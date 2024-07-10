@@ -8,8 +8,8 @@ class UserTeamRoleModel implements IHasId {
   @override
   final String id;
 
-  @JsonKey(name: 'user_auth_id')
-  final String userAuthId;
+  @JsonKey(name: 'user_id')
+  final String userId;
 
   @JsonKey(name: 'team_id')
   final String teamId;
@@ -19,7 +19,7 @@ class UserTeamRoleModel implements IHasId {
 
   UserTeamRoleModel({
     required this.id,
-    required this.userAuthId,
+    required this.userId,
     required this.teamId,
     required this.teamRole,
   });

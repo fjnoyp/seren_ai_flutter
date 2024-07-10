@@ -9,7 +9,7 @@ part of 'user_team_role_model.dart';
 UserTeamRoleModel _$UserTeamRoleModelFromJson(Map<String, dynamic> json) =>
     UserTeamRoleModel(
       id: json['id'] as String,
-      userAuthId: json['user_auth_id'] as String,
+      userId: json['user_id'] as String,
       teamId: json['team_id'] as String,
       teamRole: json['team_role'] as String,
     );
@@ -17,7 +17,7 @@ UserTeamRoleModel _$UserTeamRoleModelFromJson(Map<String, dynamic> json) =>
 Map<String, dynamic> _$UserTeamRoleModelToJson(UserTeamRoleModel instance) =>
     <String, dynamic>{
       'id': instance.id,
-      'user_auth_id': instance.userAuthId,
+      'user_id': instance.userId,
       'team_id': instance.teamId,
       'team_role': instance.teamRole,
     };

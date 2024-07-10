@@ -60,26 +60,33 @@ class BaseLoaderCacheDatabaseNotifier<T extends IHasId> {
     return items;
   }
 
-  Future<T?> getItemById(String id,
-      {List<Map<String, dynamic>>? eqFilters}) async {
-    if (_cache.containsKey(id)) {
-      return _cache[id];
+  Future<T?> getItem(
+      {String? id,List<Map<String, dynamic>>? eqFilters}) async {
+
+    if (id == null && eqFilters == null) {
+      return null;
     }
 
     var query = client.from(tableName).select();
+
+    if(id != null){
+      if (_cache.containsKey(id)) {
+        return _cache[id];
+      }
+      query = query.eq('id', id);
+    }
+    
     if (eqFilters != null) {
       for (var filter in eqFilters) {
         query = query.eq(filter['key'], filter['value']);
-      }
-      query = query.eq('id', id);
-
-      final response = await query.single().end();
-      final item = fromJson(response);
-
-      _cache[id] = item;
-      return item;
+      }      
     }
-    return null;
+
+    final response = await query.single().end();
+    final item = fromJson(response);
+
+    _cache[item.id] = item;
+    return item;
   }
 
   Future<T> createItem(T item) async {

@@ -1,7 +1,7 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:seren_ai_flutter/services/data/orgs/models/joined_org_role_model.dart';
 import 'package:seren_ai_flutter/services/data/orgs/user_org_roles/org_roles_cacher_database_provider.dart';
-import 'package:seren_ai_flutter/services/data/authUsers/auth_users_cacher_database_provider.dart';
+import 'package:seren_ai_flutter/services/data/users/users_cacher_database_provider.dart';
 import 'package:seren_ai_flutter/services/data/orgs/orgs_cacher_database_provider.dart';
 
 final joinedUserOrgRolesCompProvider = StateNotifierProvider.family<
@@ -27,20 +27,20 @@ class JoinedUserOrgRolesCompNotifier
       {'key': 'org_id', 'value': orgId}
     ]);
 
-    final userIds = userOrgRoles.map((role) => role.userAuthId).toList();
+    final userIds = userOrgRoles.map((role) => role.userId).toList();
     final authUsers =
-        await ref.read(authUsersCacherDatabaseProvider).getItems(ids: userIds);
+        await ref.read(usersCacherDatabaseProvider).getItems(ids: userIds);
 
     final org = (await ref
         .read(orgsCacherDatabaseProvider)
-        .getItemById(orgId))!;
+        .getItem(id: orgId))!;
 
     final joinedRoles = userOrgRoles.map((role) {
       final authUser =
-          authUsers.firstWhere((user) => user.id == role.userAuthId);
+          authUsers.firstWhere((user) => user.id == role.userId);
       return JoinedOrgRoleModel(
         orgRole: role,
-        authUser: authUser,
+        user: authUser,
         org: org,
       );
     }).toList();
