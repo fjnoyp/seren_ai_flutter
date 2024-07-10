@@ -1,6 +1,6 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:seren_ai_flutter/services/auth/cur_auth_user_provider.dart';
-import 'package:seren_ai_flutter/services/data/authUsers/models/auth_user_model.dart';
+import 'package:seren_ai_flutter/services/data/users/models/user_model.dart';
 import 'package:seren_ai_flutter/services/data/orgs/models/joined_org_role_model.dart';
 import 'package:seren_ai_flutter/services/data/orgs/models/user_org_role_model.dart';
 import 'package:seren_ai_flutter/services/data/orgs/cur_org/cur_user_org_role_comp_list_listener_database_provider.dart';
@@ -40,15 +40,13 @@ class JoinedCurUserOrgRolesCompNotifier extends StateNotifier<List<JoinedOrgRole
         return;
       }
 
-      final curAuthUser = AuthUserModel(id: currentUser.id, email: currentUser.email);
-
       // Join the org roles with the orgs
       final joinedRoles = userOrgRoles.map((role) {
         final org = orgs.firstWhere((org) => org.id == role.orgId);
         return JoinedOrgRoleModel(
           orgRole: role,
           org: org, 
-          authUser: curAuthUser,
+          user: currentUser,
         );
       }).toList();
 

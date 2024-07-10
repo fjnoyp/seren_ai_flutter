@@ -19,9 +19,6 @@ class ManageOrgUsersPage extends ConsumerWidget {
     final joinedOrgRoles = ref.watch(joinedUserOrgRolesCompProvider(curOrgId));
 
     return Scaffold(
-      appBar: AppBar(
-        title: const Text('Manage Organization Users'),
-      ),
       body: joinedOrgRoles.isEmpty
           ? const Center(child: Text('No users found in this organization.'))
           : ListView.builder(
@@ -29,14 +26,16 @@ class ManageOrgUsersPage extends ConsumerWidget {
               itemBuilder: (context, index) {
                 final joinedRole = joinedOrgRoles[index];
                 return ListTile(
-                  title: Text(joinedRole.authUser.email ?? 'No email'),
+                  title: Text(joinedRole.user.email ?? 'No email'),
                   subtitle: Text(joinedRole.orgRole.orgRole),
+                  /*
                   trailing: IconButton(
                     icon: const Icon(Icons.delete),
                     onPressed: () {
                       // Implement user removal logic here
                     },
                   ),
+                  */
                 );
               },
             ),

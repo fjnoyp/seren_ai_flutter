@@ -8,8 +8,8 @@ class UserOrgRoleModel implements IHasId {
   @override
   final String id;
 
-  @JsonKey(name: 'user_auth_id')
-  final String userAuthId;
+  @JsonKey(name: 'user_id')
+  final String userId;
 
   @JsonKey(name: 'org_id')
   final String orgId;
@@ -19,7 +19,7 @@ class UserOrgRoleModel implements IHasId {
 
   UserOrgRoleModel({
     required this.id,
-    required this.userAuthId,
+    required this.userId,
     required this.orgId,
     required this.orgRole,
   });

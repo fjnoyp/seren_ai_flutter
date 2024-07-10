@@ -30,7 +30,7 @@ class CurUserOrgRoleCompListNotifier extends StateNotifier<List<UserOrgRoleModel
     _databaseNotifier = BaseListenerDatabaseNotifier<UserOrgRoleModel>(
       tableName: 'user_org_roles',
       eqFilters: [
-        {'key': 'user_auth_id', 'value': userId},
+        {'key': 'user_id', 'value': userId},
       ],
       fromJson: (json) => UserOrgRoleModel.fromJson(json),
     );

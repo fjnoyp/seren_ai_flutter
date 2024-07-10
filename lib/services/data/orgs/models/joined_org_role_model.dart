@@ -1,15 +1,15 @@
 import 'package:seren_ai_flutter/services/data/orgs/models/user_org_role_model.dart';
-import 'package:seren_ai_flutter/services/data/authUsers/models/auth_user_model.dart';
+import 'package:seren_ai_flutter/services/data/users/models/user_model.dart';
 import 'package:seren_ai_flutter/services/data/orgs/models/org_model.dart';
 
 class JoinedOrgRoleModel {
   final UserOrgRoleModel orgRole;
-  final AuthUserModel authUser;
+  final UserModel user;
   final OrgModel org;
 
   JoinedOrgRoleModel({
     required this.orgRole,
-    required this.authUser,
+    required this.user,
     required this.org,
   });
 

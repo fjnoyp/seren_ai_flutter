@@ -9,6 +9,7 @@ class ChooseOrgPage extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final orgRoles = ref.watch(joinedCurUserOrgRolesCompProvider);
+    final curOrgId = ref.watch(curOrgIdProvider);
 
     return Scaffold(
       body: orgRoles.isEmpty
@@ -21,7 +22,7 @@ class ChooseOrgPage extends ConsumerWidget {
                 final orgModel = orgRole.org; 
                 final orgRoleModel = orgRole.orgRole;
 
-                final isSelected = ref.read(curOrgIdProvider.notifier).getOrgId() == orgModel.id;
+                final isSelected = curOrgId == orgModel.id;
 
                 return Container(
                   margin: const EdgeInsets.symmetric(vertical: 8.0, horizontal: 16.0),
