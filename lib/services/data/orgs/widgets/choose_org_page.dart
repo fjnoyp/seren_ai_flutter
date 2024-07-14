@@ -11,6 +11,13 @@ class ChooseOrgPage extends ConsumerWidget {
     final orgRoles = ref.watch(joinedCurUserOrgRolesCompProvider);
     final curOrgId = ref.watch(curOrgIdProvider);
 
+    if(orgRoles == null) {
+      return const Center(
+        child: 
+            Text('Waiting for orgRoles to load...'),
+      );      
+    }
+
     return Scaffold(
       body: orgRoles.isEmpty
           ? const Center(child: Text('No organizations available'))

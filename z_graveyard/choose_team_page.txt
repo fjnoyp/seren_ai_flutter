@@ -1,0 +1,57 @@
+import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:seren_ai_flutter/services/data/teams/cur_team/cur_team_id_provider.dart';
+import 'package:seren_ai_flutter/services/data/teams/cur_team/joined_cur_user_team_roles_comp_provider.dart';
+import 'package:seren_ai_flutter/services/data/teams/teams_listener_database_provider.dart';
+
+// Possibly unneeded - 
+// Allow users to easily switch between different teams 
+// Unlike orgs which is more hard set 
+
+
+class ChooseTeamPage extends ConsumerWidget {
+  const ChooseTeamPage({super.key});
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+
+    final allTeams = ref.watch(teamsListenerDatabaseProvider);
+
+
+    final teamRoles = ref.watch(joinedCurUserTeamRolesCompProvider);
+    final curTeamId = ref.watch(curTeamIdProvider);
+
+    return Scaffold(
+      body: teamRoles.isEmpty
+          ? const Center(child: Text('No teams available'))
+          : ListView.builder(
+              itemCount: teamRoles.length,
+              itemBuilder: (context, index) {
+                final teamRole = teamRoles[index];
+
+                final teamModel = teamRole.team; 
+                final teamRoleModel = teamRole.teamRole;
+
+                final isSelected = curTeamId == teamModel.id;
+
+                return Container(
+                  margin: const EdgeInsets.symmetric(vertical: 8.0, horizontal: 16.0),
+                  decoration: BoxDecoration(
+                    border: Border.all(color: Colors.grey),
+                    borderRadius: BorderRadius.circular(8.0),
+                    color: isSelected ? Colors.blue : Colors.transparent,
+                  ),
+                  child: ListTile(
+                    contentPadding: const EdgeInsets.all(16.0),
+                    title: Center(child: Text(teamModel.name)),
+                    subtitle: Center(child: Text(teamRoleModel.teamRole)),
+                    onTap: () {
+                      ref.read(curTeamIdProvider.notifier).setTeamId(teamModel.id);
+                    },
+                  ),
+                );
+              },
+            ),
+      );
+  }
+}

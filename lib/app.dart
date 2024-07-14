@@ -9,11 +9,14 @@ import 'package:seren_ai_flutter/services/auth/widgets/sign_in_up_page.dart';
 import 'package:seren_ai_flutter/services/data/orgs/widgets/choose_org_page.dart';
 import 'package:seren_ai_flutter/services/data/orgs/widgets/manage_org_users_page.dart';
 import 'package:seren_ai_flutter/services/data/orgs/widgets/org_guard.dart';
+import 'package:seren_ai_flutter/services/data/tasks/widgets/ManageTasksPage.dart';
+import 'package:seren_ai_flutter/services/data/teams/widgets/manage_team_users_page.dart';
 import 'package:seren_ai_flutter/widgets/home_page.dart';
 import 'package:seren_ai_flutter/widgets/main_scaffold.dart';
 import 'package:seren_ai_flutter/widgets/tasks_page.dart';
 import 'package:seren_ai_flutter/widgets/test_page.dart';
 import 'package:seren_ai_flutter/widgets/theme_data.dart';
+import 'package:supabase_flutter/supabase_flutter.dart';
 
 final log = Logger('App');
 
@@ -50,8 +53,8 @@ class AppState extends State<App> {
       // Initiate the orchestrator
       //ref.read(sttToLangchainOrchestrator);
 
-      final firstUserValue = ref.read(curAuthUserProvider);
-      final initialRoute = firstUserValue == null ? signInUpRoute : tasksRoute;
+      //final firstUserValue = ref.read(curAuthUserProvider);
+      final initialRoute = Supabase.instance.client.auth.currentUser == null ? signInUpRoute : tasksRoute;
 
       final themeMode = ref.watch(themeSNP);
 
@@ -63,6 +66,8 @@ class AppState extends State<App> {
           routes: {
             chooseOrgRoute: (context) => _buildAuthGuardScaffold('Choose Organization', const ChooseOrgPage()),
             manageOrgUsersRoute: (context) => _buildGuardScaffold('Manage Organization Users', const ManageOrgUsersPage()),
+            manageTeamUsersRoute: (context) => _buildGuardScaffold('Manage Team Users', const ManageTeamUsersPage()),
+            manageTasksRoute: (context) => _buildGuardScaffold('Manage Tasks', const ManageTasksPage()),
             testRoute: (context) => _buildGuardScaffold('Test', const TestPage()),
             tasksRoute: (context) => _buildGuardScaffold('Tasks', const TasksPage()),
             signInUpRoute: (context) => const SignInUpPage(),

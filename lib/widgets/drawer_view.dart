@@ -50,30 +50,33 @@ class DrawerView extends HookWidget {
             ),
             Consumer(
               builder: (context, ref, child) {
-                final user = ref.read(curAuthUserProvider);
-                return ListTile(
-                  dense: true,
-                  leading: const Icon(Icons.email),
-                  title: buildRow('Email', user?.email ?? 'No email'),
-                );
-              },
-            ),
-            ListTile(
-              dense: true,
-              leading: const Icon(Icons.star),
-              title: buildRow('Subscription', 'Premium'),
-            ),
-            Consumer(
-              builder: (context, ref, child) {
-                return ListTile(
-                  dense: true,
-                  leading: const Icon(Icons.logout),
-                  title: const Text('Sign Out',
-                      style: TextStyle(fontWeight: FontWeight.bold)),
-                  onTap: () {
-                    ref.read(curAuthUserProvider.notifier).signOut();
-                  },
-                );
+                final user = ref.watch(curAuthUserProvider);
+
+                if (user == null) {
+                  return const Center(child: Text('No Auth User'));
+                }
+
+                return Column(children: [
+                  ListTile(
+                    dense: true,
+                    leading: const Icon(Icons.email),
+                    title: buildRow('Email', user.email ?? 'No email'),
+                  ),
+                  ListTile(
+                    dense: true,
+                    leading: const Icon(Icons.star),
+                    title: buildRow('Subscription', 'Premium'),
+                  ),
+                  ListTile(
+                    dense: true,
+                    leading: const Icon(Icons.logout),
+                    title: const Text('Sign Out',
+                        style: TextStyle(fontWeight: FontWeight.bold)),
+                    onTap: () {
+                      ref.read(curAuthUserProvider.notifier).signOut();
+                    },
+                  ),
+                ]);
               },
             ),
             const ListTile(
@@ -117,20 +120,6 @@ class DrawerView extends HookWidget {
             ),
           ] else ...[
             _buildListTile(
-                context: context,
-                icon: Icons.house,
-                title: 'Choose Organization',
-                onTap: () {
-                  Navigator.pushNamed(context, chooseOrgRoute);
-                }),
-              _buildListTile(
-              context: context,
-              icon: Icons.people,
-              title: 'Org Admin - Manage Org Users',
-              onTap: () {
-                Navigator.pushNamed(context, manageOrgUsersRoute);
-              }),
-            _buildListTile(
               context: context,
               icon: Icons.home,
               title: 'Home',
@@ -138,6 +127,41 @@ class DrawerView extends HookWidget {
                 Navigator.pushNamed(context, homeRoute);
               },
             ),
+            _buildListTile(
+                context: context,
+                icon: Icons.house,
+                title: 'Choose Organization',
+                onTap: () {
+                  Navigator.pushNamed(context, chooseOrgRoute);
+                }),
+            _buildListTile(
+                context: context,
+                icon: Icons.people,
+                title: 'Org Admin - Manage Org Users',
+                onTap: () {
+                  Navigator.pushNamed(context, manageOrgUsersRoute);
+                }),
+            _buildListTile(
+                context: context,
+                icon: Icons.people,
+                title: 'Choose Team',
+                onTap: () {
+                  Navigator.pushNamed(context, chooseTeamRoute);
+                }),
+            _buildListTile(
+                context: context,
+                icon: Icons.people,
+                title: 'Team Admin - Manage Team Users',
+                onTap: () {
+                  Navigator.pushNamed(context, manageTeamUsersRoute);
+                }),
+            _buildListTile(
+                context: context,
+                icon: Icons.task,
+                title: 'Manage Tasks',
+                onTap: () {
+                  Navigator.pushNamed(context, manageTasksRoute);
+                }),
             _buildListTile(
               context: context,
               icon: Icons.task,

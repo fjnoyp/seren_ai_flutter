@@ -1,5 +1,5 @@
 import 'package:json_annotation/json_annotation.dart';
-import 'package:seren_ai_flutter/services/data/i_has_id.dart';
+import 'package:seren_ai_flutter/services/data/common/i_has_id.dart';
 
 part 'org_model.g.dart';
 
