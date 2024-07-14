@@ -1,6 +1,5 @@
-import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:seren_ai_flutter/services/data/i_has_id.dart';
-import 'package:seren_ai_flutter/services/data/throw_error_supabase.dart';
+import 'package:seren_ai_flutter/services/data/common/i_has_id.dart';
+import 'package:seren_ai_flutter/services/data/common/throw_error_supabase.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
 typedef FromJson<T> = T Function(Map<String, dynamic> json);

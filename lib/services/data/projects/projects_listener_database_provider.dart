@@ -1,6 +1,6 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:seren_ai_flutter/services/data/projects/models/project_model.dart';
-import 'package:seren_ai_flutter/services/data/base_listener_database_notifier.dart';
+import 'package:seren_ai_flutter/services/data/common/base_listener_database_notifier.dart';
 
 final projectsListenerDatabaseProvider = StateNotifierProvider.family<BaseListenerDatabaseNotifier<ProjectModel>, List<ProjectModel>, String>((ref, parentTeamId) {
   return BaseListenerDatabaseNotifier<ProjectModel>(

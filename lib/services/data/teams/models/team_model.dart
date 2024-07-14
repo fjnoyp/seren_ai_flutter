@@ -1,9 +1,11 @@
 import 'package:json_annotation/json_annotation.dart';
+import 'package:seren_ai_flutter/services/data/common/i_has_id.dart';
 
 part 'team_model.g.dart';
 
 @JsonSerializable()
-class TeamModel {
+class TeamModel implements IHasId {
+  @override
   final String id;
   final String name;
 

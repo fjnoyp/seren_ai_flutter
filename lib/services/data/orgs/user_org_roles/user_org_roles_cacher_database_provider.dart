@@ -1,6 +1,6 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:seren_ai_flutter/services/data/orgs/models/user_org_role_model.dart';
-import 'package:seren_ai_flutter/services/data/base_cacher_database_notifier.dart';
+import 'package:seren_ai_flutter/services/data/common/base_cacher_database_notifier.dart';
 
 final userOrgRolesCacherDatabaseProvider = Provider.family<BaseLoaderCacheDatabaseNotifier<UserOrgRoleModel>, String>((ref, orgId) {
   return BaseLoaderCacheDatabaseNotifier<UserOrgRoleModel>(

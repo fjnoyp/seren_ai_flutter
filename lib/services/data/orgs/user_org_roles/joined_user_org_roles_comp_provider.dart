@@ -1,6 +1,6 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:seren_ai_flutter/services/data/orgs/models/joined_org_role_model.dart';
-import 'package:seren_ai_flutter/services/data/orgs/user_org_roles/org_roles_cacher_database_provider.dart';
+import 'package:seren_ai_flutter/services/data/orgs/user_org_roles/user_org_roles_cacher_database_provider.dart';
 import 'package:seren_ai_flutter/services/data/users/users_cacher_database_provider.dart';
 import 'package:seren_ai_flutter/services/data/orgs/orgs_cacher_database_provider.dart';
 

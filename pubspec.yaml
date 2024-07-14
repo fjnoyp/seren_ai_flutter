@@ -46,8 +46,9 @@ dev_dependencies:
   # flutter pub run build_runner build
   build_runner: ^2.4.11
 
-   # code generation of to/from json code 
+  # code generation of to/from json code 
   json_serializable: ^6.8.0
 
 flutter:
   uses-material-design: true
+  
