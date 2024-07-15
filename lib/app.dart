@@ -3,17 +3,16 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:logging/logging.dart';
 import 'package:seren_ai_flutter/constants.dart';
-import 'package:seren_ai_flutter/services/auth/cur_auth_user_provider.dart';
 import 'package:seren_ai_flutter/services/auth/widgets/auth_guard.dart';
 import 'package:seren_ai_flutter/services/auth/widgets/sign_in_up_page.dart';
 import 'package:seren_ai_flutter/services/data/orgs/widgets/choose_org_page.dart';
 import 'package:seren_ai_flutter/services/data/orgs/widgets/manage_org_users_page.dart';
 import 'package:seren_ai_flutter/services/data/orgs/widgets/org_guard.dart';
-import 'package:seren_ai_flutter/services/data/tasks/widgets/ManageTasksPage.dart';
+import 'package:seren_ai_flutter/services/data/tasks/widgets/create_task_page.dart';
 import 'package:seren_ai_flutter/services/data/teams/widgets/manage_team_users_page.dart';
 import 'package:seren_ai_flutter/widgets/home_page.dart';
 import 'package:seren_ai_flutter/widgets/main_scaffold.dart';
-import 'package:seren_ai_flutter/widgets/tasks_page.dart';
+import 'package:seren_ai_flutter/services/data/tasks/widgets/tasks_page.dart';
 import 'package:seren_ai_flutter/widgets/test_page.dart';
 import 'package:seren_ai_flutter/widgets/theme_data.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
@@ -66,11 +65,11 @@ class AppState extends State<App> {
           routes: {
             chooseOrgRoute: (context) => _buildAuthGuardScaffold('Choose Organization', const ChooseOrgPage()),
             manageOrgUsersRoute: (context) => _buildGuardScaffold('Manage Organization Users', const ManageOrgUsersPage()),
-            manageTeamUsersRoute: (context) => _buildGuardScaffold('Manage Team Users', const ManageTeamUsersPage()),
-            manageTasksRoute: (context) => _buildGuardScaffold('Manage Tasks', const ManageTasksPage()),
+            manageTeamUsersRoute: (context) => _buildGuardScaffold('Manage Team Users', const ManageTeamUsersPage()),                        
             testRoute: (context) => _buildGuardScaffold('Test', const TestPage()),
             tasksRoute: (context) => _buildGuardScaffold('Tasks', const TasksPage()),
-            signInUpRoute: (context) => const SignInUpPage(),
+            createTaskRoute: (context) => _buildGuardScaffold('Create Task', const CreateTaskPage()),
+            signInUpRoute: (context) => MainScaffold(title: 'Sign In/Up', body: const SignInUpPage()),
             homeRoute: (context) => _buildGuardScaffold('Home', const HomePage()),
           },
           // For dynamically generating routes based on settings param 

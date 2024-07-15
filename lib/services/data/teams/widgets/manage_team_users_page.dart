@@ -85,8 +85,7 @@ class TeamUsersList extends ConsumerWidget {
 
     final joinedTeamRoles = ref.watch(joinedUserTeamRolesCacherCompProvider(curTeamId));
 
-    return Scaffold(
-      body: joinedTeamRoles.isEmpty
+    return joinedTeamRoles.isEmpty
           ? const Center(child: Text('No users found in this team.'))
           : ListView.builder(
               itemCount: joinedTeamRoles.length,
@@ -97,7 +96,6 @@ class TeamUsersList extends ConsumerWidget {
                   subtitle: Text(joinedRole.teamRole.teamRole),
                 );
               },
-            ),
-    );
+            );
   }
 }

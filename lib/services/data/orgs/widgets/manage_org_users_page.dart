@@ -18,8 +18,7 @@ class ManageOrgUsersPage extends ConsumerWidget {
 
     final joinedOrgRoles = ref.watch(joinedUserOrgRolesCompProvider(curOrgId));
 
-    return Scaffold(
-      body: joinedOrgRoles.isEmpty
+    return joinedOrgRoles.isEmpty
           ? const Center(child: Text('No users found in this organization.'))
           : ListView.builder(
               itemCount: joinedOrgRoles.length,
@@ -38,7 +37,6 @@ class ManageOrgUsersPage extends ConsumerWidget {
                   */
                 );
               },
-            ),
     );
   }
 }
