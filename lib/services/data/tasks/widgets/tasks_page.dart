@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:seren_ai_flutter/constants.dart';
+import 'package:seren_ai_flutter/services/data/tasks/cur_tasks/cur_user_tasks_list_listener_database_provider.dart';
 
 import 'package:seren_ai_flutter/services/data/tasks/models/task_model.dart';
 import 'package:seren_ai_flutter/services/data/tasks/tasks_listener_database_provider.dart';
@@ -9,7 +11,7 @@ class TasksPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return const DefaultTabController(
+    return  DefaultTabController(
       length: 3,
       child: Column(
         children: [
@@ -21,19 +23,40 @@ class TasksPage extends StatelessWidget {
             ],
           ),
           Expanded(
-            child: TabBarView(
-              children: [
+            child: Padding(              
+              padding: const EdgeInsets.symmetric(horizontal: 20.0),              
+              child: TabBarView(
+                children: [
                 InProgressTasks(),
                 UpcomingTasks(),
                 CompletedTasks(),
               ],
             ),
+          ),          
           ),
+          Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 20.0),
+            child: SizedBox(
+              width: double.infinity,
+              child: FilledButton(
+                onPressed: () => HandleCreateNewTask(context),
+                child: Text('Create New Task'),
+              ),
+            ),
+          ),
+          SizedBox(height: 16),
         ],
       ),
     );
   }
+
+  void HandleCreateNewTask(BuildContext context) {
+    // navigate to create task page
+    Navigator.pushNamed(context, createTaskRoute);
+  }
 }
+
+
 
 Widget taskPreview(TaskModel task) {
   return Card(
@@ -98,25 +121,27 @@ class InProgressTasks extends ConsumerWidget {
   const InProgressTasks({super.key});
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    // Hardcoded from: http://127.0.0.1:54323/project/default/editor/17698    
-    final tasks = ref.watch(tasksListenerDatabaseProvider('a0307617-7384-4885-adfe-dd45c33f9c7b'));
+    final tasks = ref.watch(curUserTasksListListenerDatabaseProvider);
 
-    if (tasks.isEmpty) {
-      return const Center(child: CircularProgressIndicator());
-    } else {
-      return ListView.builder(
-      itemCount: tasks.length,
-      itemBuilder: (context, index) {
-        /*
-        return ListTile(
-          title: Text(tasks[index].name), // Assuming TaskModel has a 'name' field
-        );
-        */
-        return taskPreview(tasks[index]);
-      },
+    // TODO: filter on team - currently cross team tasks shown 
+
+    return Container(
+      color: Colors.red,
+      child: tasks == null
+          ? const Center(child: CircularProgressIndicator())
+          : tasks.isEmpty
+              ? const Center(child: Text('No tasks available'))
+              : ListView.builder(
+                  itemCount: tasks.length,
+                  itemBuilder: (context, index) {
+                    final task = tasks[index];
+                    return ListTile(
+                      title: Text(task.name),
+                      subtitle: Text(task.description ?? ''),
+                    );
+                  },
+                ),
     );
-    }
-  
   }
 }
 

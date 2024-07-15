@@ -18,8 +18,7 @@ class ChooseOrgPage extends ConsumerWidget {
       );      
     }
 
-    return Scaffold(
-      body: orgRoles.isEmpty
+    return orgRoles.isEmpty
           ? const Center(child: Text('No organizations available'))
           : ListView.builder(
               itemCount: orgRoles.length,
@@ -48,7 +47,6 @@ class ChooseOrgPage extends ConsumerWidget {
                   ),
                 );
               },
-            ),
       );
   }
 }
