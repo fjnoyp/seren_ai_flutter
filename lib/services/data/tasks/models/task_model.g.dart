@@ -20,8 +20,8 @@ TaskModel _$TaskModelFromJson(Map<String, dynamic> json) => TaskModel(
       lastUpdatedDate: DateTime.parse(json['last_updated_date'] as String),
       authorUserId: json['author_user_id'] as String,
       assignedUserId: json['assigned_user_id'] as String?,
-      parentTeamId: json['parent_team_id'] as String,
-      parentProjectId: json['parent_project_id'] as String?,
+      parentTeamId: json['parent_team_id'] as String?,
+      parentProjectId: json['parent_project_id'] as String,
       estimatedDuration: (json['estimated_duration'] as num?)?.toInt(),
       listDurations: (json['list_durations'] as List<dynamic>?)
           ?.map((e) => (e as Map<String, dynamic>).map(
@@ -54,6 +54,7 @@ const _$StatusEnumEnumMap = {
   StatusEnum.open: 'open',
   StatusEnum.inProgress: 'inProgress',
   StatusEnum.finished: 'finished',
+  StatusEnum.archived: 'archived',
 };
 
 const _$PriorityEnumEnumMap = {
