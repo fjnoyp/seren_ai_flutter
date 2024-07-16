@@ -12,6 +12,7 @@ class BaseListenerDatabaseParams {
   BaseListenerDatabaseParams(this.tableName, this.filters, this.fromJson);
 }
 
+/// Listen to the database for changes and auto updates state. 
 class BaseListenerDatabaseNotifier<T> extends StateNotifier<List<T>> {
   final SupabaseClient client = Supabase.instance.client;
   final String tableName;
