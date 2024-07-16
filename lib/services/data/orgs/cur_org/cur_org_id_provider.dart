@@ -14,24 +14,24 @@ class CurOrgIdNotifier extends StateNotifier<String?> {
   }
 
   void _init() {
+    // TODO: this appears to cause BadState exception with provider being disposed before, likely due to WatchAuth logic 
+    final watchedCurUserOrgRoles =
+        ref.watch(curUserOrgRolesListListenerDatabaseProvider);
 
-    final watchedCurUserOrgRoles = ref.watch(curUserOrgRolesListListenerDatabaseProvider); 
+    if (watchedCurUserOrgRoles != null) {
+      final currentOrgId = state;
+      final isInCurrentOrg = watchedCurUserOrgRoles
+          .any((orgRole) => orgRole.orgId == currentOrgId);
 
-      if (watchedCurUserOrgRoles != null) {
-        final currentOrgId = state;
-        final isInCurrentOrg = watchedCurUserOrgRoles
-            .any((orgRole) => orgRole.orgId == currentOrgId);
-
-        if (!isInCurrentOrg) {
-          state = null;
-        }
-      } else {
+      if (!isInCurrentOrg) {
         state = null;
-      }    
+      }
+    } else {
+      state = null;
+    }
   }
 
   void setOrgId(String orgId) {
     state = orgId;
   }
-
 }

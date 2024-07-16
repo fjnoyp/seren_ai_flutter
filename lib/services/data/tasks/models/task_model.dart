@@ -2,7 +2,7 @@ import 'package:json_annotation/json_annotation.dart';
 
 part 'task_model.g.dart';
 
-enum StatusEnum { cancelled, open, inProgress, finished }
+enum StatusEnum { cancelled, open, inProgress, finished, archived }
 enum PriorityEnum { veryLow, low, normal, high, veryHigh }
 
 @JsonSerializable()
@@ -33,10 +33,10 @@ class TaskModel {
   final String? assignedUserId;
 
   @JsonKey(name: 'parent_team_id')
-  final String parentTeamId;
+  final String? parentTeamId;
 
   @JsonKey(name: 'parent_project_id')
-  final String? parentProjectId;
+  final String parentProjectId;
 
   @JsonKey(name: 'estimated_duration')
   final int? estimatedDuration;

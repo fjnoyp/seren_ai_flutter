@@ -20,7 +20,7 @@ class CreateTaskPage extends ConsumerWidget {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              // Project 
+              // Project
               Row(
                   crossAxisAlignment: CrossAxisAlignment.baseline,
                   textBaseline: TextBaseline.alphabetic,
@@ -33,7 +33,21 @@ class CreateTaskPage extends ConsumerWidget {
                         style: theme.textTheme.bodyMedium
                             ?.copyWith(color: theme.colorScheme.secondary)),
                   ]),
-                  const SizedBox(height: 16),
+
+                  Row(
+                  crossAxisAlignment: CrossAxisAlignment.baseline,
+                  textBaseline: TextBaseline.alphabetic,
+                  children: [
+                    Text('Team',
+                        style: theme.textTheme.titleMedium
+                            ?.copyWith(fontWeight: FontWeight.bold)),
+                    const SizedBox(width: 10),
+                    Text('ElectriciansPorto1',
+                        style: theme.textTheme.bodyMedium
+                            ?.copyWith(color: theme.colorScheme.secondary)),
+                  ]),
+              const SizedBox(height: 16),
+              // Title Input
               TextFormField(
                 controller: _nameController,
                 style: theme.textTheme.titleMedium,
@@ -48,72 +62,68 @@ class CreateTaskPage extends ConsumerWidget {
                   return null;
                 },
               ),
-              const SizedBox(height: 16),
-              Row(
-                crossAxisAlignment: CrossAxisAlignment.start,  
-                    
-                children: [
-                              Expanded(
-      child: IntrinsicHeight(
-                    child: Column(
+              SizedBox(height: 8), // Project
+              Divider(),
+
+              Padding(
+                  padding: const EdgeInsets.only(left: 15),
+                  child: Column(children: [
+                    _createSelectionRow(context),
+                    const Divider(),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.start,
                       children: [
-                        Icon(Icons.person_outline, color: theme.iconTheme.color),
-                        const SizedBox(width: 8),
-                        Text('Assigned', style: theme.textTheme.bodyMedium),
-                        const Spacer(),
+                        Icon(Icons.calendar_month),
                         TextButton(
-                          onPressed: () {
-                            // TODO: Implement assign functionality
-                          },
-                          child: Text('Assign',
-                              style: TextStyle(color: theme.colorScheme.secondary)),
-                        ),
+                            onPressed: () {},
+                            style: TextButton.styleFrom(
+                              alignment: Alignment.centerLeft,
+                              padding: EdgeInsets.only(left: 10),
+                            ),
+                            child: Text(
+                              'A',
+                            ))
                       ],
                     ),
-                  ),  ),            
-                  Expanded(
-      child: IntrinsicHeight(
-                    child: Column(
-                      children: [
-                        Icon(Icons.calendar_today, color: theme.iconTheme.color),
-                        const SizedBox(width: 8),
-                        Text('Due date', style: theme.textTheme.bodyMedium),
-                        const Spacer(),
-                        TextButton(
-                          onPressed: () async {
-                            final selectedDate = await showDatePicker(
-                              context: context,
-                              initialDate: DateTime.now(),
-                              firstDate: DateTime.now(),
-                              lastDate: DateTime(2100),
-                            );
-                            // Handle the selected date
-                          },
-                          child: Text('Set date',
-                              style: TextStyle(color: theme.colorScheme.secondary)),
-                        ),
-                      ],
+                    const SizedBox(height: 16),
+                    Text('Description', style: theme.textTheme.titleMedium),
+                    const SizedBox(height: 8),
+                    TextFormField(
+                      controller: _descriptionController,
+                      style: theme.textTheme.bodyMedium,
+                      decoration: InputDecoration(
+                        hintText: 'Add description',
+                        border: InputBorder.none,
+                      ),
+                      maxLines: 5,
                     ),
-                  ),),
-                ],
-              ),
-              const SizedBox(height: 24),
-              Text('Description', style: theme.textTheme.titleMedium),
-              const SizedBox(height: 8),
-              TextFormField(
-                controller: _descriptionController,
-                style: theme.textTheme.bodyMedium,
-                decoration: InputDecoration(
-                  hintText: 'Add description',
-                  border: InputBorder.none,
-                ),
-                maxLines: 5,
-              ),
-              const SizedBox(height: 24),
+                    const SizedBox(height: 24),
+                  ])),
+
               Text('Comments', style: theme.textTheme.titleMedium),
               const SizedBox(height: 8),
               // TODO: Implement comments section
               const SizedBox(height: 24),
+
+              Row(
+                  crossAxisAlignment: CrossAxisAlignment.baseline,
+                  textBaseline: TextBaseline.alphabetic,
+                  children: [
+                    Text('Team:',
+                        style: theme.textTheme.titleSmall
+                            ?.copyWith(fontWeight: FontWeight.bold)),
+                    const SizedBox(width: 10),
+                    Container(
+                      padding: const EdgeInsets.all(2),
+                      decoration: BoxDecoration(
+                        border: Border.all(color: Colors.grey),
+                        borderRadius: BorderRadius.circular(4),
+                      ),
+                      child: Text(
+                        'Electricians13',
+                      ),
+                    ),
+                  ]),
               SizedBox(
                 width: double.infinity,
                 child: ElevatedButton(
@@ -134,7 +144,7 @@ class CreateTaskPage extends ConsumerWidget {
                         assignedUserId: null,
                         parentTeamId:
                             'current_team_id', // Replace with actual team ID
-                        parentProjectId: null,
+                        parentProjectId: 'current_project_id', // Replace with actual project ID
                         estimatedDuration: null,
                         listDurations: null,
                       );
@@ -153,6 +163,39 @@ class CreateTaskPage extends ConsumerWidget {
           ),
         ),
       ),
+    );
+  }
+
+  Widget _createSelectionRow(BuildContext context) {
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.start,
+      children: [
+        Icon(Icons.person),
+        TextButton(
+          onPressed: () {
+            showModalBottomSheet(
+              context: context,
+              builder: (BuildContext context) {
+                return ListView.builder(
+                  itemCount: 10, // Assuming you have a list of 10 temp strings
+                  itemBuilder: (context, index) {
+                    return ListTile(
+                      title: Text('Temp String ${index + 1}'),
+                    );
+                  },
+                );
+              },
+            );
+          },
+          style: TextButton.styleFrom(
+            alignment: Alignment.centerLeft,
+            padding: EdgeInsets.only(left: 10),
+          ),
+          child: Text(
+            'Assignee',
+          ),
+        ),
+      ],
     );
   }
 }
