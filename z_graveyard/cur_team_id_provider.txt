@@ -3,6 +3,11 @@ import 'package:seren_ai_flutter/services/data/teams/cur_team/cur_user_team_role
 import 'package:seren_ai_flutter/services/data/teams/models/user_team_role_model.dart';
 
 // TODO: not used yet ...
+// We no longer need a current team context, we will show all tasks assigned to the user 
+// Teams have become an organizational concept for grouping users together 
+// But users who belong to multiple teams or projects will just see all of their current tasks 
+// Administrators, can see tasks grouped by projects or teams in a separate view 
+
 final curTeamIdProvider =
     StateNotifierProvider<CurTeamIdNotifier, String?>((ref) {
   return CurTeamIdNotifier(ref);

@@ -5,6 +5,7 @@ import 'package:supabase_flutter/supabase_flutter.dart';
 typedef FromJson<T> = T Function(Map<String, dynamic> json);
 typedef ToJson<T> = Map<String, dynamic> Function(T item);
 
+/// Use cautiously, data does not get updated automatically. 
 class BaseLoaderCacheDatabaseNotifier<T extends IHasId> {
   final SupabaseClient client = Supabase.instance.client;
   final String tableName;
