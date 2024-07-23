@@ -140,8 +140,7 @@ class CreateTaskPage extends ConsumerWidget {
                         createdDate: DateTime.now(),
                         lastUpdatedDate: DateTime.now(),
                         authorUserId:
-                            'current_user_id', // Replace with actual user ID
-                        assignedUserId: null,
+                            'current_user_id', // Replace with actual user ID                        
                         parentTeamId:
                             'current_team_id', // Replace with actual team ID
                         parentProjectId: 'current_project_id', // Replace with actual project ID
