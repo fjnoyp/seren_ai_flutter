@@ -6,11 +6,12 @@ import 'package:seren_ai_flutter/services/data/tasks/cur_tasks/cur_user_tasks_li
 import 'package:seren_ai_flutter/services/data/tasks/models/task_model.dart';
 import 'package:seren_ai_flutter/services/data/tasks/tasks_listener_database_provider.dart';
 
-class TasksPage extends StatelessWidget {
+class TasksPage extends ConsumerWidget {
   const TasksPage({super.key});
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
+           
     return  DefaultTabController(
       length: 3,
       child: Column(
@@ -100,7 +101,7 @@ Widget taskPreview(TaskModel task) {
           Text('Created: ${task.createdDate.toIso8601String()}'),
           Text('Last Updated: ${task.lastUpdatedDate.toIso8601String()}'),
           Text('Author: ${task.authorUserId}'),
-          if (task.assignedUserId != null) Text('Assigned to: ${task.assignedUserId}'),
+          // if (task.assignedUserId != null) Text('Assigned to: ${task.assignedUserId}'),
           Text('Team: ${task.parentTeamId}'),
           if (task.parentProjectId != null) Text('Project: ${task.parentProjectId}'),
           if (task.estimatedDuration != null) Text('Estimated Duration: ${task.estimatedDuration} mins'),
@@ -121,7 +122,9 @@ class InProgressTasks extends ConsumerWidget {
   const InProgressTasks({super.key});
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    print('InProgressTasks: build');
     final tasks = ref.watch(curUserTasksListListenerDatabaseProvider);
+    print('InProgressTasks: tasks: $tasks');
 
     // TODO: filter on team - currently cross team tasks shown 
 

@@ -29,8 +29,8 @@ class TaskModel {
   @JsonKey(name: 'author_user_id')
   final String authorUserId;
 
-  @JsonKey(name: 'assigned_user_id')
-  final String? assignedUserId;
+  @JsonKey(name: 'assigned_user_ids')
+  final List<String> assignedUserIds;
 
   @JsonKey(name: 'parent_team_id')
   final String? parentTeamId;
@@ -54,7 +54,7 @@ class TaskModel {
     required this.createdDate,
     required this.lastUpdatedDate,
     required this.authorUserId,
-    required this.assignedUserId,
+    this.assignedUserIds = const [],
     required this.parentTeamId,
     required this.parentProjectId,
     required this.estimatedDuration,

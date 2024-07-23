@@ -14,7 +14,23 @@ void main() async {
   );
   runApp(
     const ProviderScope(
-      child: App(),
+      child: EagerInitialization(
+        child: App(),
+      ),
     ),
   );
+}
+
+/// Eagerly initialize providers by watching them.
+class EagerInitialization extends ConsumerWidget {
+  const EagerInitialization({super.key, required this.child});
+  final Widget child;
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    // Eagerly initialize providers by watching them.
+    // By using "watch", the provider will stay alive and not be disposed.
+    //ref.watch(curUserTasksListListenerDatabaseProvider);
+    return child;
+  }
 }
