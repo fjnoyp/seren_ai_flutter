@@ -142,13 +142,6 @@ class DrawerView extends HookWidget {
                   Navigator.pushNamed(context, manageOrgUsersRoute);
                 }),
             _buildListTile(
-                context: context,
-                icon: Icons.people,
-                title: 'Choose Team',
-                onTap: () {
-                  Navigator.pushNamed(context, chooseTeamRoute);
-                }),
-            _buildListTile(
               context: context,
               icon: Icons.task,
               title: 'Tasks',

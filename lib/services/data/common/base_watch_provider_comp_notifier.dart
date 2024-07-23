@@ -17,22 +17,22 @@ class BaseWatchProviderCompNotifier<T, K> extends StateNotifier<List<K>?> {
   }
 
   void _init() {
-    final watchedValue = ref.watch<T?>(watchedProvider);
 
-    if (watchedValue == null) {
+    // DO NOT USE ref.watch - this causes provider to dispose and rebuild when watched value changes 
+    ref.listen<T?>(watchedProvider, (previous, next) {
+      if (next == null) {
+        _stateNotifier?.dispose();
+        state = null;
+        return;
+      }
+
+      state = [];
       _stateNotifier?.dispose();
-      state = null;
-      return;
-    }
-
-    final depInitValue = watchedValue;
-
-    state = [];
-    _stateNotifier?.dispose();
-    _stateNotifier = createWatchingNotifier(depInitValue);
-    _stateNotifier?.addListener((value) {
-      state = value;
-    });
+      _stateNotifier = createWatchingNotifier(next);
+      _stateNotifier?.addListener((value) {
+        state = value;
+      });
+    }, fireImmediately: true);
   }
 
   @override
