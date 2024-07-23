@@ -119,6 +119,15 @@ class CurUserTasksListNotifier extends StateNotifier<List<TaskModel>?> {
 
   void _initialize() {
 
+    // PREVIOUS MAJOR ISSUE: 
+    // Using ref.watch instead of ref.listen caused thie provider to keep on disposing itself        
+    //ref.watch(taskUserAssignmentsListenerDatabaseProvider);
+
+    // I think this was because watch rebuilt the provider when the value updated, but because the provider was scoped to a single taskView UI it was also rebuilding the UI. 
+
+    // Unsure - no online documentation confirms this. Riverpod docs actually tell you to use watch when having providers rely on each other ... 
+
+
     ref.listen(taskUserAssignmentsListenerDatabaseProvider, (previous, next) {
       if (next != null) {
         // Get the list of tasks to watch 
