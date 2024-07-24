@@ -31,7 +31,18 @@ dependencies:
   # hooks and riverpod 
   hooks_riverpod: ^2.5.1
 
+  # auto gen data model to/from json 
   json_annotation: ^4.9.0
+
+  # offline db + better watch queries 
+  powersync: ^1.5.5
+
+  # file path manipulation 
+  path: ^1.9.0
+
+  # finding commonly used file paths across platforms (flutter)
+  path_provider: ^2.1.3
+
 
 
 

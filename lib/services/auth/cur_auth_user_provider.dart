@@ -1,4 +1,5 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:seren_ai_flutter/services/data/db_setup/powersync_provider.dart';
 import 'package:seren_ai_flutter/services/data/users/models/user_model.dart';
 import 'package:seren_ai_flutter/services/data/users/users_cacher_database_provider.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
@@ -30,14 +31,14 @@ class CurAuthUserNotifier extends StateNotifier<UserModel?> {
     } 
 
     try {
-      final user = await convertAuthUserIdToUserModel(authUserId);
+      final user = await _convertAuthUserIdToUserModel(authUserId);
       state = user;
     } catch (error) {
       state = null;
     }
   }
 
-  Future<UserModel> convertAuthUserIdToUserModel(String authUserId) async {
+  Future<UserModel> _convertAuthUserIdToUserModel(String authUserId) async {
     final usersCacherDatabase = ref.read(usersCacherDatabaseProvider);
     final userModel = await usersCacherDatabase.getItem(
         eqFilters: [{'key': 'parent_auth_user_id', 'value': authUserId}]);
@@ -49,6 +50,7 @@ class CurAuthUserNotifier extends StateNotifier<UserModel?> {
 
   Future<void> signOut() async {
     await Supabase.instance.client.auth.signOut();
+    await ref.read(powerSyncProvider).disconnectAndClear();
     state = null;
   }
 }

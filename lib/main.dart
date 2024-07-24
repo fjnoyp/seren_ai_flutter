@@ -1,36 +1,19 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:seren_ai_flutter/app.dart';
-import 'package:supabase_flutter/supabase_flutter.dart';
+import 'package:seren_ai_flutter/services/data/db_setup/powersync.dart';
+import 'package:seren_ai_flutter/services/data/db_setup/powersync_provider.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
+  final db = await PowerSyncDatabaseFactory.openDatabase();
 
-  await Supabase.initialize(
-    //url: 'https://nqgmckqizuustcwsolta.supabase.co',
-    url: 'http://127.0.0.1:54321', // Your local Supabase URL
-    anonKey:
-        'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im5xZ21ja3FpenV1c3Rjd3NvbHRhIiwicm9sZSI6ImFub24iLCJpYXQiOjE3MTE0NzAwNzksImV4cCI6MjAyNzA0NjA3OX0.WmoWQ5qH50u5wD1sUP6JFQ1jjLzhDhv9SSABx84rVw4',
-  );
   runApp(
-    const ProviderScope(
-      child: EagerInitialization(
-        child: App(),
-      ),
+    ProviderScope(
+      overrides: [
+        powerSyncProvider.overrideWithValue(db),
+      ],
+      child: const App(),
     ),
   );
-}
-
-/// Eagerly initialize providers by watching them.
-class EagerInitialization extends ConsumerWidget {
-  const EagerInitialization({super.key, required this.child});
-  final Widget child;
-
-  @override
-  Widget build(BuildContext context, WidgetRef ref) {
-    // Eagerly initialize providers by watching them.
-    // By using "watch", the provider will stay alive and not be disposed.
-    //ref.watch(curUserTasksListListenerDatabaseProvider);
-    return child;
-  }
 }

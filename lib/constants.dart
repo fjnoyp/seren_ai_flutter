@@ -13,4 +13,6 @@ const String testRoute = '/test';
 const String tasksRoute = '/tasks'; 
 const String createTaskRoute = '/createTask';
 
+const String testSQLPageRoute = '/testSQLPage';
+
 final simpleDateFormat = DateFormat('MMM dd, yyyy HH:mm');
