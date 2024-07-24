@@ -151,6 +151,14 @@ class DrawerView extends HookWidget {
             ),
             _buildListTile(
               context: context,
+              icon: Icons.square,
+              title: 'Test SQL',
+              onTap: () {
+                Navigator.pushNamed(context, testSQLPageRoute);
+              },
+            ),
+            _buildListTile(
+              context: context,
               icon: Icons.settings,
               title: 'Settings',
               onTap: () {

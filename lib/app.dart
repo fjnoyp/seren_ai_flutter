@@ -14,6 +14,7 @@ import 'package:seren_ai_flutter/widgets/home_page.dart';
 import 'package:seren_ai_flutter/widgets/main_scaffold.dart';
 import 'package:seren_ai_flutter/services/data/tasks/widgets/tasks_page.dart';
 import 'package:seren_ai_flutter/widgets/test_page.dart';
+import 'package:seren_ai_flutter/widgets/test_sql_page.dart';
 import 'package:seren_ai_flutter/widgets/theme_data.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
@@ -71,6 +72,7 @@ class AppState extends State<App> {
             createTaskRoute: (context) => _buildGuardScaffold('Create Task', const CreateTaskPage()),
             signInUpRoute: (context) => MainScaffold(title: 'Sign In/Up', body: const SignInUpPage()),
             homeRoute: (context) => _buildGuardScaffold('Home', const HomePage()),
+            testSQLPageRoute: (context) => _buildGuardScaffold('Test SQL Page', TestSQLPage()),
           },
           // For dynamically generating routes based on settings param 
           onGenerateRoute: (settings) {
