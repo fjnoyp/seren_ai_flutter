@@ -29,36 +29,28 @@ class TaskModel {
   @JsonKey(name: 'author_user_id')
   final String authorUserId;
 
-  @JsonKey(name: 'assigned_user_ids')
-  final List<String> assignedUserIds;
-
   @JsonKey(name: 'parent_team_id')
   final String? parentTeamId;
 
   @JsonKey(name: 'parent_project_id')
   final String parentProjectId;
 
-  @JsonKey(name: 'estimated_duration')
-  final int? estimatedDuration;
-
-  @JsonKey(name: 'list_durations')
-  final List<Map<String, DateTime>>? listDurations;
+  @JsonKey(name: 'estimated_duration_minutes')
+  final int? estimatedDurationMinutes;
 
   TaskModel({
     required this.id,
     required this.name,
     required this.description,
     required this.statusEnum,
-    required this.priorityEnum,
-    required this.dueDate,
+    this.priorityEnum,
+    this.dueDate,
     required this.createdDate,
     required this.lastUpdatedDate,
-    required this.authorUserId,
-    this.assignedUserIds = const [],
-    required this.parentTeamId,
+    required this.authorUserId,    
+    this.parentTeamId,
     required this.parentProjectId,
-    required this.estimatedDuration,
-    required this.listDurations,
+    this.estimatedDurationMinutes,
   });
 
   factory TaskModel.fromJson(Map<String, dynamic> json) => _$TaskModelFromJson(json);

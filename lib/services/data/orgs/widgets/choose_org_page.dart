@@ -1,14 +1,15 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:seren_ai_flutter/services/data/orgs/cur_org/cur_org_id_provider.dart';
-import 'package:seren_ai_flutter/services/data/orgs/cur_org/joined_cur_user_org_roles_comp_provider.dart';
+import 'package:seren_ai_flutter/services/data/orgs/cur_org/joined_cur_user_org_roles_listener_provider.dart';
+import 'package:seren_ai_flutter/services/data/orgs/user_org_roles/joined_user_org_roles_listener_fam_provider.dart';
 
 class ChooseOrgPage extends ConsumerWidget {
   const ChooseOrgPage({super.key});
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final orgRoles = ref.watch(joinedCurUserOrgRolesCompProvider);
+    final orgRoles = ref.watch(joinedCurUserOrgRolesListenerProvider);
     final curOrgId = ref.watch(curOrgIdProvider);
 
     if(orgRoles == null) {
