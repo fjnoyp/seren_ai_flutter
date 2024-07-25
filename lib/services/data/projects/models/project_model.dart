@@ -1,9 +1,11 @@
 import 'package:json_annotation/json_annotation.dart';
+import 'package:seren_ai_flutter/services/data/common/i_has_id.dart';
 
 part 'project_model.g.dart';
 
 @JsonSerializable()
-class ProjectModel {
+class ProjectModel implements IHasId {
+  @override
   final String id;
   final String name;
   final String? description;

@@ -1,6 +1,6 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:seren_ai_flutter/services/data/orgs/models/user_org_role_model.dart';
-import 'package:seren_ai_flutter/services/data/common/base_cacher_db.dart';
+import 'package:seren_ai_flutter/services/data/common/base_db.dart';
 import 'package:seren_ai_flutter/services/data/db_setup/db_provider.dart';
 
 final userOrgRolesListenerFamProvider = NotifierProvider.family<

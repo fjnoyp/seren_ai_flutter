@@ -21,6 +21,29 @@ class MainScaffold extends StatelessWidget {
       appBar: AppBar(
         backgroundColor: theme.appBarTheme.backgroundColor,
         elevation: 0,
+        leading: Builder(
+          builder: (BuildContext context) {
+            return Row(
+              children: [
+                IconButton(
+                  icon: Icon(Icons.menu, color: theme.iconTheme.color),
+                  onPressed: () {
+                    Scaffold.of(context).openDrawer();
+                  },
+                ),
+                if (Navigator.of(context).canPop())
+                  IconButton(
+                    icon: Icon(Icons.arrow_back, color: theme.iconTheme.color),
+                    onPressed: () => Navigator.of(context).pop(),
+                  ),
+              ],
+            );
+          },
+        ),
+        leadingWidth: Navigator.of(context).canPop()
+            ? 96
+            : 48, // Adjust width based on whether back button is shown
+
         title: Padding(
           padding: const EdgeInsets.all(8.0),
           child: Text(
@@ -36,8 +59,8 @@ class MainScaffold extends StatelessWidget {
         ],
       ),
       drawer: const DrawerView(),
-      body: Padding( 
-        padding: const EdgeInsets.all(0),       
+      body: Padding(
+        padding: const EdgeInsets.all(0),
         child: body,
       ),
       floatingActionButton: floatingActionButton,

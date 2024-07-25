@@ -25,7 +25,7 @@ class ManageOrgUsersPage extends ConsumerWidget {
               itemBuilder: (context, index) {
                 final joinedRole = joinedOrgRoles[index];
                 return ListTile(
-                  title: Text(joinedRole.user.email ?? 'No email'),
+                  title: Text(joinedRole.user?.email ?? 'No email or email not found'),
                   subtitle: Text(joinedRole.orgRole.orgRole),
                   /*
                   trailing: IconButton(

@@ -53,6 +53,19 @@ class TaskModel {
     this.estimatedDurationMinutes,
   });
 
+  /*
+  @override  
+  int get hashCode => id.hashCode;
+
+  @override
+  bool operator ==(Object other) {
+    if (other is TaskModel) {
+      return id == other.id;
+    }
+    return false;
+  }
+  */
+
   factory TaskModel.fromJson(Map<String, dynamic> json) => _$TaskModelFromJson(json);
   Map<String, dynamic> toJson() => _$TaskModelToJson(this);
 }
