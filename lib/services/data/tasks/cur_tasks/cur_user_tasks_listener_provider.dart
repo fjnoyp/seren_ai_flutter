@@ -20,16 +20,15 @@ class CurUserTaskListenerNotifier extends Notifier<List<TaskModel>?> {
     }
 
     final db = ref.read(dbProvider);
-
-    // TODO: if this works remove task_user_assignments 
-    final oquery = '''
+    
+    final query = '''
     SELECT t.*
     FROM tasks t
     JOIN task_user_assignments tua ON t.id = tua.task_id
     WHERE tua.user_id = '${watchedCurAuthUser.id}';
     ''';
 
-    final query = 'SELECT * FROM tasks';
+    //final query = 'SELECT * FROM tasks';
 
     db.watch(query).listen((results) {
       List<TaskModel> items = results.map((e) => TaskModel.fromJson(e)).toList();
