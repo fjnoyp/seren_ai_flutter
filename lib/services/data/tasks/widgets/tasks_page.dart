@@ -1,18 +1,16 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:seren_ai_flutter/constants.dart';
-import 'package:seren_ai_flutter/services/data/tasks/cur_tasks/cur_user_tasks_list_listener_database_provider.dart';
+import 'package:seren_ai_flutter/services/data/tasks/cur_tasks/cur_user_tasks_listener_provider.dart';
 
 import 'package:seren_ai_flutter/services/data/tasks/models/task_model.dart';
-import 'package:seren_ai_flutter/services/data/tasks/tasks_listener_database_provider.dart';
 
 class TasksPage extends ConsumerWidget {
   const TasksPage({super.key});
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-           
-    return  DefaultTabController(
+    return DefaultTabController(
       length: 3,
       child: Column(
         children: [
@@ -24,16 +22,16 @@ class TasksPage extends ConsumerWidget {
             ],
           ),
           Expanded(
-            child: Padding(              
-              padding: const EdgeInsets.symmetric(horizontal: 20.0),              
+            child: Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 20.0),
               child: TabBarView(
                 children: [
-                InProgressTasks(),
-                UpcomingTasks(),
-                CompletedTasks(),
-              ],
+                  InProgressTasks(),
+                  UpcomingTasks(),
+                  CompletedTasks(),
+                ],
+              ),
             ),
-          ),          
           ),
           Padding(
             padding: const EdgeInsets.symmetric(horizontal: 20.0),
@@ -56,8 +54,6 @@ class TasksPage extends ConsumerWidget {
     Navigator.pushNamed(context, createTaskRoute);
   }
 }
-
-
 
 Widget taskPreview(TaskModel task) {
   return Card(
@@ -87,11 +83,13 @@ Widget taskPreview(TaskModel task) {
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
               Chip(
-                label: Text('Status: ${task.statusEnum?.toString().split('.').last ?? 'N/A'}'),
+                label: Text(
+                    'Status: ${task.statusEnum?.toString().split('.').last ?? 'N/A'}'),
                 backgroundColor: Colors.blue[100],
               ),
               Chip(
-                label: Text('Priority: ${task.priorityEnum?.toString().split('.').last ?? 'N/A'}'),
+                label: Text(
+                    'Priority: ${task.priorityEnum?.toString().split('.').last ?? 'N/A'}'),
                 backgroundColor: Colors.red[100],
               ),
             ],
@@ -103,30 +101,23 @@ Widget taskPreview(TaskModel task) {
           Text('Author: ${task.authorUserId}'),
           // if (task.assignedUserId != null) Text('Assigned to: ${task.assignedUserId}'),
           Text('Team: ${task.parentTeamId}'),
-          if (task.parentProjectId != null) Text('Project: ${task.parentProjectId}'),
-          if (task.estimatedDuration != null) Text('Estimated Duration: ${task.estimatedDuration} mins'),
-          if (task.listDurations != null) ...[
-            SizedBox(height: 16),
-            Text('Durations:'),
-            for (var duration in task.listDurations!)
-              Text('${duration.keys.first}: ${duration.values.first.toIso8601String()}'),
-          ],
+          if (task.parentProjectId != null)
+            Text('Project: ${task.parentProjectId}'),         
         ],
       ),
     ),
   );
 }
 
-
 class InProgressTasks extends ConsumerWidget {
   const InProgressTasks({super.key});
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     print('InProgressTasks: build');
-    final tasks = ref.watch(curUserTasksListListenerDatabaseProvider);
+    final tasks = ref.watch(curUserTasksListenerProvider);
     print('InProgressTasks: tasks: $tasks');
 
-    // TODO: filter on team - currently cross team tasks shown 
+    // TODO: filter on team - currently cross team tasks shown
 
     return Container(
       color: Colors.red,

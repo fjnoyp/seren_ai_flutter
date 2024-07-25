@@ -9,7 +9,11 @@ const userOrgRolesTable = 'user_org_roles';
 const userTeamRolesTable = 'user_team_roles';
 const userProjectRolesTable = 'user_project_roles';
 
-Schema schema = const Schema([
+// TODO: generate from model classes ...
+// Generate Schema classes that create the Table schemas 
+// And provide field getters for constructing queries 
+
+const permissionSchemas = [
   Table(usersTable, [
     Column.text('id'),
     Column.text('parent_auth_user_id'),
@@ -50,4 +54,44 @@ Schema schema = const Schema([
     Column.text('project_id'),
     Column.text('project_role'),
   ]),
+];
+
+const tasksTable = 'tasks';
+const taskCommentsTable = 'task_comments';
+const taskUserAssignmentsTable = 'task_user_assignments';
+
+const tasksSchemas = [
+  Table(tasksTable, [
+    Column.text('id'),
+    Column.text('name'),
+    Column.text('description'),
+    Column.text('status_enum'),
+    Column.text('priority_enum'),
+    Column.text('due_date'),
+    Column.text('created_date'),
+    Column.text('last_updated_date'),
+    Column.text('author_user_id'),
+    Column.text('parent_team_id'),
+    Column.text('parent_project_id'),
+    Column.text('estimated_duration_minutes'),
+  ]),
+  Table(taskCommentsTable, [
+    Column.text('id'),
+    Column.text('author_user_id'),
+    Column.text('parent_task_id'),
+    Column.text('created_date'),
+    Column.text('content'),
+    Column.text('start_date_time'),
+    Column.text('end_date_time'),
+  ]),
+  Table(taskUserAssignmentsTable, [
+    Column.text('id'),
+    Column.text('task_id'),
+    Column.text('user_id'),
+  ]),
+];
+
+Schema schema = const Schema([
+...permissionSchemas,
+...tasksSchemas,
 ]);

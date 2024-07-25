@@ -1,19 +1,19 @@
+import 'package:powersync/powersync.dart';
 import 'package:seren_ai_flutter/services/data/common/i_has_id.dart';
-import 'package:seren_ai_flutter/services/data/common/throw_error_supabase.dart';
-import 'package:supabase_flutter/supabase_flutter.dart';
 
 typedef FromJson<T> = T Function(Map<String, dynamic> json);
 typedef ToJson<T> = Map<String, dynamic> Function(T item);
 
 /// Use cautiously, data does not get updated automatically. 
-class BaseLoaderCacheDatabaseNotifier<T extends IHasId> {
-  final SupabaseClient client = Supabase.instance.client;
+class BaseCacherDb<T extends IHasId> {  
   final String tableName;
   final FromJson<T> fromJson;
   final ToJson<T> toJson;
   final Map<String, T?> _cache = {};
+  final PowerSyncDatabase db;
 
-  BaseLoaderCacheDatabaseNotifier({
+  BaseCacherDb({
+    required this.db,
     required this.tableName,
     required this.fromJson,
     required this.toJson,
@@ -25,31 +25,22 @@ class BaseLoaderCacheDatabaseNotifier<T extends IHasId> {
       return [];
     }
 
-    var query = client.from(tableName).select();
+    var query = 'SELECT * FROM $tableName';
     final List<T> items = [];
 
     if (ids != null) {
-      final idsToGet = ids.where((id) => !_cache.containsKey(id)).toList();
-      items.addAll(ids
-          .where((id) => _cache.containsKey(id))
-          .map((id) => _cache[id]!)
-          .toList());
-      query = query.inFilter('id', idsToGet);
-
-      // If there are no filters, we can return the cached items
-      if (idsToGet.isEmpty && eqFilters == null) {
-        return items;
-      }
+      query += " WHERE id IN ('${ids.join("', '")}')";      
     }
 
     if (eqFilters != null) {
-      for (var filter in eqFilters) {
-        query = query.eq(filter['key'], filter['value']);
-      }
+      query += (ids != null) ? ' AND ' : ' WHERE ';
+
+      final filterClauses = eqFilters.map((filter) => "${filter['key']} = '${filter['value']}'");
+      query += filterClauses.join(' AND ');
     }
 
     // Make the request
-    final response = await query.end();
+    final response = await db.execute(query);
     final fetchedItems = (response as List).map((e) => fromJson(e)).toList();
     items.addAll(fetchedItems);
 
@@ -67,42 +58,43 @@ class BaseLoaderCacheDatabaseNotifier<T extends IHasId> {
       return null;
     }
 
-    var query = client.from(tableName).select();
+    var query = 'SELECT * FROM $tableName';
 
     if(id != null){
       if (_cache.containsKey(id)) {
         return _cache[id];
       }
-      query = query.eq('id', id);
+      query += " WHERE id = '$id'";
     }
     
     if (eqFilters != null) {
-      for (var filter in eqFilters) {
-        query = query.eq(filter['key'], filter['value']);
-      }      
+      query += (id != null) ? ' AND ' : ' WHERE ';
+      final filterClauses = eqFilters.map((filter) => "${filter['key']} = '${filter['value']}'");
+      query += filterClauses.join(' AND ');
     }
 
-    final response = await query.single().end();
-    final item = fromJson(response);
+    final response = await db.execute(query);
+    final item = fromJson(response.first);
 
     _cache[item.id] = item;
+    
     return item;
   }
 
   Future<T> createItem(T item) async {
-    final response = await client.from(tableName).insert(toJson(item)).select().end();
+    final response = await db.execute('INSERT INTO $tableName (${toJson(item)})');
     final newItem = fromJson(response.first);
     _cache[newItem.id] = newItem;
     return newItem;
   }
 
   Future<void> modifyItem(T item) async {
-    await client.from(tableName).upsert(toJson(item)).select().end();
+    await db.execute('UPDATE $tableName SET ${toJson(item)} WHERE id = ${item.id}');
     _cache[item.id] = item;
   }
 
   Future<void> deleteItem(String id) async {
-    await client.from(tableName).delete().eq('id', id).end();
+    await db.execute('DELETE FROM $tableName WHERE id = $id');
     _cache.remove(id);
   }
 }
