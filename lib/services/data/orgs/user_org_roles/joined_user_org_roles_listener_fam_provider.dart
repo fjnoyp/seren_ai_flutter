@@ -1,9 +1,9 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:seren_ai_flutter/services/data/db_setup/db_provider.dart';
 import 'package:seren_ai_flutter/services/data/orgs/models/joined_user_org_role_model.dart';
 import 'package:seren_ai_flutter/services/data/orgs/user_org_roles/user_org_roles_listener_fam_provider.dart';
-import 'package:seren_ai_flutter/services/data/users/users_cacher_database_provider.dart';
-import 'package:seren_ai_flutter/services/data/orgs/orgs_cacher_db_provider.dart';
+import 'package:seren_ai_flutter/services/data/users/user_db_provider.dart';
+import 'package:seren_ai_flutter/services/data/orgs/orgs_db_provider.dart';
+import 'package:collection/collection.dart'; 
 
 final joinedUserOrgRolesListenerFamProvider = NotifierProvider.family<
     JoinedUserOrgRolesListenerFamNotifier,
@@ -33,15 +33,15 @@ class JoinedUserOrgRolesListenerFamNotifier
 
     final userIds = userOrgRoles.map((role) => role.userId).toList();
     final authUsers =
-        await ref.read(usersCacherDatabaseProvider).getItems(ids: userIds);
+        await ref.read(usersDbProvider).getItems(ids: userIds);
 
-    final org = (await ref
-        .read(orgsCacherDatabaseProvider)
-        .getItem(id: orgId))!;
+    final org = await ref
+        .read(orgsDbProvider)
+        .getItem(id: orgId);
 
     final joinedRoles = userOrgRoles.map((role) {
       final authUser =
-          authUsers.firstWhere((user) => user.id == role.userId);
+          authUsers.firstWhereOrNull((user) => user.id == role.userId);
       return JoinedUserOrgRoleModel(
         orgRole: role,
         user: authUser,

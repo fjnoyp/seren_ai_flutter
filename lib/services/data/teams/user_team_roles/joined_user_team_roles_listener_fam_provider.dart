@@ -1,25 +1,28 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-import 'package:seren_ai_flutter/services/data/teams/models/joined_team_role_model.dart';
-import 'package:seren_ai_flutter/services/data/teams/teams_cacher_database_provider.dart';
+import 'package:seren_ai_flutter/services/data/teams/models/joined_user_team_role_model.dart';
+import 'package:seren_ai_flutter/services/data/teams/teams_db_provider.dart';
 import 'package:seren_ai_flutter/services/data/teams/user_team_roles/user_team_roles_listener_fam_provider.dart';
+import 'package:seren_ai_flutter/services/data/users/models/user_model.dart';
 
-import 'package:seren_ai_flutter/services/data/users/users_cacher_database_provider.dart';
+import 'package:seren_ai_flutter/services/data/users/user_db_provider.dart';
+import 'package:collection/collection.dart'; 
+
 
 
 final joinedUserTeamRolesListenerFamProvider = NotifierProvider.family<
     JoinedUserTeamRolesListenerFamNotifier,
-    List<JoinedTeamRoleModel>?,
+    List<JoinedUserTeamRoleModel>?,
     String>(
   JoinedUserTeamRolesListenerFamNotifier.new
 );
 
 class JoinedUserTeamRolesListenerFamNotifier
-    extends FamilyNotifier<List<JoinedTeamRoleModel>?, String> {
+    extends FamilyNotifier<List<JoinedUserTeamRoleModel>?, String> {
 
 
   @override
-  List<JoinedTeamRoleModel>? build(String arg) {
+  List<JoinedUserTeamRoleModel>? build(String arg) {
     _listen(); 
     return null;
   }
@@ -34,14 +37,14 @@ class JoinedUserTeamRolesListenerFamNotifier
     }
 
     final userIds = userTeamRoles.map((role) => role.userId).toList();
-    final authUsers = await ref.read(usersCacherDatabaseProvider).getItems(ids: userIds);
+    final authUsers = await ref.read(usersDbProvider).getItems(ids: userIds);
 
-    final team = (await ref.read(teamsCacherDatabaseProvider).getItem(id: teamId))!; 
+    final team = await ref.read(teamsDbProvider).getItem(id: teamId); 
 
     final joinedRoles = userTeamRoles.map((role) {
-      final authUser =
-          authUsers.firstWhere((user) => user.id == role.userId);
-      return JoinedTeamRoleModel(
+      final UserModel? authUser =
+          authUsers.firstWhereOrNull((user) => user.id == role.userId);
+      return JoinedUserTeamRoleModel(
         teamRole: role,
         user: authUser,
         team: team,

@@ -4,12 +4,22 @@ import 'package:seren_ai_flutter/constants.dart';
 import 'package:seren_ai_flutter/services/data/tasks/cur_tasks/cur_user_tasks_listener_provider.dart';
 
 import 'package:seren_ai_flutter/services/data/tasks/models/task_model.dart';
+import 'package:seren_ai_flutter/services/data/users/user_db_provider.dart';
 
 class TasksPage extends ConsumerWidget {
   const TasksPage({super.key});
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    final tasks = ref.watch(curUserTasksListenerProvider);
+
+
+      final inProgressTasks = ref.watch(
+      curUserTasksListenerProvider.select((tasks) => 
+        tasks?.where((task) => task.statusEnum == StatusEnum.inProgress).toList() ?? []
+      )
+    );
+
     return DefaultTabController(
       length: 3,
       child: Column(
@@ -17,8 +27,8 @@ class TasksPage extends ConsumerWidget {
           TabBar(
             tabs: [
               Tab(text: 'In Progress'),
-              Tab(text: 'Upcoming'),
-              Tab(text: 'Completed'),
+              Tab(text: 'Open'),
+              Tab(text: 'Finished'),
             ],
           ),
           Expanded(
@@ -26,9 +36,9 @@ class TasksPage extends ConsumerWidget {
               padding: const EdgeInsets.symmetric(horizontal: 20.0),
               child: TabBarView(
                 children: [
-                  InProgressTasks(),
-                  UpcomingTasks(),
-                  CompletedTasks(),
+                        buildTasksList(ref, filter: (task) => task.statusEnum == StatusEnum.inProgress),
+                        buildTasksList(ref, filter: (task) => task.statusEnum == StatusEnum.open),
+                        buildTasksList(ref, filter: (task) => task.statusEnum == StatusEnum.finished),
                 ],
               ),
             ),
@@ -55,9 +65,10 @@ class TasksPage extends ConsumerWidget {
   }
 }
 
-Widget taskPreview(TaskModel task) {
+Widget tasksListItem(TaskModel task) {
+  
   return Card(
-    margin: const EdgeInsets.symmetric(vertical: 8.0, horizontal: 16.0),
+    margin: const EdgeInsets.symmetric(vertical: 8.0, horizontal: 8.0),
     elevation: 4.0,
     shape: RoundedRectangleBorder(
       borderRadius: BorderRadius.circular(12.0),
@@ -109,70 +120,17 @@ Widget taskPreview(TaskModel task) {
   );
 }
 
-class InProgressTasks extends ConsumerWidget {
-  const InProgressTasks({super.key});
-  @override
-  Widget build(BuildContext context, WidgetRef ref) {
-    print('InProgressTasks: build');
-    final tasks = ref.watch(curUserTasksListenerProvider);
-    print('InProgressTasks: tasks: $tasks');
+Widget buildTasksList(WidgetRef ref, {required bool Function(TaskModel) filter}) {
+  final filteredTasks = ref.watch(
+    curUserTasksListenerProvider.select((tasks) => 
+      tasks?.where(filter).toList() ?? []
+    )
+  );
 
-    // TODO: filter on team - currently cross team tasks shown
-
-    return Container(
-      color: Colors.red,
-      child: tasks == null
-          ? const Center(child: CircularProgressIndicator())
-          : tasks.isEmpty
-              ? const Center(child: Text('No tasks available'))
-              : ListView.builder(
-                  itemCount: tasks.length,
-                  itemBuilder: (context, index) {
-                    final task = tasks[index];
-                    return ListTile(
-                      title: Text(task.name),
-                      subtitle: Text(task.description ?? ''),
-                    );
-                  },
-                ),
-    );
-  }
-}
-
-class UpcomingTasks extends StatelessWidget {
-  const UpcomingTasks({Key? key}) : super(key: key);
-
-  @override
-  Widget build(BuildContext context) {
-    // Replace with your actual task data
-    final tasks = ['Task 4', 'Task 5', 'Task 6'];
-
-    return ListView.builder(
-      itemCount: tasks.length,
-      itemBuilder: (context, index) {
-        return ListTile(
-          title: Text(tasks[index]),
-        );
-      },
-    );
-  }
-}
-
-class CompletedTasks extends StatelessWidget {
-  const CompletedTasks({Key? key}) : super(key: key);
-
-  @override
-  Widget build(BuildContext context) {
-    // Replace with your actual task data
-    final tasks = ['Task 7', 'Task 8', 'Task 9'];
-
-    return ListView.builder(
-      itemCount: tasks.length,
-      itemBuilder: (context, index) {
-        return ListTile(
-          title: Text(tasks[index]),
-        );
-      },
-    );
-  }
+  return ListView.builder(
+    itemCount: filteredTasks.length,
+    itemBuilder: (context, index) {
+      return tasksListItem(filteredTasks[index]);
+    },
+  );
 }

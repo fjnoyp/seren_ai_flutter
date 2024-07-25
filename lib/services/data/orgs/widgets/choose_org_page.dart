@@ -29,6 +29,11 @@ class ChooseOrgPage extends ConsumerWidget {
                 final orgModel = orgRole.org; 
                 final orgRoleModel = orgRole.orgRole;
 
+                if(orgModel == null) {
+                  return const Text('Error cannot load organization');
+                }
+
+
                 final isSelected = curOrgId == orgModel.id;
 
                 return Container(

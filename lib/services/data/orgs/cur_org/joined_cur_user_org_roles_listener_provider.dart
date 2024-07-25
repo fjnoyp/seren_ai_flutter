@@ -2,7 +2,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:seren_ai_flutter/services/auth/cur_auth_user_provider.dart';
 import 'package:seren_ai_flutter/services/data/orgs/cur_org/cur_user_org_roles_listener_provider.dart';
 import 'package:seren_ai_flutter/services/data/orgs/models/joined_user_org_role_model.dart';
-import 'package:seren_ai_flutter/services/data/orgs/orgs_cacher_db_provider.dart';
+import 'package:seren_ai_flutter/services/data/orgs/orgs_db_provider.dart';
 
 final joinedCurUserOrgRolesListenerProvider = NotifierProvider<
     JoinedCurUserOrgRolesListenerNotifier,
@@ -37,7 +37,7 @@ class JoinedCurUserOrgRolesListenerNotifier
     // Get the orgs associated with the user's roles
     final orgIds = watchedCurUserOrgRoles.map((role) => role.orgId).toList();
     final orgs =
-        await ref.read(orgsCacherDatabaseProvider).getItems(ids: orgIds);
+        await ref.read(orgsDbProvider).getItems(ids: orgIds);
 
     if (orgs.isEmpty) {
       state = [];
