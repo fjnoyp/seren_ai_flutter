@@ -144,8 +144,7 @@ class CreateTaskPage extends ConsumerWidget {
                         parentTeamId:
                             'current_team_id', // Replace with actual team ID
                         parentProjectId: 'current_project_id', // Replace with actual project ID
-                        estimatedDuration: null,
-                        listDurations: null,
+  
                       );
                       // Add the new task to the database or state management
                       Navigator.pop(context);

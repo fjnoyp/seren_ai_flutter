@@ -2,6 +2,6 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:powersync/powersync.dart';
 
-final powerSyncProvider = Provider<PowerSyncDatabase>((ref) {
+final dbProvider = Provider<PowerSyncDatabase>((ref) {
   throw UnimplementedError();
 });

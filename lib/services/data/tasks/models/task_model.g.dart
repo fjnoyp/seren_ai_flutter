@@ -19,17 +19,10 @@ TaskModel _$TaskModelFromJson(Map<String, dynamic> json) => TaskModel(
       createdDate: DateTime.parse(json['created_date'] as String),
       lastUpdatedDate: DateTime.parse(json['last_updated_date'] as String),
       authorUserId: json['author_user_id'] as String,
-      assignedUserIds: (json['assigned_user_ids'] as List<dynamic>)
-          .map((e) => e as String)
-          .toList(),
       parentTeamId: json['parent_team_id'] as String?,
       parentProjectId: json['parent_project_id'] as String,
-      estimatedDuration: (json['estimated_duration'] as num?)?.toInt(),
-      listDurations: (json['list_durations'] as List<dynamic>?)
-          ?.map((e) => (e as Map<String, dynamic>).map(
-                (k, e) => MapEntry(k, DateTime.parse(e as String)),
-              ))
-          .toList(),
+      estimatedDurationMinutes:
+          (json['estimated_duration_minutes'] as num?)?.toInt(),
     );
 
 Map<String, dynamic> _$TaskModelToJson(TaskModel instance) => <String, dynamic>{
@@ -42,13 +35,9 @@ Map<String, dynamic> _$TaskModelToJson(TaskModel instance) => <String, dynamic>{
       'created_date': instance.createdDate.toIso8601String(),
       'last_updated_date': instance.lastUpdatedDate.toIso8601String(),
       'author_user_id': instance.authorUserId,
-      'assigned_user_ids': instance.assignedUserIds,
       'parent_team_id': instance.parentTeamId,
       'parent_project_id': instance.parentProjectId,
-      'estimated_duration': instance.estimatedDuration,
-      'list_durations': instance.listDurations
-          ?.map((e) => e.map((k, e) => MapEntry(k, e.toIso8601String())))
-          .toList(),
+      'estimated_duration_minutes': instance.estimatedDurationMinutes,
     };
 
 const _$StatusEnumEnumMap = {
