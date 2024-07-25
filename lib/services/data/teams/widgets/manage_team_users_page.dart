@@ -3,7 +3,7 @@ import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:seren_ai_flutter/services/data/orgs/cur_org/cur_org_id_provider.dart';
 import 'package:seren_ai_flutter/services/data/teams/models/team_model.dart';
-import 'package:seren_ai_flutter/services/data/teams/teams_cacher_database_provider.dart';
+import 'package:seren_ai_flutter/services/data/teams/teams_db_provider.dart';
 import 'package:seren_ai_flutter/services/data/teams/user_team_roles/joined_user_team_roles_listener_fam_provider.dart';
 
 final _currentTeamIdProvider = StateProvider<String?>((ref) => null);
@@ -42,7 +42,7 @@ class CurTeamSelectionDropdown extends HookConsumerWidget {
     }
 
     return FutureBuilder<List<TeamModel>>(
-      future: ref.read(teamsCacherDatabaseProvider).getItems(eqFilters: [{'key': 'parent_org_id', 'value': curOrgId}]),
+      future: ref.read(teamsDbProvider).getItems(eqFilters: [{'key': 'parent_org_id', 'value': curOrgId}]),
       builder: (context, snapshot) {
         if (snapshot.connectionState == ConnectionState.waiting) {
           return const CircularProgressIndicator();
@@ -96,7 +96,7 @@ class TeamUsersList extends ConsumerWidget {
               itemBuilder: (context, index) {
                 final joinedRole = joinedTeamRoles[index];
                 return ListTile(
-                  title: Text(joinedRole.user.email ?? 'No email'),
+                  title: Text(joinedRole.user?.email ?? 'No email or email not found'),
                   subtitle: Text(joinedRole.teamRole.teamRole),
                 );
               },

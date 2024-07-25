@@ -1,0 +1,67 @@
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:seren_ai_flutter/services/data/db_setup/db_provider.dart';
+import 'package:seren_ai_flutter/services/data/orgs/models/joined_user_org_role_model.dart';
+import 'package:seren_ai_flutter/services/data/orgs/user_org_roles/user_org_roles_listener_fam_provider.dart';
+import 'package:seren_ai_flutter/services/data/tasks/cur_tasks/cur_user_tasks_listener_db_provider.dart';
+import 'package:seren_ai_flutter/services/data/tasks/models/joined_task_model.dart';
+import 'package:seren_ai_flutter/services/data/users/users_cacher_database_provider.dart';
+import 'package:seren_ai_flutter/services/data/orgs/orgs_cacher_db_provider.dart';
+
+final joinedCurUserTasksListenerProvider = NotifierProvider<
+    JoinedCurUserTasksListenerNotifier,
+    List<JoinedTaskModel>?>(
+  JoinedCurUserTasksListenerNotifier.new
+);
+
+class JoinedCurUserTasksListenerNotifier
+    extends Notifier<List<JoinedTaskModel>?> {  
+
+  @override
+  List<JoinedTaskModel>? build() {
+    _listen();
+    return null;
+  }
+
+  Future<void> _listen() async {
+    final watchedCurUserTasks = ref.watch(curUserTasksListenerDbProvider);
+
+    if(watchedCurUserTasks == null){
+      return; 
+    }
+
+    final authorUserIds = watchedCurUserTasks.map((task) => task.authorUserId).toSet();
+    final authorUsers = ref.read(usersCacherDatabaseProvider).getItems(ids: authorUserIds);
+
+    final teamIds = watchedCurUserTasks
+
+
+    
+    
+    final userOrgRoles = ref
+        .watch(userOrgRolesListenerFamProvider(orgId));
+
+    if (userOrgRoles == null) {
+      return;
+    }
+
+    final userIds = userOrgRoles.map((role) => role.userId).toList();
+    final authUsers =
+        await ref.read(usersCacherDatabaseProvider).getItems(ids: userIds);
+
+    final org = (await ref
+        .read(orgsCacherDatabaseProvider)
+        .getItem(id: orgId))!;
+
+    final joinedRoles = userOrgRoles.map((role) {
+      final authUser =
+          authUsers.firstWhere((user) => user.id == role.userId);
+      return JoinedUserOrgRoleModel(
+        orgRole: role,
+        user: authUser,
+        org: org,
+      );
+    }).toList();
+
+    state = joinedRoles;
+  }
+}
