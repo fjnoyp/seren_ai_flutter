@@ -1,4 +1,5 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:seren_ai_flutter/services/data/orgs/cur_org/cur_user_org_roles_listener_provider.dart';
 
 final curOrgIdProvider =
@@ -7,8 +8,11 @@ final curOrgIdProvider =
 });
 
 class CurOrgIdNotifier extends Notifier<String?> {
+  static const String _orgIdKey = 'current_org_id';
+
   @override
   String? build() {
+    _loadSavedOrgId();
 
     ref.listen(curUserOrgRolesListenerProvider, (previous, next) {
       if (next != null) {
@@ -16,19 +20,38 @@ class CurOrgIdNotifier extends Notifier<String?> {
         final isInCurrentOrg = next.any((orgRole) => orgRole.orgId == currentOrgId);
 
         if (!isInCurrentOrg) {
-          state = null;
+          // print out what happened 
+          print('CurOrgId - User left org $currentOrgId');
+          print('CurOrgId - New orgs: ${next.map((orgRole) => orgRole.orgId).toList()}');
+          _setAndSaveOrgId(null);
         }
       } else {
-        state = null;
+        _setAndSaveOrgId(null);
       }
     }, fireImmediately: true);
 
-    return null; 
+    return null;
   }
 
-  CurOrgIdNotifier() : super();
+  Future<void> _loadSavedOrgId() async {
+    final prefs = await SharedPreferences.getInstance();
+    final savedOrgId = prefs.getString(_orgIdKey);
+    if (savedOrgId != null) {
+      state = savedOrgId;
+    }
+  }
+
+  Future<void> _setAndSaveOrgId(String? orgId) async {
+    state = orgId;
+    final prefs = await SharedPreferences.getInstance();
+    if (orgId != null) {
+      await prefs.setString(_orgIdKey, orgId);
+    } else {
+      await prefs.remove(_orgIdKey);
+    }
+  }
 
   void setOrgId(String orgId) {
-    state = orgId;
+    _setAndSaveOrgId(orgId);
   }
 }
