@@ -1,16 +1,51 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:hooks_riverpod/hooks_riverpod.dart';
+import 'package:seren_ai_flutter/services/auth/cur_auth_user_provider.dart';
 import 'package:seren_ai_flutter/services/data/tasks/models/task_model.dart';
+import 'package:seren_ai_flutter/services/data/tasks/widgets/task_editable_field.dart';
+import 'package:seren_ai_flutter/services/data/tasks/widgets/task_editable_meta_field.dart';
 
-class CreateTaskPage extends ConsumerWidget {
+/* === Thoughts on ai generation of create task === 
+1) Tasks must be assigned to specific users / projects 
+2) Desire to avoid duplication of user / project subset creation logic? 
+3) Options:
+    A) ai (backend) recalculates subset itself 
+    B) client sends the possible selections to backend either fully or as ids 
+4) For now: 
+    Client will send everything, to avoid need to duplicate logic 
+
+=== Additional Considerations === 
+In the future ai (backend) should be independent - this will require refactoring 
+SQL logic to a separate shared file to ensure frontend / backend logic remains in sync
+
+We cannot merge sql request logic as client must WATCH data while edge functions 
+inherently only READ data. 
+We could keep ai as data intake only, and just have 3rd intermediary process insert data
+in case where client is not sending the data context  */
+
+class CreateTaskPage extends HookConsumerWidget {
   const CreateTaskPage({super.key});
 
+  void test() {}
+  
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final theme = Theme.of(context);
     final _formKey = GlobalKey<FormState>();
     final _nameController = TextEditingController();
-    final _descriptionController = TextEditingController();
+    //final _descriptionController = TextEditingController();
+
+    final taskProject = useState<String?>(null);
+    final taskTeam = useState<String?>(null);
+
+    final taskAssignedUsers = useState<List<String>>([]);
+    final taskDueDate = useState<DateTime?>(null);
+    final taskDescription = useState<String>('');
+
+    final taskPriority = useState<PriorityEnum?>(null);
+    final taskStatus = useState<StatusEnum?>(null);
 
     return SingleChildScrollView(
       child: Padding(
@@ -21,32 +56,21 @@ class CreateTaskPage extends ConsumerWidget {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               // Project
-              Row(
-                  crossAxisAlignment: CrossAxisAlignment.baseline,
-                  textBaseline: TextBaseline.alphabetic,
-                  children: [
-                    Text('Project',
-                        style: theme.textTheme.titleMedium
-                            ?.copyWith(fontWeight: FontWeight.bold)),
-                    const SizedBox(width: 10),
-                    Text('Foundation Works San Giusto',
-                        style: theme.textTheme.bodyMedium
-                            ?.copyWith(color: theme.colorScheme.secondary)),
-                  ]),
+              ProjectEditableField(
+                selectedProject: taskProject.value,
+                onProjectSelected: (project) {
+                  taskProject.value = project;
+                },
+                hasError: taskProject.value == null,
+              ),
+              TeamEditableField(
+                selectedTeam: taskTeam.value,
+                onTeamSelected: (team) {
+                  taskTeam.value = team;
+                },
+                hasError: taskTeam.value == null,
+              ),
 
-                  Row(
-                  crossAxisAlignment: CrossAxisAlignment.baseline,
-                  textBaseline: TextBaseline.alphabetic,
-                  children: [
-                    Text('Team',
-                        style: theme.textTheme.titleMedium
-                            ?.copyWith(fontWeight: FontWeight.bold)),
-                    const SizedBox(width: 10),
-                    Text('ElectriciansPorto1',
-                        style: theme.textTheme.bodyMedium
-                            ?.copyWith(color: theme.colorScheme.secondary)),
-                  ]),
-              const SizedBox(height: 16),
               // Title Input
               TextFormField(
                 controller: _nameController,
@@ -62,42 +86,61 @@ class CreateTaskPage extends ConsumerWidget {
                   return null;
                 },
               ),
-              SizedBox(height: 8), // Project
+              SizedBox(height: 8), 
               Divider(),
 
+              // ======================
+              // ====== SUBITEMS ======
+              // ======================
               Padding(
                   padding: const EdgeInsets.only(left: 15),
                   child: Column(children: [
-                    _createSelectionRow(context),
+                    // === PRIORITY SELECTION ===
+                    TaskPriorityEditableField(
+                      selectedPriority: taskPriority.value,
+                      onPrioritySelected: (priority) {
+                        taskPriority.value = priority;
+                      },
+                      hasError: taskPriority.value == null,
+                    ),
                     const Divider(),
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.start,
-                      children: [
-                        Icon(Icons.calendar_month),
-                        TextButton(
-                            onPressed: () {},
-                            style: TextButton.styleFrom(
-                              alignment: Alignment.centerLeft,
-                              padding: EdgeInsets.only(left: 10),
-                            ),
-                            child: Text(
-                              'A',
-                            ))
-                      ],
+
+                    // === STATUS SELECTION ===
+                    TaskStatusEditableField(
+                      selectedStatus: taskStatus.value,
+                      onStatusSelected: (status) {
+                        taskStatus.value = status;
+                      },
+                      hasError: taskStatus.value == null,
                     ),
-                    const SizedBox(height: 16),
-                    Text('Description', style: theme.textTheme.titleMedium),
-                    const SizedBox(height: 8),
-                    TextFormField(
-                      controller: _descriptionController,
-                      style: theme.textTheme.bodyMedium,
-                      decoration: InputDecoration(
-                        hintText: 'Add description',
-                        border: InputBorder.none,
-                      ),
-                      maxLines: 5,
+                    const Divider(),
+
+                    // === DATE SELECTION ===
+                    TaskDateEditableField(
+                      selectedDate: taskDueDate.value,
+                      onDateSelected: (date) {
+                        taskDueDate.value = date;
+                      },
+                      hasError: taskDueDate.value == null,
                     ),
-                    const SizedBox(height: 24),
+                    const Divider(),
+                    // === ASSIGNEES SELECTION ===
+                    TaskAssigneesEditableField(
+                      selectedUsers: taskAssignedUsers.value,
+                      onAssigneesSelected: (assignees) {
+                        taskAssignedUsers.value = assignees;
+                      },
+                      hasError: taskAssignedUsers.value.isEmpty,
+                    ),
+                    const Divider(),
+                    // === WRITE DESCRIPTION ===
+                    TaskDescriptionEditableField(
+                      description: taskDescription.value,
+                      onDescriptionChanged: (description) {
+                        taskDescription.value = description;
+                      },
+                      hasError: taskDescription.value.isEmpty,
+                    ),
                   ])),
 
               Text('Comments', style: theme.textTheme.titleMedium),
@@ -105,46 +148,32 @@ class CreateTaskPage extends ConsumerWidget {
               // TODO: Implement comments section
               const SizedBox(height: 24),
 
-              Row(
-                  crossAxisAlignment: CrossAxisAlignment.baseline,
-                  textBaseline: TextBaseline.alphabetic,
-                  children: [
-                    Text('Team:',
-                        style: theme.textTheme.titleSmall
-                            ?.copyWith(fontWeight: FontWeight.bold)),
-                    const SizedBox(width: 10),
-                    Container(
-                      padding: const EdgeInsets.all(2),
-                      decoration: BoxDecoration(
-                        border: Border.all(color: Colors.grey),
-                        borderRadius: BorderRadius.circular(4),
-                      ),
-                      child: Text(
-                        'Electricians13',
-                      ),
-                    ),
-                  ]),
               SizedBox(
-                width: double.infinity,
+                width: double.infinity,                
                 child: ElevatedButton(
                   onPressed: () {
+
+                    final curAuthUser = ref.watch(curAuthUserProvider);
+
+                    
+
                     if (_formKey.currentState!.validate()) {
                       // Handle task creation logic here
                       final newTask = TaskModel(
                         id: 'new_id', // Generate or assign a unique ID
                         name: _nameController.text,
-                        description: _descriptionController.text,
+                        description: '',
                         statusEnum: StatusEnum.inProgress,
                         priorityEnum: PriorityEnum.normal,
                         dueDate: null,
                         createdDate: DateTime.now(),
                         lastUpdatedDate: DateTime.now(),
                         authorUserId:
-                            'current_user_id', // Replace with actual user ID                        
+                            'current_user_id', // Replace with actual user ID
                         parentTeamId:
                             'current_team_id', // Replace with actual team ID
-                        parentProjectId: 'current_project_id', // Replace with actual project ID
-  
+                        parentProjectId:
+                            'current_project_id', // Replace with actual project ID
                       );
                       // Add the new task to the database or state management
                       Navigator.pop(context);
@@ -161,39 +190,6 @@ class CreateTaskPage extends ConsumerWidget {
           ),
         ),
       ),
-    );
-  }
-
-  Widget _createSelectionRow(BuildContext context) {
-    return Row(
-      mainAxisAlignment: MainAxisAlignment.start,
-      children: [
-        Icon(Icons.person),
-        TextButton(
-          onPressed: () {
-            showModalBottomSheet(
-              context: context,
-              builder: (BuildContext context) {
-                return ListView.builder(
-                  itemCount: 10, // Assuming you have a list of 10 temp strings
-                  itemBuilder: (context, index) {
-                    return ListTile(
-                      title: Text('Temp String ${index + 1}'),
-                    );
-                  },
-                );
-              },
-            );
-          },
-          style: TextButton.styleFrom(
-            alignment: Alignment.centerLeft,
-            padding: EdgeInsets.only(left: 10),
-          ),
-          child: Text(
-            'Assignee',
-          ),
-        ),
-      ],
     );
   }
 }

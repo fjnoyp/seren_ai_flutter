@@ -6,6 +6,9 @@ import 'package:seren_ai_flutter/services/data/teams/user_team_roles/user_team_r
 import 'package:seren_ai_flutter/services/data/users/models/user_model.dart';
 
 import 'package:seren_ai_flutter/services/data/users/user_db_provider.dart';
+
+
+// ignore: depend_on_referenced_packages
 import 'package:collection/collection.dart'; 
 
 
