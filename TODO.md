@@ -7,4 +7,5 @@
     - centralize into single file as constants/functions 
     - existing system makes db schema changes risky as we have to search for all the queries that use the db in the code 
     - existing system does not allow logic reuse client -> backend 
-    
+- (P1) subscriptions
+    - cancel subscriptions onDispose 

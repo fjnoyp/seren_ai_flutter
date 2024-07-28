@@ -1,7 +1,7 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:seren_ai_flutter/services/auth/cur_auth_user_provider.dart';
 import 'package:seren_ai_flutter/services/data/db_setup/db_provider.dart';
-import 'package:seren_ai_flutter/services/data/orgs/cur_org/is_cur_org_admin_listener_provider.dart';
+import 'package:seren_ai_flutter/services/data/orgs/cur_org/is_cur_user_org_admin_listener_provider.dart';
 import 'package:seren_ai_flutter/services/data/projects/models/project_model.dart';
 
 // Provide all projects for current user
@@ -21,7 +21,7 @@ class CurUserProjectsListenerNotifier extends Notifier<List<ProjectModel>?> {
       return null;
     }
 
-    final watchedIsCurOrgAdmin = ref.watch(isCurOrgAdminListenerProvider);
+    final watchedIsCurOrgAdmin = ref.watch(isCurUserOrgAdminListenerProvider);
 
     if(watchedIsCurOrgAdmin) {
       return null;
@@ -38,9 +38,13 @@ class CurUserProjectsListenerNotifier extends Notifier<List<ProjectModel>?> {
     WHERE upr.user_id = '${watchedCurAuthUser.id}'; 
     ''';     
 
-    db.watch(query).listen((results) {
+    final subscription = db.watch(query).listen((results) {
       List<ProjectModel> items = results.map((e) => ProjectModel.fromJson(e)).toList();
       state = items; 
+    });
+
+    ref.onDispose(() {
+      subscription.cancel();
     });
 
     return null; 
