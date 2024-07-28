@@ -34,9 +34,13 @@ class CurUserAssignedTaskListenerNotifier extends Notifier<List<TaskModel>?> {
 
     //final query = 'SELECT * FROM tasks';
 
-    db.watch(query).listen((results) {
+    final subscription = db.watch(query).listen((results) {
       List<TaskModel> items = results.map((e) => TaskModel.fromJson(e)).toList();
       state = items;      
+    });
+
+    ref.onDispose(() {
+      subscription.cancel();
     });
 
     return null;

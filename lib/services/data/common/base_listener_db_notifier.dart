@@ -28,9 +28,13 @@ class BaseListenerDbNotifier<T>
         eqFilters.map((filter) => "${filter['key']} = ?").join(" AND ");
     final query = "SELECT * FROM $tableName WHERE $whereClause";
 
-    db.watch(query).listen((results) {
+    final subscription = db.watch(query).listen((results) {
       List<T> items = results.map((e) => fromJson(e)).toList();
       state = items;
+    });
+
+    ref.onDispose(() {
+      subscription.cancel();
     });
 
     return null;

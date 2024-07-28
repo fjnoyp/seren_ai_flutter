@@ -19,10 +19,14 @@ class UserOrgRolesListenerFamNotifier
     final db = ref.read(dbProvider);
     final query = "SELECT * FROM user_org_roles WHERE org_id = '$orgId'";
 
-    db.watch(query).listen((results) {
+    final subscription = db.watch(query).listen((results) {
       List<UserOrgRoleModel> items =
           results.map((e) => UserOrgRoleModel.fromJson(e)).toList();
       state = items;
+    });
+
+    ref.onDispose(() {
+      subscription.cancel();
     });
 
     return null;
