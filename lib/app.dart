@@ -8,6 +8,7 @@ import 'package:seren_ai_flutter/services/auth/widgets/sign_in_up_page.dart';
 import 'package:seren_ai_flutter/services/data/orgs/widgets/choose_org_page.dart';
 import 'package:seren_ai_flutter/services/data/orgs/widgets/manage_org_users_page.dart';
 import 'package:seren_ai_flutter/services/data/orgs/widgets/org_guard.dart';
+import 'package:seren_ai_flutter/services/data/projects/widgets/projects_page.dart';
 import 'package:seren_ai_flutter/services/data/tasks/widgets/create_task_page.dart';
 import 'package:seren_ai_flutter/services/data/teams/widgets/manage_team_users_page.dart';
 import 'package:seren_ai_flutter/widgets/home_page.dart';
@@ -64,14 +65,21 @@ class AppState extends State<App> {
           themeMode: themeMode,
           initialRoute: initialRoute,          
           routes: {
+            signInUpRoute: (context) => MainScaffold(title: 'Sign In/Up', body: const SignInUpPage()),
+            homeRoute: (context) => _buildGuardScaffold('Home', const HomePage()),
+
+
             chooseOrgRoute: (context) => _buildAuthGuardScaffold('Choose Organization', const ChooseOrgPage()),
             manageOrgUsersRoute: (context) => _buildGuardScaffold('Manage Organization Users', const ManageOrgUsersPage()),
             manageTeamUsersRoute: (context) => _buildGuardScaffold('Manage Team Users', const ManageTeamUsersPage()),                        
-            testRoute: (context) => _buildGuardScaffold('Test', const TestPage()),
+            
+            projectsRoute: (context) => _buildGuardScaffold('Projects', const ProjectsPage()), 
+            
             tasksRoute: (context) => _buildGuardScaffold('Tasks', const TasksPage()),
             createTaskRoute: (context) => _buildGuardScaffold('Create Task', const CreateTaskPage()),
-            signInUpRoute: (context) => MainScaffold(title: 'Sign In/Up', body: const SignInUpPage()),
-            homeRoute: (context) => _buildGuardScaffold('Home', const HomePage()),
+
+            
+            testRoute: (context) => _buildGuardScaffold('Test', const TestPage()),
             testSQLPageRoute: (context) => _buildGuardScaffold('Test SQL Page', TestSQLPage()),
           },
           // For dynamically generating routes based on settings param 
