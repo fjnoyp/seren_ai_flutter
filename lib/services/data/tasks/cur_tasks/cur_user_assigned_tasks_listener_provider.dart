@@ -4,11 +4,11 @@ import 'package:seren_ai_flutter/services/data/db_setup/db_provider.dart';
 import 'package:seren_ai_flutter/services/data/tasks/models/task_model.dart';
 
 /// Provide all tasks assigned to current user 
-final curUserTasksListenerProvider =
-    NotifierProvider<CurUserTaskListenerNotifier, List<TaskModel>?>(
-        CurUserTaskListenerNotifier.new);
+final curUserAssignedTasksListenerProvider =
+    NotifierProvider<CurUserAssignedTaskListenerNotifier, List<TaskModel>?>(
+        CurUserAssignedTaskListenerNotifier.new);
 
-class CurUserTaskListenerNotifier extends Notifier<List<TaskModel>?> {
+class CurUserAssignedTaskListenerNotifier extends Notifier<List<TaskModel>?> {
   @override
   List<TaskModel>? build() {
     
@@ -20,7 +20,11 @@ class CurUserTaskListenerNotifier extends Notifier<List<TaskModel>?> {
     }
 
     final db = ref.read(dbProvider);
-    
+
+    // Get tasks which user is assigned to 
+    // TODO: get all tasks viewable to user: 
+    // curUserAllViewableTasksListenerProvider 
+    // Then subdivide into assigned via a separate provider 
     final query = '''
     SELECT t.*
     FROM tasks t

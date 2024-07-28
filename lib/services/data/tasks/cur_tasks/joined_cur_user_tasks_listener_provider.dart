@@ -1,6 +1,6 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:seren_ai_flutter/services/data/projects/projects_db_provider.dart';
-import 'package:seren_ai_flutter/services/data/tasks/cur_tasks/cur_user_tasks_listener_provider.dart';
+import 'package:seren_ai_flutter/services/data/tasks/cur_tasks/cur_user_assigned_tasks_listener_provider.dart';
 import 'package:seren_ai_flutter/services/data/tasks/models/joined_task_model.dart';
 import 'package:seren_ai_flutter/services/data/teams/teams_db_provider.dart';
 import 'package:seren_ai_flutter/services/data/users/user_db_provider.dart';
@@ -24,7 +24,7 @@ class JoinedCurUserTasksListenerNotifier
 
   // TODO: not so efficient - any task change will require a complete recalculation
   Future<void> _listen() async {
-    final watchedCurUserTasks = ref.watch(curUserTasksListenerProvider);
+    final watchedCurUserTasks = ref.watch(curUserAssignedTasksListenerProvider);
 
     if(watchedCurUserTasks == null){
       return; 

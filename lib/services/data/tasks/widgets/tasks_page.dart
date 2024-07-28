@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:intl/intl.dart';
 import 'package:seren_ai_flutter/constants.dart';
-import 'package:seren_ai_flutter/services/data/tasks/cur_tasks/cur_user_tasks_listener_provider.dart';
+import 'package:seren_ai_flutter/services/data/tasks/cur_tasks/cur_user_assigned_tasks_listener_provider.dart';
 import 'package:seren_ai_flutter/services/data/tasks/cur_tasks/joined_cur_user_tasks_listener_provider.dart';
 import 'package:seren_ai_flutter/services/data/tasks/models/joined_task_model.dart';
 
@@ -15,9 +15,9 @@ class TasksPage extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final tasks = ref.watch(curUserTasksListenerProvider);
+    final tasks = ref.watch(curUserAssignedTasksListenerProvider);
 
-    final inProgressTasks = ref.watch(curUserTasksListenerProvider.select(
+    final inProgressTasks = ref.watch(curUserAssignedTasksListenerProvider.select(
         (tasks) =>
             tasks
                 ?.where((task) => task.statusEnum == StatusEnum.inProgress)
