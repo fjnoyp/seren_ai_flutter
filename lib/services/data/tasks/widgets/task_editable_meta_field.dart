@@ -2,7 +2,12 @@ import 'package:flutter/material.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:seren_ai_flutter/services/data/common/string_extensions.dart';
+import 'package:seren_ai_flutter/services/data/projects/cur_user_projects_listener_provider.dart';
 import 'package:seren_ai_flutter/services/data/tasks/models/task_model.dart';
+import 'package:seren_ai_flutter/services/data/teams/cur_team/cur_user_team_roles_listener_provider.dart';
+import 'package:seren_ai_flutter/services/data/teams/cur_team/cur_user_viewable_teams_listener_provider.dart';
+import 'package:seren_ai_flutter/services/data/teams/cur_team/joined_cur_user_team_roles_listener_provider.dart';
+import 'package:seren_ai_flutter/services/data/teams/teams_db_provider.dart';
 
 // TODO: reduce code duplication once UI flows are confirmed 
 // Combine with task_editable_field
@@ -102,7 +107,7 @@ class ProjectEditableField extends HookConsumerWidget {
   }
 }
 
-class ProjectSelectionModal extends HookWidget {
+class ProjectSelectionModal extends HookConsumerWidget {
   final String? initialSelectedProject;
   final Function(String) onProjectSelected;
 
@@ -113,9 +118,13 @@ class ProjectSelectionModal extends HookWidget {
   }) : super(key: key);
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
     // This is a placeholder. You should replace this with actual project data.
-    final projects = ['Project A', 'Project B', 'Project C'];
+    final projects = ref.watch(curUserProjectsListenerProvider);
+
+    if(projects == null){
+      return const CircularProgressIndicator();
+    }
 
     return Padding(
       padding: const EdgeInsets.all(16.0),
@@ -123,9 +132,9 @@ class ProjectSelectionModal extends HookWidget {
         mainAxisSize: MainAxisSize.min,
         children: projects.map((project) {
           return ListTile(
-            title: Text(project),
+            title: Text(project.name),
             leading: Radio<String>(
-              value: project,
+              value: project.id,
               groupValue: initialSelectedProject,
               onChanged: (String? value) {
                 if (value != null) {
@@ -180,7 +189,7 @@ class TeamEditableField extends HookConsumerWidget {
   }
 }
 
-class TeamSelectionModal extends HookWidget {
+class TeamSelectionModal extends HookConsumerWidget {
   final String? initialSelectedTeam;
   final Function(String) onTeamSelected;
 
@@ -191,19 +200,23 @@ class TeamSelectionModal extends HookWidget {
   }) : super(key: key);
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
     // This is a placeholder. You should replace this with actual team data.
-    final teams = ['Team X', 'Team Y', 'Team Z'];
+    final watchedViewableTeams = ref.watch(curUserViewableTeamsListenerProvider);    
+
+    if(watchedViewableTeams == null){
+      return const CircularProgressIndicator();
+    }
 
     return Padding(
       padding: const EdgeInsets.all(16.0),
       child: Column(
         mainAxisSize: MainAxisSize.min,
-        children: teams.map((team) {
+        children: watchedViewableTeams.map((team) {
           return ListTile(
-            title: Text(team),
+            title: Text(team.name),
             leading: Radio<String>(
-              value: team,
+              value: team.id,
               groupValue: initialSelectedTeam,
               onChanged: (String? value) {
                 if (value != null) {

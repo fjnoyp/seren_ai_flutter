@@ -24,9 +24,13 @@ class CurUserTeamRolesListenerNotifier extends Notifier<List<UserTeamRoleModel>?
 
     final query = "SELECT * FROM user_team_roles WHERE user_id = '${watchedCurAuthUser.id}'";
 
-    db.watch(query).listen((results) {
+    final subscription = db.watch(query).listen((results) {
       List<UserTeamRoleModel> items = results.map((e) => UserTeamRoleModel.fromJson(e)).toList();
       state = items; 
+    });
+
+    ref.onDispose(() {
+      subscription.cancel();
     });
 
   }  
