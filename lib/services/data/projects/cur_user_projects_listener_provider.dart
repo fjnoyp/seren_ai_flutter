@@ -21,12 +21,6 @@ class CurUserProjectsListenerNotifier extends Notifier<List<ProjectModel>?> {
       return null;
     }
 
-    final watchedIsCurOrgAdmin = ref.watch(isCurUserOrgAdminListenerProvider);
-
-    if(watchedIsCurOrgAdmin) {
-      return null;
-    }
-
     final db = ref.read(dbProvider);
 
     // Get all projects which user is assigned to 

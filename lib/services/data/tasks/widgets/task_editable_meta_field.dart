@@ -3,10 +3,13 @@ import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:seren_ai_flutter/services/data/common/string_extensions.dart';
 import 'package:seren_ai_flutter/services/data/projects/cur_user_projects_listener_provider.dart';
+import 'package:seren_ai_flutter/services/data/projects/cur_user_viewable_projects_listener_provider.dart';
+import 'package:seren_ai_flutter/services/data/projects/models/project_model.dart';
 import 'package:seren_ai_flutter/services/data/tasks/models/task_model.dart';
 import 'package:seren_ai_flutter/services/data/teams/cur_team/cur_user_team_roles_listener_provider.dart';
 import 'package:seren_ai_flutter/services/data/teams/cur_team/cur_user_viewable_teams_listener_provider.dart';
 import 'package:seren_ai_flutter/services/data/teams/cur_team/joined_cur_user_team_roles_listener_provider.dart';
+import 'package:seren_ai_flutter/services/data/teams/models/team_model.dart';
 import 'package:seren_ai_flutter/services/data/teams/teams_db_provider.dart';
 
 // TODO: reduce code duplication once UI flows are confirmed 
@@ -69,8 +72,8 @@ class TaskEditableMetaField extends StatelessWidget {
   }
 }
 class ProjectEditableField extends HookConsumerWidget {
-  final Function(String) onProjectSelected;
-  final String? selectedProject;
+  final Function(ProjectModel) onProjectSelected;
+  final ProjectModel? selectedProject;
   final bool? hasError;
 
   const ProjectEditableField({
@@ -95,7 +98,7 @@ class ProjectEditableField extends HookConsumerWidget {
     }
 
     String getDisplayText() {
-      return selectedProject ?? 'Select Project';
+      return selectedProject?.name ?? 'Select Project';
     }
 
     return TaskEditableMetaField(
@@ -108,8 +111,8 @@ class ProjectEditableField extends HookConsumerWidget {
 }
 
 class ProjectSelectionModal extends HookConsumerWidget {
-  final String? initialSelectedProject;
-  final Function(String) onProjectSelected;
+  final ProjectModel? initialSelectedProject;
+  final Function(ProjectModel) onProjectSelected;
 
   const ProjectSelectionModal({
     Key? key,
@@ -120,23 +123,30 @@ class ProjectSelectionModal extends HookConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     // This is a placeholder. You should replace this with actual project data.
-    final projects = ref.watch(curUserProjectsListenerProvider);
+    final watchedProjects = ref.watch(curUserViewableProjectsListenerProvider);
 
-    if(projects == null){
+    if(watchedProjects == null){
       return const CircularProgressIndicator();
+    }
+
+    if(watchedProjects.isEmpty){
+      return const Padding(
+        padding: EdgeInsets.all(32.0),
+        child: Text('No projects'),
+      );
     }
 
     return Padding(
       padding: const EdgeInsets.all(16.0),
       child: Column(
         mainAxisSize: MainAxisSize.min,
-        children: projects.map((project) {
+        children: watchedProjects.map((project) {
           return ListTile(
             title: Text(project.name),
-            leading: Radio<String>(
-              value: project.id,
+            leading: Radio<ProjectModel>(
+              value: project,
               groupValue: initialSelectedProject,
-              onChanged: (String? value) {
+              onChanged: (ProjectModel? value) {
                 if (value != null) {
                   onProjectSelected(value);
                   Navigator.pop(context);
@@ -151,8 +161,8 @@ class ProjectSelectionModal extends HookConsumerWidget {
 }
 
 class TeamEditableField extends HookConsumerWidget {
-  final Function(String) onTeamSelected;
-  final String? selectedTeam;
+  final Function(TeamModel) onTeamSelected;
+  final TeamModel? selectedTeam;
   final bool? hasError;
 
   const TeamEditableField({
@@ -177,7 +187,7 @@ class TeamEditableField extends HookConsumerWidget {
     }
 
     String getDisplayText() {
-      return selectedTeam ?? 'Select Team';
+      return selectedTeam?.name ?? 'Select Team';
     }
 
     return TaskEditableMetaField(
@@ -190,8 +200,8 @@ class TeamEditableField extends HookConsumerWidget {
 }
 
 class TeamSelectionModal extends HookConsumerWidget {
-  final String? initialSelectedTeam;
-  final Function(String) onTeamSelected;
+  final TeamModel? initialSelectedTeam;
+  final Function(TeamModel) onTeamSelected;
 
   const TeamSelectionModal({
     Key? key,
@@ -208,17 +218,24 @@ class TeamSelectionModal extends HookConsumerWidget {
       return const CircularProgressIndicator();
     }
 
+    if(watchedViewableTeams.isEmpty){
+      return const Padding(
+        padding: EdgeInsets.all(32.0),
+        child: Text('No teams'),
+      );
+    }
+
     return Padding(
       padding: const EdgeInsets.all(16.0),
       child: Column(
         mainAxisSize: MainAxisSize.min,
-        children: watchedViewableTeams.map((team) {
+        children: watchedViewableTeams.map((curTeam) {
           return ListTile(
-            title: Text(team.name),
-            leading: Radio<String>(
-              value: team.id,
+            title: Text(curTeam.name),
+            leading: Radio<TeamModel>(
+              value: curTeam,
               groupValue: initialSelectedTeam,
-              onChanged: (String? value) {
+              onChanged: (TeamModel? value) {
                 if (value != null) {
                   onTeamSelected(value);
                   Navigator.pop(context);

@@ -3,9 +3,11 @@ import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:seren_ai_flutter/services/auth/cur_auth_user_provider.dart';
+import 'package:seren_ai_flutter/services/data/projects/models/project_model.dart';
 import 'package:seren_ai_flutter/services/data/tasks/models/task_model.dart';
 import 'package:seren_ai_flutter/services/data/tasks/widgets/task_editable_field.dart';
 import 'package:seren_ai_flutter/services/data/tasks/widgets/task_editable_meta_field.dart';
+import 'package:seren_ai_flutter/services/data/teams/models/team_model.dart';
 
 /* === Thoughts on ai generation of create task === 
 1) Tasks must be assigned to specific users / projects 
@@ -37,8 +39,8 @@ class CreateTaskPage extends HookConsumerWidget {
     final _nameController = TextEditingController();
     //final _descriptionController = TextEditingController();
 
-    final taskProject = useState<String?>(null);
-    final taskTeam = useState<String?>(null);
+    final taskProject = useState<ProjectModel?>(null);
+    final taskTeam = useState<TeamModel?>(null);
 
     final taskAssignedUsers = useState<List<String>>([]);
     final taskDueDate = useState<DateTime?>(null);
