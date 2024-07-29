@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
+import 'package:logging/logging.dart';
 import 'package:seren_ai_flutter/services/auth/cur_auth_user_provider.dart';
 import 'package:seren_ai_flutter/services/data/projects/models/project_model.dart';
 import 'package:seren_ai_flutter/services/data/tasks/models/task_model.dart';
@@ -26,6 +27,8 @@ We cannot merge sql request logic as client must WATCH data while edge functions
 inherently only READ data. 
 We could keep ai as data intake only, and just have 3rd intermediary process insert data
 in case where client is not sending the data context  */
+
+final log = Logger('CreateTaskPage');
 
 class CreateTaskPage extends HookConsumerWidget {
   const CreateTaskPage({super.key});
@@ -157,6 +160,11 @@ class CreateTaskPage extends HookConsumerWidget {
 
                     final curAuthUser = ref.watch(curAuthUserProvider);
 
+                    if(curAuthUser == null){
+                      log.severe('Error: Current user is not authenticated.');
+                      return;
+                    }
+
                     
 
                     if (_formKey.currentState!.validate()) {
@@ -170,8 +178,7 @@ class CreateTaskPage extends HookConsumerWidget {
                         dueDate: null,
                         createdDate: DateTime.now(),
                         lastUpdatedDate: DateTime.now(),
-                        authorUserId:
-                            'current_user_id', // Replace with actual user ID
+                        authorUserId: curAuthUser.id,                            
                         parentTeamId:
                             'current_team_id', // Replace with actual team ID
                         parentProjectId:
