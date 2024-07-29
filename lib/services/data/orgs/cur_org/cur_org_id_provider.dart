@@ -2,6 +2,10 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:seren_ai_flutter/services/data/orgs/cur_org/cur_user_org_roles_listener_provider.dart';
 
+import 'package:logging/logging.dart';
+
+final log = Logger('CurOrgIdProvider');
+
 final curOrgIdProvider =
     NotifierProvider<CurOrgIdNotifier, String?>(() {
   return CurOrgIdNotifier();
@@ -21,8 +25,8 @@ class CurOrgIdNotifier extends Notifier<String?> {
 
         if (!isInCurrentOrg) {
           // print out what happened 
-          print('CurOrgId - User left org $currentOrgId');
-          print('CurOrgId - New orgs: ${next.map((orgRole) => orgRole.orgId).toList()}');
+          log.info('CurOrgId - User left org $currentOrgId');
+          log.info('CurOrgId - New orgs: ${next.map((orgRole) => orgRole.orgId).toList()}');
           _setAndSaveOrgId(null);
         }
       } else {

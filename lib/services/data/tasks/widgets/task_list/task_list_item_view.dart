@@ -19,8 +19,6 @@ class TaskListItemView extends StatelessWidget {
     final team = joinedTask.team;
     final project = joinedTask.project;
 
-    print('current brightness: ' + theme.brightness.name);
-
     return Card(
       color: theme.cardColor,
       margin: const EdgeInsets.symmetric(vertical: 8.0, horizontal: 2.0),
