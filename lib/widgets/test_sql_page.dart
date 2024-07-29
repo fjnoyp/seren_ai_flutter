@@ -70,8 +70,7 @@ class TestSQLPage extends HookConsumerWidget {
               onPressed: () async {
                 final db = ref.read(dbProvider);
                 final results = await db.execute(_sqlController.text);
-                final items = results.map((row) => row.values).toList();
-                print('Results: $items');
+                final items = results.map((row) => row.values).toList();                
                 sqlResult.value = items.toString();
               },
               child: Text('Execute SQL'),
