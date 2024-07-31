@@ -10,13 +10,24 @@ class UserModel implements IHasId {
 
   @JsonKey(name: 'parent_auth_user_id')
   final String parentAuthUserId; 
-  final String? email;
+  final String email;
 
   UserModel({
     required this.id,
     required this.parentAuthUserId,
-    this.email,
+    required this.email,
   });
+
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+      other is UserModel &&
+          runtimeType == other.runtimeType &&
+          id == other.id &&
+          email == other.email;
+
+  @override
+  int get hashCode => id.hashCode ^ email.hashCode;
 
   factory UserModel.fromJson(Map<String, dynamic> json) => _$UserModelFromJson(json);
   Map<String, dynamic> toJson() => _$UserModelToJson(this);

@@ -5,13 +5,14 @@ typedef FromJson<T> = T Function(Map<String, dynamic> json);
 typedef ToJson<T> = Map<String, dynamic> Function(T item);
 
 /// For retrieving values from a specifi DB table 
-class BaseDb<T extends IHasId> {  
+/// Use for joined tables where we don't want to recompute joins based on foreign keys 
+class BaseReadDb<T extends IHasId> {  
   final String tableName;
   final FromJson<T> fromJson;
   final ToJson<T> toJson;
   final PowerSyncDatabase db;
 
-  BaseDb({
+  BaseReadDb({
     required this.db,
     required this.tableName,
     required this.fromJson,
@@ -71,13 +72,13 @@ class BaseDb<T extends IHasId> {
     return item;
   }
 
-  Future<T> createItem(T item) async {
+  Future<T> insertItem(T item) async {
     final response = await db.execute('INSERT INTO $tableName (${toJson(item)})');
     final newItem = fromJson(response.first);
     return newItem;
   }
 
-  Future<void> modifyItem(T item) async {
+  Future<void> updateItem(T item) async {
     await db.execute('UPDATE $tableName SET ${toJson(item)} WHERE id = ${item.id}');    
   }
 

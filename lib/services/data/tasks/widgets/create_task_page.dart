@@ -6,9 +6,10 @@ import 'package:logging/logging.dart';
 import 'package:seren_ai_flutter/services/auth/cur_auth_user_provider.dart';
 import 'package:seren_ai_flutter/services/data/projects/models/project_model.dart';
 import 'package:seren_ai_flutter/services/data/tasks/models/task_model.dart';
-import 'package:seren_ai_flutter/services/data/tasks/widgets/task_editable_field.dart';
-import 'package:seren_ai_flutter/services/data/tasks/widgets/task_editable_meta_field.dart';
+import 'package:seren_ai_flutter/services/data/tasks/tasks_db_provider.dart';
+import 'package:seren_ai_flutter/services/data/tasks/widgets/task_form_field.dart';
 import 'package:seren_ai_flutter/services/data/teams/models/team_model.dart';
+import 'package:seren_ai_flutter/services/data/users/models/user_model.dart';
 
 /* === Thoughts on ai generation of create task === 
 1) Tasks must be assigned to specific users / projects 
@@ -33,52 +34,40 @@ final log = Logger('CreateTaskPage');
 class CreateTaskPage extends HookConsumerWidget {
   const CreateTaskPage({super.key});
 
-  void test() {}
-  
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final theme = Theme.of(context);
-    final _formKey = GlobalKey<FormState>();
-    final _nameController = TextEditingController();
-    //final _descriptionController = TextEditingController();
+    final formKey = GlobalKey<FormState>();
 
-    final taskProject = useState<ProjectModel?>(null);
-    final taskTeam = useState<TeamModel?>(null);
-
-    final taskAssignedUsers = useState<List<String>>([]);
-    final taskDueDate = useState<DateTime?>(null);
-    final taskDescription = useState<String>('');
-
-    final taskPriority = useState<PriorityEnum?>(null);
-    final taskStatus = useState<StatusEnum?>(null);
+    final nameController = TextEditingController();
+    final projectController = useState<ProjectModel?>(null);
+    final teamController = useState<TeamModel?>(null);
+    final dateController = useState<DateTime?>(null);
+    final statusController = useState<StatusEnum?>(null);
+    final priorityController = useState<PriorityEnum?>(null);
+    final descriptionController = useState<String?>(null);
+    final assigneesController = useState<Set<UserModel>?>(null);
 
     return SingleChildScrollView(
       child: Padding(
         padding: const EdgeInsets.all(16.0),
         child: Form(
-          key: _formKey,
+          key: formKey,
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              // Project
-              ProjectEditableField(
-                selectedProject: taskProject.value,
-                onProjectSelected: (project) {
-                  taskProject.value = project;
-                },
-                hasError: taskProject.value == null,
+
+              TeamSelectFormField(ref, teamController),
+
+              ProjectSelectFormField(ref, projectController, 
+              enabled: teamController.value != null,
+              emptyValue: teamController.value != null ? 'Select a Project' : 'Select a Team First'
               ),
-              TeamEditableField(
-                selectedTeam: taskTeam.value,
-                onTeamSelected: (team) {
-                  taskTeam.value = team;
-                },
-                hasError: taskTeam.value == null,
-              ),
+              
 
               // Title Input
               TextFormField(
-                controller: _nameController,
+                controller: nameController,
                 style: theme.textTheme.titleMedium,
                 decoration: InputDecoration(
                   hintText: 'Task Name',
@@ -91,99 +80,76 @@ class CreateTaskPage extends HookConsumerWidget {
                   return null;
                 },
               ),
-              SizedBox(height: 8), 
+              SizedBox(height: 8),
               Divider(),
 
               // ======================
               // ====== SUBITEMS ======
               // ======================
               Padding(
-                  padding: const EdgeInsets.only(left: 15),
-                  child: Column(children: [
-                    // === PRIORITY SELECTION ===
-                    TaskPriorityEditableField(
-                      selectedPriority: taskPriority.value,
-                      onPrioritySelected: (priority) {
-                        taskPriority.value = priority;
-                      },
-                      hasError: taskPriority.value == null,
+                padding: const EdgeInsets.only(left: 15),
+                child: Column(
+                  children: [
+                    TaskPrioritySelectFormField(priorityController),
+                    const Divider(),
+                    TaskStatusSelectFormField(statusController),
+                    const Divider(),
+                    TaskDateSelectFormField(dateController),
+                    const Divider(),
+                    TaskAssigneesFormField(
+                      controller: assigneesController,
+                      projectController: projectController,
+                      enabled: projectController.value != null && teamController.value != null,
+                      emptyValue: projectController.value != null && teamController.value != null ? 'Choose Assignees' : 'Select a Project and Team First'
                     ),
                     const Divider(),
+                    TaskDescriptionFormField(descriptionController),
+                  ],
+                ),
+              ),
 
-                    // === STATUS SELECTION ===
-                    TaskStatusEditableField(
-                      selectedStatus: taskStatus.value,
-                      onStatusSelected: (status) {
-                        taskStatus.value = status;
-                      },
-                      hasError: taskStatus.value == null,
-                    ),
-                    const Divider(),
-
-                    // === DATE SELECTION ===
-                    TaskDateEditableField(
-                      selectedDate: taskDueDate.value,
-                      onDateSelected: (date) {
-                        taskDueDate.value = date;
-                      },
-                      hasError: taskDueDate.value == null,
-                    ),
-                    const Divider(),
-                    // === ASSIGNEES SELECTION ===
-                    TaskAssigneesEditableField(
-                      selectedUsers: taskAssignedUsers.value,
-                      onAssigneesSelected: (assignees) {
-                        taskAssignedUsers.value = assignees;
-                      },
-                      hasError: taskAssignedUsers.value.isEmpty,
-                    ),
-                    const Divider(),
-                    // === WRITE DESCRIPTION ===
-                    TaskDescriptionEditableField(
-                      description: taskDescription.value,
-                      onDescriptionChanged: (description) {
-                        taskDescription.value = description;
-                      },
-                      hasError: taskDescription.value.isEmpty,
-                    ),
-                  ])),
-
-              Text('Comments', style: theme.textTheme.titleMedium),
-              const SizedBox(height: 8),
+              //Text('Comments', style: theme.textTheme.titleMedium),
+              //const SizedBox(height: 8),
               // TODO: Implement comments section
               const SizedBox(height: 24),
 
               SizedBox(
-                width: double.infinity,                
+                width: double.infinity,
                 child: ElevatedButton(
                   onPressed: () {
-
                     final curAuthUser = ref.watch(curAuthUserProvider);
 
-                    if(curAuthUser == null){
+                    if (curAuthUser == null) {
                       log.severe('Error: Current user is not authenticated.');
                       return;
                     }
 
-                    
+                    print('Assignees: ${assigneesController.value}');
+                    print('Project: ${projectController.value}');
+                    print('Team: ${teamController.value}');
+                    print('Date: ${dateController.value}');
+                    print('Status: ${statusController.value}');
+                    print('Priority: ${priorityController.value}');
+                    print('Description: ${descriptionController.value}');
 
-                    if (_formKey.currentState!.validate()) {
+                    if (formKey.currentState!.validate()) {
                       // Handle task creation logic here
                       final newTask = TaskModel(
                         id: 'new_id', // Generate or assign a unique ID
-                        name: _nameController.text,
-                        description: '',
-                        statusEnum: StatusEnum.inProgress,
-                        priorityEnum: PriorityEnum.normal,
-                        dueDate: null,
+                        name: nameController.text,
+                        description: descriptionController.value,
+                        statusEnum: statusController.value ?? StatusEnum.inProgress,
+                        priorityEnum: priorityController.value ?? PriorityEnum.normal,
+                        dueDate: dateController.value,
                         createdDate: DateTime.now(),
                         lastUpdatedDate: DateTime.now(),
-                        authorUserId: curAuthUser.id,                            
-                        parentTeamId:
-                            'current_team_id', // Replace with actual team ID
-                        parentProjectId:
-                            'current_project_id', // Replace with actual project ID
+                        authorUserId: curAuthUser.id,
+                        parentTeamId: teamController.value?.id ?? '',
+                        parentProjectId: projectController.value?.id ?? '',
+                        assignees: assigneesController.value ?? Set<UserModel>(),
                       );
+
+                      ref.read(tasksDbProvider).insertItem(newTask);
                       // Add the new task to the database or state management
                       Navigator.pop(context);
                     }
