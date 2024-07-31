@@ -1,7 +1,7 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:seren_ai_flutter/services/data/db_setup/db_provider.dart';
 import 'package:seren_ai_flutter/services/data/users/models/user_model.dart';
-import 'package:seren_ai_flutter/services/data/users/user_db_provider.dart';
+import 'package:seren_ai_flutter/services/data/users/users_read_provider.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
 final curAuthUserProvider = NotifierProvider<CurAuthUserNotifier, UserModel?>(CurAuthUserNotifier.new);
@@ -35,7 +35,7 @@ class CurAuthUserNotifier extends Notifier<UserModel?> {
   }
 
   Future<UserModel> _convertAuthUserIdToUserModel(String authUserId) async {
-    final usersCacherDatabase = ref.read(usersDbProvider);
+    final usersCacherDatabase = ref.read(usersReadProvider);
     final userModel = await usersCacherDatabase.getItem(
         eqFilters: [{'key': 'parent_auth_user_id', 'value': authUserId}]);
     if(userModel == null){

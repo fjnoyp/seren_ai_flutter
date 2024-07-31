@@ -1,8 +1,8 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:seren_ai_flutter/services/data/orgs/models/joined_user_org_role_model.dart';
 import 'package:seren_ai_flutter/services/data/orgs/user_org_roles/user_org_roles_listener_fam_provider.dart';
-import 'package:seren_ai_flutter/services/data/users/user_db_provider.dart';
-import 'package:seren_ai_flutter/services/data/orgs/orgs_db_provider.dart';
+import 'package:seren_ai_flutter/services/data/users/users_read_provider.dart';
+import 'package:seren_ai_flutter/services/data/orgs/orgs_read_provider.dart';
 import 'package:collection/collection.dart'; 
 
 final joinedUserOrgRolesListenerFamProvider = NotifierProvider.family<
@@ -33,10 +33,10 @@ class JoinedUserOrgRolesListenerFamNotifier
 
     final userIds = userOrgRoles.map((role) => role.userId).toList();
     final authUsers =
-        await ref.read(usersDbProvider).getItems(ids: userIds);
+        await ref.read(usersReadProvider).getItems(ids: userIds);
 
     final org = await ref
-        .read(orgsDbProvider)
+        .read(orgsReadProvider)
         .getItem(id: orgId);
 
     final joinedRoles = userOrgRoles.map((role) {

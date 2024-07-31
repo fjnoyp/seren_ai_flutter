@@ -1,8 +1,8 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:seren_ai_flutter/services/data/teams/cur_team/cur_user_team_roles_listener_provider.dart';
 import 'package:seren_ai_flutter/services/data/teams/models/joined_user_team_role_model.dart';
-import 'package:seren_ai_flutter/services/data/teams/teams_db_provider.dart';
-import 'package:seren_ai_flutter/services/data/users/user_db_provider.dart';
+import 'package:seren_ai_flutter/services/data/teams/teams_read_provider.dart';
+import 'package:seren_ai_flutter/services/data/users/users_read_provider.dart';
 
 import 'package:collection/collection.dart';
 
@@ -29,10 +29,10 @@ class JoinedCurUserTeamRolesListenerNotifier
     }
 
     final userIds = watchedCurUserTeamRoles.map((role) => role.userId).toSet();
-    final users = await ref.read(usersDbProvider).getItems(ids: userIds);
+    final users = await ref.read(usersReadProvider).getItems(ids: userIds);
 
     final teamIds = watchedCurUserTeamRoles.map((role) => role.teamId).toSet();
-    final teams = await ref.read(teamsDbProvider).getItems(ids: teamIds);
+    final teams = await ref.read(teamsReadProvider).getItems(ids: teamIds);
     
     final joinedTeamRoles = watchedCurUserTeamRoles.map((teamRole) {
       final user = users.firstWhereOrNull((user) => user.id == teamRole.userId);
