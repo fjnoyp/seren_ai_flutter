@@ -1,9 +1,9 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:seren_ai_flutter/services/data/projects/projects_db_provider.dart';
+import 'package:seren_ai_flutter/services/data/projects/projects_read_provider.dart';
 import 'package:seren_ai_flutter/services/data/tasks/cur_tasks/cur_user_assigned_tasks_listener_provider.dart';
 import 'package:seren_ai_flutter/services/data/tasks/models/joined_task_model.dart';
-import 'package:seren_ai_flutter/services/data/teams/teams_db_provider.dart';
-import 'package:seren_ai_flutter/services/data/users/user_db_provider.dart';
+import 'package:seren_ai_flutter/services/data/teams/teams_read_provider.dart';
+import 'package:seren_ai_flutter/services/data/users/users_read_provider.dart';
 
 import 'package:collection/collection.dart'; 
 
@@ -31,20 +31,20 @@ class JoinedCurUserTasksListenerNotifier
     }
 
     final authorUserIds = watchedCurUserTasks.map((task) => task.authorUserId).toSet();
-    final authorUsers = await ref.read(usersDbProvider).getItems(ids: authorUserIds);
+    final authorUsers = await ref.read(usersReadProvider).getItems(ids: authorUserIds);
 
     final Set<String> teamIds = watchedCurUserTasks
       .map((task) => task.parentTeamId)
       .where((id) => id != null)
       .map((id) => id!)
       .toSet();
-    final teams = await ref.read(teamsDbProvider).getItems(ids: teamIds);
+    final teams = await ref.read(teamsReadProvider).getItems(ids: teamIds);
 
 
     final projectIds = watchedCurUserTasks
       .map((task) => task.parentProjectId)
       .toSet();
-    final projects = await ref.read(projectsDbProvider).getItems(ids: projectIds);
+    final projects = await ref.read(projectsReadProvider).getItems(ids: projectIds);
     
     final joinedTasks = watchedCurUserTasks.map((task) {
       final authorUser = authorUsers.firstWhereOrNull((user) => user.id == task.authorUserId);

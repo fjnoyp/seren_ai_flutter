@@ -2,7 +2,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:seren_ai_flutter/services/data/teams/models/user_team_role_model.dart';
 import 'package:seren_ai_flutter/services/data/common/base_listener_db_notifier.dart';
 
-final userTeamRolesListenerFamProvider = Provider.family<List<UserTeamRoleModel>?, String>(
+final userTeamRolesListenerTeamFamProvider = Provider.family<List<UserTeamRoleModel>?, String>(
   (ref, userId) {
     final params = ref.read(_userTeamRolesListenerFamParamsProvider(userId));
     return ref.watch(_userTeamRolesListenerFamProvider(params));

@@ -8,7 +8,7 @@ import 'package:seren_ai_flutter/services/data/tasks/models/joined_task_model.da
 
 import 'package:seren_ai_flutter/services/data/tasks/models/task_model.dart';
 import 'package:seren_ai_flutter/services/data/tasks/widgets/task_list/tasks_list_view.dart';
-import 'package:seren_ai_flutter/services/data/users/user_db_provider.dart';
+import 'package:seren_ai_flutter/services/data/users/users_read_provider.dart';
 
 class TasksPage extends ConsumerWidget {
   const TasksPage({super.key});
