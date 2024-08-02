@@ -28,62 +28,72 @@ class TaskListItemView extends StatelessWidget {
       ),
       child: Padding(
         padding: const EdgeInsets.fromLTRB(10.0, 12.0, 4.0, 12.0),
-        child: Row(
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          mainAxisSize: MainAxisSize.min,
           children: [
-            Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(
-                  task.name,
-                  style: theme.textTheme.titleMedium,
-                ),
-                Padding(
-                  padding: EdgeInsets.only(left: 5),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      const SizedBox(height: 2),
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        children: [
-                          TaskPriorityView(
-                              priority: task.priorityEnum ?? PriorityEnum.normal),
-                        ],
-                      ),
-                      const SizedBox(height: 5),
-                      if (task.dueDate != null)
-                        Row(
-                          children: [
-                            Icon(Icons.calendar_today, size: 16),
-                            const SizedBox(width: 4),
-                            Text(
-                              'Due Date: ${task.dueDate?.toIso8601String() != null ? listDateFormat.format(task.dueDate!) : 'N/A'}',
-                              style: theme.textTheme.labelSmall!.copyWith(
-                                color: DateTime.now().isAfter(task.dueDate!)
-                                    ? Colors.red
-                                    : null,
-                              ),
-                            ),
-                          ],
-                        ),
-                      const SizedBox(height: 5),
-                      if (task.description != null &&
-                          task.description!.isNotEmpty)
-                        Text(
-                          task.description!,
-                          style: theme.textTheme.bodySmall,
-                          overflow: TextOverflow.ellipsis,
-                        ),
-                      const SizedBox(height: 5),
+            // TASK NAME + PROJECT NAME
 
-                      //Text('Author: ${authorUser?.email}'),
-                      // if (task.assignedUserId != null) Text('Assigned to: ${task.assignedUserId}'),
-                      //Text('Team: ${team?.name}'),
-                      Text('${project?.name}', style: theme.textTheme.labelSmall?.copyWith(color: theme.colorScheme.onSurface.withOpacity(0.7)),),
-                    ],
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Flexible(
+                  child: Text(
+                    task.name,
+                    style: theme.textTheme.titleMedium,
+                    overflow: TextOverflow.ellipsis,
                   ),
                 ),
+                Text(
+                  '${project?.name}',
+                  style: theme.textTheme.labelSmall?.copyWith(
+                      color: theme.colorScheme.onSurface.withOpacity(0.7)),
+                ),
               ],
+            ),
+            Padding(
+              padding: EdgeInsets.only(left: 8),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  const SizedBox(height: 2),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      TaskPriorityView(
+                          priority: task.priorityEnum ?? PriorityEnum.normal),
+                    ],
+                  ),
+                  const SizedBox(height: 5),
+                  if (task.dueDate != null)
+                    Row(
+                      children: [
+                        Icon(Icons.calendar_today, size: 16),
+                        const SizedBox(width: 4),
+                        Text(
+                          'Due Date: ${task.dueDate?.toIso8601String() != null ? listDateFormat.format(task.dueDate!) : 'N/A'}',
+                          style: theme.textTheme.labelSmall!.copyWith(
+                            color: DateTime.now().isAfter(task.dueDate!)
+                                ? Colors.red
+                                : null,
+                          ),
+                        ),
+                      ],
+                    ),
+                  const SizedBox(height: 5),
+                  if (task.description != null && task.description!.isNotEmpty)
+                    Text(
+                      task.description!,
+                      style: theme.textTheme.bodySmall,
+                      overflow: TextOverflow.ellipsis,
+                    ),
+                  const SizedBox(height: 5),
+
+                  //Text('Author: ${authorUser?.email}'),
+                  // if (task.assignedUserId != null) Text('Assigned to: ${task.assignedUserId}'),
+                  //Text('Team: ${team?.name}'),
+                ],
+              ),
             ),
           ],
         ),

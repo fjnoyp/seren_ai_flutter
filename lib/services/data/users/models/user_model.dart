@@ -1,5 +1,6 @@
 import 'package:json_annotation/json_annotation.dart';
 import 'package:seren_ai_flutter/services/data/common/i_has_id.dart';
+import 'package:seren_ai_flutter/services/data/common/uuid.dart';
 
 part 'user_model.g.dart';
 
@@ -13,10 +14,10 @@ class UserModel implements IHasId {
   final String email;
 
   UserModel({
-    required this.id,
+    String? id,
     required this.parentAuthUserId,
     required this.email,
-  });
+  }) : id = id ?? uuid.v4();
 
   @override
   bool operator ==(Object other) =>

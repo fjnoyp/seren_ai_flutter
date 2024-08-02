@@ -1,5 +1,6 @@
 import 'package:json_annotation/json_annotation.dart';
 import 'package:seren_ai_flutter/services/data/common/i_has_id.dart';
+import 'package:seren_ai_flutter/services/data/common/uuid.dart';
 
 part 'task_model.g.dart';
 
@@ -40,8 +41,8 @@ class TaskModel implements IHasId{
   @JsonKey(name: 'estimated_duration_minutes')
   final int? estimatedDurationMinutes;
 
-  TaskModel({
-    required this.id,
+  TaskModel({    
+    String? id,
     required this.name,
     required this.description,
     required this.statusEnum,
@@ -53,7 +54,7 @@ class TaskModel implements IHasId{
     this.parentTeamId,
     required this.parentProjectId,
     this.estimatedDurationMinutes,
-  });
+  }) : id = id ?? uuid.v4();
 
   /*
   @override  

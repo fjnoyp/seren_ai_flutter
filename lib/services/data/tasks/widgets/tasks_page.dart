@@ -15,15 +15,6 @@ class TasksPage extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final tasks = ref.watch(curUserAssignedTasksListenerProvider);
-
-    final inProgressTasks = ref.watch(curUserAssignedTasksListenerProvider.select(
-        (tasks) =>
-            tasks
-                ?.where((task) => task.statusEnum == StatusEnum.inProgress)
-                .toList() ??
-            []));
-
     return DefaultTabController(
       length: 3,
       child: Column(

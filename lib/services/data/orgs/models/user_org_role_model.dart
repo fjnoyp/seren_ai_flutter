@@ -1,5 +1,6 @@
 import 'package:json_annotation/json_annotation.dart';
 import 'package:seren_ai_flutter/services/data/common/i_has_id.dart';
+import 'package:seren_ai_flutter/services/data/common/uuid.dart';
 import 'package:seren_ai_flutter/services/data/orgs/models/org_model.dart';
 import 'package:seren_ai_flutter/services/data/users/models/user_model.dart';
 
@@ -21,11 +22,11 @@ class UserOrgRoleModel implements IHasId {
   final String orgRole;
 
   UserOrgRoleModel({
-    required this.id,
+    String? id,
     required this.userId,
     required this.orgId,
     required this.orgRole,
-  });
+  }) : id = id ?? uuid.v4();
 
   factory UserOrgRoleModel.fromJson(Map<String, dynamic> json) => _$UserOrgRoleModelFromJson(json);
   Map<String, dynamic> toJson() => _$UserOrgRoleModelToJson(this);

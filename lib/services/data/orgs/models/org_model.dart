@@ -1,5 +1,6 @@
 import 'package:json_annotation/json_annotation.dart';
 import 'package:seren_ai_flutter/services/data/common/i_has_id.dart';
+import 'package:seren_ai_flutter/services/data/common/uuid.dart';
 
 part 'org_model.g.dart';
 
@@ -11,10 +12,10 @@ class OrgModel implements IHasId {
   final String? address;
 
   OrgModel({
-    required this.id,
+    String? id,
     required this.name,
     this.address,
-  });
+  }) : id = id ?? uuid.v4();
 
   factory OrgModel.fromJson(Map<String, dynamic> json) => _$OrgModelFromJson(json);
   Map<String, dynamic> toJson() => _$OrgModelToJson(this);
