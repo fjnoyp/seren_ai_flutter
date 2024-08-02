@@ -1,5 +1,6 @@
 import 'package:json_annotation/json_annotation.dart';
 import 'package:seren_ai_flutter/services/data/common/i_has_id.dart';
+import 'package:seren_ai_flutter/services/data/common/uuid.dart';
 
 part 'user_team_role_model.g.dart';
 
@@ -18,11 +19,11 @@ class UserTeamRoleModel implements IHasId {
   final String teamRole;
 
   UserTeamRoleModel({
-    required this.id,
+    String? id,
     required this.userId,
     required this.teamId,
     required this.teamRole,
-  });
+  }) : id = id ?? uuid.v4();
 
   factory UserTeamRoleModel.fromJson(Map<String, dynamic> json) => _$UserTeamRoleModelFromJson(json);
   Map<String, dynamic> toJson() => _$UserTeamRoleModelToJson(this);

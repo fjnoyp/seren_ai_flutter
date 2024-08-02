@@ -26,10 +26,11 @@ class CurUserAssignedTaskListenerNotifier extends Notifier<List<TaskModel>?> {
     // curUserAllViewableTasksListenerProvider 
     // Then subdivide into assigned via a separate provider 
     final query = '''
-    SELECT t.*
+    SELECT DISTINCT t.*
     FROM tasks t
-    JOIN task_user_assignments tua ON t.id = tua.task_id
-    WHERE tua.user_id = '${watchedCurAuthUser.id}';
+    LEFT JOIN task_user_assignments tua ON t.id = tua.task_id
+    WHERE tua.user_id = '${watchedCurAuthUser.id}'
+    OR t.author_user_id = '${watchedCurAuthUser.id}';
     ''';
 
     //final query = 'SELECT * FROM tasks';

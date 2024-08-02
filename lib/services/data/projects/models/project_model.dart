@@ -1,5 +1,6 @@
 import 'package:json_annotation/json_annotation.dart';
 import 'package:seren_ai_flutter/services/data/common/i_has_id.dart';
+import 'package:seren_ai_flutter/services/data/common/uuid.dart';
 
 part 'project_model.g.dart';
 
@@ -17,12 +18,12 @@ class ProjectModel implements IHasId {
   final String? parentTeamId;
 
   ProjectModel({
-    required this.id,
+    String? id,
     required this.name,
     required this.description,
     required this.parentOrgId,
     required this.parentTeamId,    
-  });
+  }) : id = id ?? uuid.v4();
 
   factory ProjectModel.fromJson(Map<String, dynamic> json) => _$ProjectModelFromJson(json);
   Map<String, dynamic> toJson() => _$ProjectModelToJson(this);

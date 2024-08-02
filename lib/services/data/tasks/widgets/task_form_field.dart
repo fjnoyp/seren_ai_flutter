@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
+import 'package:seren_ai_flutter/services/auth/cur_auth_user_provider.dart';
 import 'package:seren_ai_flutter/services/data/common/string_extensions.dart';
 import 'package:seren_ai_flutter/services/data/projects/cur_user_viewable_projects_listener_provider.dart';
 import 'package:seren_ai_flutter/services/data/projects/models/project_model.dart';
@@ -11,7 +12,8 @@ import 'package:seren_ai_flutter/services/data/users/models/user_model.dart';
 import 'package:seren_ai_flutter/services/data/users/users_in_project_read_provider.dart';
 
 Widget TeamSelectFormField(
-    WidgetRef ref, ValueNotifier<TeamModel?> teamController, {bool enabled = true}) {
+    WidgetRef ref, ValueNotifier<TeamModel?> teamController,
+    {bool enabled = true}) {
   final watchedTeams = ref.watch(curUserViewableTeamsListenerProvider);
 
   return ModalSelectFormField<TeamModel>(
@@ -29,7 +31,8 @@ Widget TeamSelectFormField(
 }
 
 Widget ProjectSelectFormField(
-    WidgetRef ref, ValueNotifier<ProjectModel?> projectController, {bool enabled = true, String emptyValue = 'Select a Project'}) {
+    WidgetRef ref, ValueNotifier<ProjectModel?> projectController,
+    {bool enabled = true, String emptyValue = 'Select a Project'}) {
   final watchedProjects = ref.watch(curUserViewableProjectsListenerProvider);
 
   return ModalSelectFormField<ProjectModel>(
@@ -46,8 +49,8 @@ Widget ProjectSelectFormField(
   );
 }
 
-
-Widget TaskDateSelectFormField(ValueNotifier<DateTime?> dateController, {bool enabled = true}) {
+Widget TaskDateSelectFormField(ValueNotifier<DateTime?> dateController,
+    {bool enabled = true}) {
   return DateSelectFormField(
     controller: dateController,
     emptyValue: 'Set Due Date',
@@ -57,7 +60,8 @@ Widget TaskDateSelectFormField(ValueNotifier<DateTime?> dateController, {bool en
   );
 }
 
-Widget TaskStatusSelectFormField(ValueNotifier<StatusEnum?> statusController, {bool enabled = true}) {
+Widget TaskStatusSelectFormField(ValueNotifier<StatusEnum?> statusController,
+    {bool enabled = true}) {
   return ModalSelectFormField<StatusEnum>(
     controller: statusController,
     emptyValue: 'Select Status',
@@ -70,7 +74,8 @@ Widget TaskStatusSelectFormField(ValueNotifier<StatusEnum?> statusController, {b
 }
 
 Widget TaskPrioritySelectFormField(
-    ValueNotifier<PriorityEnum?> priorityController, {bool enabled = true}) {
+    ValueNotifier<PriorityEnum?> priorityController,
+    {bool enabled = true}) {
   return ModalSelectFormField<PriorityEnum>(
     controller: priorityController,
     emptyValue: 'Select Priority',
@@ -165,8 +170,8 @@ class TaskDescriptionWritingModal extends HookWidget {
 // === TASK ASSIGNEES ===
 
 class TaskAssigneesFormField extends ActionSelectFormField<Set<UserModel>> {
-  TaskAssigneesFormField(
-    {required ValueNotifier<Set<UserModel>?> controller, 
+  TaskAssigneesFormField({
+    required ValueNotifier<Set<UserModel>?> controller,
     required ValueNotifier<ProjectModel?> projectController,
     String emptyValue = 'Choose Assignees',
     super.enabled,
@@ -176,8 +181,9 @@ class TaskAssigneesFormField extends ActionSelectFormField<Set<UserModel>> {
           emptyValue: emptyValue,
           labelWidget: const Icon(Icons.person),
           //options: [], // Not used for assignees
-          optionLabel: (assignees) =>
-              assignees.isEmpty ? 'Choose Assignees' : assignees.map((user) => user.email).join(', '),
+          optionLabel: (assignees) => assignees.isEmpty
+              ? 'Choose Assignees'
+              : assignees.map((user) => user.email).join(', '),
           validator: (assignees) => assignees == null || assignees.isEmpty
               ? 'Assignees are required'
               : null,
@@ -186,7 +192,7 @@ class TaskAssigneesFormField extends ActionSelectFormField<Set<UserModel>> {
               context: context,
               builder: (BuildContext context) {
                 return TaskAssigneesSelectionModal(
-                  initialSelectedUsers: controller.value ?? Set<UserModel>(),                  
+                  initialSelectedUsers: controller.value ?? Set<UserModel>(),
                   projectController: projectController,
                   onUsersSelected: (Set<UserModel> selectedUsers) {
                     controller.value = selectedUsers;
@@ -200,7 +206,7 @@ class TaskAssigneesFormField extends ActionSelectFormField<Set<UserModel>> {
 
 class TaskAssigneesSelectionModal extends HookConsumerWidget {
   final Set<UserModel> initialSelectedUsers;
-  final Function(Set<UserModel>) onUsersSelected;  
+  final Function(Set<UserModel>) onUsersSelected;
   final ValueNotifier<ProjectModel?> projectController;
 
   const TaskAssigneesSelectionModal({
@@ -211,20 +217,30 @@ class TaskAssigneesSelectionModal extends HookConsumerWidget {
   }) : super(key: key);
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-
-    if(projectController.value == null) {
+    if (projectController.value == null) {
       return const Center(child: Text('Select a Project first'));
     }
     final curProject = projectController.value!;
     final curProjectId = curProject.id;
     final usersInProject = ref.watch(usersInProjectReadProvider(curProjectId));
 
-    final searchController = useTextEditingController();
-    final currentlySelectedUsers = useState<Set<UserModel>>(initialSelectedUsers);
+    //final searchController = useTextEditingController();
+    final currentlySelectedUsers =
+        useState<Set<UserModel>>(initialSelectedUsers);
+
+    final watchedCurAuthUser = ref.watch(curAuthUserProvider);
 
     if (usersInProject.isLoading) {
       return const CircularProgressIndicator();
+    } else if (usersInProject.hasError) {
+      return Text('Error: ${usersInProject.error}');
     }
+
+    // add current user to usersInProject if not null
+    final usersInProjectWithCurrentUser = [
+      ...?usersInProject.value,
+      if (watchedCurAuthUser != null) watchedCurAuthUser,
+    ];
 
     return Padding(
       padding: const EdgeInsets.all(16.0),
@@ -234,7 +250,8 @@ class TaskAssigneesSelectionModal extends HookConsumerWidget {
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
               Text('Only users in '),
-              Text(curProject.name, style: TextStyle(fontWeight: FontWeight.bold)),
+              Text(curProject.name,
+                  style: TextStyle(fontWeight: FontWeight.bold)),
               Text(' can be assigned'),
             ],
           ),
@@ -254,38 +271,36 @@ class TaskAssigneesSelectionModal extends HookConsumerWidget {
             child: Text('Add Users to ${curProject.name}'),
           ),
           Expanded(
-              child: usersInProject.when(
-                data: (users) {
-                  return ListView.builder(
-                    itemCount: users.length,
-                    itemBuilder: (context, index) {
-                      final user = users[index];
-                      final isSelected = currentlySelectedUsers.value.contains(user);
-                      return ListTile(
-                        title: Text(user.email),
-                        //subtitle: Text(user.email),
-                        leading: Checkbox(
-                          value: isSelected,
-                          onChanged: (bool? value) {
-                            if (value != null) {
-                            final updatedUsers = Set<UserModel>.from(currentlySelectedUsers.value);
-                              if (value) {
-                                updatedUsers.add(user);
-                              } else {
-                                updatedUsers.remove(user);
-                              }
-                              currentlySelectedUsers.value = updatedUsers;
-                              onUsersSelected(updatedUsers);
-                            }
-                          },
-                        ),
-                      );
+            child: ListView.builder(
+              itemCount: usersInProjectWithCurrentUser.length,
+              itemBuilder: (context, index) {
+                final user = usersInProjectWithCurrentUser[index];
+                final isSelected = currentlySelectedUsers.value.contains(user);
+                return ListTile(
+                  title: Text(user.email),
+                  //subtitle: Text(user.email),
+                  leading: Checkbox(
+                    value: isSelected,
+                    onChanged: (bool? value) {
+                      if (value != null) {
+                        final updatedUsers =
+                            Set<UserModel>.from(currentlySelectedUsers.value);
+                        if (value) {
+                          updatedUsers.add(user);
+                        } else {
+                          updatedUsers.remove(user);
+                        }
+                        currentlySelectedUsers.value = updatedUsers;
+                        onUsersSelected(updatedUsers);
+                      }
                     },
-                  );
-                },
-                loading: () => const Center(child: CircularProgressIndicator()),
-                error: (error, stack) => Center(child: Text('Error: $error')),
-              ),
+                  ),
+                );
+              },
+            ),
+
+            //loading: () => const Center(child: CircularProgressIndicator()),
+            //error: (error, stack) => Center(child: Text('Error: $error')),
           ),
         ],
       ),
@@ -307,7 +322,7 @@ class ActionSelectFormField<T> extends FormField<T> {
     required Future<T?> Function(BuildContext) showSelectionUI,
     super.onSaved,
     validator,
-    super.enabled, 
+    super.enabled,
     //super.validator,
   }) : super(
           builder: (FormFieldState<T> state) {
@@ -317,21 +332,22 @@ class ActionSelectFormField<T> extends FormField<T> {
                 const SizedBox(width: 8),
                 Expanded(
                   child: TextButton(
-
-                    onPressed: enabled ? () async {
-                      final result = await showSelectionUI(state.context);
-                      if (result != null) {
-                        state.didChange(result);
-                        controller.value = result;
-                        //state.validate();
-                      }
-                    } : null,
+                    onPressed: enabled
+                        ? () async {
+                            final result = await showSelectionUI(state.context);
+                            if (result != null) {
+                              state.didChange(result);
+                              controller.value = result;
+                              //state.validate();
+                            }
+                          }
+                        : null,
                     style: TextButton.styleFrom(
                       alignment: Alignment.centerLeft,
                       padding: EdgeInsets.only(left: 10),
                     ),
                     child: ValueListenableBuilder<T?>(
-                      valueListenable: controller,                      
+                      valueListenable: controller,
                       builder: (context, value, child) {
                         return Text(
                           value == null ? emptyValue : optionLabel(value),
@@ -342,7 +358,8 @@ class ActionSelectFormField<T> extends FormField<T> {
                               .bodyMedium
                               ?.copyWith(
                                 color: state.hasError ? Colors.red : null,
-                                backgroundColor: enabled ? null : Colors.grey[200],
+                                backgroundColor:
+                                    enabled ? null : Colors.grey[200],
                               ),
                         );
                       },
@@ -352,12 +369,12 @@ class ActionSelectFormField<T> extends FormField<T> {
               ],
             );
           },
-          // TODO: bug from FormField causes validator to always be called with null regardless of controller value ... 
+          // TODO: bug from FormField causes validator to always be called with null regardless of controller value ...
           validator: (_) {
             //print('Controller: ${controller.value}');
             //print('Validator: $value');
             return validator(controller.value);
-            //return null; 
+            //return null;
           },
         );
 }

@@ -1,4 +1,5 @@
 import 'package:powersync/powersync.dart';
+import 'package:seren_ai_flutter/services/data/common/base_table_db.dart';
 import 'package:seren_ai_flutter/services/data/common/i_has_id.dart';
 
 typedef FromJson<T> = T Function(Map<String, dynamic> json);
@@ -6,18 +7,18 @@ typedef ToJson<T> = Map<String, dynamic> Function(T item);
 
 /// For retrieving values from a specifi DB table 
 /// Use for joined tables where we don't want to recompute joins based on foreign keys 
-class BaseReadDb<T extends IHasId> {  
+class BaseTableReadDb<T extends IHasId> extends BaseTableDb<T> {  
   final String tableName;
   final FromJson<T> fromJson;
   final ToJson<T> toJson;
   final PowerSyncDatabase db;
 
-  BaseReadDb({
+  BaseTableReadDb({
     required this.db,
     required this.tableName,
     required this.fromJson,
     required this.toJson,
-  });
+  }) : super(db: db, tableName: tableName, fromJson: fromJson, toJson: toJson);
 
   Future<List<T>> getItems(
       {Iterable<String>? ids, Iterable<Map<String, dynamic>>? eqFilters}) async {
@@ -72,17 +73,4 @@ class BaseReadDb<T extends IHasId> {
     return item;
   }
 
-  Future<T> insertItem(T item) async {
-    final response = await db.execute('INSERT INTO $tableName (${toJson(item)})');
-    final newItem = fromJson(response.first);
-    return newItem;
-  }
-
-  Future<void> updateItem(T item) async {
-    await db.execute('UPDATE $tableName SET ${toJson(item)} WHERE id = ${item.id}');    
-  }
-
-  Future<void> deleteItem(String id) async {
-    await db.execute('DELETE FROM $tableName WHERE id = $id');    
-  }
 }
