@@ -1,5 +1,6 @@
 import 'package:json_annotation/json_annotation.dart';
 import 'package:seren_ai_flutter/services/data/common/i_has_id.dart';
+import 'package:seren_ai_flutter/services/data/common/uuid.dart';
 
 part 'team_model.g.dart';
 
@@ -13,10 +14,10 @@ class TeamModel implements IHasId {
   final String parentOrgId;
 
   TeamModel({
-    required this.id,
+    String? id,
     required this.name,
     required this.parentOrgId,
-  });
+  }) : id = id ?? uuid.v4();
 
   factory TeamModel.fromJson(Map<String, dynamic> json) => _$TeamModelFromJson(json);
   Map<String, dynamic> toJson() => _$TeamModelToJson(this);

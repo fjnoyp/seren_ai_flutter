@@ -1,10 +1,11 @@
 import 'package:json_annotation/json_annotation.dart';
 import 'package:seren_ai_flutter/services/data/common/i_has_id.dart';
+import 'package:seren_ai_flutter/services/data/common/uuid.dart';
 
-part 'task_user_assignments.g.dart';
+part 'task_user_assignments_model.g.dart';
 
 @JsonSerializable()
-class TaskUserAssignments implements IHasId {
+class TaskUserAssignmentsModel implements IHasId {
   @override
   final String id;
 
@@ -14,12 +15,12 @@ class TaskUserAssignments implements IHasId {
   @JsonKey(name: 'user_id')
   final String userId;
 
-  TaskUserAssignments({
-    required this.id,
+  TaskUserAssignmentsModel({  
+    String? id,
     required this.taskId,
     required this.userId,
-  });
+  }) : id = id ?? uuid.v4();
 
-  factory TaskUserAssignments.fromJson(Map<String, dynamic> json) => _$TaskUserAssignmentsFromJson(json);
+  factory TaskUserAssignmentsModel.fromJson(Map<String, dynamic> json) => _$TaskUserAssignmentsFromJson(json);
   Map<String, dynamic> toJson() => _$TaskUserAssignmentsToJson(this);
 }

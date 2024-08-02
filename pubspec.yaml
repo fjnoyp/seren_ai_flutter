@@ -42,6 +42,7 @@ dependencies:
 
   # finding commonly used file paths across platforms (flutter)
   path_provider: ^2.1.3
+  uuid: ^4.4.2
 
 
 

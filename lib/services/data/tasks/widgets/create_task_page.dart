@@ -6,10 +6,15 @@ import 'package:logging/logging.dart';
 import 'package:seren_ai_flutter/services/auth/cur_auth_user_provider.dart';
 import 'package:seren_ai_flutter/services/data/projects/models/project_model.dart';
 import 'package:seren_ai_flutter/services/data/tasks/models/task_model.dart';
+import 'package:seren_ai_flutter/services/data/tasks/models/task_user_assignments_model.dart';
+import 'package:seren_ai_flutter/services/data/tasks/task_user_assignments_db_provider.dart';
 import 'package:seren_ai_flutter/services/data/tasks/tasks_db_provider.dart';
 import 'package:seren_ai_flutter/services/data/tasks/widgets/task_form_field.dart';
+import 'package:seren_ai_flutter/services/data/teams/cur_team/cur_user_team_roles_listener_provider.dart';
+import 'package:seren_ai_flutter/services/data/teams/cur_team/joined_cur_user_team_roles_listener_provider.dart';
 import 'package:seren_ai_flutter/services/data/teams/models/team_model.dart';
 import 'package:seren_ai_flutter/services/data/users/models/user_model.dart';
+import 'package:uuid/uuid.dart';
 
 /* === Thoughts on ai generation of create task === 
 1) Tasks must be assigned to specific users / projects 
@@ -47,6 +52,23 @@ class CreateTaskPage extends HookConsumerWidget {
     final priorityController = useState<PriorityEnum?>(null);
     final descriptionController = useState<String?>(null);
     final assigneesController = useState<Set<UserModel>?>(null);
+
+    useEffect(() {
+      // TODO: implement proper default team selection - this doesn't work due to lazy init
+      // Will want to have eager loaded cur user team provider 
+      /*
+      final joinedCurUserTeamRoles = ref.read(joinedCurUserTeamRolesListenerProvider);
+      if(joinedCurUserTeamRoles != null && joinedCurUserTeamRoles.isNotEmpty) {
+        teamController.value = joinedCurUserTeamRoles[0].team;
+      }
+      */
+
+      statusController.value = StatusEnum.open;
+      priorityController.value = PriorityEnum.normal;
+      dateController.value = DateTime.now();      
+
+      return null;
+    }, []);
 
     return SingleChildScrollView(
       child: Padding(
@@ -131,11 +153,11 @@ class CreateTaskPage extends HookConsumerWidget {
                     print('Status: ${statusController.value}');
                     print('Priority: ${priorityController.value}');
                     print('Description: ${descriptionController.value}');
+                  
 
-                    if (formKey.currentState!.validate()) {
+                    if (formKey.currentState!.validate()) {                      
                       // Handle task creation logic here
-                      final newTask = TaskModel(
-                        id: 'new_id', // Generate or assign a unique ID
+                      final newTask = TaskModel(                        
                         name: nameController.text,
                         description: descriptionController.value,
                         statusEnum: statusController.value ?? StatusEnum.inProgress,
@@ -146,10 +168,17 @@ class CreateTaskPage extends HookConsumerWidget {
                         authorUserId: curAuthUser.id,
                         parentTeamId: teamController.value?.id ?? '',
                         parentProjectId: projectController.value?.id ?? '',
-                        assignees: assigneesController.value ?? Set<UserModel>(),
                       );
 
                       ref.read(tasksDbProvider).insertItem(newTask);
+
+                      final taskUserAssignments = assigneesController.value?.map((user) => TaskUserAssignmentsModel(
+                        taskId: newTask.id,
+                        userId: user.id,
+                      )).toList() ?? [];
+
+                      ref.read(taskUserAssignmentsDbProvider).insertItems(taskUserAssignments);
+
                       // Add the new task to the database or state management
                       Navigator.pop(context);
                     }
