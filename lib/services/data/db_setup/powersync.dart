@@ -133,7 +133,7 @@ class SupabaseConnector extends PowerSyncBackendConnector {
 }
 
 /*
-TODO:
+TODO p5:
 /// Explicit sign out - clear database and log out.
 Future<void> logout() async {
   await Supabase.instance.client.auth.signOut();

@@ -17,7 +17,7 @@ class SignInUpPage extends StatelessWidget {
               },
               onSignUpComplete: (response) {
                 Navigator.of(context).pushReplacementNamed(homeRoute);
-                // TODO create entry in public.users table 
+                // TODO p2: create entry in public.users table 
               },
               metadataFields: [
                 MetaDataField(

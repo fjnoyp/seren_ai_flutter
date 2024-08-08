@@ -24,7 +24,7 @@ class CurUserProjectsListenerNotifier extends Notifier<List<ProjectModel>?> {
     final db = ref.read(dbProvider);
 
     // Get all projects which user is assigned to 
-    // TODO: org admins should be able to see all projects 
+    // TODO p2: org admins should be able to see all projects 
     final query = '''
     SELECT p.*
     FROM projects p
