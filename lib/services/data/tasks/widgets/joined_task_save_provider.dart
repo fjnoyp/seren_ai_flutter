@@ -19,7 +19,8 @@ class JoinedTaskSaveService {
     // TODO p1: broken task save - task name is not saved 
     // Also if project changes user assigness is not resolved properly ... 
 
-      ref.read(tasksDbProvider).upsertItem(task.task);
+      // TODO p4: optimize by running all futures in parallel 
+      await ref.read(tasksDbProvider).upsertItem(task.task);
 
       if (task.assignees.isNotEmpty) {
         final taskUserAssignments = task.assignees
@@ -28,7 +29,7 @@ class JoinedTaskSaveService {
                   userId: user.id,
                 ))
             .toList();
-        ref.read(taskUserAssignmentsDbProvider).upsertItems(taskUserAssignments);
+        await ref.read(taskUserAssignmentsDbProvider).upsertItems(taskUserAssignments);
       }
     
   }
