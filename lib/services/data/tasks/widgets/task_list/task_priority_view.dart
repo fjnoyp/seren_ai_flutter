@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:seren_ai_flutter/services/data/tasks/models/task_model.dart';
+import 'package:seren_ai_flutter/services/data/tasks/widgets/ui_constants.dart';
 
 class TaskPriorityView extends StatelessWidget {
   final PriorityEnum priority;
@@ -9,34 +10,17 @@ class TaskPriorityView extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
-    Color color;
-    switch (priority) {
-      case PriorityEnum.veryHigh:
-        color = Colors.red;
-        break;
-      case PriorityEnum.high:
-        color = Colors.orange;
-        break;
-      case PriorityEnum.normal:
-        color = Colors.blue;
-        break;
-      case PriorityEnum.low:
-        color = Colors.grey;
-        break;
-      case PriorityEnum.veryLow:
-        color = Colors.lightBlue;
-        break;
-    }
+    final color = getTaskPriorityColor(priority);
 
     return Container(
       decoration: BoxDecoration(
-        border: Border.all(color: color),
+        border: Border.all(color: color ?? Colors.transparent),
         borderRadius: BorderRadius.circular(4),
       ),
       padding: const EdgeInsets.all(2), // Added padding
       child: Row(
         children: [
-          Icon(Icons.flag, color: color, size: 16),
+          Icon(Icons.priority_high, color: color, size: 16),
           Text('${priority.toString().split('.').last}',
               style: theme.textTheme.labelSmall!.copyWith(color: color)),
         ],

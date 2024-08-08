@@ -29,7 +29,7 @@ class TaskDescriptionSelectionField extends ConsumerWidget {
       enabled: enabled,
       value: curTaskDescription,      
       onValueChanged3: (ref, description) => ref.read(curTaskProvider.notifier).updateTask(ref.read(curTaskProvider).task.copyWith(description: description)),
-      showSelectionUI: (BuildContext context, void Function(WidgetRef, String)? onValueChanged3) async {
+      showSelectionModal: (BuildContext context, void Function(WidgetRef, String)? onValueChanged3) async {
          showModalBottomSheet<String>(
           context: context,
           isScrollControlled: true,

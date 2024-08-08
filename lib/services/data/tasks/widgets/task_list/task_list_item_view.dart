@@ -5,7 +5,7 @@ import 'package:intl/intl.dart';
 import 'package:seren_ai_flutter/services/data/tasks/widgets/task_list/task_priority_view.dart';
 import 'package:seren_ai_flutter/constants.dart';
 import 'package:seren_ai_flutter/services/data/tasks/widgets/task_page.dart';
-
+import 'package:seren_ai_flutter/services/data/tasks/widgets/ui_constants.dart';
 class TaskListItemView extends StatelessWidget {
   final JoinedTaskModel joinedTask;
   final DateFormat listDateFormat = DateFormat('MMM dd');
@@ -20,6 +20,8 @@ class TaskListItemView extends StatelessWidget {
     final authorUser = joinedTask.authorUser;
     final team = joinedTask.team;
     final project = joinedTask.project;
+
+    final dueDateColor = getDueDateColor(task.dueDate);
 
     return GestureDetector(
       onTap: () {
@@ -74,14 +76,12 @@ class TaskListItemView extends StatelessWidget {
                     if (task.dueDate != null)
                       Row(
                         children: [
-                          Icon(Icons.calendar_today, size: 16),
+                          Icon(Icons.calendar_today, size: 16, color: dueDateColor),
                           const SizedBox(width: 4),
                           Text(
                             'Due Date: ${task.dueDate?.toIso8601String() != null ? listDateFormat.format(task.dueDate!) : 'N/A'}',
                             style: theme.textTheme.labelSmall!.copyWith(
-                              color: DateTime.now().isAfter(task.dueDate!)
-                                  ? Colors.red
-                                  : null,
+                              color: dueDateColor,
                             ),
                           ),
                         ],

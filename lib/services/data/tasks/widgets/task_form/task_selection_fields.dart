@@ -6,9 +6,10 @@ import 'package:seren_ai_flutter/services/data/tasks/cur_task_provider.dart';
 import 'package:seren_ai_flutter/services/data/tasks/cur_task_selection_options_provider.dart';
 import 'package:seren_ai_flutter/services/data/tasks/models/task_model.dart';
 import 'package:seren_ai_flutter/services/data/tasks/widgets/task_form/selection_field.dart';
+import 'package:seren_ai_flutter/services/data/tasks/widgets/ui_constants.dart';
 import 'package:seren_ai_flutter/services/data/teams/models/team_model.dart';
 
-// TODO p5: consider refactoring to extend from SelectionField directly by having injectable listen for setting the current value 
+// TODO p5: consider refactoring to extend from SelectionField directly by having injectable listen for setting the current value
 
 class TaskTeamSelectionField extends ConsumerWidget {
   const TaskTeamSelectionField({
@@ -36,8 +37,8 @@ class TaskTeamSelectionField extends ConsumerWidget {
       options: selectableTeams ?? [],
       onValueChanged3: (ref, team) {
         ref.read(curTaskProvider.notifier).updateTeam(team);
-      },      
-    );    
+      },
+    );
   }
 }
 
@@ -69,7 +70,8 @@ class TaskProjectSelectionField extends ConsumerWidget {
       options: selectableProjects ?? [],
       //onValueChanged: (project) => ref.read(curTaskProvider.notifier).updateParentProject(project),
       //onValueChanged2: () => ref.read(curTaskProvider.notifier).updateParentProject(ProjectModel(name: 'test', description: 'test', parentOrgId: 'test', parentTeamId: 'test')),
-      onValueChanged3: (ref, project) => ref.read(curTaskProvider.notifier).updateParentProject(project),
+      onValueChanged3: (ref, project) =>
+          ref.read(curTaskProvider.notifier).updateParentProject(project),
     );
   }
 }
@@ -96,8 +98,9 @@ class TaskStatusSelectionField extends ConsumerWidget {
       value: curTaskStatus,
       options: StatusEnum.values,
       //onValueChanged: updateStatus,
-      onValueChanged3: (ref, status) {        
-        ref.read(curTaskProvider.notifier).updateTask(ref.read(curTaskProvider).task.copyWith(statusEnum: status));
+      onValueChanged3: (ref, status) {
+        ref.read(curTaskProvider.notifier).updateTask(
+            ref.read(curTaskProvider).task.copyWith(statusEnum: status));
       },
     );
   }
@@ -115,11 +118,9 @@ class TaskPrioritySelectionField extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final curTaskPriority =
         ref.watch(curTaskProvider.select((state) => state.task.priorityEnum));
-    updatePriority(PriorityEnum? priority) =>
-        ref.read(curTaskProvider.notifier).updateTask(
-            ref.read(curTaskProvider).task.copyWith(priorityEnum: priority));
 
     return ModalSelectionField<PriorityEnum>(
+      defaultColor: getTaskPriorityColor(curTaskPriority ?? PriorityEnum.normal),
       labelWidget: const Icon(Icons.priority_high),
       validator: (priority) => priority == null ? 'Priority is required' : null,
       valueToString: (priority) =>
@@ -128,7 +129,8 @@ class TaskPrioritySelectionField extends ConsumerWidget {
       value: curTaskPriority,
       options: PriorityEnum.values,
       onValueChanged3: (ref, priority) {
-        ref.read(curTaskProvider.notifier).updateTask(ref.read(curTaskProvider).task.copyWith(priorityEnum: priority));
+        ref.read(curTaskProvider.notifier).updateTask(
+            ref.read(curTaskProvider).task.copyWith(priorityEnum: priority));
       },
     );
   }
