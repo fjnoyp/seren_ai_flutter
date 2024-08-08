@@ -5,10 +5,10 @@ import 'package:seren_ai_flutter/services/data/tasks/models/task_model.dart';
 
 /// Provide all tasks assigned to current user 
 final curUserViewableTasksListenerProvider =
-    NotifierProvider<CurUserAssignedTaskListenerNotifier, List<TaskModel>?>(
-        CurUserAssignedTaskListenerNotifier.new);
+    NotifierProvider<CurUserViewableTasksListenerNotifier, List<TaskModel>?>(
+        CurUserViewableTasksListenerNotifier.new);
 
-class CurUserAssignedTaskListenerNotifier extends Notifier<List<TaskModel>?> {
+class CurUserViewableTasksListenerNotifier extends Notifier<List<TaskModel>?> {
   @override
   List<TaskModel>? build() {
     

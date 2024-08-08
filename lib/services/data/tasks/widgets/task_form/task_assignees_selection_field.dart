@@ -3,6 +3,7 @@ import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:seren_ai_flutter/services/data/tasks/cur_task_provider.dart';
 import 'package:seren_ai_flutter/services/data/tasks/cur_task_selection_options_provider.dart';
+import 'package:seren_ai_flutter/services/data/tasks/models/joined_task_user_assignments_model.dart';
 import 'package:seren_ai_flutter/services/data/tasks/widgets/task_form/selection_field.dart';
 import 'package:seren_ai_flutter/services/data/users/models/user_model.dart';
 
@@ -16,32 +17,37 @@ class TaskAssigneesSelectionField extends HookConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final curTaskAssignees = ref.watch(curTaskAssigneesProvider);    
-    
+    final curTaskAssignees = ref.watch(curTaskAssigneesProvider);
+
     //updateAssignees(Set<UserModel>? assignees) => ref.read(curTaskProvider.notifier).updateAssignees(assignees);
 
     final curProject = ref.watch(curTaskProjectProvider);
 
-    return SelectionField<Set<UserModel>>(
+    return SelectionField<List<UserModel>>(
       labelWidget: const Icon(Icons.person),
       validator: (assignees) => assignees == null || assignees.isEmpty
           ? 'Assignees are required'
           : null,
-      valueToString: (assignees) => assignees?.isEmpty ?? true
+      valueToString: (assignees) => assignees?.isEmpty == null
           ? 'Choose Assignees'
-          : assignees!.map((user) => user.email).join(', '),
+          : assignees!.map((assignment) => assignment.email).join(', '),
       enabled: enabled && curProject != null,
       value: curTaskAssignees,
-      onValueChanged3: (ref, assignees) => ref.read(curTaskProvider.notifier).updateAssignees(assignees),
-      showSelectionUI: (BuildContext context, void Function(WidgetRef, Set<UserModel>)? onValueChanged3) async {
-         showModalBottomSheet<Set<UserModel>>(
+      onValueChanged3: (ref, assignees) =>
+          ref.read(curTaskProvider.notifier).updateAssignees(assignees),
+      showSelectionUI: (BuildContext context,
+          void Function(WidgetRef, List<UserModel>)? onValueChanged3) async {
+        showModalBottomSheet<List<UserModel>>(
           context: context,
           isScrollControlled: true,
           builder: (BuildContext context) {
             return TaskAssigneesSelectionModal(
-              initialSelectedUsers: curTaskAssignees ?? {},
-              onAssigneesChanged: (WidgetRef ref,Set<UserModel> newAssignees) {
-                ref.read(curTaskProvider.notifier).updateAssignees(newAssignees);
+              initialSelectedUsers: curTaskAssignees,
+              onAssigneesChanged:
+                  (WidgetRef ref, List<UserModel> newAssignees) {
+                ref
+                    .read(curTaskProvider.notifier)
+                    .updateAssignees(newAssignees);
                 Navigator.pop(context);
               },
             );
@@ -53,9 +59,8 @@ class TaskAssigneesSelectionField extends HookConsumerWidget {
 }
 
 class TaskAssigneesSelectionModal extends HookConsumerWidget {
-  final Set<UserModel> initialSelectedUsers;
-  final void Function(WidgetRef, Set<UserModel>) onAssigneesChanged;
-  
+  final List<UserModel> initialSelectedUsers;
+  final void Function(WidgetRef, List<UserModel>) onAssigneesChanged;
 
   const TaskAssigneesSelectionModal({
     super.key,
@@ -66,7 +71,8 @@ class TaskAssigneesSelectionModal extends HookConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final currentlySelectedUsers = useState(initialSelectedUsers);
-    final watchedSelectableUsers = ref.watch(curTaskSelectionOptionsProvider.select((state) => state.selectableUsers));
+    final watchedSelectableUsers = ref.watch(curTaskSelectionOptionsProvider
+        .select((state) => state.selectableUsers));
 
     final curProject = ref.watch(curTaskProjectProvider);
 
@@ -96,20 +102,23 @@ class TaskAssigneesSelectionModal extends HookConsumerWidget {
             ),
             ConstrainedBox(
               constraints: BoxConstraints(
-                maxHeight: MediaQuery.of(context).size.height * 0.5, // 50% of screen height
+                maxHeight: MediaQuery.of(context).size.height *
+                    0.5, // 50% of screen height
               ),
               child: ListView.builder(
                 itemCount: watchedSelectableUsers.length,
                 itemBuilder: (context, index) {
                   final user = watchedSelectableUsers[index];
-                  final isSelected = currentlySelectedUsers.value.contains(user);
+                  final isSelected =
+                      currentlySelectedUsers.value.contains(user);
                   return ListTile(
                     title: Text(user.email),
                     leading: Checkbox(
                       value: isSelected,
                       onChanged: (bool? value) {
                         if (value != null) {
-                          final updatedUsers = Set<UserModel>.from(currentlySelectedUsers.value);
+                          final updatedUsers = List<UserModel>.from(
+                              currentlySelectedUsers.value);
                           if (value) {
                             updatedUsers.add(user);
                           } else {
