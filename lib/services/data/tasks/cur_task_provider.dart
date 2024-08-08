@@ -54,16 +54,20 @@ class CurTaskNotifier extends Notifier<JoinedTaskModel> {
     }
   }
 
+  void updateTaskName(String name) {
+    state = state.copyWith(task: state.task.copyWith(name: name));
+  }
+
   void updateDueDate(DateTime? dueDate) {
     state = state.copyWith(task: state.task.copyWith(dueDate: dueDate));
   }
 
   void updateParentProject(ProjectModel? project) {
-    state = state.copyWith(project: project);
+    state = state.copyWith(task: state.task.copyWith(parentProjectId: project?.id), project: project);
   }
 
   void updateTeam(TeamModel? team) {
-    state = state.copyWith(team: team);
+    state = state.copyWith(task: state.task.copyWith(parentTeamId: team?.id), team: team);
   }
 }
 

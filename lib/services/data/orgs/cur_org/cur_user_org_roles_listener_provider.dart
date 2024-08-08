@@ -19,6 +19,8 @@ class CurUserOrgRolesListenerNotifier extends Notifier<List<UserOrgRoleModel>?> 
       return null;
     }
 
+    // TODO p1: auth token refresh causes this to glitch out and cause @cur_org_id_provider to be null and log out user from org ... 
+
     final db = ref.read(dbProvider);
     final query = "SELECT * FROM user_org_roles WHERE user_id = '${watchedCurAuthUser.id}'";
 

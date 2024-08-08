@@ -38,6 +38,21 @@ class BaseTableDb<T extends IHasId> {
     */
   }
 
+  Future<void> upsertItem(T item) async {
+    final existingItem = await db.execute('SELECT * FROM $tableName WHERE id = ?', [item.id]);
+    if (existingItem.isEmpty) {
+      await insertItem(item);
+    } else {
+      await updateItem(item);
+    }
+  }
+
+  Future<void> upsertItems(List<T> items) async {
+    for (final item in items) {
+      await upsertItem(item);
+    }
+  }
+
   Future<void> insertItems(List<T> items) async {
     if (items.isEmpty) return;
     
