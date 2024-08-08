@@ -22,9 +22,9 @@ class JoinedCurUserTasksListenerNotifier
     return null;
   }
 
-  // TODO: not so efficient - any task change will require a complete recalculation
+  // TODO p5: not so efficient - any task change will require a complete recalculation
   Future<void> _listen() async {
-    final watchedCurUserTasks = ref.watch(curUserAssignedTasksListenerProvider);
+    final watchedCurUserTasks = ref.watch(curUserViewableTasksListenerProvider);
 
     if(watchedCurUserTasks == null){
       return; 

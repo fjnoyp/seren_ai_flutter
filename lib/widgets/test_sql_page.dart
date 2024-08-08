@@ -14,7 +14,7 @@ final testTasksProvider = NotifierProvider<TasksNotifier, List<UserModel>>(
 
 class TasksNotifier extends Notifier<List<UserModel>> {
 
-  // We initialize the list of todos to an empty list
+  // We initialize the list of tasks to an empty list
   @override
   List<UserModel> build() {
     final user = ref.watch(curAuthUserProvider); 

@@ -8,10 +8,11 @@ import 'package:seren_ai_flutter/services/data/tasks/models/joined_task_model.da
 
 import 'package:seren_ai_flutter/services/data/tasks/models/task_model.dart';
 import 'package:seren_ai_flutter/services/data/tasks/widgets/task_list/tasks_list_view.dart';
+import 'package:seren_ai_flutter/services/data/tasks/widgets/task_page.dart';
 import 'package:seren_ai_flutter/services/data/users/users_read_provider.dart';
 
-class TasksPage extends ConsumerWidget {
-  const TasksPage({super.key});
+class TasksListPage extends ConsumerWidget {
+  const TasksListPage({super.key});
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -46,7 +47,7 @@ class TasksPage extends ConsumerWidget {
             child: SizedBox(
               width: double.infinity,
               child: FilledButton(
-                onPressed: () => HandleCreateNewTask(context),
+                onPressed: () => openTaskPage(context, mode: TaskPageMode.create),
                 child: Text('Create New Task'),
               ),
             ),
@@ -55,10 +56,5 @@ class TasksPage extends ConsumerWidget {
         ],
       ),
     );
-  }
-
-  void HandleCreateNewTask(BuildContext context) {
-    // navigate to create task page
-    Navigator.pushNamed(context, createTaskRoute);
   }
 }

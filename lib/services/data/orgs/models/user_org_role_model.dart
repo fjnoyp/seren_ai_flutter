@@ -17,7 +17,7 @@ class UserOrgRoleModel implements IHasId {
   @JsonKey(name: 'org_id')
   final String orgId;
 
-  // TODO: switch to enum
+  // TODO p3: switch to enum
   @JsonKey(name: 'org_role')
   final String orgRole;
 

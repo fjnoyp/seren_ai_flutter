@@ -9,11 +9,13 @@ import 'package:seren_ai_flutter/services/data/orgs/widgets/choose_org_page.dart
 import 'package:seren_ai_flutter/services/data/orgs/widgets/manage_org_users_page.dart';
 import 'package:seren_ai_flutter/services/data/orgs/widgets/org_guard.dart';
 import 'package:seren_ai_flutter/services/data/projects/widgets/projects_page.dart';
-import 'package:seren_ai_flutter/services/data/tasks/widgets/create_task_page.dart';
+import 'package:seren_ai_flutter/services/data/tasks/models/joined_task_model.dart';
+import 'package:seren_ai_flutter/services/data/tasks/models/task_model.dart';
+import 'package:seren_ai_flutter/services/data/tasks/widgets/task_page.dart';
 import 'package:seren_ai_flutter/services/data/teams/widgets/manage_team_users_page.dart';
 import 'package:seren_ai_flutter/widgets/home_page.dart';
 import 'package:seren_ai_flutter/widgets/main_scaffold.dart';
-import 'package:seren_ai_flutter/services/data/tasks/widgets/tasks_page.dart';
+import 'package:seren_ai_flutter/services/data/tasks/widgets/tasks_list_page.dart';
 import 'package:seren_ai_flutter/widgets/test_page.dart';
 import 'package:seren_ai_flutter/widgets/test_sql_page.dart';
 import 'package:seren_ai_flutter/widgets/theme_data.dart';
@@ -75,10 +77,16 @@ class AppState extends State<App> {
             
             projectsRoute: (context) => _buildGuardScaffold('Projects', const ProjectsPage()), 
             
-            tasksRoute: (context) => _buildGuardScaffold('Tasks', const TasksPage()),
-            createTaskRoute: (context) => _buildGuardScaffold('Create Task', const CreateTaskPage()),
-
-            
+            tasksRoute: (context) => _buildGuardScaffold('Tasks', const TasksListPage()),
+            taskPageRoute: (context) {
+              final args = ModalRoute.of(context)!.settings.arguments as Map<String, dynamic>;
+              final mode = args['mode'] as TaskPageMode;
+              final joinedTask = args['joinedTask'] as JoinedTaskModel?;
+              final title = mode == TaskPageMode.create ? 'Create Task' : 'View Task';
+              //return _buildGuardScaffold(title, TaskPage(mode: mode, initialJoinedTask: joinedTask));
+              //return _buildGuardScaffold(title, const TaskPage()); 
+              return MainScaffold(title: '', body: TaskPage()); 
+            },
             testRoute: (context) => _buildGuardScaffold('Test', const TestPage()),
             testSQLPageRoute: (context) => _buildGuardScaffold('Test SQL Page', TestSQLPage()),
           },

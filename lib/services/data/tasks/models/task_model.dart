@@ -56,18 +56,53 @@ class TaskModel implements IHasId{
     this.estimatedDurationMinutes,
   }) : id = id ?? uuid.v4();
 
-  /*
-  @override  
-  int get hashCode => id.hashCode;
-
-  @override
-  bool operator ==(Object other) {
-    if (other is TaskModel) {
-      return id == other.id;
-    }
-    return false;
+  // Factory constructor for creating a TaskModel with default values
+  factory TaskModel.defaultTask() {
+    final now = DateTime.now();
+    return TaskModel(
+      name: 'New Task',
+      description: null,
+      statusEnum: StatusEnum.open,
+      priorityEnum: null,
+      dueDate: null,
+      createdDate: now,
+      lastUpdatedDate: now,
+      authorUserId: '',  // This should be set to the current user's ID in practice
+      parentTeamId: null,
+      parentProjectId: '',  // This should be set to a valid project ID in practice
+      estimatedDurationMinutes: null,
+    );
   }
-  */
+
+  TaskModel copyWith({
+    String? id,
+    String? name,
+    String? description,
+    StatusEnum? statusEnum,
+    PriorityEnum? priorityEnum,
+    DateTime? dueDate,
+    DateTime? createdDate,
+    DateTime? lastUpdatedDate,
+    String? authorUserId,
+    String? parentTeamId,
+    String? parentProjectId,
+    int? estimatedDurationMinutes,
+  }) {
+    return TaskModel(
+      id: id ?? this.id,
+      name: name ?? this.name,
+      description: description ?? this.description,
+      statusEnum: statusEnum ?? this.statusEnum,
+      priorityEnum: priorityEnum ?? this.priorityEnum,
+      dueDate: dueDate ?? this.dueDate,
+      createdDate: createdDate ?? this.createdDate,
+      lastUpdatedDate: lastUpdatedDate ?? this.lastUpdatedDate,
+      authorUserId: authorUserId ?? this.authorUserId,
+      parentTeamId: parentTeamId ?? this.parentTeamId,
+      parentProjectId: parentProjectId ?? this.parentProjectId,
+      estimatedDurationMinutes: estimatedDurationMinutes ?? this.estimatedDurationMinutes,
+    );
+  }
 
   factory TaskModel.fromJson(Map<String, dynamic> json) => _$TaskModelFromJson(json);
   Map<String, dynamic> toJson() => _$TaskModelToJson(this);
