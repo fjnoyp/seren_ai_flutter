@@ -9,6 +9,7 @@ import 'package:seren_ai_flutter/services/data/orgs/widgets/choose_org_page.dart
 import 'package:seren_ai_flutter/services/data/orgs/widgets/manage_org_users_page.dart';
 import 'package:seren_ai_flutter/services/data/orgs/widgets/org_guard.dart';
 import 'package:seren_ai_flutter/services/data/projects/widgets/projects_page.dart';
+import 'package:seren_ai_flutter/services/data/tasks/cur_task_provider.dart';
 import 'package:seren_ai_flutter/services/data/tasks/models/joined_task_model.dart';
 import 'package:seren_ai_flutter/services/data/tasks/models/task_model.dart';
 import 'package:seren_ai_flutter/services/data/tasks/widgets/task_page.dart';
@@ -83,9 +84,8 @@ class AppState extends State<App> {
               final mode = args['mode'] as TaskPageMode;
               final joinedTask = args['joinedTask'] as JoinedTaskModel?;
               final title = mode == TaskPageMode.create ? 'Create Task' : 'View Task';
-              //return _buildGuardScaffold(title, TaskPage(mode: mode, initialJoinedTask: joinedTask));
-              //return _buildGuardScaffold(title, const TaskPage()); 
-              return MainScaffold(title: '', body: TaskPage()); 
+
+              return _buildGuardScaffold(title, TaskPage(mode: mode, initialJoinedTask: joinedTask)); 
             },
             testRoute: (context) => _buildGuardScaffold('Test', const TestPage()),
             testSQLPageRoute: (context) => _buildGuardScaffold('Test SQL Page', TestSQLPage()),
