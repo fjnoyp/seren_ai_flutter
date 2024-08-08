@@ -15,11 +15,10 @@ class JoinedTaskSaveService {
   JoinedTaskSaveService(this.ref);
   
   Future<void> saveTask(JoinedTaskModel task) async {
-    final isValidTask = ref.read(curTaskProvider.notifier).isValidTask();
 
     // TODO p1: broken task save - task name is not saved 
     // Also if project changes user assigness is not resolved properly ... 
-    if (isValidTask) {
+
       ref.read(tasksDbProvider).upsertItem(task.task);
 
       if (task.assignees.isNotEmpty) {
@@ -31,6 +30,6 @@ class JoinedTaskSaveService {
             .toList();
         ref.read(taskUserAssignmentsDbProvider).upsertItems(taskUserAssignments);
       }
-    }
+    
   }
 }

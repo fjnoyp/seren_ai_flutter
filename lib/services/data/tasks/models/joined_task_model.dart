@@ -21,6 +21,17 @@ class JoinedTaskModel{
   
   JoinedTaskModel({required this.task, required this.authorUser, required this.project, this.team, required this.assignees, required this.comments});
 
+  static JoinedTaskModel empty() {
+    return JoinedTaskModel(
+      task: TaskModel.defaultTask(),
+      authorUser: null,
+      project: null,
+      team: null,
+      assignees: [],
+      comments: [],
+    );
+  }
+
   JoinedTaskModel copyWith({
     TaskModel? task,
     UserModel? authorUser,

@@ -25,8 +25,11 @@ class BaseTableDb<T extends IHasId> {
     final columns = '(${json.keys.join(', ')})';
     final valuesPlaceholder = 'VALUES(${List.filled(json.keys.length, '?').join(', ')})';
     final values = json.values.toList();
-
-    await db.execute('INSERT INTO $tableName $columns $valuesPlaceholder', values);
+    try {
+      final result = await db.execute('INSERT INTO $tableName $columns $valuesPlaceholder', values);
+    } catch (e) {
+      throw Exception('Failed to insert item into $tableName: $e');
+    }
 
     //final values = '(${json.values.map(_sqlEscape).join(', ')})';
     
