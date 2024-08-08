@@ -14,18 +14,15 @@ final curTaskProvider =
 class CurTaskNotifier extends Notifier<JoinedTaskModel> {
   @override
   JoinedTaskModel build() {
-    return JoinedTaskModel(
-      task: TaskModel.defaultTask(),
-      authorUser: null,
-      project: null,
-      team: null,
-      assignees: [],
-      comments: [],
-    );
+    return JoinedTaskModel.empty();
   }
 
   void setNewTask(JoinedTaskModel joinedTask) {
     state = joinedTask;
+  }
+
+  void setToNewTask(UserModel authorUser) {
+    state = JoinedTaskModel.empty().copyWith(authorUser: authorUser, task: TaskModel.defaultTask().copyWith(authorUserId: authorUser.id));
   }
 
   bool isValidTask() {

@@ -55,11 +55,17 @@ class TaskPage extends HookConsumerWidget {
         if (initialJoinedTask != null) {
           ref.read(curTaskProvider.notifier).setNewTask(initialJoinedTask!);
         }
+
+        else if(mode == TaskPageMode.create) {
+          final authUser = ref.watch(curAuthUserProvider);
+          if(authUser == null) throw Exception('Error: Current user is not authenticated.');
+          ref.read(curTaskProvider.notifier).setToNewTask(authUser);
+        }
       });
       return null;
-    }, [initialJoinedTask]);
+    }, [initialJoinedTask, mode]);
 
-    print('TaskPage build');
+    
     final theme = Theme.of(context);
 
     final isEnabled = mode != TaskPageMode.readOnly;
