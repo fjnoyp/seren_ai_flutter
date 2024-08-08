@@ -36,7 +36,7 @@ class JoinedCurUserTasksListenerNotifier
     final authorUserIds =
         watchedCurUserTasks.map((task) => task.authorUserId).toSet();
     final authorUsers =
-        await ref.read(usersReadProvider).getItems(ids: authorUserIds);
+        await ref.watch(usersReadProvider).getItems(ids: authorUserIds);
 
     // Fetch teams
     final Set<String> teamIds = watchedCurUserTasks
@@ -44,18 +44,18 @@ class JoinedCurUserTasksListenerNotifier
         .where((id) => id != null)
         .map((id) => id!)
         .toSet();
-    final teams = await ref.read(teamsReadProvider).getItems(ids: teamIds);
+    final teams = await ref.watch(teamsReadProvider).getItems(ids: teamIds);
 
     // Fetch projects
     final projectIds =
         watchedCurUserTasks.map((task) => task.parentProjectId).toSet();
     final projects =
-        await ref.read(projectsReadProvider).getItems(ids: projectIds);
+        await ref.watch(projectsReadProvider).getItems(ids: projectIds);
 
     
 
     // Fetch assignments for all tasks
-    final db = ref.read(dbProvider);
+    final db = ref.watch(dbProvider);
     final assignmentsQuery = '''
     SELECT tua.task_id, u.* 
     FROM task_user_assignments tua
