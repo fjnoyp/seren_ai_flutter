@@ -35,7 +35,7 @@ class TaskAssigneesSelectionField extends HookConsumerWidget {
       value: curTaskAssignees,
       onValueChanged3: (ref, assignees) =>
           ref.read(curTaskProvider.notifier).updateAssignees(assignees),
-      showSelectionUI: (BuildContext context,
+      showSelectionModal: (BuildContext context,
           void Function(WidgetRef, List<UserModel>)? onValueChanged3) async {
         showModalBottomSheet<List<UserModel>>(
           context: context,
