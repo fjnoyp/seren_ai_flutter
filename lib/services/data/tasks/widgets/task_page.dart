@@ -1,29 +1,15 @@
-import 'dart:ui';
-
 import 'package:flutter/material.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
-import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:logging/logging.dart';
-import 'package:seren_ai_flutter/constants.dart';
 import 'package:seren_ai_flutter/services/auth/cur_auth_user_provider.dart';
-import 'package:seren_ai_flutter/services/data/projects/models/project_model.dart';
 import 'package:seren_ai_flutter/services/data/tasks/cur_task_provider.dart';
 import 'package:seren_ai_flutter/services/data/tasks/models/joined_task_model.dart';
-import 'package:seren_ai_flutter/services/data/tasks/models/task_model.dart';
-import 'package:seren_ai_flutter/services/data/tasks/models/task_user_assignments_model.dart';
-import 'package:seren_ai_flutter/services/data/tasks/task_user_assignments_db_provider.dart';
-import 'package:seren_ai_flutter/services/data/tasks/tasks_db_provider.dart';
 import 'package:seren_ai_flutter/services/data/tasks/widgets/task_form/task_assignees_selection_field.dart';
 import 'package:seren_ai_flutter/services/data/tasks/widgets/task_form/task_description_selection_field.dart';
 import 'package:seren_ai_flutter/services/data/tasks/widgets/task_form/task_due_date_selection_field.dart';
 import 'package:seren_ai_flutter/services/data/tasks/widgets/task_form/task_name_field.dart';
 import 'package:seren_ai_flutter/services/data/tasks/widgets/task_form/task_selection_fields.dart';
-import 'package:seren_ai_flutter/services/data/teams/cur_team/cur_user_team_roles_listener_provider.dart';
-import 'package:seren_ai_flutter/services/data/teams/cur_team/joined_cur_user_team_roles_listener_provider.dart';
-import 'package:seren_ai_flutter/services/data/teams/models/team_model.dart';
-import 'package:seren_ai_flutter/services/data/users/models/user_model.dart';
-import 'package:uuid/uuid.dart';
 
 /* === Thoughts on ai generation of create task === 
 1) Tasks must be assigned to specific users / projects 
@@ -48,34 +34,40 @@ enum TaskPageMode { readOnly, edit, create }
 final log = Logger('TaskPage');
 
 class TaskPage extends HookConsumerWidget {
-  //final TaskPageMode mode;
-  //final JoinedTaskModel? initialJoinedTask;
+  final TaskPageMode mode;
+  final JoinedTaskModel? initialJoinedTask;
 
   const TaskPage({
     super.key,
-    //required this.mode,
-    //this.initialJoinedTask,
+    required this.mode,
+    this.initialJoinedTask,
   });
+
+  
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    useEffect(() {
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        if (initialJoinedTask != null) {
+            ref.read(curTaskProvider.notifier).setNewTask(initialJoinedTask!);
+          }
+      });
+      return null;
+    }, [initialJoinedTask]);
+  
     print('TaskPage build');
-    final theme = Theme.of(context);
-    final formKey = GlobalKey<FormState>();
+    final theme = Theme.of(context);    
 
-    final mode = TaskPageMode.edit;
-
-    //final isEnabled = mode != TaskPageMode.readOnly;
-    final isEnabled = true;
+    final isEnabled = mode != TaskPageMode.readOnly;
 
     return SingleChildScrollView(
       child: Padding(
-        padding: const EdgeInsets.all(16.0),
-        child: Form(
-          key: formKey,
+        padding: const EdgeInsets.all(16.0),        
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
+              ElevatedButton(onPressed: () { ref.read(curTaskProvider.notifier).setNewTask(initialJoinedTask!); }, child: Text('Test')),
               TaskTeamSelectionField(enabled: isEnabled),
               TaskProjectSelectionField(enabled: isEnabled),
 
@@ -144,9 +136,8 @@ class TaskPage extends HookConsumerWidget {
                     },
                     child: Text('Edit'))
             ],
-          ),
         ),
-      ),
+      ),      
     );
   }
 }
