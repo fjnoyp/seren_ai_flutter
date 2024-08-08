@@ -113,7 +113,7 @@ class TaskPage extends HookConsumerWidget {
               SizedBox(
                 width: double.infinity,
                 child: ElevatedButton(
-                  onPressed: () {
+                  onPressed: () async {
                     final curAuthUser = ref.watch(curAuthUserProvider);
 
                     if (curAuthUser == null) {
@@ -126,8 +126,12 @@ class TaskPage extends HookConsumerWidget {
                         ref.read(curTaskProvider.notifier).isValidTask();
 
                     if (isValidTask) {
-                      final curJoinedTask = ref.read(curTaskProvider);
-                      ref.read(joinedTaskSaveProvider).saveTask(curJoinedTask);
+                      final curJoinedTask =  ref.read(curTaskProvider);
+                      await ref.read(joinedTaskSaveProvider).saveTask(curJoinedTask);
+                      
+                      if (context.mounted) {
+                        Navigator.pop(context);
+                      }
                     }
                   },
                   style: ElevatedButton.styleFrom(
