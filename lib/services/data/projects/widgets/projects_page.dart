@@ -41,7 +41,7 @@ class ProjectListTile extends StatelessWidget {
       subtitle: Text(project.description ?? 'No description'),
       trailing: const Icon(Icons.chevron_right),
       onTap: () {
-        // TODO: Navigate to project details page
+        // TODO p3: Navigate to project details page
       },
     );
   }
