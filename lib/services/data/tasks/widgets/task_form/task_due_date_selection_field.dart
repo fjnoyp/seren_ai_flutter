@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:seren_ai_flutter/services/data/tasks/cur_task_provider.dart';
 import 'package:seren_ai_flutter/services/data/tasks/widgets/task_form/selection_field.dart';
+import 'package:seren_ai_flutter/services/data/tasks/widgets/ui_constants.dart';
 
 class TaskDueDateSelectionField extends ConsumerWidget {
   final bool enabled;
@@ -14,36 +15,23 @@ class TaskDueDateSelectionField extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final curTaskDueDate = ref.watch(curTaskDueDateProvider);
+    final defaultColor = getDueDateColor(curTaskDueDate);
 
-    return Row(
-      children: [
-        const Icon(Icons.date_range),
-        const SizedBox(width: 8),
-        Expanded(
-          child: TextButton(
-            onPressed: enabled
-                ? () async {
-                    await ref
-                        .read(curTaskProvider.notifier)
-                        .pickAndUpdateDueDate(context);
-                  }
-                : null,
-            style: TextButton.styleFrom(
-              alignment: Alignment.centerLeft,
-              padding: const EdgeInsets.only(left: 10),
-            ),
-            child: Text(
-              _valueToString(curTaskDueDate),
-              maxLines: 2,
-              overflow: TextOverflow.ellipsis,
-              style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                    color: enabled ? null : Colors.grey[600],
-                    backgroundColor: enabled ? null : Colors.grey[200],
-                  ),
-            ),
-          ),
-        ),
-      ],
+    return SelectionField<DateTime>(
+      labelWidget: const Icon(Icons.date_range),
+      validator: _validator,
+      valueToString: _valueToString,
+      enabled: enabled,
+      value: curTaskDueDate,
+      defaultColor: defaultColor,
+      //options: [], // No options needed for date selection
+      showSelectionModal: (BuildContext context,
+          void Function(WidgetRef, DateTime)? onValueChanged3) async {
+        await ref.read(curTaskProvider.notifier).pickAndUpdateDueDate(context);
+      },
+      onValueChanged3: (ref, date) async {
+        //await ref.read(curTaskProvider.notifier).updateDueDate(date);
+      },
     );
   }
 
