@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:seren_ai_flutter/services/data/tasks/models/joined_task_model.dart';
 import 'package:seren_ai_flutter/services/data/tasks/models/task_model.dart';
 import 'package:intl/intl.dart';
@@ -7,14 +8,14 @@ import 'package:seren_ai_flutter/constants.dart';
 import 'package:seren_ai_flutter/services/data/tasks/widgets/task_page.dart';
 import 'package:seren_ai_flutter/services/data/tasks/widgets/ui_constants.dart';
 
-class TaskListItemView extends StatelessWidget {
+class TaskListItemView extends ConsumerWidget {
   final JoinedTaskModel joinedTask;
   final DateFormat listDateFormat = DateFormat('MMM dd');
 
   TaskListItemView({Key? key, required this.joinedTask}) : super(key: key);
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
     final theme = Theme.of(context);
 
     final task = joinedTask.task;
@@ -26,8 +27,8 @@ class TaskListItemView extends StatelessWidget {
 
     return GestureDetector(
       onTap: () {
-        openTaskPage(context,
-            mode: TaskPageMode.readOnly, joinedTask: joinedTask);
+        openTaskPage(context, ref,
+            mode: TaskPageMode.readOnly, initialJoinedTask: joinedTask);
       },
       child: Card(
         color: theme.cardColor,
