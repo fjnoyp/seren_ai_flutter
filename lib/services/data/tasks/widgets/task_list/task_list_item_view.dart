@@ -6,6 +6,7 @@ import 'package:seren_ai_flutter/services/data/tasks/widgets/task_list/task_prio
 import 'package:seren_ai_flutter/constants.dart';
 import 'package:seren_ai_flutter/services/data/tasks/widgets/task_page.dart';
 import 'package:seren_ai_flutter/services/data/tasks/widgets/ui_constants.dart';
+
 class TaskListItemView extends StatelessWidget {
   final JoinedTaskModel joinedTask;
   final DateFormat listDateFormat = DateFormat('MMM dd');
@@ -25,7 +26,8 @@ class TaskListItemView extends StatelessWidget {
 
     return GestureDetector(
       onTap: () {
-        openTaskPage(context, mode: TaskPageMode.readOnly, joinedTask: joinedTask);
+        openTaskPage(context,
+            mode: TaskPageMode.readOnly, joinedTask: joinedTask);
       },
       child: Card(
         color: theme.cardColor,
@@ -45,6 +47,7 @@ class TaskListItemView extends StatelessWidget {
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
+                  // TASK NAME
                   Flexible(
                     child: Text(
                       task.name,
@@ -52,6 +55,7 @@ class TaskListItemView extends StatelessWidget {
                       overflow: TextOverflow.ellipsis,
                     ),
                   ),
+                  // PROJECT NAME
                   Text(
                     '${project?.name}',
                     style: theme.textTheme.labelSmall?.copyWith(
@@ -76,7 +80,8 @@ class TaskListItemView extends StatelessWidget {
                     if (task.dueDate != null)
                       Row(
                         children: [
-                          Icon(Icons.calendar_today, size: 16, color: dueDateColor),
+                          Icon(Icons.calendar_today,
+                              size: 16, color: dueDateColor),
                           const SizedBox(width: 4),
                           Text(
                             'Due Date: ${task.dueDate?.toIso8601String() != null ? listDateFormat.format(task.dueDate!) : 'N/A'}',
