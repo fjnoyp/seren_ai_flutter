@@ -40,32 +40,16 @@ final log = Logger('TaskPage');
 
 class TaskPage extends HookConsumerWidget {
   final TaskPageMode mode;
-  final JoinedTaskModel? initialJoinedTask;
+  //final JoinedTaskModel? initialJoinedTask;
 
   const TaskPage({
     super.key,
     required this.mode,
-    this.initialJoinedTask,
+    //this.initialJoinedTask,
   });
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    useEffect(() {
-      WidgetsBinding.instance.addPostFrameCallback((_) {
-        if (initialJoinedTask != null) {
-          ref.read(curTaskProvider.notifier).setNewTask(initialJoinedTask!);
-        }
-
-        else if(mode == TaskPageMode.create) {
-          final authUser = ref.watch(curAuthUserProvider);
-          if(authUser == null) throw Exception('Error: Current user is not authenticated.');
-          ref.read(curTaskProvider.notifier).setToNewTask(authUser);
-        }
-      });
-      return null;
-    }, [initialJoinedTask, mode]);
-
-    
     final theme = Theme.of(context);
 
     final isEnabled = mode != TaskPageMode.readOnly;
@@ -126,9 +110,11 @@ class TaskPage extends HookConsumerWidget {
                         ref.read(curTaskProvider.notifier).isValidTask();
 
                     if (isValidTask) {
-                      final curJoinedTask =  ref.read(curTaskProvider);
-                      await ref.read(joinedTaskSaveProvider).saveTask(curJoinedTask);
-                      
+                      final curJoinedTask = ref.read(curTaskProvider);
+                      await ref
+                          .read(joinedTaskSaveProvider)
+                          .saveTask(curJoinedTask);
+
                       if (context.mounted) {
                         Navigator.pop(context);
                       }
@@ -149,8 +135,7 @@ class TaskPage extends HookConsumerWidget {
                   onPressed: () {
                     // remove self from stack
                     Navigator.pop(context);
-                    openTaskPage(context,
-                        mode: TaskPageMode.edit, joinedTask: initialJoinedTask);
+                    openTaskPage(context, ref, mode: TaskPageMode.edit);
                   },
                   child: Text('Edit'))
           ],
@@ -158,4 +143,42 @@ class TaskPage extends HookConsumerWidget {
       ),
     );
   }
+}
+
+// TODO p3: figure out how to remove code duplication due to WidgetRef vs Ref 
+Future<void> openBlankTaskPage(BuildContext context, Ref ref) async {
+  Navigator.popUntil(context, (route) => route.settings.name != taskPageRoute);
+
+  final authUser = ref.watch(curAuthUserProvider);
+  if (authUser == null){
+    throw Exception('Error: Current user is not authenticated.');
+  }
+  ref.read(curTaskProvider.notifier).setToNewTask(authUser);
+
+  await Navigator.pushNamed(context, taskPageRoute,
+      arguments: {'mode': TaskPageMode.create});
+}
+
+Future<void> openTaskPage(BuildContext context, WidgetRef ref,
+    {required TaskPageMode mode, JoinedTaskModel? initialJoinedTask}) async {
+  // Remove previous TaskPage to avoid duplicate task pages
+  Navigator.popUntil(context, (route) => route.settings.name != taskPageRoute);
+
+  // CREATE - wipe existing task state
+  if (mode == TaskPageMode.create) {
+    final authUser = ref.watch(curAuthUserProvider);
+    if (authUser == null) {
+      throw Exception('Error: Current user is not authenticated.');
+    }
+    ref.read(curTaskProvider.notifier).setToNewTask(authUser);
+  }
+  // EDIT/READ - optionally load provided initial task
+  else if (mode == TaskPageMode.edit || mode == TaskPageMode.readOnly) {
+    if (initialJoinedTask != null) {
+      ref.read(curTaskProvider.notifier).setNewTask(initialJoinedTask);
+    }
+  }
+
+  await Navigator.pushNamed(context, taskPageRoute,
+      arguments: {'mode': mode, 'joinedTask': initialJoinedTask});
 }

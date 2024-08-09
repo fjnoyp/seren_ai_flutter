@@ -1,4 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+
+import 'package:seren_ai_flutter/services/ai_orchestrator_provider.dart';
 import 'drawer_view.dart';
 
 class MainScaffold extends StatelessWidget {
@@ -31,6 +34,7 @@ class MainScaffold extends StatelessWidget {
                     Scaffold.of(context).openDrawer();
                   },
                 ),
+                // TODO p2: user can pop out to nothing on the starting page ... back button is in a weird location. we should only conditionally show back button 
                 if (Navigator.of(context).canPop())
                   IconButton(
                     icon: Icon(Icons.arrow_back, color: theme.iconTheme.color),
@@ -63,7 +67,17 @@ class MainScaffold extends StatelessWidget {
         padding: const EdgeInsets.all(0),
         child: body,
       ),
-      floatingActionButton: floatingActionButton,
+      //floatingActionButton: floatingActionButton,
+      floatingActionButton: Consumer(
+        builder: (context, ref, child) {
+          return FloatingActionButton(
+            onPressed: () {
+              ref.read(aiOrchestratorProvider).testMove(context);              
+            },       
+            child: Icon(Icons.pets)        
+          );
+        },
+      ),
     );
   }
 }
