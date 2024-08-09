@@ -47,7 +47,7 @@ class TasksListPage extends ConsumerWidget {
             child: SizedBox(
               width: double.infinity,
               child: FilledButton(
-                onPressed: () => openTaskPage(context, mode: TaskPageMode.create),
+                onPressed: () => openTaskPage(context, ref, mode: TaskPageMode.create),
                 child: Text('Create New Task'),
               ),
             ),

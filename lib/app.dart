@@ -62,7 +62,7 @@ class AppState extends State<App> {
 
       final themeMode = ref.watch(themeSNP);
 
-      return MaterialApp(
+      return MaterialApp(        
           theme: lightTheme,
           darkTheme: darkTheme,
           themeMode: themeMode,
@@ -85,11 +85,11 @@ class AppState extends State<App> {
               final joinedTask = args['joinedTask'] as JoinedTaskModel?;
               final title = mode == TaskPageMode.create ? 'Create Task' : 'View Task';
 
-              return _buildGuardScaffold(title, TaskPage(mode: mode, initialJoinedTask: joinedTask)); 
+              return _buildGuardScaffold(title, TaskPage(mode: mode)); 
             },
             testRoute: (context) => _buildGuardScaffold('Test', const TestPage()),
             testSQLPageRoute: (context) => _buildGuardScaffold('Test SQL Page', TestSQLPage()),
-          },
+          },          
           // For dynamically generating routes based on settings param 
           onGenerateRoute: (settings) {
             /*
