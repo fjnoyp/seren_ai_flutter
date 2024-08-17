@@ -23,7 +23,7 @@ class TaskAssigneesSelectionField extends HookConsumerWidget {
 
     final curProject = ref.watch(curTaskProjectProvider);
 
-    return SelectionField<List<UserModel>>(
+    return AnimatedSelectionField<List<UserModel>>(
       labelWidget: const Icon(Icons.person),
       validator: (assignees) => assignees == null || assignees.isEmpty
           ? 'Assignees are required'

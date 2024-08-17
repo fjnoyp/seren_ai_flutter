@@ -3,6 +3,7 @@ import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:seren_ai_flutter/services/ai_orchestrator_provider.dart';
 import 'package:seren_ai_flutter/services/data/tasks/cur_task_provider.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
+import 'package:seren_ai_flutter/services/data/tasks/widgets/task_form/color_animation.dart';
 
 class TaskNameField extends HookConsumerWidget {
   const TaskNameField({
@@ -19,39 +20,12 @@ class TaskNameField extends HookConsumerWidget {
     final nameController = useTextEditingController(text: curTaskName);
     final focusNode = useFocusNode();
 
-    print('TaskNameField build');
-    print('    curTaskName: $curTaskName');
-
-    /*
-  final animationController =
-        useAnimationController(duration: Duration(seconds: 1));
-    final animation = CurvedAnimation(
-      parent: animationController,
-      curve: Curves.easeInOutCubic,
-    );
-    final colorTween =
-        ColorTween(begin: Colors.black, end: Colors.yellow).animate(animation);
-        */
-
-    final colorAnimation = useColorAnimation(
+    final colorAnimation = useAiActionColorAnimation(
+      context,
+      ref,
       duration: Duration(seconds: 1),
-      begin: Colors.black,
-      end: Colors.yellow,
+      triggerValue: curTaskName,
     );
-
-    // Must manually update the controller's text when the task name changes
-    useEffect(() {
-      final isAiEditing = ref.read(isAiEditingProvider);
-
-      if (!isAiEditing) return;
-      nameController.text = curTaskName;
-
-      // Trigger the animation
-      colorAnimation.controller
-          .forward()
-          .then((_) => colorAnimation.controller.reverse());
-      return null;
-    }, [curTaskName]);
 
     // HACK to get textController to sync with curTaskProvider
     // The onSubmitted event is never called
@@ -98,24 +72,3 @@ class TaskNameField extends HookConsumerWidget {
   }
 }
 
-class ColorAnimation {
-  final Animation<Color?> colorTween;
-  final AnimationController controller;
-
-  ColorAnimation(this.colorTween, this.controller);
-}
-
-ColorAnimation useColorAnimation({
-  required Duration duration,
-  required Color begin,
-  required Color end,
-}) {
-  final animationController = useAnimationController(duration: duration);
-  final animation = CurvedAnimation(
-    parent: animationController,
-    curve: Curves.easeInOutCubic,
-  );
-  final colorTween = ColorTween(begin: begin, end: end).animate(animation);
-
-  return ColorAnimation(colorTween, animationController);
-}

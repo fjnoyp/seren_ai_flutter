@@ -20,7 +20,7 @@ class TaskDescriptionSelectionField extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final curTaskDescription = ref.watch(curTaskProvider.select((state) => state.task.description));
 
-    return SelectionField<String>(
+    return AnimatedSelectionField<String>(
       labelWidget: const Icon(Icons.description),
       validator: (description) => description == null || description.isEmpty
           ? 'Description is required'
