@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:seren_ai_flutter/services/data/tasks/cur_task_provider.dart';
+import 'package:seren_ai_flutter/services/data/tasks/widgets/task_form/color_animation.dart';
 import 'package:seren_ai_flutter/services/data/tasks/widgets/task_form/selection_field.dart';
 import 'package:seren_ai_flutter/services/data/tasks/widgets/ui_constants.dart';
 
@@ -15,15 +16,18 @@ class TaskDueDateSelectionField extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final curTaskDueDate = ref.watch(curTaskDueDateProvider);
-    final defaultColor = getDueDateColor(curTaskDueDate);
 
-    return SelectionField<DateTime>(
+    // TODO p4: color ignored due to animation 
+    //final defaultColor = getDueDateColor(curTaskDueDate);
+
+    return 
+    AnimatedSelectionField<DateTime>(
       labelWidget: const Icon(Icons.date_range),
       validator: _validator,
       valueToString: _valueToString,
       enabled: enabled,
       value: curTaskDueDate,
-      defaultColor: defaultColor,
+      //defaultColor: defaultColor,
       //options: [], // No options needed for date selection
       showSelectionModal: (BuildContext context,
           void Function(WidgetRef, DateTime)? onValueChanged3) async {

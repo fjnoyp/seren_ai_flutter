@@ -66,6 +66,10 @@ class CurTaskNotifier extends Notifier<JoinedTaskModel> {
   void updateTeam(TeamModel? team) {
     state = state.copyWith(task: state.task.copyWith(parentTeamId: team?.id), team: team);
   }
+
+  void updateAllFields(JoinedTaskModel joinedTask) {
+    state = joinedTask;
+  }
 }
 
 // Providers for individual fields
