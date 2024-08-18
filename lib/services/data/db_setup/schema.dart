@@ -90,8 +90,28 @@ const tasksSchemas = [
     Column.text('user_id'),
   ]),
 ];
+const aiChatThreadsTable = 'ai_chat_threads';
+const aiChatMessagesTable = 'ai_chat_messages';
+
+const aiChatSchemas = [
+  Table(aiChatThreadsTable, [
+    Column.text('id'),
+    Column.text('author_user_id'),
+    Column.text('name'),
+    Column.text('created_at'),
+    Column.text('summary'),
+  ]),
+  Table(aiChatMessagesTable, [
+    Column.text('id'),
+    Column.text('type'),
+    Column.text('created_at'),
+    Column.text('content'),
+    Column.text('parent_chat_thread_id'),
+  ]),
+];
 
 Schema schema = const Schema([
-...permissionSchemas,
-...tasksSchemas,
+  ...permissionSchemas,
+  ...tasksSchemas,
+  ...aiChatSchemas,
 ]);

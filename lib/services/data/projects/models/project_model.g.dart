@@ -7,7 +7,7 @@ part of 'project_model.dart';
 // **************************************************************************
 
 ProjectModel _$ProjectModelFromJson(Map<String, dynamic> json) => ProjectModel(
-      id: json['id'] as String,
+      id: json['id'] as String?,
       name: json['name'] as String,
       description: json['description'] as String?,
       parentOrgId: json['parent_org_id'] as String,

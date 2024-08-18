@@ -6,14 +6,15 @@ part of 'task_user_assignments_model.dart';
 // JsonSerializableGenerator
 // **************************************************************************
 
-TaskUserAssignmentsModel _$TaskUserAssignmentsFromJson(Map<String, dynamic> json) =>
+TaskUserAssignmentsModel _$TaskUserAssignmentsModelFromJson(
+        Map<String, dynamic> json) =>
     TaskUserAssignmentsModel(
-      id: json['id'] as String,
+      id: json['id'] as String?,
       taskId: json['task_id'] as String,
       userId: json['user_id'] as String,
     );
 
-Map<String, dynamic> _$TaskUserAssignmentsToJson(
+Map<String, dynamic> _$TaskUserAssignmentsModelToJson(
         TaskUserAssignmentsModel instance) =>
     <String, dynamic>{
       'id': instance.id,

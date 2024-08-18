@@ -8,7 +8,7 @@ part of 'user_team_role_model.dart';
 
 UserTeamRoleModel _$UserTeamRoleModelFromJson(Map<String, dynamic> json) =>
     UserTeamRoleModel(
-      id: json['id'] as String,
+      id: json['id'] as String?,
       userId: json['user_id'] as String,
       teamId: json['team_id'] as String,
       teamRole: json['team_role'] as String,

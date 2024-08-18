@@ -8,7 +8,7 @@ part of 'task_comments_model.dart';
 
 TaskCommentsModel _$TaskCommentsModelFromJson(Map<String, dynamic> json) =>
     TaskCommentsModel(
-      id: json['id'] as String,
+      id: json['id'] as String?,
       authorUserId: json['author_user_id'] as String,
       parentTaskId: json['parent_task_id'] as String,
       createdDate: DateTime.parse(json['created_date'] as String),
