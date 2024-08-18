@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import 'package:seren_ai_flutter/services/ai_orchestrator_provider.dart';
+import 'package:seren_ai_flutter/services/speech_to_text/widgets/speech_state_control_button_widget.dart';
+import 'package:seren_ai_flutter/services/speech_to_text/widgets/speech_transcribed_widget.dart';
 import 'drawer_view.dart';
 
 class MainScaffold extends StatelessWidget {
@@ -77,6 +79,18 @@ class MainScaffold extends StatelessWidget {
             child: Icon(Icons.pets)        
           );
         },
+      ),
+      bottomSheet: 
+      ConstrainedBox(
+        constraints: BoxConstraints(
+          maxHeight: 150,
+        ),
+        child: Column(
+          children: [
+            SpeechStateControlButtonWidget(),
+            SpeechTranscribedWidget(),
+          ],
+        ),
       ),
     );
   }
