@@ -10,6 +10,7 @@ import 'package:seren_ai_flutter/services/data/tasks/models/task_model.dart';
 import 'package:seren_ai_flutter/services/data/tasks/widgets/task_page.dart';
 import 'package:seren_ai_flutter/services/data/teams/models/team_model.dart';
 import 'package:seren_ai_flutter/services/data/users/models/user_model.dart';
+import 'package:supabase_flutter/supabase_flutter.dart';
 
 final isAiEditingProvider = StateProvider<bool>((ref) => false);
 
@@ -22,6 +23,20 @@ class AiOrchestrator {
   AiOrchestrator(this.ref);
 
   Future<void> testMove(BuildContext context) async {
+
+    // TEST calling Supabase Edge Function 
+    final supabase = Supabase.instance.client;
+    final res = await supabase.functions.invoke('chat', body: {'input': 'Your input message here'});
+
+    if (res.status != 200) {
+      print('Error: ${res.status}');
+    } else {
+      print('Response: ${res.data}');
+    }
+
+    
+
+
 
     ref.read(isAiEditingProvider.notifier).state = true;
 
