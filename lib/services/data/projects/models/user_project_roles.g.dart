@@ -8,7 +8,7 @@ part of 'user_project_roles.dart';
 
 UserProjectRoles _$UserProjectRolesFromJson(Map<String, dynamic> json) =>
     UserProjectRoles(
-      id: json['id'] as String,
+      id: json['id'] as String?,
       userId: json['userId'] as String,
       projectId: json['projectId'] as String,
       projectRole: json['projectRole'] as String,

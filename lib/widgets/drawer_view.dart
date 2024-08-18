@@ -141,7 +141,7 @@ class DrawerView extends HookWidget {
                 onTap: () {
                   Navigator.pushNamed(context, manageOrgUsersRoute);
                 }),
-                  _buildListTile(
+            _buildListTile(
               context: context,
               icon: Icons.folder,
               title: 'Projects',
@@ -163,6 +163,14 @@ class DrawerView extends HookWidget {
               title: 'Test SQL',
               onTap: () {
                 Navigator.pushNamed(context, testSQLPageRoute);
+              },
+            ),
+            _buildListTile(
+              context: context,
+              icon: Icons.chat,
+              title: 'AI Chat Threads',
+              onTap: () {
+                Navigator.pushNamed(context, aiChatThreadsRoute);
               },
             ),
             _buildListTile(

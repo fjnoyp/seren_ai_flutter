@@ -80,16 +80,92 @@ class MainScaffold extends StatelessWidget {
           );
         },
       ),
-      bottomSheet: 
-      ConstrainedBox(
+      // bottomSheet
+      bottomNavigationBar: Consumer(
+        builder: (context, ref, child) {
+          final isTextFieldVisible = ref.watch(textFieldVisibilityProvider);
+          return AnimatedContainer(
+            duration: const Duration(milliseconds: 300),
+            height: isTextFieldVisible ? 200 : 150,
+            decoration: BoxDecoration(
+              color: Colors.white.withOpacity(0.9),
+              border: Border.all(color: Colors.grey),
+            ),
+            child: Column(
+              children: [
+                if (isTextFieldVisible)
+                  const Padding(
+                    padding: EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                    child: VisibleTextFieldWidget(),
+                  ),
+                Expanded(
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      const Spacer(flex: 1),
+                      const Expanded(
+                        flex: 1,
+                        child: SpeechStateControlButtonWidget(),
+                      ),
+                      Expanded(
+                        flex: 1,
+                        child: IconButton(
+                          icon: Icon(
+                              isTextFieldVisible ? Icons.cancel : Icons.create),
+                          onPressed: () {
+                            ref.read(textFieldVisibilityProvider.notifier).state =
+                                !isTextFieldVisible;
+                          },
+                        ),
+                      ),
+                      // TODO p1: readd - SpeechTranscribedWidget(),
+                    ],
+                  ),
+                ),
+              ],
+            ),
+          );
+        },
+      ),
+    );
+  }
+}
+
+final textFieldVisibilityProvider = StateProvider<bool>((ref) => false);
+
+final TextEditingController textEditingController = TextEditingController();
+
+
+class VisibleTextFieldWidget extends ConsumerWidget {
+  const VisibleTextFieldWidget({Key? key}) : super(key: key);
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final isTextFieldVisible = ref.watch(textFieldVisibilityProvider);
+    return Visibility(
+      visible: isTextFieldVisible,
+      child: ConstrainedBox(
         constraints: BoxConstraints(
-          maxHeight: 150,
+          maxHeight: 100,
         ),
-        child: Column(
-          children: [
-            SpeechStateControlButtonWidget(),
-            SpeechTranscribedWidget(),
-          ],
+        child: SingleChildScrollView(
+          child: TextField(
+            controller: textEditingController,
+            maxLines: null,
+            decoration: const InputDecoration(
+              hintText: 'Enter something',
+              border: OutlineInputBorder(),
+            ),
+            onSubmitted: (String value) {
+              // Hide the TextField after input is submitted
+              ref.read(textFieldVisibilityProvider.notifier).state = false;
+
+              // Submit
+              //ref.read(langchainNotifierProvider.notifier).askConversation(textEditingController.text);
+
+              textEditingController.clear();
+            },
+          ),
         ),
       ),
     );

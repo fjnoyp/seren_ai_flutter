@@ -38,6 +38,7 @@ enum TaskPageMode { readOnly, edit, create }
 
 final log = Logger('TaskPage');
 
+/// For creating / editing a task 
 class TaskPage extends HookConsumerWidget {
   final TaskPageMode mode;
   //final JoinedTaskModel? initialJoinedTask;
@@ -180,5 +181,5 @@ Future<void> openTaskPage(BuildContext context, WidgetRef ref,
   }
 
   await Navigator.pushNamed(context, taskPageRoute,
-      arguments: {'mode': mode, 'joinedTask': initialJoinedTask});
+      arguments: {'mode': mode});
 }

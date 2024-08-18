@@ -7,7 +7,7 @@ part of 'org_model.dart';
 // **************************************************************************
 
 OrgModel _$OrgModelFromJson(Map<String, dynamic> json) => OrgModel(
-      id: json['id'] as String,
+      id: json['id'] as String?,
       name: json['name'] as String,
       address: json['address'] as String?,
     );

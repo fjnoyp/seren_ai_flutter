@@ -21,6 +21,6 @@ class TaskUserAssignmentsModel implements IHasId {
     required this.userId,
   }) : id = id ?? uuid.v4();
 
-  factory TaskUserAssignmentsModel.fromJson(Map<String, dynamic> json) => _$TaskUserAssignmentsFromJson(json);
-  Map<String, dynamic> toJson() => _$TaskUserAssignmentsToJson(this);
+  factory TaskUserAssignmentsModel.fromJson(Map<String, dynamic> json) => _$TaskUserAssignmentsModelFromJson(json);
+  Map<String, dynamic> toJson() => _$TaskUserAssignmentsModelToJson(this);
 }
