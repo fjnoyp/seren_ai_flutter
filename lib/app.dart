@@ -5,6 +5,8 @@ import 'package:logging/logging.dart';
 import 'package:seren_ai_flutter/constants.dart';
 import 'package:seren_ai_flutter/services/auth/widgets/auth_guard.dart';
 import 'package:seren_ai_flutter/services/auth/widgets/sign_in_up_page.dart';
+import 'package:seren_ai_flutter/services/data/ai_chats/widgets/ai_chat_thread_messages_page.dart';
+import 'package:seren_ai_flutter/services/data/ai_chats/widgets/ai_chat_threads_page.dart';
 import 'package:seren_ai_flutter/services/data/orgs/widgets/choose_org_page.dart';
 import 'package:seren_ai_flutter/services/data/orgs/widgets/manage_org_users_page.dart';
 import 'package:seren_ai_flutter/services/data/orgs/widgets/org_guard.dart';
@@ -14,6 +16,7 @@ import 'package:seren_ai_flutter/services/data/tasks/models/joined_task_model.da
 import 'package:seren_ai_flutter/services/data/tasks/models/task_model.dart';
 import 'package:seren_ai_flutter/services/data/tasks/widgets/task_page.dart';
 import 'package:seren_ai_flutter/services/data/teams/widgets/manage_team_users_page.dart';
+import 'package:seren_ai_flutter/services/speech_to_text/stt_orchestrator_provider.dart.dart';
 import 'package:seren_ai_flutter/widgets/home_page.dart';
 import 'package:seren_ai_flutter/widgets/main_scaffold.dart';
 import 'package:seren_ai_flutter/services/data/tasks/widgets/tasks_list_page.dart';
@@ -55,7 +58,7 @@ class AppState extends State<App> {
   Widget build(BuildContext context) {
     return Consumer(builder: (context, ref, child) {
       // Initiate the orchestrator
-      //ref.read(sttToLangchainOrchestrator);
+      ref.read(sttOrchestratorProvider);
 
       //final firstUserValue = ref.read(curAuthUserProvider);
       final initialRoute = Supabase.instance.client.auth.currentUser == null ? signInUpRoute : tasksRoute;
@@ -80,12 +83,20 @@ class AppState extends State<App> {
             
             tasksRoute: (context) => _buildGuardScaffold('Tasks', const TasksListPage()),
             taskPageRoute: (context) {
+              // TODO p3: add taskId to args
+              // Cannot use implicits or else dynamic routes will not work 
               final args = ModalRoute.of(context)!.settings.arguments as Map<String, dynamic>;
-              final mode = args['mode'] as TaskPageMode;
-              final joinedTask = args['joinedTask'] as JoinedTaskModel?;
+              final mode = args['mode'] as TaskPageMode;              
               final title = mode == TaskPageMode.create ? 'Create Task' : 'View Task';
 
               return _buildGuardScaffold(title, TaskPage(mode: mode)); 
+            },
+
+            aiChatThreadsRoute: (context) => _buildGuardScaffold('AI Chat Threads', const AiChatThreadsPage()),
+            aiChatThreadMessagesRoute: (context) {
+              final args = ModalRoute.of(context)!.settings.arguments as Map<String, dynamic>;
+              final threadId = args['threadId'] as String;
+              return _buildGuardScaffold('AI Chat Messages', AiChatThreadMessagesPage(threadId: threadId));
             },
             testRoute: (context) => _buildGuardScaffold('Test', const TestPage()),
             testSQLPageRoute: (context) => _buildGuardScaffold('Test SQL Page', TestSQLPage()),

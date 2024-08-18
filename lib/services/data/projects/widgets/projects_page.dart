@@ -10,11 +10,7 @@ class ProjectsPage extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final projects = ref.watch(curUserProjectsListenerProvider);
 
-    return Scaffold(
-      appBar: AppBar(
-        title: const Text('Projects'),
-      ),
-      body: projects == null
+    return projects == null
           ? const Center(child: CircularProgressIndicator())
           : projects.isEmpty
               ? const Center(child: Text('No projects found'))
@@ -24,8 +20,7 @@ class ProjectsPage extends ConsumerWidget {
                     final project = projects[index];
                     return ProjectListTile(project: project);
                   },
-                ),
-    );
+                );
   }
 }
 
