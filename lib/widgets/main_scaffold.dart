@@ -65,39 +65,36 @@ class MainScaffold extends StatelessWidget {
         ],
       ),
       drawer: const DrawerView(),
-      body: Padding(
-        padding: const EdgeInsets.all(0),
-        child: body,
+      body: Stack(
+        children: [
+          Padding(
+            padding: const EdgeInsets.all(0),
+            child: body,
+          ),
+          const UserInputTextDisplayWidget(),
+        ],
       ),
-      //floatingActionButton: floatingActionButton,
       floatingActionButton: Consumer(
         builder: (context, ref, child) {
           return FloatingActionButton(
             onPressed: () {
-              ref.read(aiOrchestratorProvider).testMove(context);              
-            },       
-            child: Icon(Icons.pets)        
+              ref.read(aiOrchestratorProvider).testMove(context);
+            },
+            child: Icon(Icons.pets),
           );
         },
       ),
-      // bottomSheet
       bottomNavigationBar: Consumer(
         builder: (context, ref, child) {
           final isTextFieldVisible = ref.watch(textFieldVisibilityProvider);
-          return AnimatedContainer(
-            duration: const Duration(milliseconds: 300),
-            height: isTextFieldVisible ? 200 : 150,
+          return Container(
+            height: 150,
             decoration: BoxDecoration(
               color: Colors.white.withOpacity(0.9),
               border: Border.all(color: Colors.grey),
             ),
             child: Column(
               children: [
-                if (isTextFieldVisible)
-                  const Padding(
-                    padding: EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-                    child: VisibleTextFieldWidget(),
-                  ),
                 Expanded(
                   child: Row(
                     mainAxisAlignment: MainAxisAlignment.center,
@@ -110,11 +107,9 @@ class MainScaffold extends StatelessWidget {
                       Expanded(
                         flex: 1,
                         child: IconButton(
-                          icon: Icon(
-                              isTextFieldVisible ? Icons.cancel : Icons.create),
+                          icon: Icon(isTextFieldVisible ? Icons.cancel : Icons.create),
                           onPressed: () {
-                            ref.read(textFieldVisibilityProvider.notifier).state =
-                                !isTextFieldVisible;
+                            ref.read(textFieldVisibilityProvider.notifier).state = !isTextFieldVisible;
                           },
                         ),
                       ),
@@ -132,42 +127,67 @@ class MainScaffold extends StatelessWidget {
 }
 
 final textFieldVisibilityProvider = StateProvider<bool>((ref) => false);
-
 final TextEditingController textEditingController = TextEditingController();
 
 
-class VisibleTextFieldWidget extends ConsumerWidget {
-  const VisibleTextFieldWidget({Key? key}) : super(key: key);
+
+class UserInputTextDisplayWidget extends ConsumerWidget {
+  const UserInputTextDisplayWidget({Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final isTextFieldVisible = ref.watch(textFieldVisibilityProvider);
+    final viewInsets = MediaQuery.of(context).viewInsets;
+
     return Visibility(
       visible: isTextFieldVisible,
-      child: ConstrainedBox(
-        constraints: BoxConstraints(
-          maxHeight: 100,
-        ),
-        child: SingleChildScrollView(
-          child: TextField(
-            controller: textEditingController,
-            maxLines: null,
-            decoration: const InputDecoration(
-              hintText: 'Enter something',
-              border: OutlineInputBorder(),
-            ),
-            onSubmitted: (String value) {
-              // Hide the TextField after input is submitted
-              ref.read(textFieldVisibilityProvider.notifier).state = false;
-
-              // Submit
-              //ref.read(langchainNotifierProvider.notifier).askConversation(textEditingController.text);
-
-              textEditingController.clear();
-            },
+      child: Positioned(
+        bottom: viewInsets.bottom,
+        left: 0,
+        right: 0,
+        child: Container(
+          color: Colors.white,
+          padding: EdgeInsets.all(16),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+               Row(
+                mainAxisAlignment: MainAxisAlignment.end,
+                children: [
+                  IconButton(
+                    icon: Icon(Icons.check_box_outlined, size: 20),
+                    onPressed: () {
+                      ref.read(textFieldVisibilityProvider.notifier).state = false;
+                      ref.read(aiOrchestratorProvider).testChatMessage(message: textEditingController.text);
+                      textEditingController.clear();
+                    },
+                    color: Colors.green,
+                  ),
+                  IconButton(
+                    icon: Icon(Icons.close_outlined, size: 20),
+                    onPressed: () {
+                      ref.read(textFieldVisibilityProvider.notifier).state = false;
+                      textEditingController.clear();
+                    },
+                    color: Colors.red,
+                  ),
+                  
+                ],
+              ),
+              TextField(
+                controller: textEditingController,
+                maxLines: null,
+                decoration: const InputDecoration(
+                  hintText: 'Enter something',
+                  border: OutlineInputBorder(),
+                ),
+              ),              
+             
+            ],
           ),
         ),
       ),
     );
   }
 }
+

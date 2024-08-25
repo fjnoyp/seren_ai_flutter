@@ -3,6 +3,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:seren_ai_flutter/constants.dart';
+import 'package:seren_ai_flutter/services/auth/cur_auth_user_provider.dart';
+import 'package:seren_ai_flutter/services/data/ai_chats/ai_chat_messages_db_provider.dart';
+import 'package:seren_ai_flutter/services/data/ai_chats/cur_chat_thread_provider.dart';
+import 'package:seren_ai_flutter/services/data/ai_chats/models/ai_chat_message_model.dart';
 import 'package:seren_ai_flutter/services/data/projects/models/project_model.dart';
 import 'package:seren_ai_flutter/services/data/tasks/cur_task_provider.dart';
 import 'package:seren_ai_flutter/services/data/tasks/models/joined_task_model.dart';
@@ -22,10 +26,72 @@ class AiOrchestrator {
 
   AiOrchestrator(this.ref);
 
+  Future<void> testChatMessage({required String message}) async {
+
+    final curChatThread = ref.watch(curChatThreadProvider);
+
+    if (curChatThread == null) {
+      print('No chat thread found');
+      return;
+    }
+
+    final threadId = curChatThread.id;
+
+   // create a chat message in the threadId
+   final chatMessage = AiChatMessageModel(
+     type: AiChatMessageType.user,
+     createdAt: DateTime.now().toUtc(),
+     content: message,
+     parentChatThreadId: threadId,
+   );
+
+   final aiChatMessagesDb = await ref.read(aiChatMessagesDbProvider);
+
+   await aiChatMessagesDb.insertItem(chatMessage);
+
+   // generate ai response 
+
+
+    final supabase = Supabase.instance.client;
+    final res = await supabase.functions.invoke(
+      'chat', 
+      body: {
+        'userMessage': message,
+        'threadId': threadId,
+      });
+
+    if (res.status != 200) {
+      print('Error: ${res.status}');
+    } else {
+      print('Response: ${res.data}');
+    }
+
+    // TODO p1: add ai response to the thread 
+
+
+
+
+  /*
+   final aiChatMessage = AiChatMessageModel(
+     type: AiChatMessageType.ai,
+     createdAt: DateTime.now().toUtc(),
+     content: res.data,
+     parentChatThreadId: threadId,
+   );
+
+   await aiChatMessagesDb.insertItem(aiChatMessage);
+   */
+
+   // update the thread with the ai response 
+
+  }
+
   Future<void> testMove(BuildContext context) async {
 
     // TEST calling Supabase Edge Function 
     final supabase = Supabase.instance.client;
+
+    /*
     final res = await supabase.functions.invoke('chat', body: {'input': 'Your input message here'});
 
     if (res.status != 200) {
@@ -33,6 +99,7 @@ class AiOrchestrator {
     } else {
       print('Response: ${res.data}');
     }
+    */
 
     
 
@@ -52,13 +119,13 @@ class AiOrchestrator {
     final joinedTask = JoinedTaskModel(
       task: TaskModel(
         name: 'AI Set Task Test',
-        dueDate: DateTime.now(),
+        dueDate: DateTime.now().toUtc(),
         parentProjectId: 'parentProjectId',
         parentTeamId: 'parentTeamId',
         description: 'Task description',
         statusEnum: StatusEnum.inProgress,
-        createdDate: DateTime.now(),
-        lastUpdatedDate: DateTime.now(),
+        createdDate: DateTime.now().toUtc(),
+        lastUpdatedDate: DateTime.now().toUtc(),
         authorUserId: 'authorUserId',
       ),
       authorUser: UserModel(
@@ -66,6 +133,15 @@ class AiOrchestrator {
         email: 'ai@seren.ai',
         parentAuthUserId: 'parentAuthUserId',
       ),
+
+      // TODO p1: allow managers/admins to assign a user to a project/team so they don't have to worry about any selection
+
+      // Team is just for gropuing users 
+      // Tasks are only assigned based on project permissions 
+
+      // https://miro.com/app/board/uXjVKCs7dtw=/?utm_source=notification&utm_medium=email&utm_campaign=daily-updates&utm_content=view-board-cta
+
+
       project: ProjectModel(
         id: 'projectId',
         name: 'TEST',

@@ -48,7 +48,7 @@ class AiChatThreadsPage extends ConsumerWidget {
 
     final newThread = AiChatThreadModel(      
       name: 'New Chat Thread',
-      createdAt: DateTime.now(),
+      createdAt: DateTime.now().toUtc(),
       authorUserId: curUser.id,
     );
 

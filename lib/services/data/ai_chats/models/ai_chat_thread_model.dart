@@ -25,7 +25,7 @@ class AiChatThreadModel implements IHasId{
 
   // Factory constructor for creating a AiChatThreadModel with default values
   factory AiChatThreadModel.defaultThread() {
-    final now = DateTime.now();
+    final now = DateTime.now().toUtc();
     return AiChatThreadModel(
       authorUserId: '',  // This should be set to the current user's ID in practice
       name: 'New Thread',
