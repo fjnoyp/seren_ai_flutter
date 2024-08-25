@@ -58,7 +58,7 @@ class TaskModel implements IHasId{
 
   // Factory constructor for creating a TaskModel with default values
   factory TaskModel.defaultTask() {
-    final now = DateTime.now();
+    final now = DateTime.now().toUtc();
     return TaskModel(
       name: 'New Task',
       description: null,

@@ -43,15 +43,13 @@ class AiChatThreadMessagesPage extends ConsumerWidget {
         Expanded(
           child: messages == null
               ? const Center(child: CircularProgressIndicator())
-              : SingleChildScrollView(
+              : ListView.builder(
                   controller: scrollController,
-                  child: ListView.builder(
-                    itemCount: messages.length,
-                    itemBuilder: (context, index) {
+                  itemCount: messages.length,
+                  itemBuilder: (context, index) {
                     return _buildMessageItem(context, messages[index]);
                   },
                 ),
-              ),
         ),
       ],
     );
@@ -79,10 +77,10 @@ class AiChatThreadMessagesPage extends ConsumerWidget {
   Widget _buildMessageItem(BuildContext context, AiChatMessageModel message) {
     return ListTile(
       title: Text(
-        message.type == MessageType.ai ? 'AI' : 'User',
+        message.type == AiChatMessageType.ai ? 'AI' : 'User',
         style: TextStyle(
           fontWeight: FontWeight.bold,
-          color: message.type == MessageType.ai ? Colors.blue : Colors.green,
+          color: message.type == AiChatMessageType.ai ? Colors.blue : Colors.green,
         ),
       ),
       subtitle: Text(message.content),
