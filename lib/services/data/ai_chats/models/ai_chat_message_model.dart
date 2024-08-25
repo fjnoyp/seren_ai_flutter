@@ -4,14 +4,14 @@ import 'package:seren_ai_flutter/services/data/common/uuid.dart';
 
 part 'ai_chat_message_model.g.dart';
 
-enum MessageType { ai, user }
+enum AiChatMessageType { ai, user }
 
 @JsonSerializable()
 class AiChatMessageModel implements IHasId{
   @override
   final String id;
   @JsonKey(name: 'type')
-  final MessageType type;
+  final AiChatMessageType type;
   @JsonKey(name: 'created_at')
   final DateTime createdAt;
   final String content;
@@ -28,9 +28,9 @@ class AiChatMessageModel implements IHasId{
 
   // Factory constructor for creating a AiChatMessage with default values
   factory AiChatMessageModel.defaultMessage() {
-    final now = DateTime.now();
+    final now = DateTime.now().toUtc();
     return AiChatMessageModel(
-      type: MessageType.user, // Assuming default type as user
+      type: AiChatMessageType.user, // Assuming default type as user
       createdAt: now,
       content: 'New Message',
       parentChatThreadId: '',  // This should be set to a valid chat thread ID in practice
@@ -39,7 +39,7 @@ class AiChatMessageModel implements IHasId{
 
   AiChatMessageModel copyWith({
     String? id,
-    MessageType? type,
+    AiChatMessageType? type,
     DateTime? createdAt,
     String? content,
     String? parentChatThreadId,

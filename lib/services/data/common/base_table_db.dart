@@ -4,6 +4,8 @@ import 'package:seren_ai_flutter/services/data/common/i_has_id.dart';
 typedef FromJson<T> = T Function(Map<String, dynamic> json);
 typedef ToJson<T> = Map<String, dynamic> Function(T item);
 
+// TODO p4: consider moving this all to backend as edge functions 
+// TO reduce code duplication and reduce the amount of code we need to maintain
 class BaseTableDb<T extends IHasId> {
   final String tableName;
   final FromJson<T> fromJson;

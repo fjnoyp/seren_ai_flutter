@@ -42,7 +42,7 @@ class CurTaskNotifier extends Notifier<JoinedTaskModel> {
   Future<void> pickAndUpdateDueDate(BuildContext context) async {
     final DateTime? picked = await showDatePicker(
       context: context,
-      initialDate: state.task.dueDate ?? DateTime.now(),
+      initialDate: state.task.dueDate ?? DateTime.now().toUtc(),
       firstDate: DateTime(2000),
       lastDate: DateTime(2100),
     );
