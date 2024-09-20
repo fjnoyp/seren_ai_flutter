@@ -136,7 +136,7 @@ const shiftSchemas = [
     Column.integer('day_of_week'),
     Column.text('start_time'),
     Column.text('duration'),
-    Column.text('timezone'),
+    //Column.text('timezone'),
   ]),
   Table(shiftLogsTable, [
     Column.text('id'),

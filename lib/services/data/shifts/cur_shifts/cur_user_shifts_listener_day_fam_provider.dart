@@ -25,6 +25,7 @@ class ShiftObject {
   });
 }
 
+// TODO p3: convert this to week provider so we can handle UTC -> local timezone issue conversions for specific days/shifts 
 final curUserShiftsListenerDayFamProvider = AsyncNotifierProvider.family<
     CurUserShiftsListenerDayFamNotifier,
     List<JoinedShiftModel>,

@@ -1,5 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:logging/logging.dart';
 import 'package:seren_ai_flutter/services/data/shifts/models/joined_shift_model.dart';
+
+final log = Logger('debugShiftsFullDayView');
 
 Widget debugShiftsFullDayView(DateTime day, JoinedShiftModel shift) {
   return SizedBox(
@@ -44,9 +47,10 @@ Widget debugShiftsFullDayView(DateTime day, JoinedShiftModel shift) {
 
             // Timeframes
             ...shift.timeFrames.map((timeFrame) {
-              final start = _parseTime(timeFrame.startTime);
+              final start = timeFrame.getStartDateTime(day).toLocal();
               final end = start.add(timeFrame.duration);
               return _buildTimeBlock(
+                day: day,
                 startTime: start,
                 endTime: end,
                 totalHeight: height,
@@ -58,12 +62,13 @@ Widget debugShiftsFullDayView(DateTime day, JoinedShiftModel shift) {
 
             // Overrides
             ...shift.overrides.map((override) {
-              final start = override.startDatetime.toLocal();
-              final end = override.endDatetime.toLocal();
+              final start = override.startDateTime.toLocal();
+              final end = override.endDateTime.toLocal();
               final color = override.isRemoval
                   ? Colors.red.withOpacity(0.5)
                   : Colors.orange.withOpacity(0.5);
               return _buildTimeBlock(
+                day: day,
                 startTime: start,
                 endTime: end,
                 totalHeight: height,
@@ -82,6 +87,7 @@ Widget debugShiftsFullDayView(DateTime day, JoinedShiftModel shift) {
                   ? Colors.yellow.withOpacity(0.5)
                   : Colors.green.withOpacity(0.5);
               return _buildTimeBlock(
+                day: day,
                 startTime: start,
                 endTime: end,
                 totalHeight: height,
@@ -127,6 +133,7 @@ String _formatTimeRange(DateTime startTime, DateTime endTime) {
 }
 
 Widget _buildTimeBlock({
+  required DateTime day,
   required DateTime startTime,
   required DateTime endTime,
   required double totalHeight,
@@ -136,8 +143,16 @@ Widget _buildTimeBlock({
   double width = 100,
   double leftOffset = 0,
 }) {
-  final startOffset = startTime.hour * 60 + startTime.minute;
-  final endOffset = endTime.hour * 60 + endTime.minute;
+
+  // if startTime or endTime are not on the same day as day, return null
+  if (startTime.day > day.day || endTime.day < day.day) {
+    // Ignore this case for now - we need to handle multi day shift info 
+    log.severe('unhandled edge case for start and end time not on the same day as day');
+    return const SizedBox.shrink();
+  }
+
+  final startOffset = startTime.day < day.day ? 0 : startTime.hour * 60 + startTime.minute;
+  final endOffset = endTime.day > day.day ? (24*60) : endTime.hour * 60 + endTime.minute;
   final top = (startOffset / 60) * hourHeight;
   final blockHeight = ((endOffset - startOffset) / 60) * hourHeight;
 
@@ -167,7 +182,4 @@ Widget _buildTimeBlock({
   );
 }
 
-DateTime _parseTime(String time) {
-  final parts = time.split(':');
-  return DateTime(2023, 1, 1, int.parse(parts[0]), int.parse(parts[1]));
-}
+
