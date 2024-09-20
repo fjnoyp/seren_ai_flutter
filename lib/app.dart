@@ -11,6 +11,7 @@ import 'package:seren_ai_flutter/services/data/orgs/widgets/choose_org_page.dart
 import 'package:seren_ai_flutter/services/data/orgs/widgets/manage_org_users_page.dart';
 import 'package:seren_ai_flutter/services/data/orgs/widgets/org_guard.dart';
 import 'package:seren_ai_flutter/services/data/projects/widgets/projects_page.dart';
+import 'package:seren_ai_flutter/services/data/shifts/widgets/shifts_page.dart';
 import 'package:seren_ai_flutter/services/data/tasks/cur_task_provider.dart';
 import 'package:seren_ai_flutter/services/data/tasks/models/joined_task_model.dart';
 import 'package:seren_ai_flutter/services/data/tasks/models/task_model.dart';
@@ -98,6 +99,9 @@ class AppState extends State<App> {
               final threadId = args['threadId'] as String;
               return _buildGuardScaffold('AI Chat Messages', AiChatThreadMessagesPage(threadId: threadId));
             },
+
+            shiftsRoute: (context) => _buildGuardScaffold('Shifts', const ShiftsPage()),
+            
             testRoute: (context) => _buildGuardScaffold('Test', const TestPage()),
             testSQLPageRoute: (context) => _buildGuardScaffold('Test SQL Page', TestSQLPage()),
           },          

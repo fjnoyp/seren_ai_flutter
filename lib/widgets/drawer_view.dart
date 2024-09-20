@@ -175,12 +175,21 @@ class DrawerView extends HookWidget {
             ),
             _buildListTile(
               context: context,
+              icon: Icons.work,
+              title: 'Shifts',
+              onTap: () {
+                Navigator.pushNamed(context, shiftsRoute);
+              },
+            ),
+            _buildListTile(
+              context: context,
               icon: Icons.settings,
               title: 'Settings',
               onTap: () {
                 isSettingsView.value = true;
               },
             ),
+            
           ],
         ],
       ),

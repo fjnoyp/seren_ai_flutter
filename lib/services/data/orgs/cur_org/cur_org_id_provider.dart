@@ -1,4 +1,5 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:seren_ai_flutter/services/shared_preferences_provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:seren_ai_flutter/services/data/orgs/cur_org/cur_user_org_roles_listener_provider.dart';
 
@@ -16,46 +17,41 @@ class CurOrgIdNotifier extends Notifier<String?> {
 
   @override
   String? build() {
-    _loadSavedOrgId();
+    state = _getDesiredOrgId();
 
     ref.listen(curUserOrgRolesListenerProvider, (previous, next) {
-      if (next != null) {
-        final currentOrgId = state;
-        final isInCurrentOrg = next.any((orgRole) => orgRole.orgId == currentOrgId);
+      if (next != null) {        
+        final desiredOrgId = _getDesiredOrgId();
 
-        if (!isInCurrentOrg) {
-          // print out what happened 
-          log.info('CurOrgId - User left org $currentOrgId');
-          log.info('CurOrgId - New orgs: ${next.map((orgRole) => orgRole.orgId).toList()}');
-          _setAndSaveOrgId(null);
+        final orgIds = next.map((orgRole) => orgRole.orgId).toList();
+
+        if(orgIds.contains(desiredOrgId)) {
+          state = desiredOrgId;
+        }
+        else{
+          state = null; 
         }
       } else {
-        _setAndSaveOrgId(null);
+        state = null;
       }
     }, fireImmediately: true);
 
-    return null;
+    return null; 
   }
 
-  Future<void> _loadSavedOrgId() async {
-    final prefs = await SharedPreferences.getInstance();
-    final savedOrgId = prefs.getString(_orgIdKey);
-    if (savedOrgId != null) {
-      state = savedOrgId;
-    }
+  String? _getDesiredOrgId() {
+    final prefs = ref.read(sharedPreferencesProvider);
+    return prefs.getString(_orgIdKey);
   }
 
-  Future<void> _setAndSaveOrgId(String? orgId) async {
-    state = orgId;
-    final prefs = await SharedPreferences.getInstance();
-    if (orgId != null) {
-      await prefs.setString(_orgIdKey, orgId);
+  // We assume desiredOrgId is valid for user ... 
+  void setDesiredOrgId(String desiredOrgId) {
+    state = desiredOrgId;
+    final prefs = ref.read(sharedPreferencesProvider);
+    if (desiredOrgId != null) {
+      prefs.setString(_orgIdKey, desiredOrgId);
     } else {
-      await prefs.remove(_orgIdKey);
+      prefs.remove(_orgIdKey);
     }
-  }
-
-  void setOrgId(String orgId) {
-    _setAndSaveOrgId(orgId);
   }
 }
