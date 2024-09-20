@@ -12,14 +12,17 @@ class AiChatThreadModel implements IHasId{
   final String authorUserId;
   final String name;
   @JsonKey(name: 'created_at')
-  final DateTime createdAt;
+  final DateTime? createdAt;
+  @JsonKey(name: 'updated_at')
+  final DateTime? updatedAt;
   final String? summary;
 
   AiChatThreadModel({
     String? id,
     required this.authorUserId,
     required this.name,
-    required this.createdAt,
+    this.createdAt,
+    this.updatedAt,
     this.summary,
   }) : id = id ?? uuid.v4();
 
@@ -39,6 +42,7 @@ class AiChatThreadModel implements IHasId{
     String? authorUserId,
     String? name,
     DateTime? createdAt,
+    DateTime? updatedAt,
     String? summary,
   }) {
     return AiChatThreadModel(
@@ -46,6 +50,7 @@ class AiChatThreadModel implements IHasId{
       authorUserId: authorUserId ?? this.authorUserId,
       name: name ?? this.name,
       createdAt: createdAt ?? this.createdAt,
+      updatedAt: updatedAt ?? this.updatedAt,
       summary: summary ?? this.summary,
     );
   }

@@ -33,11 +33,11 @@ class TasksListPage extends ConsumerWidget {
               child: TabBarView(
                 children: [
                   TasksListView(filter: (joinedTask) =>
-                          joinedTask.task.statusEnum == StatusEnum.inProgress),
+                          joinedTask.task.status == StatusEnum.inProgress),
                   TasksListView(filter: (joinedTask) =>
-                          joinedTask.task.statusEnum == StatusEnum.open),
+                          joinedTask.task.status == StatusEnum.open),
                   TasksListView(filter: (joinedTask) =>
-                          joinedTask.task.statusEnum == StatusEnum.finished),
+                          joinedTask.task.status == StatusEnum.finished),
                 ],
               ),
             ),

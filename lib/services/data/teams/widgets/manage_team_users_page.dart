@@ -6,6 +6,7 @@ import 'package:seren_ai_flutter/services/data/teams/models/team_model.dart';
 import 'package:seren_ai_flutter/services/data/teams/teams_read_provider.dart';
 import 'package:seren_ai_flutter/services/data/teams/user_team_roles/joined_user_team_roles_listener_team_fam_provider.dart';
 
+// Local provider for choosing current team we're viewing
 final _currentTeamIdProvider = StateProvider<String?>((ref) => null);
 
 class ManageTeamUsersPage extends ConsumerWidget {

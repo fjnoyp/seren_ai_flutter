@@ -18,13 +18,39 @@ class UserTeamRoleModel implements IHasId {
   @JsonKey(name: 'team_role')
   final String teamRole;
 
+  @JsonKey(name: 'created_at')
+  final DateTime? createdAt;
+
+  @JsonKey(name: 'updated_at')
+  final DateTime? updatedAt;
+
   UserTeamRoleModel({
     String? id,
     required this.userId,
     required this.teamId,
     required this.teamRole,
+    this.createdAt,
+    this.updatedAt,
   }) : id = id ?? uuid.v4();
 
   factory UserTeamRoleModel.fromJson(Map<String, dynamic> json) => _$UserTeamRoleModelFromJson(json);
   Map<String, dynamic> toJson() => _$UserTeamRoleModelToJson(this);
+
+  UserTeamRoleModel copyWith({
+    String? id,
+    String? userId,
+    String? teamId,
+    String? teamRole,
+    DateTime? createdAt,
+    DateTime? updatedAt,
+  }) {
+    return UserTeamRoleModel(
+      id: id ?? this.id,
+      userId: userId ?? this.userId,
+      teamId: teamId ?? this.teamId,
+      teamRole: teamRole ?? this.teamRole,
+      createdAt: createdAt ?? this.createdAt,
+      updatedAt: updatedAt ?? this.updatedAt,
+    );
+  }
 }
