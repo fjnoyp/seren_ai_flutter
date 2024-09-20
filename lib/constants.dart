@@ -19,6 +19,8 @@ const String taskPageRoute = '/taskPage';
 const String aiChatThreadsRoute = '/aiChatThreads';
 const String aiChatThreadMessagesRoute = '/aiChatThreadMessages';
 
+const String shiftsRoute = '/shifts';
+
 const String testSQLPageRoute = '/testSQLPage';
 
 final simpleDateFormat = DateFormat('MMM dd, yyyy HH:mm');

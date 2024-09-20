@@ -4,7 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:seren_ai_flutter/constants.dart';
 import 'package:seren_ai_flutter/services/data/ai_chats/models/ai_chat_message_model.dart';
-import 'package:seren_ai_flutter/services/data/ai_chats/cur_user_ai_chat_messages_listener_provider.dart';
+import 'package:seren_ai_flutter/services/data/ai_chats/cur_user_ai_chat_messages_listener_fam_provider.dart';
 import 'package:seren_ai_flutter/services/data/ai_chats/models/ai_chat_thread_model.dart';
 import 'package:seren_ai_flutter/services/data/ai_chats/cur_user_ai_chat_threads_listener_provider.dart';
 
@@ -20,7 +20,7 @@ class AiChatThreadMessagesPage extends ConsumerWidget {
 
     final threads = ref.watch(curUserAiChatThreadsListenerProvider);
     final curThread = threads?.firstWhere((thread) => thread.id == threadId);
-    final messages = ref.watch(curUserAiChatMessagesListenerProvider(threadId));
+    final messages = ref.watch(curUserAiChatMessagesListenerFamProvider(threadId));
 
     if (curThread == null) {
       return const Center(child: CircularProgressIndicator());
