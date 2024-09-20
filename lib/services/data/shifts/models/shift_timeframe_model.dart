@@ -5,6 +5,8 @@ import 'package:seren_ai_flutter/services/data/common/uuid.dart';
 
 part 'shift_timeframe_model.g.dart';
 
+
+
 @JsonSerializable()
 class ShiftTimeframeModel implements IHasId {
   @override
@@ -22,7 +24,7 @@ class ShiftTimeframeModel implements IHasId {
   @JsonKey(name: 'duration', fromJson: parseDuration, toJson: durationToString)
   final Duration duration;
   
-  final String timezone;
+  //final String timezone;
 
   @JsonKey(name: 'created_at')
   final DateTime? createdAt;
@@ -36,7 +38,7 @@ class ShiftTimeframeModel implements IHasId {
     required this.dayOfWeek,
     required this.startTime,
     required this.duration,
-    required this.timezone,
+    //required this.timezone,
     this.createdAt,
     this.updatedAt,
   }) : id = id ?? uuid.v4();
@@ -47,7 +49,7 @@ class ShiftTimeframeModel implements IHasId {
     int? dayOfWeek,
     String? startTime,
     Duration? duration,
-    String? timezone,
+    //String? timezone,
     DateTime? createdAt,
     DateTime? updatedAt,
   }) {
@@ -57,7 +59,7 @@ class ShiftTimeframeModel implements IHasId {
       dayOfWeek: dayOfWeek ?? this.dayOfWeek,
       startTime: startTime ?? this.startTime,
       duration: duration ?? this.duration,
-      timezone: timezone ?? this.timezone,
+      //timezone: timezone ?? this.timezone,
       createdAt: createdAt ?? this.createdAt,
       updatedAt: updatedAt ?? this.updatedAt,
     );
@@ -65,4 +67,28 @@ class ShiftTimeframeModel implements IHasId {
 
   factory ShiftTimeframeModel.fromJson(Map<String, dynamic> json) => _$ShiftTimeframeModelFromJson(json);
   Map<String, dynamic> toJson() => _$ShiftTimeframeModelToJson(this);
+
+  // TODO p3: startTimes on 12 am or 11:59 pm will cause issues with proper day depending on local timezone... 
+  DateTime getStartDateTime(DateTime day) { 
+    // Parse the startTime string
+    List<String> timeParts = startTime.split(':');
+    int hour = int.parse(timeParts[0]);
+    int minute = int.parse(timeParts[1]);
+
+    // Check startTime is in UTC throw exception otherwise
+    if(!startTime.contains('+00')) {
+      throw Exception('ShiftTimeframeModel: startTime is not in UTC');
+    }
+
+    // Create a DateTime in UTC for the given day
+    DateTime utcDateTime = DateTime.utc(
+      day.year,
+      day.month,
+      day.day,
+      hour,
+      minute,
+    );
+
+    return utcDateTime;
+  }
 }

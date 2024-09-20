@@ -29,3 +29,11 @@ https://docs.google.com/document/d/1MAOogPCurlaLiia1DLNlKJt969z6Xy0RG4gjaaeKM1g/
 listen does not rebuild the provider, it just calls the callback when the data changes. 
 
 watch rebuilds the provider and all its dependents. This can cause issues with too many rebuilds triggering each other etc. 
+
+
+## Time Zone - DateTime Issues 
+For all DateTime calculations USE UTC - for any display use TOLOCAL
+
+Postgres appears to store all datetimes in UTC. 
+So any datetime received must be converted to the local timezone before displaying! 
+

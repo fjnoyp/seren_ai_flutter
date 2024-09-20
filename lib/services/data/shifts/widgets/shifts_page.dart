@@ -1,55 +1,37 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:seren_ai_flutter/services/data/shifts/cur_shifts/cur_user_shifts_listener_day_fam_provider.dart';
 import 'package:seren_ai_flutter/services/data/shifts/widgets/debug_shifts_full_day_view.dart';
 import 'package:table_calendar/table_calendar.dart';
 import 'package:seren_ai_flutter/services/data/shifts/models/joined_shift_model.dart';
 
-class ShiftsPage extends ConsumerStatefulWidget {
+class ShiftsPage extends HookConsumerWidget {
   const ShiftsPage({super.key});
 
   @override
-  ConsumerState<ShiftsPage> createState() => _ShiftsPageState();
-}
-
-class _ShiftsPageState extends ConsumerState<ShiftsPage> {
-  late DateTime _selectedDay;
-  late DateTime _focusedDay;
-
-  @override
-  void initState() {
-    super.initState();
-    _selectedDay = DateTime.now();
-    _focusedDay = DateTime.now();
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    final now = DateTime.now();
-    final weekStart = DateTime(now.year, now.month, now.day - now.weekday + 1);
+  Widget build(BuildContext context, WidgetRef ref) {
+    final selectedDay = useState(DateTime.now());
+    final focusedDay = useState(DateTime.now());
 
     return Column(
       children: [
         TableCalendar(
           firstDay: DateTime(2010),
           lastDay: DateTime(2030),
-          focusedDay: _focusedDay,
-          selectedDayPredicate: (day) => isSameDay(_selectedDay, day),
+          focusedDay: focusedDay.value,
+          selectedDayPredicate: (day) => isSameDay(selectedDay.value, day),
           calendarFormat: CalendarFormat.week,
           availableCalendarFormats: {
             CalendarFormat.week: 'Week',
           },
           startingDayOfWeek: StartingDayOfWeek.monday,
-          onDaySelected: (selectedDay, focusedDay) {
-            setState(() {
-              _selectedDay = selectedDay;
-              _focusedDay = focusedDay;
-            });
+          onDaySelected: (newSelectedDay, newFocusedDay) {
+            selectedDay.value = newSelectedDay;
+            focusedDay.value = newFocusedDay;
           },
-          onPageChanged: (focusedDay) {
-            setState(() {
-              _focusedDay = focusedDay;
-            });
+          onPageChanged: (newFocusedDay) {
+            focusedDay.value = newFocusedDay;
           },
           calendarStyle: const CalendarStyle(
             outsideDaysVisible: false,
@@ -75,20 +57,21 @@ class _ShiftsPageState extends ConsumerState<ShiftsPage> {
           ),
         ),
         Expanded(
-          child: DayShiftsWidget(day: _selectedDay),
+          child: DayShiftsWidget(day: selectedDay.value),
         ),
       ],
     );
   }
 }
 
-class DayShiftsWidget extends ConsumerWidget {
+class DayShiftsWidget extends HookConsumerWidget {
   final DateTime day;
 
   const DayShiftsWidget({Key? key, required this.day}) : super(key: key);
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    final isDebugMode = useState(false);
     final joinedShifts = ref.watch(curUserShiftsListenerDayFamProvider(day));
 
     return joinedShifts.when(
@@ -101,30 +84,31 @@ class DayShiftsWidget extends ConsumerWidget {
         final shift = shifts.first;
         return Column(
           children: [
-            Text(shift.shift.name),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Text(shift.shift.name),
+                SizedBox(width: 10),
+                Switch(
+                  value: isDebugMode.value,
+                  onChanged: (value) {
+                    isDebugMode.value = value;
+                  },
+                ),
+              ],
+            ),
             SizedBox(height: 10),
             Expanded(
-              child: debugShiftsFullDayView(day, shift),
+              child: isDebugMode.value
+                ? debugShiftsFullDayView(day, shift)
+                : Column(
+                    children: [
+                      Text('TODO: Implement non-debug view'),
+                    ],
+                  ),
             ),
           ],
         );
-        /*
-            SizedBox(height: 20),
-            Text('Shift Logs'),
-            Expanded(
-              child: ListView.builder(
-                itemCount: shift.logs.length,
-                itemBuilder: (context, index) {
-                  final log = shift.logs[index];
-                  return ListTile(
-                    title: Text(
-                        '${log.clockInDatetime.toLocal().toString()} - ${log.clockOutDatetime?.toLocal().toString() ?? 'Ongoing'}'),
-                    subtitle: Text(log.isBreak ? 'Break' : 'Work'),
-                  );
-                },
-              ),
-            ),
-            */
       },
       loading: () => const Center(child: CircularProgressIndicator()),
       error: (error, stack) => Center(child: Text('Error: $error')),

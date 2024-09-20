@@ -13,7 +13,6 @@ ShiftTimeframeModel _$ShiftTimeframeModelFromJson(Map<String, dynamic> json) =>
       dayOfWeek: (json['day_of_week'] as num).toInt(),
       startTime: json['start_time'] as String,
       duration: parseDuration(json['duration'] as String),
-      timezone: json['timezone'] as String,
       createdAt: json['created_at'] == null
           ? null
           : DateTime.parse(json['created_at'] as String),
@@ -30,7 +29,6 @@ Map<String, dynamic> _$ShiftTimeframeModelToJson(
       'day_of_week': instance.dayOfWeek,
       'start_time': instance.startTime,
       'duration': durationToString(instance.duration),
-      'timezone': instance.timezone,
       'created_at': instance.createdAt?.toIso8601String(),
       'updated_at': instance.updatedAt?.toIso8601String(),
     };

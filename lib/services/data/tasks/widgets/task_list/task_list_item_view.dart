@@ -23,6 +23,8 @@ class TaskListItemView extends ConsumerWidget {
     final team = joinedTask.team;
     final project = joinedTask.project;
 
+    final updatedAt = task.updatedAt;
+
     final dueDateColor = getDueDateColor(task.dueDate);
 
     return GestureDetector(
@@ -64,6 +66,12 @@ class TaskListItemView extends ConsumerWidget {
                   ),
                 ],
               ),
+              if (updatedAt != null)
+                Text(
+                  'Updated: ${updatedAt.toLocal().toString()}',
+                  style: theme.textTheme.labelSmall?.copyWith(
+                      color: theme.colorScheme.onSurface.withOpacity(0.7)),
+                ),
               Padding(
                 padding: EdgeInsets.only(left: 8),
                 child: Column(
