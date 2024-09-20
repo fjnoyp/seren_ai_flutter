@@ -17,10 +17,10 @@ class ShiftOverrideModel implements IHasId {
   final String shiftId;
   
   @JsonKey(name: 'start_datetime')
-  final DateTime startDatetime;
+  final DateTime startDateTime;
   
   @JsonKey(name: 'end_datetime')
-  final DateTime endDatetime;
+  final DateTime endDateTime;
   
   @JsonKey(name: 'is_removal', fromJson: boolFromInt, toJson: boolToInt)
   final bool isRemoval;
@@ -35,8 +35,8 @@ class ShiftOverrideModel implements IHasId {
     String? id,
     this.userId,
     required this.shiftId,
-    required this.startDatetime,
-    required this.endDatetime,
+    required this.startDateTime,
+    required this.endDateTime,
     this.isRemoval = false,
     this.createdAt,
     this.updatedAt,
@@ -55,8 +55,8 @@ class ShiftOverrideModel implements IHasId {
       id: id ?? this.id,
       userId: userId ?? this.userId,
       shiftId: shiftId ?? this.shiftId,
-      startDatetime: startDatetime ?? this.startDatetime,
-      endDatetime: endDatetime ?? this.endDatetime,
+      startDateTime: startDatetime ?? this.startDateTime,
+      endDateTime: endDatetime ?? this.endDateTime,
       isRemoval: isRemoval ?? this.isRemoval,
       createdAt: createdAt ?? this.createdAt,
       updatedAt: updatedAt ?? this.updatedAt,

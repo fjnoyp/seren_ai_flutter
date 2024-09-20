@@ -5,6 +5,10 @@ import 'package:seren_ai_flutter/services/data/tasks/widgets/task_form/color_ani
 import 'package:seren_ai_flutter/services/data/tasks/widgets/task_form/selection_field.dart';
 import 'package:seren_ai_flutter/services/data/tasks/widgets/ui_constants.dart';
 
+
+// TODO p1 : add proper time selection for due date
+// WARNING - beware of utc / local time issues in storage !!! 
+// I think it should be okay since we convert to ISO string at the end - but be careful 
 class TaskDueDateSelectionField extends ConsumerWidget {
   final bool enabled;
 
