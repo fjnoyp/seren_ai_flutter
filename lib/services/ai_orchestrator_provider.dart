@@ -123,9 +123,7 @@ class AiOrchestrator {
         parentProjectId: 'parentProjectId',
         parentTeamId: 'parentTeamId',
         description: 'Task description',
-        statusEnum: StatusEnum.inProgress,
-        createdDate: DateTime.now().toUtc(),
-        lastUpdatedDate: DateTime.now().toUtc(),
+        status: StatusEnum.inProgress,
         authorUserId: 'authorUserId',
       ),
       authorUser: UserModel(

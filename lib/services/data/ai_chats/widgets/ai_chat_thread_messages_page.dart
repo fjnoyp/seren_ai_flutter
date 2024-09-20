@@ -85,7 +85,7 @@ class AiChatThreadMessagesPage extends ConsumerWidget {
       ),
       subtitle: Text(message.content),
       trailing: Text(
-        '${message.createdAt.hour}:${message.createdAt.minute}',
+        '${message.createdAt?.hour}:${message.createdAt?.minute}',
         style: const TextStyle(fontSize: 12),
       ),
     );

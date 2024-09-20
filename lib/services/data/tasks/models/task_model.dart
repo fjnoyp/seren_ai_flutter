@@ -12,22 +12,22 @@ class TaskModel implements IHasId{
   @override
   final String id;
   final String name;
-  final String? description;
+  final String? description;  
 
-  @JsonKey(name: 'status_enum')
-  final StatusEnum? statusEnum;
+  @JsonKey(name: 'status')
+  final StatusEnum? status;
 
-  @JsonKey(name: 'priority_enum')
-  final PriorityEnum? priorityEnum;
+  @JsonKey(name: 'priority')
+  final PriorityEnum? priority;
 
   @JsonKey(name: 'due_date')
   final DateTime? dueDate;
 
-  @JsonKey(name: 'created_date')
-  final DateTime createdDate;
+  @JsonKey(name: 'created_at')
+  final DateTime? createdAt;
 
-  @JsonKey(name: 'last_updated_date')
-  final DateTime lastUpdatedDate;
+  @JsonKey(name: 'updated_at')
+  final DateTime? updatedAt;
 
   @JsonKey(name: 'author_user_id')
   final String authorUserId;
@@ -45,11 +45,11 @@ class TaskModel implements IHasId{
     String? id,
     required this.name,
     required this.description,
-    required this.statusEnum,
-    this.priorityEnum,
+    required this.status,
+    this.priority,
     this.dueDate,
-    required this.createdDate,
-    required this.lastUpdatedDate,
+    this.createdAt,
+    this.updatedAt,
     required this.authorUserId,    
     this.parentTeamId,
     required this.parentProjectId,
@@ -62,11 +62,11 @@ class TaskModel implements IHasId{
     return TaskModel(
       name: 'New Task',
       description: null,
-      statusEnum: StatusEnum.open,
-      priorityEnum: null,
+      status: StatusEnum.open,
+      priority: PriorityEnum.normal,
       dueDate: null,
-      createdDate: now,
-      lastUpdatedDate: now,
+      createdAt: now,
+      updatedAt: now,
       authorUserId: '',  // This should be set to the current user's ID in practice
       parentTeamId: null,
       parentProjectId: '',  // This should be set to a valid project ID in practice
@@ -78,11 +78,11 @@ class TaskModel implements IHasId{
     String? id,
     String? name,
     String? description,
-    StatusEnum? statusEnum,
-    PriorityEnum? priorityEnum,
+    StatusEnum? status,
+    PriorityEnum? priority,
     DateTime? dueDate,
-    DateTime? createdDate,
-    DateTime? lastUpdatedDate,
+    DateTime? createdAt,
+    DateTime? updatedAt,
     String? authorUserId,
     String? parentTeamId,
     String? parentProjectId,
@@ -92,11 +92,11 @@ class TaskModel implements IHasId{
       id: id ?? this.id,
       name: name ?? this.name,
       description: description ?? this.description,
-      statusEnum: statusEnum ?? this.statusEnum,
-      priorityEnum: priorityEnum ?? this.priorityEnum,
+      status: status ?? this.status,
+      priority: priority ?? this.priority,
       dueDate: dueDate ?? this.dueDate,
-      createdDate: createdDate ?? this.createdDate,
-      lastUpdatedDate: lastUpdatedDate ?? this.lastUpdatedDate,
+      createdAt: createdAt ?? this.createdAt,
+      updatedAt: updatedAt ?? this.updatedAt,
       authorUserId: authorUserId ?? this.authorUserId,
       parentTeamId: parentTeamId ?? this.parentTeamId,
       parentProjectId: parentProjectId ?? this.parentProjectId,

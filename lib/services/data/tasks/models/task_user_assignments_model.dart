@@ -15,12 +15,36 @@ class TaskUserAssignmentsModel implements IHasId {
   @JsonKey(name: 'user_id')
   final String userId;
 
-  TaskUserAssignmentsModel({  
+  @JsonKey(name: 'created_at')
+  final DateTime? createdAt;
+
+  @JsonKey(name: 'updated_at')
+  final DateTime? updatedAt;
+
+  TaskUserAssignmentsModel({
     String? id,
     required this.taskId,
     required this.userId,
+    this.createdAt,
+    this.updatedAt,
   }) : id = id ?? uuid.v4();
 
   factory TaskUserAssignmentsModel.fromJson(Map<String, dynamic> json) => _$TaskUserAssignmentsModelFromJson(json);
   Map<String, dynamic> toJson() => _$TaskUserAssignmentsModelToJson(this);
+
+  TaskUserAssignmentsModel copyWith({
+    String? id,
+    String? taskId,
+    String? userId,
+    DateTime? createdAt,
+    DateTime? updatedAt,
+  }) {
+    return TaskUserAssignmentsModel(
+      id: id ?? this.id,
+      taskId: taskId ?? this.taskId,
+      userId: userId ?? this.userId,
+      createdAt: createdAt ?? this.createdAt,
+      updatedAt: updatedAt ?? this.updatedAt,
+    );
+  }
 }

@@ -88,7 +88,7 @@ class TaskStatusSelectionField extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final curTaskStatus =
-        ref.watch(curTaskProvider.select((state) => state.task.statusEnum));
+        ref.watch(curTaskProvider.select((state) => state.task.status));
 
     return AnimatedModalSelectionField<StatusEnum>(
       labelWidget: const Icon(Icons.flag),
@@ -100,7 +100,7 @@ class TaskStatusSelectionField extends ConsumerWidget {
       options: StatusEnum.values,
       onValueChanged: (ref, status) {
         ref.read(curTaskProvider.notifier).updateTask(
-            ref.read(curTaskProvider).task.copyWith(statusEnum: status));
+            ref.read(curTaskProvider).task.copyWith(status: status));
       },
     );
   }
@@ -117,7 +117,7 @@ class TaskPrioritySelectionField extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final curTaskPriority =
-        ref.watch(curTaskProvider.select((state) => state.task.priorityEnum));
+        ref.watch(curTaskProvider.select((state) => state.task.priority));
 
     return AnimatedModalSelectionField<PriorityEnum>(
       labelWidget: const Icon(Icons.priority_high),
@@ -129,7 +129,7 @@ class TaskPrioritySelectionField extends ConsumerWidget {
       options: PriorityEnum.values,
       onValueChanged: (ref, priority) {
         ref.read(curTaskProvider.notifier).updateTask(
-            ref.read(curTaskProvider).task.copyWith(priorityEnum: priority));
+            ref.read(curTaskProvider).task.copyWith(priority: priority));
       },
     );
   }

@@ -24,6 +24,12 @@ class ShiftLogModel implements IHasId {
   @JsonKey(name: 'is_break', fromJson: _boolFromInt)
   final bool isBreak;
 
+  @JsonKey(name: 'created_at')
+  final DateTime? createdAt;
+
+  @JsonKey(name: 'updated_at')
+  final DateTime? updatedAt;
+
   static bool _boolFromInt(dynamic value) => value == 1;
 
   ShiftLogModel({
@@ -33,6 +39,8 @@ class ShiftLogModel implements IHasId {
     required this.clockInDatetime,
     this.clockOutDatetime,
     required this.isBreak,
+    this.createdAt,
+    this.updatedAt,
   }) : id = id ?? uuid.v4();
 
   ShiftLogModel copyWith({
@@ -42,6 +50,8 @@ class ShiftLogModel implements IHasId {
     DateTime? clockInDatetime,
     DateTime? clockOutDatetime,
     bool? isBreak,
+    DateTime? createdAt,
+    DateTime? updatedAt,
   }) {
     return ShiftLogModel(
       id: id ?? this.id,
@@ -50,6 +60,8 @@ class ShiftLogModel implements IHasId {
       clockInDatetime: clockInDatetime ?? this.clockInDatetime,
       clockOutDatetime: clockOutDatetime ?? this.clockOutDatetime,
       isBreak: isBreak ?? this.isBreak,
+      createdAt: createdAt ?? this.createdAt,
+      updatedAt: updatedAt ?? this.updatedAt,
     );
   }
 

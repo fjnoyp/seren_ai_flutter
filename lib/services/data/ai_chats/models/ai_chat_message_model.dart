@@ -12,8 +12,13 @@ class AiChatMessageModel implements IHasId{
   final String id;
   @JsonKey(name: 'type')
   final AiChatMessageType type;
+
   @JsonKey(name: 'created_at')
-  final DateTime createdAt;
+  final DateTime? createdAt;
+
+  @JsonKey(name: 'updated_at')
+  final DateTime? updatedAt;
+
   final String content;
   @JsonKey(name: 'parent_chat_thread_id')
   final String parentChatThreadId;
@@ -21,7 +26,8 @@ class AiChatMessageModel implements IHasId{
   AiChatMessageModel({
     String? id,
     required this.type,
-    required this.createdAt,
+    this.createdAt,
+    this.updatedAt,
     required this.content,
     required this.parentChatThreadId,
   }) : id = id ?? uuid.v4();
@@ -30,8 +36,7 @@ class AiChatMessageModel implements IHasId{
   factory AiChatMessageModel.defaultMessage() {
     final now = DateTime.now().toUtc();
     return AiChatMessageModel(
-      type: AiChatMessageType.user, // Assuming default type as user
-      createdAt: now,
+      type: AiChatMessageType.user, // Assuming default type as user      
       content: 'New Message',
       parentChatThreadId: '',  // This should be set to a valid chat thread ID in practice
     );
@@ -41,6 +46,7 @@ class AiChatMessageModel implements IHasId{
     String? id,
     AiChatMessageType? type,
     DateTime? createdAt,
+    DateTime? updatedAt,
     String? content,
     String? parentChatThreadId,
   }) {
@@ -48,6 +54,7 @@ class AiChatMessageModel implements IHasId{
       id: id ?? this.id,
       type: type ?? this.type,
       createdAt: createdAt ?? this.createdAt,
+      updatedAt: updatedAt ?? this.updatedAt,
       content: content ?? this.content,
       parentChatThreadId: parentChatThreadId ?? this.parentChatThreadId,
     );

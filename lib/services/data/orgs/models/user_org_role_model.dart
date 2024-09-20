@@ -21,13 +21,39 @@ class UserOrgRoleModel implements IHasId {
   @JsonKey(name: 'org_role')
   final String orgRole;
 
+  @JsonKey(name: 'created_at')
+  final DateTime? createdAt;
+
+  @JsonKey(name: 'updated_at')
+  final DateTime? updatedAt;
+
   UserOrgRoleModel({
     String? id,
     required this.userId,
     required this.orgId,
     required this.orgRole,
+    this.createdAt,
+    this.updatedAt,
   }) : id = id ?? uuid.v4();
 
   factory UserOrgRoleModel.fromJson(Map<String, dynamic> json) => _$UserOrgRoleModelFromJson(json);
   Map<String, dynamic> toJson() => _$UserOrgRoleModelToJson(this);
+
+  UserOrgRoleModel copyWith({
+    String? id,
+    String? userId,
+    String? orgId,
+    String? orgRole,
+    DateTime? createdAt,
+    DateTime? updatedAt,
+  }) {
+    return UserOrgRoleModel(
+      id: id ?? this.id,
+      userId: userId ?? this.userId,
+      orgId: orgId ?? this.orgId,
+      orgRole: orgRole ?? this.orgRole,
+      createdAt: createdAt ?? this.createdAt,
+      updatedAt: updatedAt ?? this.updatedAt,
+    );
+  }
 }

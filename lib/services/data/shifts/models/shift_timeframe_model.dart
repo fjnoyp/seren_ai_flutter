@@ -24,6 +24,12 @@ class ShiftTimeframeModel implements IHasId {
   
   final String timezone;
 
+  @JsonKey(name: 'created_at')
+  final DateTime? createdAt;
+
+  @JsonKey(name: 'updated_at')
+  final DateTime? updatedAt;
+
   ShiftTimeframeModel({
     String? id,
     required this.shiftId,
@@ -31,6 +37,8 @@ class ShiftTimeframeModel implements IHasId {
     required this.startTime,
     required this.duration,
     required this.timezone,
+    this.createdAt,
+    this.updatedAt,
   }) : id = id ?? uuid.v4();
 
   ShiftTimeframeModel copyWith({
@@ -40,6 +48,8 @@ class ShiftTimeframeModel implements IHasId {
     String? startTime,
     Duration? duration,
     String? timezone,
+    DateTime? createdAt,
+    DateTime? updatedAt,
   }) {
     return ShiftTimeframeModel(
       id: id ?? this.id,
@@ -48,6 +58,8 @@ class ShiftTimeframeModel implements IHasId {
       startTime: startTime ?? this.startTime,
       duration: duration ?? this.duration,
       timezone: timezone ?? this.timezone,
+      createdAt: createdAt ?? this.createdAt,
+      updatedAt: updatedAt ?? this.updatedAt,
     );
   }
 

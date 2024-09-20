@@ -25,6 +25,11 @@ class ShiftOverrideModel implements IHasId {
   @JsonKey(name: 'is_removal', fromJson: boolFromInt, toJson: boolToInt)
   final bool isRemoval;
 
+  @JsonKey(name: 'created_at')
+  final DateTime? createdAt;
+
+  @JsonKey(name: 'updated_at')
+  final DateTime? updatedAt;
 
   ShiftOverrideModel({
     String? id,
@@ -33,6 +38,8 @@ class ShiftOverrideModel implements IHasId {
     required this.startDatetime,
     required this.endDatetime,
     this.isRemoval = false,
+    this.createdAt,
+    this.updatedAt,
   }) : id = id ?? uuid.v4();
   ShiftOverrideModel copyWith({
     String? id,
@@ -41,6 +48,8 @@ class ShiftOverrideModel implements IHasId {
     DateTime? startDatetime,
     DateTime? endDatetime,
     bool? isRemoval,
+    DateTime? createdAt,
+    DateTime? updatedAt,
   }) {
     return ShiftOverrideModel(
       id: id ?? this.id,
@@ -49,6 +58,8 @@ class ShiftOverrideModel implements IHasId {
       startDatetime: startDatetime ?? this.startDatetime,
       endDatetime: endDatetime ?? this.endDatetime,
       isRemoval: isRemoval ?? this.isRemoval,
+      createdAt: createdAt ?? this.createdAt,
+      updatedAt: updatedAt ?? this.updatedAt,
     );
   }
 

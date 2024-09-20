@@ -16,6 +16,12 @@ ShiftOverrideModel _$ShiftOverrideModelFromJson(Map<String, dynamic> json) =>
       isRemoval: json['is_removal'] == null
           ? false
           : boolFromInt((json['is_removal'] as num).toInt()),
+      createdAt: json['created_at'] == null
+          ? null
+          : DateTime.parse(json['created_at'] as String),
+      updatedAt: json['updated_at'] == null
+          ? null
+          : DateTime.parse(json['updated_at'] as String),
     );
 
 Map<String, dynamic> _$ShiftOverrideModelToJson(ShiftOverrideModel instance) =>
@@ -26,4 +32,6 @@ Map<String, dynamic> _$ShiftOverrideModelToJson(ShiftOverrideModel instance) =>
       'start_datetime': instance.startDatetime.toIso8601String(),
       'end_datetime': instance.endDatetime.toIso8601String(),
       'is_removal': boolToInt(instance.isRemoval),
+      'created_at': instance.createdAt?.toIso8601String(),
+      'updated_at': instance.updatedAt?.toIso8601String(),
     };

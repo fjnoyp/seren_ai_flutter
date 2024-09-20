@@ -68,7 +68,7 @@ class AiChatThreadsPage extends ConsumerWidget {
       title: Text(thread.name),
       subtitle: Text(thread.summary ?? 'No summary available'),
       trailing: Text(
-        '${thread.createdAt.day}/${thread.createdAt.month}/${thread.createdAt.year}',
+        '${thread.createdAt?.day}/${thread.createdAt?.month}/${thread.createdAt?.year}',
       ),
       onTap: () {
         openAiChatMessages(context, thread.id);
