@@ -22,3 +22,10 @@ https://www.figma.com/design/WD79K7Z9YAXc8SwoTU5r0n/Figma-basics?node-id=1669-16
 
 Basic AI Flows: 
 https://docs.google.com/document/d/1MAOogPCurlaLiia1DLNlKJt969z6Xy0RG4gjaaeKM1g/edit?usp=sharing
+
+
+## Listen vs Watch in Riverpod
+
+listen does not rebuild the provider, it just calls the callback when the data changes. 
+
+watch rebuilds the provider and all its dependents. This can cause issues with too many rebuilds triggering each other etc. 

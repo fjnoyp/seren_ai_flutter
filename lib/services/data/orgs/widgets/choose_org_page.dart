@@ -48,7 +48,7 @@ class ChooseOrgPage extends ConsumerWidget {
                     title: Center(child: Text(orgModel.name)),
                     subtitle: Center(child: Text(orgRoleModel.orgRole)),
                     onTap: () {
-                      ref.read(curOrgIdProvider.notifier).setOrgId(orgModel.id);
+                      ref.read(curOrgIdProvider.notifier).setDesiredOrgId(orgModel.id);
                     },
                   ),
                 );

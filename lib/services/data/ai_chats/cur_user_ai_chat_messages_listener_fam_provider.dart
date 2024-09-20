@@ -3,11 +3,12 @@ import 'package:seren_ai_flutter/services/data/db_setup/db_provider.dart';
 import 'package:seren_ai_flutter/services/data/ai_chats/models/ai_chat_message_model.dart';
 import 'package:seren_ai_flutter/services/auth/cur_auth_user_provider.dart';
 
-final curUserAiChatMessagesListenerProvider = NotifierProvider.family<CurUserAiChatMessagesListenerNotifier, List<AiChatMessageModel>?, String>(
-  CurUserAiChatMessagesListenerNotifier.new
+// Family provider that listens to all ai chat messages for a given chat thread id 
+final curUserAiChatMessagesListenerFamProvider = NotifierProvider.family<CurUserAiChatMessagesListenerFamNotifier, List<AiChatMessageModel>?, String>(
+  CurUserAiChatMessagesListenerFamNotifier.new
 );
 
-class CurUserAiChatMessagesListenerNotifier extends FamilyNotifier<List<AiChatMessageModel>?, String> {
+class CurUserAiChatMessagesListenerFamNotifier extends FamilyNotifier<List<AiChatMessageModel>?, String> {
   @override
   List<AiChatMessageModel>? build(String arg) {
     final chatThreadId = arg;
