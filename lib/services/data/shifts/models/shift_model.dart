@@ -19,19 +19,30 @@ class ShiftModel implements IHasId {
   @JsonKey(name: 'parent_project_id')
   final String parentProjectId;
 
+  @JsonKey(name: 'created_at')
+  final DateTime? createdAt;
+
+  @JsonKey(name: 'updated_at')
+  final DateTime? updatedAt;
+
   ShiftModel({
     String? id,
     required this.name,
     required this.authorUserId,
     this.parentTeamId,
     required this.parentProjectId,
+    this.createdAt,
+    this.updatedAt,
   }) : id = id ?? uuid.v4();
 
   factory ShiftModel.defaultShift() {
+    final now = DateTime.now().toUtc();
     return ShiftModel(
       name: 'New Shift',
       authorUserId: '',
       parentProjectId: '',
+      createdAt: now,
+      updatedAt: now,
     );
   }
 
@@ -41,6 +52,8 @@ class ShiftModel implements IHasId {
     String? authorUserId,
     String? parentTeamId,
     String? parentProjectId,
+    DateTime? createdAt,
+    DateTime? updatedAt,
   }) {
     return ShiftModel(
       id: id ?? this.id,
@@ -48,6 +61,8 @@ class ShiftModel implements IHasId {
       authorUserId: authorUserId ?? this.authorUserId,
       parentTeamId: parentTeamId ?? this.parentTeamId,
       parentProjectId: parentProjectId ?? this.parentProjectId,
+      createdAt: createdAt ?? this.createdAt,
+      updatedAt: updatedAt ?? this.updatedAt,
     );
   }
 

@@ -74,7 +74,7 @@ class TaskListItemView extends ConsumerWidget {
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
                         TaskPriorityView(
-                            priority: task.priorityEnum ?? PriorityEnum.normal),
+                            priority: task.priority ?? PriorityEnum.normal),
                       ],
                     ),
                     const SizedBox(height: 5),

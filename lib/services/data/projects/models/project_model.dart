@@ -10,6 +10,7 @@ class ProjectModel implements IHasId {
   final String id;
   final String name;
   final String? description;
+  final String? address;
 
   @JsonKey(name: 'parent_org_id')
   final String parentOrgId;
@@ -17,16 +18,24 @@ class ProjectModel implements IHasId {
   @JsonKey(name: 'parent_team_id')
   final String? parentTeamId;
 
+  @JsonKey(name: 'created_at')
+  final DateTime? createdAt;
+
+  @JsonKey(name: 'updated_at')
+  final DateTime? updatedAt;  
+
   ProjectModel({
     String? id,
     required this.name,
-    required this.description,
+    this.description,
+    this.address,
     required this.parentOrgId,
-    required this.parentTeamId,    
+    required this.parentTeamId,
+    this.createdAt,
+    this.updatedAt,
   }) : id = id ?? uuid.v4();
 
   factory ProjectModel.fromJson(Map<String, dynamic> json) => _$ProjectModelFromJson(json);
   Map<String, dynamic> toJson() => _$ProjectModelToJson(this);
 }
-
 

@@ -12,11 +12,18 @@ class UserModel implements IHasId {
   @JsonKey(name: 'parent_auth_user_id')
   final String parentAuthUserId; 
   final String email;
+  @JsonKey(name: 'created_at')
+  final DateTime? createdAt;
+
+  @JsonKey(name: 'updated_at')
+  final DateTime? updatedAt;
 
   UserModel({
     String? id,
     required this.parentAuthUserId,
     required this.email,
+    this.createdAt,
+    this.updatedAt,
   }) : id = id ?? uuid.v4();
 
   @override
@@ -25,11 +32,29 @@ class UserModel implements IHasId {
       other is UserModel &&
           runtimeType == other.runtimeType &&
           id == other.id &&
-          email == other.email;
+          email == other.email &&
+          createdAt == other.createdAt &&
+          updatedAt == other.updatedAt;
 
   @override
-  int get hashCode => id.hashCode ^ email.hashCode;
+  int get hashCode => id.hashCode ^ email.hashCode ^ createdAt.hashCode ^ updatedAt.hashCode;
 
   factory UserModel.fromJson(Map<String, dynamic> json) => _$UserModelFromJson(json);
   Map<String, dynamic> toJson() => _$UserModelToJson(this);
+
+  UserModel copyWith({
+    String? id,
+    String? parentAuthUserId,
+    String? email,
+    DateTime? createdAt,
+    DateTime? updatedAt,
+  }) {
+    return UserModel(
+      id: id ?? this.id,
+      parentAuthUserId: parentAuthUserId ?? this.parentAuthUserId,
+      email: email ?? this.email,
+      createdAt: createdAt ?? this.createdAt,
+      updatedAt: updatedAt ?? this.updatedAt,
+    );
+  }
 }

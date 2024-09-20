@@ -10,14 +10,17 @@ TaskModel _$TaskModelFromJson(Map<String, dynamic> json) => TaskModel(
       id: json['id'] as String?,
       name: json['name'] as String,
       description: json['description'] as String?,
-      statusEnum: $enumDecodeNullable(_$StatusEnumEnumMap, json['status_enum']),
-      priorityEnum:
-          $enumDecodeNullable(_$PriorityEnumEnumMap, json['priority_enum']),
+      status: $enumDecodeNullable(_$StatusEnumEnumMap, json['status']),
+      priority: $enumDecodeNullable(_$PriorityEnumEnumMap, json['priority']),
       dueDate: json['due_date'] == null
           ? null
           : DateTime.parse(json['due_date'] as String),
-      createdDate: DateTime.parse(json['created_date'] as String),
-      lastUpdatedDate: DateTime.parse(json['last_updated_date'] as String),
+      createdAt: json['created_at'] == null
+          ? null
+          : DateTime.parse(json['created_at'] as String),
+      updatedAt: json['updated_at'] == null
+          ? null
+          : DateTime.parse(json['updated_at'] as String),
       authorUserId: json['author_user_id'] as String,
       parentTeamId: json['parent_team_id'] as String?,
       parentProjectId: json['parent_project_id'] as String,
@@ -29,11 +32,11 @@ Map<String, dynamic> _$TaskModelToJson(TaskModel instance) => <String, dynamic>{
       'id': instance.id,
       'name': instance.name,
       'description': instance.description,
-      'status_enum': _$StatusEnumEnumMap[instance.statusEnum],
-      'priority_enum': _$PriorityEnumEnumMap[instance.priorityEnum],
+      'status': _$StatusEnumEnumMap[instance.status],
+      'priority': _$PriorityEnumEnumMap[instance.priority],
       'due_date': instance.dueDate?.toIso8601String(),
-      'created_date': instance.createdDate.toIso8601String(),
-      'last_updated_date': instance.lastUpdatedDate.toIso8601String(),
+      'created_at': instance.createdAt?.toIso8601String(),
+      'updated_at': instance.updatedAt?.toIso8601String(),
       'author_user_id': instance.authorUserId,
       'parent_team_id': instance.parentTeamId,
       'parent_project_id': instance.parentProjectId,
