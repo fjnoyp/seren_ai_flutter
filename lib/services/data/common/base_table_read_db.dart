@@ -7,6 +7,11 @@ typedef ToJson<T> = Map<String, dynamic> Function(T item);
 
 /// For retrieving values from a specifi DB table 
 /// Use for joined tables where we don't want to recompute joins based on foreign keys 
+
+
+// TODO p3: refactor to using queries 
+// And using futureProvider to fetch data once and not over and over again ... 
+
 class BaseTableReadDb<T extends IHasId> extends BaseTableDb<T> {  
   final String tableName;
   final FromJson<T> fromJson;
