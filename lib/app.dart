@@ -7,6 +7,9 @@ import 'package:seren_ai_flutter/services/auth/widgets/auth_guard.dart';
 import 'package:seren_ai_flutter/services/auth/widgets/sign_in_up_page.dart';
 import 'package:seren_ai_flutter/services/data/ai_chats/widgets/ai_chat_thread_messages_page.dart';
 import 'package:seren_ai_flutter/services/data/ai_chats/widgets/ai_chat_threads_page.dart';
+import 'package:seren_ai_flutter/services/data/notes/widgets/note_folder_notes_list_page.dart';
+import 'package:seren_ai_flutter/services/data/notes/widgets/note_folders_list_page.dart';
+import 'package:seren_ai_flutter/services/data/notes/widgets/note_page.dart';
 import 'package:seren_ai_flutter/services/data/orgs/widgets/choose_org_page.dart';
 import 'package:seren_ai_flutter/services/data/orgs/widgets/manage_org_users_page.dart';
 import 'package:seren_ai_flutter/services/data/orgs/widgets/org_guard.dart';
@@ -101,9 +104,23 @@ class AppState extends State<App> {
             },
 
             shiftsRoute: (context) => _buildGuardScaffold('Shifts', const ShiftsPage()),
+
+            noteFoldersListRoute: (context) => _buildGuardScaffold('Note Folders', const NoteFoldersListPage()),
             
             testRoute: (context) => _buildGuardScaffold('Test', const TestPage()),
             testSQLPageRoute: (context) => _buildGuardScaffold('Test SQL Page', TestSQLPage()),
+
+            noteFolderNotesListRoute: (context) {
+              final args = ModalRoute.of(context)!.settings.arguments as Map<String, dynamic>;
+              final noteFolderId = args['noteFolderId'] as String;
+              return _buildGuardScaffold('Note Folder Notes', NoteFolderNotesListPage(noteFolderId: noteFolderId));
+            },
+
+            notePageRoute: (context) {
+              final args = ModalRoute.of(context)!.settings.arguments as Map<String, dynamic>;
+              final noteId = args['noteId'] as String;
+              return _buildGuardScaffold('Note', NotePage(noteId: noteId));
+            },
           },          
           // For dynamically generating routes based on settings param 
           onGenerateRoute: (settings) {

@@ -20,7 +20,7 @@ class AiChatThreadMessagesPage extends ConsumerWidget {
 
     final threads = ref.watch(curUserAiChatThreadsListenerProvider);
     final curThread = threads?.firstWhere((thread) => thread.id == threadId);
-    final messages = ref.watch(curUserAiChatMessagesListenerFamProvider(threadId));
+    final messages = ref.watch(aiChatMessagesListenerFamProvider(threadId));
 
     if (curThread == null) {
       return const Center(child: CircularProgressIndicator());

@@ -21,6 +21,9 @@ const String aiChatThreadMessagesRoute = '/aiChatThreadMessages';
 
 const String shiftsRoute = '/shifts';
 
+const String noteFoldersListRoute = '/noteFoldersList';
+const String noteFolderNotesListRoute = '/noteFolderNotesList';
+const String notePageRoute = '/notePage';
 const String testSQLPageRoute = '/testSQLPage';
 
 final simpleDateFormat = DateFormat('MMM dd, yyyy HH:mm');

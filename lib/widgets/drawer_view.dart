@@ -143,7 +143,7 @@ class DrawerView extends HookWidget {
                 }),
             _buildListTile(
               context: context,
-              icon: Icons.folder,
+              icon: Icons.work,
               title: 'Projects',
               onTap: () {
                 Navigator.pushNamed(context, projectsRoute);
@@ -175,10 +175,18 @@ class DrawerView extends HookWidget {
             ),
             _buildListTile(
               context: context,
-              icon: Icons.work,
+              icon: Icons.punch_clock_outlined,
               title: 'Shifts',
               onTap: () {
                 Navigator.pushNamed(context, shiftsRoute);
+              },
+            ),
+            _buildListTile(
+              context: context,
+              icon: Icons.folder,
+              title: 'Note Folders',
+              onTap: () {
+                Navigator.pushNamed(context, noteFoldersListRoute);
               },
             ),
             _buildListTile(
