@@ -12,6 +12,9 @@ import 'package:seren_ai_flutter/services/data/users/users_read_provider.dart';
 
 import 'package:collection/collection.dart';
 
+// TODO p2 : split out the providers here - there isn't always a need for this joined provider ... 
+// It's inefficient 
+
 final joinedCurUserTasksListenerProvider = NotifierProvider<
     JoinedCurUserTasksListenerNotifier,
     List<JoinedTaskModel>?>(JoinedCurUserTasksListenerNotifier.new);
@@ -31,6 +34,8 @@ class JoinedCurUserTasksListenerNotifier
     if (watchedCurUserTasks == null) {
       return;
     }
+
+    // NOTE - all joined data are read not watched 
 
     // Fetch author users
     final authorUserIds =

@@ -1,6 +1,6 @@
 import 'package:json_annotation/json_annotation.dart';
 import 'package:seren_ai_flutter/services/data/common/i_has_id.dart';
-import 'package:seren_ai_flutter/services/data/common/json_parsing.dart';
+import 'package:seren_ai_flutter/services/data/common/utils/json_parsing.dart';
 import 'package:seren_ai_flutter/services/data/common/uuid.dart';
 
 part 'shift_override_model.g.dart';

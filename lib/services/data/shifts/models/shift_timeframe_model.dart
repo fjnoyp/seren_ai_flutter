@@ -1,29 +1,27 @@
 import 'package:json_annotation/json_annotation.dart';
 import 'package:seren_ai_flutter/services/data/common/i_has_id.dart';
-import 'package:seren_ai_flutter/services/data/common/json_parsing.dart';
+import 'package:seren_ai_flutter/services/data/common/utils/json_parsing.dart';
 import 'package:seren_ai_flutter/services/data/common/uuid.dart';
 
 part 'shift_timeframe_model.g.dart';
-
-
 
 @JsonSerializable()
 class ShiftTimeframeModel implements IHasId {
   @override
   final String id;
-  
+
   @JsonKey(name: 'shift_id')
   final String shiftId;
-  
+
   @JsonKey(name: 'day_of_week')
   final int dayOfWeek;
-  
+
   @JsonKey(name: 'start_time')
   final String startTime;
-  
+
   @JsonKey(name: 'duration', fromJson: parseDuration, toJson: durationToString)
   final Duration duration;
-  
+
   //final String timezone;
 
   @JsonKey(name: 'created_at')
@@ -65,20 +63,21 @@ class ShiftTimeframeModel implements IHasId {
     );
   }
 
-  factory ShiftTimeframeModel.fromJson(Map<String, dynamic> json) => _$ShiftTimeframeModelFromJson(json);
+  factory ShiftTimeframeModel.fromJson(Map<String, dynamic> json) =>
+      _$ShiftTimeframeModelFromJson(json);
   Map<String, dynamic> toJson() => _$ShiftTimeframeModelToJson(this);
 
-  // TODO p3: startTimes on 12 am or 11:59 pm will cause issues with proper day depending on local timezone... 
-  DateTime getStartDateTime(DateTime day) { 
+  /// UTC only 
+  DateTime getStartDateTime(DateTime day) {
+    assert(day.isUtc, 'ShiftTimeframeModel: input day is not in UTC');
+
     // Parse the startTime string
     List<String> timeParts = startTime.split(':');
     int hour = int.parse(timeParts[0]);
     int minute = int.parse(timeParts[1]);
 
-    // Check startTime is in UTC throw exception otherwise
-    if(!startTime.contains('+00')) {
-      throw Exception('ShiftTimeframeModel: startTime is not in UTC');
-    }
+    assert(startTime.contains('+00'),
+        'ShiftTimeframeModel: startTime is not in UTC');
 
     // Create a DateTime in UTC for the given day
     DateTime utcDateTime = DateTime.utc(
@@ -90,5 +89,12 @@ class ShiftTimeframeModel implements IHasId {
     );
 
     return utcDateTime;
+  }
+
+  DateTime getEndDateTime(DateTime day) {
+    DateTime start = getStartDateTime(day);
+
+    // Add the duration to the start time
+    return start.add(duration);
   }
 }
