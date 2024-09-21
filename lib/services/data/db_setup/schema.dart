@@ -156,6 +156,32 @@ const shiftSchemas = [
   ]),
 ];
 
+
+const notesTable = 'notes';
+const noteFoldersTable = 'note_folders';
+
+const noteSchemas = [
+  Table(notesTable, [
+    Column.text('id'),
+    Column.text('author_user_id'),
+    Column.text('name'),
+    Column.text('date'),
+    Column.text('address'),
+    Column.text('description'),
+    Column.text('action_required'),
+    Column.text('status'),
+    Column.text('parent_note_folder_id'),
+  ]),
+  Table(noteFoldersTable, [
+    Column.text('id'),
+    Column.text('name'),
+    Column.text('description'),
+    Column.text('parent_team_id'),
+    Column.text('parent_project_id'),
+    Column.integer('estimated_duration_minutes'),
+  ]),
+];
+
 // Go through all the tables and add a Column.text('created_at') and Column.text('updated_at') to each table
 
 const allTables = [
@@ -163,6 +189,7 @@ const allTables = [
   ...tasksSchemas,
   ...aiChatSchemas,
   ...shiftSchemas,
+  ...noteSchemas,
 ];
 
 // Create a function to add timestamp columns
