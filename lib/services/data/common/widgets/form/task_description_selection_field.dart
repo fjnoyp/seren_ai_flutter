@@ -2,11 +2,11 @@
 // === TASK DESCRIPTION ===
 import 'package:flutter/material.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
-import 'package:seren_ai_flutter/services/data/tasks/widgets/task_form/selection_field.dart';
+import 'package:seren_ai_flutter/services/data/common/widgets/form/selection_field.dart';
 import 'package:flutter/material.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:seren_ai_flutter/services/data/tasks/cur_task_provider.dart';
-import 'package:seren_ai_flutter/services/data/tasks/widgets/task_form/selection_field.dart';
+import 'package:seren_ai_flutter/services/data/common/widgets/form/selection_field.dart';
 
 class TaskDescriptionSelectionField extends ConsumerWidget {
   const TaskDescriptionSelectionField({
@@ -28,8 +28,8 @@ class TaskDescriptionSelectionField extends ConsumerWidget {
       valueToString: (description) => description ?? 'Enter Description',
       enabled: enabled,
       value: curTaskDescription,      
-      onValueChanged3: (ref, description) => ref.read(curTaskProvider.notifier).updateTask(ref.read(curTaskProvider).task.copyWith(description: description)),
-      showSelectionModal: (BuildContext context, void Function(WidgetRef, String)? onValueChanged3) async {
+      onValueChanged: (ref, description) => ref.read(curTaskProvider.notifier).updateTask(ref.read(curTaskProvider).task.copyWith(description: description)),
+      showSelectionModal: (BuildContext context) async {
          showModalBottomSheet<String>(
           context: context,
           isScrollControlled: true,

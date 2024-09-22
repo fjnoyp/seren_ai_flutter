@@ -93,7 +93,7 @@ class TaskListItemView extends ConsumerWidget {
                               size: 16, color: dueDateColor),
                           const SizedBox(width: 4),
                           Text(
-                            'Due Date: ${task.dueDate?.toIso8601String() != null ? listDateFormat.format(task.dueDate!) : 'N/A'}',
+                            'Due Date: ${task.dueDate != null ? listDateFormat.format(task.dueDate!.toLocal()) : 'N/A'}',
                             style: theme.textTheme.labelSmall!.copyWith(
                               color: dueDateColor,
                             ),

@@ -4,7 +4,7 @@ import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:seren_ai_flutter/services/data/tasks/cur_task_provider.dart';
 import 'package:seren_ai_flutter/services/data/tasks/cur_task_selection_options_provider.dart';
 import 'package:seren_ai_flutter/services/data/tasks/models/joined_task_user_assignments_model.dart';
-import 'package:seren_ai_flutter/services/data/tasks/widgets/task_form/selection_field.dart';
+import 'package:seren_ai_flutter/services/data/common/widgets/form/selection_field.dart';
 import 'package:seren_ai_flutter/services/data/users/models/user_model.dart';
 
 class TaskAssigneesSelectionField extends HookConsumerWidget {
@@ -33,10 +33,9 @@ class TaskAssigneesSelectionField extends HookConsumerWidget {
           : assignees!.map((assignment) => assignment.email).join(', '),
       enabled: enabled && curProject != null,
       value: curTaskAssignees,
-      onValueChanged3: (ref, assignees) =>
+      onValueChanged: (ref, assignees) =>
           ref.read(curTaskProvider.notifier).updateAssignees(assignees),
-      showSelectionModal: (BuildContext context,
-          void Function(WidgetRef, List<UserModel>)? onValueChanged3) async {
+      showSelectionModal: (BuildContext context) async {
         showModalBottomSheet<List<UserModel>>(
           context: context,
           isScrollControlled: true,
