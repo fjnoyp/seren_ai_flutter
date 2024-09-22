@@ -1,10 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_hooks/flutter_hooks.dart';
-import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
-import 'package:seren_ai_flutter/services/ai_orchestrator_provider.dart';
-import 'package:seren_ai_flutter/services/data/projects/models/project_model.dart';
-import 'package:seren_ai_flutter/services/data/tasks/cur_task_provider.dart';
 import 'package:seren_ai_flutter/services/data/common/widgets/form/color_animation.dart';
 
 class AnimatedModalSelectionField<T> extends HookConsumerWidget {
@@ -16,7 +11,7 @@ class AnimatedModalSelectionField<T> extends HookConsumerWidget {
     required this.enabled,
     required this.value,
     required this.options,
-    required this.onValueChanged,
+    this.onValueChanged,
   });
 
   final Widget labelWidget;
@@ -25,7 +20,7 @@ class AnimatedModalSelectionField<T> extends HookConsumerWidget {
   final bool enabled;
   final T? value;
   final List<T> options;
-  final void Function(WidgetRef, T?) onValueChanged;
+  final void Function(WidgetRef, T?)? onValueChanged;
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -42,18 +37,18 @@ class AnimatedModalSelectionField<T> extends HookConsumerWidget {
         return DefaultTextStyle(
           style: TextStyle(color: colorAnimation.colorTween.value),
           child: IconTheme(
-        data: IconThemeData(color: colorAnimation.colorTween.value),
-          child: ModalSelectionField<T>(
-            labelWidget: labelWidget,
-            validator: validator,
-            valueToString: valueToString,
-            enabled: enabled,
-            value: value,
-            options: options,
-            onValueChanged: onValueChanged,
-            defaultColor: colorAnimation.colorTween.value,
+            data: IconThemeData(color: colorAnimation.colorTween.value),
+            child: ModalSelectionField<T>(
+              labelWidget: labelWidget,
+              validator: validator,
+              valueToString: valueToString,
+              enabled: enabled,
+              value: value,
+              options: options,
+              onValueChanged: onValueChanged,
+              defaultColor: colorAnimation.colorTween.value,
+            ),
           ),
-        ),
         );
       },
     );
@@ -64,15 +59,12 @@ class ModalSelectionField<T> extends SelectionField<T> {
   ModalSelectionField({
     super.key,
     required super.value,
-    required super.onValueChanged,
-    //required super.onValueChanged,
+    super.onValueChanged,    
     required super.labelWidget,
     required List<T> options,
     required super.valueToString,
-    //super.onSaved,
     super.validator,
-    super.enabled,
-    //super.onValueChanged2,
+    super.enabled,    
     super.defaultColor,
   }) : super(
           showSelectionModal: (BuildContext context) async {
@@ -87,8 +79,6 @@ class ModalSelectionField<T> extends SelectionField<T> {
                       return ListTile(
                         title: Text(valueToString(option)),
                         onTap: () {
-                          //ref.read(curTaskProvider.notifier).updateParentProject(ProjectModel(name: 'test', description: 'test', parentOrgId: 'test', parentTeamId: 'test'));
-
                           onValueChanged?.call(ref, option);
                           Navigator.pop(context, option);
                         },
@@ -106,7 +96,7 @@ class AnimatedSelectionField<T> extends SelectionField<T> {
   AnimatedSelectionField({
     super.key,
     required super.value,
-    required super.onValueChanged,
+    super.onValueChanged,
     required super.labelWidget,
     required super.valueToString,
     required super.showSelectionModal,
@@ -130,31 +120,29 @@ class AnimatedSelectionField<T> extends SelectionField<T> {
         return DefaultTextStyle(
           style: TextStyle(color: colorAnimation.colorTween.value),
           child: IconTheme(
-        data: IconThemeData(color: colorAnimation.colorTween.value),
-        child: SelectionField<T>(
-          key: key,
-          value: value,
-          onValueChanged: onValueChanged,
-          labelWidget: labelWidget,
-          valueToString: valueToString,
-          showSelectionModal: showSelectionModal,
-          validator: validator,
-          enabled: enabled,
-          defaultColor: colorAnimation.colorTween.value,
-        ),
-        ),
+            data: IconThemeData(color: colorAnimation.colorTween.value),
+            child: SelectionField<T>(
+              key: key,
+              value: value,
+              onValueChanged: onValueChanged,
+              labelWidget: labelWidget,
+              valueToString: valueToString,
+              showSelectionModal: showSelectionModal,
+              validator: validator,
+              enabled: enabled,
+              defaultColor: colorAnimation.colorTween.value,
+            ),
+          ),
         );
       },
     );
   }
 }
 
-
 class SelectionField<T> extends HookConsumerWidget {
   final Widget labelWidget;
   final String Function(T?) valueToString;
-  final Future<void> Function(BuildContext)
-      showSelectionModal;
+  final Future<void> Function(BuildContext) showSelectionModal;
   final FormFieldValidator<T>? validator;
   final bool enabled;
   final T? value;
@@ -168,7 +156,7 @@ class SelectionField<T> extends HookConsumerWidget {
     required this.valueToString,
     required this.showSelectionModal,
     required this.value,
-    required this.onValueChanged,
+    this.onValueChanged,
     // TODO p2: actually use this validator (ie. display string output if not null/empty)
     this.validator,
     this.enabled = true,
@@ -176,65 +164,43 @@ class SelectionField<T> extends HookConsumerWidget {
   }) : super(key: key);
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-
-
-
-    
     final Color baseColor = defaultColor ??
         Theme.of(context).textTheme.bodyMedium?.color ??
         Colors.black;
 
-    final Color curColor = enabled ? baseColor : Color.lerp(baseColor, Colors.grey[600], 0.5)!;
-    //final Color curColor = baseColor;
-    
-
-  
-
-    return  Row(
-            children: [
-              // Label Widget
-
-              /*
-        ColorFiltered(
-          colorFilter: ColorFilter.mode(curColor, BlendMode.srcIn),
-          child: labelWidget,
+    final Color curColor =
+        enabled ? baseColor : Color.lerp(baseColor, Colors.grey[600], 0.5)!;
+    return Row(
+      children: [
+        labelWidget,
+        const SizedBox(width: 8),
+        Expanded(
+          // Button to show selection UI
+          child: TextButton(
+            onPressed: enabled
+                ? () async {
+                    // Using ShowBottomSheet or ShowDatePicker invalidates the ref context after the modal closes
+                    // Only fix has been to use consumer directly in the modal builder when the tap occurs
+                    await showSelectionModal(context);
+                  }
+                : null,
+            style: TextButton.styleFrom(
+              alignment: Alignment.centerLeft,
+              padding: const EdgeInsets.only(left: 10),
+            ),
+            // Current Value Display
+            child: Text(
+              valueToString(value),
+              maxLines: 2,
+              overflow: TextOverflow.ellipsis,
+              style: Theme.of(context)
+                  .textTheme
+                  .bodyMedium
+                  ?.copyWith(color: curColor),
+            ),
+          ),
         ),
-        */
-
-              
-              //DefaultTextStyle(
-//                style: TextStyle(color: curColor),
-                //child: labelWidget,
-              //),
-              labelWidget,
-              const SizedBox(width: 8),
-              Expanded(
-                // Button to show selection UI
-                child: TextButton(
-                  onPressed: enabled
-                      ? () async {
-                          // Using ShowBottomSheet or ShowDatePicker invalidates the ref context after the modal closes
-                          // Only fix has been to use consumer directly in the modal builder when the tap occurs
-                          await showSelectionModal(context);
-                        }
-                      : null,
-                  style: TextButton.styleFrom(
-                    alignment: Alignment.centerLeft,
-                    padding: const EdgeInsets.only(left: 10),
-                  ),
-                  // Current Value Display
-                  child: Text(
-                    valueToString(value),
-                    maxLines: 2,
-                    overflow: TextOverflow.ellipsis,
-                    style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                        color: curColor),
-                        //backgroundColor: enabled ? null : Colors.grey[200],
-                        //),
-                  ),
-                ),
-              ),
-            ],
-          );
+      ],
+    );
   }
 }
