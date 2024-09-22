@@ -1,54 +1,51 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
-import 'package:seren_ai_flutter/services/data/tasks/cur_task_provider.dart';
-import 'package:seren_ai_flutter/services/data/tasks/cur_task_selection_options_provider.dart';
-import 'package:seren_ai_flutter/services/data/tasks/models/joined_task_user_assignments_model.dart';
 import 'package:seren_ai_flutter/services/data/common/widgets/form/selection_field.dart';
+import 'package:seren_ai_flutter/services/data/projects/models/project_model.dart';
 import 'package:seren_ai_flutter/services/data/users/models/user_model.dart';
 
-class TaskAssigneesSelectionField extends HookConsumerWidget {
-  const TaskAssigneesSelectionField({
+class BaseAssigneesSelectionField extends HookConsumerWidget {
+  final bool enabled;
+  final ProviderListenable<List<UserModel>> assigneesProvider;
+  final ProviderListenable<ProjectModel?> projectProvider;
+  final Function(WidgetRef, List<UserModel>) updateAssignees;
+  final ProviderListenable<List<UserModel>> selectableUsersProvider;
+  const BaseAssigneesSelectionField({
     super.key,
     required this.enabled,
+    required this.assigneesProvider,
+    required this.projectProvider,
+    required this.updateAssignees,
+    required this.selectableUsersProvider,
   });
-
-  final bool enabled;
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final curTaskAssignees = ref.watch(curTaskAssigneesProvider);
-
-    //updateAssignees(Set<UserModel>? assignees) => ref.read(curTaskProvider.notifier).updateAssignees(assignees);
-
-    final curProject = ref.watch(curTaskProjectProvider);
+    final curAssignees = ref.watch(assigneesProvider);
+    final curProject = ref.watch(projectProvider);
 
     return AnimatedSelectionField<List<UserModel>>(
       labelWidget: const Icon(Icons.person),
       validator: (assignees) => assignees == null || assignees.isEmpty
           ? 'Assignees are required'
           : null,
-      valueToString: (assignees) => assignees?.isEmpty == null
+      valueToString: (assignees) => assignees?.isEmpty == true
           ? 'Choose Assignees'
           : assignees!.map((assignment) => assignment.email).join(', '),
       enabled: enabled && curProject != null,
-      value: curTaskAssignees,
-      onValueChanged: (ref, assignees) =>
-          ref.read(curTaskProvider.notifier).updateAssignees(assignees),
+      value: curAssignees,
+      onValueChanged: updateAssignees,
       showSelectionModal: (BuildContext context) async {
         showModalBottomSheet<List<UserModel>>(
           context: context,
           isScrollControlled: true,
           builder: (BuildContext context) {
-            return TaskAssigneesSelectionModal(
-              initialSelectedUsers: curTaskAssignees,
-              onAssigneesChanged:
-                  (WidgetRef ref, List<UserModel> newAssignees) {
-                ref
-                    .read(curTaskProvider.notifier)
-                    .updateAssignees(newAssignees);
-                Navigator.pop(context);
-              },
+            return AssigneesSelectionModal(
+              initialSelectedUsers: curAssignees,
+              onAssigneesChanged: updateAssignees,
+              selectableUsersProvider: selectableUsersProvider,
+              projectProvider: projectProvider,
             );
           },
         );
@@ -57,23 +54,27 @@ class TaskAssigneesSelectionField extends HookConsumerWidget {
   }
 }
 
-class TaskAssigneesSelectionModal extends HookConsumerWidget {
+class AssigneesSelectionModal extends HookConsumerWidget {
   final List<UserModel> initialSelectedUsers;
   final void Function(WidgetRef, List<UserModel>) onAssigneesChanged;
+  final ProviderListenable<List<UserModel>> selectableUsersProvider;
+  final ProviderListenable<ProjectModel?> projectProvider;
 
-  const TaskAssigneesSelectionModal({
+  const AssigneesSelectionModal({
     super.key,
     required this.initialSelectedUsers,
     required this.onAssigneesChanged,
+    required this.selectableUsersProvider,
+    required this.projectProvider,
   });
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final currentlySelectedUsers = useState(initialSelectedUsers);
-    final watchedSelectableUsers = ref.watch(curTaskSelectionOptionsProvider
-        .select((state) => state.selectableUsers));
+    
+    final watchedSelectableUsers = ref.watch(selectableUsersProvider);
 
-    final curProject = ref.watch(curTaskProjectProvider);
+    final curProject = ref.watch(projectProvider);
 
     return Padding(
       padding: EdgeInsets.only(
@@ -101,8 +102,7 @@ class TaskAssigneesSelectionModal extends HookConsumerWidget {
             ),
             ConstrainedBox(
               constraints: BoxConstraints(
-                maxHeight: MediaQuery.of(context).size.height *
-                    0.5, // 50% of screen height
+                maxHeight: MediaQuery.of(context).size.height * 0.5,
               ),
               child: ListView.builder(
                 itemCount: watchedSelectableUsers.length,

@@ -8,7 +8,7 @@ import 'package:seren_ai_flutter/services/data/ai_chats/ai_chat_messages_db_prov
 import 'package:seren_ai_flutter/services/data/ai_chats/cur_chat_thread_provider.dart';
 import 'package:seren_ai_flutter/services/data/ai_chats/models/ai_chat_message_model.dart';
 import 'package:seren_ai_flutter/services/data/projects/models/project_model.dart';
-import 'package:seren_ai_flutter/services/data/tasks/cur_task_provider.dart';
+import 'package:seren_ai_flutter/services/data/tasks/ui_state/cur_task_provider.dart';
 import 'package:seren_ai_flutter/services/data/tasks/models/joined_task_model.dart';
 import 'package:seren_ai_flutter/services/data/tasks/models/task_model.dart';
 import 'package:seren_ai_flutter/services/data/tasks/widgets/task_page.dart';
