@@ -3,7 +3,7 @@ import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:seren_ai_flutter/services/ai_orchestrator_provider.dart';
 import 'package:seren_ai_flutter/services/data/tasks/cur_task_provider.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
-import 'package:seren_ai_flutter/services/data/tasks/widgets/task_form/color_animation.dart';
+import 'package:seren_ai_flutter/services/data/common/widgets/form/color_animation.dart';
 
 class TaskNameField extends HookConsumerWidget {
   const TaskNameField({

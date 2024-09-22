@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:seren_ai_flutter/services/data/tasks/cur_task_provider.dart';
-import 'package:seren_ai_flutter/services/data/tasks/widgets/task_form/color_animation.dart';
-import 'package:seren_ai_flutter/services/data/tasks/widgets/task_form/selection_field.dart';
+import 'package:seren_ai_flutter/services/data/common/widgets/form/color_animation.dart';
+import 'package:seren_ai_flutter/services/data/common/widgets/form/selection_field.dart';
 import 'package:seren_ai_flutter/services/data/tasks/widgets/ui_constants.dart';
 
 
@@ -30,14 +30,17 @@ class TaskDueDateSelectionField extends ConsumerWidget {
       validator: _validator,
       valueToString: _valueToString,
       enabled: enabled,
-      value: curTaskDueDate,
+      value: curTaskDueDate?.toLocal(),
       //defaultColor: defaultColor,
       //options: [], // No options needed for date selection
-      showSelectionModal: (BuildContext context,
-          void Function(WidgetRef, DateTime)? onValueChanged3) async {
+      showSelectionModal: (BuildContext context) async {
+
+
         await ref.read(curTaskProvider.notifier).pickAndUpdateDueDate(context);
+
       },
-      onValueChanged3: (ref, date) async {
+
+      onValueChanged: (ref, date) async {
         //await ref.read(curTaskProvider.notifier).updateDueDate(date);
       },
     );
