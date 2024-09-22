@@ -3,7 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:seren_ai_flutter/services/auth/cur_auth_user_provider.dart';
 import 'package:seren_ai_flutter/services/data/projects/cur_user_viewable_projects_listener_provider.dart';
 import 'package:seren_ai_flutter/services/data/projects/models/project_model.dart';
-import 'package:seren_ai_flutter/services/data/tasks/cur_task_provider.dart';
+import 'package:seren_ai_flutter/services/data/tasks/ui_state/cur_task_provider.dart';
 import 'package:seren_ai_flutter/services/data/teams/cur_team/cur_user_viewable_teams_listener_provider.dart';
 import 'package:seren_ai_flutter/services/data/teams/models/team_model.dart';
 import 'package:seren_ai_flutter/services/data/users/models/user_model.dart';
@@ -26,6 +26,10 @@ class TaskSelectionOptionsState {
   });
 }
 
+// === NOTE === 
+// This is inefficient as it groups state together
+// But it allows for easy access to all the options in the UI for the AI in the future 
+// TODO p5: investigate if the AlwaysAliveListenerProviders created when doing select on the fields here can cause memory issues down the line 
 class CurTaskSelectionOptionsNotifier extends Notifier<TaskSelectionOptionsState> {  
 
   @override
@@ -45,8 +49,6 @@ class CurTaskSelectionOptionsNotifier extends Notifier<TaskSelectionOptionsState
       ...?usersInProject,
       if (watchedCurAuthUser != null) watchedCurAuthUser,
     ];
-
-
 
     return TaskSelectionOptionsState(
       selectableProjects: watchedProjects ?? [],

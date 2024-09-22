@@ -1,30 +1,33 @@
 import 'package:flutter/material.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:seren_ai_flutter/services/ai_orchestrator_provider.dart';
-import 'package:seren_ai_flutter/services/data/tasks/cur_task_provider.dart';
+import 'package:seren_ai_flutter/services/data/tasks/ui_state/cur_task_provider.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:seren_ai_flutter/services/data/common/widgets/form/color_animation.dart';
 
-class TaskNameField extends HookConsumerWidget {
-  const TaskNameField({
+class BaseNameField extends HookConsumerWidget {
+  const BaseNameField({
     super.key,
     required this.enabled,
+    required this.nameProvider,
+    required this.updateName,
   });
 
   final bool enabled;
+  final ProviderListenable<String> nameProvider;
+  final Function(WidgetRef, String) updateName;
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final curTaskName =
-        ref.watch(curTaskProvider.select((state) => state.task.name));
-    final nameController = useTextEditingController(text: curTaskName);
+    final curName = ref.watch(nameProvider);
+    final nameController = useTextEditingController(text: curName);
     final focusNode = useFocusNode();
 
     final colorAnimation = useAiActionColorAnimation(
       context,
       ref,
       duration: Duration(seconds: 1),
-      triggerValue: curTaskName,
+      triggerValue: curName,
     );
 
     // HACK to get textController to sync with curTaskProvider
@@ -52,18 +55,16 @@ class TaskNameField extends HookConsumerWidget {
           enabled: enabled,
           textInputAction: TextInputAction.done,
           onSubmitted: (value) {
-            ref.read(curTaskProvider.notifier).updateTaskName(value);
+            updateName(ref, value);
             FocusScope.of(context).unfocus(); // Hide the keyboard
           },
           onEditingComplete: () {
-            ref
-                .read(curTaskProvider.notifier)
-                .updateTaskName(nameController.text);
+            updateName(ref, nameController.text);
             FocusScope.of(context).unfocus(); // Hide the keyboard
           },
           decoration: InputDecoration(
-            hintText: 'Enter task name',
-            errorText: curTaskName.isEmpty ? 'Task name is required' : null,
+            hintText: 'Enter name',
+            errorText: curName.isEmpty ? 'Name is required' : null,
           ),
           style: TextStyle(color: colorAnimation.colorTween.value),
         );
@@ -71,4 +72,3 @@ class TaskNameField extends HookConsumerWidget {
     );
   }
 }
-

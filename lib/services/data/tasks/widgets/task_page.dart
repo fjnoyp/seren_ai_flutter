@@ -1,20 +1,16 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:logging/logging.dart';
 import 'package:seren_ai_flutter/constants.dart';
 import 'package:seren_ai_flutter/services/auth/cur_auth_user_provider.dart';
-import 'package:seren_ai_flutter/services/data/tasks/cur_task_provider.dart';
+import 'package:seren_ai_flutter/services/data/tasks/ui_state/cur_task_provider.dart';
 import 'package:seren_ai_flutter/services/data/tasks/models/joined_task_model.dart';
-import 'package:seren_ai_flutter/services/data/tasks/models/task_user_assignments_model.dart';
-import 'package:seren_ai_flutter/services/data/tasks/task_user_assignments_db_provider.dart';
-import 'package:seren_ai_flutter/services/data/tasks/tasks_db_provider.dart';
 import 'package:seren_ai_flutter/services/data/tasks/widgets/joined_task_save_provider.dart';
-import 'package:seren_ai_flutter/services/data/common/widgets/form/task_assignees_selection_field.dart';
-import 'package:seren_ai_flutter/services/data/common/widgets/form/task_description_selection_field.dart';
-import 'package:seren_ai_flutter/services/data/common/widgets/form/task_due_date_selection_field.dart';
-import 'package:seren_ai_flutter/services/data/common/widgets/form/task_name_field.dart';
-import 'package:seren_ai_flutter/services/data/common/widgets/form/task_selection_fields.dart';
+import 'package:seren_ai_flutter/services/data/tasks/widgets/task_form/task_assignees_selection_field.dart';
+import 'package:seren_ai_flutter/services/data/tasks/widgets/task_form/task_description_selection_field.dart';
+import 'package:seren_ai_flutter/services/data/tasks/widgets/task_form/task_due_date_selection_field.dart';
+import 'package:seren_ai_flutter/services/data/tasks/widgets/task_form/task_name_field.dart';
+import 'package:seren_ai_flutter/services/data/tasks/widgets/task_form/task_selection_fields.dart';
 
 /* === Thoughts on ai generation of create task === 
 1) Tasks must be assigned to specific users / projects 
