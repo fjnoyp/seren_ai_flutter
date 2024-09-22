@@ -10,11 +10,11 @@ import 'package:seren_ai_flutter/services/data/tasks/models/task_user_assignment
 import 'package:seren_ai_flutter/services/data/tasks/task_user_assignments_db_provider.dart';
 import 'package:seren_ai_flutter/services/data/tasks/tasks_db_provider.dart';
 import 'package:seren_ai_flutter/services/data/tasks/widgets/joined_task_save_provider.dart';
-import 'package:seren_ai_flutter/services/data/tasks/widgets/task_form/task_assignees_selection_field.dart';
-import 'package:seren_ai_flutter/services/data/tasks/widgets/task_form/task_description_selection_field.dart';
-import 'package:seren_ai_flutter/services/data/tasks/widgets/task_form/task_due_date_selection_field.dart';
-import 'package:seren_ai_flutter/services/data/tasks/widgets/task_form/task_name_field.dart';
-import 'package:seren_ai_flutter/services/data/tasks/widgets/task_form/task_selection_fields.dart';
+import 'package:seren_ai_flutter/services/data/common/widgets/form/task_assignees_selection_field.dart';
+import 'package:seren_ai_flutter/services/data/common/widgets/form/task_description_selection_field.dart';
+import 'package:seren_ai_flutter/services/data/common/widgets/form/task_due_date_selection_field.dart';
+import 'package:seren_ai_flutter/services/data/common/widgets/form/task_name_field.dart';
+import 'package:seren_ai_flutter/services/data/common/widgets/form/task_selection_fields.dart';
 
 /* === Thoughts on ai generation of create task === 
 1) Tasks must be assigned to specific users / projects 

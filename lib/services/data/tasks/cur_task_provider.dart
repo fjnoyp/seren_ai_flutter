@@ -39,15 +39,37 @@ class CurTaskNotifier extends Notifier<JoinedTaskModel> {
     state = state.copyWith(task: task);
   }
 
+  // We must showDatePicker and update in same method 
+  // As the original ref is invalidated after showDatePicker returns 
   Future<void> pickAndUpdateDueDate(BuildContext context) async {
-    final DateTime? picked = await showDatePicker(
+
+    final DateTime now = DateTime.now();
+    final DateTime initialDate = state.task.dueDate?.toLocal() ?? now;
+
+    final DateTime? pickedDate = await showDatePicker(
       context: context,
-      initialDate: state.task.dueDate ?? DateTime.now().toUtc(),
+      initialDate: initialDate,
       firstDate: DateTime(2000),
       lastDate: DateTime(2100),
     );
-    if (picked != null) {
-      updateDueDate(picked);
+
+    if (pickedDate != null) {
+          final TimeOfDay? pickedTime = await showTimePicker(
+            context: context,
+            initialTime: TimeOfDay.fromDateTime(initialDate),
+          );
+
+          if (pickedTime != null) {
+            final DateTime pickedDateTime = DateTime(
+              pickedDate.year,
+              pickedDate.month,
+              pickedDate.day,
+              pickedTime.hour,
+              pickedTime.minute,
+            ).toUtc();
+
+            updateDueDate(pickedDateTime);
+      }
     }
   }
 

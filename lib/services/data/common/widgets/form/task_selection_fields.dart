@@ -7,8 +7,8 @@ import 'package:seren_ai_flutter/services/data/projects/models/project_model.dar
 import 'package:seren_ai_flutter/services/data/tasks/cur_task_provider.dart';
 import 'package:seren_ai_flutter/services/data/tasks/cur_task_selection_options_provider.dart';
 import 'package:seren_ai_flutter/services/data/tasks/models/task_model.dart';
-import 'package:seren_ai_flutter/services/data/tasks/widgets/task_form/color_animation.dart';
-import 'package:seren_ai_flutter/services/data/tasks/widgets/task_form/selection_field.dart';
+import 'package:seren_ai_flutter/services/data/common/widgets/form/color_animation.dart';
+import 'package:seren_ai_flutter/services/data/common/widgets/form/selection_field.dart';
 import 'package:seren_ai_flutter/services/data/tasks/widgets/ui_constants.dart';
 import 'package:seren_ai_flutter/services/data/teams/models/team_model.dart';
 

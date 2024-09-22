@@ -5,7 +5,7 @@ import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:seren_ai_flutter/services/ai_orchestrator_provider.dart';
 import 'package:seren_ai_flutter/services/data/projects/models/project_model.dart';
 import 'package:seren_ai_flutter/services/data/tasks/cur_task_provider.dart';
-import 'package:seren_ai_flutter/services/data/tasks/widgets/task_form/color_animation.dart';
+import 'package:seren_ai_flutter/services/data/common/widgets/form/color_animation.dart';
 
 class AnimatedModalSelectionField<T> extends HookConsumerWidget {
   const AnimatedModalSelectionField({
@@ -50,7 +50,7 @@ class AnimatedModalSelectionField<T> extends HookConsumerWidget {
             enabled: enabled,
             value: value,
             options: options,
-            onValueChanged3: onValueChanged,
+            onValueChanged: onValueChanged,
             defaultColor: colorAnimation.colorTween.value,
           ),
         ),
@@ -64,7 +64,7 @@ class ModalSelectionField<T> extends SelectionField<T> {
   ModalSelectionField({
     super.key,
     required super.value,
-    required super.onValueChanged3,
+    required super.onValueChanged,
     //required super.onValueChanged,
     required super.labelWidget,
     required List<T> options,
@@ -75,8 +75,7 @@ class ModalSelectionField<T> extends SelectionField<T> {
     //super.onValueChanged2,
     super.defaultColor,
   }) : super(
-          showSelectionModal: (BuildContext context,
-              void Function(WidgetRef, T)? onValueChanged3) async {
+          showSelectionModal: (BuildContext context) async {
             return showModalBottomSheet(
               context: context,
               builder: (BuildContext context) => Consumer(
@@ -90,7 +89,7 @@ class ModalSelectionField<T> extends SelectionField<T> {
                         onTap: () {
                           //ref.read(curTaskProvider.notifier).updateParentProject(ProjectModel(name: 'test', description: 'test', parentOrgId: 'test', parentTeamId: 'test'));
 
-                          onValueChanged3?.call(ref, option);
+                          onValueChanged?.call(ref, option);
                           Navigator.pop(context, option);
                         },
                       );
@@ -107,7 +106,7 @@ class AnimatedSelectionField<T> extends SelectionField<T> {
   AnimatedSelectionField({
     super.key,
     required super.value,
-    required super.onValueChanged3,
+    required super.onValueChanged,
     required super.labelWidget,
     required super.valueToString,
     required super.showSelectionModal,
@@ -135,7 +134,7 @@ class AnimatedSelectionField<T> extends SelectionField<T> {
         child: SelectionField<T>(
           key: key,
           value: value,
-          onValueChanged3: onValueChanged3,
+          onValueChanged: onValueChanged,
           labelWidget: labelWidget,
           valueToString: valueToString,
           showSelectionModal: showSelectionModal,
@@ -154,12 +153,12 @@ class AnimatedSelectionField<T> extends SelectionField<T> {
 class SelectionField<T> extends HookConsumerWidget {
   final Widget labelWidget;
   final String Function(T?) valueToString;
-  final Future<void> Function(BuildContext, void Function(WidgetRef, T)?)
+  final Future<void> Function(BuildContext)
       showSelectionModal;
   final FormFieldValidator<T>? validator;
   final bool enabled;
   final T? value;
-  final void Function(WidgetRef, T)? onValueChanged3;
+  final void Function(WidgetRef, T)? onValueChanged;
 
   final Color? defaultColor;
 
@@ -169,8 +168,8 @@ class SelectionField<T> extends HookConsumerWidget {
     required this.valueToString,
     required this.showSelectionModal,
     required this.value,
-    required this.onValueChanged3,
-    // This is unused - must implement validator ui manually
+    required this.onValueChanged,
+    // TODO p2: actually use this validator (ie. display string output if not null/empty)
     this.validator,
     this.enabled = true,
     this.defaultColor,
@@ -216,7 +215,7 @@ class SelectionField<T> extends HookConsumerWidget {
                       ? () async {
                           // Using ShowBottomSheet or ShowDatePicker invalidates the ref context after the modal closes
                           // Only fix has been to use consumer directly in the modal builder when the tap occurs
-                          await showSelectionModal(context, onValueChanged3);
+                          await showSelectionModal(context);
                         }
                       : null,
                   style: TextButton.styleFrom(
