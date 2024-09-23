@@ -99,6 +99,7 @@ class TaskPage extends HookConsumerWidget {
                     }
 
                     // TODO p2: add validator ui - since we don't use formfield (since we use provider to manage task form state) we must manually implement validation
+
                     final isValidTask =
                         ref.read(curTaskProvider.notifier).isValidTask();
 
@@ -152,6 +153,7 @@ Future<void> openBlankTaskPage(BuildContext context, Ref ref) async {
       arguments: {'mode': EditablePageMode.create});
 }
 
+// TODO p2: init state within the page itself ... we should only rely on arguments to init the page (to support deep linking)
 Future<void> openTaskPage(BuildContext context, WidgetRef ref,
     {required EditablePageMode mode, JoinedTaskModel? initialJoinedTask}) async {
   // Remove previous TaskPage to avoid duplicate task pages

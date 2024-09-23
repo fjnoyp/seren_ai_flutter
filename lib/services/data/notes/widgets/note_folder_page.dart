@@ -5,18 +5,17 @@ import 'package:seren_ai_flutter/constants.dart';
 import 'package:seren_ai_flutter/services/auth/cur_auth_user_provider.dart';
 import 'package:seren_ai_flutter/services/data/common/widgets/editablePageModeEnum.dart';
 import 'package:seren_ai_flutter/services/data/common/widgets/form/base_text_block_edit_selection_field.dart';
-import 'package:seren_ai_flutter/services/data/notes/notes_read_provider.dart';
+import 'package:seren_ai_flutter/services/data/notes/note_folders_read_provider.dart';
 import 'package:seren_ai_flutter/services/data/notes/ui_state/cur_folder_provider.dart';
-import 'package:seren_ai_flutter/services/data/notes/ui_state/cur_note_provider.dart';
-import 'package:seren_ai_flutter/services/data/notes/widgets/form/note_selection_fields.dart';
+import 'package:seren_ai_flutter/services/data/notes/widgets/form/note_folder_selection_fields.dart';
 
-final log = Logger('NotePage');
+final log = Logger('NoteFolderPage');
 
-/// For creating / editing a note
-class NotePage extends HookConsumerWidget {
-  final EditablePageMode mode;  
+/// For creating / editing a note folder
+class NoteFolderPage extends HookConsumerWidget {
+  final EditablePageMode mode;
 
-  const NotePage({
+  const NoteFolderPage({
     super.key,
     required this.mode,
   });
@@ -33,7 +32,7 @@ class NotePage extends HookConsumerWidget {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            NoteNameField(enabled: isEnabled),
+            NoteFolderNameField(enabled: isEnabled),
             SizedBox(height: 8),
             Divider(),
 
@@ -44,30 +43,7 @@ class NotePage extends HookConsumerWidget {
               padding: const EdgeInsets.only(left: 15),
               child: Column(
                 children: [
-                  NoteDueDateSelectionField(enabled: isEnabled),
-                  const Divider(),
-                  NoteDescriptionSelectionField(enabled: isEnabled),
-                  const Divider(),
-                  BaseTextBlockEditSelectionField(
-                    enabled: isEnabled,
-                    descriptionProvider: curNoteAddressProvider,
-                    updateDescription: (ref, address) =>
-                        ref.read(curNoteProvider.notifier).updateAddress(address),
-                  ),
-                  const Divider(),
-                  BaseTextBlockEditSelectionField(
-                    enabled: isEnabled,
-                    descriptionProvider: curNoteActionRequiredProvider,
-                    updateDescription: (ref, actionRequired) =>
-                        ref.read(curNoteProvider.notifier).updateActionRequired(actionRequired),
-                  ),
-                  const Divider(),
-                  BaseTextBlockEditSelectionField(
-                    enabled: isEnabled,
-                    descriptionProvider: curNoteStatusProvider,
-                    updateDescription: (ref, status) =>
-                        ref.read(curNoteProvider.notifier).updateStatus(status),
-                  ),
+                  NoteFolderDescriptionField(enabled: isEnabled),
                 ],
               ),
             ),
@@ -86,15 +62,16 @@ class NotePage extends HookConsumerWidget {
                       return;
                     }
 
-                    final isValidNote =
-                        ref.read(curNoteProvider.notifier).isValidNote();
-                        
+                    final isValidNoteFolder =
+                        ref.read(curNoteFolderProvider.notifier).isValidNoteFolder();
+
                     // TODO p2: add validator ui - since we don't use formfield (since we use provider to manage task form state) we must manually implement validation
 
-                    if (isValidNote) {
-                      final curNote = ref.read(curNoteProvider);
-                      
-                      await ref.read(notesReadProvider).upsertItem(curNote);
+                    if (isValidNoteFolder) {
+                      final curNoteFolder = ref.read(curNoteFolderProvider);
+                      // Save note folder logic here
+
+                      await ref.read(noteFoldersReadProvider).upsertItem(curNoteFolder);
 
                       if (context.mounted) {
                         Navigator.pop(context);
@@ -106,8 +83,8 @@ class NotePage extends HookConsumerWidget {
                     foregroundColor: theme.colorScheme.onSecondary,
                   ),
                   child: Text(mode == EditablePageMode.edit
-                      ? 'Update Note'
-                      : 'Create Note'),
+                      ? 'Update Note Folder'
+                      : 'Create Note Folder'),
                 ),
               ),
 
@@ -115,7 +92,7 @@ class NotePage extends HookConsumerWidget {
               ElevatedButton(
                   onPressed: () {
                     Navigator.pop(context);
-                    openNotePage(context, ref, mode: EditablePageMode.edit);
+                    openNoteFolderPage(context, ref, mode: EditablePageMode.edit);
                   },
                   child: Text('Edit'))
           ],
@@ -126,30 +103,26 @@ class NotePage extends HookConsumerWidget {
 }
 
 // TODO p2: init state within the page itself ... we should only rely on arguments to init the page (to support deep linking)
-Future<void> openNotePage(BuildContext context, WidgetRef ref,
-    {required EditablePageMode mode, String? parentNoteFolderId, String? noteId}) async {
-  Navigator.popUntil(context, (route) => route.settings.name != notePageRoute);
+Future<void> openNoteFolderPage(BuildContext context, WidgetRef ref,
+    {required EditablePageMode mode, String? noteFolderId}) async {
+  Navigator.popUntil(context, (route) => route.settings.name != noteFolderPageRoute);
 
   if (mode == EditablePageMode.create) {
     final authUser = ref.watch(curAuthUserProvider);
     if (authUser == null) {
       throw Exception('Error: Current user is not authenticated.');
     }
-
-    if(parentNoteFolderId == null) {
-      throw ArgumentError('Error: Parent note folder id is required for creating a note.');
-    }
-    
-    ref.read(curNoteProvider.notifier).setToNewNote(authUser, parentNoteFolderId);
+    ref.read(curNoteFolderProvider.notifier).setToNewNoteFolder();
   } else if (mode == EditablePageMode.edit || mode == EditablePageMode.readOnly) {
-    if (noteId != null) {
-      final note = await ref.read(notesReadProvider).getItem(id: noteId);
-      if (note != null) {
-        ref.read(curNoteProvider.notifier).setNewNote(note);
+    if (noteFolderId != null) {
+      final noteFolder = await ref.read(noteFoldersReadProvider).getItem(id: noteFolderId);
+      if (noteFolder != null) {
+        ref.read(curNoteFolderProvider.notifier).setNewNoteFolder(noteFolder);
       }
     }
   }
 
-  await Navigator.pushNamed(context, notePageRoute,
-      arguments: {'mode': mode });
+  await Navigator.pushNamed(context, noteFolderPageRoute,
+      arguments: {'mode': mode, 'noteFolderId': noteFolderId});
 }
+

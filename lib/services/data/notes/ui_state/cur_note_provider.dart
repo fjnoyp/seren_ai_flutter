@@ -16,8 +16,8 @@ class CurNoteNotifier extends Notifier<NoteModel> {
     state = note;
   }
 
-  void setToNewNote(UserModel authorUser) {
-    state = NoteModel.defaultNote().copyWith(authorUserId: authorUser.id);
+  void setToNewNote(UserModel authorUser, String parentNoteFolderId) {
+    state = NoteModel.defaultNote().copyWith(authorUserId: authorUser.id, parentNoteFolderId: parentNoteFolderId);
   }
 
   bool isValidNote() {

@@ -27,7 +27,7 @@ final themeSNP = StateNotifierProvider<ThemeSN, ThemeMode>((ref) {
 });
 
 final lightTheme = FlexThemeData.light(
-  scheme: FlexScheme.sanJuanBlue,
+  scheme: FlexScheme.tealM3,
   surfaceMode: FlexSurfaceMode.levelSurfacesLowScaffold,
   blendLevel: 7,
   subThemesData: const FlexSubThemesData(
@@ -46,7 +46,7 @@ final lightTheme = FlexThemeData.light(
 );
 
 final darkTheme = FlexThemeData.dark(
-  scheme: FlexScheme.sanJuanBlue,
+  scheme: FlexScheme.tealM3,
   surfaceMode: FlexSurfaceMode.levelSurfacesLowScaffold,
   blendLevel: 13,
   subThemesData: const FlexSubThemesData(

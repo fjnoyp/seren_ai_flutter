@@ -1,6 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
+import 'package:intl/intl.dart';
 import 'package:seren_ai_flutter/services/data/common/widgets/form/selection_field.dart';
+
+final DateFormat _dayFormat = DateFormat('MMM d, yyyy HH:mm');
 
 class BaseDueDateSelectionField extends ConsumerWidget {
   final bool enabled;
@@ -31,7 +34,7 @@ class BaseDueDateSelectionField extends ConsumerWidget {
   }
 
   String _valueToString(DateTime? date) {
-    return date == null ? 'Choose a Due Date' : date.toString();
+    return date == null ? 'Choose a Due Date' : _dayFormat.format(date);
   }
 
   String? _validator(DateTime? date) {
