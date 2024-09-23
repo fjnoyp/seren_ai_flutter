@@ -6,7 +6,7 @@ import 'package:seren_ai_flutter/services/data/common/widgets/form/selection_fie
 class BaseTextBlockEditSelectionField extends ConsumerWidget {
   final bool enabled;
   final ProviderListenable<String?> descriptionProvider;
-  final Function(WidgetRef, String?) updateDescription;
+  final Function(WidgetRef, String) updateDescription;
 
   const BaseTextBlockEditSelectionField({
     super.key,
@@ -46,7 +46,7 @@ class BaseTextBlockEditSelectionField extends ConsumerWidget {
 
 class TextBlockWritingModal extends HookWidget {
   final String initialDescription;
-  final void Function(WidgetRef, String?) onDescriptionChanged;
+  final void Function(WidgetRef, String) onDescriptionChanged;
 
   const TextBlockWritingModal({
     Key? key,

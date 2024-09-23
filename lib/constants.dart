@@ -24,6 +24,8 @@ const String shiftsRoute = '/shifts';
 const String noteFoldersListRoute = '/noteFoldersList';
 const String noteFolderNotesListRoute = '/noteFolderNotesList';
 const String notePageRoute = '/notePage';
+const String noteFolderPageRoute = '/noteFolderPage';
+
 const String testSQLPageRoute = '/testSQLPage';
 
 final simpleDateFormat = DateFormat('MMM dd, yyyy HH:mm');

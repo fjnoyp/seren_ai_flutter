@@ -14,7 +14,7 @@ NoteModel _$NoteModelFromJson(Map<String, dynamic> json) => NoteModel(
           json['date'] == null ? null : DateTime.parse(json['date'] as String),
       address: json['address'] as String?,
       description: json['description'] as String?,
-      actionRequired: json['actionRequired'] as String?,
+      actionRequired: json['action_required'] as String?,
       status: json['status'] as String?,
       parentNoteFolderId: json['parent_note_folder_id'] as String?,
       createdAt: json['created_at'] == null
@@ -32,7 +32,7 @@ Map<String, dynamic> _$NoteModelToJson(NoteModel instance) => <String, dynamic>{
       'date': instance.date?.toIso8601String(),
       'address': instance.address,
       'description': instance.description,
-      'actionRequired': instance.actionRequired,
+      'action_required': instance.actionRequired,
       'status': instance.status,
       'parent_note_folder_id': instance.parentNoteFolderId,
       'created_at': instance.createdAt?.toIso8601String(),

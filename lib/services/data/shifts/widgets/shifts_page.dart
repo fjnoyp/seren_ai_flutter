@@ -25,11 +25,19 @@ class ShiftsPage extends HookConsumerWidget {
 
     // TODO p3: Allow choosing which shift to view
     final joinedShifts = ref.watch(curUserJoinedShiftsListenerProvider);
-    final selectedShift = joinedShifts?[0];
 
-    if (selectedShift == null) {
-      return Text('No shifts');
+    if(joinedShifts == null){
+      return const Center(child: CircularProgressIndicator());
     }
+
+    if(joinedShifts.isEmpty){
+      return const Center(child: Text('No shifts'));
+    }
+
+    final selectedShift = joinedShifts[0];
+
+    final theme = Theme.of(context);
+
 
     return Column(
       children: [
@@ -50,8 +58,16 @@ class ShiftsPage extends HookConsumerWidget {
           onPageChanged: (newFocusedDay) {
             focusedDay.value = newFocusedDay;
           },
-          calendarStyle: const CalendarStyle(
-            outsideDaysVisible: false,
+          calendarStyle: CalendarStyle(
+            outsideDaysVisible: false,       
+            todayDecoration: BoxDecoration(
+              color: theme.colorScheme.secondary,
+              shape: BoxShape.circle,
+            ),
+            selectedDecoration: BoxDecoration(
+              color: theme.colorScheme.primary,
+              shape: BoxShape.circle,
+            ),
           ),
           calendarBuilders: CalendarBuilders(
             markerBuilder: (context, date, events) {

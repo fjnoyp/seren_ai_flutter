@@ -16,6 +16,8 @@ class NoteModel implements IHasId {
   final DateTime? date;
   final String? address;
   final String? description;
+
+  @JsonKey(name: 'action_required')
   final String? actionRequired;
   final String? status;
   

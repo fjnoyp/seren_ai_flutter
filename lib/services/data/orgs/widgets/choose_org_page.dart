@@ -19,6 +19,8 @@ class ChooseOrgPage extends ConsumerWidget {
       );      
     }
 
+    final theme = Theme.of(context);
+
     return orgRoles.isEmpty
           ? const Center(child: Text('No organizations available'))
           : ListView.builder(
@@ -41,7 +43,7 @@ class ChooseOrgPage extends ConsumerWidget {
                   decoration: BoxDecoration(
                     border: Border.all(color: Colors.grey),
                     borderRadius: BorderRadius.circular(8.0),
-                    color: isSelected ? Colors.blue : Colors.transparent,
+                    color: isSelected ? theme.colorScheme.primary : Colors.transparent,
                   ),
                   child: ListTile(
                     contentPadding: const EdgeInsets.all(16.0),
