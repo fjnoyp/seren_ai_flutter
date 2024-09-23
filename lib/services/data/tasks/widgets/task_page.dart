@@ -3,14 +3,11 @@ import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:logging/logging.dart';
 import 'package:seren_ai_flutter/constants.dart';
 import 'package:seren_ai_flutter/services/auth/cur_auth_user_provider.dart';
+import 'package:seren_ai_flutter/services/data/common/widgets/editablePageModeEnum.dart';
 import 'package:seren_ai_flutter/services/data/tasks/ui_state/cur_task_provider.dart';
 import 'package:seren_ai_flutter/services/data/tasks/models/joined_task_model.dart';
 import 'package:seren_ai_flutter/services/data/tasks/widgets/joined_task_save_provider.dart';
-import 'package:seren_ai_flutter/services/data/tasks/widgets/task_form/task_assignees_selection_field.dart';
-import 'package:seren_ai_flutter/services/data/tasks/widgets/task_form/task_description_selection_field.dart';
-import 'package:seren_ai_flutter/services/data/tasks/widgets/task_form/task_due_date_selection_field.dart';
-import 'package:seren_ai_flutter/services/data/tasks/widgets/task_form/task_name_field.dart';
-import 'package:seren_ai_flutter/services/data/tasks/widgets/task_form/task_selection_fields.dart';
+import 'package:seren_ai_flutter/services/data/tasks/widgets/form/task_selection_fields.dart';
 
 /* === Thoughts on ai generation of create task === 
 1) Tasks must be assigned to specific users / projects 
@@ -30,13 +27,12 @@ inherently only READ data.
 We could keep ai as data intake only, and just have 3rd intermediary process insert data
 in case where client is not sending the data context  */
 
-enum TaskPageMode { readOnly, edit, create }
 
 final log = Logger('TaskPage');
 
 /// For creating / editing a task 
 class TaskPage extends HookConsumerWidget {
-  final TaskPageMode mode;
+  final EditablePageMode mode;
   //final JoinedTaskModel? initialJoinedTask;
 
   const TaskPage({
@@ -49,7 +45,7 @@ class TaskPage extends HookConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final theme = Theme.of(context);
 
-    final isEnabled = mode != TaskPageMode.readOnly;
+    final isEnabled = mode != EditablePageMode.readOnly;
 
     return SingleChildScrollView(
       child: Padding(
@@ -90,7 +86,7 @@ class TaskPage extends HookConsumerWidget {
             // TODO p2: Implement comments section
             const SizedBox(height: 24),
 
-            if (mode != TaskPageMode.readOnly)
+            if (mode != EditablePageMode.readOnly)
               SizedBox(
                 width: double.infinity,
                 child: ElevatedButton(
@@ -121,18 +117,18 @@ class TaskPage extends HookConsumerWidget {
                     backgroundColor: theme.colorScheme.secondary,
                     foregroundColor: theme.colorScheme.onSecondary,
                   ),
-                  child: Text(mode == TaskPageMode.edit
+                  child: Text(mode == EditablePageMode.edit
                       ? 'Update Task'
                       : 'Create Task'),
                 ),
               ),
 
-            if (mode == TaskPageMode.readOnly)
+            if (mode == EditablePageMode.readOnly)
               ElevatedButton(
                   onPressed: () {
                     // remove self from stack
                     Navigator.pop(context);
-                    openTaskPage(context, ref, mode: TaskPageMode.edit);
+                    openTaskPage(context, ref, mode: EditablePageMode.edit);
                   },
                   child: Text('Edit'))
           ],
@@ -153,16 +149,16 @@ Future<void> openBlankTaskPage(BuildContext context, Ref ref) async {
   ref.read(curTaskProvider.notifier).setToNewTask(authUser);
 
   await Navigator.pushNamed(context, taskPageRoute,
-      arguments: {'mode': TaskPageMode.create});
+      arguments: {'mode': EditablePageMode.create});
 }
 
 Future<void> openTaskPage(BuildContext context, WidgetRef ref,
-    {required TaskPageMode mode, JoinedTaskModel? initialJoinedTask}) async {
+    {required EditablePageMode mode, JoinedTaskModel? initialJoinedTask}) async {
   // Remove previous TaskPage to avoid duplicate task pages
   Navigator.popUntil(context, (route) => route.settings.name != taskPageRoute);
 
   // CREATE - wipe existing task state
-  if (mode == TaskPageMode.create) {
+  if (mode == EditablePageMode.create) {
     final authUser = ref.watch(curAuthUserProvider);
     if (authUser == null) {
       throw Exception('Error: Current user is not authenticated.');
@@ -170,7 +166,7 @@ Future<void> openTaskPage(BuildContext context, WidgetRef ref,
     ref.read(curTaskProvider.notifier).setToNewTask(authUser);
   }
   // EDIT/READ - optionally load provided initial task
-  else if (mode == TaskPageMode.edit || mode == TaskPageMode.readOnly) {
+  else if (mode == EditablePageMode.edit || mode == EditablePageMode.readOnly) {
     if (initialJoinedTask != null) {
       ref.read(curTaskProvider.notifier).setNewTask(initialJoinedTask);
     }

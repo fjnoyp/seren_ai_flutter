@@ -4,20 +4,21 @@ import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:seren_ai_flutter/services/data/common/widgets/form/selection_field.dart';
 import 'package:seren_ai_flutter/services/data/projects/models/project_model.dart';
 import 'package:seren_ai_flutter/services/data/users/models/user_model.dart';
+import 'package:seren_ai_flutter/services/data/users/users_in_project_listener_provider.dart';
 
 class BaseAssigneesSelectionField extends HookConsumerWidget {
   final bool enabled;
   final ProviderListenable<List<UserModel>> assigneesProvider;
   final ProviderListenable<ProjectModel?> projectProvider;
   final Function(WidgetRef, List<UserModel>) updateAssignees;
-  final ProviderListenable<List<UserModel>> selectableUsersProvider;
+  //final ProviderListenable<List<UserModel>> selectableUsersProvider;
   const BaseAssigneesSelectionField({
     super.key,
     required this.enabled,
     required this.assigneesProvider,
     required this.projectProvider,
     required this.updateAssignees,
-    required this.selectableUsersProvider,
+    //required this.selectableUsersProvider,
   });
 
   @override
@@ -44,7 +45,7 @@ class BaseAssigneesSelectionField extends HookConsumerWidget {
             return AssigneesSelectionModal(
               initialSelectedUsers: curAssignees,
               onAssigneesChanged: updateAssignees,
-              selectableUsersProvider: selectableUsersProvider,
+              //selectableUsersProvider: selectableUsersProvider,
               projectProvider: projectProvider,
             );
           },
@@ -57,14 +58,14 @@ class BaseAssigneesSelectionField extends HookConsumerWidget {
 class AssigneesSelectionModal extends HookConsumerWidget {
   final List<UserModel> initialSelectedUsers;
   final void Function(WidgetRef, List<UserModel>) onAssigneesChanged;
-  final ProviderListenable<List<UserModel>> selectableUsersProvider;
+  //final ProviderListenable<List<UserModel>> selectableUsersProvider;
   final ProviderListenable<ProjectModel?> projectProvider;
 
   const AssigneesSelectionModal({
     super.key,
     required this.initialSelectedUsers,
     required this.onAssigneesChanged,
-    required this.selectableUsersProvider,
+    //required this.selectableUsersProvider,
     required this.projectProvider,
   });
 
@@ -72,9 +73,19 @@ class AssigneesSelectionModal extends HookConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final currentlySelectedUsers = useState(initialSelectedUsers);
     
-    final watchedSelectableUsers = ref.watch(selectableUsersProvider);
-
     final curProject = ref.watch(projectProvider);
+
+    if(curProject == null) {
+      return const Center(child: CircularProgressIndicator());
+    }
+
+    final watchedSelectableUsers = ref.watch(usersInProjectListenerProvider(curProject.id));
+
+    if(watchedSelectableUsers == null) {
+      return const Center(child: CircularProgressIndicator());
+    }
+
+    
 
     return Padding(
       padding: EdgeInsets.only(

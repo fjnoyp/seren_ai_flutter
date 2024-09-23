@@ -7,6 +7,7 @@ import 'package:seren_ai_flutter/services/auth/widgets/auth_guard.dart';
 import 'package:seren_ai_flutter/services/auth/widgets/sign_in_up_page.dart';
 import 'package:seren_ai_flutter/services/data/ai_chats/widgets/ai_chat_thread_messages_page.dart';
 import 'package:seren_ai_flutter/services/data/ai_chats/widgets/ai_chat_threads_page.dart';
+import 'package:seren_ai_flutter/services/data/common/widgets/editablePageModeEnum.dart';
 import 'package:seren_ai_flutter/services/data/notes/widgets/note_folder_notes_list_page.dart';
 import 'package:seren_ai_flutter/services/data/notes/widgets/note_folders_list_page.dart';
 import 'package:seren_ai_flutter/services/data/notes/widgets/note_page.dart';
@@ -90,8 +91,8 @@ class AppState extends State<App> {
               // TODO p3: add taskId to args
               // Cannot use implicits or else dynamic routes will not work 
               final args = ModalRoute.of(context)!.settings.arguments as Map<String, dynamic>;
-              final mode = args['mode'] as TaskPageMode;              
-              final title = mode == TaskPageMode.create ? 'Create Task' : 'View Task';
+              final mode = args['mode'] as EditablePageMode;              
+              final title = mode == EditablePageMode.create ? 'Create Task' : 'View Task';
 
               return _buildGuardScaffold(title, TaskPage(mode: mode)); 
             },
@@ -119,7 +120,10 @@ class AppState extends State<App> {
             notePageRoute: (context) {
               final args = ModalRoute.of(context)!.settings.arguments as Map<String, dynamic>;
               final noteId = args['noteId'] as String;
-              return _buildGuardScaffold('Note', NotePage(noteId: noteId));
+              final mode = args['mode'] as EditablePageMode;
+              final title = mode == EditablePageMode.create ? 'Create Note' : 'View Note';
+              
+              return _buildGuardScaffold(title, NotePage(mode: mode, noteId: noteId));
             },
           },          
           // For dynamically generating routes based on settings param 

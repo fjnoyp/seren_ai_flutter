@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
+import 'package:seren_ai_flutter/services/data/common/widgets/editablePageModeEnum.dart';
 import 'package:seren_ai_flutter/services/data/tasks/models/joined_task_model.dart';
 import 'package:seren_ai_flutter/services/data/tasks/models/task_model.dart';
 import 'package:intl/intl.dart';
@@ -28,9 +29,9 @@ class TaskListItemView extends ConsumerWidget {
     final dueDateColor = getDueDateColor(task.dueDate);
 
     return GestureDetector(
-      onTap: () {
-        openTaskPage(context, ref,
-            mode: TaskPageMode.readOnly, initialJoinedTask: joinedTask);
+      onTap: () async {
+        await openTaskPage(context, ref,
+            mode: EditablePageMode.readOnly, initialJoinedTask: joinedTask);
       },
       child: Card(
         color: theme.cardColor,
