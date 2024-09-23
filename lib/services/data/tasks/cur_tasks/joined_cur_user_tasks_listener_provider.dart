@@ -27,7 +27,9 @@ class JoinedCurUserTasksListenerNotifier
     return null;
   }
 
-  // TODO p5: not so efficient - any task change will require a complete recalculation
+  // TODO p4: not efficient - any task change will require a complete recalculation, also we must manually add fields to each task 
+  // Can create a map or break sql reads 
+
   Future<void> _listen() async {
     final watchedCurUserTasks = ref.watch(curUserViewableTasksListenerProvider);
 

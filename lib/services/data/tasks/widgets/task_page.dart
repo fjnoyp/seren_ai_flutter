@@ -169,9 +169,11 @@ Future<void> openTaskPage(BuildContext context, WidgetRef ref,
   }
   // EDIT/READ - optionally load provided initial task
   else if (mode == EditablePageMode.edit || mode == EditablePageMode.readOnly) {
-    if (initialJoinedTask != null) {
-      ref.read(curTaskProvider.notifier).setNewTask(initialJoinedTask);
-    }
+
+    if (initialJoinedTask == null) throw ArgumentError('Error: initialJoinedTask is required for edit mode');
+
+    ref.read(curTaskProvider.notifier).setNewTask(initialJoinedTask);
+    
   }
 
   await Navigator.pushNamed(context, taskPageRoute,
