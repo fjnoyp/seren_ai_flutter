@@ -2,14 +2,13 @@ import 'package:flutter/material.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:seren_ai_flutter/services/data/common/widgets/form/selection_field.dart';
-import 'package:seren_ai_flutter/services/data/tasks/ui_state/cur_task_provider.dart';
 
-class BaseDescriptionSelectionField extends ConsumerWidget {
+class BaseTextBlockEditSelectionField extends ConsumerWidget {
   final bool enabled;
   final ProviderListenable<String?> descriptionProvider;
   final Function(WidgetRef, String?) updateDescription;
 
-  const BaseDescriptionSelectionField({
+  const BaseTextBlockEditSelectionField({
     super.key,
     required this.enabled,
     required this.descriptionProvider,
@@ -23,9 +22,9 @@ class BaseDescriptionSelectionField extends ConsumerWidget {
     return AnimatedSelectionField<String>(
       labelWidget: const Icon(Icons.description),
       validator: (description) => description == null || description.isEmpty
-          ? 'Description is required'
+          ? 'Text is required'
           : null,
-      valueToString: (description) => description ?? 'Enter Description',
+      valueToString: (description) => description ?? 'Enter Text',
       enabled: enabled,
       value: curDescription,      
       onValueChanged: updateDescription,
@@ -34,7 +33,7 @@ class BaseDescriptionSelectionField extends ConsumerWidget {
           context: context,
           isScrollControlled: true,
           builder: (BuildContext context) {
-            return DescriptionWritingModal(
+            return TextBlockWritingModal(
               initialDescription: curDescription ?? '',
               onDescriptionChanged: updateDescription,
             );
@@ -45,11 +44,11 @@ class BaseDescriptionSelectionField extends ConsumerWidget {
   }
 }
 
-class DescriptionWritingModal extends HookWidget {
+class TextBlockWritingModal extends HookWidget {
   final String initialDescription;
   final void Function(WidgetRef, String?) onDescriptionChanged;
 
-  const DescriptionWritingModal({
+  const TextBlockWritingModal({
     Key? key,
     required this.initialDescription,
     required this.onDescriptionChanged,
@@ -73,7 +72,7 @@ class DescriptionWritingModal extends HookWidget {
               controller: descriptionController,
               maxLines: 5,
               decoration: const InputDecoration(
-                hintText: 'Enter description here...',
+                hintText: 'Enter text here...',
                 border: OutlineInputBorder(),
               ),
             ),

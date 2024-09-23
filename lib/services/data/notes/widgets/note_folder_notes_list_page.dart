@@ -6,6 +6,7 @@ import 'package:seren_ai_flutter/services/data/notes/models/note_model.dart';
 import 'package:seren_ai_flutter/services/data/notes/notes_listener_fam_provider.dart';
 import 'package:seren_ai_flutter/services/data/notes/models/note_folder_model.dart';
 import 'package:seren_ai_flutter/services/data/notes/cur_user_viewable_note_folders_listener_provider.dart';
+import 'package:seren_ai_flutter/services/data/notes/widgets/note_page.dart';
 
 
 class NoteFolderNotesListPage extends ConsumerWidget {
@@ -40,7 +41,18 @@ class NoteFolderNotesListPage extends ConsumerWidget {
             ),
           ),
         ),
-        
+        Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 20.0),
+            child: SizedBox(
+              width: double.infinity,
+              child: FilledButton(
+                onPressed: () {
+                  // TODO p0: create new note and open 
+                },
+                child: const Text('Create New Note'),
+              ),
+            ),
+          ),
       ],
     );
   }
@@ -78,13 +90,9 @@ class NoteFolderNotesListPage extends ConsumerWidget {
         style: const TextStyle(fontSize: 12),
       ),
       onTap: () {
-        openNotePage(context, note.id);
+        //openNotePage(context, note.id);
       },
     );
   }
 }
 
-openNotePage(BuildContext context, String noteId) {
-  Navigator.pushNamed(context, notePageRoute,
-    arguments: {'noteId': noteId});
-}

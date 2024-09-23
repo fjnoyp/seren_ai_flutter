@@ -109,7 +109,7 @@ class AiOrchestrator {
 
     //openTaskPage(context, ref, mode: TaskPageMode.create);
 
-    openBlankTaskPage(context, ref);
+    await openBlankTaskPage(context, ref);
 
     print('openTaskPage done');
 
