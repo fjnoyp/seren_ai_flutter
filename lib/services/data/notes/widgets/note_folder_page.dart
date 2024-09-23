@@ -5,8 +5,9 @@ import 'package:seren_ai_flutter/constants.dart';
 import 'package:seren_ai_flutter/services/auth/cur_auth_user_provider.dart';
 import 'package:seren_ai_flutter/services/data/common/widgets/editablePageModeEnum.dart';
 import 'package:seren_ai_flutter/services/data/common/widgets/form/base_text_block_edit_selection_field.dart';
+import 'package:seren_ai_flutter/services/data/notes/models/joined_note_folder_model.dart';
 import 'package:seren_ai_flutter/services/data/notes/note_folders_read_provider.dart';
-import 'package:seren_ai_flutter/services/data/notes/ui_state/cur_folder_provider.dart';
+import 'package:seren_ai_flutter/services/data/notes/ui_state/cur_note_folder_provider.dart';
 import 'package:seren_ai_flutter/services/data/notes/widgets/form/note_folder_selection_fields.dart';
 
 final log = Logger('NoteFolderPage');
@@ -44,6 +45,8 @@ class NoteFolderPage extends HookConsumerWidget {
               child: Column(
                 children: [
                   NoteFolderDescriptionField(enabled: isEnabled),
+                  NoteFolderParentProjectField(enabled: isEnabled),
+                  NoteFolderParentTeamField(enabled: isEnabled),
                 ],
               ),
             ),
@@ -71,7 +74,7 @@ class NoteFolderPage extends HookConsumerWidget {
                       final curNoteFolder = ref.read(curNoteFolderProvider);
                       // Save note folder logic here
 
-                      await ref.read(noteFoldersReadProvider).upsertItem(curNoteFolder);
+                      await ref.read(noteFoldersReadProvider).upsertItem(curNoteFolder.noteFolder);
 
                       if (context.mounted) {
                         Navigator.pop(context);
@@ -104,7 +107,7 @@ class NoteFolderPage extends HookConsumerWidget {
 
 // TODO p2: init state within the page itself ... we should only rely on arguments to init the page (to support deep linking)
 Future<void> openNoteFolderPage(BuildContext context, WidgetRef ref,
-    {required EditablePageMode mode, String? noteFolderId}) async {
+    {required EditablePageMode mode, JoinedNoteFolderModel? joinedNoteFolder}) async {
   Navigator.popUntil(context, (route) => route.settings.name != noteFolderPageRoute);
 
   if (mode == EditablePageMode.create) {
@@ -113,16 +116,15 @@ Future<void> openNoteFolderPage(BuildContext context, WidgetRef ref,
       throw Exception('Error: Current user is not authenticated.');
     }
     ref.read(curNoteFolderProvider.notifier).setToNewNoteFolder();
-  } else if (mode == EditablePageMode.edit || mode == EditablePageMode.readOnly) {
-    if (noteFolderId != null) {
-      final noteFolder = await ref.read(noteFoldersReadProvider).getItem(id: noteFolderId);
-      if (noteFolder != null) {
-        ref.read(curNoteFolderProvider.notifier).setNewNoteFolder(noteFolder);
-      }
+  } 
+  // EDIT/READ
+  else if (mode == EditablePageMode.edit || mode == EditablePageMode.readOnly) {
+    if (joinedNoteFolder != null) {
+      ref.read(curNoteFolderProvider.notifier).setNewNoteFolder(joinedNoteFolder);
     }
   }
 
   await Navigator.pushNamed(context, noteFolderPageRoute,
-      arguments: {'mode': mode, 'noteFolderId': noteFolderId});
+      arguments: {'mode': mode });
 }
 

@@ -52,6 +52,7 @@ dependencies:
   #calendar_view: ^1.2.0
 
   table_calendar: ^3.1.2
+  collection: ^1.18.0
 
 
 
