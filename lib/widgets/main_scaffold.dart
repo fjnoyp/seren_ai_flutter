@@ -7,6 +7,9 @@ import 'package:seren_ai_flutter/services/speech_to_text/widgets/speech_transcri
 import 'drawer_view.dart';
 
 class MainScaffold extends StatelessWidget {
+
+  final bool enableAiBar = false; 
+
   final String title;
   final Widget body;
   final FloatingActionButton? floatingActionButton;
@@ -74,7 +77,7 @@ class MainScaffold extends StatelessWidget {
           const UserInputTextDisplayWidget(),
         ],
       ),
-      floatingActionButton: Consumer(
+      floatingActionButton: enableAiBar ? Consumer(
         builder: (context, ref, child) {
           return FloatingActionButton(
             onPressed: () {
@@ -83,8 +86,8 @@ class MainScaffold extends StatelessWidget {
             child: Icon(Icons.pets),
           );
         },
-      ),
-      bottomNavigationBar: Consumer(
+      ) : null,
+      bottomNavigationBar: enableAiBar ? Consumer(
         builder: (context, ref, child) {
           final isTextFieldVisible = ref.watch(textFieldVisibilityProvider);
           return Container(
@@ -121,7 +124,7 @@ class MainScaffold extends StatelessWidget {
             ),
           );
         },
-      ),
+      ) : null,
     );
   }
 }
