@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:intl/intl.dart';
 import 'package:seren_ai_flutter/constants.dart';
+import 'package:seren_ai_flutter/services/data/common/widgets/create_item_bottom_button.dart';
 import 'package:seren_ai_flutter/services/data/common/widgets/editablePageModeEnum.dart';
 import 'package:seren_ai_flutter/services/data/tasks/cur_tasks/cur_user_viewable_tasks_listener_provider.dart';
 import 'package:seren_ai_flutter/services/data/tasks/cur_tasks/joined_cur_user_tasks_listener_provider.dart';
@@ -43,17 +44,10 @@ class TasksListPage extends ConsumerWidget {
               ),
             ),
           ),
-          Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 20.0),
-            child: SizedBox(
-              width: double.infinity,
-              child: FilledButton(
-                onPressed: () async => await openTaskPage(context, ref, mode: EditablePageMode.create),
-                child: Text('Create New Task'),
-              ),
-            ),
-          ),
-          SizedBox(height: 16),
+          CreateItemBottomButton(
+            onPressed: () async => await openTaskPage(context, ref, mode: EditablePageMode.create),
+            buttonText: 'Create New Task',
+          ),      
         ],
       ),
     );
