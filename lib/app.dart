@@ -23,6 +23,7 @@ import 'package:seren_ai_flutter/services/data/tasks/models/task_model.dart';
 import 'package:seren_ai_flutter/services/data/tasks/widgets/task_page.dart';
 import 'package:seren_ai_flutter/services/data/teams/widgets/manage_team_users_page.dart';
 import 'package:seren_ai_flutter/services/speech_to_text/stt_orchestrator_provider.dart.dart';
+import 'package:seren_ai_flutter/widgets/flutter_wechat_assets_picker/multi_assets_page.dart';
 import 'package:seren_ai_flutter/widgets/home_page.dart';
 import 'package:seren_ai_flutter/widgets/main_scaffold.dart';
 import 'package:seren_ai_flutter/services/data/tasks/widgets/tasks_list_page.dart';
@@ -133,6 +134,8 @@ class AppState extends State<App> {
 
               return _buildGuardScaffold(title, NoteFolderPage(mode: mode));
             },
+
+            flutterWechatAssetsPickerRoute: (context) => _buildGuardScaffold('Flutter Wechat Assets Picker', const MultiAssetsPage()),
           },          
           // For dynamically generating routes based on settings param 
           onGenerateRoute: (settings) {

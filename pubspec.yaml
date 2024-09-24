@@ -5,6 +5,10 @@ version: 1.0.0+3
 environment:
   sdk: '>=3.4.3 <4.0.0'
 
+# Platform specific setup
+# https://pub.dev/packages/wechat_assets_picker
+# speech_to_text
+
 dependencies:
   flutter:
     sdk: flutter
@@ -53,6 +57,8 @@ dependencies:
 
   table_calendar: ^3.1.2
   collection: ^1.18.0
+  wechat_assets_picker: ^9.3.0
+  wechat_camera_picker: ^4.3.2
 
 
 

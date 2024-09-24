@@ -46,6 +46,9 @@ class NoteFoldersListPage extends ConsumerWidget {
         },
       )
       ),
+
+      testImageDisplay(),
+      
       CreateItemBottomButton(
         onPressed: () async => await openNoteFolderPage(context, ref, mode: EditablePageMode.create),
         buttonText: 'Create New Note Folder',
@@ -57,4 +60,25 @@ class NoteFoldersListPage extends ConsumerWidget {
     Navigator.pushNamed(context, noteFolderNotesListRoute,
         arguments: {'noteFolderId': noteFolderId});
   }
+  
+  // Allow users to select an image or video to upload 
+  // Upload to different buckets based on the type of file
+  // TODO p2: add video support 
+  Widget testImageUpload () {
+    
+    return Image.network('https://aunxmivgfpuzxwmyggvn.supabase.co/storage/v1/object/public/test/Screenshot%202024-09-23%20at%204.34.46%20PM.png');
+  }
+
+  Widget testImageDisplay() {
+
+    // https://aunxmivgfpuzxwmyggvn.supabase.co/storage/v1/object/public/test/Screenshot%202024-09-23%20at%204.34.46%20PM.png
+    return Image.network('https://aunxmivgfpuzxwmyggvn.supabase.co/storage/v1/object/public/test/Screenshot%202024-09-23%20at%204.34.46%20PM.png');
+  }
+
+  Widget testPrivateImageDisplay() {
+
+    // TODO: use supabase sdk to download the image ... 
+
+    return Image.network('https://aunxmivgfpuzxwmyggvn.supabase.co/storage/v1/object/private/test/Screenshot%202024-09-23%20at%204.34.46%20PM.png');
+  } 
 }
