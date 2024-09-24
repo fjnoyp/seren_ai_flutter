@@ -28,8 +28,4 @@ const String noteFolderPageRoute = '/noteFolderPage';
 
 const String testSQLPageRoute = '/testSQLPage';
 
-final simpleDateFormat = DateFormat('MMM dd, yyyy HH:mm');
-
-
-
-
+const String flutterWechatAssetsPickerRoute = '/flutterWechatAssetsPicker';
