@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
+import 'package:seren_ai_flutter/widgets/home/base_home_card.dart';
+import 'package:seren_ai_flutter/widgets/home/task_home_card.dart';
 
 class HomePage extends StatelessWidget {
   const HomePage({super.key});
@@ -11,12 +13,12 @@ class HomePage extends StatelessWidget {
       child: LayoutBuilder(
         builder: (context, constraints) {
           return Column(
-            mainAxisAlignment: MainAxisAlignment.center,
+            mainAxisAlignment: MainAxisAlignment.start,
             children: [
               Align(
                 alignment: Alignment.centerLeft,
                 child: Padding(
-                  padding: const EdgeInsets.all(16.0),
+                  padding: const EdgeInsets.all(30.0),
                   child: Text(
                     'Welcome,\nLetty!',
                     style: Theme.of(context).textTheme.headlineMedium,
@@ -33,7 +35,7 @@ class HomePage extends StatelessWidget {
                     crossAxisSpacing: 9,
                     mainAxisSpacing: 9,
                     children: [
-                      TaskCard(),
+                      TaskHomeCard(),
                       NotesCard(),
                       ShiftCard(),
                       ClockInOutCard(),
@@ -44,129 +46,6 @@ class HomePage extends StatelessWidget {
             ],
           );
         },
-      ),
-    );
-  }
-}
-
-class OuterCard extends StatelessWidget {
-  final Widget child;
-  final Color color;
-  final String title;
-
-  const OuterCard(
-      {super.key,
-      required this.child,
-      required this.color,
-      required this.title});
-
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      padding: EdgeInsets.all(6),
-      decoration: BoxDecoration(
-        color: color,
-        borderRadius: BorderRadius.circular(4),
-      ),
-      margin: EdgeInsets.all(2),
-      child: Column(
-        children: [
-          Row(
-            children: [
-              Text(
-                title,
-                style: Theme.of(context).textTheme.titleMedium,                
-              ),
-            ],
-          ),
-          Expanded(
-            child: child,
-          ),
-        ],
-      ),
-    );
-  }
-}
-
-Widget TaskCardItem({required String title, required BuildContext context}) {
-  return Card(
-    color: Theme.of(context).colorScheme.primary,
-    child: Row(
-      children: [
-        Checkbox(
-          value: false,
-          onChanged: (newValue) {},
-        ),
-        Expanded(
-          child: Text(
-            title,
-            style: Theme.of(context)
-                .textTheme
-                .labelSmall
-                ?.copyWith(color: Theme.of(context).colorScheme.onPrimary),
-            maxLines: null,
-            overflow: TextOverflow.visible,
-          ),
-        ),
-      ],
-    ),
-  );
-}
-
-class TaskCard extends StatelessWidget {
-  const TaskCard({super.key});
-
-  @override
-  Widget build(BuildContext context) {
-    return OuterCard(
-      color: Theme.of(context).colorScheme.primaryContainer,
-      title: "Today's Tasks",
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Flexible(
-            fit:
-                FlexFit.tight, // Ensures the child takes up the available space
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              // Changed from ListView to Column
-              children: [
-                Flexible(
-                    fit: FlexFit.loose,
-                    child: TaskCardItem(
-                        title: "Inspect Foundation Work", context: context)),
-                Flexible(
-                    fit: FlexFit.loose,
-                    child: TaskCardItem(
-                        title: "Address Safety Issues", context: context)),
-                Flexible(
-                  fit: FlexFit.loose,
-                  child: Card(
-                    child: GestureDetector(
-                      onTap: () {},
-                      child: Container(
-                        width: double.infinity,
-                        height: 30, // Set max height to 10
-                        decoration: BoxDecoration(
-                          border: Border.all(
-                              color: Theme.of(context).colorScheme.primary),
-                          borderRadius: BorderRadius.circular(
-                              12), // Increased the border radius for more rounded edges
-                        ),
-                        child: Center(
-                          child: Text(
-                            "See All",
-                            style: Theme.of(context).textTheme.bodySmall,
-                          ),
-                        ),
-                      ),
-                    ),
-                  ),
-                ),
-              ],
-            ),
-          ),
-        ],
       ),
     );
   }
@@ -202,7 +81,7 @@ class NotesCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return OuterCard(
+    return BaseHomeCard(
       title: "Notes",
       color: Theme.of(context).colorScheme.primaryContainer,
       child: Column(
@@ -233,7 +112,7 @@ class ShiftCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return OuterCard(
+    return BaseHomeCard(
       title: "Today's Shift",
       color: Theme.of(context).colorScheme.primaryContainer,
       child: Center(
@@ -283,7 +162,7 @@ class ClockInOutCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return OuterCard(
+    return BaseHomeCard(
       title: "Clock in/out",
       color: Theme.of(context).colorScheme.primaryContainer,
       child: Center(

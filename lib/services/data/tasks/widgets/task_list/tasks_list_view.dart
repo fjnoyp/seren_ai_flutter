@@ -14,6 +14,8 @@ class TasksListView extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+
+    // TODO p2: we can split providers instead ... 
     final filteredTasks = ref.watch(joinedCurUserTasksListenerProvider
         .select((joinedTasks) => joinedTasks?.where(filter).toList() ?? []));
 
