@@ -15,6 +15,8 @@ import 'package:table_calendar/table_calendar.dart';
 
 import 'dart:async'; // Add this import
 
+final DateFormat listDateFormat = DateFormat('HH:mm');
+
 class ShiftsPage extends HookConsumerWidget {
   const ShiftsPage({super.key});
 
@@ -185,8 +187,6 @@ Center( // Wrap with Center widget
   }
 }
 
-final DateFormat listDateFormat = DateFormat('HH:mm');
-
 Widget _showShiftLogs(String shiftId, DateTime day) {
   return Consumer(
     builder: (context, ref, child) {
@@ -197,17 +197,22 @@ Widget _showShiftLogs(String shiftId, DateTime day) {
         return Text('No shift logs');
       }
 
-      return Column(
-        //crossAxisAlignment: CrossAxisAlignment.start,
-        children: shiftLogs.map((log) {
-          return SizedBox(
-            width: 100,
-            child: Text(
-              '${listDateFormat.format(log.clockInDatetime.toLocal())} - ${log.clockOutDatetime != null ? listDateFormat.format(log.clockOutDatetime!.toLocal()) : 'Ongoing'}',
-              style: TextStyle(fontSize: 12),
-            ),
-          );
-        }).toList(),
+      // TODO p3: don't use hardcoded height 
+      return Container(
+        height: 300, // Fixed height to enable scrolling
+        child: ListView.builder(
+          itemCount: shiftLogs.length,
+          itemBuilder: (context, index) {
+            final log = shiftLogs[index];
+            return Padding(
+              padding: const EdgeInsets.symmetric(vertical: 4.0),
+              child: Text(
+                '${listDateFormat.format(log.clockInDatetime.toLocal())} - ${log.clockOutDatetime != null ? listDateFormat.format(log.clockOutDatetime!.toLocal()) : 'Ongoing'}',
+                style: TextStyle(fontSize: 12),
+              ),
+            );
+          },
+        ),
       );
     },
   );

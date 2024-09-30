@@ -8,19 +8,3 @@ bool _checkIsOverdue(DateTime? dueDate) => dueDate == null || DateTime.now().toU
 MaterialColor? getDueDateColor(DateTime? dueDate) => _checkIsOverdue(dueDate) ? Colors.red : null;
 
 
-MaterialColor? getTaskPriorityColor(PriorityEnum priority) {
-  switch (priority) {
-    case PriorityEnum.veryHigh:
-      return Colors.red;
-    case PriorityEnum.high:
-      return Colors.orange;
-    case PriorityEnum.normal:
-      return Colors.blue;
-    case PriorityEnum.low:
-      return Colors.grey;
-    case PriorityEnum.veryLow:
-      return Colors.lightBlue;
-    default:
-      return null;
-  }
-}
