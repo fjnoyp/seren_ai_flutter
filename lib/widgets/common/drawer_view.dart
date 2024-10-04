@@ -3,7 +3,7 @@ import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:seren_ai_flutter/constants.dart';
 import 'package:seren_ai_flutter/services/auth/cur_auth_user_provider.dart';
-import 'package:seren_ai_flutter/widgets/theme_data.dart';
+import 'package:seren_ai_flutter/widgets/common/theme_data.dart';
 
 class DrawerView extends HookWidget {
   const DrawerView({super.key});

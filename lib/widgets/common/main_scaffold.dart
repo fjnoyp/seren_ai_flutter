@@ -7,8 +7,7 @@ import 'package:seren_ai_flutter/services/speech_to_text/widgets/speech_transcri
 import 'drawer_view.dart';
 
 class MainScaffold extends StatelessWidget {
-
-  final bool enableAiBar = false; 
+  final bool enableAiBar = true;
 
   final String title;
   final Widget body;
@@ -39,7 +38,7 @@ class MainScaffold extends StatelessWidget {
                     Scaffold.of(context).openDrawer();
                   },
                 ),
-                // TODO p2: user can pop out to nothing on the starting page ... back button is in a weird location. we should only conditionally show back button 
+                // TODO p2: user can pop out to nothing on the starting page ... back button is in a weird location. we should only conditionally show back button
                 if (Navigator.of(context).canPop())
                   IconButton(
                     icon: Icon(Icons.arrow_back, color: theme.iconTheme.color),
@@ -74,9 +73,11 @@ class MainScaffold extends StatelessWidget {
             padding: const EdgeInsets.all(0),
             child: body,
           ),
-          const UserInputTextDisplayWidget(),
+          
         ],
       ),
+
+      /*
       floatingActionButton: enableAiBar ? Consumer(
         builder: (context, ref, child) {
           return FloatingActionButton(
@@ -87,52 +88,41 @@ class MainScaffold extends StatelessWidget {
           );
         },
       ) : null,
-      bottomNavigationBar: enableAiBar ? Consumer(
-        builder: (context, ref, child) {
-          final isTextFieldVisible = ref.watch(textFieldVisibilityProvider);
-          return Container(
-            height: 150,
-            decoration: BoxDecoration(
-              color: Colors.white.withOpacity(0.9),
-              border: Border.all(color: Colors.grey),
-            ),
-            child: Column(
-              children: [
-                Expanded(
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.center,
+      */
+
+      bottomNavigationBar: enableAiBar
+          ? Consumer(
+              builder: (context, ref, child) {
+                final isTextFieldVisible =
+                    ref.watch(textFieldVisibilityProvider);
+                return SafeArea(
+                  child: Column(
+                    mainAxisSize: MainAxisSize.min,
                     children: [
-                      const Spacer(flex: 1),
-                      const Expanded(
-                        flex: 1,
-                        child: SpeechStateControlButtonWidget(),
+                      const UserInputTextDisplayWidget(),
+                      const SpeechTranscribedWidget(),
+                      const SpeechStateControlButtonWidget(),
+                      IconButton(
+                        icon: Icon(
+                            isTextFieldVisible ? Icons.cancel : Icons.keyboard),
+                        onPressed: () {
+                          ref.read(textFieldVisibilityProvider.notifier).state =
+                              !isTextFieldVisible;
+                        },
                       ),
-                      Expanded(
-                        flex: 1,
-                        child: IconButton(
-                          icon: Icon(isTextFieldVisible ? Icons.cancel : Icons.create),
-                          onPressed: () {
-                            ref.read(textFieldVisibilityProvider.notifier).state = !isTextFieldVisible;
-                          },
-                        ),
-                      ),
-                      // TODO p1: readd - SpeechTranscribedWidget(),
+                      // You can add more widgets here if needed
                     ],
                   ),
-                ),
-              ],
-            ),
-          );
-        },
-      ) : null,
+                );
+              },
+            )
+          : null,
     );
   }
 }
 
 final textFieldVisibilityProvider = StateProvider<bool>((ref) => false);
 final TextEditingController textEditingController = TextEditingController();
-
-
 
 class UserInputTextDisplayWidget extends ConsumerWidget {
   const UserInputTextDisplayWidget({Key? key}) : super(key: key);
@@ -154,14 +144,17 @@ class UserInputTextDisplayWidget extends ConsumerWidget {
           child: Column(
             mainAxisSize: MainAxisSize.min,
             children: [
-               Row(
+              Row(
                 mainAxisAlignment: MainAxisAlignment.end,
                 children: [
                   IconButton(
                     icon: Icon(Icons.check_box_outlined, size: 20),
                     onPressed: () {
-                      ref.read(textFieldVisibilityProvider.notifier).state = false;
-                      ref.read(aiOrchestratorProvider).testChatMessage(message: textEditingController.text);
+                      ref.read(textFieldVisibilityProvider.notifier).state =
+                          false;
+                      ref
+                          .read(aiOrchestratorProvider)
+                          .testChatMessage(message: textEditingController.text);
                       textEditingController.clear();
                     },
                     color: Colors.green,
@@ -169,12 +162,12 @@ class UserInputTextDisplayWidget extends ConsumerWidget {
                   IconButton(
                     icon: Icon(Icons.close_outlined, size: 20),
                     onPressed: () {
-                      ref.read(textFieldVisibilityProvider.notifier).state = false;
+                      ref.read(textFieldVisibilityProvider.notifier).state =
+                          false;
                       textEditingController.clear();
                     },
                     color: Colors.red,
                   ),
-                  
                 ],
               ),
               TextField(
@@ -184,8 +177,7 @@ class UserInputTextDisplayWidget extends ConsumerWidget {
                   hintText: 'Enter something',
                   border: OutlineInputBorder(),
                 ),
-              ),              
-             
+              ),
             ],
           ),
         ),
@@ -193,4 +185,3 @@ class UserInputTextDisplayWidget extends ConsumerWidget {
     );
   }
 }
-
