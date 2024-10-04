@@ -25,11 +25,11 @@ import 'package:seren_ai_flutter/services/data/teams/widgets/manage_team_users_p
 import 'package:seren_ai_flutter/services/speech_to_text/stt_orchestrator_provider.dart.dart';
 import 'package:seren_ai_flutter/widgets/flutter_wechat_assets_picker/multi_assets_page.dart';
 import 'package:seren_ai_flutter/widgets/home/home_page.dart';
-import 'package:seren_ai_flutter/widgets/main_scaffold.dart';
+import 'package:seren_ai_flutter/widgets/common/main_scaffold.dart';
 import 'package:seren_ai_flutter/services/data/tasks/widgets/tasks_list_page.dart';
 import 'package:seren_ai_flutter/widgets/test_page.dart';
 import 'package:seren_ai_flutter/widgets/test_sql_page.dart';
-import 'package:seren_ai_flutter/widgets/theme_data.dart';
+import 'package:seren_ai_flutter/widgets/common/theme_data.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
 final log = Logger('App');
