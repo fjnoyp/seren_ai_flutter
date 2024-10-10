@@ -4,7 +4,7 @@ import 'package:seren_ai_flutter/services/data/common/i_has_id.dart';
 typedef FromJson<T> = T Function(Map<String, dynamic> json);
 typedef ToJson<T> = Map<String, dynamic> Function(T item);
 
-// TODO p4: consider moving this all to backend as edge functions 
+// TODO p4: consider moving this all to backend as edge functions
 // TO reduce code duplication and reduce the amount of code we need to maintain
 class BaseTableDb<T extends IHasId> {
   final String tableName;
@@ -17,7 +17,7 @@ class BaseTableDb<T extends IHasId> {
     required this.tableName,
     required this.fromJson,
     required this.toJson,
-  }); 
+  });
 
   // refactor using: https://github.com/powersync-ja/powersync.dart/blob/master/packages/powersync/example/batch_writes.dart
 
@@ -25,16 +25,18 @@ class BaseTableDb<T extends IHasId> {
     final Map<String, dynamic> json = toJson(item);
 
     final columns = '(${json.keys.join(', ')})';
-    final valuesPlaceholder = 'VALUES(${List.filled(json.keys.length, '?').join(', ')})';
+    final valuesPlaceholder =
+        'VALUES(${List.filled(json.keys.length, '?').join(', ')})';
     final values = json.values.toList();
     try {
-      final result = await db.execute('INSERT INTO $tableName $columns $valuesPlaceholder', values);
+      final result = await db.execute(
+          'INSERT INTO $tableName $columns $valuesPlaceholder', values);
     } catch (e) {
       throw Exception('Failed to insert item into $tableName: $e');
     }
 
     //final values = '(${json.values.map(_sqlEscape).join(', ')})';
-    
+
     /*
     final columns = json.keys.join(', ');
     final values = json.values.map(_sqlEscape).join(', dW');
@@ -44,7 +46,8 @@ class BaseTableDb<T extends IHasId> {
   }
 
   Future<void> upsertItem(T item) async {
-    final existingItem = await db.execute('SELECT * FROM $tableName WHERE id = ?', [item.id]);
+    final existingItem =
+        await db.execute('SELECT * FROM $tableName WHERE id = ?', [item.id]);
     if (existingItem.isEmpty) {
       await insertItem(item);
     } else {
@@ -60,16 +63,17 @@ class BaseTableDb<T extends IHasId> {
 
   Future<void> insertItems(List<T> items) async {
     if (items.isEmpty) return;
-    
+
     final Map<String, dynamic> firstItemJson = toJson(items.first);
     final columns = firstItemJson.keys.join(', ');
-    
+
     final values = items.map((item) {
       final itemJson = toJson(item);
       return '(${itemJson.values.map(_sqlEscape).join(', ')})';
     }).join(', ');
-    
-    await db.executeBatch('INSERT INTO $tableName ($columns) VALUES $values', []);
+
+    await db
+        .executeBatch('INSERT INTO $tableName ($columns) VALUES $values', []);
   }
 
   Future<void> updateItem(T item) async {
@@ -78,8 +82,9 @@ class BaseTableDb<T extends IHasId> {
         .where((entry) => entry.key != 'id')
         .map((entry) => '${entry.key} = ${_sqlEscape(entry.value)}')
         .join(', ');
-    
-    await db.execute('UPDATE $tableName SET $setClause WHERE id = ${_sqlEscape(item.id)}');
+
+    await db.execute(
+        'UPDATE $tableName SET $setClause WHERE id = ${_sqlEscape(item.id)}');
   }
 
   Future<void> deleteItem(String id) async {

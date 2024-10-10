@@ -90,6 +90,8 @@ class JoinedCurUserTasksListenerNotifier
     );
   }
 
+// TODO p3: This triggers a "Cannot use ref functions after the dependency of a provider changed"
+// We should likely just use read calls and call it for each tasks instead of in bulk like this ... 
   Future<List<JoinedTaskModel>> _getBulkJoinedTaskModels(
       List<TaskModel> watchedCurUserTasks) async {
     // NOTE - all joined data are read not watched

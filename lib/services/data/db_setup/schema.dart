@@ -101,6 +101,7 @@ const aiChatSchemas = [
     Column.text('name'),
     Column.text('created_at'),
     Column.text('summary'),
+    Column.text('parent_org_id'),
   ]),
   Table(aiChatMessagesTable, [
     Column.text('id'),

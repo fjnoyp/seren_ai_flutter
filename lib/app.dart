@@ -22,7 +22,7 @@ import 'package:seren_ai_flutter/services/data/tasks/models/joined_task_model.da
 import 'package:seren_ai_flutter/services/data/tasks/models/task_model.dart';
 import 'package:seren_ai_flutter/services/data/tasks/widgets/task_page.dart';
 import 'package:seren_ai_flutter/services/data/teams/widgets/manage_team_users_page.dart';
-import 'package:seren_ai_flutter/services/speech_to_text/stt_orchestrator_provider.dart.dart';
+import 'package:seren_ai_flutter/services/ai_interaction/stt_orchestrator_provider.dart.dart';
 import 'package:seren_ai_flutter/widgets/flutter_wechat_assets_picker/multi_assets_page.dart';
 import 'package:seren_ai_flutter/widgets/home/home_page.dart';
 import 'package:seren_ai_flutter/widgets/common/main_scaffold.dart';
