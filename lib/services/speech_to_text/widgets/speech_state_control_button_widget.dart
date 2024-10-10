@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:seren_ai_flutter/services/speech_to_text/speech_to_text_listen_provider.dart';
+import 'package:seren_ai_flutter/services/speech_to_text/speech_to_text_listen_state_provider.dart';
 import 'package:seren_ai_flutter/services/speech_to_text/speech_to_text_service_provider.dart';
 import 'package:seren_ai_flutter/services/speech_to_text/speech_to_text_status_provider.dart';
 import 'package:seren_ai_flutter/services/speech_to_text/widgets/speech_volume_widget.dart';
@@ -8,12 +8,14 @@ import 'package:seren_ai_flutter/services/speech_to_text/widgets/speech_volume_w
 
 // Button to start/stop listening
 class SpeechStateControlButtonWidget extends ConsumerWidget {
+  static const _size = 80.0; 
+
   const SpeechStateControlButtonWidget({super.key});
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final statusState = ref.watch(speechToTextStatusProvider);
-    final notifier = ref.read(speechToTextListenProvider.notifier);
+    final notifier = ref.read(speechToTextListenStateProvider.notifier);
 
     final theme = Theme.of(context);
 
@@ -33,8 +35,8 @@ class SpeechStateControlButtonWidget extends ConsumerWidget {
                   color: theme.primaryColor, // Use theme color
                   shape: BoxShape.circle, // Circular shape
                 ),
-                width: 80.0,
-                height: 80.0,
+                width: _size,
+                height: _size,
                 child: IconButton(
                   icon: const Icon(Icons.square_outlined,
                       size: 50.0, color: Colors.white),
@@ -69,8 +71,8 @@ class SpeechStateControlButtonWidget extends ConsumerWidget {
                 color: theme.primaryColor, // Use theme color
                 shape: BoxShape.circle, // Circular shape
               ),
-              width: 80.0,
-              height: 80.0,
+              width: _size,
+              height: _size,
               child: IconButton(
                 icon:
                     const Icon(Icons.mic_none, size: 50.0, color: Colors.white),
@@ -81,8 +83,8 @@ class SpeechStateControlButtonWidget extends ConsumerWidget {
         case SpeechToTextStateEnum.startListening:
         case SpeechToTextStateEnum.startNotListening:
           topView = SizedBox(
-            width: 80.0,
-            height: 80.0,
+            width: _size,
+            height: _size,
             child: CircularProgressIndicator(
               strokeWidth: 12.0,
               valueColor: AlwaysStoppedAnimation<Color>(theme.primaryColor),
@@ -99,7 +101,7 @@ class SpeechStateControlButtonWidget extends ConsumerWidget {
       columnChildren.addAll([
         const SizedBox(height: 5), // Added space between the mic and the bar
         Padding(
-          padding: const EdgeInsets.all(5.0),
+          padding: const EdgeInsets.all(0.0),
           child: ConstrainedBox(
             constraints: BoxConstraints(
               maxWidth: MediaQuery.of(context).size.width,
@@ -112,7 +114,7 @@ class SpeechStateControlButtonWidget extends ConsumerWidget {
       return Column(
         children: [
           Container(
-            padding: const EdgeInsets.all(4.0),
+            padding: const EdgeInsets.all(0.0),
             child: Column(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: columnChildren),

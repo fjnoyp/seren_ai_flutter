@@ -4,11 +4,11 @@ import 'speech_to_text_service_provider.dart';
 
 
 
-final speechToTextListenProvider =
-    StateNotifierProvider<SpeechToTextListenNotifier, SpeechToTextListenState>(
+final speechToTextListenStateProvider =
+    StateNotifierProvider<SpeechToTextListenStateNotifier, SpeechToTextListenState>(
         (ref) {
   final speechService = ref.read(speechToTextServiceProvider);
-  return SpeechToTextListenNotifier(speechService);
+  return SpeechToTextListenStateNotifier(speechService);
 });
 
 class SpeechToTextListenState {
@@ -25,11 +25,11 @@ class SpeechToTextListenState {
   }
 }
 
-class SpeechToTextListenNotifier
+class SpeechToTextListenStateNotifier
     extends StateNotifier<SpeechToTextListenState> {
   final SpeechToTextService _speechService;
 
-  SpeechToTextListenNotifier(this._speechService)
+  SpeechToTextListenStateNotifier(this._speechService)
       : super(SpeechToTextListenState());
 
   void startListening() {

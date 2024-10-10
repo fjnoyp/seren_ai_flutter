@@ -1,9 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:seren_ai_flutter/services/speech_to_text/speech_to_text_listen_provider.dart';
+import 'package:seren_ai_flutter/services/speech_to_text/speech_to_text_listen_state_provider.dart';
 import 'package:seren_ai_flutter/services/speech_to_text/speech_to_text_service_provider.dart';
 import 'package:seren_ai_flutter/services/speech_to_text/speech_to_text_status_provider.dart';
-
 
 // Display transcribed text
 class SpeechTranscribedWidget extends ConsumerWidget {
@@ -12,11 +11,13 @@ class SpeechTranscribedWidget extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final theme = Theme.of(context);
-    final textState = ref.watch(speechToTextListenProvider);
+    final textState = ref.watch(speechToTextListenStateProvider);
     final statusState = ref.watch(speechToTextStatusProvider);
 
-    if (statusState.speechState == SpeechToTextStateEnum.listening) {
-      return Container(
+
+    return Visibility(
+      visible: statusState.speechState == SpeechToTextStateEnum.listening,
+      child: Container(
         decoration: BoxDecoration(
           border: Border.all(
             color: theme.dividerColor, // Use theme color for border
@@ -32,7 +33,7 @@ class SpeechTranscribedWidget extends ConsumerWidget {
               child: Padding(
                 padding: const EdgeInsets.all(8.0),
                 child: Text(
-                  textState.text.isEmpty ? '...' : textState.text,
+                  textState.text.isEmpty ? 'Say something...' : textState.text,
                   textAlign: TextAlign.center,
                   style: TextStyle(
                       fontSize: 16.0,
@@ -43,9 +44,7 @@ class SpeechTranscribedWidget extends ConsumerWidget {
             ),
           ],
         ),
-      );
-    } else {
-      return Container();
-    }
+      ),
+    );
   }
 }

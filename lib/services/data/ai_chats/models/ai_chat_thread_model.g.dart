@@ -18,6 +18,7 @@ AiChatThreadModel _$AiChatThreadModelFromJson(Map<String, dynamic> json) =>
           ? null
           : DateTime.parse(json['updated_at'] as String),
       summary: json['summary'] as String?,
+      parentOrgId: json['parent_org_id'] as String,
     );
 
 Map<String, dynamic> _$AiChatThreadModelToJson(AiChatThreadModel instance) =>
@@ -28,4 +29,5 @@ Map<String, dynamic> _$AiChatThreadModelToJson(AiChatThreadModel instance) =>
       'created_at': instance.createdAt?.toIso8601String(),
       'updated_at': instance.updatedAt?.toIso8601String(),
       'summary': instance.summary,
+      'parent_org_id': instance.parentOrgId,
     };
