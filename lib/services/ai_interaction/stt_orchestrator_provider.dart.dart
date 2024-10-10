@@ -1,5 +1,6 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:seren_ai_flutter/services/speech_to_text/speech_to_text_listen_provider.dart';
+import 'package:seren_ai_flutter/services/ai_interaction/ai_api_provider.dart';
+import 'package:seren_ai_flutter/services/speech_to_text/speech_to_text_listen_state_provider.dart';
 import 'package:seren_ai_flutter/services/speech_to_text/speech_to_text_service_provider.dart';
 import 'package:seren_ai_flutter/services/speech_to_text/speech_to_text_status_provider.dart';
 
@@ -10,10 +11,12 @@ final sttOrchestratorProvider = Provider((ref) {
   // Thus we will get duplicate events for speech ....
 
   ref.listen<SpeechToTextStatusState>(speechToTextStatusProvider,
-      (_, speechState) async {
-//    if (previousState != speechState.speechState) {
+      (previousSpeechState, speechState) async {
 
-    //previousState = speechState.speechState;
+        if(previousSpeechState?.speechState == speechState.speechState) {
+          return;
+        }
+
 
     print('received speech state: ${speechState.speechState}');
 
@@ -26,13 +29,15 @@ final sttOrchestratorProvider = Provider((ref) {
     }
 
     if (speechState.speechState == SpeechToTextStateEnum.startNotListening) {
-      final speechText = ref.read(speechToTextListenProvider);
+      final speechText = ref.read(speechToTextListenStateProvider);
 
       if (speechText.text.isEmpty) {
         return;
       }
 
       print('received speech text: ${speechText.text}');
+
+      await ref.read(aiApiProvider).sendMessageToAi(message: speechText.text);
 
       // Enact AI action 
       /*

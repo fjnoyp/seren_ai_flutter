@@ -1,5 +1,5 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:seren_ai_flutter/services/speech_to_text/speech_to_text_listen_provider.dart';
+import 'package:seren_ai_flutter/services/speech_to_text/speech_to_text_listen_state_provider.dart';
 import 'speech_to_text_service_provider.dart';
 
 /// Provides a status notifier for the speech to text service.

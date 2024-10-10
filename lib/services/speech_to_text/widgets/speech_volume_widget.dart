@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:seren_ai_flutter/services/speech_to_text/speech_to_text_listen_provider.dart';
+import 'package:seren_ai_flutter/services/speech_to_text/speech_to_text_listen_state_provider.dart';
 import 'package:seren_ai_flutter/services/speech_to_text/speech_to_text_service_provider.dart';
 import 'package:seren_ai_flutter/services/speech_to_text/speech_to_text_status_provider.dart';
 
@@ -11,7 +11,7 @@ class SpeechVolumeWidget extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final textState = ref.watch(speechToTextListenProvider);
+    final textState = ref.watch(speechToTextListenStateProvider);
     final statusState = ref.watch(speechToTextStatusProvider);
     final soundLevel =
         statusState.speechState == SpeechToTextStateEnum.listening

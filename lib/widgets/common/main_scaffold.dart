@@ -1,9 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_riverpod/flutter_riverpod.dart';
-
-import 'package:seren_ai_flutter/services/ai_orchestrator_provider.dart';
-import 'package:seren_ai_flutter/services/speech_to_text/widgets/speech_state_control_button_widget.dart';
-import 'package:seren_ai_flutter/services/speech_to_text/widgets/speech_transcribed_widget.dart';
+import 'package:seren_ai_flutter/services/ai_interaction/widgets/user_input_display_widget.dart';
 import 'drawer_view.dart';
 
 class MainScaffold extends StatelessWidget {
@@ -90,98 +86,7 @@ class MainScaffold extends StatelessWidget {
       ) : null,
       */
 
-      bottomNavigationBar: enableAiBar
-          ? Consumer(
-              builder: (context, ref, child) {
-                final isTextFieldVisible =
-                    ref.watch(textFieldVisibilityProvider);
-                return SafeArea(
-                  child: Column(
-                    mainAxisSize: MainAxisSize.min,
-                    children: [
-                      const UserInputTextDisplayWidget(),
-                      const SpeechTranscribedWidget(),
-                      const SpeechStateControlButtonWidget(),
-                      IconButton(
-                        icon: Icon(
-                            isTextFieldVisible ? Icons.cancel : Icons.keyboard),
-                        onPressed: () {
-                          ref.read(textFieldVisibilityProvider.notifier).state =
-                              !isTextFieldVisible;
-                        },
-                      ),
-                      // You can add more widgets here if needed
-                    ],
-                  ),
-                );
-              },
-            )
-          : null,
-    );
-  }
-}
-
-final textFieldVisibilityProvider = StateProvider<bool>((ref) => false);
-final TextEditingController textEditingController = TextEditingController();
-
-class UserInputTextDisplayWidget extends ConsumerWidget {
-  const UserInputTextDisplayWidget({Key? key}) : super(key: key);
-
-  @override
-  Widget build(BuildContext context, WidgetRef ref) {
-    final isTextFieldVisible = ref.watch(textFieldVisibilityProvider);
-    final viewInsets = MediaQuery.of(context).viewInsets;
-
-    return Visibility(
-      visible: isTextFieldVisible,
-      child: Positioned(
-        bottom: viewInsets.bottom,
-        left: 0,
-        right: 0,
-        child: Container(
-          color: Colors.white,
-          padding: EdgeInsets.all(16),
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              Row(
-                mainAxisAlignment: MainAxisAlignment.end,
-                children: [
-                  IconButton(
-                    icon: Icon(Icons.check_box_outlined, size: 20),
-                    onPressed: () {
-                      ref.read(textFieldVisibilityProvider.notifier).state =
-                          false;
-                      ref
-                          .read(aiOrchestratorProvider)
-                          .testChatMessage(message: textEditingController.text);
-                      textEditingController.clear();
-                    },
-                    color: Colors.green,
-                  ),
-                  IconButton(
-                    icon: Icon(Icons.close_outlined, size: 20),
-                    onPressed: () {
-                      ref.read(textFieldVisibilityProvider.notifier).state =
-                          false;
-                      textEditingController.clear();
-                    },
-                    color: Colors.red,
-                  ),
-                ],
-              ),
-              TextField(
-                controller: textEditingController,
-                maxLines: null,
-                decoration: const InputDecoration(
-                  hintText: 'Enter something',
-                  border: OutlineInputBorder(),
-                ),
-              ),
-            ],
-          ),
-        ),
-      ),
+      bottomNavigationBar: UserInputDisplayWidget()
     );
   }
 }

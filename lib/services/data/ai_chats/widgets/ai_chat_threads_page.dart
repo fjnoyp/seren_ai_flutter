@@ -7,6 +7,7 @@ import 'package:seren_ai_flutter/services/data/ai_chats/ai_chat_threads_db_provi
 import 'package:seren_ai_flutter/services/data/ai_chats/cur_user_ai_chat_threads_listener_provider.dart';
 import 'package:seren_ai_flutter/services/data/ai_chats/models/ai_chat_thread_model.dart';
 import 'package:seren_ai_flutter/services/data/ai_chats/widgets/ai_chat_thread_messages_page.dart';
+import 'package:seren_ai_flutter/services/data/orgs/cur_org/cur_org_id_provider.dart';
 
 class AiChatThreadsPage extends ConsumerWidget {
   const AiChatThreadsPage({Key? key}) : super(key: key);
@@ -46,10 +47,17 @@ class AiChatThreadsPage extends ConsumerWidget {
       throw Exception('Current user not found');
     }
 
+    final curOrgId = ref.read(curOrgIdProvider);
+
+    if(curOrgId == null) {
+      throw Exception('Current organization not found');
+    }
+
     final newThread = AiChatThreadModel(      
       name: 'New Chat Thread',
       createdAt: DateTime.now().toUtc(),
       authorUserId: curUser.id,
+      parentOrgId: curOrgId,
     );
 
     await aiChatThreadsDb.insertItem(newThread);

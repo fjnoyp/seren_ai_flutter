@@ -17,6 +17,9 @@ class AiChatThreadModel implements IHasId{
   final DateTime? updatedAt;
   final String? summary;
 
+  @JsonKey(name: 'parent_org_id')
+  final String parentOrgId;
+
   AiChatThreadModel({
     String? id,
     required this.authorUserId,
@@ -24,18 +27,8 @@ class AiChatThreadModel implements IHasId{
     this.createdAt,
     this.updatedAt,
     this.summary,
+    required this.parentOrgId,
   }) : id = id ?? uuid.v4();
-
-  // Factory constructor for creating a AiChatThreadModel with default values
-  factory AiChatThreadModel.defaultThread() {
-    final now = DateTime.now().toUtc();
-    return AiChatThreadModel(
-      authorUserId: '',  // This should be set to the current user's ID in practice
-      name: 'New Thread',
-      createdAt: now,
-      summary: null,
-    );
-  }
 
   AiChatThreadModel copyWith({
     String? id,
@@ -44,6 +37,7 @@ class AiChatThreadModel implements IHasId{
     DateTime? createdAt,
     DateTime? updatedAt,
     String? summary,
+    String? parentOrgId,
   }) {
     return AiChatThreadModel(
       id: id ?? this.id,
@@ -52,6 +46,7 @@ class AiChatThreadModel implements IHasId{
       createdAt: createdAt ?? this.createdAt,
       updatedAt: updatedAt ?? this.updatedAt,
       summary: summary ?? this.summary,
+      parentOrgId: parentOrgId ?? this.parentOrgId,
     );
   }
 

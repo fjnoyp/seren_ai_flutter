@@ -47,7 +47,7 @@ class NoteFoldersListPage extends ConsumerWidget {
       )
       ),
 
-      testImageDisplay(),
+      //testImageDisplay(),
       
       CreateItemBottomButton(
         onPressed: () async => await openNoteFolderPage(context, ref, mode: EditablePageMode.create),
