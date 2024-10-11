@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:seren_ai_flutter/services/auth/cur_auth_user_provider.dart';
 import 'package:seren_ai_flutter/services/data/projects/models/project_model.dart';
 import 'package:seren_ai_flutter/services/data/tasks/models/joined_task_model.dart';
 import 'package:seren_ai_flutter/services/data/tasks/models/joined_task_user_assignments_model.dart';
+import 'package:seren_ai_flutter/services/data/tasks/models/task_comments_model.dart';
 import 'package:seren_ai_flutter/services/data/tasks/models/task_model.dart';
 import 'package:seren_ai_flutter/services/data/tasks/models/task_user_assignments_model.dart';
 import 'package:seren_ai_flutter/services/data/tasks/task_comments/task_comments_listener_fam_provider.dart';
@@ -95,16 +97,23 @@ class CurTaskNotifier extends Notifier<JoinedTaskModel> {
     state = joinedTask;
   }
 
+  void addComment(String text) {
+    final comment = TaskCommentsModel(
+      authorUserId: ref.read(curAuthUserProvider)!.id,
+      parentTaskId: state.task.id,
+      content: text,
+      createdAt: DateTime.now().toUtc(),
+      updatedAt: DateTime.now().toUtc(),
+    );
+    ref.read(taskCommentsDbProvider).upsertItem(comment);
+    state = state.copyWith(comments: [...state.comments, comment]);
+  }
+
   Future<void> updateComments() async {
     final comments =
         ref.read(taskCommentsListenerFamProvider(state.task.id)) ?? [];
 
     state = state.copyWith(comments: comments);
-
-    final taskCommentsDb = ref.read(taskCommentsDbProvider);
-    for (final comment in comments) {
-      taskCommentsDb.upsertItem(comment);
-    }
   }
 }
 
