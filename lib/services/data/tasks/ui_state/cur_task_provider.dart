@@ -5,6 +5,8 @@ import 'package:seren_ai_flutter/services/data/tasks/models/joined_task_model.da
 import 'package:seren_ai_flutter/services/data/tasks/models/joined_task_user_assignments_model.dart';
 import 'package:seren_ai_flutter/services/data/tasks/models/task_model.dart';
 import 'package:seren_ai_flutter/services/data/tasks/models/task_user_assignments_model.dart';
+import 'package:seren_ai_flutter/services/data/tasks/task_comments/task_comments_listener_fam_provider.dart';
+import 'package:seren_ai_flutter/services/data/tasks/task_comments_db_provider.dart';
 import 'package:seren_ai_flutter/services/data/teams/models/team_model.dart';
 import 'package:seren_ai_flutter/services/data/users/models/user_model.dart';
 
@@ -91,6 +93,18 @@ class CurTaskNotifier extends Notifier<JoinedTaskModel> {
 
   void updateAllFields(JoinedTaskModel joinedTask) {
     state = joinedTask;
+  }
+
+  Future<void> updateComments() async {
+    final comments =
+        ref.read(taskCommentsListenerFamProvider(state.task.id)) ?? [];
+
+    state = state.copyWith(comments: comments);
+
+    final taskCommentsDb = ref.read(taskCommentsDbProvider);
+    for (final comment in comments) {
+      taskCommentsDb.upsertItem(comment);
+    }
   }
 }
 
