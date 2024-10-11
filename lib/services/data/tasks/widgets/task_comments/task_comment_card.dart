@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
 import 'package:seren_ai_flutter/services/data/tasks/models/joined_task_comments_model.dart';
 
 class TaskCommentCard extends StatelessWidget {
@@ -35,9 +36,9 @@ class TaskCommentCard extends StatelessWidget {
                   ),
                 ),
                 Text(
-                  // TODO: format date
-                  comment.comment.updatedAt?.toString() ??
-                      comment.comment.createdAt.toString(),
+                  DateFormat('MMMM, d   hh:mm a').format(
+                      comment.comment.updatedAt?.toLocal() ??
+                          comment.comment.createdAt!.toLocal()),
                 ),
               ],
             ),
