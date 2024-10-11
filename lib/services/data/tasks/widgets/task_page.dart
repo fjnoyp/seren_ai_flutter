@@ -8,6 +8,7 @@ import 'package:seren_ai_flutter/services/data/tasks/ui_state/cur_task_provider.
 import 'package:seren_ai_flutter/services/data/tasks/models/joined_task_model.dart';
 import 'package:seren_ai_flutter/services/data/tasks/widgets/joined_task_save_provider.dart';
 import 'package:seren_ai_flutter/services/data/tasks/widgets/form/task_selection_fields.dart';
+import 'package:seren_ai_flutter/services/data/tasks/widgets/task_comments/task_comment_section.dart';
 
 /* === Thoughts on ai generation of create task === 
 1) Tasks must be assigned to specific users / projects 
@@ -81,9 +82,7 @@ class TaskPage extends HookConsumerWidget {
               ),
             ),
 
-            //Text('Comments', style: theme.textTheme.titleMedium),
-            //const SizedBox(height: 8),
-            // TODO p2: Implement comments section
+            TaskCommentSection(ref.read(curTaskProvider).task.id),
             const SizedBox(height: 24),
 
             if (mode != EditablePageMode.readOnly)
@@ -173,6 +172,9 @@ Future<void> openTaskPage(BuildContext context, WidgetRef ref,
     // initialJoinedTask can be null if we are opening an existing task page for edit 
     if (initialJoinedTask != null) {
       ref.read(curTaskProvider.notifier).setNewTask(initialJoinedTask);
+
+      // TODO: modify to have comments listened to in realtime
+      ref.read(curTaskProvider.notifier).updateComments();
     }
   }
 
