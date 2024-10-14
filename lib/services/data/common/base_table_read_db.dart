@@ -73,6 +73,11 @@ class BaseTableReadDb<T extends IHasId> extends BaseTableDb<T> {
     }
 
     final response = await db.execute(query);
+
+    if (response.isEmpty) {
+      return null;
+    }
+
     final item = fromJson(response.first);
     
     return item;
