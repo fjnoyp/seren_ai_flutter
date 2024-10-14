@@ -14,11 +14,17 @@ class AuthGuard extends ConsumerWidget {
     final user = ref.watch(curAuthUserProvider);
 
     if (user == null) {
-      // Redirect to sign-in page if user is not authenticated
-      WidgetsBinding.instance.addPostFrameCallback((_) {
-        Navigator.pushNamedAndRemoveUntil(context, signInUpRoute, (route) => false);
-      });
-      return Container(); // Return an empty container while redirecting
+      // TODO: replace with some runtime logic instead of just waiting 3 seconds
+      Future.delayed(const Duration(seconds: 3)).then(
+        (_) {
+          if (user == null) {
+            // Redirect to sign-in page if user is not authenticated
+            Navigator.of(context)
+                .pushNamedAndRemoveUntil(signInUpRoute, (route) => false);
+            return Container(); // Return an empty container while redirecting
+          }
+        },
+      );
     }
 
     return child;
