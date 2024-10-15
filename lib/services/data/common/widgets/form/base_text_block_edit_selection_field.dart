@@ -21,9 +21,10 @@ class BaseTextBlockEditSelectionField extends ConsumerWidget {
 
     return AnimatedSelectionField<String>(
       labelWidget: const Icon(Icons.description),
-      validator: (description) => description == null || description.isEmpty
-          ? 'Text is required'
-          : null,
+      validator: (description) => null,
+      // description == null || description.isEmpty
+      //     ? 'Text is required'
+      //     : null,
       valueToString: (description) => description ?? 'Enter Text',
       enabled: enabled,
       value: curDescription,      
