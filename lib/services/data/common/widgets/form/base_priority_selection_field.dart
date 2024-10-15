@@ -22,7 +22,7 @@ class BasePrioritySelectionField extends ConsumerWidget {
 
     return AnimatedModalSelectionField<PriorityEnum>(
       labelWidget: const Icon(Icons.priority_high),
-      validator: (priority) => priority == null ? 'Priority is required' : null,
+      validator: (priority) => null, // priority == null ? 'Priority is required' : null,
       valueToString: (priority) =>
           priority?.toString().enumToHumanReadable ?? 'Select Priority',
       enabled: enabled,
