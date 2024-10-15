@@ -8,12 +8,14 @@ class MainScaffold extends StatelessWidget {
   final String title;
   final Widget body;
   final FloatingActionButton? floatingActionButton;
+  final bool showBottomBar;
 
   const MainScaffold({
     super.key,
     required this.title,
     required this.body,
     this.floatingActionButton,
+    this.showBottomBar = true,
   });
 
   @override
@@ -86,7 +88,7 @@ class MainScaffold extends StatelessWidget {
       ) : null,
       */
 
-      bottomNavigationBar: UserInputDisplayWidget()
+      bottomNavigationBar: showBottomBar ? const UserInputDisplayWidget() : null,
     );
   }
 }

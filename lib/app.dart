@@ -78,7 +78,7 @@ class AppState extends State<App> {
           themeMode: themeMode,
           initialRoute: initialRoute,          
           routes: {
-            signInUpRoute: (context) => MainScaffold(title: 'Sign In/Up', body: const SignInUpPage()),
+            signInUpRoute: (context) => const MainScaffold(title: 'Sign In/Up', body: SignInUpPage(), showBottomBar: false),
             homeRoute: (context) => _buildGuardScaffold('Home', const HomePage()),
 
 
