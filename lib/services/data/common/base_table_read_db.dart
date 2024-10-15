@@ -5,14 +5,13 @@ import 'package:seren_ai_flutter/services/data/common/i_has_id.dart';
 typedef FromJson<T> = T Function(Map<String, dynamic> json);
 typedef ToJson<T> = Map<String, dynamic> Function(T item);
 
-/// For retrieving values from a specifi DB table 
-/// Use for joined tables where we don't want to recompute joins based on foreign keys 
+/// For retrieving values from a specifi DB table
+/// Use for joined tables where we don't want to recompute joins based on foreign keys
 
+// TODO p3: refactor to using queries
+// And using futureProvider to fetch data once and not over and over again ...
 
-// TODO p3: refactor to using queries 
-// And using futureProvider to fetch data once and not over and over again ... 
-
-class BaseTableReadDb<T extends IHasId> extends BaseTableDb<T> {  
+class BaseTableReadDb<T extends IHasId> extends BaseTableDb<T> {
   final String tableName;
   final FromJson<T> fromJson;
   final ToJson<T> toJson;
@@ -26,7 +25,8 @@ class BaseTableReadDb<T extends IHasId> extends BaseTableDb<T> {
   }) : super(db: db, tableName: tableName, fromJson: fromJson, toJson: toJson);
 
   Future<List<T>> getItems(
-      {Iterable<String>? ids, Iterable<Map<String, dynamic>>? eqFilters}) async {
+      {Iterable<String>? ids,
+      Iterable<Map<String, dynamic>>? eqFilters}) async {
     if (ids == null && eqFilters == null) {
       return [];
     }
@@ -35,13 +35,14 @@ class BaseTableReadDb<T extends IHasId> extends BaseTableDb<T> {
     final List<T> items = [];
 
     if (ids != null) {
-      query += " WHERE id IN ('${ids.join("', '")}')";      
+      query += " WHERE id IN ('${ids.join("', '")}')";
     }
 
     if (eqFilters != null) {
       query += (ids != null) ? ' AND ' : ' WHERE ';
 
-      final filterClauses = eqFilters.map((filter) => "${filter['key']} = '${filter['value']}'");
+      final filterClauses =
+          eqFilters.map((filter) => "${filter['key']} = '${filter['value']}'");
       query += filterClauses.join(' AND ');
     }
 
@@ -54,28 +55,32 @@ class BaseTableReadDb<T extends IHasId> extends BaseTableDb<T> {
   }
 
   Future<T?> getItem(
-      {String? id,List<Map<String, dynamic>>? eqFilters}) async {
-
+      {String? id, List<Map<String, dynamic>>? eqFilters}) async {
     if (id == null && eqFilters == null) {
       return null;
     }
 
     var query = 'SELECT * FROM $tableName';
 
-    if(id != null){
+    if (id != null) {
       query += " WHERE id = '$id'";
     }
-    
+
     if (eqFilters != null) {
       query += (id != null) ? ' AND ' : ' WHERE ';
-      final filterClauses = eqFilters.map((filter) => "${filter['key']} = '${filter['value']}'");
+      final filterClauses =
+          eqFilters.map((filter) => "${filter['key']} = '${filter['value']}'");
       query += filterClauses.join(' AND ');
     }
 
     final response = await db.execute(query);
+
+    if (response.isEmpty) {
+      return null;
+    }
+
     final item = fromJson(response.first);
-    
+
     return item;
   }
-
 }
