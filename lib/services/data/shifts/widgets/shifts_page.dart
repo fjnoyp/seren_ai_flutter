@@ -28,18 +28,17 @@ class ShiftsPage extends HookConsumerWidget {
     // TODO p3: Allow choosing which shift to view
     final joinedShifts = ref.watch(curUserJoinedShiftsListenerProvider);
 
-    if(joinedShifts == null){
+    if (joinedShifts == null) {
       return const Center(child: CircularProgressIndicator());
     }
 
-    if(joinedShifts.isEmpty){
+    if (joinedShifts.isEmpty) {
       return const Center(child: Text('No shifts'));
     }
 
     final selectedShift = joinedShifts[0];
 
     final theme = Theme.of(context);
-
 
     return Column(
       children: [
@@ -61,7 +60,7 @@ class ShiftsPage extends HookConsumerWidget {
             focusedDay.value = newFocusedDay;
           },
           calendarStyle: CalendarStyle(
-            outsideDaysVisible: false,       
+            outsideDaysVisible: false,
             todayDecoration: BoxDecoration(
               color: theme.colorScheme.secondary,
               shape: BoxShape.circle,
@@ -114,110 +113,120 @@ class DayShiftsWidget extends HookConsumerWidget {
 
     final shiftId = shift.shift.id;
 
-    return Column(
+    return Stack(
+      alignment: Alignment.bottomCenter,
       children: [
-        Row(mainAxisAlignment: MainAxisAlignment.end, children: [
-          IconButton(
-            icon: Icon(
-              isDebugMode.value ? Icons.list : Icons.bug_report,
-              size: 20, // Smaller size
-            ),
-            onPressed: () {
-              isDebugMode.value = !isDebugMode.value; // Toggle value
-            },
-          ),
-        ]),
-        Expanded(
-          child: isDebugMode.value
-              ? debugShiftsFullDayView(shiftId, day)
-              : Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Padding(
-                      padding: const EdgeInsets.only(left: 15),
-                      child: Text(shift.shift.name,
-                          style: theme.textTheme.titleLarge),
-                    ),
-                    //const SizedBox(height: 10),
-                    const Divider(),
-                    Padding(
-                      padding: const EdgeInsets.only(left: 20),
-                      child: Row(
-                        crossAxisAlignment: CrossAxisAlignment.center,
-                        children: [
-                          const Icon(Icons.punch_clock_outlined),
-                          const SizedBox(width: 10),
-                          _buildShiftTimeRangesList(shift.shift.id, day),
-                        ],
-                      ),
-                    ),
-                    const Divider(),
-                    Padding(
-                      padding: const EdgeInsets.only(left: 20),
-                      child: Row(
-                        crossAxisAlignment: CrossAxisAlignment.center,
-                        children: [
-                          const Icon(Icons.location_on_outlined),
-                          const SizedBox(width: 10),
-                          Text(shift.parentProject?.address ??
-                              'No project address'),
-                        ],
-                      ),
-                    ),
-                    const Divider(),
-                    //   _buildShiftTimeRangesList(shiftId, day),
-                    Padding(
-                      padding: const EdgeInsets.only(left: 20),
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Text('Shift Logs', style: theme.textTheme.titleMedium),
-                          _showShiftLogs(shiftId, day),
-                        ],
-                      ),
-                    ),
-
-Center( // Wrap with Center widget
-      child: ClockInClockOut(shiftId: shiftId, day: day),
-    ),                  ],
+        SingleChildScrollView(
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Row(mainAxisAlignment: MainAxisAlignment.end, children: [
+                IconButton(
+                  icon: Icon(
+                    isDebugMode.value ? Icons.list : Icons.bug_report,
+                    size: 20, // Smaller size
+                  ),
+                  onPressed: () {
+                    isDebugMode.value = !isDebugMode.value; // Toggle value
+                  },
                 ),
+              ]),
+              isDebugMode.value
+                  ? debugShiftsFullDayView(shiftId, day)
+                  : Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Padding(
+                          padding: const EdgeInsets.only(left: 15),
+                          child: Text(shift.shift.name,
+                              style: theme.textTheme.titleLarge),
+                        ),
+                        //const SizedBox(height: 10),
+                        const Divider(),
+                        Padding(
+                          padding: const EdgeInsets.only(left: 20),
+                          child: Row(
+                            crossAxisAlignment: CrossAxisAlignment.center,
+                            children: [
+                              const Icon(Icons.punch_clock_outlined),
+                              const SizedBox(width: 10),
+                              _buildShiftTimeRangesList(shift.shift.id, day),
+                            ],
+                          ),
+                        ),
+                        const Divider(),
+                        Padding(
+                          padding: const EdgeInsets.only(left: 20),
+                          child: Row(
+                            crossAxisAlignment: CrossAxisAlignment.center,
+                            children: [
+                              const Icon(Icons.location_on_outlined),
+                              const SizedBox(width: 10),
+                              Text(shift.parentProject?.address ??
+                                  'No project address'),
+                            ],
+                          ),
+                        ),
+                        const Divider(),
+                        //   _buildShiftTimeRangesList(shiftId, day),
+                        Padding(
+                          padding: const EdgeInsets.only(left: 20, bottom: 40),
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Text(
+                                'Shift Logs',
+                                style: theme.textTheme.titleMedium,
+                              ),
+                              _ShiftLogs(shiftId, day),
+                            ],
+                          ),
+                        ),
+                      ],
+                    ),
+            ],
+          ),
         ),
+        ClockInClockOut(shiftId: shiftId, day: day),
       ],
     );
   }
 }
 
-Widget _showShiftLogs(String shiftId, DateTime day) {
-  return Consumer(
-    builder: (context, ref, child) {
-      final shiftLogs = ref.watch(
-          curUserShiftLogsFamListenerProvider((shiftId: shiftId, day: day)));
+class _ShiftLogs extends ConsumerWidget {
+  const _ShiftLogs(this.shiftId, this.day);
 
-      if (shiftLogs == null || shiftLogs.isEmpty) {
-        return Text('No shift logs');
-      }
+  final String shiftId;
+  final DateTime day;
 
-      // TODO p3: don't use hardcoded height 
-      return Container(
-        height: 300, // Fixed height to enable scrolling
-        child: ListView.builder(
-          itemCount: shiftLogs.length,
-          itemBuilder: (context, index) {
-            final log = shiftLogs[index];
-            return Padding(
-              padding: const EdgeInsets.symmetric(vertical: 4.0),
-              child: Text(
-                '${listDateFormat.format(log.clockInDatetime.toLocal())} - ${log.clockOutDatetime != null ? listDateFormat.format(log.clockOutDatetime!.toLocal()) : 'Ongoing'}',
-                style: TextStyle(fontSize: 12),
-              ),
-            );
-          },
-        ),
-      );
-    },
-  );
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final shiftLogs = ref.watch(
+        curUserShiftLogsFamListenerProvider((shiftId: shiftId, day: day)));
+
+    if (shiftLogs == null || shiftLogs.isEmpty) {
+      return const Text('No shift logs');
+    }
+
+    return ListView.builder(
+      shrinkWrap: true,
+      physics: const NeverScrollableScrollPhysics(),
+      itemCount: shiftLogs.length,
+      itemBuilder: (context, index) {
+        final log = shiftLogs[index];
+        return Padding(
+          padding: const EdgeInsets.symmetric(vertical: 4.0),
+          child: Text(
+            '${listDateFormat.format(log.clockInDatetime.toLocal())} - ${log.clockOutDatetime != null ? listDateFormat.format(log.clockOutDatetime!.toLocal()) : 'Ongoing'}',
+            style: const TextStyle(fontSize: 12),
+          ),
+        );
+      },
+    );
+  }
 }
 
+// TODO: don't use functions to build widgets
 Widget _buildShiftTimeRangesList(String shiftId, DateTime day) {
   return Consumer(
     builder: (context, ref, child) {
@@ -283,6 +292,7 @@ class ClockInClockOut extends HookConsumerWidget {
         );
       } else if (curLog.clockOutDatetime == null) {
         return Column(
+          mainAxisSize: MainAxisSize.min,
           children: [
             ElevatedButton(
               onPressed: () => notifier.clockOut(),
