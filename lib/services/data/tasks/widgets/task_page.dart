@@ -7,6 +7,7 @@ import 'package:seren_ai_flutter/services/data/common/widgets/editablePageModeEn
 import 'package:seren_ai_flutter/services/data/projects/cur_user_viewable_projects_listener_provider.dart';
 import 'package:seren_ai_flutter/services/data/tasks/ui_state/cur_task_provider.dart';
 import 'package:seren_ai_flutter/services/data/tasks/models/joined_task_model.dart';
+import 'package:seren_ai_flutter/services/data/tasks/widgets/delete_task_button.dart';
 import 'package:seren_ai_flutter/services/data/tasks/widgets/joined_task_save_provider.dart';
 import 'package:seren_ai_flutter/services/data/tasks/widgets/form/task_selection_fields.dart';
 import 'package:seren_ai_flutter/services/data/tasks/widgets/task_comments/task_comment_section.dart';
@@ -55,6 +56,12 @@ class TaskPage extends HookConsumerWidget {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
+            if (mode == EditablePageMode.edit)
+              Align(
+                alignment: Alignment.topRight,
+                child:
+                    DeleteTaskButton(taskId: ref.read(curTaskProvider).task.id),
+              ),
             TaskTeamSelectionField(enabled: isEnabled),
             TaskProjectSelectionField(enabled: isEnabled),
 
