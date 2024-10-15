@@ -28,9 +28,9 @@ class BaseAssigneesSelectionField extends HookConsumerWidget {
 
     return AnimatedSelectionField<List<UserModel>>(
       labelWidget: const Icon(Icons.person),
-      validator: (assignees) => assignees == null || assignees.isEmpty
-          ? 'Assignees are required'
-          : null,
+      // validator: (assignees) => assignees == null || assignees.isEmpty
+      //     ? 'Assignees are required'
+      //     : null,
       valueToString: (assignees) => assignees?.isEmpty == true
           ? 'Choose Assignees'
           : assignees!.map((assignment) => assignment.email).join(', '),

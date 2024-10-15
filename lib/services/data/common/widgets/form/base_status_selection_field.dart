@@ -22,7 +22,7 @@ class BaseStatusSelectionField extends ConsumerWidget {
 
     return AnimatedModalSelectionField<StatusEnum>(
       labelWidget: const Icon(Icons.flag),
-      validator: (status) => status == null ? 'Status is required' : null,
+      validator: (status) => null, // status == null ? 'Status is required' : null,
       valueToString: (status) =>
           status?.toString().enumToHumanReadable ?? 'Select Status',
       enabled: enabled,
