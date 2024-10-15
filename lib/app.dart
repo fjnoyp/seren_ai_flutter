@@ -17,9 +17,6 @@ import 'package:seren_ai_flutter/services/data/orgs/widgets/manage_org_users_pag
 import 'package:seren_ai_flutter/services/data/orgs/widgets/org_guard.dart';
 import 'package:seren_ai_flutter/services/data/projects/widgets/projects_page.dart';
 import 'package:seren_ai_flutter/services/data/shifts/widgets/shifts_page.dart';
-import 'package:seren_ai_flutter/services/data/tasks/ui_state/cur_task_provider.dart';
-import 'package:seren_ai_flutter/services/data/tasks/models/joined_task_model.dart';
-import 'package:seren_ai_flutter/services/data/tasks/models/task_model.dart';
 import 'package:seren_ai_flutter/services/data/tasks/widgets/task_page.dart';
 import 'package:seren_ai_flutter/services/data/teams/widgets/manage_team_users_page.dart';
 import 'package:seren_ai_flutter/services/ai_interaction/stt_orchestrator_provider.dart.dart';
@@ -50,17 +47,6 @@ class AppState extends State<App> {
     _initDeepLinkListener();
   }
 
-  Widget _buildGuardScaffold(String title, Widget body) {
-    return AuthGuard(child: 
-            OrgGuard(child:
-              MainScaffold(title: title, body: body)));
-  }
-
-  Widget _buildAuthGuardScaffold(String title, Widget body) {
-    return AuthGuard(child: 
-            MainScaffold(title: title, body: body));
-  }
-
   @override
   Widget build(BuildContext context) {
     return Consumer(builder: (context, ref, child) {
@@ -72,59 +58,58 @@ class AppState extends State<App> {
 
       final themeMode = ref.watch(themeSNP);
 
-      return MaterialApp(        
+      return MaterialApp(
           theme: lightTheme,
           darkTheme: darkTheme,
           themeMode: themeMode,
-          initialRoute: initialRoute,          
+          initialRoute: initialRoute,
           routes: {
             signInUpRoute: (context) => const MainScaffold(title: 'Sign In/Up', body: SignInUpPage(), showBottomBar: false),
-            homeRoute: (context) => _buildGuardScaffold('Home', const HomePage()),
+            homeRoute: (context) => const _GuardScaffold('Home', HomePage()),
 
 
-            chooseOrgRoute: (context) => _buildAuthGuardScaffold('Choose Organization', const ChooseOrgPage()),
-            manageOrgUsersRoute: (context) => _buildGuardScaffold('Manage Organization Users', const ManageOrgUsersPage()),
-            manageTeamUsersRoute: (context) => _buildGuardScaffold('Manage Team Users', const ManageTeamUsersPage()),                        
+            chooseOrgRoute: (context) => const _AuthGuardScaffold('Choose Organization', ChooseOrgPage()),
+            manageOrgUsersRoute: (context) => const _GuardScaffold('Manage Organization Users', ManageOrgUsersPage()),
+            manageTeamUsersRoute: (context) => const _GuardScaffold('Manage Team Users', ManageTeamUsersPage()),
             
-            projectsRoute: (context) => _buildGuardScaffold('Projects', const ProjectsPage()), 
+            projectsRoute: (context) => const _GuardScaffold('Projects', ProjectsPage()),
             
-            tasksRoute: (context) => _buildGuardScaffold('Tasks', const TasksListPage()),
+            tasksRoute: (context) => const _GuardScaffold('Tasks', TasksListPage()),
             taskPageRoute: (context) {
               // TODO p3: add taskId to args
-              // Cannot use implicits or else dynamic routes will not work 
+              // Cannot use implicits or else dynamic routes will not work
               final args = ModalRoute.of(context)!.settings.arguments as Map<String, dynamic>;
-              final mode = args['mode'] as EditablePageMode;              
+              final mode = args['mode'] as EditablePageMode;
               final title = mode == EditablePageMode.create ? 'Create Task' : 'View Task';
 
-              return _buildGuardScaffold(title, TaskPage(mode: mode)); 
+              return _GuardScaffold(title, TaskPage(mode: mode));
             },
 
-            aiChatThreadsRoute: (context) => _buildGuardScaffold('AI Chat Threads', const AiChatThreadsPage()),
+            aiChatThreadsRoute: (context) => const _GuardScaffold('AI Chat Threads', AiChatThreadsPage()),
             aiChatThreadMessagesRoute: (context) {
               final args = ModalRoute.of(context)!.settings.arguments as Map<String, dynamic>;
               final threadId = args['threadId'] as String;
-              return _buildGuardScaffold('AI Chat Messages', AiChatThreadMessagesPage(threadId: threadId));
+              return _GuardScaffold('AI Chat Messages', AiChatThreadMessagesPage(threadId: threadId));
             },
 
-            shiftsRoute: (context) => _buildGuardScaffold('Shifts', const ShiftsPage()),
+            shiftsRoute: (context) => const _GuardScaffold('Shifts', ShiftsPage()),
 
-            noteFoldersListRoute: (context) => _buildGuardScaffold('Note Folders', const NoteFoldersListPage()),
-            
-            testRoute: (context) => _buildGuardScaffold('Test', const TestPage()),
-            testSQLPageRoute: (context) => _buildGuardScaffold('Test SQL Page', TestSQLPage()),
+            noteFoldersListRoute: (context) => const _GuardScaffold('Note Folders', NoteFoldersListPage()),
 
+            testRoute: (context) => const _GuardScaffold('Test', TestPage()),
+            testSQLPageRoute: (context) => _GuardScaffold('Test SQL Page', TestSQLPage()),
             noteFolderNotesListRoute: (context) {
               final args = ModalRoute.of(context)!.settings.arguments as Map<String, dynamic>;
               final noteFolderId = args['noteFolderId'] as String;
-              return _buildGuardScaffold('Note Folder Notes', NoteFolderNotesListPage(noteFolderId: noteFolderId));
+              return _GuardScaffold('Note Folder Notes', NoteFolderNotesListPage(noteFolderId: noteFolderId));
             },
 
             notePageRoute: (context) {
               final args = ModalRoute.of(context)!.settings.arguments as Map<String, dynamic>;              
               final mode = args['mode'] as EditablePageMode;
               final title = mode == EditablePageMode.create ? 'Create Note' : 'View Note';
-              
-              return _buildGuardScaffold(title, NotePage(mode: mode));
+
+              return _GuardScaffold(title, NotePage(mode: mode));
             },
 
             noteFolderPageRoute: (context) {
@@ -132,12 +117,12 @@ class AppState extends State<App> {
               final mode = args['mode'] as EditablePageMode;
               final title = mode == EditablePageMode.create ? 'Create Note Folder' : 'View Note Folder';
 
-              return _buildGuardScaffold(title, NoteFolderPage(mode: mode));
+              return _GuardScaffold(title, NoteFolderPage(mode: mode));
             },
 
-            flutterWechatAssetsPickerRoute: (context) => _buildGuardScaffold('Flutter Wechat Assets Picker', const MultiAssetsPage()),
-          },          
-          // For dynamically generating routes based on settings param 
+            flutterWechatAssetsPickerRoute: (context) => const _GuardScaffold('Flutter Wechat Assets Picker', MultiAssetsPage()),
+          },
+          // For dynamically generating routes based on settings param
           onGenerateRoute: (settings) {
             /*
             if (settings.name == '/test') {
@@ -158,8 +143,10 @@ class AppState extends State<App> {
             */
             // Handle other routes here if needed
             return null;
-          });
-    });
+          },
+        );
+      },
+    );
   }
 
   void _initDeepLinkListener() async {
@@ -195,5 +182,33 @@ class AppState extends State<App> {
       print('Unknown deep link: $uri');
     }
     */
+  }
+}
+
+class _AuthGuardScaffold extends StatelessWidget {
+  const _AuthGuardScaffold(this.title, this.body);
+
+  final String title;
+  final Widget body;
+
+  @override
+  Widget build(BuildContext context) {
+    return AuthGuard(child: MainScaffold(title: title, body: body));
+  }
+}
+
+class _GuardScaffold extends StatelessWidget {
+  const _GuardScaffold(this.title, this.body);
+
+  final String title;
+  final Widget body;
+
+  @override
+  Widget build(BuildContext context) {
+    return AuthGuard(
+      child: OrgGuard(
+        child: MainScaffold(title: title, body: body),
+      ),
+    );
   }
 }
