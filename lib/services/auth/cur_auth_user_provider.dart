@@ -10,28 +10,39 @@ class CurAuthUserNotifier extends Notifier<UserModel?> {
     
   @override
   UserModel? build() {
-    final authUserId = Supabase.instance.client.auth.currentUser?.id;
-    _updateUser(authUserId);
+    final authUser = Supabase.instance.client.auth.currentUser;
+    _updateUser(authUser);
 
     Supabase.instance.client.auth.onAuthStateChange.listen((data) {
-      _updateUser(data.session?.user.id);
+      _updateUser(data.session?.user);
     });
 
-    return null; 
+    return null;
   }
 
-  Future<void> _updateUser(String? authUserId) async {    
-    if(authUserId == null) {
+  Future<void> _updateUser(User? user) async {
+    if (user?.id == null) {
       state = null;
-      return; 
-    } 
+      return;
+    }
 
     try {
-      final user = await _convertAuthUserIdToUserModel(authUserId);
-      state = user;
+      final userModel = await _convertAuthUserIdToUserModel(user!.id);
+      state = userModel;
     } catch (error) {
-      state = null;
+      if (error is _UserNotFoundError) {
+        await _insertNotFoundUserAndTryAgain(user!);
+      } else {
+        state = null;
+      }
     }
+  }
+
+  Future<void> _insertNotFoundUserAndTryAgain(User user) async {
+    final usersCacherDatabase = ref.read(usersReadProvider);
+    await usersCacherDatabase.upsertItem(
+        UserModel(parentAuthUserId: user.id, email: user.email!));
+    _updateUser(user);
   }
 
   Future<UserModel> _convertAuthUserIdToUserModel(String authUserId) async {
@@ -39,7 +50,7 @@ class CurAuthUserNotifier extends Notifier<UserModel?> {
     final userModel = await usersCacherDatabase.getItem(
         eqFilters: [{'key': 'parent_auth_user_id', 'value': authUserId}]);
     if(userModel == null){
-      throw Exception('User not found');
+      throw _UserNotFoundError();
     }
     return userModel;
   }
@@ -50,3 +61,5 @@ class CurAuthUserNotifier extends Notifier<UserModel?> {
     state = null;
   }
 }
+
+final class _UserNotFoundError extends Error {}
