@@ -59,12 +59,12 @@ class ModalSelectionField<T> extends SelectionField<T> {
   ModalSelectionField({
     super.key,
     required super.value,
-    super.onValueChanged,    
+    super.onValueChanged,
     required super.labelWidget,
     required List<T> options,
     required super.valueToString,
     super.validator,
-    super.enabled,    
+    super.enabled,
     super.defaultColor,
   }) : super(
           showSelectionModal: (BuildContext context) async {
@@ -142,7 +142,7 @@ class AnimatedSelectionField<T> extends SelectionField<T> {
 class SelectionField<T> extends HookConsumerWidget {
   final Widget labelWidget;
   final String Function(T?) valueToString;
-  final Future<void> Function(BuildContext) showSelectionModal;
+  final Future<T?> Function(BuildContext) showSelectionModal;
   final FormFieldValidator<T>? validator;
   final bool enabled;
   final T? value;
@@ -151,17 +151,17 @@ class SelectionField<T> extends HookConsumerWidget {
   final Color? defaultColor;
 
   const SelectionField({
-    Key? key,
+    super.key,
     required this.labelWidget,
     required this.valueToString,
     required this.showSelectionModal,
     required this.value,
     this.onValueChanged,
-    // TODO p2: actually use this validator (ie. display string output if not null/empty)
     this.validator,
     this.enabled = true,
     this.defaultColor,
-  }) : super(key: key);
+  });
+
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final Color baseColor = defaultColor ??
@@ -170,37 +170,74 @@ class SelectionField<T> extends HookConsumerWidget {
 
     final Color curColor =
         enabled ? baseColor : Color.lerp(baseColor, Colors.grey[600], 0.5)!;
-    return Row(
-      children: [
-        labelWidget,
-        const SizedBox(width: 8),
-        Expanded(
-          // Button to show selection UI
-          child: TextButton(
-            onPressed: enabled
-                ? () async {
-                    // Using ShowBottomSheet or ShowDatePicker invalidates the ref context after the modal closes
-                    // Only fix has been to use consumer directly in the modal builder when the tap occurs
-                    await showSelectionModal(context);
-                  }
-                : null,
-            style: TextButton.styleFrom(
-              alignment: Alignment.centerLeft,
-              padding: const EdgeInsets.only(left: 10),
+    return FormField<T>(
+      validator: validator,
+      builder: (field) {
+        return Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Container(
+              padding: field.hasError
+                  ? const EdgeInsets.symmetric(horizontal: 8.0)
+                  : const EdgeInsets.all(0),
+              decoration: field.hasError
+                  ? BoxDecoration(
+                      border: Border.all(
+                          color: Theme.of(context).colorScheme.error),
+                      borderRadius: BorderRadius.circular(4.0),
+                    )
+                  : const BoxDecoration(),
+              child: Row(
+                children: [
+                  labelWidget,
+                  const SizedBox(width: 8),
+                  Expanded(
+                    child:
+                        // Button to show selection UI
+                        TextButton(
+                      onPressed: enabled
+                          ? () async {
+                              // Using ShowBottomSheet or ShowDatePicker invalidates the ref context after the modal closes
+                              // Only fix has been to use consumer directly in the modal builder when the tap occurs
+                              await showSelectionModal(context).then((value) {
+                                field.didChange(value);
+                                field.validate();
+                              });
+                            }
+                          : null,
+                      style: TextButton.styleFrom(
+                        alignment: Alignment.centerLeft,
+                        padding: const EdgeInsets.only(left: 10),
+                      ),
+                      // Current Value Display
+                      child: Text(
+                        valueToString(value),
+                        maxLines: 2,
+                        overflow: TextOverflow.ellipsis,
+                        style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                            color: field.hasError
+                                ? Theme.of(context).colorScheme.error
+                                : curColor),
+                      ),
+                    ),
+                  ),
+                ],
+              ),
             ),
-            // Current Value Display
-            child: Text(
-              valueToString(value),
-              maxLines: 2,
-              overflow: TextOverflow.ellipsis,
-              style: Theme.of(context)
-                  .textTheme
-                  .bodyMedium
-                  ?.copyWith(color: curColor),
-            ),
-          ),
-        ),
-      ],
+            if (field.hasError)
+              Padding(
+                padding: const EdgeInsets.only(bottom: 8.0, left: 10.0),
+                child: Text(
+                  field.errorText ?? '',
+                  style: Theme.of(context)
+                      .textTheme
+                      .labelSmall
+                      ?.copyWith(color: Theme.of(context).colorScheme.error),
+                ),
+              ),
+          ],
+        );
+      },
     );
   }
 }

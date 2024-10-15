@@ -4,6 +4,7 @@ import 'package:logging/logging.dart';
 import 'package:seren_ai_flutter/constants.dart';
 import 'package:seren_ai_flutter/services/auth/cur_auth_user_provider.dart';
 import 'package:seren_ai_flutter/services/data/common/widgets/editablePageModeEnum.dart';
+import 'package:seren_ai_flutter/services/data/projects/cur_user_viewable_projects_listener_provider.dart';
 import 'package:seren_ai_flutter/services/data/tasks/ui_state/cur_task_provider.dart';
 import 'package:seren_ai_flutter/services/data/tasks/models/joined_task_model.dart';
 import 'package:seren_ai_flutter/services/data/tasks/widgets/joined_task_save_provider.dart';
@@ -97,21 +98,7 @@ class TaskPage extends HookConsumerWidget {
                       return;
                     }
 
-                    // TODO p2: add validator ui - since we don't use formfield (since we use provider to manage task form state) we must manually implement validation
-
-                    final isValidTask =
-                        ref.read(curTaskProvider.notifier).isValidTask();
-
-                    if (isValidTask) {
-                      final curJoinedTask = ref.read(curTaskProvider);
-                      await ref
-                          .read(joinedTaskSaveProvider)
-                          .saveTask(curJoinedTask);
-
-                      if (context.mounted) {
-                        Navigator.pop(context);
-                      }
-                    }
+                    await _validateTaskAndMaybeSave(ref, context);
                   },
                   style: ElevatedButton.styleFrom(
                     backgroundColor: theme.colorScheme.secondary,
@@ -136,6 +123,60 @@ class TaskPage extends HookConsumerWidget {
       ),
     );
   }
+
+  Future<void> _validateTaskAndMaybeSave(WidgetRef ref, BuildContext context) async {
+    final isValidTask =
+        ref.read(curTaskProvider.notifier).isValidTask();
+    
+    if (isValidTask) {
+      final curJoinedTask = ref.read(curTaskProvider);
+      await ref
+          .read(joinedTaskSaveProvider)
+          .saveTask(curJoinedTask);
+    
+      if (context.mounted) {
+        Navigator.pop(context);
+      }
+    } else {
+      // takes action to solve each validation error
+      if (ref.read(curTaskProvider).task.parentProjectId.isEmpty) {
+        _takeActionOnEmptyProjectValue(context).then((_) => _validateTaskAndMaybeSave(ref, context));
+      } else if (ref.read(curTaskProvider).task.name.isEmpty) {
+        _takeActionOnEmptyNameValue(context).then((_) => _validateTaskAndMaybeSave(ref, context));
+      }
+    }
+  }
+
+  Future<dynamic> _takeActionOnEmptyProjectValue(BuildContext context) {
+    // TODO: refactor to avoid hard coded solution
+    return showModalBottomSheet(
+      context: context,
+      builder: (BuildContext context) => Consumer(
+        builder: (BuildContext context, WidgetRef ref,
+            Widget? child) {
+          final selectableProjects = ref
+              .read(curUserViewableProjectsListenerProvider);
+          return ListView.builder(
+            itemCount: selectableProjects!.length,
+            itemBuilder: (BuildContext context, int index) {
+              final project = selectableProjects[index];
+              return ListTile(
+                title: Text(project.name),
+                onTap: () {
+                  ref
+                      .read(curTaskProvider.notifier)
+                      .updateParentProject(project);
+                  Navigator.pop(context, project);
+                },
+              );
+            },
+          );
+        },
+      ),
+    );
+  }
+
+  Future<void> _takeActionOnEmptyNameValue(BuildContext context) async {}
 }
 
 // TODO p3: figure out how to remove code duplication due to WidgetRef vs Ref 

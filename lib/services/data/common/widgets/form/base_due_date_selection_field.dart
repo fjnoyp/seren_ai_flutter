@@ -38,6 +38,6 @@ class BaseDueDateSelectionField extends ConsumerWidget {
   }
 
   String? _validator(DateTime? date) {
-    return date == null ? 'Due date is required' : null;
+    // return date == null ? 'Due date is required' : null;
   }
 }
