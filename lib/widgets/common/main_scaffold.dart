@@ -24,7 +24,7 @@ class MainScaffold extends StatelessWidget {
     final theme = Theme.of(context);
     return PopScope(
       canPop: Navigator.of(context).canPop(),
-      onPopInvokedWithResult: (didPop, result) {
+      onPopInvoked: (didPop) {
         if (!didPop) {
           Navigator.of(context)
               .pushNamedAndRemoveUntil(homeRoute, (route) => false);
