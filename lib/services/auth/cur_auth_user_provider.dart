@@ -4,10 +4,10 @@ import 'package:seren_ai_flutter/services/data/users/models/user_model.dart';
 import 'package:seren_ai_flutter/services/data/users/users_read_provider.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
-final curAuthUserProvider = NotifierProvider<CurAuthUserNotifier, UserModel?>(CurAuthUserNotifier.new);
+final curAuthUserProvider =
+    NotifierProvider<CurAuthUserNotifier, UserModel?>(CurAuthUserNotifier.new);
 
 class CurAuthUserNotifier extends Notifier<UserModel?> {
-    
   @override
   UserModel? build() {
     final authUser = Supabase.instance.client.auth.currentUser;
@@ -30,29 +30,19 @@ class CurAuthUserNotifier extends Notifier<UserModel?> {
       final userModel = await _convertAuthUserIdToUserModel(user!.id);
       state = userModel;
     } catch (error) {
-      if (error is _UserNotFoundError) {
-        await _insertNotFoundUserAndTryAgain(user!);
-      } else {
-        state = null;
-      }
+      state = null;
     }
-  }
-
-  Future<void> _insertNotFoundUserAndTryAgain(User user) async {
-    final usersCacherDatabase = ref.read(usersReadProvider);
-    await usersCacherDatabase.upsertItem(
-        UserModel(parentAuthUserId: user.id, email: user.email!));
-    _updateUser(user);
   }
 
   Future<UserModel> _convertAuthUserIdToUserModel(String authUserId) async {
-    final usersCacherDatabase = ref.read(usersReadProvider);
-    final userModel = await usersCacherDatabase.getItem(
-        eqFilters: [{'key': 'parent_auth_user_id', 'value': authUserId}]);
-    if(userModel == null){
+    final supabaseFetchedUsers = await Supabase.instance.client
+        .from('users')
+        .select()
+        .eq('parent_auth_user_id', authUserId);
+    if (supabaseFetchedUsers.isEmpty) {
       throw _UserNotFoundError();
     }
-    return userModel;
+    return UserModel.fromJson(supabaseFetchedUsers.first);
   }
 
   Future<void> signOut() async {
