@@ -34,7 +34,6 @@ class NoteFolderParentProjectField extends BaseProjectSelectionField {
     required super.enabled,
   }) : super(
           projectProvider: curNoteFolderParentProjectProvider,
-          selectableProjectsProvider: curUserViewableProjectsListenerProvider,
           updateProject: (ref, project) => 
               ref.read(curNoteFolderProvider.notifier).updateParentProject(project),
         );

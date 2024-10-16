@@ -28,7 +28,6 @@ class TaskProjectSelectionField extends BaseProjectSelectionField {
     required super.enabled,
   }) : super(
           projectProvider: curTaskProjectProvider,
-          selectableProjectsProvider: curUserViewableProjectsListenerProvider,
           updateProject: (ref, project) =>
               ref.read(curTaskProvider.notifier).updateParentProject(project),
         );
