@@ -1,3 +1,5 @@
+import 'dart:math';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:seren_ai_flutter/constants.dart';
@@ -5,14 +7,13 @@ import 'package:seren_ai_flutter/services/data/common/widgets/editablePageModeEn
 import 'package:seren_ai_flutter/services/data/tasks/cur_tasks/cur_user_viewable_tasks_listener_provider.dart';
 import 'package:seren_ai_flutter/services/data/tasks/cur_tasks/joined_cur_user_tasks_listener_provider.dart';
 import 'package:seren_ai_flutter/services/data/tasks/models/task_model.dart';
-import 'package:seren_ai_flutter/services/data/tasks/widgets/task_list/task_status_view.dart';
 import 'package:seren_ai_flutter/services/data/tasks/widgets/task_page.dart';
 import 'package:seren_ai_flutter/widgets/home/base_home_card.dart';
 
 class TaskCardItem extends ConsumerWidget {
   final TaskModel task;
 
-  const TaskCardItem({Key? key, required this.task}) : super(key: key);
+  const TaskCardItem({super.key, required this.task});
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -20,8 +21,7 @@ class TaskCardItem extends ConsumerWidget {
       onTap: () async {
         final joinedTask = await ref.read(joinedCurUserTasksListenerProvider.notifier).getJoinedTask(task);
         await openTaskPage(context, ref,
-              mode: EditablePageMode.readOnly, initialJoinedTask: joinedTask);
-        
+            mode: EditablePageMode.readOnly, initialJoinedTask: joinedTask);
       },
       child: Card(
         color: Theme.of(context).colorScheme.primary,
@@ -49,7 +49,7 @@ class TaskHomeCard extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    // TODO p4: show the latest updated task or some other intelligent task selection 
+    // TODO p4: show the latest updated task or some other intelligent task selection
     final watchedTasks = ref.watch(curUserViewableTasksListenerProvider);
 
     // get the open tasks that are due the soonest
@@ -58,9 +58,6 @@ class TaskHomeCard extends ConsumerWidget {
             task.status == StatusEnum.inProgress ||
             task.status == StatusEnum.open)
         .toList();
-
-    final firstTask = openTasks?.first;
-    final secondTask = openTasks?[1];
 
     return BaseHomeCard(
       color: Theme.of(context).colorScheme.primaryContainer,
@@ -71,52 +68,46 @@ class TaskHomeCard extends ConsumerWidget {
           Flexible(
             fit:
                 FlexFit.tight, // Ensures the child takes up the available space
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              // Changed from ListView to Column
-              children: [
-                // Display the name, status,
-                firstTask != null
-                    ? Flexible(
-                        fit: FlexFit.tight,
-                        child: TaskCardItem(task: firstTask))
-                    : Container(),
-                secondTask != null
-                    ? Flexible(
+            child: openTasks?.isEmpty ?? true
+                ? const Center(child: Text('No tasks due today'))
+                : Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    // Changed from ListView to Column
+                    children: [
+                      // Display the name, status,
+                      ...openTasks!.getRange(0, min(2, openTasks.length)).map(
+                          (task) => Flexible(
+                              fit: FlexFit.loose,
+                              child: TaskCardItem(task: task))),
+                      Flexible(
                         fit: FlexFit.loose,
-                        child: TaskCardItem(task: secondTask))
-                    : Container(),
-                Flexible(
-                  fit: FlexFit.loose,
-                  child: Card(
-                    child: GestureDetector(
-                      onTap: () {},
-                      child: Container(
-                        width: double.infinity,
-                        height: 30, // Set max height to 10
-                        decoration: BoxDecoration(
-                          border: Border.all(
-                              color: Theme.of(context).colorScheme.primary),
-                          borderRadius: BorderRadius.circular(
-                              12), // Increased the border radius for more rounded edges
-                        ),
-                        child: Center(
+                        child: Card(
                           child: InkWell(
                             onTap: () {
                               Navigator.pushNamed(context, tasksRoute);
                             },
-                            child: Text(
-                              "See All",
-                              style: Theme.of(context).textTheme.bodySmall,
+                            child: Container(
+                              width: double.infinity,
+                              height: 30, // Set max height to 10
+                              decoration: BoxDecoration(
+                                border: Border.all(
+                                    color:
+                                        Theme.of(context).colorScheme.primary),
+                                borderRadius: BorderRadius.circular(
+                                    12), // Increased the border radius for more rounded edges
+                              ),
+                              child: Center(
+                                child: Text(
+                                  "See All",
+                                  style: Theme.of(context).textTheme.bodySmall,
+                                ),
+                              ),
                             ),
                           ),
                         ),
                       ),
-                    ),
+                    ],
                   ),
-                ),
-              ],
-            ),
           ),
         ],
       ),
