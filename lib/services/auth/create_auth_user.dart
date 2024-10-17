@@ -1,1 +1,0 @@
-// TODO p2: create public.user row for every new sign up 

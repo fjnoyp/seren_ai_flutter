@@ -1,15 +1,15 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:seren_ai_flutter/services/auth/auth_states.dart';
 import 'package:seren_ai_flutter/services/data/db_setup/db_provider.dart';
 import 'package:seren_ai_flutter/services/data/users/models/user_model.dart';
-import 'package:seren_ai_flutter/services/data/users/users_read_provider.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
 final curAuthUserProvider =
-    NotifierProvider<CurAuthUserNotifier, UserModel?>(CurAuthUserNotifier.new);
+    NotifierProvider<CurAuthUserNotifier, AppAuthState>(CurAuthUserNotifier.new);
 
-class CurAuthUserNotifier extends Notifier<UserModel?> {
+class CurAuthUserNotifier extends Notifier<AppAuthState> {
   @override
-  UserModel? build() {
+  AppAuthState build() {
     final authUser = Supabase.instance.client.auth.currentUser;
     _updateUser(authUser);
 
@@ -17,20 +17,22 @@ class CurAuthUserNotifier extends Notifier<UserModel?> {
       _updateUser(data.session?.user);
     });
 
-    return null;
+    return InitialAuthState();
   }
 
   Future<void> _updateUser(User? user) async {
     if (user?.id == null) {
-      state = null;
+      state = LoggedOutAuthState();
       return;
     }
 
+    state = LoadingAuthState();
+
     try {
       final userModel = await _convertAuthUserIdToUserModel(user!.id);
-      state = userModel;
+      state = LoggedInAuthState(userModel);
     } catch (error) {
-      state = null;
+      state = ErrorAuthState(error: error.toString());
     }
   }
 
@@ -40,7 +42,7 @@ class CurAuthUserNotifier extends Notifier<UserModel?> {
         .select()
         .eq('parent_auth_user_id', authUserId);
     if (supabaseFetchedUsers.isEmpty) {
-      throw _UserNotFoundError();
+      throw 'User not found';
     }
     return UserModel.fromJson(supabaseFetchedUsers.first);
   }
@@ -48,8 +50,6 @@ class CurAuthUserNotifier extends Notifier<UserModel?> {
   Future<void> signOut() async {
     await Supabase.instance.client.auth.signOut();
     await ref.read(dbProvider).disconnectAndClear();
-    state = null;
+    state = LoggedOutAuthState();
   }
 }
-
-final class _UserNotFoundError extends Error {}

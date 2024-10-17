@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:logging/logging.dart';
 import 'package:seren_ai_flutter/constants.dart';
+import 'package:seren_ai_flutter/services/auth/auth_states.dart';
 import 'package:seren_ai_flutter/services/auth/cur_auth_user_provider.dart';
 import 'package:seren_ai_flutter/services/data/common/widgets/editablePageModeEnum.dart';
 import 'package:seren_ai_flutter/services/data/projects/cur_user_viewable_projects_listener_provider.dart';
@@ -30,10 +31,9 @@ inherently only READ data.
 We could keep ai as data intake only, and just have 3rd intermediary process insert data
 in case where client is not sending the data context  */
 
-
 final log = Logger('TaskPage');
 
-/// For creating / editing a task 
+/// For creating / editing a task
 class TaskPage extends HookConsumerWidget {
   final EditablePageMode mode;
   //final JoinedTaskModel? initialJoinedTask;
@@ -98,7 +98,11 @@ class TaskPage extends HookConsumerWidget {
                 width: double.infinity,
                 child: ElevatedButton(
                   onPressed: () async {
-                    final curAuthUser = ref.watch(curAuthUserProvider);
+                    final curAuthUserState = ref.read(curAuthUserProvider);
+                    final curAuthUser = switch (curAuthUserState) {
+                      LoggedInAuthState() => curAuthUserState.user,
+                      _ => null,
+                    };
 
                     if (curAuthUser == null) {
                       log.severe('Error: Current user is not authenticated.');
@@ -131,25 +135,25 @@ class TaskPage extends HookConsumerWidget {
     );
   }
 
-  Future<void> _validateTaskAndMaybeSave(WidgetRef ref, BuildContext context) async {
-    final isValidTask =
-        ref.read(curTaskProvider.notifier).isValidTask();
-    
+  Future<void> _validateTaskAndMaybeSave(
+      WidgetRef ref, BuildContext context) async {
+    final isValidTask = ref.read(curTaskProvider.notifier).isValidTask();
+
     if (isValidTask) {
       final curJoinedTask = ref.read(curTaskProvider);
-      await ref
-          .read(joinedTaskSaveProvider)
-          .saveTask(curJoinedTask);
-    
+      await ref.read(joinedTaskSaveProvider).saveTask(curJoinedTask);
+
       if (context.mounted) {
         Navigator.pop(context);
       }
     } else {
       // takes action to solve each validation error
       if (ref.read(curTaskProvider).task.parentProjectId.isEmpty) {
-        _takeActionOnEmptyProjectValue(context).then((_) => _validateTaskAndMaybeSave(ref, context));
+        _takeActionOnEmptyProjectValue(context)
+            .then((_) => _validateTaskAndMaybeSave(ref, context));
       } else if (ref.read(curTaskProvider).task.name.isEmpty) {
-        _takeActionOnEmptyNameValue(context).then((_) => _validateTaskAndMaybeSave(ref, context));
+        _takeActionOnEmptyNameValue(context)
+            .then((_) => _validateTaskAndMaybeSave(ref, context));
       }
     }
   }
@@ -159,10 +163,9 @@ class TaskPage extends HookConsumerWidget {
     return showModalBottomSheet(
       context: context,
       builder: (BuildContext context) => Consumer(
-        builder: (BuildContext context, WidgetRef ref,
-            Widget? child) {
-          final selectableProjects = ref
-              .read(curUserViewableProjectsListenerProvider);
+        builder: (BuildContext context, WidgetRef ref, Widget? child) {
+          final selectableProjects =
+              ref.read(curUserViewableProjectsListenerProvider);
           return ListView.builder(
             itemCount: selectableProjects!.length,
             itemBuilder: (BuildContext context, int index) {
@@ -186,12 +189,17 @@ class TaskPage extends HookConsumerWidget {
   Future<void> _takeActionOnEmptyNameValue(BuildContext context) async {}
 }
 
-// TODO p3: figure out how to remove code duplication due to WidgetRef vs Ref 
+// TODO p3: figure out how to remove code duplication due to WidgetRef vs Ref
 Future<void> openBlankTaskPage(BuildContext context, Ref ref) async {
   Navigator.popUntil(context, (route) => route.settings.name != taskPageRoute);
 
-  final authUser = ref.watch(curAuthUserProvider);
-  if (authUser == null){
+  final curAuthUserState = ref.watch(curAuthUserProvider);
+  final authUser = switch (curAuthUserState) {
+    LoggedInAuthState() => curAuthUserState.user,
+    _ => null,
+  };
+
+  if (authUser == null) {
     throw Exception('Error: Current user is not authenticated.');
   }
   ref.read(curTaskProvider.notifier).setToNewTask(authUser);
@@ -202,13 +210,18 @@ Future<void> openBlankTaskPage(BuildContext context, Ref ref) async {
 
 // TODO p2: init state within the page itself ... we should only rely on arguments to init the page (to support deep linking)
 Future<void> openTaskPage(BuildContext context, WidgetRef ref,
-    {required EditablePageMode mode, JoinedTaskModel? initialJoinedTask}) async {
+    {required EditablePageMode mode,
+    JoinedTaskModel? initialJoinedTask}) async {
   // Remove previous TaskPage to avoid duplicate task pages
   Navigator.popUntil(context, (route) => route.settings.name != taskPageRoute);
 
   // CREATE - wipe existing task state
   if (mode == EditablePageMode.create) {
-    final authUser = ref.watch(curAuthUserProvider);
+    final curAuthUserState = ref.read(curAuthUserProvider);
+    final authUser = switch (curAuthUserState) {
+      LoggedInAuthState() => curAuthUserState.user,
+      _ => null,
+    };
     if (authUser == null) {
       throw Exception('Error: Current user is not authenticated.');
     }
@@ -216,8 +229,7 @@ Future<void> openTaskPage(BuildContext context, WidgetRef ref,
   }
   // EDIT/READ - optionally load provided initial task
   else if (mode == EditablePageMode.edit || mode == EditablePageMode.readOnly) {
-
-    // initialJoinedTask can be null if we are opening an existing task page for edit 
+    // initialJoinedTask can be null if we are opening an existing task page for edit
     if (initialJoinedTask != null) {
       ref.read(curTaskProvider.notifier).setNewTask(initialJoinedTask);
 
@@ -226,6 +238,5 @@ Future<void> openTaskPage(BuildContext context, WidgetRef ref,
     }
   }
 
-  await Navigator.pushNamed(context, taskPageRoute,
-      arguments: {'mode': mode});
+  await Navigator.pushNamed(context, taskPageRoute, arguments: {'mode': mode});
 }

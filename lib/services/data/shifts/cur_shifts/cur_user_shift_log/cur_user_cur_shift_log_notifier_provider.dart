@@ -1,4 +1,5 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:seren_ai_flutter/services/auth/auth_states.dart';
 import 'package:seren_ai_flutter/services/auth/cur_auth_user_provider.dart';
 import 'package:seren_ai_flutter/services/data/db_setup/db_provider.dart';
 import 'package:seren_ai_flutter/services/data/shifts/cur_shifts/cur_user_shift_log/cur_user_cur_shift_log_fam_provider.dart';
@@ -16,7 +17,11 @@ class CurUserCurShiftLogNotifier {
 
   Future<void> clockIn() async {
     final db = ref.read(dbProvider);
-    final curUser = ref.read(curAuthUserProvider);
+    final curAuthUserState = ref.read(curAuthUserProvider);
+    final curUser = switch (curAuthUserState) {
+      LoggedInAuthState() => curAuthUserState.user,
+      _ => null,
+    };
     if (curUser == null) throw Exception('No user found');
 
     final curLog = ref.read(curUserCurShiftLogFamProvider(shiftId)); 

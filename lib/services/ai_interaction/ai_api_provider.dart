@@ -2,7 +2,7 @@
 
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:seren_ai_flutter/constants.dart';
+import 'package:seren_ai_flutter/services/auth/auth_states.dart';
 import 'package:seren_ai_flutter/services/auth/cur_auth_user_provider.dart';
 import 'package:seren_ai_flutter/services/data/ai_chats/ai_chat_messages_db_provider.dart';
 import 'package:seren_ai_flutter/services/data/ai_chats/ai_chat_threads_db_provider.dart';
@@ -32,11 +32,17 @@ class AiApi {
   AiApi(this.ref);
 
   Future<AiChatThreadModel?> createChatThreadIfNone() async {
+    final curAuthUserState = ref.read(curAuthUserProvider);
+    final curUser = switch (curAuthUserState) {
+      LoggedInAuthState() => curAuthUserState.user,
+      _ => null,
+    };
+
     final chatThreadDb = ref.read(aiChatThreadsDbProvider);
     final chatThreads = await chatThreadDb.getItems(eqFilters: [
       {
         'key': 'author_user_id',
-        'value': ref.read(curAuthUserProvider)?.id,
+        'value': curUser?.id,
       },
     ]);
 
@@ -44,7 +50,7 @@ class AiApi {
       // Create one if necessary 
       print('No chat thread found, creating one');
 
-      final curAuthUserId = ref.read(curAuthUserProvider)?.id;
+      final curAuthUserId = curUser?.id;
       final curOrgId = ref.read(curOrgIdProvider);
 
       if(curAuthUserId == null || curOrgId == null) {
