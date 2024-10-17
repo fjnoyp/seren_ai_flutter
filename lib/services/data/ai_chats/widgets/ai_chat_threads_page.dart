@@ -1,7 +1,8 @@
-/// For seeing the users's chat threads 
+/// For seeing the users's chat threads
 
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:seren_ai_flutter/services/auth/auth_states.dart';
 import 'package:seren_ai_flutter/services/auth/cur_auth_user_provider.dart';
 import 'package:seren_ai_flutter/services/data/ai_chats/ai_chat_threads_db_provider.dart';
 import 'package:seren_ai_flutter/services/data/ai_chats/cur_user_ai_chat_threads_listener_provider.dart';
@@ -17,43 +18,47 @@ class AiChatThreadsPage extends ConsumerWidget {
     final chatThreads = ref.watch(curUserAiChatThreadsListenerProvider);
 
     return chatThreads == null
-          ? const Center(child: CircularProgressIndicator())
-          : Column(
-              children: [
-                Expanded(
-                  child: ListView.builder(
-                    itemCount: chatThreads.length,
-                    itemBuilder: (context, index) {
-                      return _buildChatThreadItem(context, chatThreads[index]);
-                    },
-                  ),
+        ? const Center(child: CircularProgressIndicator())
+        : Column(
+            children: [
+              Expanded(
+                child: ListView.builder(
+                  itemCount: chatThreads.length,
+                  itemBuilder: (context, index) {
+                    return _buildChatThreadItem(context, chatThreads[index]);
+                  },
                 ),
-                Padding(
-                  padding: const EdgeInsets.all(16.0),
-                  child: ElevatedButton(
-                    onPressed: () => _createNewChatThread(context, ref),
-                    child: const Text('Create New Chat Thread'),
-                  ),
+              ),
+              Padding(
+                padding: const EdgeInsets.all(16.0),
+                child: ElevatedButton(
+                  onPressed: () => _createNewChatThread(context, ref),
+                  child: const Text('Create New Chat Thread'),
                 ),
-              ],
-            );
+              ),
+            ],
+          );
   }
 
   Future<void> _createNewChatThread(BuildContext context, WidgetRef ref) async {
     final aiChatThreadsDb = ref.read(aiChatThreadsDbProvider);
-    final curUser = ref.read(curAuthUserProvider);
+    final curAuthUserState = ref.read(curAuthUserProvider);
+    final curUser = switch (curAuthUserState) {
+      LoggedInAuthState() => curAuthUserState.user,
+      _ => null,
+    };
 
-    if(curUser == null) {
+    if (curUser == null) {
       throw Exception('Current user not found');
     }
 
     final curOrgId = ref.read(curOrgIdProvider);
 
-    if(curOrgId == null) {
+    if (curOrgId == null) {
       throw Exception('Current organization not found');
     }
 
-    final newThread = AiChatThreadModel(      
+    final newThread = AiChatThreadModel(
       name: 'New Chat Thread',
       createdAt: DateTime.now().toUtc(),
       authorUserId: curUser.id,

@@ -1,4 +1,5 @@
 import 'package:hooks_riverpod/hooks_riverpod.dart';
+import 'package:seren_ai_flutter/services/auth/auth_states.dart';
 import 'package:seren_ai_flutter/services/auth/cur_auth_user_provider.dart';
 import 'package:seren_ai_flutter/services/data/db_setup/db_provider.dart';
 import 'package:seren_ai_flutter/services/data/shifts/models/shift_override_model.dart';
@@ -9,8 +10,11 @@ final curUserShiftOverridesFamListenerProvider = NotifierProvider.family<CurUser
 class CurUserShiftOverridesFamListenerNotifier extends FamilyNotifier<List<ShiftOverrideModel>?, ({String shiftId, DateTime day})> {
   @override
   List<ShiftOverrideModel>? build(({String shiftId, DateTime day}) args) {
-    final curUser = ref.watch(curAuthUserProvider);
-    final curUserId = curUser?.id;
+    final curAuthUserState = ref.read(curAuthUserProvider);
+    final curUserId = switch (curAuthUserState) {
+      LoggedInAuthState() => curAuthUserState.user.id,
+      _ => null,
+    };
 
     if (curUserId == null) {
       return null;
