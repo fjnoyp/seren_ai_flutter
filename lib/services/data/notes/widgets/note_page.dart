@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:logging/logging.dart';
 import 'package:seren_ai_flutter/constants.dart';
+import 'package:seren_ai_flutter/services/auth/auth_states.dart';
 import 'package:seren_ai_flutter/services/auth/cur_auth_user_provider.dart';
 import 'package:seren_ai_flutter/services/data/common/widgets/editablePageModeEnum.dart';
 import 'package:seren_ai_flutter/services/data/common/widgets/form/base_text_block_edit_selection_field.dart';
@@ -131,7 +132,11 @@ Future<void> openNotePage(BuildContext context, WidgetRef ref,
   Navigator.popUntil(context, (route) => route.settings.name != notePageRoute);
 
   if (mode == EditablePageMode.create) {
-    final authUser = ref.watch(curAuthUserProvider);
+    final curAuthUserState = ref.read(curAuthUserProvider);
+    final authUser = switch (curAuthUserState) {
+      LoggedInAuthState() => curAuthUserState.user,
+      _ => null,
+    };
     if (authUser == null) {
       throw Exception('Error: Current user is not authenticated.');
     }

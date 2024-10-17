@@ -1,4 +1,5 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:seren_ai_flutter/services/auth/auth_states.dart';
 import 'package:seren_ai_flutter/services/auth/cur_auth_user_provider.dart';
 import 'package:seren_ai_flutter/services/data/db_setup/db_provider.dart';
 import 'package:seren_ai_flutter/services/data/orgs/models/user_org_role_model.dart';
@@ -13,7 +14,11 @@ class CurUserOrgRolesListenerNotifier extends Notifier<List<UserOrgRoleModel>?> 
 
   @override
   List<UserOrgRoleModel>? build() {
-    final watchedCurAuthUser = ref.watch(curAuthUserProvider); 
+    final curAuthUserState = ref.watch(curAuthUserProvider);
+    final watchedCurAuthUser = switch (curAuthUserState) {
+      LoggedInAuthState() => curAuthUserState.user,
+      _ => null,
+    };
 
     if(watchedCurAuthUser == null) {
       return null;

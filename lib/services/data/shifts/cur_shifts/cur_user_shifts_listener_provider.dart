@@ -1,5 +1,6 @@
 // Shift Provider
 import 'package:hooks_riverpod/hooks_riverpod.dart';
+import 'package:seren_ai_flutter/services/auth/auth_states.dart';
 import 'package:seren_ai_flutter/services/auth/cur_auth_user_provider.dart';
 import 'package:seren_ai_flutter/services/data/db_setup/db_provider.dart';
 import 'package:seren_ai_flutter/services/data/shifts/models/shift_model.dart';
@@ -9,8 +10,11 @@ final curUserShiftsListenerProvider = NotifierProvider<CurUserShiftsListenerNoti
 class CurUserShiftsListenerNotifier extends Notifier<List<ShiftModel>?> {
   @override
   List<ShiftModel>? build() {
-    final curUser = ref.watch(curAuthUserProvider);
-    final curUserId = curUser?.id;
+    final curAuthUserState = ref.watch(curAuthUserProvider);
+    final curUserId = switch (curAuthUserState) {
+      LoggedInAuthState() => curAuthUserState.user.id,
+      _ => null,
+    };
 
     if (curUserId == null) {
       return null;

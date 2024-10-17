@@ -1,20 +1,27 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:seren_ai_flutter/services/auth/auth_states.dart';
 import 'package:seren_ai_flutter/services/data/db_setup/db_provider.dart';
 import 'package:seren_ai_flutter/services/data/ai_chats/models/ai_chat_message_model.dart';
 import 'package:seren_ai_flutter/services/auth/cur_auth_user_provider.dart';
 
-// Family provider that listens to all ai chat messages for a given chat thread id 
-final aiChatMessagesListenerFamProvider = NotifierProvider.family<AiChatMessagesListenerFamNotifier, List<AiChatMessageModel>?, String>(
-  AiChatMessagesListenerFamNotifier.new
-);
+// Family provider that listens to all ai chat messages for a given chat thread id
+final aiChatMessagesListenerFamProvider = NotifierProvider.family<
+    AiChatMessagesListenerFamNotifier,
+    List<AiChatMessageModel>?,
+    String>(AiChatMessagesListenerFamNotifier.new);
 
-class AiChatMessagesListenerFamNotifier extends FamilyNotifier<List<AiChatMessageModel>?, String> {
+class AiChatMessagesListenerFamNotifier
+    extends FamilyNotifier<List<AiChatMessageModel>?, String> {
   @override
   List<AiChatMessageModel>? build(String arg) {
     final chatThreadId = arg;
-    
+
     final db = ref.read(dbProvider);
-    final curUser = ref.read(curAuthUserProvider);
+    final curAuthUserState = ref.read(curAuthUserProvider);
+    final curUser = switch (curAuthUserState) {
+      LoggedInAuthState() => curAuthUserState.user,
+      _ => null,
+    };
 
     if (curUser == null) return null;
 
@@ -26,7 +33,8 @@ class AiChatMessagesListenerFamNotifier extends FamilyNotifier<List<AiChatMessag
     ''';
 
     final subscription = db.watch(query).listen((results) {
-      List<AiChatMessageModel> messages = results.map((e) => AiChatMessageModel.fromJson(e)).toList();
+      List<AiChatMessageModel> messages =
+          results.map((e) => AiChatMessageModel.fromJson(e)).toList();
       state = messages;
     });
 

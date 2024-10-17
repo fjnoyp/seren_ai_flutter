@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:seren_ai_flutter/constants.dart';
+import 'package:seren_ai_flutter/services/auth/auth_states.dart';
 import 'package:seren_ai_flutter/services/auth/cur_auth_user_provider.dart';
 import 'package:seren_ai_flutter/widgets/common/theme_data.dart';
 
@@ -50,7 +51,11 @@ class DrawerView extends HookWidget {
             ),
             Consumer(
               builder: (context, ref, child) {
-                final user = ref.watch(curAuthUserProvider);
+                final curAuthUserState = ref.watch(curAuthUserProvider);
+                final user = switch (curAuthUserState) {
+                  LoggedInAuthState() => curAuthUserState.user,
+                  _ => null,
+                };
 
                 if (user == null) {
                   return const Center(child: Text('No Auth User'));

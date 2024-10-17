@@ -1,4 +1,5 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:seren_ai_flutter/services/auth/auth_states.dart';
 import 'package:seren_ai_flutter/services/auth/cur_auth_user_provider.dart';
 import 'package:seren_ai_flutter/services/data/orgs/cur_org/cur_user_org_roles_listener_provider.dart';
 import 'package:seren_ai_flutter/services/data/orgs/models/joined_user_org_role_model.dart';
@@ -22,7 +23,11 @@ class JoinedCurUserOrgRolesListenerNotifier
     final watchedCurUserOrgRoles =
         ref.watch(curUserOrgRolesListenerProvider);
 
-    final watchedCurAuthUser = ref.watch(curAuthUserProvider);
+    final curAuthUserState = ref.watch(curAuthUserProvider);
+    final watchedCurAuthUser = switch (curAuthUserState) {
+      LoggedInAuthState() => curAuthUserState.user,
+      _ => null,
+    };
 
     if (watchedCurAuthUser == null || watchedCurUserOrgRoles == null) {
       state = null;
