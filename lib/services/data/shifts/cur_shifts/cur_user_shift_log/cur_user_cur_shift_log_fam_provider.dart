@@ -1,4 +1,5 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:seren_ai_flutter/services/auth/auth_states.dart';
 import 'package:seren_ai_flutter/services/auth/cur_auth_user_provider.dart';
 import 'package:seren_ai_flutter/services/data/db_setup/db_provider.dart';
 import 'package:seren_ai_flutter/services/data/shifts/models/shift_log_model.dart';
@@ -10,7 +11,11 @@ class CurUserCurShiftLogFamNotifier extends FamilyNotifier<ShiftLogModel?, Strin
   ShiftLogModel? build(String arg) {
     final shiftId = arg;
     
-    final curUser = ref.watch(curAuthUserProvider);
+    final curAuthUserState = ref.watch(curAuthUserProvider);
+    final curUser = switch (curAuthUserState) {
+      LoggedInAuthState() => curAuthUserState.user,
+      _ => null,
+    };
     if (curUser == null) return null;
 
     final getUserOpenShiftLogQuery = '''

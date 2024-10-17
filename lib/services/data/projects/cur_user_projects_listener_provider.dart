@@ -1,4 +1,5 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:seren_ai_flutter/services/auth/auth_states.dart';
 import 'package:seren_ai_flutter/services/auth/cur_auth_user_provider.dart';
 import 'package:seren_ai_flutter/services/data/db_setup/db_provider.dart';
 import 'package:seren_ai_flutter/services/data/orgs/cur_org/is_cur_user_org_admin_listener_provider.dart';
@@ -15,7 +16,11 @@ class CurUserProjectsListenerNotifier extends Notifier<List<ProjectModel>?> {
   @override
   List<ProjectModel>? build() {
 
-    final watchedCurAuthUser = ref.watch(curAuthUserProvider);
+    final curAuthUserState = ref.watch(curAuthUserProvider);
+    final watchedCurAuthUser = switch (curAuthUserState) {
+      LoggedInAuthState() => curAuthUserState.user,
+      _ => null,
+    };
 
     if(watchedCurAuthUser == null) {
       return null;
