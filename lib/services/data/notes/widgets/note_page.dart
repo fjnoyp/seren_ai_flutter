@@ -7,7 +7,6 @@ import 'package:seren_ai_flutter/services/auth/cur_auth_user_provider.dart';
 import 'package:seren_ai_flutter/services/data/common/widgets/editablePageModeEnum.dart';
 import 'package:seren_ai_flutter/services/data/common/widgets/form/base_text_block_edit_selection_field.dart';
 import 'package:seren_ai_flutter/services/data/notes/notes_read_provider.dart';
-import 'package:seren_ai_flutter/services/data/notes/ui_state/cur_note_folder_provider.dart';
 import 'package:seren_ai_flutter/services/data/notes/ui_state/cur_note_provider.dart';
 import 'package:seren_ai_flutter/services/data/notes/widgets/form/note_selection_fields.dart';
 
@@ -15,7 +14,7 @@ final log = Logger('NotePage');
 
 /// For creating / editing a note
 class NotePage extends HookConsumerWidget {
-  final EditablePageMode mode;  
+  final EditablePageMode mode;
 
   const NotePage({
     super.key,
@@ -35,8 +34,8 @@ class NotePage extends HookConsumerWidget {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             NoteNameField(enabled: isEnabled),
-            SizedBox(height: 8),
-            Divider(),
+            const SizedBox(height: 8),
+            const Divider(),
 
             // ======================
             // ====== SUBITEMS ======
@@ -52,15 +51,17 @@ class NotePage extends HookConsumerWidget {
                   BaseTextBlockEditSelectionField(
                     enabled: isEnabled,
                     descriptionProvider: curNoteAddressProvider,
-                    updateDescription: (ref, address) =>
-                        ref.read(curNoteProvider.notifier).updateAddress(address),
+                    updateDescription: (ref, address) => ref
+                        .read(curNoteProvider.notifier)
+                        .updateAddress(address),
                   ),
                   const Divider(),
                   BaseTextBlockEditSelectionField(
                     enabled: isEnabled,
                     descriptionProvider: curNoteActionRequiredProvider,
-                    updateDescription: (ref, actionRequired) =>
-                        ref.read(curNoteProvider.notifier).updateActionRequired(actionRequired),
+                    updateDescription: (ref, actionRequired) => ref
+                        .read(curNoteProvider.notifier)
+                        .updateActionRequired(actionRequired),
                   ),
                   const Divider(),
                   BaseTextBlockEditSelectionField(
@@ -80,22 +81,11 @@ class NotePage extends HookConsumerWidget {
                 width: double.infinity,
                 child: ElevatedButton(
                   onPressed: () async {
-                    final curAuthUser = ref.watch(curAuthUserProvider);
-
-                    if (curAuthUser == null) {
-                      log.severe('Error: Current user is not authenticated.');
-                      return;
-                    }
-
                     final isValidNote =
                         ref.read(curNoteProvider.notifier).isValidNote();
-                        
-                    // TODO p2: add validator ui - since we don't use formfield (since we use provider to manage task form state) we must manually implement validation
 
                     if (isValidNote) {
-                      final curNote = ref.read(curNoteProvider);
-                      
-                      await ref.read(notesReadProvider).upsertItem(curNote);
+                      ref.read(curNoteProvider.notifier).saveNote();
 
                       if (context.mounted) {
                         Navigator.pop(context);
@@ -118,7 +108,7 @@ class NotePage extends HookConsumerWidget {
                     Navigator.pop(context);
                     openNotePage(context, ref, mode: EditablePageMode.edit);
                   },
-                  child: Text('Edit'))
+                  child: const Text('Edit'))
           ],
         ),
       ),
@@ -128,7 +118,9 @@ class NotePage extends HookConsumerWidget {
 
 // TODO p2: init state within the page itself ... we should only rely on arguments to init the page (to support deep linking)
 Future<void> openNotePage(BuildContext context, WidgetRef ref,
-    {required EditablePageMode mode, String? parentNoteFolderId, String? noteId}) async {
+    {required EditablePageMode mode,
+    String? parentNoteFolderId,
+    String? noteId}) async {
   Navigator.popUntil(context, (route) => route.settings.name != notePageRoute);
 
   if (mode == EditablePageMode.create) {
@@ -141,13 +133,17 @@ Future<void> openNotePage(BuildContext context, WidgetRef ref,
       throw Exception('Error: Current user is not authenticated.');
     }
 
-    if(parentNoteFolderId == null) {
-      throw ArgumentError('Error: Parent note folder id is required for creating a note.');
+    if (parentNoteFolderId == null) {
+      throw ArgumentError(
+          'Error: Parent note folder id is required for creating a note.');
     }
-    
-    // TODO p3: maybe you can select the parent folder instead in a note 
-    ref.read(curNoteProvider.notifier).setToNewNote(authUser, parentNoteFolderId);
-  } else if (mode == EditablePageMode.edit || mode == EditablePageMode.readOnly) {
+
+    // TODO p3: maybe you can select the parent folder instead in a note
+    ref
+        .read(curNoteProvider.notifier)
+        .setToNewNote(authUser, parentNoteFolderId);
+  } else if (mode == EditablePageMode.edit ||
+      mode == EditablePageMode.readOnly) {
     if (noteId != null) {
       final note = await ref.read(notesReadProvider).getItem(id: noteId);
       if (note != null) {
@@ -156,6 +152,5 @@ Future<void> openNotePage(BuildContext context, WidgetRef ref,
     }
   }
 
-  await Navigator.pushNamed(context, notePageRoute,
-      arguments: {'mode': mode });
+  await Navigator.pushNamed(context, notePageRoute, arguments: {'mode': mode});
 }

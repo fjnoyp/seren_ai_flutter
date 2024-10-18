@@ -18,6 +18,8 @@ const permissionSchemas = [
     Column.text('id'),
     Column.text('parent_auth_user_id'),
     Column.text('email'),
+    Column.text('default_project_id'),
+    Column.text('default_team_id'),
   ]),
   Table(orgsTable, [
     Column.text('id'),

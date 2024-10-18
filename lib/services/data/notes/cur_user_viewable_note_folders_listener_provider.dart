@@ -1,5 +1,4 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:seren_ai_flutter/services/auth/cur_auth_user_provider.dart';
 import 'package:seren_ai_flutter/services/data/db_setup/db_provider.dart';
 import 'package:seren_ai_flutter/services/data/notes/models/note_folder_model.dart';
 import 'package:seren_ai_flutter/services/data/projects/cur_user_viewable_projects_listener_provider.dart';
@@ -13,12 +12,6 @@ final curUserViewableNoteFoldersListenerProvider =
 class CurUserViewableNoteFoldersListenerNotifier extends Notifier<List<NoteFolderModel>?> {
   @override
   List<NoteFolderModel>? build() {
-    final watchedCurAuthUser = ref.watch(curAuthUserProvider);
-
-    if (watchedCurAuthUser == null) {
-      return null;
-    }
-
     final db = ref.read(dbProvider);
 
     final curTeams = ref.watch(curUserViewableTeamsListenerProvider);
