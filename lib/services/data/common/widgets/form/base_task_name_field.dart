@@ -47,6 +47,7 @@ class BaseNameField extends HookConsumerWidget {
     return AnimatedBuilder(
       animation: colorAnimation.colorTween,
       builder: (context, child) {
+        nameController.text = curName;
         return TextField(
           focusNode: focusNode,
           controller: nameController,
