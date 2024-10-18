@@ -2,11 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:logging/logging.dart';
 import 'package:seren_ai_flutter/constants.dart';
-import 'package:seren_ai_flutter/services/auth/cur_auth_user_provider.dart';
 import 'package:seren_ai_flutter/services/data/common/widgets/editablePageModeEnum.dart';
-import 'package:seren_ai_flutter/services/data/common/widgets/form/base_text_block_edit_selection_field.dart';
 import 'package:seren_ai_flutter/services/data/notes/models/joined_note_folder_model.dart';
-import 'package:seren_ai_flutter/services/data/notes/note_folders_read_provider.dart';
 import 'package:seren_ai_flutter/services/data/notes/ui_state/cur_note_folder_provider.dart';
 import 'package:seren_ai_flutter/services/data/notes/widgets/form/note_folder_selection_fields.dart';
 
@@ -34,8 +31,8 @@ class NoteFolderPage extends HookConsumerWidget {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             NoteFolderNameField(enabled: isEnabled),
-            SizedBox(height: 8),
-            Divider(),
+            const SizedBox(height: 8),
+            const Divider(),
 
             // ======================
             // ====== SUBITEMS ======
@@ -58,23 +55,11 @@ class NoteFolderPage extends HookConsumerWidget {
                 width: double.infinity,
                 child: ElevatedButton(
                   onPressed: () async {
-                    final curAuthUser = ref.watch(curAuthUserProvider);
-
-                    if (curAuthUser == null) {
-                      log.severe('Error: Current user is not authenticated.');
-                      return;
-                    }
-
                     final isValidNoteFolder =
                         ref.read(curNoteFolderProvider.notifier).isValidNoteFolder();
 
-                    // TODO p2: add validator ui - since we don't use formfield (since we use provider to manage task form state) we must manually implement validation
-
                     if (isValidNoteFolder) {
-                      final curNoteFolder = ref.read(curNoteFolderProvider);
-                      // Save note folder logic here
-
-                      await ref.read(noteFoldersReadProvider).upsertItem(curNoteFolder.noteFolder);
+                      ref.read(curNoteFolderProvider.notifier).saveNoteFolder();
 
                       if (context.mounted) {
                         Navigator.pop(context);
@@ -97,7 +82,7 @@ class NoteFolderPage extends HookConsumerWidget {
                     Navigator.pop(context);
                     openNoteFolderPage(context, ref, mode: EditablePageMode.edit);
                   },
-                  child: Text('Edit'))
+                  child: const Text('Edit'))
           ],
         ),
       ),
@@ -111,10 +96,6 @@ Future<void> openNoteFolderPage(BuildContext context, WidgetRef ref,
   Navigator.popUntil(context, (route) => route.settings.name != noteFolderPageRoute);
 
   if (mode == EditablePageMode.create) {
-    final authUser = ref.watch(curAuthUserProvider);
-    if (authUser == null) {
-      throw Exception('Error: Current user is not authenticated.');
-    }
     ref.read(curNoteFolderProvider.notifier).setToNewNoteFolder();
   } 
   // EDIT/READ

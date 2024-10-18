@@ -18,11 +18,19 @@ class UserModel implements IHasId {
   @JsonKey(name: 'updated_at')
   final DateTime? updatedAt;
 
+  @JsonKey(name: 'default_project_id')
+  final String? defaultProjectId;
+
+  @JsonKey(name: 'default_team_id')
+  final String? defaultTeamId;
+
   UserModel({
     String? id,
     required this.parentAuthUserId,
     required this.email,
     this.createdAt,
+    this.defaultProjectId,
+    this.defaultTeamId,
     this.updatedAt,
   }) : id = id ?? uuid.v4();
 

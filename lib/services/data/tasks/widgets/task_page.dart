@@ -8,6 +8,7 @@ import 'package:seren_ai_flutter/services/data/common/widgets/editablePageModeEn
 import 'package:seren_ai_flutter/services/data/projects/cur_user_viewable_projects_listener_provider.dart';
 import 'package:seren_ai_flutter/services/data/tasks/ui_state/cur_task_provider.dart';
 import 'package:seren_ai_flutter/services/data/tasks/models/joined_task_model.dart';
+import 'package:seren_ai_flutter/services/data/tasks/ui_state/cur_task_states.dart';
 import 'package:seren_ai_flutter/services/data/tasks/widgets/delete_task_button.dart';
 import 'package:seren_ai_flutter/services/data/tasks/widgets/joined_task_save_provider.dart';
 import 'package:seren_ai_flutter/services/data/tasks/widgets/form/task_selection_fields.dart';
@@ -50,6 +51,13 @@ class TaskPage extends HookConsumerWidget {
 
     final isEnabled = mode != EditablePageMode.readOnly;
 
+    final curTaskState = ref.watch(curTaskProvider);
+
+    final curTask = switch (curTaskState) {
+      LoadedCurTaskState() => curTaskState.task,
+      _ => null,
+    };
+
     return SingleChildScrollView(
       child: Padding(
         padding: const EdgeInsets.all(16.0),
@@ -60,15 +68,15 @@ class TaskPage extends HookConsumerWidget {
               Align(
                 alignment: Alignment.topRight,
                 child:
-                    DeleteTaskButton(taskId: ref.read(curTaskProvider).task.id),
+                    DeleteTaskButton(taskId: curTask?.task.id ?? ''),
               ),
             TaskTeamSelectionField(enabled: isEnabled),
             TaskProjectSelectionField(enabled: isEnabled),
 
             // Title Input
             TaskNameField(enabled: isEnabled),
-            SizedBox(height: 8),
-            Divider(),
+            const SizedBox(height: 8),
+            const Divider(),
 
             // ======================
             // ====== SUBITEMS ======
@@ -90,7 +98,7 @@ class TaskPage extends HookConsumerWidget {
               ),
             ),
 
-            TaskCommentSection(ref.read(curTaskProvider).task.id),
+            TaskCommentSection(curTask?.task.id ?? ''),
             const SizedBox(height: 24),
 
             if (mode != EditablePageMode.readOnly)
@@ -128,7 +136,7 @@ class TaskPage extends HookConsumerWidget {
                     Navigator.pop(context);
                     openTaskPage(context, ref, mode: EditablePageMode.edit);
                   },
-                  child: Text('Edit'))
+                  child: const Text('Edit'))
           ],
         ),
       ),
@@ -137,21 +145,27 @@ class TaskPage extends HookConsumerWidget {
 
   Future<void> _validateTaskAndMaybeSave(
       WidgetRef ref, BuildContext context) async {
+    final curTaskState = ref.read(curTaskProvider);
+
+    final curJoinedTask = switch (curTaskState) {
+      LoadedCurTaskState() => curTaskState.task,
+      _ => null,
+    };
+
     final isValidTask = ref.read(curTaskProvider.notifier).isValidTask();
 
     if (isValidTask) {
-      final curJoinedTask = ref.read(curTaskProvider);
-      await ref.read(joinedTaskSaveProvider).saveTask(curJoinedTask);
+      await ref.read(joinedTaskSaveProvider).saveTask(curJoinedTask!);
 
       if (context.mounted) {
         Navigator.pop(context);
       }
     } else {
       // takes action to solve each validation error
-      if (ref.read(curTaskProvider).task.parentProjectId.isEmpty) {
+      if (curJoinedTask?.task.parentProjectId.isEmpty??false) {
         _takeActionOnEmptyProjectValue(context)
             .then((_) => _validateTaskAndMaybeSave(ref, context));
-      } else if (ref.read(curTaskProvider).task.name.isEmpty) {
+      } else if (curJoinedTask?.task.name.isEmpty ?? false) {
         _takeActionOnEmptyNameValue(context)
             .then((_) => _validateTaskAndMaybeSave(ref, context));
       }
@@ -193,16 +207,7 @@ class TaskPage extends HookConsumerWidget {
 Future<void> openBlankTaskPage(BuildContext context, Ref ref) async {
   Navigator.popUntil(context, (route) => route.settings.name != taskPageRoute);
 
-  final curAuthUserState = ref.watch(curAuthUserProvider);
-  final authUser = switch (curAuthUserState) {
-    LoggedInAuthState() => curAuthUserState.user,
-    _ => null,
-  };
-
-  if (authUser == null) {
-    throw Exception('Error: Current user is not authenticated.');
-  }
-  ref.read(curTaskProvider.notifier).setToNewTask(authUser);
+  ref.read(curTaskProvider.notifier).setToNewTask();
 
   await Navigator.pushNamed(context, taskPageRoute,
       arguments: {'mode': EditablePageMode.create});
@@ -217,15 +222,7 @@ Future<void> openTaskPage(BuildContext context, WidgetRef ref,
 
   // CREATE - wipe existing task state
   if (mode == EditablePageMode.create) {
-    final curAuthUserState = ref.read(curAuthUserProvider);
-    final authUser = switch (curAuthUserState) {
-      LoggedInAuthState() => curAuthUserState.user,
-      _ => null,
-    };
-    if (authUser == null) {
-      throw Exception('Error: Current user is not authenticated.');
-    }
-    ref.read(curTaskProvider.notifier).setToNewTask(authUser);
+    ref.read(curTaskProvider.notifier).setToNewTask();
   }
   // EDIT/READ - optionally load provided initial task
   else if (mode == EditablePageMode.edit || mode == EditablePageMode.readOnly) {

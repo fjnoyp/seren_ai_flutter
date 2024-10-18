@@ -1,4 +1,6 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:seren_ai_flutter/services/auth/auth_states.dart';
+import 'package:seren_ai_flutter/services/auth/cur_auth_user_provider.dart';
 import 'package:seren_ai_flutter/services/data/projects/projects_read_provider.dart';
 import 'package:seren_ai_flutter/services/data/shifts/cur_shifts/cur_user_shifts_listener_provider.dart';
 import 'package:seren_ai_flutter/services/data/shifts/models/joined_shift_model.dart';
@@ -34,6 +36,14 @@ class CurUserJoinedShiftsListenerNotifier
         parentProject: project,
       );
     }).toList();
+
+    final curAuthUserState = ref.read(curAuthUserProvider);
+    if (curAuthUserState is LoggedInAuthState) {
+      final curAuthUserDefaultProjectId =
+          curAuthUserState.user.defaultProjectId;
+      joinedShifts.sort((a, b) =>
+          (a.parentProject?.id ?? '') == curAuthUserDefaultProjectId ? -1 : 1);
+    }
 
     state = joinedShifts;
   }
