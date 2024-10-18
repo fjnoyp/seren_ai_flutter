@@ -1,53 +1,52 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:seren_ai_flutter/services/auth/auth_states.dart';
-import 'package:seren_ai_flutter/services/auth/cur_auth_user_provider.dart';
+import 'package:seren_ai_flutter/services/auth/cur_auth_state_provider.dart';
 import 'package:seren_ai_flutter/services/data/db_setup/db_provider.dart';
 import 'package:seren_ai_flutter/services/data/orgs/cur_org/is_cur_user_org_admin_listener_provider.dart';
 import 'package:seren_ai_flutter/services/data/projects/models/project_model.dart';
 
 // Provide all projects for current user
-final curUserProjectsListenerProvider = NotifierProvider<CurUserProjectsListenerNotifier, List<ProjectModel>?>(
-  CurUserProjectsListenerNotifier.new
-);
+final curUserProjectsListenerProvider =
+    NotifierProvider<CurUserProjectsListenerNotifier, List<ProjectModel>?>(
+        CurUserProjectsListenerNotifier.new);
 
 /// Get the current user's projects
 class CurUserProjectsListenerNotifier extends Notifier<List<ProjectModel>?> {
-
   @override
   List<ProjectModel>? build() {
-
-    final curAuthUserState = ref.watch(curAuthUserProvider);
+    final curAuthUserState = ref.watch(curAuthStateProvider);
     final watchedCurAuthUser = switch (curAuthUserState) {
       LoggedInAuthState() => curAuthUserState.user,
       _ => null,
     };
 
-    if(watchedCurAuthUser == null) {
+    if (watchedCurAuthUser == null) {
       return null;
     }
 
     final db = ref.read(dbProvider);
 
-    // Get all projects which user is assigned to 
-    // TODO p2: org admins should be able to see all projects 
+    // Get all projects which user is assigned to
+    // TODO p2: org admins should be able to see all projects
     final query = '''
     SELECT p.*
     FROM projects p
     JOIN user_project_roles upr on p.id = upr.project_id
     WHERE upr.user_id = '${watchedCurAuthUser.id}'; 
-    ''';     
+    ''';
 
     final subscription = db.watch(query).listen((results) {
-      List<ProjectModel> items = results.map((e) => ProjectModel.fromJson(e)).toList();
-      state = items; 
+      List<ProjectModel> items =
+          results.map((e) => ProjectModel.fromJson(e)).toList();
+      state = items;
     });
 
     ref.onDispose(() {
       subscription.cancel();
     });
 
-    return null; 
-  }  
+    return null;
+  }
 }
 
 /*

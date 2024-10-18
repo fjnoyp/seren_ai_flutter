@@ -13,6 +13,8 @@ UserModel _$UserModelFromJson(Map<String, dynamic> json) => UserModel(
       createdAt: json['created_at'] == null
           ? null
           : DateTime.parse(json['created_at'] as String),
+      defaultProjectId: json['default_project_id'] as String?,
+      defaultTeamId: json['default_team_id'] as String?,
       updatedAt: json['updated_at'] == null
           ? null
           : DateTime.parse(json['updated_at'] as String),
@@ -24,4 +26,6 @@ Map<String, dynamic> _$UserModelToJson(UserModel instance) => <String, dynamic>{
       'email': instance.email,
       'created_at': instance.createdAt?.toIso8601String(),
       'updated_at': instance.updatedAt?.toIso8601String(),
+      'default_project_id': instance.defaultProjectId,
+      'default_team_id': instance.defaultTeamId,
     };

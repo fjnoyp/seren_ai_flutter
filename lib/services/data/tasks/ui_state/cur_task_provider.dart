@@ -1,145 +1,263 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:seren_ai_flutter/services/auth/auth_states.dart';
-import 'package:seren_ai_flutter/services/auth/cur_auth_user_provider.dart';
+import 'package:seren_ai_flutter/services/auth/cur_auth_state_provider.dart';
 import 'package:seren_ai_flutter/services/data/projects/models/project_model.dart';
+import 'package:seren_ai_flutter/services/data/projects/projects_read_provider.dart';
 import 'package:seren_ai_flutter/services/data/tasks/models/joined_task_model.dart';
 import 'package:seren_ai_flutter/services/data/tasks/models/task_comments_model.dart';
 import 'package:seren_ai_flutter/services/data/tasks/models/task_model.dart';
 import 'package:seren_ai_flutter/services/data/tasks/task_comments/task_comments_listener_fam_provider.dart';
 import 'package:seren_ai_flutter/services/data/tasks/task_comments_db_provider.dart';
 import 'package:seren_ai_flutter/services/data/teams/models/team_model.dart';
+import 'package:seren_ai_flutter/services/data/teams/teams_read_provider.dart';
 import 'package:seren_ai_flutter/services/data/users/models/user_model.dart';
+import 'package:seren_ai_flutter/services/data/tasks/ui_state/cur_task_states.dart';
 
 final curTaskProvider =
-    NotifierProvider<CurTaskNotifier, JoinedTaskModel>(CurTaskNotifier.new);
+    NotifierProvider<CurTaskNotifier, CurTaskState>(CurTaskNotifier.new);
 
-class CurTaskNotifier extends Notifier<JoinedTaskModel> {
+class CurTaskNotifier extends Notifier<CurTaskState> {
   @override
-  JoinedTaskModel build() {
-    return JoinedTaskModel.empty();
+  CurTaskState build() {
+    return InitialCurTaskState();
   }
 
   void setNewTask(JoinedTaskModel joinedTask) {
-    state = joinedTask;
+    state = LoadedCurTaskState(joinedTask);
   }
 
-  void setToNewTask(UserModel authorUser) {
-    state = JoinedTaskModel.empty().copyWith(authorUser: authorUser, task: TaskModel.defaultTask().copyWith(authorUserId: authorUser.id));
+  Future<void> setToNewTask() async {
+    state = LoadingCurTaskState();
+    try {
+      final curAuthUserState = ref.read(curAuthStateProvider);
+      if (switch (curAuthUserState) {
+        LoggedInAuthState() => curAuthUserState.user,
+        _ => null,
+      }
+          case final curUser?) {
+        final defaultTeam =
+            await ref.read(teamsReadProvider).getItem(eqFilters: [
+          {'key': 'id', 'value': curUser.defaultTeamId}
+        ]);
+        final defaultProject =
+            await ref.read(projectsReadProvider).getItem(eqFilters: [
+          {'key': 'id', 'value': curUser.defaultProjectId}
+        ]);
+        final newTask = JoinedTaskModel.empty().copyWith(
+          authorUser: curUser,
+          task: TaskModel.defaultTask().copyWith(
+            authorUserId: curUser.id,
+            parentTeamId: defaultTeam?.id,
+            parentProjectId: defaultProject?.id,
+          ),
+          team: defaultTeam,
+          project: defaultProject,
+        );
+        state = LoadedCurTaskState(newTask);
+      } else {
+        throw Exception('Error: Current user is not authenticated.');
+      }
+    } catch (error) {
+      state = ErrorCurTaskState(error: error.toString());
+    }
   }
 
   bool isValidTask() {
-    return state.task.name.isNotEmpty && state.task.parentProjectId.isNotEmpty;
+    if (state is LoadedCurTaskState) {
+      final loadedState = state as LoadedCurTaskState;
+      return loadedState.task.task.name.isNotEmpty &&
+          loadedState.task.task.parentProjectId.isNotEmpty;
+    }
+    return false;
   }
 
   void updateAssignees(List<UserModel> assignees) {
-    state = state.copyWith(
-      assignees: assignees,
-    );
+    if (state is LoadedCurTaskState) {
+      final loadedState = state as LoadedCurTaskState;
+      state =
+          LoadedCurTaskState(loadedState.task.copyWith(assignees: assignees));
+    }
   }
 
   void updateTask(TaskModel task) {
-    state = state.copyWith(task: task);
+    if (state is LoadedCurTaskState) {
+      final loadedState = state as LoadedCurTaskState;
+      state = LoadedCurTaskState(loadedState.task.copyWith(task: task));
+    }
   }
 
-  // We must showDatePicker and update in same method 
-  // As the original ref is invalidated after showDatePicker returns 
+  void updateStatus(StatusEnum? status) {
+    if (state is LoadedCurTaskState) {
+      final loadedState = state as LoadedCurTaskState;
+      state = LoadedCurTaskState(loadedState.task
+          .copyWith(task: loadedState.task.task.copyWith(status: status)));
+    }
+  }
+
+  void updatePriority(PriorityEnum? priority) {
+    if (state is LoadedCurTaskState) {
+      final loadedState = state as LoadedCurTaskState;
+      state = LoadedCurTaskState(loadedState.task
+          .copyWith(task: loadedState.task.task.copyWith(priority: priority)));
+    }
+  }
+
+  void updateDescription(String? description) {
+    if (state is LoadedCurTaskState) {
+      final loadedState = state as LoadedCurTaskState;
+      state = LoadedCurTaskState(loadedState.task.copyWith(
+          task: loadedState.task.task.copyWith(description: description)));
+    }
+  }
+
+  // We must showDatePicker and update in same method
+  // As the original ref is invalidated after showDatePicker returns
+
   Future<void> pickAndUpdateDueDate(BuildContext context) async {
+    if (state is LoadedCurTaskState) {
+      final loadedState = state as LoadedCurTaskState;
+      final DateTime now = DateTime.now();
+      final DateTime initialDate =
+          loadedState.task.task.dueDate?.toLocal() ?? now;
 
-    final DateTime now = DateTime.now();
-    final DateTime initialDate = state.task.dueDate?.toLocal() ?? now;
+      final DateTime? pickedDate = await showDatePicker(
+        context: context,
+        initialDate: initialDate,
+        firstDate: DateTime(2000),
+        lastDate: DateTime(2100),
+      );
 
-    final DateTime? pickedDate = await showDatePicker(
-      context: context,
-      initialDate: initialDate,
-      firstDate: DateTime(2000),
-      lastDate: DateTime(2100),
-    );
+      if (pickedDate != null) {
+        final TimeOfDay? pickedTime = await showTimePicker(
+          context: context,
+          initialTime: TimeOfDay.fromDateTime(initialDate),
+        );
 
-    if (pickedDate != null) {
-          final TimeOfDay? pickedTime = await showTimePicker(
-            context: context,
-            initialTime: TimeOfDay.fromDateTime(initialDate),
-          );
+        if (pickedTime != null) {
+          final DateTime pickedDateTime = DateTime(
+            pickedDate.year,
+            pickedDate.month,
+            pickedDate.day,
+            pickedTime.hour,
+            pickedTime.minute,
+          ).toUtc();
 
-          if (pickedTime != null) {
-            final DateTime pickedDateTime = DateTime(
-              pickedDate.year,
-              pickedDate.month,
-              pickedDate.day,
-              pickedTime.hour,
-              pickedTime.minute,
-            ).toUtc();
-
-            updateDueDate(pickedDateTime);
+          updateDueDate(pickedDateTime);
+        }
       }
     }
   }
 
   void updateTaskName(String name) {
-    state = state.copyWith(task: state.task.copyWith(name: name));
+    if (state is LoadedCurTaskState) {
+      final loadedState = state as LoadedCurTaskState;
+      state = LoadedCurTaskState(loadedState.task
+          .copyWith(task: loadedState.task.task.copyWith(name: name)));
+    }
   }
 
   void updateDueDate(DateTime? dueDate) {
-    state = state.copyWith(task: state.task.copyWith(dueDate: dueDate));
+    if (state is LoadedCurTaskState) {
+      final loadedState = state as LoadedCurTaskState;
+      state = LoadedCurTaskState(loadedState.task
+          .copyWith(task: loadedState.task.task.copyWith(dueDate: dueDate)));
+    }
   }
 
   void updateParentProject(ProjectModel? project) {
-    state = state.copyWith(task: state.task.copyWith(parentProjectId: project?.id), project: project);
+    if (state is LoadedCurTaskState) {
+      final loadedState = state as LoadedCurTaskState;
+      state = LoadedCurTaskState(loadedState.task.copyWith(
+          task: loadedState.task.task.copyWith(parentProjectId: project?.id),
+          project: project));
+    }
   }
 
   void updateTeam(TeamModel? team) {
-    state = state.copyWith(task: state.task.copyWith(parentTeamId: team?.id), team: team);
+    if (state is LoadedCurTaskState) {
+      final loadedState = state as LoadedCurTaskState;
+      state = LoadedCurTaskState(loadedState.task.copyWith(
+          task: loadedState.task.task.copyWith(parentTeamId: team?.id),
+          team: team));
+    }
   }
 
   void updateAllFields(JoinedTaskModel joinedTask) {
-    state = joinedTask;
+    state = LoadedCurTaskState(joinedTask);
   }
 
   void addComment(String text) {
-    final curAuthUserState = ref.read(curAuthUserProvider);
-    final curUser = switch (curAuthUserState) {
-      LoggedInAuthState() => curAuthUserState.user,
-      _ => null,
-    };
-    final comment = TaskCommentsModel(
-      authorUserId: curUser!.id,
-      parentTaskId: state.task.id,
-      content: text,
-      createdAt: DateTime.now().toUtc(),
-      updatedAt: DateTime.now().toUtc(),
-    );
-    ref.read(taskCommentsDbProvider).upsertItem(comment);
-    state = state.copyWith(comments: [...state.comments, comment]);
+    if (state is LoadedCurTaskState) {
+      final loadedState = state as LoadedCurTaskState;
+      final curAuthUserState = ref.read(curAuthStateProvider);
+      final curUser = switch (curAuthUserState) {
+        LoggedInAuthState() => curAuthUserState.user,
+        _ => null,
+      };
+      final comment = TaskCommentsModel(
+        authorUserId: curUser!.id,
+        parentTaskId: loadedState.task.task.id,
+        content: text,
+        createdAt: DateTime.now().toUtc(),
+        updatedAt: DateTime.now().toUtc(),
+      );
+      ref.read(taskCommentsDbProvider).upsertItem(comment);
+      state = LoadedCurTaskState(loadedState.task
+          .copyWith(comments: [...loadedState.task.comments, comment]));
+    }
   }
 
   Future<void> updateComments() async {
-    final comments =
-        ref.read(taskCommentsListenerFamProvider(state.task.id)) ?? [];
+    if (state is LoadedCurTaskState) {
+      final loadedState = state as LoadedCurTaskState;
+      final comments =
+          ref.read(taskCommentsListenerFamProvider(loadedState.task.task.id)) ??
+              [];
 
-    state = state.copyWith(comments: comments);
+      state = LoadedCurTaskState(loadedState.task.copyWith(comments: comments));
+    }
   }
 }
 
 // Providers for individual fields
 
 final curTaskAssigneesProvider = Provider<List<UserModel>>((ref) {
-  return ref.watch(curTaskProvider.select((state) => 
-    state.assignees));
+  final curTaskState = ref.watch(curTaskProvider);
+  return switch (curTaskState) {
+    LoadedCurTaskState() => curTaskState.task.assignees,
+    _ => [],
+  };
 });
 
 final curTaskProjectProvider = Provider<ProjectModel?>((ref) {
-  return ref.watch(curTaskProvider.select((state) => state.project));
+  final curTaskState = ref.watch(curTaskProvider);
+  return switch (curTaskState) {
+    LoadedCurTaskState() => curTaskState.task.project,
+    _ => null,
+  };
 });
 
 final curTaskTeamProvider = Provider<TeamModel?>((ref) {
-  return ref.watch(curTaskProvider.select((state) => state.team));
+  final curTaskState = ref.watch(curTaskProvider);
+  return switch (curTaskState) {
+    LoadedCurTaskState() => curTaskState.task.team,
+    _ => null,
+  };
 });
 
 final curTaskProjectIdProvider = Provider<String?>((ref) {
-  return ref.watch(curTaskProvider.select((state) => state.task.parentProjectId));
+  final curTaskState = ref.watch(curTaskProvider);
+  return switch (curTaskState) {
+    LoadedCurTaskState() => curTaskState.task.task.parentProjectId,
+    _ => null,
+  };
 });
 
 final curTaskDueDateProvider = Provider<DateTime?>((ref) {
-  return ref.watch(curTaskProvider.select((state) => state.task.dueDate));
+  final curTaskState = ref.watch(curTaskProvider);
+  return switch (curTaskState) {
+    LoadedCurTaskState() => curTaskState.task.task.dueDate,
+    _ => null,
+  };
 });

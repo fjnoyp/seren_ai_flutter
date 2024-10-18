@@ -3,7 +3,7 @@ import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:seren_ai_flutter/constants.dart';
 import 'package:seren_ai_flutter/services/auth/auth_states.dart';
-import 'package:seren_ai_flutter/services/auth/cur_auth_user_provider.dart';
+import 'package:seren_ai_flutter/services/auth/cur_auth_state_provider.dart';
 import 'package:seren_ai_flutter/widgets/common/theme_data.dart';
 
 class DrawerView extends HookWidget {
@@ -51,7 +51,7 @@ class DrawerView extends HookWidget {
             ),
             Consumer(
               builder: (context, ref, child) {
-                final curAuthUserState = ref.watch(curAuthUserProvider);
+                final curAuthUserState = ref.watch(curAuthStateProvider);
                 final user = switch (curAuthUserState) {
                   LoggedInAuthState() => curAuthUserState.user,
                   _ => null,
@@ -78,7 +78,7 @@ class DrawerView extends HookWidget {
                     title: const Text('Sign Out',
                         style: TextStyle(fontWeight: FontWeight.bold)),
                     onTap: () {
-                      ref.read(curAuthUserProvider.notifier).signOut();
+                      ref.read(curAuthStateProvider.notifier).signOut();
                     },
                   ),
                 ]);
@@ -210,7 +210,6 @@ class DrawerView extends HookWidget {
                 isSettingsView.value = true;
               },
             ),
-            
           ],
         ],
       ),

@@ -59,6 +59,7 @@ dependencies:
   collection: ^1.18.0
   wechat_assets_picker: ^9.3.0
   wechat_camera_picker: ^4.3.2
+  flutter_svg: ^2.0.10+1
 
 
 
@@ -79,4 +80,10 @@ dev_dependencies:
 
 flutter:
   uses-material-design: true
-  
+
+  # fonts:
+  #   - family:  FeatherIcons
+  #     fonts:
+  #       - asset: assets/icons/FeatherIcons.ttf
+  assets:
+    - assets/images/AI button.svg

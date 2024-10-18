@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_svg/svg.dart';
+import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:seren_ai_flutter/constants.dart';
 import 'package:seren_ai_flutter/services/ai_interaction/widgets/user_input_display_widget.dart';
 import 'drawer_view.dart';
 
-class MainScaffold extends StatelessWidget {
-  final bool enableAiBar = true;
-
+class MainScaffold extends HookWidget {
   final String title;
   final Widget body;
   final FloatingActionButton? floatingActionButton;
@@ -21,10 +21,13 @@ class MainScaffold extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    // final enableAiBar = true;
+    final isListening = useState(false);
+
     final theme = Theme.of(context);
     return PopScope(
       canPop: Navigator.of(context).canPop(),
-      onPopInvoked: (didPop) {
+      onPopInvokedWithResult: (didPop, result) {
         if (!didPop) {
           Navigator.of(context)
               .pushNamedAndRemoveUntil(homeRoute, (route) => false);
@@ -48,7 +51,8 @@ class MainScaffold extends StatelessWidget {
                   // TODO p2: back button is in a weird location. we should only conditionally show back button
                   if (Navigator.of(context).canPop())
                     IconButton(
-                    icon: Icon(Icons.arrow_back, color: theme.iconTheme.color),
+                      icon:
+                          Icon(Icons.arrow_back, color: theme.iconTheme.color),
                       onPressed: () => Navigator.of(context).pop(),
                     ),
                 ],
@@ -96,8 +100,47 @@ class MainScaffold extends StatelessWidget {
         ) : null,
         */
 
-        bottomNavigationBar:
-            showBottomBar ? const UserInputDisplayWidget() : null,
+        bottomNavigationBar: showBottomBar
+            ? isListening.value
+                ? const UserInputDisplayWidget()
+                : BottomAppBar(
+                    notchMargin: 0,
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceAround,
+                      children: [
+                        IconButton(
+                          tooltip: 'home',
+                          icon: const Icon(Icons.grid_view),
+                          onPressed: () => Navigator.of(context)
+                              .pushNamedAndRemoveUntil(
+                                  homeRoute, (route) => false),
+                        ),
+                        const SizedBox.shrink(),
+                        IconButton(
+                          tooltip: 'chat',
+                          icon: const Icon(Icons.chat_bubble_outline),
+                          onPressed: () => Navigator.of(context)
+                              .pushNamed(aiChatThreadsRoute),
+                        ),
+                      ],
+                    ),
+                  )
+            : null,
+        floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
+        floatingActionButton: isListening.value
+            ? null
+            : Tooltip(
+                message: 'AI Assistant',
+                child: GestureDetector(
+                  onTap: () => isListening.value = true,
+                  child: Hero(
+                    tag: 'ai-button',
+                    child: SizedBox(
+                        height: 56.0,
+                        child:
+                            SvgPicture.asset('assets/images/AI button.svg'))),
+                ),
+              ),
       ),
     );
   }
