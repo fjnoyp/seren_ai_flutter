@@ -1,9 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
-import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
-import 'package:powersync/powersync.dart' hide Column;
-import 'package:seren_ai_flutter/services/auth/cur_auth_user_provider.dart';
 import 'package:seren_ai_flutter/services/data/db_setup/db_provider.dart';
 import 'package:seren_ai_flutter/services/data/users/models/user_model.dart';
 
@@ -17,11 +14,6 @@ class TasksNotifier extends Notifier<List<UserModel>> {
   // We initialize the list of tasks to an empty list
   @override
   List<UserModel> build() {
-    final user = ref.watch(curAuthUserProvider); 
-    if(user == null) {
-      return [];
-    }
-
     _listen();
 
     return [];
