@@ -1,6 +1,6 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:seren_ai_flutter/services/auth/auth_states.dart';
-import 'package:seren_ai_flutter/services/auth/cur_auth_user_provider.dart';
+import 'package:seren_ai_flutter/services/auth/cur_auth_state_provider.dart';
 import 'package:seren_ai_flutter/services/data/notes/models/joined_note_folder_model.dart';
 import 'package:seren_ai_flutter/services/data/notes/models/note_folder_model.dart';
 import 'package:seren_ai_flutter/services/data/notes/note_folders_read_provider.dart';
@@ -10,7 +10,7 @@ import 'package:seren_ai_flutter/services/data/teams/models/team_model.dart';
 import 'package:seren_ai_flutter/services/data/teams/teams_read_provider.dart';
 import 'package:seren_ai_flutter/services/data/notes/ui_state/cur_note_folder_states.dart';
 
-final curNoteFolderProvider =
+final curNoteFolderStateProvider =
     NotifierProvider<CurNoteFolderNotifier, CurNoteFolderState>(
         CurNoteFolderNotifier.new);
 
@@ -27,7 +27,8 @@ class CurNoteFolderNotifier extends Notifier<CurNoteFolderState> {
   Future<void> setToNewNoteFolder() async {
     state = LoadingCurNoteFolderState();
     try {
-      final curUser = (ref.read(curAuthUserProvider) as LoggedInAuthState).user;
+      final curUser =
+          (ref.read(curAuthStateProvider) as LoggedInAuthState).user;
 
       final defaultTeam = await ref.read(teamsReadProvider).getItem(eqFilters: [
         {'key': 'id', 'value': curUser.defaultTeamId}
@@ -122,7 +123,7 @@ class CurNoteFolderNotifier extends Notifier<CurNoteFolderState> {
 // Providers for individual fields
 
 final curNoteFolderNameProvider = Provider<String>((ref) {
-  final curNoteFolderState = ref.watch(curNoteFolderProvider);
+  final curNoteFolderState = ref.watch(curNoteFolderStateProvider);
   return switch (curNoteFolderState) {
     LoadedCurNoteFolderState() => curNoteFolderState.noteFolder.noteFolder.name,
     _ => '',
@@ -130,7 +131,7 @@ final curNoteFolderNameProvider = Provider<String>((ref) {
 });
 
 final curNoteFolderDescriptionProvider = Provider<String?>((ref) {
-  final curNoteFolderState = ref.watch(curNoteFolderProvider);
+  final curNoteFolderState = ref.watch(curNoteFolderStateProvider);
   return switch (curNoteFolderState) {
     LoadedCurNoteFolderState() =>
       curNoteFolderState.noteFolder.noteFolder.description,
@@ -139,7 +140,7 @@ final curNoteFolderDescriptionProvider = Provider<String?>((ref) {
 });
 
 final curNoteFolderParentTeamIdProvider = Provider<String?>((ref) {
-  final curNoteFolderState = ref.watch(curNoteFolderProvider);
+  final curNoteFolderState = ref.watch(curNoteFolderStateProvider);
   return switch (curNoteFolderState) {
     LoadedCurNoteFolderState() =>
       curNoteFolderState.noteFolder.noteFolder.parentTeamId,
@@ -148,7 +149,7 @@ final curNoteFolderParentTeamIdProvider = Provider<String?>((ref) {
 });
 
 final curNoteFolderParentProjectIdProvider = Provider<String?>((ref) {
-  final curNoteFolderState = ref.watch(curNoteFolderProvider);
+  final curNoteFolderState = ref.watch(curNoteFolderStateProvider);
   return switch (curNoteFolderState) {
     LoadedCurNoteFolderState() =>
       curNoteFolderState.noteFolder.noteFolder.parentProjectId,
@@ -157,7 +158,7 @@ final curNoteFolderParentProjectIdProvider = Provider<String?>((ref) {
 });
 
 final curNoteFolderParentProjectProvider = Provider<ProjectModel?>((ref) {
-  final curNoteFolderState = ref.watch(curNoteFolderProvider);
+  final curNoteFolderState = ref.watch(curNoteFolderStateProvider);
   return switch (curNoteFolderState) {
     LoadedCurNoteFolderState() => curNoteFolderState.noteFolder.project,
     _ => null,
@@ -165,7 +166,7 @@ final curNoteFolderParentProjectProvider = Provider<ProjectModel?>((ref) {
 });
 
 final curNoteFolderParentTeamProvider = Provider<TeamModel?>((ref) {
-  final curNoteFolderState = ref.watch(curNoteFolderProvider);
+  final curNoteFolderState = ref.watch(curNoteFolderStateProvider);
   return switch (curNoteFolderState) {
     LoadedCurNoteFolderState() => curNoteFolderState.noteFolder.team,
     _ => null,

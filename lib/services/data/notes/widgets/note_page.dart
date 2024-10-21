@@ -3,11 +3,11 @@ import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:logging/logging.dart';
 import 'package:seren_ai_flutter/constants.dart';
 import 'package:seren_ai_flutter/services/auth/auth_states.dart';
-import 'package:seren_ai_flutter/services/auth/cur_auth_user_provider.dart';
+import 'package:seren_ai_flutter/services/auth/cur_auth_state_provider.dart';
 import 'package:seren_ai_flutter/services/data/common/widgets/editablePageModeEnum.dart';
 import 'package:seren_ai_flutter/services/data/common/widgets/form/base_text_block_edit_selection_field.dart';
 import 'package:seren_ai_flutter/services/data/notes/notes_read_provider.dart';
-import 'package:seren_ai_flutter/services/data/notes/ui_state/cur_note_provider.dart';
+import 'package:seren_ai_flutter/services/data/notes/ui_state/cur_note_state_provider.dart';
 import 'package:seren_ai_flutter/services/data/notes/widgets/form/note_selection_fields.dart';
 
 final log = Logger('NotePage');
@@ -52,7 +52,7 @@ class NotePage extends HookConsumerWidget {
                     enabled: isEnabled,
                     descriptionProvider: curNoteAddressProvider,
                     updateDescription: (ref, address) => ref
-                        .read(curNoteProvider.notifier)
+                        .read(curNoteStateProvider.notifier)
                         .updateAddress(address),
                   ),
                   const Divider(),
@@ -60,15 +60,16 @@ class NotePage extends HookConsumerWidget {
                     enabled: isEnabled,
                     descriptionProvider: curNoteActionRequiredProvider,
                     updateDescription: (ref, actionRequired) => ref
-                        .read(curNoteProvider.notifier)
+                        .read(curNoteStateProvider.notifier)
                         .updateActionRequired(actionRequired),
                   ),
                   const Divider(),
                   BaseTextBlockEditSelectionField(
                     enabled: isEnabled,
                     descriptionProvider: curNoteStatusProvider,
-                    updateDescription: (ref, status) =>
-                        ref.read(curNoteProvider.notifier).updateStatus(status),
+                    updateDescription: (ref, status) => ref
+                        .read(curNoteStateProvider.notifier)
+                        .updateStatus(status),
                   ),
                 ],
               ),
@@ -82,10 +83,10 @@ class NotePage extends HookConsumerWidget {
                 child: ElevatedButton(
                   onPressed: () async {
                     final isValidNote =
-                        ref.read(curNoteProvider.notifier).isValidNote();
+                        ref.read(curNoteStateProvider.notifier).isValidNote();
 
                     if (isValidNote) {
-                      ref.read(curNoteProvider.notifier).saveNote();
+                      ref.read(curNoteStateProvider.notifier).saveNote();
 
                       if (context.mounted) {
                         Navigator.pop(context);
@@ -124,7 +125,7 @@ Future<void> openNotePage(BuildContext context, WidgetRef ref,
   Navigator.popUntil(context, (route) => route.settings.name != notePageRoute);
 
   if (mode == EditablePageMode.create) {
-    final curAuthUserState = ref.read(curAuthUserProvider);
+    final curAuthUserState = ref.read(curAuthStateProvider);
     final authUser = switch (curAuthUserState) {
       LoggedInAuthState() => curAuthUserState.user,
       _ => null,
@@ -140,14 +141,14 @@ Future<void> openNotePage(BuildContext context, WidgetRef ref,
 
     // TODO p3: maybe you can select the parent folder instead in a note
     ref
-        .read(curNoteProvider.notifier)
+        .read(curNoteStateProvider.notifier)
         .setToNewNote(authUser, parentNoteFolderId);
   } else if (mode == EditablePageMode.edit ||
       mode == EditablePageMode.readOnly) {
     if (noteId != null) {
       final note = await ref.read(notesReadProvider).getItem(id: noteId);
       if (note != null) {
-        ref.read(curNoteProvider.notifier).setNewNote(note);
+        ref.read(curNoteStateProvider.notifier).setNewNote(note);
       }
     }
   }
