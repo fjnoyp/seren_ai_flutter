@@ -1,0 +1,70 @@
+name: Android Release
+
+on:
+  push:
+    branches:
+      - main  # Only run when changes are pushed to main
+  # pull_request:
+  #   branches:
+  #     - main  # Also run on pull requests targeting main
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+
+    - name: Set up Flutter
+      uses: subosito/flutter-action@v2
+      with:
+        flutter-version: "stable"
+
+    - name: Install Flutter dependencies
+      run: flutter pub get
+
+    - name: Set up Node.js
+      uses: actions/setup-node@v4
+      with:
+        node-version: '20'
+
+    - name: Install Node.js dependencies
+      run: npm ci
+
+    - name: Build APK
+      run: flutter build apk --release
+
+    - name: Create build directory
+      run: mkdir -p android/app/build/outputs/apk/release
+
+    - name: Sign APK
+      env:
+        KEYSTORE_PATH: ${{ secrets.KEYSTORE_PATH }}
+        KEYSTORE_PASSWORD: ${{ secrets.KEYSTORE_PASSWORD }}
+        KEY_ALIAS: ${{ secrets.KEY_ALIAS }}
+        KEY_PASSWORD: ${{ secrets.KEY_PASSWORD }}
+      run: |
+        # Copy the keystore file
+        echo "${{ secrets.KEYSTORE }}" | base64 --decode > android/app/my-release-key.jks
+        
+        # Sign the APK
+        jarsigner -verbose -sigalg SHA1withRSA -digestalg SHA1 \
+          -keystore android/app/my-release-key.jks \
+          -storepass $KEYSTORE_PASSWORD -keypass $KEY_PASSWORD \
+          android/app/build/outputs/apk/release/app-release-unsigned.apk $KEY_ALIAS
+
+        # Verify APK
+        jarsigner -verify android/app/build/outputs/apk/release/app-release-unsigned.apk
+
+    - name: Align APK using zipalign
+      run: |
+        ${ANDROID_HOME}/build-tools/33.0.1/zipalign -v -p 4 \
+        android/app/build/outputs/apk/release/app-release-unsigned.apk \
+        android/app/build/outputs/apk/release/app-release.apk
+
+    - name: Upload APK as artifact
+      uses: actions/upload-artifact@v3
+      with:
+        name: release-apk
+        path: android/app/build/outputs/apk/release/app-release.apk
