@@ -3,7 +3,7 @@ import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:logging/logging.dart';
 import 'package:seren_ai_flutter/constants.dart';
 import 'package:seren_ai_flutter/services/auth/auth_states.dart';
-import 'package:seren_ai_flutter/services/auth/cur_auth_user_provider.dart';
+import 'package:seren_ai_flutter/services/auth/cur_auth_state_provider.dart';
 import 'package:seren_ai_flutter/services/data/common/widgets/editablePageModeEnum.dart';
 import 'package:seren_ai_flutter/services/data/projects/cur_user_viewable_projects_listener_provider.dart';
 import 'package:seren_ai_flutter/services/data/tasks/ui_state/cur_task_provider.dart';
@@ -67,8 +67,7 @@ class TaskPage extends HookConsumerWidget {
             if (mode == EditablePageMode.edit)
               Align(
                 alignment: Alignment.topRight,
-                child:
-                    DeleteTaskButton(taskId: curTask?.task.id ?? ''),
+                child: DeleteTaskButton(taskId: curTask?.task.id ?? ''),
               ),
             TaskTeamSelectionField(enabled: isEnabled),
             TaskProjectSelectionField(enabled: isEnabled),
@@ -106,7 +105,7 @@ class TaskPage extends HookConsumerWidget {
                 width: double.infinity,
                 child: ElevatedButton(
                   onPressed: () async {
-                    final curAuthUserState = ref.read(curAuthUserProvider);
+                    final curAuthUserState = ref.read(curAuthStateProvider);
                     final curAuthUser = switch (curAuthUserState) {
                       LoggedInAuthState() => curAuthUserState.user,
                       _ => null,
@@ -162,7 +161,7 @@ class TaskPage extends HookConsumerWidget {
       }
     } else {
       // takes action to solve each validation error
-      if (curJoinedTask?.task.parentProjectId.isEmpty??false) {
+      if (curJoinedTask?.task.parentProjectId.isEmpty ?? false) {
         _takeActionOnEmptyProjectValue(context)
             .then((_) => _validateTaskAndMaybeSave(ref, context));
       } else if (curJoinedTask?.task.name.isEmpty ?? false) {
