@@ -21,8 +21,16 @@ jobs:
       with:
         flutter-version: "stable"
 
-    - name: Install dependencies
+    - name: Install Flutter dependencies
       run: flutter pub get
+
+    - name: Set up Node.js
+      uses: actions/setup-node@v3
+      with:
+        node-version: '20'
+
+    - name: Install Node.js dependencies
+      run: npm ci
 
     - name: Build APK
       run: flutter build apk --release
