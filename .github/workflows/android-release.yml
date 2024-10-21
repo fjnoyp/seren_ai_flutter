@@ -30,9 +30,6 @@ jobs:
       with:
         node-version: '20'
 
-    - name: Install Node.js dependencies
-      run: npm ci
-
     - name: Build APK
       run: flutter build apk --release
 
