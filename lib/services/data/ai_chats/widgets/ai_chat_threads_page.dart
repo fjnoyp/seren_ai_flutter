@@ -3,7 +3,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:seren_ai_flutter/services/auth/auth_states.dart';
-import 'package:seren_ai_flutter/services/auth/cur_auth_user_provider.dart';
+import 'package:seren_ai_flutter/services/auth/cur_auth_state_provider.dart';
 import 'package:seren_ai_flutter/services/data/ai_chats/ai_chat_threads_db_provider.dart';
 import 'package:seren_ai_flutter/services/data/ai_chats/cur_user_ai_chat_threads_listener_provider.dart';
 import 'package:seren_ai_flutter/services/data/ai_chats/models/ai_chat_thread_model.dart';
@@ -42,7 +42,7 @@ class AiChatThreadsPage extends ConsumerWidget {
 
   Future<void> _createNewChatThread(BuildContext context, WidgetRef ref) async {
     final aiChatThreadsDb = ref.read(aiChatThreadsDbProvider);
-    final curAuthUserState = ref.read(curAuthUserProvider);
+    final curAuthUserState = ref.read(curAuthStateProvider);
     final curUser = switch (curAuthUserState) {
       LoggedInAuthState() => curAuthUserState.user,
       _ => null,

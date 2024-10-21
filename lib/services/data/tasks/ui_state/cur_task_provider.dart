@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:seren_ai_flutter/services/auth/auth_states.dart';
-import 'package:seren_ai_flutter/services/auth/cur_auth_user_provider.dart';
+import 'package:seren_ai_flutter/services/auth/cur_auth_state_provider.dart';
 import 'package:seren_ai_flutter/services/data/projects/models/project_model.dart';
 import 'package:seren_ai_flutter/services/data/projects/projects_read_provider.dart';
 import 'package:seren_ai_flutter/services/data/tasks/models/joined_task_model.dart';
@@ -30,7 +30,7 @@ class CurTaskNotifier extends Notifier<CurTaskState> {
   Future<void> setToNewTask() async {
     state = LoadingCurTaskState();
     try {
-      final curAuthUserState = ref.read(curAuthUserProvider);
+      final curAuthUserState = ref.read(curAuthStateProvider);
       if (switch (curAuthUserState) {
         LoggedInAuthState() => curAuthUserState.user,
         _ => null,
@@ -190,7 +190,7 @@ class CurTaskNotifier extends Notifier<CurTaskState> {
   void addComment(String text) {
     if (state is LoadedCurTaskState) {
       final loadedState = state as LoadedCurTaskState;
-      final curAuthUserState = ref.read(curAuthUserProvider);
+      final curAuthUserState = ref.read(curAuthStateProvider);
       final curUser = switch (curAuthUserState) {
         LoggedInAuthState() => curAuthUserState.user,
         _ => null,

@@ -2,7 +2,7 @@ import 'package:seren_ai_flutter/services/data/common/widgets/form/base_project_
 import 'package:seren_ai_flutter/services/data/common/widgets/form/base_task_name_field.dart';
 import 'package:seren_ai_flutter/services/data/common/widgets/form/base_team_selection_field.dart';
 import 'package:seren_ai_flutter/services/data/common/widgets/form/base_text_block_edit_selection_field.dart';
-import 'package:seren_ai_flutter/services/data/notes/ui_state/cur_note_folder_provider.dart';
+import 'package:seren_ai_flutter/services/data/notes/ui_state/cur_note_folder_state_provider.dart';
 import 'package:seren_ai_flutter/services/data/notes/ui_state/cur_note_folder_states.dart';
 import 'package:seren_ai_flutter/services/data/projects/cur_user_viewable_projects_listener_provider.dart';
 import 'package:seren_ai_flutter/services/data/teams/cur_team/cur_user_viewable_teams_listener_provider.dart';
@@ -12,12 +12,15 @@ class NoteFolderNameField extends BaseNameField {
     super.key,
     required super.enabled,
   }) : super(
-          nameProvider: curNoteFolderProvider.select((state) => switch (state) {
-                LoadedCurNoteFolderState() => state.noteFolder.noteFolder.name,
-                _ => '',
-              }),
-          updateName: (ref, name) => 
-              ref.read(curNoteFolderProvider.notifier).updateNoteFolderName(name),
+          nameProvider:
+              curNoteFolderStateProvider.select((state) => switch (state) {
+                    LoadedCurNoteFolderState() =>
+                      state.noteFolder.noteFolder.name,
+                    _ => '',
+                  }),
+          updateName: (ref, name) => ref
+              .read(curNoteFolderStateProvider.notifier)
+              .updateNoteFolderName(name),
         );
 }
 
@@ -26,12 +29,15 @@ class NoteFolderDescriptionField extends BaseTextBlockEditSelectionField {
     super.key,
     required super.enabled,
   }) : super(
-          descriptionProvider: curNoteFolderProvider.select((state) => switch (state) {
-                LoadedCurNoteFolderState() => state.noteFolder.noteFolder.description,
-                _ => null,
-              }),
-          updateDescription: (ref, description) => 
-              ref.read(curNoteFolderProvider.notifier).updateDescription(description),
+          descriptionProvider:
+              curNoteFolderStateProvider.select((state) => switch (state) {
+                    LoadedCurNoteFolderState() =>
+                      state.noteFolder.noteFolder.description,
+                    _ => null,
+                  }),
+          updateDescription: (ref, description) => ref
+              .read(curNoteFolderStateProvider.notifier)
+              .updateDescription(description),
         );
 }
 
@@ -42,8 +48,9 @@ class NoteFolderParentProjectField extends BaseProjectSelectionField {
   }) : super(
           projectProvider: curNoteFolderParentProjectProvider,
           selectableProjectsProvider: curUserViewableProjectsListenerProvider,
-          updateProject: (ref, project) => 
-              ref.read(curNoteFolderProvider.notifier).updateParentProject(project),
+          updateProject: (ref, project) => ref
+              .read(curNoteFolderStateProvider.notifier)
+              .updateParentProject(project),
         );
 }
 
@@ -54,7 +61,8 @@ class NoteFolderParentTeamField extends BaseTeamSelectionField {
   }) : super(
           teamProvider: curNoteFolderParentTeamProvider,
           selectableTeamsProvider: curUserViewableTeamsListenerProvider,
-          updateTeam: (ref, team) => 
-              ref.read(curNoteFolderProvider.notifier).updateParentTeam(team),
+          updateTeam: (ref, team) => ref
+              .read(curNoteFolderStateProvider.notifier)
+              .updateParentTeam(team),
         );
 }
