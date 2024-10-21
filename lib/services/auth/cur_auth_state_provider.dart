@@ -4,8 +4,9 @@ import 'package:seren_ai_flutter/services/data/db_setup/db_provider.dart';
 import 'package:seren_ai_flutter/services/data/users/models/user_model.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
-final curAuthUserProvider =
-    NotifierProvider<CurAuthUserNotifier, AppAuthState>(CurAuthUserNotifier.new);
+final curAuthStateProvider =
+    NotifierProvider<CurAuthUserNotifier, AppAuthState>(
+        CurAuthUserNotifier.new);
 
 class CurAuthUserNotifier extends Notifier<AppAuthState> {
   @override

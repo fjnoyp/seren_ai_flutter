@@ -3,7 +3,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:seren_ai_flutter/services/auth/auth_states.dart';
-import 'package:seren_ai_flutter/services/auth/cur_auth_user_provider.dart';
+import 'package:seren_ai_flutter/services/auth/cur_auth_state_provider.dart';
 import 'package:seren_ai_flutter/services/data/ai_chats/ai_chat_messages_db_provider.dart';
 import 'package:seren_ai_flutter/services/data/ai_chats/ai_chat_threads_db_provider.dart';
 import 'package:seren_ai_flutter/services/data/ai_chats/cur_chat_thread_provider.dart';
@@ -19,7 +19,6 @@ import 'package:seren_ai_flutter/services/data/teams/models/team_model.dart';
 import 'package:seren_ai_flutter/services/data/users/models/user_model.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
-
 final isAiRespondingProvider = StateProvider<bool>((ref) => false);
 
 final isAiEditingProvider = StateProvider<bool>((ref) => false);
@@ -32,7 +31,7 @@ class AiApi {
   AiApi(this.ref);
 
   Future<AiChatThreadModel?> createChatThreadIfNone() async {
-    final curAuthUserState = ref.read(curAuthUserProvider);
+    final curAuthUserState = ref.read(curAuthStateProvider);
     final curUser = switch (curAuthUserState) {
       LoggedInAuthState() => curAuthUserState.user,
       _ => null,
@@ -47,38 +46,37 @@ class AiApi {
     ]);
 
     if (chatThreads.isEmpty) {
-      // Create one if necessary 
+      // Create one if necessary
       print('No chat thread found, creating one');
 
       final curAuthUserId = curUser?.id;
       final curOrgId = ref.read(curOrgIdProvider);
 
-      if(curAuthUserId == null || curOrgId == null) {
+      if (curAuthUserId == null || curOrgId == null) {
         print('No current user or org id found');
         throw Exception('No current user or org id found');
       }
 
       final newChatThread = AiChatThreadModel(
-        authorUserId: curAuthUserId,
-        name: 'Default Chat Thread',
-        parentOrgId: curOrgId
-      );
+          authorUserId: curAuthUserId,
+          name: 'Default Chat Thread',
+          parentOrgId: curOrgId);
       await chatThreadDb.insertItem(newChatThread);
 
       return newChatThread;
-    }    
+    }
 
     return chatThreads[0];
   }
 
   Future<void> sendMessageToAi({required String message}) async {
     //return testHardcodedAiResponse(message: message);
-    
+
     var curChatThread = ref.watch(curChatThreadProvider);
 
     curChatThread ??= await createChatThreadIfNone();
 
-    if(curChatThread == null) {
+    if (curChatThread == null) {
       print('No chat thread found');
       return;
     }
@@ -114,7 +112,7 @@ curl -L -X POST 'https://***REMOVED***.supabase.co/functions/v1/chat' -H 'Author
 
     ref.read(isAiRespondingProvider.notifier).state = false;
 
-    // TODO p1: confirm if backend updates the thread with the ai response .. 
+    // TODO p1: confirm if backend updates the thread with the ai response ..
     /*
     final aiChatMessage = AiChatMessageModel(
       type: AiChatMessageType.ai,
@@ -128,8 +126,7 @@ curl -L -X POST 'https://***REMOVED***.supabase.co/functions/v1/chat' -H 'Author
 
   // Test calling ai and receiving a hardcoded response
   Future<void> testHardcodedAiResponse({required String message}) async {
-
-    // Manually update the chat thread 
+    // Manually update the chat thread
     final curChatThread = ref.watch(curChatThreadProvider);
 
     if (curChatThread == null) {
@@ -154,9 +151,6 @@ curl -L -X POST 'https://***REMOVED***.supabase.co/functions/v1/chat' -H 'Author
       parentChatThreadId: curChatThread.id,
     );
     await aiChatMessagesDb.insertItem(aiChatMessage);
-
-    
-
   }
 
   Future<void> testAiCreateTask(BuildContext context) async {

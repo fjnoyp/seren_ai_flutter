@@ -2,7 +2,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:seren_ai_flutter/services/auth/auth_states.dart';
 import 'package:seren_ai_flutter/services/data/db_setup/db_provider.dart';
 import 'package:seren_ai_flutter/services/data/ai_chats/models/ai_chat_message_model.dart';
-import 'package:seren_ai_flutter/services/auth/cur_auth_user_provider.dart';
+import 'package:seren_ai_flutter/services/auth/cur_auth_state_provider.dart';
 
 // Family provider that listens to all ai chat messages for a given chat thread id
 final aiChatMessagesListenerFamProvider = NotifierProvider.family<
@@ -17,7 +17,7 @@ class AiChatMessagesListenerFamNotifier
     final chatThreadId = arg;
 
     final db = ref.read(dbProvider);
-    final curAuthUserState = ref.read(curAuthUserProvider);
+    final curAuthUserState = ref.read(curAuthStateProvider);
     final curUser = switch (curAuthUserState) {
       LoggedInAuthState() => curAuthUserState.user,
       _ => null,

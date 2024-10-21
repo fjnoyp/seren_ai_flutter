@@ -5,7 +5,7 @@ import 'package:seren_ai_flutter/services/data/notes/notes_read_provider.dart';
 import 'package:seren_ai_flutter/services/data/notes/ui_state/cur_note_states.dart';
 import 'package:seren_ai_flutter/services/data/users/models/user_model.dart';
 
-final curNoteProvider =
+final curNoteStateProvider =
     NotifierProvider<CurNoteNotifier, CurNoteState>(CurNoteNotifier.new);
 
 class CurNoteNotifier extends Notifier<CurNoteState> {
@@ -18,7 +18,8 @@ class CurNoteNotifier extends Notifier<CurNoteState> {
     state = LoadedCurNoteState(note);
   }
 
-  Future<void> setToNewNote(UserModel authorUser, String parentNoteFolderId) async {
+  Future<void> setToNewNote(
+      UserModel authorUser, String parentNoteFolderId) async {
     state = LoadingCurNoteState();
     try {
       final newNote = NoteModel.defaultNote().copyWith(
@@ -32,7 +33,8 @@ class CurNoteNotifier extends Notifier<CurNoteState> {
   }
 
   bool isValidNote() {
-    return state is LoadedCurNoteState && (state as LoadedCurNoteState).note.name.isNotEmpty;
+    return state is LoadedCurNoteState &&
+        (state as LoadedCurNoteState).note.name.isNotEmpty;
   }
 
   void updateNote(NoteModel note) {
@@ -41,8 +43,8 @@ class CurNoteNotifier extends Notifier<CurNoteState> {
     }
   }
 
-  // We must showDatePicker and update in same method 
-  // As the original ref is invalidated after showDatePicker returns 
+  // We must showDatePicker and update in same method
+  // As the original ref is invalidated after showDatePicker returns
   Future<void> pickAndUpdateDate(BuildContext context) async {
     if (state is LoadedCurNoteState) {
       final loadedState = state as LoadedCurNoteState;
@@ -101,14 +103,16 @@ class CurNoteNotifier extends Notifier<CurNoteState> {
   void updateDescription(String? description) {
     if (state is LoadedCurNoteState) {
       final loadedState = state as LoadedCurNoteState;
-      state = LoadedCurNoteState(loadedState.note.copyWith(description: description));
+      state = LoadedCurNoteState(
+          loadedState.note.copyWith(description: description));
     }
   }
 
   void updateActionRequired(String? actionRequired) {
     if (state is LoadedCurNoteState) {
       final loadedState = state as LoadedCurNoteState;
-      state = LoadedCurNoteState(loadedState.note.copyWith(actionRequired: actionRequired));
+      state = LoadedCurNoteState(
+          loadedState.note.copyWith(actionRequired: actionRequired));
     }
   }
 
@@ -123,7 +127,6 @@ class CurNoteNotifier extends Notifier<CurNoteState> {
     state = LoadedCurNoteState(note);
   }
 
-  
   Future<void> saveNote() async {
     if (state is LoadedCurNoteState) {
       final loadedState = state as LoadedCurNoteState;
@@ -135,7 +138,7 @@ class CurNoteNotifier extends Notifier<CurNoteState> {
 // Providers for individual fields
 
 final curNoteAuthorProvider = Provider<String?>((ref) {
-  final curNoteState = ref.watch(curNoteProvider);
+  final curNoteState = ref.watch(curNoteStateProvider);
   return switch (curNoteState) {
     LoadedCurNoteState() => curNoteState.note.authorUserId,
     _ => null,
@@ -143,7 +146,7 @@ final curNoteAuthorProvider = Provider<String?>((ref) {
 });
 
 final curNoteDateProvider = Provider<DateTime?>((ref) {
-  final curNoteState = ref.watch(curNoteProvider);
+  final curNoteState = ref.watch(curNoteStateProvider);
   return switch (curNoteState) {
     LoadedCurNoteState() => curNoteState.note.date,
     _ => null,
@@ -151,7 +154,7 @@ final curNoteDateProvider = Provider<DateTime?>((ref) {
 });
 
 final curNoteAddressProvider = Provider<String?>((ref) {
-  final curNoteState = ref.watch(curNoteProvider);
+  final curNoteState = ref.watch(curNoteStateProvider);
   return switch (curNoteState) {
     LoadedCurNoteState() => curNoteState.note.address,
     _ => null,
@@ -159,7 +162,7 @@ final curNoteAddressProvider = Provider<String?>((ref) {
 });
 
 final curNoteDescriptionProvider = Provider<String?>((ref) {
-  final curNoteState = ref.watch(curNoteProvider);
+  final curNoteState = ref.watch(curNoteStateProvider);
   return switch (curNoteState) {
     LoadedCurNoteState() => curNoteState.note.description,
     _ => null,
@@ -167,7 +170,7 @@ final curNoteDescriptionProvider = Provider<String?>((ref) {
 });
 
 final curNoteActionRequiredProvider = Provider<String?>((ref) {
-  final curNoteState = ref.watch(curNoteProvider);
+  final curNoteState = ref.watch(curNoteStateProvider);
   return switch (curNoteState) {
     LoadedCurNoteState() => curNoteState.note.actionRequired,
     _ => null,
@@ -175,7 +178,7 @@ final curNoteActionRequiredProvider = Provider<String?>((ref) {
 });
 
 final curNoteStatusProvider = Provider<String?>((ref) {
-  final curNoteState = ref.watch(curNoteProvider);
+  final curNoteState = ref.watch(curNoteStateProvider);
   return switch (curNoteState) {
     LoadedCurNoteState() => curNoteState.note.status,
     _ => null,

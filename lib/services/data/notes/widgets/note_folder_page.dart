@@ -4,7 +4,7 @@ import 'package:logging/logging.dart';
 import 'package:seren_ai_flutter/constants.dart';
 import 'package:seren_ai_flutter/services/data/common/widgets/editablePageModeEnum.dart';
 import 'package:seren_ai_flutter/services/data/notes/models/joined_note_folder_model.dart';
-import 'package:seren_ai_flutter/services/data/notes/ui_state/cur_note_folder_provider.dart';
+import 'package:seren_ai_flutter/services/data/notes/ui_state/cur_note_folder_state_provider.dart';
 import 'package:seren_ai_flutter/services/data/notes/widgets/form/note_folder_selection_fields.dart';
 
 final log = Logger('NoteFolderPage');
@@ -55,11 +55,14 @@ class NoteFolderPage extends HookConsumerWidget {
                 width: double.infinity,
                 child: ElevatedButton(
                   onPressed: () async {
-                    final isValidNoteFolder =
-                        ref.read(curNoteFolderProvider.notifier).isValidNoteFolder();
+                    final isValidNoteFolder = ref
+                        .read(curNoteFolderStateProvider.notifier)
+                        .isValidNoteFolder();
 
                     if (isValidNoteFolder) {
-                      ref.read(curNoteFolderProvider.notifier).saveNoteFolder();
+                      ref
+                          .read(curNoteFolderStateProvider.notifier)
+                          .saveNoteFolder();
 
                       if (context.mounted) {
                         Navigator.pop(context);
@@ -80,7 +83,8 @@ class NoteFolderPage extends HookConsumerWidget {
               ElevatedButton(
                   onPressed: () {
                     Navigator.pop(context);
-                    openNoteFolderPage(context, ref, mode: EditablePageMode.edit);
+                    openNoteFolderPage(context, ref,
+                        mode: EditablePageMode.edit);
                   },
                   child: const Text('Edit'))
           ],
@@ -92,20 +96,23 @@ class NoteFolderPage extends HookConsumerWidget {
 
 // TODO p2: init state within the page itself ... we should only rely on arguments to init the page (to support deep linking)
 Future<void> openNoteFolderPage(BuildContext context, WidgetRef ref,
-    {required EditablePageMode mode, JoinedNoteFolderModel? joinedNoteFolder}) async {
-  Navigator.popUntil(context, (route) => route.settings.name != noteFolderPageRoute);
+    {required EditablePageMode mode,
+    JoinedNoteFolderModel? joinedNoteFolder}) async {
+  Navigator.popUntil(
+      context, (route) => route.settings.name != noteFolderPageRoute);
 
   if (mode == EditablePageMode.create) {
-    ref.read(curNoteFolderProvider.notifier).setToNewNoteFolder();
-  } 
+    ref.read(curNoteFolderStateProvider.notifier).setToNewNoteFolder();
+  }
   // EDIT/READ
   else if (mode == EditablePageMode.edit || mode == EditablePageMode.readOnly) {
     if (joinedNoteFolder != null) {
-      ref.read(curNoteFolderProvider.notifier).setNewNoteFolder(joinedNoteFolder);
+      ref
+          .read(curNoteFolderStateProvider.notifier)
+          .setNewNoteFolder(joinedNoteFolder);
     }
   }
 
   await Navigator.pushNamed(context, noteFolderPageRoute,
-      arguments: {'mode': mode });
+      arguments: {'mode': mode});
 }
-

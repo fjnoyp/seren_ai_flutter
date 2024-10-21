@@ -1,6 +1,6 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:seren_ai_flutter/services/auth/auth_states.dart';
-import 'package:seren_ai_flutter/services/auth/cur_auth_user_provider.dart';
+import 'package:seren_ai_flutter/services/auth/cur_auth_state_provider.dart';
 import 'package:seren_ai_flutter/services/data/db_setup/db_provider.dart';
 import 'package:seren_ai_flutter/services/data/tasks/models/task_model.dart';
 
@@ -12,7 +12,7 @@ final curUserViewableTasksListenerProvider =
 class CurUserViewableTasksListenerNotifier extends Notifier<List<TaskModel>?> {
   @override
   List<TaskModel>? build() {
-    final curAuthUserState = ref.read(curAuthUserProvider);
+    final curAuthUserState = ref.read(curAuthStateProvider);
     final watchedCurAuthUser = switch (curAuthUserState) {
       LoggedInAuthState() => curAuthUserState.user,
       _ => null,
