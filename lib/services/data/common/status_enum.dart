@@ -1,0 +1,1 @@
+enum StatusEnum { cancelled, open, inProgress, finished, archived }

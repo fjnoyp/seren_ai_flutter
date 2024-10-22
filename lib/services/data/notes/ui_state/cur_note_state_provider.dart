@@ -1,4 +1,5 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:seren_ai_flutter/services/data/common/status_enum.dart';
 import 'package:seren_ai_flutter/services/data/notes/models/note_model.dart';
 import 'package:seren_ai_flutter/services/data/notes/notes_read_provider.dart';
 import 'package:seren_ai_flutter/services/data/notes/ui_state/cur_note_states.dart';
@@ -81,7 +82,7 @@ class CurNoteNotifier extends Notifier<CurNoteState> {
     }
   }
 
-  void updateStatus(String? status) {
+  void updateStatus(StatusEnum? status) {
     if (state is LoadedCurNoteState) {
       final loadedState = state as LoadedCurNoteState;
       state = LoadedCurNoteState(loadedState.note.copyWith(status: status));
@@ -142,7 +143,7 @@ final curNoteActionRequiredProvider = Provider<String?>((ref) {
   };
 });
 
-final curNoteStatusProvider = Provider<String?>((ref) {
+final curNoteStatusProvider = Provider<StatusEnum?>((ref) {
   final curNoteState = ref.watch(curNoteStateProvider);
   return switch (curNoteState) {
     LoadedCurNoteState() => curNoteState.note.status,
