@@ -1,10 +1,10 @@
 import 'package:json_annotation/json_annotation.dart';
 import 'package:seren_ai_flutter/services/data/common/i_has_id.dart';
+import 'package:seren_ai_flutter/services/data/common/status_enum.dart';
 import 'package:seren_ai_flutter/services/data/common/uuid.dart';
 
 part 'task_model.g.dart';
 
-enum StatusEnum { cancelled, open, inProgress, finished, archived }
 enum PriorityEnum { veryLow, low, normal, high, veryHigh }
 
 @JsonSerializable()
