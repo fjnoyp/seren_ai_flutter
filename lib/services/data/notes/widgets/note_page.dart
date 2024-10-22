@@ -8,6 +8,7 @@ import 'package:seren_ai_flutter/services/data/common/widgets/editablePageModeEn
 import 'package:seren_ai_flutter/services/data/common/widgets/form/base_text_block_edit_selection_field.dart';
 import 'package:seren_ai_flutter/services/data/notes/notes_read_provider.dart';
 import 'package:seren_ai_flutter/services/data/notes/ui_state/cur_note_state_provider.dart';
+import 'package:seren_ai_flutter/services/data/notes/ui_state/cur_note_states.dart';
 import 'package:seren_ai_flutter/services/data/notes/widgets/form/note_selection_fields.dart';
 
 final log = Logger('NotePage');
@@ -33,7 +34,14 @@ class NotePage extends HookConsumerWidget {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            NoteNameField(enabled: isEnabled),
+            isEnabled
+                ? NoteNameField(enabled: true)
+                : Text(
+                    (ref.watch(curNoteStateProvider) as LoadedCurNoteState)
+                        .note
+                        .name,
+                    style: Theme.of(context).textTheme.headlineMedium,
+                  ),
             const SizedBox(height: 8),
             const Divider(),
 
