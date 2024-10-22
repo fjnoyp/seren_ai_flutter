@@ -1,7 +1,6 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:seren_ai_flutter/services/data/db_setup/db_provider.dart';
 import 'package:seren_ai_flutter/services/data/notes/models/note_model.dart';
-import 'package:seren_ai_flutter/services/auth/cur_auth_state_provider.dart';
 
 // Family provider that listens to all notes for a given note folder id
 final notesListenerFamProvider =
@@ -15,9 +14,6 @@ class NotesListenerFamNotifier
     final noteFolderId = arg;
 
     final db = ref.read(dbProvider);
-    final curUser = ref.read(curAuthStateProvider);
-
-    if (curUser == null) return null;
 
     final query = '''
       SELECT * 
