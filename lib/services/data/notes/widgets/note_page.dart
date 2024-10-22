@@ -10,6 +10,7 @@ import 'package:seren_ai_flutter/services/data/notes/notes_read_provider.dart';
 import 'package:seren_ai_flutter/services/data/notes/ui_state/cur_note_state_provider.dart';
 import 'package:seren_ai_flutter/services/data/notes/ui_state/cur_note_states.dart';
 import 'package:seren_ai_flutter/services/data/notes/widgets/delete_note_button.dart';
+import 'package:seren_ai_flutter/services/data/notes/ui_state/cur_note_states.dart';
 import 'package:seren_ai_flutter/services/data/notes/widgets/form/note_selection_fields.dart';
 
 final log = Logger('NotePage');
@@ -48,7 +49,12 @@ class NotePage extends HookConsumerWidget {
                     alignment: Alignment.topRight,
                     child: DeleteNoteButton(noteId: curNoteState.note.id),
                   ),
-                NoteNameField(enabled: isEnabled),
+                isEnabled
+                    ? NoteNameField(enabled: true)
+                    : Text(
+                        curNoteState.note.name,
+                        style: Theme.of(context).textTheme.headlineMedium,
+                      ),
                 const SizedBox(height: 8),
                 const Divider(),
 
