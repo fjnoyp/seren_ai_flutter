@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:seren_ai_flutter/services/data/common/status_enum.dart';
 import 'package:seren_ai_flutter/services/data/tasks/models/task_model.dart';
 import 'package:seren_ai_flutter/services/data/tasks/widgets/ui_constants.dart';
 

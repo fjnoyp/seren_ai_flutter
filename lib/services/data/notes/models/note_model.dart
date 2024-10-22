@@ -1,5 +1,6 @@
 import 'package:json_annotation/json_annotation.dart';
 import 'package:seren_ai_flutter/services/data/common/i_has_id.dart';
+import 'package:seren_ai_flutter/services/data/common/status_enum.dart';
 import 'package:seren_ai_flutter/services/data/common/uuid.dart';
 
 part 'note_model.g.dart';
@@ -19,7 +20,7 @@ class NoteModel implements IHasId {
 
   @JsonKey(name: 'action_required')
   final String? actionRequired;
-  final String? status;
+  final StatusEnum? status;
   
   @JsonKey(name: 'parent_note_folder_id')
   final String? parentNoteFolderId;
@@ -63,7 +64,7 @@ class NoteModel implements IHasId {
     String? address,
     String? description,
     String? actionRequired,
-    String? status,
+    StatusEnum? status,
     String? parentNoteFolderId,
     DateTime? createdAt,
     DateTime? updatedAt,
