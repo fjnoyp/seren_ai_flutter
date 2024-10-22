@@ -48,7 +48,7 @@ class ShiftsPage extends HookConsumerWidget {
           focusedDay: focusedDay.value,
           selectedDayPredicate: (day) => isSameDay(selectedDay.value, day),
           calendarFormat: CalendarFormat.week,
-          availableCalendarFormats: {
+          availableCalendarFormats: const {
             CalendarFormat.week: 'Week',
           },
           startingDayOfWeek: StartingDayOfWeek.monday,
@@ -91,19 +91,18 @@ class ShiftsPage extends HookConsumerWidget {
           ),
         ),
         Expanded(
-          child: DayShiftsWidget(day: selectedDay.value, shift: selectedShift),
+          child: _DayShiftsWidget(day: selectedDay.value, shift: selectedShift),
         ),
       ],
     );
   }
 }
 
-class DayShiftsWidget extends HookConsumerWidget {
+class _DayShiftsWidget extends HookConsumerWidget {
   final DateTime day;
   final JoinedShiftModel shift;
 
-  const DayShiftsWidget({Key? key, required this.shift, required this.day})
-      : super(key: key);
+  const _DayShiftsWidget({required this.shift, required this.day});
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -114,7 +113,7 @@ class DayShiftsWidget extends HookConsumerWidget {
     final shiftId = shift.shift.id;
 
     return Stack(
-      alignment: Alignment.bottomCenter,
+      alignment: Alignment.topCenter,
       children: [
         SingleChildScrollView(
           child: Column(
@@ -150,7 +149,7 @@ class DayShiftsWidget extends HookConsumerWidget {
                             children: [
                               const Icon(Icons.punch_clock_outlined),
                               const SizedBox(width: 10),
-                              _buildShiftTimeRangesList(shift.shift.id, day),
+                              _ShiftTimeRangesList(shift.shift.id, day),
                             ],
                           ),
                         ),
@@ -187,7 +186,8 @@ class DayShiftsWidget extends HookConsumerWidget {
             ],
           ),
         ),
-        ClockInClockOut(shiftId: shiftId, day: day),
+        Positioned(
+            bottom: 36.0, child: _ClockInClockOut(shiftId: shiftId, day: day)),
       ],
     );
   }
@@ -226,36 +226,38 @@ class _ShiftLogs extends ConsumerWidget {
   }
 }
 
-// TODO: don't use functions to build widgets
-Widget _buildShiftTimeRangesList(String shiftId, DateTime day) {
-  return Consumer(
-    builder: (context, ref, child) {
-      final shiftTimeRanges = ref.watch(
-          curUserActiveShiftRangesFamProvider((shiftId: shiftId, day: day)));
-
-      if (shiftTimeRanges.isEmpty) {
-        return Text('No shifts!');
-      }
-
-      return Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: shiftTimeRanges.map((timeframe) {
-          return Text(
-            '${listDateFormat.format(timeframe.start.toLocal())} - ${listDateFormat.format(timeframe.end.toLocal())} - ${timeframe.duration.formatDuration()}',
-            style: TextStyle(fontWeight: FontWeight.bold),
-          );
-        }).toList(),
-      );
-    },
-  );
-}
-
-class ClockInClockOut extends HookConsumerWidget {
+class _ShiftTimeRangesList extends ConsumerWidget {
   final String shiftId;
   final DateTime day;
 
-  const ClockInClockOut({Key? key, required this.shiftId, required this.day})
-      : super(key: key);
+  const _ShiftTimeRangesList(this.shiftId, this.day);
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final shiftTimeRanges = ref.watch(
+        curUserActiveShiftRangesFamProvider((shiftId: shiftId, day: day)));
+
+    if (shiftTimeRanges.isEmpty) {
+      return const Text('No shifts!');
+    }
+
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: shiftTimeRanges.map((timeframe) {
+        return Text(
+          '${listDateFormat.format(timeframe.start.toLocal())} - ${listDateFormat.format(timeframe.end.toLocal())} - ${timeframe.duration.formatDuration()}',
+          style: const TextStyle(fontWeight: FontWeight.bold),
+        );
+      }).toList(),
+    );
+  }
+}
+
+class _ClockInClockOut extends HookConsumerWidget {
+  final String shiftId;
+  final DateTime day;
+
+  const _ClockInClockOut({required this.shiftId, required this.day});
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -274,7 +276,7 @@ class ClockInClockOut extends HookConsumerWidget {
       // Start timer if curLog is not null and clocked in
       useEffect(() {
         if (curLog != null && curLog.clockOutDatetime == null) {
-          timer ??= Timer.periodic(Duration(seconds: 1), (_) {
+          timer ??= Timer.periodic(const Duration(seconds: 1), (_) {
             elapsedTime.value =
                 DateTime.now().toUtc().difference(curLog.clockInDatetime);
           });
@@ -286,17 +288,17 @@ class ClockInClockOut extends HookConsumerWidget {
       }, [curLog]);
 
       if (curLog == null) {
-        return ElevatedButton(
+        return OutlinedButton(
           onPressed: () => notifier.clockIn(),
-          child: Text('Clock In'),
+          child: const Text('Clock In'),
         );
       } else if (curLog.clockOutDatetime == null) {
         return Column(
           mainAxisSize: MainAxisSize.min,
           children: [
-            ElevatedButton(
+            OutlinedButton(
               onPressed: () => notifier.clockOut(),
-              child: Text('Clock Out'),
+              child: const Text('Clock Out'),
             ),
             Text(
                 'Elapsed Time: ${elapsedTime.value.inHours}:${(elapsedTime.value.inMinutes % 60).toString().padLeft(2, '0')}:${(elapsedTime.value.inSeconds % 60).toString().padLeft(2, '0')}'),
@@ -304,9 +306,9 @@ class ClockInClockOut extends HookConsumerWidget {
         );
       } else {
         timer?.cancel(); // Cancel timer when shift is completed
-        return Text('Shift completed');
+        return const Text('Shift completed');
       }
     }
-    return SizedBox.shrink(); // Return an empty widget if not the same day
+    return const SizedBox.shrink(); // Return an empty widget if not the same day
   }
 }
