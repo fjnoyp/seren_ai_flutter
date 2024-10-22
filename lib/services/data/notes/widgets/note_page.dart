@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
+import 'package:intl/intl.dart';
 import 'package:logging/logging.dart';
 import 'package:seren_ai_flutter/constants.dart';
 import 'package:seren_ai_flutter/services/auth/auth_states.dart';
@@ -10,7 +11,6 @@ import 'package:seren_ai_flutter/services/data/notes/notes_read_provider.dart';
 import 'package:seren_ai_flutter/services/data/notes/ui_state/cur_note_state_provider.dart';
 import 'package:seren_ai_flutter/services/data/notes/ui_state/cur_note_states.dart';
 import 'package:seren_ai_flutter/services/data/notes/widgets/delete_note_button.dart';
-import 'package:seren_ai_flutter/services/data/notes/ui_state/cur_note_states.dart';
 import 'package:seren_ai_flutter/services/data/notes/widgets/form/note_selection_fields.dart';
 
 final log = Logger('NotePage');
@@ -56,6 +56,10 @@ class NotePage extends HookConsumerWidget {
                         style: Theme.of(context).textTheme.headlineMedium,
                       ),
                 const SizedBox(height: 8),
+                // TODO: change together with localizations
+                if (!isEnabled)
+                  Text(
+                      DateFormat.yMd().format(ref.watch(curNoteDateProvider)!)),
                 const Divider(),
 
                 // ======================
@@ -65,8 +69,6 @@ class NotePage extends HookConsumerWidget {
                   padding: const EdgeInsets.only(left: 15),
                   child: Column(
                     children: [
-                      NoteDueDateSelectionField(enabled: isEnabled),
-                      const Divider(),
                       NoteDescriptionSelectionField(enabled: isEnabled),
                       const Divider(),
                       BaseTextBlockEditSelectionField(
@@ -108,8 +110,14 @@ class NotePage extends HookConsumerWidget {
                             .isValidNote();
 
                         if (isValidNote) {
+                          if (mode == EditablePageMode.create) {
+                            ref
+                                .read(curNoteStateProvider.notifier)
+                                .updateDate(DateTime.now());
+                          }
                           ref.read(curNoteStateProvider.notifier).saveNote();
 
+                          // TODO: handle error cases
                           if (context.mounted) {
                             Navigator.pop(context);
                           }

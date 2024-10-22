@@ -1,4 +1,3 @@
-import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:seren_ai_flutter/services/data/notes/models/note_model.dart';
 import 'package:seren_ai_flutter/services/data/notes/notes_read_provider.dart';
@@ -43,42 +42,6 @@ class CurNoteNotifier extends Notifier<CurNoteState> {
     }
   }
 
-  // We must showDatePicker and update in same method
-  // As the original ref is invalidated after showDatePicker returns
-  Future<void> pickAndUpdateDate(BuildContext context) async {
-    if (state is LoadedCurNoteState) {
-      final loadedState = state as LoadedCurNoteState;
-      final DateTime now = DateTime.now();
-      final DateTime initialDate = loadedState.note.date?.toLocal() ?? now;
-
-      final DateTime? pickedDate = await showDatePicker(
-        context: context,
-        initialDate: initialDate,
-        firstDate: DateTime(2000),
-        lastDate: DateTime(2100),
-      );
-
-      if (pickedDate != null) {
-        final TimeOfDay? pickedTime = await showTimePicker(
-          context: context,
-          initialTime: TimeOfDay.fromDateTime(initialDate),
-        );
-
-        if (pickedTime != null) {
-          final DateTime pickedDateTime = DateTime(
-            pickedDate.year,
-            pickedDate.month,
-            pickedDate.day,
-            pickedTime.hour,
-            pickedTime.minute,
-          ).toUtc();
-
-          updateDate(pickedDateTime);
-        }
-      }
-    }
-  }
-
   void updateNoteName(String name) {
     if (state is LoadedCurNoteState) {
       final loadedState = state as LoadedCurNoteState;
@@ -86,7 +49,9 @@ class CurNoteNotifier extends Notifier<CurNoteState> {
     }
   }
 
-  void updateDate(DateTime? date) {
+  // TODO: we shouldn't be able to freely update date
+  // refactor to set date only when creating new note
+  void updateDate(DateTime date) {
     if (state is LoadedCurNoteState) {
       final loadedState = state as LoadedCurNoteState;
       state = LoadedCurNoteState(loadedState.note.copyWith(date: date));
