@@ -1,0 +1,51 @@
+name: Android Release
+
+on:
+  push:
+    branches:
+      - main  # Only run when changes are pushed to main
+
+env:
+  FLUTTER_BUILD_MODE: release
+  FLUTTER_VERSION_NAME: 1.0.0
+  FLUTTER_VERSION_CODE: 11
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+
+    - name: Set up Java
+      uses: actions/setup-java@v3
+      with:
+        distribution: 'temurin'
+        java-version: '11'  # Changed to match your local Java version
+
+    - name: Set up Flutter
+      uses: subosito/flutter-action@v2
+      with:
+        flutter-version: "3.24.3"  # Changed to match your local version
+        channel: 'stable'
+
+    - name: Create local.properties
+      run: |
+        echo "flutter.buildMode=$FLUTTER_BUILD_MODE" >> android/local.properties
+        echo "flutter.versionName=$FLUTTER_VERSION_NAME" >> android/local.properties
+        echo "flutter.versionCode=$FLUTTER_VERSION_CODE" >> android/local.properties
+
+    - name: Install dependencies
+      run: flutter pub get
+
+    - name: Update
+      run: |
+        sed -i 's/id "org.jetbrains.kotlin.android" version ".*"/id "org.jetbrains.kotlin.android" version "1.9.22"/' android/settings.gradle
+        sed -i '/buildscript {/,/}/c\buildscript {\n    ext.kotlin_version = "1.9.22"\n    repositories {\n        google()\n        mavenCentral()\n    }\n    dependencies {\n        classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlin_version"\n    }\n}' android/build.gradle
+
+    - name: Print android/settings.gradle contents
+      run: cat android/settings.gradle
+
+    - name: Build APK
+      run: flutter build apk --release
