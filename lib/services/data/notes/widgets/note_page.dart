@@ -62,41 +62,36 @@ class NotePage extends HookConsumerWidget {
                       DateFormat.yMd().format(ref.watch(curNoteDateProvider)!)),
                 const Divider(),
 
-                // ======================
-                // ====== SUBITEMS ======
-                // ======================
-                Padding(
-                  padding: const EdgeInsets.only(left: 15),
-                  child: Column(
-                    children: [
-                      NoteDescriptionSelectionField(enabled: isEnabled),
-                      const Divider(),
-                      BaseTextBlockEditSelectionField(
-                        enabled: isEnabled,
-                        descriptionProvider: curNoteAddressProvider,
-                        updateDescription: (ref, address) => ref
-                            .read(curNoteStateProvider.notifier)
-                            .updateAddress(address),
-                      ),
-                      const Divider(),
-                      BaseTextBlockEditSelectionField(
-                        enabled: isEnabled,
-                        descriptionProvider: curNoteActionRequiredProvider,
-                        updateDescription: (ref, actionRequired) => ref
-                            .read(curNoteStateProvider.notifier)
-                            .updateActionRequired(actionRequired),
-                      ),
-                      const Divider(),
-                      BaseTextBlockEditSelectionField(
-                        enabled: isEnabled,
-                        descriptionProvider: curNoteStatusProvider,
-                        updateDescription: (ref, status) => ref
-                            .read(curNoteStateProvider.notifier)
-                            .updateStatus(status),
-                      ),
-                    ],
+            // ======================
+            // ====== SUBITEMS ======
+            // ======================
+            Padding(
+              padding: const EdgeInsets.only(left: 15),
+              child: Column(
+                children: [
+                  const Divider(),
+                  NoteDescriptionSelectionField(enabled: isEnabled),
+                  const Divider(),
+                  BaseTextBlockEditSelectionField(
+                    enabled: isEnabled,
+                    descriptionProvider: curNoteAddressProvider,
+                    updateDescription: (ref, address) => ref
+                        .read(curNoteStateProvider.notifier)
+                        .updateAddress(address),
                   ),
-                ),
+                  const Divider(),
+                  BaseTextBlockEditSelectionField(
+                    enabled: isEnabled,
+                    descriptionProvider: curNoteActionRequiredProvider,
+                    updateDescription: (ref, actionRequired) => ref
+                        .read(curNoteStateProvider.notifier)
+                        .updateActionRequired(actionRequired),
+                  ),
+                  const Divider(),
+                  NoteStatusSelectionField(enabled: isEnabled),
+                ],
+              ),
+            ),
 
                 const SizedBox(height: 24),
 

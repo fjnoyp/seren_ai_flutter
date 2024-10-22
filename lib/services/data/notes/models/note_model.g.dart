@@ -15,7 +15,7 @@ NoteModel _$NoteModelFromJson(Map<String, dynamic> json) => NoteModel(
       address: json['address'] as String?,
       description: json['description'] as String?,
       actionRequired: json['action_required'] as String?,
-      status: json['status'] as String?,
+      status: $enumDecodeNullable(_$StatusEnumEnumMap, json['status']),
       parentNoteFolderId: json['parent_note_folder_id'] as String?,
       createdAt: json['created_at'] == null
           ? null
@@ -33,8 +33,16 @@ Map<String, dynamic> _$NoteModelToJson(NoteModel instance) => <String, dynamic>{
       'address': instance.address,
       'description': instance.description,
       'action_required': instance.actionRequired,
-      'status': instance.status,
+      'status': _$StatusEnumEnumMap[instance.status],
       'parent_note_folder_id': instance.parentNoteFolderId,
       'created_at': instance.createdAt?.toIso8601String(),
       'updated_at': instance.updatedAt?.toIso8601String(),
     };
+
+const _$StatusEnumEnumMap = {
+  StatusEnum.cancelled: 'cancelled',
+  StatusEnum.open: 'open',
+  StatusEnum.inProgress: 'inProgress',
+  StatusEnum.finished: 'finished',
+  StatusEnum.archived: 'archived',
+};
