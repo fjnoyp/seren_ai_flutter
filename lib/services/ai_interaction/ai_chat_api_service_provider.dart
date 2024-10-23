@@ -4,8 +4,8 @@ import 'package:seren_ai_flutter/services/auth/cur_auth_state_provider.dart';
 import 'package:seren_ai_flutter/services/data/ai_chats/models/ai_chat_message_model.dart';
 import 'package:seren_ai_flutter/services/data/common/status_enum.dart';
 import 'package:seren_ai_flutter/services/data/orgs/cur_org/cur_org_id_provider.dart';
+import 'package:seren_ai_flutter/services/text_to_speech/text_to_speech_notifier.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
-
 
 import 'package:flutter/material.dart';
 import 'package:seren_ai_flutter/services/data/projects/models/project_model.dart';
@@ -20,18 +20,16 @@ final isAiRespondingProvider = StateProvider<bool>((ref) => false);
 
 final isAiEditingProvider = StateProvider<bool>((ref) => false);
 
-final aiChatApiServiceProvider =
-    Provider<AIChatApiService>(AIChatApiService.new);
+final aiChatServiceProvider =
+    Provider<AIChatService>(AIChatService.new);
 
-class AIChatApiService {
+class AIChatService {
   final Ref ref;
 
-  AIChatApiService(this.ref);
+  AIChatService(this.ref);
 
   Future<List<AiChatMessageModel>> sendMessage(String message) async {
-
     ref.read(isAiRespondingProvider.notifier).state = true;
-
 
     final curOrgId = ref.read(curOrgIdProvider);
     final curAuthUserState = ref.read(curAuthStateProvider);
@@ -48,16 +46,27 @@ class AIChatApiService {
 
     try {
       final aiChatMessages = await _sendMessage(
-        message: message, userId: curUser.id, orgId: curOrgId);
+          message: message, userId: curUser.id, orgId: curOrgId);
+
+      // Speak the result
+      await speakAiMessage(aiChatMessages);
+
       return aiChatMessages;
     } catch (e) {
       ref.read(isAiRespondingProvider.notifier).state = false;
       rethrow;
-    }
-    finally {
+    } finally {
       ref.read(isAiRespondingProvider.notifier).state = false;
     }
+  }
 
+  Future<void> speakAiMessage(List<AiChatMessageModel> result) async {
+    // TODO: consolidate duplicated code from stt_orchestrator_provider.dart
+    final aiMessage = result.firstWhere((element) =>
+        element.type == AiChatMessageType.ai && element.content.isNotEmpty);
+
+    final textToSpeech = ref.read(textToSpeechServiceProvider);
+    await textToSpeech.speak(aiMessage.content);
   }
 
   Future<List<AiChatMessageModel>> _sendMessage(
@@ -81,7 +90,6 @@ class AIChatApiService {
       throw Exception('Unexpected response format: ${response.data}');
     }
   }
-
 
   Future<void> testAiCreateTask(BuildContext context) async {
     // TEST calling Supabase Edge Function

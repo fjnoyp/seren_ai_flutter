@@ -24,7 +24,7 @@ class AIChatsPage extends HookConsumerWidget {
               onPressed: () {
                 final message = messageController.text;
                 if (message.isNotEmpty) {
-                  ref.read(aiChatApiServiceProvider).sendMessage(message);
+                  ref.read(aiChatServiceProvider).sendMessage(message);
                   messageController.clear();
                 }
               },
