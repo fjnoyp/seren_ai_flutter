@@ -1,7 +1,5 @@
 // constants for all routes
 
-import 'package:intl/intl.dart';
-
 const String signInUpRoute = '/signInUp';
 const String chooseOrgRoute = '/chooseOrg';
 //const String chooseTeamRoute = '/chooseTeam';
@@ -20,8 +18,7 @@ const String aiChatsRoute = '/aiChats';
 
 const String shiftsRoute = '/shifts';
 
-const String noteFoldersListRoute = '/noteFoldersList';
-const String noteFolderNotesListRoute = '/noteFolderNotesList';
+const String noteListRoute = '/noteList';
 const String notePageRoute = '/notePage';
 const String noteFolderPageRoute = '/noteFolderPage';
 

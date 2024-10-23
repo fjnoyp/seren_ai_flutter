@@ -1,6 +1,5 @@
 import 'package:powersync/powersync.dart';
 
-
 const usersTable = 'users';
 const orgsTable = 'orgs';
 const teamsTable = 'teams';
@@ -10,8 +9,8 @@ const userTeamRolesTable = 'user_team_roles';
 const userProjectRolesTable = 'user_project_roles';
 
 // TODO p5: generate from model classes ...
-// Generate Schema classes that create the Table schemas 
-// And provide field getters for constructing queries 
+// Generate Schema classes that create the Table schemas
+// And provide field getters for constructing queries
 
 const permissionSchemas = [
   Table(usersTable, [
@@ -160,7 +159,6 @@ const shiftSchemas = [
   ]),
 ];
 
-
 const notesTable = 'notes';
 const noteFoldersTable = 'note_folders';
 
@@ -174,15 +172,7 @@ const noteSchemas = [
     Column.text('description'),
     Column.text('action_required'),
     Column.text('status'),
-    Column.text('parent_note_folder_id'),
-  ]),
-  Table(noteFoldersTable, [
-    Column.text('id'),
-    Column.text('name'),
-    Column.text('description'),
-    Column.text('parent_team_id'),
     Column.text('parent_project_id'),
-    Column.integer('estimated_duration_minutes'),
   ]),
 ];
 
