@@ -1,7 +1,4 @@
-/// For seeing the users's chat threads
-
 import 'package:flutter/material.dart';
-import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:seren_ai_flutter/services/ai_interaction/ai_chat_api_service_provider.dart';
@@ -16,47 +13,51 @@ class AIChatsPage extends HookConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final messageController = useTextEditingController();
 
-    return CustomScrollView(
-      slivers: [
-        SliverToBoxAdapter(
-          child: Column(
-            children: [
-              TextField(
-                controller: messageController,
-                decoration: InputDecoration(
-                  labelText: 'Ask a question',
-                  suffixIcon: IconButton(
-                    icon: Icon(Icons.send),
-                    onPressed: () {
-                      final message = messageController.text;
-                      if (message.isNotEmpty) {
-                        ref.read(aiChatApiServiceProvider).sendMessage(message);
-                        messageController.clear();
-                      }
-                    },
-                  ),
-                ),
-              ),
-              _buildChatThreadDisplay(ref),
-            ],
+    return ListView(
+      children: [
+        TextField(
+          controller: messageController,
+          decoration: InputDecoration(
+            labelText: 'Ask a question',
+            suffixIcon: IconButton(
+              icon: const Icon(Icons.send),
+              onPressed: () {
+                final message = messageController.text;
+                if (message.isNotEmpty) {
+                  ref.read(aiChatApiServiceProvider).sendMessage(message);
+                  messageController.clear();
+                }
+              },
+            ),
           ),
         ),
-        _buildChatMessagesDisplay(ref),
-        const SliverToBoxAdapter(
-          child: SizedBox(height: 200),
-        ),
+        const ChatThreadDisplay(),
+        const ChatMessagesDisplay(),
+        const SizedBox(height: 200),
       ],
     );
   }
+}
 
-  Widget _buildChatThreadDisplay(WidgetRef ref) {
+class ChatThreadDisplay extends ConsumerWidget {
+  const ChatThreadDisplay({Key? key}) : super(key: key);
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
     final chatThread = ref.watch(curUserAiChatThreadListenerProvider);
     return chatThread == null
         ? const Text('No chat thread available')
-        : _buildChatThreadCard(chatThread);
+        : ChatThreadCard(thread: chatThread);
   }
+}
 
-  Widget _buildChatThreadCard(AiChatThreadModel thread) {
+class ChatThreadCard extends StatelessWidget {
+  final AiChatThreadModel thread;
+
+  const ChatThreadCard({Key? key, required this.thread}) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
     return Card(
       child: ListTile(
         title: SelectableText('Chat Thread ID: ${thread.id}'),
@@ -70,23 +71,26 @@ class AIChatsPage extends HookConsumerWidget {
       ),
     );
   }
+}
 
-  Widget _buildChatMessagesDisplay(WidgetRef ref) {
+class ChatMessagesDisplay extends ConsumerWidget {
+  const ChatMessagesDisplay({Key? key}) : super(key: key);
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
     final chatMessages = ref.watch(curUserChatMessagesListenerProvider);
     return chatMessages == null
-        ? const SliverToBoxAdapter(child: Text('No messages available'))
-        : SliverList(
-            delegate: SliverChildBuilderDelegate(
-              (context, index) => _buildMessageCard(chatMessages[index]),
-              childCount: chatMessages.length,
-            ),
+        ? const Text('No messages available')
+        : ListView.builder(
+            shrinkWrap: true,
+            physics: const NeverScrollableScrollPhysics(),
+            itemCount: chatMessages.length,
+            itemBuilder: (context, index) =>
+                MessageCard(message: chatMessages[index]),
           );
   }
-
-  Widget _buildMessageCard(AiChatMessageModel message) {
-    return MessageCard(message: message);
-  }
 }
+
 class MessageCard extends HookWidget {
   final AiChatMessageModel message;
 

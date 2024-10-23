@@ -42,15 +42,22 @@ class AIChatApiService {
     };
 
     if (curUser == null || curOrgId == null) {
+      ref.read(isAiRespondingProvider.notifier).state = false;
       throw Exception('No current user or org id found');
     }
 
-    final aiChatMessages = await _sendMessage(
+    try {
+      final aiChatMessages = await _sendMessage(
         message: message, userId: curUser.id, orgId: curOrgId);
+      return aiChatMessages;
+    } catch (e) {
+      ref.read(isAiRespondingProvider.notifier).state = false;
+      rethrow;
+    }
+    finally {
+      ref.read(isAiRespondingProvider.notifier).state = false;
+    }
 
-    ref.read(isAiRespondingProvider.notifier).state = false;
-
-    return aiChatMessages;
   }
 
   Future<List<AiChatMessageModel>> _sendMessage(
