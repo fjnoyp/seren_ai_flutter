@@ -6,7 +6,7 @@ import 'package:seren_ai_flutter/services/data/common/widgets/form/selection_fie
 class BaseTextBlockEditSelectionField extends ConsumerWidget {
   final bool enabled;
   final ProviderListenable<String?> descriptionProvider;
-  final Function(WidgetRef, String) updateDescription;
+  final Function(WidgetRef, String?) updateDescription;
 
   const BaseTextBlockEditSelectionField({
     super.key,

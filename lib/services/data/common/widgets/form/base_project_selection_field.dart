@@ -8,6 +8,7 @@ class BaseProjectSelectionField extends ConsumerWidget {
   final ProviderListenable<ProjectModel?> projectProvider;
   final ProviderListenable<List<ProjectModel>?> selectableProjectsProvider;
   final Function(WidgetRef, ProjectModel?) updateProject;
+  final bool isProjectRequired;
 
   const BaseProjectSelectionField({
     super.key,
@@ -15,11 +16,12 @@ class BaseProjectSelectionField extends ConsumerWidget {
     required this.projectProvider,
     required this.selectableProjectsProvider,
     required this.updateProject,
+    this.isProjectRequired = true,
   });
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final curTaskProject = ref.watch(projectProvider);
+    final curItemProject = ref.watch(projectProvider);
     final selectableProjects = ref.watch(selectableProjectsProvider);
 
     return AnimatedModalSelectionField<ProjectModel>(
@@ -27,14 +29,19 @@ class BaseProjectSelectionField extends ConsumerWidget {
         width: 60,
         child: Text('Project', style: TextStyle(fontWeight: FontWeight.bold)),
       ),
-      validator: (project) => project == null ? 'Project is required' : null,
-      valueToString: (project) => project?.name ?? 'Select a Project',
+      validator: isProjectRequired
+          ? (project) => project == null ? 'Project is required' : null
+          : (_) => null,
+      valueToString: (project) =>
+          project?.name ??
+          (isProjectRequired ? 'Select a Project' : 'Personal'),
       enabled: enabled,
-      value: curTaskProject,
+      value: curItemProject,
       options: selectableProjects ?? [],
       onValueChanged: (ref, project) {
         updateProject(ref, project);
       },
+      isValueRequired: isProjectRequired,
     );
   }
 }
