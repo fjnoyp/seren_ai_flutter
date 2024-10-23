@@ -1,9 +1,11 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:seren_ai_flutter/services/ai_interaction/ai_chat_api_service_provider.dart';
+import 'package:seren_ai_flutter/services/data/ai_chats/models/ai_chat_message_model.dart';
 
 import 'package:seren_ai_flutter/services/speech_to_text/speech_to_text_listen_state_provider.dart';
 import 'package:seren_ai_flutter/services/speech_to_text/speech_to_text_service_provider.dart';
 import 'package:seren_ai_flutter/services/speech_to_text/speech_to_text_status_provider.dart';
+import 'package:seren_ai_flutter/services/text_to_speech/text_to_speech_notifier.dart';
 
 final sttOrchestratorProvider = Provider((ref) {
   // Listen to the speech-to-text provider
@@ -38,7 +40,8 @@ final sttOrchestratorProvider = Provider((ref) {
 
       print('received speech text: ${speechText.text}');
 
-      await ref.read(aiChatApiServiceProvider).sendMessage(speechText.text);
+      await ref.read(aiChatServiceProvider).sendMessage(speechText.text);
+
 
       // Enact AI action 
       /*
