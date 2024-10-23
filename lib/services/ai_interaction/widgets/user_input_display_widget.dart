@@ -5,6 +5,7 @@ import 'package:seren_ai_flutter/services/data/ai_chats/last_ai_message_listener
 import 'package:seren_ai_flutter/services/data/ai_chats/models/ai_chat_message_model.dart';
 import 'package:seren_ai_flutter/services/speech_to_text/widgets/speech_state_control_button_widget.dart';
 import 'package:seren_ai_flutter/services/speech_to_text/widgets/speech_transcribed_widget.dart';
+import 'package:seren_ai_flutter/services/text_to_speech/text_to_speech_notifier.dart';
 
 final textFieldVisibilityProvider = StateProvider<bool>((ref) => false);
 
@@ -141,14 +142,15 @@ class UserInputTextDisplayWidget extends ConsumerWidget {
               children: [
                 IconButton(
                   icon: Icon(Icons.check_box_outlined, size: 20),
-                  onPressed: () {
+                  onPressed: () async {
 
                     ref.read(textFieldVisibilityProvider.notifier).state =
                         false;
-                    ref
-                        .read(aiChatApiServiceProvider)
+
+                    await ref
+                        .read(aiChatServiceProvider)
                         .sendMessage(textEditingController.text);
-                    
+
                     textEditingController.clear();
                   },
                   color: theme.colorScheme.primary,
