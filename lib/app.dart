@@ -5,8 +5,7 @@ import 'package:logging/logging.dart';
 import 'package:seren_ai_flutter/constants.dart';
 import 'package:seren_ai_flutter/services/auth/widgets/auth_guard.dart';
 import 'package:seren_ai_flutter/services/auth/widgets/sign_in_up_page.dart';
-import 'package:seren_ai_flutter/services/data/ai_chats/widgets/ai_chat_thread_messages_page.dart';
-import 'package:seren_ai_flutter/services/data/ai_chats/widgets/ai_chat_threads_page.dart';
+import 'package:seren_ai_flutter/services/data/ai_chats/widgets/ai_chats_page.dart';
 import 'package:seren_ai_flutter/services/data/common/widgets/editablePageModeEnum.dart';
 import 'package:seren_ai_flutter/services/data/notes/widgets/note_folder_notes_list_page.dart';
 import 'package:seren_ai_flutter/services/data/notes/widgets/note_folder_page.dart';
@@ -85,12 +84,7 @@ class AppState extends State<App> {
               return _GuardScaffold(title, TaskPage(mode: mode));
             },
 
-            aiChatThreadsRoute: (context) => const _GuardScaffold('AI Chat Threads', AiChatThreadsPage()),
-            aiChatThreadMessagesRoute: (context) {
-              final args = ModalRoute.of(context)!.settings.arguments as Map<String, dynamic>;
-              final threadId = args['threadId'] as String;
-              return _GuardScaffold('AI Chat Messages', AiChatThreadMessagesPage(threadId: threadId));
-            },
+            aiChatsRoute: (context) => const _GuardScaffold('AI Chat Page', AIChatsPage()),
 
             shiftsRoute: (context) => const _GuardScaffold('Shifts', ShiftsPage()),
 

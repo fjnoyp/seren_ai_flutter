@@ -16,8 +16,7 @@ const String tasksRoute = '/tasks';
 //const String viewTaskRoute = '/viewTask';
 const String taskPageRoute = '/taskPage';
 
-const String aiChatThreadsRoute = '/aiChatThreads';
-const String aiChatThreadMessagesRoute = '/aiChatThreadMessages';
+const String aiChatsRoute = '/aiChats';
 
 const String shiftsRoute = '/shifts';
 
