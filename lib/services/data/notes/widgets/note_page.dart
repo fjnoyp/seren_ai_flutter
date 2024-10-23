@@ -47,12 +47,12 @@ class NotePage extends HookConsumerWidget {
                   // TODO: move to app bar
                   Align(
                     alignment: Alignment.topRight,
-                    child: DeleteNoteButton(noteId: curNoteState.note.id),
+                    child: DeleteNoteButton(noteId: curNoteState.note.note.id),
                   ),
                 isEnabled
                     ? NoteNameField(enabled: true)
                     : Text(
-                        curNoteState.note.name,
+                        curNoteState.note.note.name,
                         style: Theme.of(context).textTheme.headlineMedium,
                       ),
                 const SizedBox(height: 8),
@@ -62,36 +62,37 @@ class NotePage extends HookConsumerWidget {
                       DateFormat.yMd().format(ref.watch(curNoteDateProvider)!)),
                 const Divider(),
 
-            // ======================
-            // ====== SUBITEMS ======
-            // ======================
-            Padding(
-              padding: const EdgeInsets.only(left: 15),
-              child: Column(
-                children: [
-                  const Divider(),
-                  NoteDescriptionSelectionField(enabled: isEnabled),
-                  const Divider(),
-                  BaseTextBlockEditSelectionField(
-                    enabled: isEnabled,
-                    descriptionProvider: curNoteAddressProvider,
-                    updateDescription: (ref, address) => ref
-                        .read(curNoteStateProvider.notifier)
-                        .updateAddress(address),
+                // ======================
+                // ====== SUBITEMS ======
+                // ======================
+                Padding(
+                  padding: const EdgeInsets.only(left: 15),
+                  child: Column(
+                    children: [
+                      NoteProjectSelectionField(enabled: isEnabled),
+                      const Divider(),
+                      NoteDescriptionSelectionField(enabled: isEnabled),
+                      const Divider(),
+                      BaseTextBlockEditSelectionField(
+                        enabled: isEnabled,
+                        descriptionProvider: curNoteAddressProvider,
+                        updateDescription: (ref, address) => ref
+                            .read(curNoteStateProvider.notifier)
+                            .updateAddress(address),
+                      ),
+                      const Divider(),
+                      BaseTextBlockEditSelectionField(
+                        enabled: isEnabled,
+                        descriptionProvider: curNoteActionRequiredProvider,
+                        updateDescription: (ref, actionRequired) => ref
+                            .read(curNoteStateProvider.notifier)
+                            .updateActionRequired(actionRequired),
+                      ),
+                      const Divider(),
+                      NoteStatusSelectionField(enabled: isEnabled),
+                    ],
                   ),
-                  const Divider(),
-                  BaseTextBlockEditSelectionField(
-                    enabled: isEnabled,
-                    descriptionProvider: curNoteActionRequiredProvider,
-                    updateDescription: (ref, actionRequired) => ref
-                        .read(curNoteStateProvider.notifier)
-                        .updateActionRequired(actionRequired),
-                  ),
-                  const Divider(),
-                  NoteStatusSelectionField(enabled: isEnabled),
-                ],
-              ),
-            ),
+                ),
 
                 const SizedBox(height: 24),
 
@@ -146,7 +147,7 @@ class NotePage extends HookConsumerWidget {
 // TODO p2: init state within the page itself ... we should only rely on arguments to init the page (to support deep linking)
 Future<void> openNotePage(BuildContext context, WidgetRef ref,
     {required EditablePageMode mode,
-    String? parentNoteFolderId,
+    String? parentProjectId,
     String? noteId}) async {
   Navigator.popUntil(context, (route) => route.settings.name != notePageRoute);
 
@@ -160,15 +161,13 @@ Future<void> openNotePage(BuildContext context, WidgetRef ref,
       throw Exception('Error: Current user is not authenticated.');
     }
 
-    if (parentNoteFolderId == null) {
-      throw ArgumentError(
-          'Error: Parent note folder id is required for creating a note.');
-    }
+    // TODO: verify if isn't better to use the current project id than the default one in this case
+    // if (parentProjectId == null) {
+    //   throw ArgumentError(
+    //       'Error: Parent note folder id is required for creating a note.');
+    // }
 
-    // TODO p3: maybe you can select the parent folder instead in a note
-    ref
-        .read(curNoteStateProvider.notifier)
-        .setToNewNote(authUser, parentNoteFolderId);
+    ref.read(curNoteStateProvider.notifier).setToNewNote();
   } else if (mode == EditablePageMode.edit ||
       mode == EditablePageMode.readOnly) {
     if (noteId != null) {

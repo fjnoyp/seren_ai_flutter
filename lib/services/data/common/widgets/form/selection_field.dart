@@ -12,6 +12,7 @@ class AnimatedModalSelectionField<T> extends HookConsumerWidget {
     required this.value,
     required this.options,
     this.onValueChanged,
+    this.isValueRequired = true,
   });
 
   final Widget labelWidget;
@@ -21,6 +22,7 @@ class AnimatedModalSelectionField<T> extends HookConsumerWidget {
   final T? value;
   final List<T> options;
   final void Function(WidgetRef, T?)? onValueChanged;
+  final bool isValueRequired;
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -47,6 +49,7 @@ class AnimatedModalSelectionField<T> extends HookConsumerWidget {
               options: options,
               onValueChanged: onValueChanged,
               defaultColor: colorAnimation.colorTween.value,
+              isValueRequired: isValueRequired,
             ),
           ),
         );
@@ -66,6 +69,7 @@ class ModalSelectionField<T> extends SelectionField<T> {
     super.validator,
     super.enabled,
     super.defaultColor,
+    bool isValueRequired = false,
   }) : super(
           showSelectionModal: (BuildContext context) async {
             return showModalBottomSheet(
@@ -73,9 +77,11 @@ class ModalSelectionField<T> extends SelectionField<T> {
               builder: (BuildContext context) => Consumer(
                 builder: (BuildContext context, WidgetRef ref, Widget? child) {
                   return ListView.builder(
-                    itemCount: options.length,
+                    itemCount: isValueRequired ? options.length : options.length + 1,
                     itemBuilder: (BuildContext context, int index) {
-                      final T option = options[index];
+                      final T? option = index == options.length
+                          ? null
+                          : options[index];
                       return ListTile(
                         title: Text(valueToString(option)),
                         onTap: () {
@@ -146,7 +152,7 @@ class SelectionField<T> extends HookConsumerWidget {
   final FormFieldValidator<T>? validator;
   final bool enabled;
   final T? value;
-  final void Function(WidgetRef, T)? onValueChanged;
+  final void Function(WidgetRef, T?)? onValueChanged;
 
   final Color? defaultColor;
 

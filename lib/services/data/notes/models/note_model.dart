@@ -13,7 +13,7 @@ class NoteModel implements IHasId {
 
   @JsonKey(name: 'author_user_id')
   final String authorUserId;
-  
+
   final DateTime? date;
   final String? address;
   final String? description;
@@ -21,9 +21,9 @@ class NoteModel implements IHasId {
   @JsonKey(name: 'action_required')
   final String? actionRequired;
   final StatusEnum? status;
-  
-  @JsonKey(name: 'parent_note_folder_id')
-  final String? parentNoteFolderId;
+
+  @JsonKey(name: 'parent_project_id')
+  final String? parentProjectId;
 
   @JsonKey(name: 'created_at')
   final DateTime? createdAt;
@@ -40,7 +40,7 @@ class NoteModel implements IHasId {
     this.description,
     this.actionRequired,
     this.status,
-    this.parentNoteFolderId,
+    this.parentProjectId,
     this.createdAt,
     this.updatedAt,
   }) : id = id ?? uuid.v4();
@@ -49,7 +49,8 @@ class NoteModel implements IHasId {
     final now = DateTime.now().toUtc();
     return NoteModel(
       name: 'New Note',
-      authorUserId: '',  // This should be set to the current user's ID in practice
+      authorUserId:
+          '', // This should be set to the current user's ID in practice
       date: now,
       createdAt: now,
       updatedAt: now,
@@ -65,9 +66,10 @@ class NoteModel implements IHasId {
     String? description,
     String? actionRequired,
     StatusEnum? status,
-    String? parentNoteFolderId,
+    String? parentProjectId,
     DateTime? createdAt,
     DateTime? updatedAt,
+    bool setAsPersonal = false,
   }) {
     return NoteModel(
       id: id ?? this.id,
@@ -78,12 +80,14 @@ class NoteModel implements IHasId {
       description: description ?? this.description,
       actionRequired: actionRequired ?? this.actionRequired,
       status: status ?? this.status,
-      parentNoteFolderId: parentNoteFolderId ?? this.parentNoteFolderId,
+      parentProjectId:
+          setAsPersonal ? null : parentProjectId ?? this.parentProjectId,
       createdAt: createdAt ?? this.createdAt,
       updatedAt: updatedAt ?? this.updatedAt,
     );
   }
 
-  factory NoteModel.fromJson(Map<String, dynamic> json) => _$NoteModelFromJson(json);
+  factory NoteModel.fromJson(Map<String, dynamic> json) =>
+      _$NoteModelFromJson(json);
   Map<String, dynamic> toJson() => _$NoteModelToJson(this);
 }
