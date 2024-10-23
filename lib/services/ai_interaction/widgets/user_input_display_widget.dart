@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:seren_ai_flutter/services/ai_interaction/ai_api_provider.dart';
+import 'package:seren_ai_flutter/services/ai_interaction/ai_chat_api_service_provider.dart';
 import 'package:seren_ai_flutter/services/data/ai_chats/last_ai_message_listener_provider.dart';
+import 'package:seren_ai_flutter/services/data/ai_chats/models/ai_chat_message_model.dart';
 import 'package:seren_ai_flutter/services/speech_to_text/widgets/speech_state_control_button_widget.dart';
 import 'package:seren_ai_flutter/services/speech_to_text/widgets/speech_transcribed_widget.dart';
 
@@ -71,7 +72,7 @@ class DisplayAiResponseWidget extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {    
-    final lastAiMessage = ref.watch(lastAiMessageListenerProvider);
+    final lastAiMessage = ref.watch(lastAiMessageListenerProvider);    
     return Visibility(
       visible: lastAiMessage != null,
       child: lastAiMessage != null
@@ -145,8 +146,8 @@ class UserInputTextDisplayWidget extends ConsumerWidget {
                     ref.read(textFieldVisibilityProvider.notifier).state =
                         false;
                     ref
-                        .read(aiApiProvider)
-                        .sendMessageToAi(message: textEditingController.text);
+                        .read(aiChatApiServiceProvider)
+                        .sendMessage(textEditingController.text);
                     
                     textEditingController.clear();
                   },

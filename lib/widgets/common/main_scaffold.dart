@@ -120,7 +120,7 @@ class MainScaffold extends HookWidget {
                           tooltip: 'chat',
                           icon: const Icon(Icons.chat_bubble_outline),
                           onPressed: () => Navigator.of(context)
-                              .pushNamed(aiChatThreadsRoute),
+                              .pushNamed(aiChatsRoute),
                         ),
                       ],
                     ),
