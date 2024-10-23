@@ -47,12 +47,13 @@ class NotePage extends HookConsumerWidget {
                   // TODO: move to app bar
                   Align(
                     alignment: Alignment.topRight,
-                    child: DeleteNoteButton(noteId: curNoteState.note.note.id),
+                    child: DeleteNoteButton(
+                        noteId: curNoteState.joinedNote.note.id),
                   ),
                 isEnabled
                     ? NoteNameField(enabled: true)
                     : Text(
-                        curNoteState.note.note.name,
+                        curNoteState.joinedNote.note.name,
                         style: Theme.of(context).textTheme.headlineMedium,
                       ),
                 const SizedBox(height: 8),

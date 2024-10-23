@@ -12,7 +12,7 @@ class NoteNameField extends BaseNameField {
     required super.enabled,
   }) : super(
           nameProvider: curNoteStateProvider.select((state) => switch (state) {
-                LoadedCurNoteState() => state.note.note.name,
+                LoadedCurNoteState() => state.joinedNote.note.name,
                 _ => '',
               }),
           updateName: (ref, name) =>
@@ -27,7 +27,7 @@ class NoteStatusSelectionField extends BaseStatusSelectionField {
   }) : super(
           statusProvider:
               curNoteStateProvider.select((state) => switch (state) {
-                    LoadedCurNoteState() => state.note.note.status,
+                    LoadedCurNoteState() => state.joinedNote.note.status,
                     _ => null,
                   }),
           updateStatus: (ref, status) =>
@@ -42,7 +42,7 @@ class NoteDescriptionSelectionField extends BaseTextBlockEditSelectionField {
   }) : super(
           descriptionProvider:
               curNoteStateProvider.select((state) => switch (state) {
-                    LoadedCurNoteState() => state.note.note.description,
+                    LoadedCurNoteState() => state.joinedNote.note.description,
                     _ => null,
                   }),
           updateDescription: (ref, description) => ref
@@ -58,8 +58,9 @@ class NoteProjectSelectionField extends BaseProjectSelectionField {
   }) : super(
           projectProvider: curNoteProjectProvider,
           selectableProjectsProvider: curUserViewableProjectsListenerProvider,
-          updateProject: (ref, project) =>
-              ref.read(curNoteStateProvider.notifier).updateParentProject(project),
+          updateProject: (ref, project) => ref
+              .read(curNoteStateProvider.notifier)
+              .updateParentProject(project),
           isProjectRequired: false,
         );
 }

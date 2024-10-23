@@ -7,9 +7,9 @@ class InitialCurNoteState extends CurNoteState {}
 class LoadingCurNoteState extends CurNoteState {}
 
 class LoadedCurNoteState extends CurNoteState {
-  final JoinedNoteModel note;
+  final JoinedNoteModel joinedNote;
 
-  LoadedCurNoteState(this.note);
+  LoadedCurNoteState(this.joinedNote);
 }
 
 class ErrorCurNoteState extends CurNoteState {

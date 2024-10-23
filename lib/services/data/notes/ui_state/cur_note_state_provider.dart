@@ -41,7 +41,7 @@ class CurNoteNotifier extends Notifier<CurNoteState> {
 
   bool isValidNote() {
     return state is LoadedCurNoteState &&
-        (state as LoadedCurNoteState).note.note.name.isNotEmpty;
+        (state as LoadedCurNoteState).joinedNote.note.name.isNotEmpty;
   }
 
   Future<void> updateNote(NoteModel note) async {
@@ -54,7 +54,7 @@ class CurNoteNotifier extends Notifier<CurNoteState> {
   void updateNoteName(String name) {
     if (state is LoadedCurNoteState) {
       final loadedState = state as LoadedCurNoteState;
-      state = LoadedCurNoteState(loadedState.note.copyWith(name: name));
+      state = LoadedCurNoteState(loadedState.joinedNote.copyWith(name: name));
     }
   }
 
@@ -63,14 +63,15 @@ class CurNoteNotifier extends Notifier<CurNoteState> {
   void updateDate(DateTime date) {
     if (state is LoadedCurNoteState) {
       final loadedState = state as LoadedCurNoteState;
-      state = LoadedCurNoteState(loadedState.note.copyWith(date: date));
+      state = LoadedCurNoteState(loadedState.joinedNote.copyWith(date: date));
     }
   }
 
   void updateAddress(String? address) {
     if (state is LoadedCurNoteState) {
       final loadedState = state as LoadedCurNoteState;
-      state = LoadedCurNoteState(loadedState.note.copyWith(address: address));
+      state =
+          LoadedCurNoteState(loadedState.joinedNote.copyWith(address: address));
     }
   }
 
@@ -78,7 +79,7 @@ class CurNoteNotifier extends Notifier<CurNoteState> {
     if (state is LoadedCurNoteState) {
       final loadedState = state as LoadedCurNoteState;
       state = LoadedCurNoteState(
-          loadedState.note.copyWith(description: description));
+          loadedState.joinedNote.copyWith(description: description));
     }
   }
 
@@ -86,21 +87,22 @@ class CurNoteNotifier extends Notifier<CurNoteState> {
     if (state is LoadedCurNoteState) {
       final loadedState = state as LoadedCurNoteState;
       state = LoadedCurNoteState(
-          loadedState.note.copyWith(actionRequired: actionRequired));
+          loadedState.joinedNote.copyWith(actionRequired: actionRequired));
     }
   }
 
   void updateStatus(StatusEnum? status) {
     if (state is LoadedCurNoteState) {
       final loadedState = state as LoadedCurNoteState;
-      state = LoadedCurNoteState(loadedState.note.copyWith(status: status));
+      state =
+          LoadedCurNoteState(loadedState.joinedNote.copyWith(status: status));
     }
   }
 
   void updateParentProject(ProjectModel? project) {
     if (state is LoadedCurNoteState) {
       final loadedState = state as LoadedCurNoteState;
-      state = LoadedCurNoteState(loadedState.note
+      state = LoadedCurNoteState(loadedState.joinedNote
           .copyWith(project: project, setAsPersonal: project == null));
     }
   }
@@ -108,7 +110,7 @@ class CurNoteNotifier extends Notifier<CurNoteState> {
   Future<void> saveNote() async {
     if (state is LoadedCurNoteState) {
       final loadedState = state as LoadedCurNoteState;
-      await ref.read(notesReadProvider).upsertItem(loadedState.note.note);
+      await ref.read(notesReadProvider).upsertItem(loadedState.joinedNote.note);
     }
   }
 }
@@ -118,7 +120,7 @@ class CurNoteNotifier extends Notifier<CurNoteState> {
 final curNoteAuthorProvider = Provider<String?>((ref) {
   final curNoteState = ref.watch(curNoteStateProvider);
   return switch (curNoteState) {
-    LoadedCurNoteState() => curNoteState.note.note.authorUserId,
+    LoadedCurNoteState() => curNoteState.joinedNote.note.authorUserId,
     _ => null,
   };
 });
@@ -126,7 +128,7 @@ final curNoteAuthorProvider = Provider<String?>((ref) {
 final curNoteDateProvider = Provider<DateTime?>((ref) {
   final curNoteState = ref.watch(curNoteStateProvider);
   return switch (curNoteState) {
-    LoadedCurNoteState() => curNoteState.note.note.date,
+    LoadedCurNoteState() => curNoteState.joinedNote.note.date,
     _ => null,
   };
 });
@@ -134,7 +136,7 @@ final curNoteDateProvider = Provider<DateTime?>((ref) {
 final curNoteAddressProvider = Provider<String?>((ref) {
   final curNoteState = ref.watch(curNoteStateProvider);
   return switch (curNoteState) {
-    LoadedCurNoteState() => curNoteState.note.note.address,
+    LoadedCurNoteState() => curNoteState.joinedNote.note.address,
     _ => null,
   };
 });
@@ -142,7 +144,7 @@ final curNoteAddressProvider = Provider<String?>((ref) {
 final curNoteDescriptionProvider = Provider<String?>((ref) {
   final curNoteState = ref.watch(curNoteStateProvider);
   return switch (curNoteState) {
-    LoadedCurNoteState() => curNoteState.note.note.description,
+    LoadedCurNoteState() => curNoteState.joinedNote.note.description,
     _ => null,
   };
 });
@@ -150,7 +152,7 @@ final curNoteDescriptionProvider = Provider<String?>((ref) {
 final curNoteActionRequiredProvider = Provider<String?>((ref) {
   final curNoteState = ref.watch(curNoteStateProvider);
   return switch (curNoteState) {
-    LoadedCurNoteState() => curNoteState.note.note.actionRequired,
+    LoadedCurNoteState() => curNoteState.joinedNote.note.actionRequired,
     _ => null,
   };
 });
@@ -158,7 +160,7 @@ final curNoteActionRequiredProvider = Provider<String?>((ref) {
 final curNoteStatusProvider = Provider<StatusEnum?>((ref) {
   final curNoteState = ref.watch(curNoteStateProvider);
   return switch (curNoteState) {
-    LoadedCurNoteState() => curNoteState.note.note.status,
+    LoadedCurNoteState() => curNoteState.joinedNote.note.status,
     _ => null,
   };
 });
@@ -166,7 +168,7 @@ final curNoteStatusProvider = Provider<StatusEnum?>((ref) {
 final curNoteProjectProvider = Provider<ProjectModel?>((ref) {
   final curNoteState = ref.watch(curNoteStateProvider);
   return switch (curNoteState) {
-    LoadedCurNoteState() => curNoteState.note.project,
+    LoadedCurNoteState() => curNoteState.joinedNote.project,
     _ => null,
   };
 });
