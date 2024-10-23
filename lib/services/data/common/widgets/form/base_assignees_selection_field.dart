@@ -10,7 +10,7 @@ class BaseAssigneesSelectionField extends HookConsumerWidget {
   final bool enabled;
   final ProviderListenable<List<UserModel>> assigneesProvider;
   final ProviderListenable<ProjectModel?> projectProvider;
-  final Function(WidgetRef, List<UserModel>) updateAssignees;
+  final Function(WidgetRef, List<UserModel>?) updateAssignees;
   //final ProviderListenable<List<UserModel>> selectableUsersProvider;
   const BaseAssigneesSelectionField({
     super.key,

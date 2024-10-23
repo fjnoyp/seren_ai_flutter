@@ -16,7 +16,7 @@ NoteModel _$NoteModelFromJson(Map<String, dynamic> json) => NoteModel(
       description: json['description'] as String?,
       actionRequired: json['action_required'] as String?,
       status: $enumDecodeNullable(_$StatusEnumEnumMap, json['status']),
-      parentNoteFolderId: json['parent_note_folder_id'] as String?,
+      parentProjectId: json['parent_project_id'] as String?,
       createdAt: json['created_at'] == null
           ? null
           : DateTime.parse(json['created_at'] as String),
@@ -34,7 +34,7 @@ Map<String, dynamic> _$NoteModelToJson(NoteModel instance) => <String, dynamic>{
       'description': instance.description,
       'action_required': instance.actionRequired,
       'status': _$StatusEnumEnumMap[instance.status],
-      'parent_note_folder_id': instance.parentNoteFolderId,
+      'parent_project_id': instance.parentProjectId,
       'created_at': instance.createdAt?.toIso8601String(),
       'updated_at': instance.updatedAt?.toIso8601String(),
     };

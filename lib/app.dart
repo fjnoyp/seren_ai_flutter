@@ -7,9 +7,7 @@ import 'package:seren_ai_flutter/services/auth/widgets/auth_guard.dart';
 import 'package:seren_ai_flutter/services/auth/widgets/sign_in_up_page.dart';
 import 'package:seren_ai_flutter/services/data/ai_chats/widgets/ai_chats_page.dart';
 import 'package:seren_ai_flutter/services/data/common/widgets/editablePageModeEnum.dart';
-import 'package:seren_ai_flutter/services/data/notes/widgets/note_folder_notes_list_page.dart';
-import 'package:seren_ai_flutter/services/data/notes/widgets/note_folder_page.dart';
-import 'package:seren_ai_flutter/services/data/notes/widgets/note_folders_list_page.dart';
+import 'package:seren_ai_flutter/services/data/notes/widgets/notes_list_page.dart';
 import 'package:seren_ai_flutter/services/data/notes/widgets/note_page.dart';
 import 'package:seren_ai_flutter/services/data/orgs/widgets/choose_org_page.dart';
 import 'package:seren_ai_flutter/services/data/orgs/widgets/manage_org_users_page.dart';
@@ -36,6 +34,7 @@ class App extends StatefulWidget {
   @override
   AppState createState() => AppState();
 }
+
 class AppState extends State<App> {
   late final AppLinks _appLinks;
 
@@ -48,38 +47,47 @@ class AppState extends State<App> {
 
   @override
   Widget build(BuildContext context) {
-    return Consumer(builder: (context, ref, child) {
-      // Initiate the orchestrator
-      ref.read(sttOrchestratorProvider);
+    return Consumer(
+      builder: (context, ref, child) {
+        // Initiate the orchestrator
+        ref.read(sttOrchestratorProvider);
 
-      //final firstUserValue = ref.read(curAuthUserProvider);
-      final initialRoute = Supabase.instance.client.auth.currentUser == null ? signInUpRoute : tasksRoute;
+        //final firstUserValue = ref.read(curAuthUserProvider);
+        final initialRoute = Supabase.instance.client.auth.currentUser == null
+            ? signInUpRoute
+            : tasksRoute;
 
-      final themeMode = ref.watch(themeSNP);
+        final themeMode = ref.watch(themeSNP);
 
-      return MaterialApp(
+        return MaterialApp(
           theme: lightTheme,
           darkTheme: darkTheme,
           themeMode: themeMode,
           initialRoute: initialRoute,
           routes: {
-            signInUpRoute: (context) => const MainScaffold(title: 'Sign In/Up', body: SignInUpPage(), showBottomBar: false),
+            signInUpRoute: (context) => const MainScaffold(
+                title: 'Sign In/Up',
+                body: SignInUpPage(),
+                showBottomBar: false),
             homeRoute: (context) => const _GuardScaffold('Home', HomePage()),
-
-
-            chooseOrgRoute: (context) => const _AuthGuardScaffold('Choose Organization', ChooseOrgPage()),
-            manageOrgUsersRoute: (context) => const _GuardScaffold('Manage Organization Users', ManageOrgUsersPage()),
-            manageTeamUsersRoute: (context) => const _GuardScaffold('Manage Team Users', ManageTeamUsersPage()),
-            
-            projectsRoute: (context) => const _GuardScaffold('Projects', ProjectsPage()),
-            
-            tasksRoute: (context) => const _GuardScaffold('Tasks', TasksListPage()),
+            chooseOrgRoute: (context) => const _AuthGuardScaffold(
+                'Choose Organization', ChooseOrgPage()),
+            manageOrgUsersRoute: (context) => const _GuardScaffold(
+                'Manage Organization Users', ManageOrgUsersPage()),
+            manageTeamUsersRoute: (context) => const _GuardScaffold(
+                'Manage Team Users', ManageTeamUsersPage()),
+            projectsRoute: (context) =>
+                const _GuardScaffold('Projects', ProjectsPage()),
+            tasksRoute: (context) =>
+                const _GuardScaffold('Tasks', TasksListPage()),
             taskPageRoute: (context) {
               // TODO p3: add taskId to args
               // Cannot use implicits or else dynamic routes will not work
-              final args = ModalRoute.of(context)!.settings.arguments as Map<String, dynamic>;
+              final args = ModalRoute.of(context)!.settings.arguments
+                  as Map<String, dynamic>;
               final mode = args['mode'] as EditablePageMode;
-              final title = mode == EditablePageMode.create ? 'Create Task' : 'View Task';
+              final title =
+                  mode == EditablePageMode.create ? 'Create Task' : 'View Task';
 
               return _GuardScaffold(title, TaskPage(mode: mode));
             },
@@ -87,34 +95,21 @@ class AppState extends State<App> {
             aiChatsRoute: (context) => const _GuardScaffold('AI Chat Page', AIChatsPage()),
 
             shiftsRoute: (context) => const _GuardScaffold('Shifts', ShiftsPage()),
-
-            noteFoldersListRoute: (context) => const _GuardScaffold('Note Folders', NoteFoldersListPage()),
-
             testRoute: (context) => const _GuardScaffold('Test', TestPage()),
-            testSQLPageRoute: (context) => _GuardScaffold('Test SQL Page', TestSQLPage()),
-            noteFolderNotesListRoute: (context) {
-              final args = ModalRoute.of(context)!.settings.arguments as Map<String, dynamic>;
-              final noteFolderId = args['noteFolderId'] as String;
-              return _GuardScaffold('Note Folder Notes', NoteFolderNotesListPage(noteFolderId: noteFolderId));
-            },
-
+            testSQLPageRoute: (context) =>
+                _GuardScaffold('Test SQL Page', TestSQLPage()),
+            noteListRoute: (context) => const _GuardScaffold('Notes', NoteListPage()),
             notePageRoute: (context) {
-              final args = ModalRoute.of(context)!.settings.arguments as Map<String, dynamic>;              
+              final args = ModalRoute.of(context)!.settings.arguments
+                  as Map<String, dynamic>;
               final mode = args['mode'] as EditablePageMode;
-              final title = mode == EditablePageMode.create ? 'Create Note' : 'View Note';
+              final title =
+                  mode == EditablePageMode.create ? 'Create Note' : 'View Note';
 
               return _GuardScaffold(title, NotePage(mode: mode));
             },
-
-            noteFolderPageRoute: (context) {
-              final args = ModalRoute.of(context)!.settings.arguments as Map<String, dynamic>;
-              final mode = args['mode'] as EditablePageMode;
-              final title = mode == EditablePageMode.create ? 'Create Note Folder' : 'View Note Folder';
-
-              return _GuardScaffold(title, NoteFolderPage(mode: mode));
-            },
-
-            flutterWechatAssetsPickerRoute: (context) => const _GuardScaffold('Flutter Wechat Assets Picker', MultiAssetsPage()),
+            flutterWechatAssetsPickerRoute: (context) => const _GuardScaffold(
+                'Flutter Wechat Assets Picker', MultiAssetsPage()),
           },
           // For dynamically generating routes based on settings param
           onGenerateRoute: (settings) {

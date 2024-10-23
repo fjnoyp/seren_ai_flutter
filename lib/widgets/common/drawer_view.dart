@@ -188,10 +188,10 @@ class DrawerView extends HookWidget {
             ),
             _buildListTile(
               context: context,
-              icon: Icons.folder,
-              title: 'Note Folders',
+              icon: Icons.note_outlined,
+              title: 'Notes',
               onTap: () {
-                Navigator.pushNamed(context, noteFoldersListRoute);
+                Navigator.pushNamed(context, noteListRoute);
               },
             ),
             _buildListTile(

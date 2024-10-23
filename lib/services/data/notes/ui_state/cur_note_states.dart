@@ -1,4 +1,4 @@
-import 'package:seren_ai_flutter/services/data/notes/models/note_model.dart';
+import 'package:seren_ai_flutter/services/data/notes/models/joined_note_model.dart';
 
 sealed class CurNoteState {}
 
@@ -7,9 +7,9 @@ class InitialCurNoteState extends CurNoteState {}
 class LoadingCurNoteState extends CurNoteState {}
 
 class LoadedCurNoteState extends CurNoteState {
-  final NoteModel note;
+  final JoinedNoteModel joinedNote;
 
-  LoadedCurNoteState(this.note);
+  LoadedCurNoteState(this.joinedNote);
 }
 
 class ErrorCurNoteState extends CurNoteState {

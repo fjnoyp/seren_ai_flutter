@@ -73,7 +73,7 @@ class CurTaskNotifier extends Notifier<CurTaskState> {
     return false;
   }
 
-  void updateAssignees(List<UserModel> assignees) {
+  void updateAssignees(List<UserModel>? assignees) {
     if (state is LoadedCurTaskState) {
       final loadedState = state as LoadedCurTaskState;
       state =
