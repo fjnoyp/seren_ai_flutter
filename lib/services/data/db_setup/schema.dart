@@ -100,9 +100,8 @@ const aiChatSchemas = [
   Table(aiChatThreadsTable, [
     Column.text('id'),
     Column.text('author_user_id'),
-    Column.text('name'),
     Column.text('created_at'),
-    Column.text('summary'),
+    Column.text('parent_lg_thread_id'),
     Column.text('parent_org_id'),
   ]),
   Table(aiChatMessagesTable, [
@@ -111,6 +110,8 @@ const aiChatSchemas = [
     Column.text('created_at'),
     Column.text('content'),
     Column.text('parent_chat_thread_id'),
+    Column.text('parent_lg_run_id'),
+    Column.text('additional_kwargs'),
   ]),
 ];
 
