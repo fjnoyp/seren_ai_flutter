@@ -175,7 +175,7 @@ class DrawerView extends HookWidget {
               icon: Icons.chat,
               title: 'AI Chat Threads',
               onTap: () {
-                Navigator.pushNamed(context, aiChatThreadsRoute);
+                Navigator.pushNamed(context, aiChatsRoute);
               },
             ),
             _buildListTile(
