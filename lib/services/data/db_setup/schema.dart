@@ -14,24 +14,24 @@ const userProjectRolesTable = 'user_project_roles';
 
 const permissionSchemas = [
   Table(usersTable, [
-    Column.text('id'),
+    // Column.text('id'),
     Column.text('parent_auth_user_id'),
     Column.text('email'),
     Column.text('default_project_id'),
     Column.text('default_team_id'),
   ]),
   Table(orgsTable, [
-    Column.text('id'),
+    // Column.text('id'),
     Column.text('name'),
     Column.text('address'),
   ]),
   Table(teamsTable, [
-    Column.text('id'),
+    // Column.text('id'),
     Column.text('name'),
     Column.text('parent_org_id'),
   ]),
   Table(projectsTable, [
-    Column.text('id'),
+    // Column.text('id'),
     Column.text('name'),
     Column.text('description'),
     Column.text('address'),
@@ -39,19 +39,19 @@ const permissionSchemas = [
     Column.text('parent_team_id'),
   ]),
   Table(userOrgRolesTable, [
-    Column.text('id'),
+    // Column.text('id'),
     Column.text('user_id'),
     Column.text('org_id'),
     Column.text('org_role'),
   ]),
   Table(userTeamRolesTable, [
-    Column.text('id'),
+    // Column.text('id'),
     Column.text('user_id'),
     Column.text('team_id'),
     Column.text('team_role'),
   ]),
   Table(userProjectRolesTable, [
-    Column.text('id'),
+    // Column.text('id'),
     Column.text('user_id'),
     Column.text('project_id'),
     Column.text('project_role'),
@@ -64,7 +64,7 @@ const taskUserAssignmentsTable = 'task_user_assignments';
 
 const tasksSchemas = [
   Table(tasksTable, [
-    Column.text('id'),
+    // Column.text('id'),
     Column.text('name'),
     Column.text('description'),
     Column.text('status'),
@@ -78,7 +78,7 @@ const tasksSchemas = [
     Column.text('estimated_duration_minutes'),
   ]),
   Table(taskCommentsTable, [
-    Column.text('id'),
+    // Column.text('id'),
     Column.text('author_user_id'),
     Column.text('parent_task_id'),
     Column.text('created_date'),
@@ -87,7 +87,7 @@ const tasksSchemas = [
     Column.text('end_date_time'),
   ]),
   Table(taskUserAssignmentsTable, [
-    Column.text('id'),
+    // Column.text('id'),
     Column.text('task_id'),
     Column.text('user_id'),
   ]),
@@ -97,16 +97,16 @@ const aiChatMessagesTable = 'ai_chat_messages';
 
 const aiChatSchemas = [
   Table(aiChatThreadsTable, [
-    Column.text('id'),
+    // Column.text('id'),
     Column.text('author_user_id'),
-    Column.text('created_at'),
+    // Column.text('created_at'),
     Column.text('parent_lg_thread_id'),
     Column.text('parent_org_id'),
   ]),
   Table(aiChatMessagesTable, [
-    Column.text('id'),
+    // Column.text('id'),
     Column.text('type'),
-    Column.text('created_at'),
+    // Column.text('created_at'),
     Column.text('content'),
     Column.text('parent_chat_thread_id'),
     Column.text('parent_lg_run_id'),
@@ -122,19 +122,19 @@ const shiftOverridesTable = 'shift_overrides';
 
 const shiftSchemas = [
   Table(shiftsTable, [
-    Column.text('id'),
+    // Column.text('id'),
     Column.text('name'),
     Column.text('author_user_id'),
     Column.text('parent_team_id'),
     Column.text('parent_project_id'),
   ]),
   Table(shiftUserAssignmentsTable, [
-    Column.text('id'),
+    // Column.text('id'),
     Column.text('shift_id'),
     Column.text('user_id'),
   ]),
   Table(shiftTimeframesTable, [
-    Column.text('id'),
+    // Column.text('id'),
     Column.text('shift_id'),
     Column.integer('day_of_week'),
     Column.text('start_time'),
@@ -142,7 +142,7 @@ const shiftSchemas = [
     //Column.text('timezone'),
   ]),
   Table(shiftLogsTable, [
-    Column.text('id'),
+    // Column.text('id'),
     Column.text('user_id'),
     Column.text('shift_id'),
     Column.text('clock_in_datetime'),
@@ -150,7 +150,7 @@ const shiftSchemas = [
     Column.integer('is_break'),
   ]),
   Table(shiftOverridesTable, [
-    Column.text('id'),
+    // Column.text('id'),
     Column.text('user_id'),
     Column.text('shift_id'),
     Column.text('start_datetime'),
@@ -164,7 +164,7 @@ const noteFoldersTable = 'note_folders';
 
 const noteSchemas = [
   Table(notesTable, [
-    Column.text('id'),
+    // Column.text('id'),
     Column.text('author_user_id'),
     Column.text('name'),
     Column.text('date'),
