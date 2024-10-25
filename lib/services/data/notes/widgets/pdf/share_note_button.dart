@@ -1,0 +1,36 @@
+import 'dart:io';
+
+import 'package:flutter/material.dart';
+import 'package:hooks_riverpod/hooks_riverpod.dart';
+import 'package:path_provider/path_provider.dart';
+import 'package:seren_ai_flutter/services/data/notes/ui_state/cur_note_state_provider.dart';
+import 'package:seren_ai_flutter/services/data/notes/ui_state/cur_note_states.dart';
+import 'package:seren_ai_flutter/services/data/notes/widgets/pdf/pdf_from_note.dart';
+import 'package:share_plus/share_plus.dart';
+
+class ShareNoteButton extends ConsumerWidget {
+  final String noteId;
+
+  const ShareNoteButton(this.noteId, {super.key});
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    return IconButton(
+      icon: const Icon(Icons.share),
+      onPressed: () async {
+        var joinedNote =
+            (ref.watch(curNoteStateProvider) as LoadedCurNoteState).joinedNote;
+        final pdf = PdfFromNote(joinedNote);
+
+        final output = await getTemporaryDirectory();
+        final path = '${output.path}/${joinedNote.note.name}.pdf';
+
+        final file = File(path);
+        await file.writeAsBytes(await pdf.save());
+
+        await Share.shareXFiles([XFile(path)]);
+        file.delete();
+      },
+    );
+  }
+}
