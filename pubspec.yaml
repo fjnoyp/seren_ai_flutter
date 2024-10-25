@@ -39,7 +39,7 @@ dependencies:
   json_annotation: ^4.9.0
 
   # offline db + better watch queries 
-  powersync: ^1.5.5
+  powersync: ^1.8.8
 
   # file path manipulation 
   path: ^1.9.0
