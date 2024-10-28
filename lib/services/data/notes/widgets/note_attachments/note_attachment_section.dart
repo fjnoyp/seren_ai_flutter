@@ -3,6 +3,7 @@ import 'dart:io';
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:permission_handler/permission_handler.dart';
 import 'package:seren_ai_flutter/services/data/notes/note_attachments_handler.dart';
 import 'package:seren_ai_flutter/services/data/notes/ui_state/cur_note_state_provider.dart';
 
@@ -37,19 +38,47 @@ class _AddAttachmentButton extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     return ElevatedButton.icon(
       onPressed: () async {
-        final result = await FilePicker.platform.pickFiles(allowMultiple: true);
-
-        if (result != null) {
-          List<File> files = result.paths.map((path) => File(path!)).toList();
-          ref.read(noteAttachmentsHandlerProvider.notifier).uploadAttachments(
-                files,
-                noteId: ref.read(curNoteStateProvider.notifier).curNoteId,
-              );
+        // Android and iOS have different permission handling
+        // ie. Android permission is automatically requested at this point
+        if (Platform.isIOS) {
+          if (await _getPermission()) {
+            await _pickAndUploadFile(ref);
+          } else {
+            ScaffoldMessenger.of(context).showSnackBar(
+              const SnackBar(content: Text('Photos permission denied')),
+            );
+          }
+        } else {
+          await _pickAndUploadFile(ref);
         }
       },
       icon: const Icon(Icons.add),
       label: const Text('Add Attachment'),
     );
+  }
+
+  Future<void> _pickAndUploadFile(WidgetRef ref) async {
+    final result = await FilePicker.platform.pickFiles(allowMultiple: true);
+
+    if (result != null) {
+      List<File> files = result.paths.map((path) => File(path!)).toList();
+      ref.read(noteAttachmentsHandlerProvider.notifier).uploadAttachments(
+            files,
+            noteId: ref.read(curNoteStateProvider.notifier).curNoteId,
+          );
+    }
+  }
+
+  Future<bool> _getPermission() async {
+    if (await Permission.storage.isGranted) {
+      return true;
+    } else if (await Permission.storage.isPermanentlyDenied) {
+      await openAppSettings();
+      return await Permission.storage.isGranted;
+    } else {
+      await Permission.photos.request();
+      return await Permission.storage.isGranted;
+    }
   }
 }
 
