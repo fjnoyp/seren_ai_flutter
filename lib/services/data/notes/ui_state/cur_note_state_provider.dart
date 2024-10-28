@@ -4,6 +4,7 @@ import 'package:seren_ai_flutter/services/auth/cur_auth_state_provider.dart';
 import 'package:seren_ai_flutter/services/data/common/status_enum.dart';
 import 'package:seren_ai_flutter/services/data/notes/models/joined_note_model.dart';
 import 'package:seren_ai_flutter/services/data/notes/models/note_model.dart';
+import 'package:seren_ai_flutter/services/data/notes/note_attachments_handler.dart';
 import 'package:seren_ai_flutter/services/data/notes/notes_read_provider.dart';
 import 'package:seren_ai_flutter/services/data/notes/ui_state/cur_note_states.dart';
 import 'package:seren_ai_flutter/services/data/projects/models/project_model.dart';
@@ -17,8 +18,13 @@ class CurNoteNotifier extends Notifier<CurNoteState> {
     return InitialCurNoteState();
   }
 
+  String get curNoteId => (state as LoadedCurNoteState).joinedNote.note.id;
+
   Future<void> setNewNote(NoteModel note) async {
     state = LoadedCurNoteState(await JoinedNoteModel.fromNoteModel(ref, note));
+    await ref
+        .read(noteAttachmentsHandlerProvider.notifier)
+        .fetchNoteAttachments(firstLoad: true, noteId: curNoteId);
   }
 
   Future<void> setToNewNote() async {
