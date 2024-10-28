@@ -196,14 +196,6 @@ class DrawerView extends HookWidget {
             ),
             _buildListTile(
               context: context,
-              icon: Icons.science,
-              title: 'Flutter Wechat Assets Picker',
-              onTap: () {
-                Navigator.pushNamed(context, flutterWechatAssetsPickerRoute);
-              },
-            ),
-            _buildListTile(
-              context: context,
               icon: Icons.settings,
               title: 'Settings',
               onTap: () {
