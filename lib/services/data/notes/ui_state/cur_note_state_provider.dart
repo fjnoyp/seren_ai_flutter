@@ -167,8 +167,10 @@ class CurNoteNotifier extends Notifier<CurNoteState> {
     attachmentsToRemove.removeWhere((e) =>
         _initialNoteAttachmentUrls.any((url) => e.name == _fileName(url)));
 
-    await supabaseStorage.from('note_attachments').remove(
-        attachmentsToRemove.map((e) => '$curNoteId/${e.name}').toList());
+    if (attachmentsToRemove.isNotEmpty) {
+      await supabaseStorage.from('note_attachments').remove(
+          attachmentsToRemove.map((e) => '$curNoteId/${e.name}').toList());
+    }
   }
 
   Future<bool> openAttachmentLocally(String fileUrl) async {
