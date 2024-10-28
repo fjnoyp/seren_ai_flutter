@@ -1,17 +1,13 @@
-import 'dart:io';
-
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:open_file/open_file.dart';
-import 'package:path_provider/path_provider.dart';
 import 'package:seren_ai_flutter/services/auth/auth_states.dart';
 import 'package:seren_ai_flutter/services/auth/cur_auth_state_provider.dart';
 import 'package:seren_ai_flutter/services/data/common/status_enum.dart';
 import 'package:seren_ai_flutter/services/data/notes/models/joined_note_model.dart';
 import 'package:seren_ai_flutter/services/data/notes/models/note_model.dart';
+import 'package:seren_ai_flutter/services/data/notes/note_attachments_handler.dart';
 import 'package:seren_ai_flutter/services/data/notes/notes_read_provider.dart';
 import 'package:seren_ai_flutter/services/data/notes/ui_state/cur_note_states.dart';
 import 'package:seren_ai_flutter/services/data/projects/models/project_model.dart';
-import 'package:supabase_flutter/supabase_flutter.dart';
 
 final curNoteStateProvider =
     NotifierProvider<CurNoteNotifier, CurNoteState>(CurNoteNotifier.new);
@@ -22,16 +18,13 @@ class CurNoteNotifier extends Notifier<CurNoteState> {
     return InitialCurNoteState();
   }
 
-  // Needed in case of reset
-  List<String> _initialNoteAttachmentUrls = [];
-  final supabaseStorage = Supabase.instance.client.storage;
   String get curNoteId => (state as LoadedCurNoteState).joinedNote.note.id;
-
-  String _fileName(String filePath) => Uri.decodeFull(filePath).split('/').last;
 
   Future<void> setNewNote(NoteModel note) async {
     state = LoadedCurNoteState(await JoinedNoteModel.fromNoteModel(ref, note));
-    _fetchNoteAttachments(firstLoad: true);
+    await ref
+        .read(noteAttachmentsHandlerProvider.notifier)
+        .fetchNoteAttachments(firstLoad: true, noteId: curNoteId);
   }
 
   Future<void> setToNewNote() async {
@@ -125,70 +118,6 @@ class CurNoteNotifier extends Notifier<CurNoteState> {
       final loadedState = state as LoadedCurNoteState;
       await ref.read(notesReadProvider).upsertItem(loadedState.joinedNote.note);
     }
-  }
-
-  Future<void> _fetchNoteAttachments({bool firstLoad = false}) async {
-    if (state is LoadedCurNoteState) {
-      final curNote = (state as LoadedCurNoteState).joinedNote;
-      final attachments = await supabaseStorage
-          .from('note_attachments')
-          .list(path: curNote.note.id);
-      attachments.removeWhere((e) => e.name.startsWith('.'));
-
-      final noteAttachmentUrls = attachments
-          .map((e) => supabaseStorage
-              .from('note_attachments')
-              .getPublicUrl('${curNote.note.id}/${e.name}'))
-          .toList();
-
-      if (firstLoad) {
-        _initialNoteAttachmentUrls = noteAttachmentUrls;
-      }
-
-      state = LoadedCurNoteState(
-          curNote.copyWith(attachmentUrls: noteAttachmentUrls));
-    }
-  }
-
-  Future<void> uploadAttachments(List<File> files) async {
-    for (var file in files) {
-      await supabaseStorage.from('note_attachments').upload(
-            '$curNoteId/${_fileName(file.path)}',
-            file,
-            fileOptions: const FileOptions(upsert: true),
-          );
-    }
-    _fetchNoteAttachments();
-  }
-
-  Future<void> resetAttachments() async {
-    final attachmentsToRemove =
-        await supabaseStorage.from('note_attachments').list(path: curNoteId);
-    attachmentsToRemove.removeWhere((e) =>
-        _initialNoteAttachmentUrls.any((url) => e.name == _fileName(url)));
-
-    if (attachmentsToRemove.isNotEmpty) {
-      await supabaseStorage.from('note_attachments').remove(
-          attachmentsToRemove.map((e) => '$curNoteId/${e.name}').toList());
-    }
-  }
-
-  Future<bool> openAttachmentLocally(String fileUrl) async {
-    final fileBytes = await supabaseStorage
-        .from('note_attachments')
-        .download('$curNoteId/${_fileName(fileUrl)}');
-    final path = await getDownloadsDirectory();
-    final file = File('${path?.path}/${_fileName(fileUrl)}');
-    await file.writeAsBytes(fileBytes);
-    await OpenFile.open(file.path);
-    return true;
-  }
-
-  Future<void> deleteAttachment(String fileUrl) async {
-    await supabaseStorage
-        .from('note_attachments')
-        .remove(['$curNoteId/${_fileName(fileUrl)}']);
-    _fetchNoteAttachments();
   }
 }
 

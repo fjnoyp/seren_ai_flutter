@@ -10,13 +10,11 @@ class JoinedNoteModel {
   final NoteModel note;
   final UserModel? authorUser;
   final ProjectModel? project;
-  final List<String> attachmentUrls;
 
   JoinedNoteModel({
     required this.note,
     required this.authorUser,
     required this.project,
-    this.attachmentUrls = const [],
   });
 
   static JoinedNoteModel empty() {
@@ -24,7 +22,6 @@ class JoinedNoteModel {
       note: NoteModel.defaultNote(),
       authorUser: null,
       project: null,
-      attachmentUrls: const [],
     );
   }
 
@@ -39,7 +36,6 @@ class JoinedNoteModel {
     String? actionRequired,
     StatusEnum? status,
     bool setAsPersonal = false,
-    List<String>? attachmentUrls,
   }) {
     return JoinedNoteModel(
       note: note ??
@@ -56,7 +52,6 @@ class JoinedNoteModel {
               ),
       authorUser: authorUser ?? this.authorUser,
       project: setAsPersonal ? null : project ?? this.project,
-      attachmentUrls: attachmentUrls ?? this.attachmentUrls,
     );
   }
 

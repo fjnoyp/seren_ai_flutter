@@ -7,6 +7,7 @@ import 'package:seren_ai_flutter/services/auth/auth_states.dart';
 import 'package:seren_ai_flutter/services/auth/cur_auth_state_provider.dart';
 import 'package:seren_ai_flutter/services/data/common/widgets/editablePageModeEnum.dart';
 import 'package:seren_ai_flutter/services/data/common/widgets/form/base_text_block_edit_selection_field.dart';
+import 'package:seren_ai_flutter/services/data/notes/note_attachments_handler.dart';
 import 'package:seren_ai_flutter/services/data/notes/notes_read_provider.dart';
 import 'package:seren_ai_flutter/services/data/notes/ui_state/cur_note_state_provider.dart';
 import 'package:seren_ai_flutter/services/data/notes/ui_state/cur_note_states.dart';
@@ -38,7 +39,10 @@ class NotePage extends HookConsumerWidget {
         // Note: if the pop was triggered by the save button,
         // then result will be true, otherwise we reset the attachments
         if (mode != EditablePageMode.readOnly && didPop && result != true) {
-          ref.read(curNoteStateProvider.notifier).resetAttachments();
+          ref
+              .read(noteAttachmentsHandlerProvider.notifier)
+              .removeUnuploadedAttachments(
+                  ref.read(curNoteStateProvider.notifier).curNoteId);
         }
       },
       child: switch (curNoteState) {

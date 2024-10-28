@@ -3,8 +3,8 @@ import 'dart:io';
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:seren_ai_flutter/services/data/notes/note_attachments_handler.dart';
 import 'package:seren_ai_flutter/services/data/notes/ui_state/cur_note_state_provider.dart';
-import 'package:seren_ai_flutter/services/data/notes/ui_state/cur_note_states.dart';
 
 class NoteAttachmentSection extends ConsumerWidget {
   const NoteAttachmentSection(this.isEnabled, {super.key});
@@ -20,11 +20,8 @@ class NoteAttachmentSection extends ConsumerWidget {
           alignment: WrapAlignment.center,
           spacing: 16.0,
           children: [
-            ...(ref.watch(curNoteStateProvider) as LoadedCurNoteState)
-                .joinedNote
-                .attachmentUrls
-                .map((e) =>
-                    _AttachmentPreviewButton(e, enableDelete: isEnabled)),
+            ...ref.watch(noteAttachmentsHandlerProvider).map(
+                (e) => _AttachmentPreviewButton(e, enableDelete: isEnabled)),
           ],
         ),
         if (isEnabled) const _AddAttachmentButton(),
@@ -40,13 +37,14 @@ class _AddAttachmentButton extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     return ElevatedButton.icon(
       onPressed: () async {
-        FilePickerResult? result =
-            await FilePicker.platform.pickFiles(allowMultiple: true);
+        final result = await FilePicker.platform.pickFiles(allowMultiple: true);
 
         if (result != null) {
           List<File> files = result.paths.map((path) => File(path!)).toList();
-
-          ref.read(curNoteStateProvider.notifier).uploadAttachments(files);
+          ref.read(noteAttachmentsHandlerProvider.notifier).uploadAttachments(
+                files,
+                noteId: ref.read(curNoteStateProvider.notifier).curNoteId,
+              );
         }
       },
       icon: const Icon(Icons.add),
@@ -107,9 +105,10 @@ class _DeleteAttachmentDialog extends ConsumerWidget {
         ),
         ElevatedButton(
           onPressed: () {
-            ref
-                .read(curNoteStateProvider.notifier)
-                .deleteAttachment(attachmentUrl);
+            ref.read(noteAttachmentsHandlerProvider.notifier).deleteAttachment(
+                  fileUrl: attachmentUrl,
+                  noteId: ref.read(curNoteStateProvider.notifier).curNoteId,
+                );
             Navigator.pop(context);
           },
           child: const Text('Delete'),
@@ -149,8 +148,12 @@ class _AttachmentPreview extends ConsumerWidget {
                 ),
                 TextButton(
                   onPressed: () => ref
-                      .read(curNoteStateProvider.notifier)
-                      .openAttachmentLocally(attachmentUrl),
+                      .read(noteAttachmentsHandlerProvider.notifier)
+                      .openAttachmentLocally(
+                        fileUrl: attachmentUrl,
+                        noteId:
+                            ref.read(curNoteStateProvider.notifier).curNoteId,
+                      ),
                   child: const Text('Open file'),
                 ),
               ],
