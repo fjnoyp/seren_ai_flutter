@@ -72,14 +72,45 @@ class NoteAttachmentsHandler extends Notifier<List<String>> {
     required String fileUrl,
     required String noteId,
   }) async {
-    final fileBytes = await supabaseStorage
-        .from('note_attachments')
-        .download('$noteId/${_fileName(fileUrl)}');
-    final path = await getDownloadsDirectory();
-    final file = File('${path?.path}/${_fileName(fileUrl)}');
-    await file.writeAsBytes(fileBytes);
+    final file = await _createOrGetLocalFile(noteId, fileUrl);
+
+    if (!(await _isFileVersionFetched(
+        fileUrl: fileUrl, file: file, noteId: noteId))) {
+      final fileBytes = await supabaseStorage
+          .from('note_attachments')
+          .download('$noteId/${_fileName(fileUrl)}');
+      await file.writeAsBytes(fileBytes);
+    }
     await OpenFile.open(file.path);
     return true;
+  }
+
+  Future<File> _createOrGetLocalFile(String noteId, String fileUrl) async {
+    final path = await getDownloadsDirectory();
+    // Create the noteId directory if it doesn't exist
+    final noteDir = Directory('${path?.path}/$noteId');
+    await noteDir.create(recursive: true);
+    
+    final file = File('${path?.path}/$noteId/${_fileName(fileUrl)}');
+    return file;
+  }
+
+  Future<bool> _isFileVersionFetched({
+    required String fileUrl,
+    required File file,
+    required String noteId,
+  }) async {
+    if (file.existsSync()) {
+      final lastModified = await file.lastModified();
+
+      final files =
+          await supabaseStorage.from('note_attachments').list(path: noteId);
+      final onlineFile = files.firstWhere((f) => f.name == _fileName(fileUrl));
+      final onlineLastModified = DateTime.parse(onlineFile.updatedAt!);
+
+      return lastModified.isAfter(onlineLastModified);
+    }
+    return false;
   }
 
   Future<void> deleteAttachment({
