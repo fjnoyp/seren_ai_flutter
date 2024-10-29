@@ -1,3 +1,4 @@
+import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:seren_ai_flutter/constants.dart';
 import 'package:seren_ai_flutter/services/data/users/models/user_model.dart';
@@ -43,6 +44,24 @@ class SignInUpPage extends StatelessWidget {
                   }
                   return null;
                 },
+              ),
+              BooleanMetaDataField(
+                key: 'terms_agreement',
+                isRequired: true,
+                checkboxPosition: ListTileControlAffinity.leading,
+                richLabelSpans: [
+                  const TextSpan(text: 'I have read and agree to the '),
+                  TextSpan(
+                    text: 'Terms and Conditions',
+                    style: TextStyle(
+                      color: Theme.of(context).colorScheme.tertiary,
+                    ),
+                    recognizer: TapGestureRecognizer()
+                      ..onTap = () {
+                        Navigator.pushNamed(context, termsAndConditionsRoute);
+                      },
+                  ),
+                ],
               ),
             ],
           )
