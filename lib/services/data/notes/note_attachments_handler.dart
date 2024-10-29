@@ -47,7 +47,7 @@ class NoteAttachmentsHandler extends Notifier<List<String>> {
   }) async {
     for (var file in files) {
       await supabaseStorage.from('note_attachments').upload(
-            '$noteId/${file.path.filePathToName()}',
+            '$noteId/${file.path.getFilePathName()}',
             file,
             fileOptions: const FileOptions(upsert: true),
           );
@@ -59,7 +59,7 @@ class NoteAttachmentsHandler extends Notifier<List<String>> {
     final attachmentsToRemove =
         await supabaseStorage.from('note_attachments').list(path: noteId);
     attachmentsToRemove.removeWhere((e) => _initialNoteAttachmentUrls
-        .any((url) => e.name == url.filePathToName()));
+        .any((url) => e.name == url.getFilePathName()));
 
     if (attachmentsToRemove.isNotEmpty) {
       await supabaseStorage
@@ -84,12 +84,12 @@ class NoteAttachmentsHandler extends Notifier<List<String>> {
     final noteDir = Directory('${path?.path}/$noteId');
     await noteDir.create(recursive: true);
 
-    final file = File('${path?.path}/$noteId/${fileUrl.filePathToName()}');
+    final file = File('${path?.path}/$noteId/${fileUrl.getFilePathName()}');
     if (!(await _isFileVersionFetched(
         fileUrl: fileUrl, file: file, noteId: noteId))) {
       final fileBytes = await supabaseStorage
           .from('note_attachments')
-          .download('$noteId/${fileUrl.filePathToName()}');
+          .download('$noteId/${fileUrl.getFilePathName()}');
       await file.writeAsBytes(fileBytes);
     }
     return file;
@@ -106,7 +106,7 @@ class NoteAttachmentsHandler extends Notifier<List<String>> {
       final files =
           await supabaseStorage.from('note_attachments').list(path: noteId);
       final onlineFile =
-          files.firstWhere((f) => f.name == fileUrl.filePathToName());
+          files.firstWhere((f) => f.name == fileUrl.getFilePathName());
       final onlineLastModified = DateTime.parse(onlineFile.updatedAt!);
 
       return lastModified.isAfter(onlineLastModified);
@@ -120,7 +120,7 @@ class NoteAttachmentsHandler extends Notifier<List<String>> {
   }) async {
     await supabaseStorage
         .from('note_attachments')
-        .remove(['$noteId/${fileUrl.filePathToName()}']);
+        .remove(['$noteId/${fileUrl.getFilePathName()}']);
     fetchNoteAttachments(noteId: noteId);
   }
 }

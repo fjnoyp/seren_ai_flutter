@@ -18,7 +18,7 @@ class ShareNoteButton extends ConsumerWidget {
     return IconButton(
       icon: const Icon(Icons.share),
       onPressed: () async {
-        final pdf = PdfFromNote(ref);
+        final pdf = NoteToPdfConverter(ref);
         // We need to call buildPdf here because the function is async (due to images loading)
         await pdf.buildPdf();
 

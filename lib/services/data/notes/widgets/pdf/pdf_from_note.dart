@@ -3,16 +3,15 @@ import 'package:intl/intl.dart';
 import 'package:pdf/pdf.dart';
 import 'package:pdf/widgets.dart';
 import 'package:seren_ai_flutter/common/utils/string_extension.dart';
-import 'package:seren_ai_flutter/services/data/common/utils/string_extensions.dart';
 import 'package:seren_ai_flutter/services/data/notes/models/joined_note_model.dart';
 import 'package:seren_ai_flutter/services/data/notes/note_attachments_handler.dart';
 import 'package:seren_ai_flutter/services/data/notes/ui_state/cur_note_state_provider.dart';
 import 'package:seren_ai_flutter/services/data/notes/ui_state/cur_note_states.dart';
 
-class PdfFromNote extends Document {
+class NoteToPdfConverter extends Document {
   final WidgetRef ref;
 
-  PdfFromNote(this.ref);
+  NoteToPdfConverter(this.ref);
 
   final pageFormat = PdfPageFormat.a4;
 
@@ -110,7 +109,7 @@ class PdfFromNote extends Document {
               UrlLink(
                 destination: e,
                 child: Text(
-                  e.filePathToName(),
+                  e.getFilePathName(),
                   style: const TextStyle(
                       color: PdfColors.blue,
                       decoration: TextDecoration.underline),
