@@ -39,7 +39,7 @@ dependencies:
   json_annotation: ^4.9.0
 
   # offline db + better watch queries 
-  powersync: ^1.5.5
+  powersync: ^1.8.8
 
   # file path manipulation 
   path: ^1.9.0
@@ -58,11 +58,12 @@ dependencies:
 
   table_calendar: ^3.1.2
   collection: ^1.18.0
-  wechat_assets_picker: ^9.3.0
-  wechat_camera_picker: ^4.3.2
   flutter_svg: ^2.0.10+1
   pdf: ^3.11.1
   share_plus: ^10.1.0
+  file_picker: ^8.1.3
+  open_file: ^3.5.9
+  permission_handler: ^11.3.1
 
 
 
