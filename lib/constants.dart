@@ -23,3 +23,5 @@ const String notePageRoute = '/notePage';
 const String noteFolderPageRoute = '/noteFolderPage';
 
 const String testSQLPageRoute = '/testSQLPage';
+
+const String termsAndConditionsRoute = '/termsAndConditions';
