@@ -18,12 +18,16 @@ class ShareNoteButton extends ConsumerWidget {
     return IconButton(
       icon: const Icon(Icons.share),
       onPressed: () async {
-        var joinedNote =
-            (ref.watch(curNoteStateProvider) as LoadedCurNoteState).joinedNote;
-        final pdf = PdfFromNote(joinedNote);
+        final pdf = PdfFromNote(ref);
+        // We need to call buildPdf here because the function is async (due to images loading)
+        await pdf.buildPdf();
 
         final output = await getTemporaryDirectory();
-        final path = '${output.path}/${joinedNote.note.name}.pdf';
+        final name = (ref.watch(curNoteStateProvider) as LoadedCurNoteState)
+            .joinedNote
+            .note
+            .name;
+        final path = '${output.path}/$name.pdf';
 
         final file = File(path);
         await file.writeAsBytes(await pdf.save());
