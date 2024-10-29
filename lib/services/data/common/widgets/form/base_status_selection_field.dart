@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
+import 'package:seren_ai_flutter/common/utils/string_extension.dart';
 import 'package:seren_ai_flutter/services/data/common/status_enum.dart';
-import 'package:seren_ai_flutter/services/data/common/utils/string_extensions.dart';
 import 'package:seren_ai_flutter/services/data/common/widgets/form/selection_field.dart';
 
 class BaseStatusSelectionField extends ConsumerWidget {
