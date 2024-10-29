@@ -13,6 +13,7 @@ import 'package:seren_ai_flutter/services/data/notes/ui_state/cur_note_state_pro
 import 'package:seren_ai_flutter/services/data/notes/ui_state/cur_note_states.dart';
 import 'package:seren_ai_flutter/services/data/notes/widgets/delete_note_button.dart';
 import 'package:seren_ai_flutter/services/data/notes/widgets/form/note_selection_fields.dart';
+import 'package:seren_ai_flutter/services/data/notes/widgets/pdf/share_note_button.dart';
 import 'package:seren_ai_flutter/services/data/notes/widgets/note_attachments/note_attachment_section.dart';
 
 final log = Logger('NotePage');
@@ -63,7 +64,12 @@ class NotePage extends HookConsumerWidget {
                       child: DeleteNoteButton(
                           noteId: curNoteState.joinedNote.note.id),
                     ),
-                  isEnabled
+                  if (mode == EditablePageMode.readOnly)
+                  Align(
+                    alignment: Alignment.topRight,
+                    child: ShareNoteButton(curNoteState.joinedNote.note.id),
+                  ),
+                isEnabled
                       ? NoteNameField(enabled: true)
                       : Text(
                           curNoteState.joinedNote.note.name,
