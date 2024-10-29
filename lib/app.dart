@@ -5,6 +5,7 @@ import 'package:logging/logging.dart';
 import 'package:seren_ai_flutter/constants.dart';
 import 'package:seren_ai_flutter/services/auth/widgets/auth_guard.dart';
 import 'package:seren_ai_flutter/services/auth/widgets/sign_in_up_page.dart';
+import 'package:seren_ai_flutter/services/auth/widgets/terms_and_conditions_webview.dart';
 import 'package:seren_ai_flutter/services/data/ai_chats/widgets/ai_chats_page.dart';
 import 'package:seren_ai_flutter/services/data/common/widgets/editablePageModeEnum.dart';
 import 'package:seren_ai_flutter/services/data/notes/widgets/notes_list_page.dart';
@@ -107,6 +108,7 @@ class AppState extends State<App> {
 
               return _GuardScaffold(title, NotePage(mode: mode));
             },
+            termsAndConditionsRoute: (context) => const TermsAndConditionsWebview(),
           },
           // For dynamically generating routes based on settings param
           onGenerateRoute: (settings) {
