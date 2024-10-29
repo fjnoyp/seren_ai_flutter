@@ -1,5 +1,7 @@
 import 'package:app_links/app_links.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_localizations/flutter_localizations.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:logging/logging.dart';
 import 'package:seren_ai_flutter/constants.dart';
@@ -88,14 +90,15 @@ class AppState extends State<App> {
 
               return _GuardScaffold(title, TaskPage(mode: mode));
             },
-
-            aiChatsRoute: (context) => const _GuardScaffold('AI Chat Page', AIChatsPage()),
-
-            shiftsRoute: (context) => const _GuardScaffold('Shifts', ShiftsPage()),
+            aiChatsRoute: (context) =>
+                const _GuardScaffold('AI Chat Page', AIChatsPage()),
+            shiftsRoute: (context) =>
+                const _GuardScaffold('Shifts', ShiftsPage()),
             testRoute: (context) => const _GuardScaffold('Test', TestPage()),
             testSQLPageRoute: (context) =>
                 _GuardScaffold('Test SQL Page', TestSQLPage()),
-            noteListRoute: (context) => const _GuardScaffold('Notes', NoteListPage()),
+            noteListRoute: (context) =>
+                const _GuardScaffold('Notes', NoteListPage()),
             notePageRoute: (context) {
               final args = ModalRoute.of(context)!.settings.arguments
                   as Map<String, dynamic>;
@@ -129,6 +132,16 @@ class AppState extends State<App> {
             // Handle other routes here if needed
             return null;
           },
+          localizationsDelegates: const [
+            AppLocalizations.delegate,
+            GlobalMaterialLocalizations.delegate,
+            GlobalWidgetsLocalizations.delegate,
+          ],
+          supportedLocales: const [
+            Locale('en' /*, 'US'*/),
+            Locale('pt', 'PT'),
+            Locale('pt', 'BR'),
+          ],
         );
       },
     );

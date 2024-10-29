@@ -1,0 +1,12 @@
+{
+    "welcome": "Welcome,\n{userName}!",
+        "@welcome": {
+        "description": "HomePage title message",
+        "placeholders": {
+            "userName": {
+                "type": "String",
+                "example": "Letty"
+            }
+        }
+    }
+}
