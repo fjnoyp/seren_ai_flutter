@@ -4,6 +4,16 @@ on:
   push:
     branches:
       - main  # Only run when changes are pushed to main
+  workflow_dispatch:  # Allows manual triggers from GitHub UI
+    inputs:
+      build_mode:
+        description: 'Build mode (release/debug)'
+        required: true
+        default: 'release'
+        type: choice
+        options:
+          - release
+          - debug
 
 env:
   FLUTTER_BUILD_MODE: release
@@ -39,10 +49,25 @@ jobs:
     - name: Install dependencies
       run: flutter pub get
 
-    - name: Update
+    - name: Update Kotlin version
       run: |
         sed -i 's/id "org.jetbrains.kotlin.android" version ".*"/id "org.jetbrains.kotlin.android" version "1.9.22"/' android/settings.gradle
-        sed -i '/buildscript {/,/}/c\buildscript {\n    ext.kotlin_version = "1.9.22"\n    repositories {\n        google()\n        mavenCentral()\n    }\n    dependencies {\n        classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlin_version"\n    }\n}' android/build.gradle
+
+    - name: Update build.gradle
+      run: |
+        cat > android/build.gradle << 'EOL'
+        buildscript {
+            ext.kotlin_version = "1.9.22"
+            repositories {
+                google()
+                mavenCentral()
+            }
+            dependencies {
+                classpath 'com.android.tools.build:gradle:7.3.0'
+                classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlin_version"
+            }
+        }
+        EOL
 
     - name: Print android/settings.gradle contents
       run: cat android/settings.gradle
