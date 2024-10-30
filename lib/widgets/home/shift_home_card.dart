@@ -5,6 +5,7 @@ import 'package:intl/intl.dart';
 import 'package:seren_ai_flutter/constants.dart';
 import 'package:seren_ai_flutter/services/data/shifts/cur_shifts/cur_user_active_shift_ranges_fam_provider.dart';
 import 'package:seren_ai_flutter/services/data/shifts/cur_shifts/cur_user_joined_shifts_listener_provider.dart';
+import 'package:seren_ai_flutter/services/data/shifts/cur_shifts/cur_user_joined_shift_provider.dart';
 import 'package:seren_ai_flutter/widgets/home/base_home_card.dart';
 
 class ShiftCard extends StatelessWidget {
@@ -18,22 +19,32 @@ class ShiftCard extends StatelessWidget {
       child: Center(
         child: Consumer(
           builder: (context, ref, child) {
-            // TODO: refactor to use handable states - activeShiftRanges state is acting weird
-            final joinedShifts = ref.watch(curUserJoinedShiftsListenerProvider);
-            final activeShiftRanges = ref.watch(
-                curUserActiveShiftRangesFamProvider((
-              shiftId: joinedShifts?.first.shift.id ?? '',
-              day: DateTime.now().toUtc()
-            )));
-            return switch (joinedShifts) {
-              null => const CircularProgressIndicator(),
-              [] => Text(AppLocalizations.of(context)!.noShifts),
-              List() => activeShiftRanges.isNotEmpty
-                  ? InkWell(
-                      onTap: () => Navigator.of(context).pushNamed(shiftsRoute),
-                      child: _ShiftInnerCard(activeShiftRanges),
-                    )
-                  : Text(AppLocalizations.of(context)!.noActiveShift),
+            final shiftIdState = ref.watch(curUserJoinedShiftProvider);
+            return switch (shiftIdState) {
+              CurUserJoinedShiftLoading() => const CircularProgressIndicator(),
+              CurUserJoinedShiftLoaded(joinedShift: final joinedShift) => Builder(
+                builder: (context) {
+                  if (joinedShift == null) {
+                    return const Text('No active shift');
+                  }
+                  
+                  final activeShiftRanges = ref.watch(
+                    curUserActiveShiftRangesFamProvider((
+                      shiftId: joinedShift.shift.id,
+                      day: DateTime.now().toUtc()
+                    ))
+                  );
+
+                  if (activeShiftRanges.isEmpty) {
+                    return const Text('No active shift ranges for today in the current shift');
+                  }
+
+                  return InkWell(
+                    onTap: () => Navigator.of(context).pushNamed(shiftsRoute),
+                    child: _ShiftInnerCard(activeShiftRanges),
+                  );
+                }
+              ),
             };
           },
         ),
