@@ -1,4 +1,4 @@
-name: Android Release
+name: Android Release AAB
 
 on:
   push:
@@ -57,15 +57,15 @@ jobs:
           }
           EOF
 
-      - name: Build APK
-        run: flutter build apk --release
+      - name: Build App Bundle
+        run: flutter build appbundle --release
 
       - name: Debug - List build directory
         run: |
-          echo "Listing build directory contents:"
-          ls -R build/app/outputs/apk/release/
+          echo "Listing bundle directory contents:"
+          ls -R build/app/outputs/bundle/release/
 
-      - name: Sign APK
+      - name: Sign App Bundle
         env:
           KEYSTORE_PASSWORD: ${{ secrets.KEYSTORE_PASSWORD }}
           KEY_ALIAS: ${{ secrets.KEY_ALIAS }}
@@ -74,23 +74,20 @@ jobs:
           # Copy the keystore file
           echo "${{ secrets.KEYSTORE }}" | base64 --decode > android/app/my-release-key.jks
           
-          # Sign the APK
+          # Sign the App Bundle
           jarsigner -verbose -sigalg SHA1withRSA -digestalg SHA1 \
             -keystore android/app/my-release-key.jks \
             -storepass $KEYSTORE_PASSWORD -keypass $KEY_PASSWORD \
-            build/app/outputs/apk/release/app-release-unsigned.apk $KEY_ALIAS
+            build/app/outputs/bundle/release/app-release-unsigned.aab $KEY_ALIAS
 
-          # Verify APK
-          jarsigner -verify build/app/outputs/apk/release/app-release-unsigned.apk
+          # Move the signed bundle to a new name
+          mv build/app/outputs/bundle/release/app-release-unsigned.aab build/app/outputs/bundle/release/app-release-signed.aab
 
-      - name: Align APK using zipalign
-        run: |
-          ${ANDROID_HOME}/build-tools/33.0.1/zipalign -v -p 4 \
-          build/app/outputs/apk/release/app-release-unsigned.apk \
-          build/app/outputs/apk/release/app-release-aligned.apk
+          # Verify App Bundle
+          jarsigner -verify build/app/outputs/bundle/release/app-release-signed.aab
 
-      - name: Upload APK as artifact
+      - name: Upload App Bundle as artifact
         uses: actions/upload-artifact@v3
         with:
-          name: release-apk
-          path: build/app/outputs/apk/release/app-release-aligned.apk
+          name: release-bundle
+          path: build/app/outputs/bundle/release/app-release-signed.aab
