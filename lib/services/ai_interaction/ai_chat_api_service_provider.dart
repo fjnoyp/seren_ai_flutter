@@ -108,7 +108,6 @@ class AIChatService {
         name: 'AI Set Task Test',
         dueDate: DateTime.now().toUtc(),
         parentProjectId: 'parentProjectId',
-        parentTeamId: 'parentTeamId',
         description: 'Task description',
         status: StatusEnum.inProgress,
         authorUserId: 'authorUserId',
@@ -131,7 +130,6 @@ class AIChatService {
         name: 'TEST',
         description: 'test',
         parentOrgId: 'parentOrgId',
-        parentTeamId: 'parentTeamId',
       ),
       team: TeamModel(
         id: 'teamId',

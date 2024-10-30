@@ -7,48 +7,42 @@ import 'package:seren_ai_flutter/services/data/users/models/user_model.dart';
 
 import 'package:seren_ai_flutter/services/data/users/users_read_provider.dart';
 
-
 // ignore: depend_on_referenced_packages
-import 'package:collection/collection.dart'; 
+import 'package:collection/collection.dart';
 
-
-
-final joinedUserTeamRolesListenerTeamFamProvider = NotifierProvider.family<
-    JoinedUserTeamRolesListenerTeamFamNotifier,
+final joinedUserTeamAssignmentsListenerTeamFamProvider = NotifierProvider.family<
+    JoinedUserTeamAssignmentsListenerTeamFamNotifier,
     List<JoinedUserTeamRoleModel>?,
-    String>(
-  JoinedUserTeamRolesListenerTeamFamNotifier.new
-);
+    String>(JoinedUserTeamAssignmentsListenerTeamFamNotifier.new);
 
-class JoinedUserTeamRolesListenerTeamFamNotifier
+class JoinedUserTeamAssignmentsListenerTeamFamNotifier
     extends FamilyNotifier<List<JoinedUserTeamRoleModel>?, String> {
-
-
   @override
   List<JoinedUserTeamRoleModel>? build(String arg) {
-    _listen(); 
+    _listen();
     return null;
   }
 
   Future<void> _listen() async {
-    final teamId = arg; 
+    final teamId = arg;
 
-    final userTeamRoles = ref.watch(userTeamRolesListenerTeamFamProvider(teamId));
+    final userTeamRoles =
+        ref.watch(userTeamRolesListenerTeamFamProvider(teamId));
 
-    if(userTeamRoles == null){
+    if (userTeamRoles == null) {
       return;
     }
 
     final userIds = userTeamRoles.map((role) => role.userId).toList();
     final authUsers = await ref.read(usersReadProvider).getItems(ids: userIds);
 
-    final team = await ref.read(teamsReadProvider).getItem(id: teamId); 
+    final team = await ref.read(teamsReadProvider).getItem(id: teamId);
 
     final joinedRoles = userTeamRoles.map((role) {
       final UserModel? authUser =
           authUsers.firstWhereOrNull((user) => user.id == role.userId);
       return JoinedUserTeamRoleModel(
-        teamRole: role,
+        teamAssignment: role,
         user: authUser,
         team: team,
       );

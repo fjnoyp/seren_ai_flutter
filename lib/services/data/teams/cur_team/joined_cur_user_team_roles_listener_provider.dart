@@ -8,13 +8,10 @@ import 'package:collection/collection.dart';
 
 final joinedCurUserTeamRolesListenerProvider = NotifierProvider<
     JoinedCurUserTeamRolesListenerNotifier,
-    List<JoinedUserTeamRoleModel>?>(
-  JoinedCurUserTeamRolesListenerNotifier.new
-);
+    List<JoinedUserTeamRoleModel>?>(JoinedCurUserTeamRolesListenerNotifier.new);
 
 class JoinedCurUserTeamRolesListenerNotifier
-    extends Notifier<List<JoinedUserTeamRoleModel>?> {  
-
+    extends Notifier<List<JoinedUserTeamRoleModel>?> {
   @override
   List<JoinedUserTeamRoleModel>? build() {
     _listen();
@@ -24,8 +21,8 @@ class JoinedCurUserTeamRolesListenerNotifier
   Future<void> _listen() async {
     final watchedCurUserTeamRoles = ref.watch(curUserTeamRolesListenerProvider);
 
-    if(watchedCurUserTeamRoles == null){
-      return; 
+    if (watchedCurUserTeamRoles == null) {
+      return;
     }
 
     final userIds = watchedCurUserTeamRoles.map((role) => role.userId).toSet();
@@ -33,11 +30,12 @@ class JoinedCurUserTeamRolesListenerNotifier
 
     final teamIds = watchedCurUserTeamRoles.map((role) => role.teamId).toSet();
     final teams = await ref.read(teamsReadProvider).getItems(ids: teamIds);
-    
+
     final joinedTeamRoles = watchedCurUserTeamRoles.map((teamRole) {
       final user = users.firstWhereOrNull((user) => user.id == teamRole.userId);
       final team = teams.firstWhereOrNull((team) => team.id == teamRole.teamId);
-      return JoinedUserTeamRoleModel(teamRole: teamRole, user: user, team: team);
+      return JoinedUserTeamRoleModel(
+          teamAssignment: teamRole, user: user, team: team);
     }).toList();
 
     state = joinedTeamRoles;

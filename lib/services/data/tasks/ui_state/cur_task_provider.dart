@@ -49,7 +49,6 @@ class CurTaskNotifier extends Notifier<CurTaskState> {
           authorUser: curUser,
           task: TaskModel.defaultTask().copyWith(
             authorUserId: curUser.id,
-            parentTeamId: defaultTeam?.id,
             parentProjectId: defaultProject?.id,
           ),
           team: defaultTeam,
@@ -172,15 +171,6 @@ class CurTaskNotifier extends Notifier<CurTaskState> {
       state = LoadedCurTaskState(loadedState.task.copyWith(
           task: loadedState.task.task.copyWith(parentProjectId: project?.id),
           project: project));
-    }
-  }
-
-  void updateTeam(TeamModel? team) {
-    if (state is LoadedCurTaskState) {
-      final loadedState = state as LoadedCurTaskState;
-      state = LoadedCurTaskState(loadedState.task.copyWith(
-          task: loadedState.task.task.copyWith(parentTeamId: team?.id),
-          team: team));
     }
   }
 

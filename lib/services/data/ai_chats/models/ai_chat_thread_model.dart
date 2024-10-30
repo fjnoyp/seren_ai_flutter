@@ -14,12 +14,15 @@ class AiChatThreadModel implements IHasId {
   final String parentLgThreadId;
   @JsonKey(name: 'parent_org_id')
   final String parentOrgId;
+  @JsonKey(name: 'parent_lg_assistant_id') 
+  final String parentLgAssistantId;
 
   AiChatThreadModel({
     String? id,
     required this.authorUserId,
     required this.parentLgThreadId,
     required this.parentOrgId,
+    required this.parentLgAssistantId,
   }) : id = id ?? uuid.v4();
 
   AiChatThreadModel copyWith({
@@ -27,12 +30,14 @@ class AiChatThreadModel implements IHasId {
     String? authorUserId,
     String? parentLgThreadId,
     String? parentOrgId,
+    String? parentLgAssistantId,
   }) {
     return AiChatThreadModel(
       id: id ?? this.id,
       authorUserId: authorUserId ?? this.authorUserId,
       parentLgThreadId: parentLgThreadId ?? this.parentLgThreadId,
       parentOrgId: parentOrgId ?? this.parentOrgId,
+      parentLgAssistantId: parentLgAssistantId ?? this.parentLgAssistantId,
     );
   }
 

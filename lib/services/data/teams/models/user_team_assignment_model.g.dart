@@ -1,17 +1,17 @@
 // GENERATED CODE - DO NOT MODIFY BY HAND
 
-part of 'user_team_role_model.dart';
+part of 'user_team_assignment_model.dart';
 
 // **************************************************************************
 // JsonSerializableGenerator
 // **************************************************************************
 
-UserTeamRoleModel _$UserTeamRoleModelFromJson(Map<String, dynamic> json) =>
-    UserTeamRoleModel(
+UserTeamAssignmentModel _$UserTeamAssignmentModelFromJson(
+        Map<String, dynamic> json) =>
+    UserTeamAssignmentModel(
       id: json['id'] as String?,
       userId: json['user_id'] as String,
       teamId: json['team_id'] as String,
-      teamRole: json['team_role'] as String,
       createdAt: json['created_at'] == null
           ? null
           : DateTime.parse(json['created_at'] as String),
@@ -20,12 +20,12 @@ UserTeamRoleModel _$UserTeamRoleModelFromJson(Map<String, dynamic> json) =>
           : DateTime.parse(json['updated_at'] as String),
     );
 
-Map<String, dynamic> _$UserTeamRoleModelToJson(UserTeamRoleModel instance) =>
+Map<String, dynamic> _$UserTeamAssignmentModelToJson(
+        UserTeamAssignmentModel instance) =>
     <String, dynamic>{
       'id': instance.id,
       'user_id': instance.userId,
       'team_id': instance.teamId,
-      'team_role': instance.teamRole,
       'created_at': instance.createdAt?.toIso8601String(),
       'updated_at': instance.updatedAt?.toIso8601String(),
     };
