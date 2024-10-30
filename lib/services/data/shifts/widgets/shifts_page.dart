@@ -6,6 +6,7 @@ import 'package:seren_ai_flutter/common/utils/duration_extension.dart';
 import 'package:seren_ai_flutter/services/data/shifts/cur_shifts/cur_user_active_shift_ranges_fam_provider.dart';
 
 import 'package:seren_ai_flutter/services/data/shifts/cur_shifts/cur_user_joined_shifts_listener_provider.dart';
+import 'package:seren_ai_flutter/services/data/shifts/cur_shifts/cur_user_joined_shift_provider.dart';
 import 'package:seren_ai_flutter/services/data/shifts/cur_shifts/cur_user_shift_log/cur_user_cur_shift_log_fam_provider.dart';
 import 'package:seren_ai_flutter/services/data/shifts/cur_shifts/cur_user_shift_log/cur_user_cur_shift_log_notifier_provider.dart';
 import 'package:seren_ai_flutter/services/data/shifts/cur_shifts/shift_day_fam_listener_providers/cur_user_shift_logs_fam_listener_provider.dart';
@@ -27,18 +28,20 @@ class ShiftsPage extends HookConsumerWidget {
     final selectedDay = useState(DateTime.now().toUtc());
     final focusedDay = useState(DateTime.now().toUtc());
 
-    // TODO p3: Allow choosing which shift to view
-    final joinedShifts = ref.watch(curUserJoinedShiftsListenerProvider);
+    final joinedShiftState = ref.watch(curUserJoinedShiftProvider);
 
-    if (joinedShifts == null) {
+    if(joinedShiftState is CurUserJoinedShiftLoading) {
       return const Center(child: CircularProgressIndicator());
     }
 
-    if (joinedShifts.isEmpty) {
-      return Center(child: Text(AppLocalizations.of(context)!.noShifts));
+    JoinedShiftModel? curJoinedShift; 
+    if(joinedShiftState is CurUserJoinedShiftLoaded) {
+      curJoinedShift = joinedShiftState.joinedShift;
     }
 
-    final selectedShift = joinedShifts[0];
+    if(curJoinedShift == null) {
+      return const Center(child: Text('No active shift'));
+    }
 
     final theme = Theme.of(context);
 
@@ -94,7 +97,7 @@ class ShiftsPage extends HookConsumerWidget {
           ),
         ),
         Expanded(
-          child: _DayShiftsWidget(day: selectedDay.value, shift: selectedShift),
+          child: _DayShiftsWidget(day: selectedDay.value, shift: curJoinedShift),
         ),
       ],
     );
