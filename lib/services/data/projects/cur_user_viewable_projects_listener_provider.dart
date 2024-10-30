@@ -1,5 +1,5 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:seren_ai_flutter/services/data/orgs/cur_org/cur_org_id_provider.dart';
+import 'package:seren_ai_flutter/services/data/orgs/cur_org/cur_user_org_id_provider.dart';
 import 'package:seren_ai_flutter/services/data/orgs/cur_org/is_cur_user_org_admin_listener_provider.dart';
 import 'package:seren_ai_flutter/services/data/projects/cur_user_projects_listener_provider.dart';
 import 'package:seren_ai_flutter/services/data/projects/models/project_model.dart';
@@ -10,7 +10,7 @@ final curUserViewableProjectsListenerProvider =
   final watchedIsCurUserOrgAdmin = ref.watch(isCurUserOrgAdminListenerProvider);
 
   if (watchedIsCurUserOrgAdmin) {
-    final watchedCurOrgId = ref.watch(curOrgIdProvider);
+    final watchedCurOrgId = ref.watch(curUserOrgIdProvider);
 
     if(watchedCurOrgId == null) {
       return [];
