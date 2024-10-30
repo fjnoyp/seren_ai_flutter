@@ -7,12 +7,12 @@ import 'package:logging/logging.dart';
 
 final log = Logger('CurOrgIdProvider');
 
-final curOrgIdProvider =
-    NotifierProvider<CurOrgIdNotifier, String?>(() {
-  return CurOrgIdNotifier();
+final curUserOrgIdProvider =
+    NotifierProvider<CurUserOrgIdNotifier, String?>(() {
+  return CurUserOrgIdNotifier();
 });
 
-class CurOrgIdNotifier extends Notifier<String?> {
+class CurUserOrgIdNotifier extends Notifier<String?> {
   static const String _orgIdKey = 'current_org_id';
 
   @override

@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:seren_ai_flutter/services/data/orgs/cur_org/cur_org_id_provider.dart';
+import 'package:seren_ai_flutter/services/data/orgs/cur_org/cur_user_org_id_provider.dart';
 import 'package:seren_ai_flutter/services/data/orgs/cur_org/joined_cur_user_org_roles_listener_provider.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
@@ -10,7 +10,7 @@ class ChooseOrgPage extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final orgRoles = ref.watch(joinedCurUserOrgRolesListenerProvider);
-    final curOrgId = ref.watch(curOrgIdProvider);
+    final curOrgId = ref.watch(curUserOrgIdProvider);
 
     if(orgRoles == null) {
       return Center(
@@ -49,7 +49,7 @@ class ChooseOrgPage extends ConsumerWidget {
                     title: Center(child: Text(orgModel.name)),
                     subtitle: Center(child: Text(orgRoleModel.orgRole)),
                     onTap: () {
-                      ref.read(curOrgIdProvider.notifier).setDesiredOrgId(orgModel.id);
+                      ref.read(curUserOrgIdProvider.notifier).setDesiredOrgId(orgModel.id);
                     },
                   ),
                 );
