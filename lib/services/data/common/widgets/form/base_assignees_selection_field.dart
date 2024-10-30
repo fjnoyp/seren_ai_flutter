@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:seren_ai_flutter/services/data/common/widgets/form/selection_field.dart';
@@ -32,7 +33,7 @@ class BaseAssigneesSelectionField extends HookConsumerWidget {
       //     ? 'Assignees are required'
       //     : null,
       valueToString: (assignees) => assignees?.isEmpty == true
-          ? 'Choose Assignees'
+          ? AppLocalizations.of(context)!.chooseAssignees
           : assignees!.map((assignment) => assignment.email).join(', '),
       enabled: enabled && curProject != null,
       value: curAssignees,
@@ -99,17 +100,17 @@ class AssigneesSelectionModal extends HookConsumerWidget {
             Row(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                const Text('Only users in '),
-                Text(curProject!.name,
+                Text(AppLocalizations.of(context)!.onlyUsersIn),
+                Text(curProject.name,
                     style: const TextStyle(fontWeight: FontWeight.bold)),
-                const Text(' can be assigned'),
+                Text(AppLocalizations.of(context)!.canBeAssigned),
               ],
             ),
             ElevatedButton(
               onPressed: () {
                 // Add logic to add more users to the current project
               },
-              child: Text('Add Users to ${curProject!.name}'),
+              child: Text(AppLocalizations.of(context)!.addUsersTo(curProject.name)),
             ),
             ConstrainedBox(
               constraints: BoxConstraints(
@@ -146,7 +147,7 @@ class AssigneesSelectionModal extends HookConsumerWidget {
               onPressed: () {
                 onAssigneesChanged(ref, currentlySelectedUsers.value);
               },
-              child: const Text('Save'),
+              child: Text(AppLocalizations.of(context)!.save),
             ),
           ],
         ),

@@ -1,12 +1,252 @@
 {
+    "@_": {"description": "Home Page"},
     "welcome": "Welcome,\n{userName}!",
-        "@welcome": {
-        "description": "HomePage title message",
+    "@welcome": {
         "placeholders": {
             "userName": {
                 "type": "String",
                 "example": "Letty"
             }
         }
-    }
+    },
+
+    "@_": {"description": "AI Chats Page"},
+    "noChatThreadAvailable": "No chat thread available",
+    "noMessagesAvailable": "No messages available",
+    "messageType": "Type: {messageType}",
+    "@messageType": {
+        "placeholders": {
+            "userName": {
+                "type": "String",
+                "example": "ai"
+            }
+        }
+    },
+    "collapse": "Collapse",
+    "expand": "Expand",
+
+    "@_": {"description": "Base Assignees Selection Field"},
+    "onlyUsersInProjectCanBeAssigned": "Only users in {projectName} can be assigned",
+    "@onlyUsersInProjectCanBeAssigned": {
+        "placeholders": {
+            "projectName": {
+                "type": "String",
+                "example": "Project 1"
+            }
+        }
+    },
+    "onlyUsersIn": "Only users in ",
+    "canBeAssigned": " can be assigned",
+    "chooseAssignees": "Choose Assignees",
+    "save": "Save",
+    "addUsersTo": "Add Users to {projectName}",
+    "@addUsersTo": {
+        "placeholders": {
+            "projectName": {
+                "type": "String",
+                "example": "Project 1"
+            }
+        }
+    },
+
+    "@_": {"description": "Base Project Selection Field"},
+    "project": "Project",
+    "selectAProject": "Select a Project",
+    "personal": "Personal",
+    "projectIsRequired": "Project is required",
+
+    "@_": {"description": "Base Team Selection Field"},
+    "team": "Team",
+    "selectATeam": "Select a Team",
+    "teamIsRequired": "Team is required",
+
+    "@_": {"description": "Base Text Block Edit Selection Field"},
+    "enterTextHere": "Enter text here...",
+    "enterText": "Enter Text",
+
+    "@_": {"description": "Note Page"},
+    "updateNote": "Update Note",
+    "createNote": "Create Note",
+    "edit": "Edit",
+    "deleteNote": "Delete Note",
+    "userNotAuthenticated": "Error: Current user is not authenticated.",
+
+    "@_": {"description": "Notes List Page"},
+    "loadingProjects": "Loading projects...",
+    "createNewNote": "Create New Note",
+    "thisProjectHasNoNotes": "This project has no notes yet",
+    "noteItemDateTimeFormat": "MM/dd/yyyy HH:mm",
+
+    "@_": {"description": "Note Attachment Section"},
+    "addAttachment": "Add Attachment",
+    "photosPermissionDenied": "Photos permission denied",
+    "delete": "Delete",
+    "cancel": "Cancel",
+    "deleteAttachment": "Delete {fileName}?",
+    "@deleteAttachment": {
+        "placeholders": {
+            "fileName": {
+                "type": "String",
+                "example": "document.pdf"
+            }
+        }
+    },
+    "notAbleToPreview": "Not able to preview this file.\n You can try opening it locally.",
+    "openFile": "Open file",
+
+    "@_": {"description": "Choose Org Page"},
+    "waitingForOrgRoles": "Waiting for orgRoles to load...",
+    "noOrganizations": "No organizations available",
+    "errorCannotLoadOrg": "Error cannot load organization",
+
+    "@_": {"description": "Manage Org Users Page"},
+    "noOrgSelected": "Error - No org selected. Wrap with OrgGuard",
+    "noUsersInOrg": "No users found in this organization.",
+    "noEmailFound": "No email or email not found",
+
+    "@_": {"description": "Projects Page"},
+    "noProjectsFound": "No projects found",
+    "noDescription": "No description",
+
+    "@_": {"description": "Shifts Page"},
+    "noShifts": "No shifts",
+    "noShiftLogs": "No shift logs",
+    "noShiftsExclamation": "No shifts!",
+    "clockIn": "Clock In", 
+    "clockOut": "Clock Out",
+    "shiftCompleted": "Shift completed",
+    "shiftLogs": "Shift Logs",
+    "noProjectAddress": "No project address",
+    "elapsedTime": "Elapsed Time: {hours}:{minutes}:{seconds}",
+    "@elapsedTime": {
+        "placeholders": {
+            "hours": {"type": "String"},
+            "minutes": {"type": "String"},
+            "seconds": {"type": "String"}
+        }
+    },
+
+    "@_": {"description": "Task Page"},
+    "updateTask": "Update Task",
+    "createTask": "Create Task",
+    "deleteTask": "Delete Task",
+
+    "@_": {"description": "Task Comment Section"},
+    "comments": "Comments",
+    "addComment": "Add Comment",
+
+    "@_": {"description": "Task List Item View"},
+    "lastUpdated": "Last updated: {date}",
+    "@lastUpdated": {
+        "placeholders": {
+            "date": {"type": "String"}
+        }
+    },
+    "dueDate": "Due: {date}",
+    "@dueDate": {
+        "placeholders": {
+            "date": {"type": "String"}
+        }
+    },
+    "notAvailable": "N/A",
+
+    "@_": {"description": "Task Priority View"},
+    "veryHigh": "Very High",
+    "high": "High", 
+    "normal": "Normal",
+    "low": "Low",
+    "veryLow": "Very Low",
+
+    "@_": {"description": "Task Status View"},
+    "open": "Open",
+    "inProgress": "In Progress",
+    "finished": "Finished",
+    "cancelled": "Cancelled", 
+    "archived": "Archived",
+
+    "@_": {"description": "Manage Team Users Page"},
+    "noOrgSelectedWrapWithGuard": "Error - No org selected. Wrap with OrgGuard",
+    "error": "Error: {error}",
+    "@error": {
+        "placeholders": {
+            "error": {"type": "String"}
+        }
+    },
+    "noTeamSelected": "Error - No team selected.",
+    "selectATeamDropdown": "Select a team",
+    "noUsersInTeam": "No users found in this team.",
+    "noEmailOrNotFound": "No email or email not found",
+
+    "@_": {"description": "Speech State Control Button Widget"},
+    "unknownState": "Unknown state: {state}",
+    "@unknownState": {
+        "placeholders": {
+            "state": {"type": "String"}
+        }
+    },
+    "initError": "Init error: {error}",
+    "@initError": {
+        "placeholders": {
+            "error": {"type": "String"}
+        }
+    },
+
+    "@_": {"description": "Speech Transcribed Widget"},
+    "saySomething": "Say something...",
+
+    "@_": {"description": "Drawer View"},
+    "settings": "Settings",
+    "menu": "Menu",
+    "account": "Account",
+    "noAuthUser": "No Auth User",
+    "email": "Email",
+    "subscription": "Subscription",
+    "premium": "Premium",
+    "signOut": "Sign Out",
+    "app": "App",
+    "colorScheme": "Color Scheme",
+    "system": "System",
+    "light": "Light", 
+    "dark": "Dark",
+    "about": "About",
+    "home": "Home",
+    "chooseOrganization": "Choose Organization",
+    "orgAdminManageOrgUsers": "Org Admin - Manage Org Users",
+    "projects": "Projects",
+    "tasks": "Tasks",
+    "testSQL": "Test SQL",
+    "aiChatThreads": "AI Chat Threads",
+    "shifts": "Shifts",
+    "notes": "Notes",
+
+    "@_": {"description": "Clock In Out Card"},
+    "clockInOut": "Clock in/out",
+    "noShifts": "No shifts",
+    "startShift": "Start Shift",
+    "endShift": "End Shift",
+    "clockedInAt": "Clocked in at {time}",
+    "@clockedInAt": {
+        "placeholders": {
+            "time": {"type": "String"}
+        }
+    },
+
+    "@_": {"description": "Notes Home Card"},
+    "noNotes": "No notes",
+
+    "@_": {"description": "Shift Home Card"},
+    "todaysShift": "Today's Shift",
+    "noActiveShift": "No active shift",
+    "timeRange": "{startTime} to {endTime}",
+    "@timeRange": {
+        "placeholders": {
+            "startTime": {"type": "String"},
+            "endTime": {"type": "String"}
+        }
+    },
+
+    "@_": {"description": "Task Home Card"},
+    "todaysTasks": "Today's Tasks",
+    "noTasksDueToday": "No tasks due today",
+    "seeAll": "See All"
 }

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:intl/intl.dart';
 import 'package:logging/logging.dart';
@@ -146,8 +147,8 @@ class NotePage extends HookConsumerWidget {
                           foregroundColor: theme.colorScheme.onSecondary,
                         ),
                         child: Text(mode == EditablePageMode.edit
-                            ? 'Update Note'
-                            : 'Create Note'),
+                            ? AppLocalizations.of(context)!.updateNote
+                            : AppLocalizations.of(context)!.createNote),
                       ),
                     ),
 
@@ -158,7 +159,7 @@ class NotePage extends HookConsumerWidget {
                           openNotePage(context, ref,
                               mode: EditablePageMode.edit);
                         },
-                        child: const Text('Edit'))
+                        child: Text(AppLocalizations.of(context)!.edit))
                 ],
               ),
             ),
@@ -182,13 +183,13 @@ Future<void> openNotePage(BuildContext context, WidgetRef ref,
       _ => null,
     };
     if (authUser == null) {
-      throw Exception('Error: Current user is not authenticated.');
+      throw Exception(AppLocalizations.of(context)!.userNotAuthenticated);
     }
 
     // TODO: verify if isn't better to use the current project id than the default one in this case
     // if (parentProjectId == null) {
     //   throw ArgumentError(
-    //       'Error: Parent note folder id is required for creating a note.');
+    //       AppLocalizations.of(context)!.parentProjectIdRequired);
     // }
 
     ref.read(curNoteStateProvider.notifier).setToNewNote();

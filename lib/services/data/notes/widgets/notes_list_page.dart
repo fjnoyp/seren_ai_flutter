@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:intl/intl.dart';
@@ -32,7 +33,7 @@ class NoteListPage extends HookConsumerWidget {
               parentProjectId: curProjectId.value,
             );
           },
-          buttonText: 'Create New Note',
+          buttonText: AppLocalizations.of(context)!.createNewNote,
         ),
       ],
     );
@@ -49,13 +50,13 @@ class _ProjectDropDown extends ConsumerWidget {
     final projects = ref.watch(curUserViewableProjectsListenerProvider);
     // TODO: improve UI by using a disabled dropdown instead
     return (projects?.isEmpty ?? true)
-        ? const Text('Loading projects...')
+        ? Text(AppLocalizations.of(context)!.loadingProjects)
         : DropdownButton<String?>(
             value: curProjectId.value,
             items: [
-              const DropdownMenuItem<String?>(
+              DropdownMenuItem<String?>(
                 value: null,
-                child: Text('Personal'),
+                child: Text(AppLocalizations.of(context)!.personal),
               ),
               ...projects!.map(
                 (project) => DropdownMenuItem<String?>(
@@ -82,7 +83,7 @@ class _NoteListByProjectId extends ConsumerWidget {
     // TODO: use note list states instead to better handle errors
     return switch (notes) {
       null => const Center(child: CircularProgressIndicator()),
-      [] => const Center(child: Text('This project has no notes yet')),
+      [] => Center(child: Text(AppLocalizations.of(context)!.thisProjectHasNoNotes)),
       List() => ListView.builder(
           itemCount: notes.length,
           itemBuilder: (context, index) => _NoteItem(notes[index]),
@@ -106,7 +107,8 @@ class _NoteItem extends ConsumerWidget {
       ),
       trailing: Text(
         note.createdAt != null
-            ? DateFormat('MM/dd/yyyy HH:mm').format(note.createdAt!)
+            // TODO: format using localizations
+            ? DateFormat(AppLocalizations.of(context)!.noteItemDateTimeFormat).format(note.createdAt!)
             : '',
         style: const TextStyle(fontSize: 12),
       ),

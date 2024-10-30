@@ -1,3 +1,142 @@
 {
-    "welcome": "Boas vindas,\n{userName}!"
+    "welcome": "Boas vindas,\n{userName}!",
+
+    "noChatThreadAvailable": "Nenhuma conversa disponível",
+    "noMessagesAvailable": "Nenhuma mensagem disponível",
+    "messageType": "Tipo: {messageType}",
+    "collapse": "Recolher",
+    "expand": "Expandir",
+
+    "onlyUsersInProjectCanBeAssigned": "Apenas utilizadores em {projectName} podem ser atribuídos",
+    "onlyUsersIn": "Apenas utilizadores em ",
+    "canBeAssigned": " podem ser atribuídos",
+    "chooseAssignees": "Escolher Responsáveis",
+    "save": "Guardar",
+    "addUsersTo": "Adicionar Utilizadores a {projectName}",
+
+    "project": "Projeto",
+    "selectAProject": "Selecionar um Projeto",
+    "personal": "Pessoal",
+    "projectIsRequired": "O projeto é obrigatório",
+
+    "team": "Equipa",
+    "selectATeam": "Selecionar uma Equipa",
+    "teamIsRequired": "A equipa é obrigatória",
+
+    "enterTextHere": "Inserir texto aqui...",
+    "enterText": "Inserir Texto",
+
+    "updateNote": "Atualizar Nota",
+    "createNote": "Criar Nota",
+    "edit": "Editar",
+    "deleteNote": "Eliminar Nota",
+    "userNotAuthenticated": "Erro: O utilizador atual não está autenticado.",
+
+    "loadingProjects": "A carregar projetos...",
+    "createNewNote": "Criar Nova Nota",
+    "thisProjectHasNoNotes": "Este projeto ainda não tem notas",
+    "noteItemDateTimeFormat": "dd/MM/yyyy HH:mm",
+
+    "addAttachment": "Adicionar Anexo",
+    "photosPermissionDenied": "Permissão de fotos negada",
+    "delete": "Eliminar",
+    "cancel": "Cancelar",
+    "deleteAttachment": "Eliminar {fileName}?",
+    "notAbleToPreview": "Não é possível pré-visualizar este ficheiro.\nPode tentar abri-lo localmente.",
+    "openFile": "Abrir ficheiro",
+
+    "waitingForOrgRoles": "A aguardar o carregamento das funções da organização...",
+    "noOrganizations": "Nenhuma organização disponível",
+    "errorCannotLoadOrg": "Erro ao carregar a organização",
+
+    "noOrgSelected": "Erro - Nenhuma organização selecionada. Envolver com OrgGuard",
+    "noUsersInOrg": "Nenhum utilizador encontrado nesta organização.",
+    "noEmailFound": "Nenhum email ou email não encontrado",
+
+    "noProjectsFound": "Nenhum projeto encontrado",
+    "noDescription": "Sem descrição",
+
+    "noShifts": "Sem turnos",
+    "noShiftLogs": "Sem registos de turnos",
+    "noShiftsExclamation": "Sem turnos!",
+    "clockIn": "Entrada", 
+    "clockOut": "Saída",
+    "shiftCompleted": "Turno concluído",
+    "shiftLogs": "Registos de Turnos",
+    "noProjectAddress": "Sem endereço do projeto",
+    "elapsedTime": "Tempo decorrido: {hours}:{minutes}:{seconds}",
+
+    "updateTask": "Atualizar Tarefa",
+    "createTask": "Criar Tarefa",
+    "deleteTask": "Eliminar Tarefa",
+
+    "comments": "Comentários",
+    "addComment": "Adicionar Comentário",
+
+    "lastUpdated": "Última atualização: {date}",
+    "dueDate": "Prazo: {date}",
+    "notAvailable": "N/D",
+
+    "veryHigh": "Muito Alta",
+    "high": "Alta", 
+    "normal": "Normal",
+    "low": "Baixa",
+    "veryLow": "Muito Baixa",
+
+    "open": "Aberta",
+    "inProgress": "Em Progresso",
+    "finished": "Concluída",
+    "cancelled": "Cancelada", 
+    "archived": "Arquivada",
+
+    "noOrgSelectedWrapWithGuard": "Erro - Nenhuma organização selecionada. Envolver com OrgGuard",
+    "error": "Erro: {error}",
+    "noTeamSelected": "Erro - Nenhuma equipa selecionada.",
+    "selectATeamDropdown": "Selecionar uma equipa",
+    "noUsersInTeam": "Nenhum utilizador encontrado nesta equipa.",
+    "noEmailOrNotFound": "Nenhum email ou email não encontrado",
+
+    "unknownState": "Estado desconhecido: {state}",
+    "initError": "Erro de inicialização: {error}",
+
+    "saySomething": "Diga algo...",
+
+    "settings": "Definições",
+    "menu": "Menu",
+    "account": "Conta",
+    "noAuthUser": "Sem Utilizador Autenticado",
+    "email": "Email",
+    "subscription": "Subscrição",
+    "premium": "Premium",
+    "signOut": "Terminar Sessão",
+    "app": "Aplicação",
+    "colorScheme": "Esquema de Cores",
+    "system": "Sistema",
+    "light": "Claro", 
+    "dark": "Escuro",
+    "about": "Sobre",
+    "home": "Início",
+    "chooseOrganization": "Escolher Organização",
+    "orgAdminManageOrgUsers": "Admin Org - Gerir Utilizadores da Org",
+    "projects": "Projetos",
+    "tasks": "Tarefas",
+    "testSQL": "Testar SQL",
+    "aiChatThreads": "Conversas IA",
+    "shifts": "Turnos",
+    "notes": "Notas",
+
+    "clockInOut": "Entrada/saída",
+    "startShift": "Iniciar Turno",
+    "endShift": "Terminar Turno",
+    "clockedInAt": "Entrada registada às {time}",
+
+    "noNotes": "Sem notas",
+
+    "todaysShift": "Turno de Hoje",
+    "noActiveShift": "Sem turno ativo",
+    "timeRange": "{startTime} até {endTime}",
+
+    "todaysTasks": "Tarefas de Hoje",
+    "noTasksDueToday": "Sem tarefas para hoje",
+    "seeAll": "Ver Tudo"
 }

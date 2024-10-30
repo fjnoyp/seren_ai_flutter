@@ -4,6 +4,7 @@ import 'package:seren_ai_flutter/services/data/common/widgets/form/base_task_com
 import 'package:seren_ai_flutter/services/data/tasks/task_comments/joined_task_comments_listener_fam_provider.dart';
 import 'package:seren_ai_flutter/services/data/tasks/ui_state/cur_task_provider.dart';
 import 'package:seren_ai_flutter/services/data/tasks/widgets/task_comments/task_comment_card.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 class TaskCommentSection extends ConsumerStatefulWidget {
   const TaskCommentSection(this.taskId, {super.key});
@@ -28,11 +29,12 @@ class _TaskCommentSectionState extends ConsumerState<TaskCommentSection> {
         children: [
           Row(
             children: [
-              Text('Comments', style: theme.textTheme.titleMedium),
+              Text(AppLocalizations.of(context)!.comments, 
+                   style: theme.textTheme.titleMedium),
               if (!showTextField)
                 IconButton(
                   onPressed: () => setState(() => showTextField = true),
-                  tooltip: 'Add Comment',
+                  tooltip: AppLocalizations.of(context)!.addComment,
                   icon: Icon(
                     Icons.add_circle_outline,
                     color: theme.colorScheme.primary,

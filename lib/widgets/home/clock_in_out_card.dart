@@ -1,3 +1,4 @@
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:intl/intl.dart';
@@ -13,7 +14,7 @@ class ClockInOutCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return BaseHomeCard(
-      title: "Clock in/out",
+      title: AppLocalizations.of(context)!.clockInOut,
       color: Theme.of(context).colorScheme.primaryContainer,
       child: Center(
         child: Consumer(
@@ -23,7 +24,7 @@ class ClockInOutCard extends StatelessWidget {
             final curShift = joinedShifts?.first;
             return switch (joinedShifts) {
               null => const CircularProgressIndicator(),
-              [] => const Text('No shifts'),
+              [] => Text(AppLocalizations.of(context)!.noShifts),
               List() => _ClockInOutInnerCard(curShift: curShift!),
             };
           },
@@ -70,14 +71,18 @@ class _ClockInOutInnerCard extends ConsumerWidget {
                     foregroundColor: Theme.of(context).colorScheme.onPrimary,
                     padding: EdgeInsets.zero,
                   ),
-                  child: Text(curLog == null ? "Start Shift" : "End Shift"),
+                  child: Text(curLog == null 
+                      ? AppLocalizations.of(context)!.startShift 
+                      : AppLocalizations.of(context)!.endShift),
                 ),
               ],
             ),
             // TODO: add elapsed time ?
             if (curLog != null)
               Text(
-                "Clocked in at ${DateFormat('h:mm').format(curLog.clockInDatetime)}",
+                AppLocalizations.of(context)!.clockedInAt(
+                  DateFormat('h:mm').format(curLog.clockInDatetime)
+                ),
                 style: Theme.of(context)
                     .textTheme
                     .bodySmall

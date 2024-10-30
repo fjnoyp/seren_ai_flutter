@@ -1,6 +1,5 @@
 import 'package:app_links/app_links.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:logging/logging.dart';
@@ -132,11 +131,7 @@ class AppState extends State<App> {
             // Handle other routes here if needed
             return null;
           },
-          localizationsDelegates: const [
-            AppLocalizations.delegate,
-            GlobalMaterialLocalizations.delegate,
-            GlobalWidgetsLocalizations.delegate,
-          ],
+          localizationsDelegates: AppLocalizations.localizationsDelegates,
           supportedLocales: const [
             Locale('en' /*, 'US'*/),
             Locale('pt', 'PT'),

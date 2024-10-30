@@ -1,3 +1,4 @@
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:seren_ai_flutter/services/auth/auth_states.dart';
@@ -20,12 +21,12 @@ class NotesCard extends ConsumerWidget {
 
     // TODO: refactor to use handable error state
     return BaseHomeCard(
-      title: "Notes",
+      title: AppLocalizations.of(context)!.notes,
       color: Theme.of(context).colorScheme.primaryContainer,
       child: Center(
         child: switch (notes) {
           null => const CircularProgressIndicator(),
-          [] => const Text('No notes'),
+          [] => Text(AppLocalizations.of(context)!.noNotes),
           List() => Column(
               mainAxisSize: MainAxisSize.min,
               children: [

@@ -7,6 +7,7 @@ import 'package:intl/intl.dart';
 import 'package:seren_ai_flutter/services/data/tasks/widgets/task_list/task_priority_view.dart';
 import 'package:seren_ai_flutter/services/data/tasks/widgets/task_page.dart';
 import 'package:seren_ai_flutter/services/data/tasks/widgets/ui_constants.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 class TaskListItemView extends ConsumerWidget {
   final JoinedTaskModel joinedTask;
@@ -66,7 +67,9 @@ class TaskListItemView extends ConsumerWidget {
               ),
               if (updatedAt != null)
                 Text(
-                  'Updated: ${updatedAt.toLocal().toString()}',
+                  AppLocalizations.of(context)!.lastUpdated(
+                    updatedAt.toLocal().toString()
+                  ),
                   style: theme.textTheme.labelSmall?.copyWith(
                       color: theme.colorScheme.onSurface.withOpacity(0.7)),
                 ),
@@ -91,7 +94,11 @@ class TaskListItemView extends ConsumerWidget {
                               size: 16, color: dueDateColor),
                           const SizedBox(width: 4),
                           Text(
-                            'Due Date: ${task.dueDate != null ? listDateFormat.format(task.dueDate!.toLocal()) : 'N/A'}',
+                            AppLocalizations.of(context)!.dueDate(
+                              task.dueDate != null 
+                                ? listDateFormat.format(task.dueDate!.toLocal()) 
+                                : AppLocalizations.of(context)!.notAvailable
+                            ),
                             style: theme.textTheme.labelSmall!.copyWith(
                               color: dueDateColor,
                             ),
