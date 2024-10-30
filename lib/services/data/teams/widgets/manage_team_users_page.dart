@@ -4,7 +4,7 @@ import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:seren_ai_flutter/services/data/orgs/cur_org/cur_org_id_provider.dart';
 import 'package:seren_ai_flutter/services/data/teams/models/team_model.dart';
 import 'package:seren_ai_flutter/services/data/teams/teams_read_provider.dart';
-import 'package:seren_ai_flutter/services/data/teams/user_team_roles/joined_user_team_assignments_listener_team_fam_provider.dart';
+import 'package:seren_ai_flutter/services/data/teams/user_team_assignments/joined_user_team_assignments_listener_team_fam_provider.dart';
 
 // Local provider for choosing current team we're viewing
 final _currentTeamIdProvider = StateProvider<String?>((ref) => null);

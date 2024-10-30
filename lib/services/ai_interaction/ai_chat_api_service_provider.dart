@@ -131,11 +131,6 @@ class AIChatService {
         description: 'test',
         parentOrgId: 'parentOrgId',
       ),
-      team: TeamModel(
-        id: 'teamId',
-        name: 'TEST',
-        parentOrgId: 'parentOrgId',
-      ),
       assignees: [
         UserModel(
           id: 'assigneeUserId',

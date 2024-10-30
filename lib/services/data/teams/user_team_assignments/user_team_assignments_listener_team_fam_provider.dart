@@ -2,18 +2,18 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:seren_ai_flutter/services/data/teams/models/user_team_assignment_model.dart';
 import 'package:seren_ai_flutter/services/data/common/base_listener_db_notifier.dart';
 
-final userTeamRolesListenerTeamFamProvider =
+final userTeamAssignmentsListenerTeamFamProvider =
     Provider.family<List<UserTeamAssignmentModel>?, String>(
   (ref, userId) {
-    final params = ref.read(_userTeamRolesListenerFamParamsProvider(userId));
-    return ref.watch(_userTeamRolesListenerFamProvider(params));
+    final params = ref.read(_userTeamAssignmentsListenerFamParamsProvider(userId));
+    return ref.watch(_userTeamAssignmentsListenerFamProvider(params));
   },
 );
 
-final _userTeamRolesListenerFamParamsProvider =
+final _userTeamAssignmentsListenerFamParamsProvider =
     Provider.family<BaseListenerDbParams<UserTeamAssignmentModel>, String>(
   (ref, userId) => BaseListenerDbParams(
-    tableName: 'user_team_roles',
+    tableName: 'user_team_assignments',
     filters: [
       {'key': 'user_id', 'value': userId}
     ],
@@ -21,19 +21,19 @@ final _userTeamRolesListenerFamParamsProvider =
   ),
 );
 
-final _userTeamRolesListenerFamProvider = NotifierProvider.family<
+final _userTeamAssignmentsListenerFamProvider = NotifierProvider.family<
         BaseListenerDbNotifier<UserTeamAssignmentModel>,
         List<UserTeamAssignmentModel>?,
         BaseListenerDbParams<UserTeamAssignmentModel>>(
     BaseListenerDbNotifier<UserTeamAssignmentModel>.new);
 
 /*
-return BaseListenerDbNotifier<UserTeamRoleModel>(
-    tableName: 'user_team_roles',
+return BaseListenerDbNotifier<UserTeamAssignmentModel>(
+    tableName: 'user_team_assignments',
     eqFilters: [
       {'key': 'user_id', 'value': userId},
       // Add more filters if needed
     ],
-    fromJson: (json) => UserTeamRoleModel.fromJson(json),
+    fromJson: (json) => UserTeamAssignmentModel.fromJson(json),
   );
   */
