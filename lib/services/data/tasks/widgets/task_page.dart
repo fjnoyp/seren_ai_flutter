@@ -96,7 +96,8 @@ class TaskPage extends HookConsumerWidget {
               ),
             ),
 
-            TaskCommentSection(curTask?.task.id ?? ''),
+            if (mode == EditablePageMode.readOnly)
+              TaskCommentSection(curTask?.task.id ?? ''),
             const SizedBox(height: 24),
 
             if (mode != EditablePageMode.readOnly)
@@ -134,7 +135,9 @@ class TaskPage extends HookConsumerWidget {
                     Navigator.pop(context);
                     openTaskPage(context, ref, mode: EditablePageMode.edit);
                   },
-                  child: const Text('Edit'))
+                  child: const Text('Edit')),
+
+            const SizedBox(height: 32),
           ],
         ),
       ),

@@ -65,11 +65,11 @@ class NotePage extends HookConsumerWidget {
                           noteId: curNoteState.joinedNote.note.id),
                     ),
                   if (mode == EditablePageMode.readOnly)
-                  Align(
-                    alignment: Alignment.topRight,
-                    child: ShareNoteButton(curNoteState.joinedNote.note.id),
-                  ),
-                isEnabled
+                    Align(
+                      alignment: Alignment.topRight,
+                      child: ShareNoteButton(curNoteState.joinedNote.note.id),
+                    ),
+                  isEnabled
                       ? NoteNameField(enabled: true)
                       : Text(
                           curNoteState.joinedNote.note.name,
@@ -158,7 +158,9 @@ class NotePage extends HookConsumerWidget {
                           openNotePage(context, ref,
                               mode: EditablePageMode.edit);
                         },
-                        child: const Text('Edit'))
+                        child: const Text('Edit')),
+
+                  const SizedBox(height: 32),
                 ],
               ),
             ),

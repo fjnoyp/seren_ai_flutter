@@ -10,41 +10,36 @@ class HomePage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Padding(
-      padding: const EdgeInsets.all(2.0),
-      child: LayoutBuilder(
-        builder: (context, constraints) {
-          return Column(
-            mainAxisAlignment: MainAxisAlignment.start,
-            children: [
-              Align(
-                alignment: Alignment.centerLeft,
-                child: Padding(
-                  padding: const EdgeInsets.all(30.0),
-                  child: Text(
-                    'Welcome,\nLetty!',
-                    style: Theme.of(context).textTheme.headlineMedium,
-                  ),
+      padding: const EdgeInsets.all(16.0),
+      child: SingleChildScrollView(
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.start,
+          children: [
+            Align(
+              alignment: Alignment.centerLeft,
+              child: Padding(
+                padding: const EdgeInsets.all(30.0),
+                child: Text(
+                  'Welcome,\nLetty!',
+                  style: Theme.of(context).textTheme.headlineMedium,
                 ),
               ),
-              ConstrainedBox(
-                constraints: BoxConstraints(
-                  maxHeight: constraints.maxHeight * 0.6,
-                ),
-                child: GridView.count(
-                  crossAxisCount: 2,
-                  crossAxisSpacing: 9,
-                  mainAxisSpacing: 9,
-                  children: const [
-                    TaskHomeCard(),
-                    NotesCard(),
-                    ShiftCard(),
-                    ClockInOutCard(),
-                  ],
-                ),
-              ),
-            ],
-          );
-        },
+            ),
+            GridView.count(
+              shrinkWrap: true,
+              physics: const NeverScrollableScrollPhysics(),
+              crossAxisCount: 2,
+              crossAxisSpacing: 8.0,
+              mainAxisSpacing: 8.0,
+              children: const [
+                TaskHomeCard(),
+                NotesCard(),
+                ShiftCard(),
+                ClockInOutCard(),
+              ],
+            ),
+          ],
+        ),
       ),
     );
   }

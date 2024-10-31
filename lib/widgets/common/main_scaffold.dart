@@ -119,28 +119,30 @@ class MainScaffold extends HookWidget {
                         IconButton(
                           tooltip: 'chat',
                           icon: const Icon(Icons.chat_bubble_outline),
-                          onPressed: () => Navigator.of(context)
-                              .pushNamed(aiChatsRoute),
+                          onPressed: () =>
+                              Navigator.of(context).pushNamed(aiChatsRoute),
                         ),
                       ],
                     ),
                   )
             : null,
         floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
-        floatingActionButton: isListening.value
-            ? null
-            : Tooltip(
-                message: 'AI Assistant',
-                child: GestureDetector(
-                  onTap: () => isListening.value = true,
-                  child: Hero(
-                    tag: 'ai-button',
-                    child: SizedBox(
-                        height: 56.0,
-                        child:
-                            SvgPicture.asset('assets/images/AI button.svg'))),
-                ),
-              ),
+        floatingActionButton: showBottomBar
+            ? isListening.value
+                ? null
+                : Tooltip(
+                    message: 'AI Assistant',
+                    child: GestureDetector(
+                      onTap: () => isListening.value = true,
+                      child: Hero(
+                          tag: 'ai-button',
+                          child: SizedBox(
+                              height: 56.0,
+                              child: SvgPicture.asset(
+                                  'assets/images/AI button.svg'))),
+                    ),
+                  )
+            : null,
       ),
     );
   }

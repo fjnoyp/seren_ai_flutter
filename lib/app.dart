@@ -64,10 +64,9 @@ class AppState extends State<App> {
           themeMode: themeMode,
           initialRoute: initialRoute,
           routes: {
-            signInUpRoute: (context) => const MainScaffold(
-                title: 'Sign In/Up',
-                body: SignInUpPage(),
-                showBottomBar: false),
+            signInUpRoute: (context) => Scaffold(
+                appBar: AppBar(title: const Text('Sign In/Up'), centerTitle: true),
+                body: const SignInUpPage(),),
             homeRoute: (context) => const _GuardScaffold('Home', HomePage()),
             chooseOrgRoute: (context) => const _AuthGuardScaffold(
                 'Choose Organization', ChooseOrgPage()),
@@ -88,14 +87,15 @@ class AppState extends State<App> {
 
               return _GuardScaffold(title, TaskPage(mode: mode));
             },
-
-            aiChatsRoute: (context) => const _GuardScaffold('AI Chat Page', AIChatsPage()),
-
-            shiftsRoute: (context) => const _GuardScaffold('Shifts', ShiftsPage()),
+            aiChatsRoute: (context) =>
+                const _GuardScaffold('AI Chat Page', AIChatsPage()),
+            shiftsRoute: (context) =>
+                const _GuardScaffold('Shifts', ShiftsPage()),
             testRoute: (context) => const _GuardScaffold('Test', TestPage()),
             testSQLPageRoute: (context) =>
                 _GuardScaffold('Test SQL Page', TestSQLPage()),
-            noteListRoute: (context) => const _GuardScaffold('Notes', NoteListPage()),
+            noteListRoute: (context) =>
+                const _GuardScaffold('Notes', NoteListPage()),
             notePageRoute: (context) {
               final args = ModalRoute.of(context)!.settings.arguments
                   as Map<String, dynamic>;
@@ -105,7 +105,8 @@ class AppState extends State<App> {
 
               return _GuardScaffold(title, NotePage(mode: mode));
             },
-            termsAndConditionsRoute: (context) => const TermsAndConditionsWebview(),
+            termsAndConditionsRoute: (context) =>
+                const TermsAndConditionsWebview(),
           },
           // For dynamically generating routes based on settings param
           onGenerateRoute: (settings) {
