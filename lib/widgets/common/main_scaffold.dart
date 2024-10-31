@@ -11,6 +11,7 @@ class MainScaffold extends HookWidget {
   final Widget body;
   final FloatingActionButton? floatingActionButton;
   final bool showBottomBar;
+  final List<Widget>? actions;
 
   const MainScaffold({
     super.key,
@@ -18,6 +19,7 @@ class MainScaffold extends HookWidget {
     required this.body,
     this.floatingActionButton,
     this.showBottomBar = true,
+    this.actions,
   });
 
   @override
@@ -74,13 +76,7 @@ class MainScaffold extends HookWidget {
               style: theme.appBarTheme.titleTextStyle,
             ),
           ),
-          actions: [
-            IconButton(
-              icon: Icon(Icons.more_vert, color: theme.iconTheme.color),
-              onPressed: () {},
-              tooltip: AppLocalizations.of(context)!.moreOptions,
-            ),
-          ],
+          actions: actions,
         ),
         drawer: const DrawerView(),
         body: Stack(
@@ -124,28 +120,30 @@ class MainScaffold extends HookWidget {
                         IconButton(
                           tooltip: AppLocalizations.of(context)!.chat,
                           icon: const Icon(Icons.chat_bubble_outline),
-                          onPressed: () => Navigator.of(context)
-                              .pushNamed(aiChatsRoute),
+                          onPressed: () =>
+                              Navigator.of(context).pushNamed(aiChatsRoute),
                         ),
                       ],
                     ),
                   )
             : null,
         floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
-        floatingActionButton: isListening.value
-            ? null
-            : Tooltip(
-                message: AppLocalizations.of(context)!.aiAssistant,
-                child: GestureDetector(
-                  onTap: () => isListening.value = true,
-                  child: Hero(
-                    tag: 'ai-button',
-                    child: SizedBox(
-                        height: 56.0,
-                        child:
-                            SvgPicture.asset('assets/images/AI button.svg'))),
-                ),
-              ),
+        floatingActionButton: showBottomBar
+            ? isListening.value
+                ? null
+                : Tooltip(
+                    message: AppLocalizations.of(context)!.aiAssistant,
+                    child: GestureDetector(
+                      onTap: () => isListening.value = true,
+                      child: Hero(
+                          tag: 'ai-button',
+                          child: SizedBox(
+                              height: 56.0,
+                              child: SvgPicture.asset(
+                                  'assets/images/AI button.svg'))),
+                    ),
+                  )
+            : null,
       ),
     );
   }

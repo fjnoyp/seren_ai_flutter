@@ -15,8 +15,6 @@ class TaskListItemView extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-  final listDateFormat = DateFormat.MMMd(AppLocalizations.of(context)!.localeName);
-
     final theme = Theme.of(context);
 
     final task = joinedTask.task;
@@ -68,8 +66,9 @@ class TaskListItemView extends ConsumerWidget {
               if (updatedAt != null)
                 Text(
                   AppLocalizations.of(context)!.lastUpdated(
-                    updatedAt.toLocal().toString()
-                  ),
+                      DateFormat.yMd(AppLocalizations.of(context)!.localeName)
+                          .add_Hm()
+                          .format(updatedAt.toLocal())),
                   style: theme.textTheme.labelSmall?.copyWith(
                       color: theme.colorScheme.onSurface.withOpacity(0.7)),
                 ),
@@ -94,11 +93,13 @@ class TaskListItemView extends ConsumerWidget {
                               size: 16, color: dueDateColor),
                           const SizedBox(width: 4),
                           Text(
-                            AppLocalizations.of(context)!.dueDate(
-                              task.dueDate != null 
-                                ? listDateFormat.format(task.dueDate!.toLocal()) 
-                                : AppLocalizations.of(context)!.notAvailable
-                            ),
+                            AppLocalizations.of(context)!.dueDate(task
+                                        .dueDate !=
+                                    null
+                                ? DateFormat.MMMd(AppLocalizations.of(context)!
+                                        .localeName)
+                                    .format(task.dueDate!.toLocal())
+                                : AppLocalizations.of(context)!.notAvailable),
                             style: theme.textTheme.labelSmall!.copyWith(
                               color: dueDateColor,
                             ),

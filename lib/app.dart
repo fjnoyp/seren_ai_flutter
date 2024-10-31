@@ -65,10 +65,9 @@ class AppState extends State<App> {
           themeMode: themeMode,
           initialRoute: initialRoute,
           routes: {
-            signInUpRoute: (context) => MainScaffold(
-                title: AppLocalizations.of(context)!.signInUp,
-                body: const SignInUpPage(),
-                showBottomBar: false),
+            signInUpRoute: (context) => Scaffold(
+                appBar: AppBar(title: Text(AppLocalizations.of(context)!.signInUp), centerTitle: true),
+                body: const SignInUpPage()),
             homeRoute: (context) => _GuardScaffold(
                 AppLocalizations.of(context)!.home, 
                 const HomePage()),
@@ -91,7 +90,8 @@ class AppState extends State<App> {
                   ? AppLocalizations.of(context)!.createTask 
                   : AppLocalizations.of(context)!.updateTask;
 
-              return _GuardScaffold(title, TaskPage(mode: mode));
+              return _GuardScaffold(title, TaskPage(mode: mode),
+                  actions: args['actions']);
             },
             aiChatsRoute: (context) => _GuardScaffold(
                 AppLocalizations.of(context)!.aiChatThreads, 
@@ -113,9 +113,11 @@ class AppState extends State<App> {
                   ? AppLocalizations.of(context)!.createNote 
                   : AppLocalizations.of(context)!.updateNote;
 
-              return _GuardScaffold(title, NotePage(mode: mode));
+              return _GuardScaffold(title, NotePage(mode: mode),
+                  actions: args['actions']);
             },
-            termsAndConditionsRoute: (context) => const TermsAndConditionsWebview(),
+            termsAndConditionsRoute: (context) =>
+                const TermsAndConditionsWebview(),
           },
           // For dynamically generating routes based on settings param
           onGenerateRoute: (settings) {
@@ -199,16 +201,17 @@ class _AuthGuardScaffold extends StatelessWidget {
 }
 
 class _GuardScaffold extends StatelessWidget {
-  const _GuardScaffold(this.title, this.body);
+  const _GuardScaffold(this.title, this.body, {this.actions});
 
   final String title;
   final Widget body;
+  final List<Widget>? actions;
 
   @override
   Widget build(BuildContext context) {
     return AuthGuard(
       child: OrgGuard(
-        child: MainScaffold(title: title, body: body),
+        child: MainScaffold(title: title, body: body, actions: actions),
       ),
     );
   }

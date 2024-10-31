@@ -8,12 +8,14 @@ class BaseTextBlockEditSelectionField extends ConsumerWidget {
   final bool enabled;
   final ProviderListenable<String?> descriptionProvider;
   final Function(WidgetRef, String?) updateDescription;
+  final Widget? labelWidget;
 
   const BaseTextBlockEditSelectionField({
     super.key,
     required this.enabled,
     required this.descriptionProvider,
     required this.updateDescription,
+    this.labelWidget,
   });
 
   @override
@@ -21,17 +23,17 @@ class BaseTextBlockEditSelectionField extends ConsumerWidget {
     final curDescription = ref.watch(descriptionProvider);
 
     return AnimatedSelectionField<String>(
-      labelWidget: const Icon(Icons.description),
+      labelWidget: labelWidget ?? const Icon(Icons.description),
       validator: (description) => null,
       // description == null || description.isEmpty
       //     ? AppLocalizations.of(context)!.textIsRequired
       //     : null,
       valueToString: (description) => description ?? AppLocalizations.of(context)!.enterText,
       enabled: enabled,
-      value: curDescription,      
+      value: curDescription,
       onValueChanged: updateDescription,
       showSelectionModal: (BuildContext context) async {
-         showModalBottomSheet<String>(
+        showModalBottomSheet<String>(
           context: context,
           isScrollControlled: true,
           builder: (BuildContext context) {
@@ -82,11 +84,11 @@ class TextBlockWritingModal extends HookWidget {
             Consumer(builder: (context, ref, child) {
               return ElevatedButton(
                 onPressed: () {
-                onDescriptionChanged(ref, descriptionController.text);
-                Navigator.pop(context);
-              },
-              child: Text(AppLocalizations.of(context)!.save),
-              );
+                  onDescriptionChanged(ref, descriptionController.text);
+                  Navigator.pop(context);
+                },
+                child: Text(AppLocalizations.of(context)!.save),
+                );
             }),
           ],
         ),

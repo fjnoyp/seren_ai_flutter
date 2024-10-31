@@ -19,22 +19,19 @@ class DrawerView extends HookWidget {
       child: ListView(
         children: <Widget>[
           DrawerHeader(
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                if (isSettingsView.value) ...[
-                  Text(AppLocalizations.of(context)!.settings,
-                      style: const TextStyle(fontSize: 24)),
-                  IconButton(
-                    icon: const Icon(Icons.arrow_back),
-                    onPressed: () => isSettingsView.value = false,
-                  ),
-                ] else ...[
-                  Text(AppLocalizations.of(context)!.menu,
-                      style: const TextStyle(fontSize: 24)),
-                ],
-              ],
-            ),
+            child: isSettingsView.value
+                ? Row(
+                    children: [
+                      IconButton(
+                        icon: const Icon(Icons.arrow_back),
+                        onPressed: () => isSettingsView.value = false,
+                      ),
+                      Text(AppLocalizations.of(context)!.settings,
+                          style: const TextStyle(fontSize: 24)),
+                    ],
+                  )
+                : Text(AppLocalizations.of(context)!.menu,
+                    style: const TextStyle(fontSize: 24)),
           ),
           if (isSettingsView.value) ...[
             ListTile(
@@ -58,14 +55,12 @@ class DrawerView extends HookWidget {
                     dense: true,
                     leading: const Icon(Icons.email),
                     title: _BuildRow(
-                        AppLocalizations.of(context)!.email,
-                        user.email),
+                        AppLocalizations.of(context)!.email, user.email),
                   ),
                   ListTile(
                     dense: true,
                     leading: const Icon(Icons.star),
-                    title: _BuildRow(
-                        AppLocalizations.of(context)!.subscription,
+                    title: _BuildRow(AppLocalizations.of(context)!.subscription,
                         AppLocalizations.of(context)!.premium),
                   ),
                   ListTile(
