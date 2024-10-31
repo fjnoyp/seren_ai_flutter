@@ -11,61 +11,60 @@ class SignInUpPage extends StatelessWidget {
   Widget build(BuildContext context) {
     return Padding(
       padding: const EdgeInsets.all(24.0),
-      child: Column(
-        children: [
-          SupaEmailAuth(
-            onSignInComplete: (response) {
-              Navigator.of(context).pushReplacementNamed(homeRoute);
-            },
-            onSignUpComplete: (response) async {
-              if (response.user != null && response.user!.email != null) {
-                final user = response.user!;
-                await Supabase.instance.client.from('users').insert(
-                      UserModel(parentAuthUserId: user.id, email: user.email!)
-                          .toJson()
-                        ..addAll(
-                          {
-                            'created_at': DateTime.now().toIso8601String(),
-                            'updated_at': DateTime.now().toIso8601String()
-                          },
-                        ),
-                    );
-              }
-              Navigator.of(context).pushReplacementNamed(homeRoute);
-            },
-            metadataFields: [
-              MetaDataField(
-                prefixIcon: const Icon(Icons.person),
-                label: 'Username',
-                key: 'username',
-                validator: (val) {
-                  if (val == null || val.isEmpty) {
-                    return 'Please enter something';
-                  }
-                  return null;
-                },
-              ),
-              BooleanMetaDataField(
-                key: 'terms_agreement',
-                isRequired: true,
-                checkboxPosition: ListTileControlAffinity.leading,
-                richLabelSpans: [
-                  const TextSpan(text: 'I have read and agree to the '),
-                  TextSpan(
-                    text: 'Terms and Conditions',
-                    style: TextStyle(
-                      color: Theme.of(context).colorScheme.tertiary,
-                    ),
-                    recognizer: TapGestureRecognizer()
-                      ..onTap = () {
-                        Navigator.pushNamed(context, termsAndConditionsRoute);
-                      },
+      child: SingleChildScrollView(
+        // TODO: maybe add seren logo here on top instead of the app bar
+        child: SupaEmailAuth(
+          onSignInComplete: (response) {
+            Navigator.of(context).pushReplacementNamed(homeRoute);
+          },
+          onSignUpComplete: (response) async {
+            if (response.user != null && response.user!.email != null) {
+              final user = response.user!;
+              await Supabase.instance.client.from('users').insert(
+                    UserModel(parentAuthUserId: user.id, email: user.email!)
+                        .toJson()
+                      ..addAll(
+                        {
+                          'created_at': DateTime.now().toIso8601String(),
+                          'updated_at': DateTime.now().toIso8601String()
+                        },
+                      ),
+                  );
+            }
+            Navigator.of(context).pushReplacementNamed(homeRoute);
+          },
+          metadataFields: [
+            MetaDataField(
+              prefixIcon: const Icon(Icons.person),
+              label: 'Username',
+              key: 'username',
+              validator: (val) {
+                if (val == null || val.isEmpty) {
+                  return 'Please enter something';
+                }
+                return null;
+              },
+            ),
+            BooleanMetaDataField(
+              key: 'terms_agreement',
+              isRequired: true,
+              checkboxPosition: ListTileControlAffinity.leading,
+              richLabelSpans: [
+                const TextSpan(text: 'I have read and agree to the '),
+                TextSpan(
+                  text: 'Terms and Conditions',
+                  style: TextStyle(
+                    color: Theme.of(context).colorScheme.tertiary,
                   ),
-                ],
-              ),
-            ],
-          )
-        ],
+                  recognizer: TapGestureRecognizer()
+                    ..onTap = () {
+                      Navigator.pushNamed(context, termsAndConditionsRoute);
+                    },
+                ),
+              ],
+            ),
+          ],
+        ),
       ),
     );
   }
