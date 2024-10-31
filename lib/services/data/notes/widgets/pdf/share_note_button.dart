@@ -9,9 +9,7 @@ import 'package:seren_ai_flutter/services/data/notes/widgets/pdf/pdf_from_note.d
 import 'package:share_plus/share_plus.dart';
 
 class ShareNoteButton extends ConsumerWidget {
-  final String noteId;
-
-  const ShareNoteButton(this.noteId, {super.key});
+  const ShareNoteButton({super.key});
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {

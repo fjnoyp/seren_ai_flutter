@@ -64,10 +64,9 @@ class AppState extends State<App> {
           themeMode: themeMode,
           initialRoute: initialRoute,
           routes: {
-            signInUpRoute: (context) => const MainScaffold(
-                title: 'Sign In/Up',
-                body: SignInUpPage(),
-                showBottomBar: false),
+            signInUpRoute: (context) => Scaffold(
+                appBar: AppBar(title: const Text('Sign In/Up'), centerTitle: true),
+                body: const SignInUpPage(),),
             homeRoute: (context) => const _GuardScaffold('Home', HomePage()),
             chooseOrgRoute: (context) => const _AuthGuardScaffold(
                 'Choose Organization', ChooseOrgPage()),
@@ -86,16 +85,18 @@ class AppState extends State<App> {
               final title =
                   mode == EditablePageMode.create ? 'Create Task' : 'View Task';
 
-              return _GuardScaffold(title, TaskPage(mode: mode));
+              return _GuardScaffold(title, TaskPage(mode: mode),
+                  actions: args['actions']);
             },
-
-            aiChatsRoute: (context) => const _GuardScaffold('AI Chat Page', AIChatsPage()),
-
-            shiftsRoute: (context) => const _GuardScaffold('Shifts', ShiftsPage()),
+            aiChatsRoute: (context) =>
+                const _GuardScaffold('AI Chat Page', AIChatsPage()),
+            shiftsRoute: (context) =>
+                const _GuardScaffold('Shifts', ShiftsPage()),
             testRoute: (context) => const _GuardScaffold('Test', TestPage()),
             testSQLPageRoute: (context) =>
                 _GuardScaffold('Test SQL Page', TestSQLPage()),
-            noteListRoute: (context) => const _GuardScaffold('Notes', NoteListPage()),
+            noteListRoute: (context) =>
+                const _GuardScaffold('Notes', NoteListPage()),
             notePageRoute: (context) {
               final args = ModalRoute.of(context)!.settings.arguments
                   as Map<String, dynamic>;
@@ -103,9 +104,11 @@ class AppState extends State<App> {
               final title =
                   mode == EditablePageMode.create ? 'Create Note' : 'View Note';
 
-              return _GuardScaffold(title, NotePage(mode: mode));
+              return _GuardScaffold(title, NotePage(mode: mode),
+                  actions: args['actions']);
             },
-            termsAndConditionsRoute: (context) => const TermsAndConditionsWebview(),
+            termsAndConditionsRoute: (context) =>
+                const TermsAndConditionsWebview(),
           },
           // For dynamically generating routes based on settings param
           onGenerateRoute: (settings) {
@@ -183,16 +186,17 @@ class _AuthGuardScaffold extends StatelessWidget {
 }
 
 class _GuardScaffold extends StatelessWidget {
-  const _GuardScaffold(this.title, this.body);
+  const _GuardScaffold(this.title, this.body, {this.actions});
 
   final String title;
   final Widget body;
+  final List<Widget>? actions;
 
   @override
   Widget build(BuildContext context) {
     return AuthGuard(
       child: OrgGuard(
-        child: MainScaffold(title: title, body: body),
+        child: MainScaffold(title: title, body: body, actions: actions),
       ),
     );
   }
