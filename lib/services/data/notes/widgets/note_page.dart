@@ -82,21 +82,9 @@ class NotePage extends HookConsumerWidget {
                         const Divider(),
                         NoteDescriptionSelectionField(enabled: isEnabled),
                         const Divider(),
-                        BaseTextBlockEditSelectionField(
-                          enabled: isEnabled,
-                          descriptionProvider: curNoteAddressProvider,
-                          updateDescription: (ref, address) => ref
-                              .read(curNoteStateProvider.notifier)
-                              .updateAddress(address),
-                        ),
+                        NoteAddressSelectionField(enabled: isEnabled),
                         const Divider(),
-                        BaseTextBlockEditSelectionField(
-                          enabled: isEnabled,
-                          descriptionProvider: curNoteActionRequiredProvider,
-                          updateDescription: (ref, actionRequired) => ref
-                              .read(curNoteStateProvider.notifier)
-                              .updateActionRequired(actionRequired),
-                        ),
+                        NoteActionRequiredSelectionField(enabled: isEnabled),
                         const Divider(),
                         NoteStatusSelectionField(enabled: isEnabled),
                         const Divider(),
