@@ -6,38 +6,38 @@ import 'package:seren_ai_flutter/services/data/users/users_read_provider.dart';
 
 import 'package:collection/collection.dart';
 
-final joinedCurUserTeamAssignmentsListenerProvider = NotifierProvider<
-    JoinedCurUserTeamAssignmentsListenerNotifier,
-    List<JoinedUserTeamAssignmentModel>?>(JoinedCurUserTeamAssignmentsListenerNotifier.new);
+final joinedCurUserTeamAssignmentsListenerProvider =
+    Provider<List<JoinedUserTeamAssignmentModel>?>((ref) {
+  final watchedCurUserTeamAssignments =
+      ref.watch(curUserTeamAssignmentsListenerProvider);
 
-class JoinedCurUserTeamAssignmentsListenerNotifier
-    extends Notifier<List<JoinedUserTeamAssignmentModel>?> {
-  @override
-  List<JoinedUserTeamAssignmentModel>? build() {
-    _listen();
+  if (watchedCurUserTeamAssignments == null) {
     return null;
   }
 
-  Future<void> _listen() async {
-    final watchedCurUserTeamAssignments = ref.watch(curUserTeamAssignmentsListenerProvider);
+  List<JoinedUserTeamAssignmentModel> joinedTeamAssignments = [];
 
-    if (watchedCurUserTeamAssignments == null) {
-      return;
-    }
-
-    final userIds = watchedCurUserTeamAssignments.map((assignment) => assignment.userId).toSet();
+  // Use ref.listen to handle async operations
+  ref.listen(curUserTeamAssignmentsListenerProvider, (_, __) async {
+    final userIds = watchedCurUserTeamAssignments
+        .map((assignment) => assignment.userId)
+        .toSet();
     final users = await ref.read(usersReadProvider).getItems(ids: userIds);
 
-    final teamIds = watchedCurUserTeamAssignments.map((assignment) => assignment.teamId).toSet();
+    final teamIds = watchedCurUserTeamAssignments
+        .map((assignment) => assignment.teamId)
+        .toSet();
     final teams = await ref.read(teamsReadProvider).getItems(ids: teamIds);
 
-    final joinedTeamAssignments = watchedCurUserTeamAssignments.map((teamAssignment) {
-      final user = users.firstWhereOrNull((user) => user.id == teamAssignment.userId);
-      final team = teams.firstWhereOrNull((team) => team.id == teamAssignment.teamId);
+    joinedTeamAssignments = watchedCurUserTeamAssignments.map((teamAssignment) {
+      final user =
+          users.firstWhereOrNull((user) => user.id == teamAssignment.userId);
+      final team =
+          teams.firstWhereOrNull((team) => team.id == teamAssignment.teamId);
       return JoinedUserTeamAssignmentModel(
           teamAssignment: teamAssignment, user: user, team: team);
     }).toList();
+  });
 
-    state = joinedTeamAssignments;
-  }
-}
+  return joinedTeamAssignments;
+});
