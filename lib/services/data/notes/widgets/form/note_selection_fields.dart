@@ -1,3 +1,4 @@
+import 'package:flutter/material.dart';
 import 'package:seren_ai_flutter/services/data/common/widgets/form/base_project_selection_field.dart';
 import 'package:seren_ai_flutter/services/data/common/widgets/form/base_status_selection_field.dart';
 import 'package:seren_ai_flutter/services/data/common/widgets/form/base_text_block_edit_selection_field.dart';
@@ -62,5 +63,30 @@ class NoteProjectSelectionField extends BaseProjectSelectionField {
               .read(curNoteStateProvider.notifier)
               .updateParentProject(project),
           isProjectRequired: false,
+        );
+}
+
+class NoteAddressSelectionField extends BaseTextBlockEditSelectionField {
+  NoteAddressSelectionField({
+    super.key,
+    required super.enabled,
+  }) : super(
+          descriptionProvider: curNoteAddressProvider,
+          updateDescription: (ref, address) =>
+              ref.read(curNoteStateProvider.notifier).updateAddress(address),
+          labelWidget: const Icon(Icons.location_on),
+        );
+}
+
+class NoteActionRequiredSelectionField extends BaseTextBlockEditSelectionField {
+  NoteActionRequiredSelectionField({
+    super.key,
+    required super.enabled,
+  }) : super(
+          descriptionProvider: curNoteActionRequiredProvider,
+          updateDescription: (ref, actionRequired) => ref
+              .read(curNoteStateProvider.notifier)
+              .updateActionRequired(actionRequired),
+          labelWidget: const Text('Action required'),
         );
 }

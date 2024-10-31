@@ -54,10 +54,10 @@ class _ShiftInnerCard extends ConsumerWidget {
         borderRadius: BorderRadius.circular(8),
       ),
       child: Padding(
-        padding: const EdgeInsets.all(16.0),
+        padding: const EdgeInsets.all(12.0),
         child: Column(
           mainAxisSize: MainAxisSize.min,
-          crossAxisAlignment: CrossAxisAlignment.start,
+          // crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Text(
               DateFormat('EEEE, d MMM').format(DateTime.now()),
@@ -68,16 +68,19 @@ class _ShiftInnerCard extends ConsumerWidget {
             ),
             const SizedBox(height: 4),
             Row(
+              mainAxisAlignment: MainAxisAlignment.center,
               children: [
                 Icon(
                   Icons.calendar_today,
                   color: Theme.of(context).colorScheme.onSurface,
                 ),
                 const SizedBox(width: 8),
-                Text(
-                  "${DateFormat('H:mm').format(activeShiftRanges.first.start.toLocal())} to ${DateFormat('H:mm').format(activeShiftRanges.first.end.toLocal())}", //"9:00 to 18:00",
-                  style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                      color: Theme.of(context).colorScheme.onSurface),
+                Flexible(
+                  child: Text(
+                    "${DateFormat('H:mm').format(activeShiftRanges.first.start.toLocal())} to ${DateFormat('H:mm').format(activeShiftRanges.first.end.toLocal())}", //"9:00 to 18:00",
+                    style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                        color: Theme.of(context).colorScheme.onSurface),
+                  ),
                 ),
               ],
             ),

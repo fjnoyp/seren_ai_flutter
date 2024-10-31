@@ -28,22 +28,17 @@ class DrawerView extends HookWidget {
       child: ListView(
         children: <Widget>[
           DrawerHeader(
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                if (isSettingsView.value) ...[
-                  const Text('Settings', style: TextStyle(fontSize: 24)),
-                  IconButton(
-                    icon: const Icon(Icons.arrow_back),
-                    onPressed: () {
-                      isSettingsView.value = false;
-                    },
-                  ),
-                ] else ...[
-                  const Text('Menu', style: TextStyle(fontSize: 24)),
-                ],
-              ],
-            ),
+            child: isSettingsView.value
+                ? Row(
+                    children: [
+                      IconButton(
+                        icon: const Icon(Icons.arrow_back),
+                        onPressed: () => isSettingsView.value = false,
+                      ),
+                      const Text('Settings', style: TextStyle(fontSize: 24)),
+                    ],
+                  )
+                : const Text('Menu', style: TextStyle(fontSize: 24)),
           ),
           if (isSettingsView.value) ...[
             const ListTile(
