@@ -4,6 +4,7 @@ import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:seren_ai_flutter/constants.dart';
 import 'package:seren_ai_flutter/services/ai_interaction/widgets/user_input_display_widget.dart';
 import 'drawer_view.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 class MainScaffold extends HookWidget {
   final String title;
@@ -25,6 +26,7 @@ class MainScaffold extends HookWidget {
     final isListening = useState(false);
 
     final theme = Theme.of(context);
+
     return PopScope(
       canPop: Navigator.of(context).canPop(),
       onPopInvokedWithResult: (didPop, result) {
@@ -47,6 +49,7 @@ class MainScaffold extends HookWidget {
                     onPressed: () {
                       Scaffold.of(context).openDrawer();
                     },
+                    tooltip: AppLocalizations.of(context)!.menu,
                   ),
                   // TODO p2: back button is in a weird location. we should only conditionally show back button
                   if (Navigator.of(context).canPop())
@@ -54,6 +57,7 @@ class MainScaffold extends HookWidget {
                       icon:
                           Icon(Icons.arrow_back, color: theme.iconTheme.color),
                       onPressed: () => Navigator.of(context).pop(),
+                      tooltip: AppLocalizations.of(context)!.back,
                     ),
                 ],
               );
@@ -74,6 +78,7 @@ class MainScaffold extends HookWidget {
             IconButton(
               icon: Icon(Icons.more_vert, color: theme.iconTheme.color),
               onPressed: () {},
+              tooltip: AppLocalizations.of(context)!.moreOptions,
             ),
           ],
         ),
@@ -109,7 +114,7 @@ class MainScaffold extends HookWidget {
                       mainAxisAlignment: MainAxisAlignment.spaceAround,
                       children: [
                         IconButton(
-                          tooltip: 'home',
+                          tooltip: AppLocalizations.of(context)!.home,
                           icon: const Icon(Icons.grid_view),
                           onPressed: () => Navigator.of(context)
                               .pushNamedAndRemoveUntil(
@@ -117,7 +122,7 @@ class MainScaffold extends HookWidget {
                         ),
                         const SizedBox.shrink(),
                         IconButton(
-                          tooltip: 'chat',
+                          tooltip: AppLocalizations.of(context)!.chat,
                           icon: const Icon(Icons.chat_bubble_outline),
                           onPressed: () => Navigator.of(context)
                               .pushNamed(aiChatsRoute),
@@ -130,7 +135,7 @@ class MainScaffold extends HookWidget {
         floatingActionButton: isListening.value
             ? null
             : Tooltip(
-                message: 'AI Assistant',
+                message: AppLocalizations.of(context)!.aiAssistant,
                 child: GestureDetector(
                   onTap: () => isListening.value = true,
                   child: Hero(

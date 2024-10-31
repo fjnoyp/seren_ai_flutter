@@ -75,7 +75,6 @@
     "loadingProjects": "Loading projects...",
     "createNewNote": "Create New Note",
     "thisProjectHasNoNotes": "This project has no notes yet",
-    "noteItemDateTimeFormat": "MM/dd/yyyy HH:mm",
 
     "@_": {"description": "Note Attachment Section"},
     "addAttachment": "Add Attachment",
@@ -125,6 +124,13 @@
             "seconds": {"type": "String"}
         }
     },
+    "ongoing": "Ongoing",
+    "menu": "Menu",
+    "back": "Back",
+    "moreOptions": "More Options",
+    "aiAssistant": "AI Assistant",
+    "home": "Home",
+    "chat": "Chat",
 
     "@_": {"description": "Task Page"},
     "updateTask": "Update Task",
@@ -248,5 +254,84 @@
     "@_": {"description": "Task Home Card"},
     "todaysTasks": "Today's Tasks",
     "noTasksDueToday": "No tasks due today",
-    "seeAll": "See All"
+    "seeAll": "See All",
+
+    "@_": {"description": "Sign In Up Page"},
+    "signInUp": "Sign In/Up",
+    "termsAndConditions": "Terms and Conditions",
+    "username": "Username",
+    "pleaseEnterSomething": "Please enter something",
+    "iHaveReadAndAgreeToThe": "I have read and agree to the ",
+
+    "@_": {"description": "Main Scaffold"},
+    "menu": "Menu",
+    "back": "Back",
+    "moreOptions": "More options",
+    "aiAssistant": "AI Assistant",
+    "chat": "Chat",
+    "unknownError": "Unknown error",
+    "saySomething": "Say something...",
+
+    "@_": {"description": "Base Due Date Selection Field"},
+    "chooseDueDate": "Choose a Due Date",
+
+    "@_": {"description": "Duration Formatting"},
+    "durationFormat": "{hours}:{minutes} hours",
+    "@durationFormat": {
+        "description": "Format for displaying duration with hours and minutes",
+        "placeholders": {
+            "hours": {
+                "type": "String",
+                "example": "2"
+            },
+            "minutes": {
+                "type": "String",
+                "example": "30"
+            }
+        }
+    },
+    "durationHoursOnly": "{hours} {hours, plural, =1{hour} other{hours}}",
+    "@durationHoursOnly": {
+        "description": "Format for displaying duration with hours only",
+        "placeholders": {
+            "hours": {
+                "type": "num",
+                "example": "2"
+            }
+        }
+    },
+    "zeroHours": "0 hours",
+
+    "@_": {"description": "PDF From Note"},
+    "pdfPersonal": "Personal",
+    "pdfCreatedBy": "Created by {email} on {date}",
+    "@pdfCreatedBy": {
+        "placeholders": {
+            "email": {
+                "type": "String"
+            },
+            "date": {
+                "type": "String"
+            }
+        }
+    },
+    "pdfStatus": "Status: {status}",
+    "@pdfStatus": {
+        "placeholders": {
+            "status": {
+                "type": "String"
+            }
+        }
+    },
+    "pdfDescription": "Description",
+    "pdfAddress": "Address",
+    "pdfActionRequired": "Action Required",
+    "pdfImageAttachments": "Image attachments",
+    "pdfOtherAttachments": "Other attachments",
+
+    "@_": {"description": "Tasks List Page"},
+    "tasksListOpen": "Open",
+    "tasksListInProgress": "In Progress",
+    "tasksListFinished": "Finished",
+    "createNewTask": "Create New Task"
 }

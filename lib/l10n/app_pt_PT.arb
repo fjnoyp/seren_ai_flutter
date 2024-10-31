@@ -1,12 +1,15 @@
 {
-    "welcome": "Boas vindas,\n{userName}!",
+    "@_": {"description": "Home Page"},
+    "welcome": "Bem-vindo,\n{userName}!",
 
+    "@_": {"description": "AI Chats Page"},
     "noChatThreadAvailable": "Nenhuma conversa disponível",
     "noMessagesAvailable": "Nenhuma mensagem disponível",
     "messageType": "Tipo: {messageType}",
     "collapse": "Recolher",
     "expand": "Expandir",
 
+    "@_": {"description": "Base Assignees Selection Field"},
     "onlyUsersInProjectCanBeAssigned": "Apenas utilizadores em {projectName} podem ser atribuídos",
     "onlyUsersIn": "Apenas utilizadores em ",
     "canBeAssigned": " podem ser atribuídos",
@@ -14,29 +17,34 @@
     "save": "Guardar",
     "addUsersTo": "Adicionar Utilizadores a {projectName}",
 
+    "@_": {"description": "Base Project Selection Field"},
     "project": "Projeto",
     "selectAProject": "Selecionar um Projeto",
     "personal": "Pessoal",
     "projectIsRequired": "O projeto é obrigatório",
 
+    "@_": {"description": "Base Team Selection Field"},
     "team": "Equipa",
     "selectATeam": "Selecionar uma Equipa",
     "teamIsRequired": "A equipa é obrigatória",
 
+    "@_": {"description": "Base Text Block Edit Selection Field"},
     "enterTextHere": "Inserir texto aqui...",
     "enterText": "Inserir Texto",
 
+    "@_": {"description": "Note Page"},
     "updateNote": "Atualizar Nota",
     "createNote": "Criar Nota",
     "edit": "Editar",
     "deleteNote": "Eliminar Nota",
     "userNotAuthenticated": "Erro: O utilizador atual não está autenticado.",
 
+    "@_": {"description": "Notes List Page"},
     "loadingProjects": "A carregar projetos...",
     "createNewNote": "Criar Nova Nota",
     "thisProjectHasNoNotes": "Este projeto ainda não tem notas",
-    "noteItemDateTimeFormat": "dd/MM/yyyy HH:mm",
 
+    "@_": {"description": "Note Attachment Section"},
     "addAttachment": "Adicionar Anexo",
     "photosPermissionDenied": "Permissão de fotos negada",
     "delete": "Eliminar",
@@ -45,17 +53,21 @@
     "notAbleToPreview": "Não é possível pré-visualizar este ficheiro.\nPode tentar abri-lo localmente.",
     "openFile": "Abrir ficheiro",
 
+    "@_": {"description": "Choose Org Page"},
     "waitingForOrgRoles": "A aguardar o carregamento das funções da organização...",
     "noOrganizations": "Nenhuma organização disponível",
     "errorCannotLoadOrg": "Erro ao carregar a organização",
 
+    "@_": {"description": "Manage Org Users Page"},
     "noOrgSelected": "Erro - Nenhuma organização selecionada. Envolver com OrgGuard",
     "noUsersInOrg": "Nenhum utilizador encontrado nesta organização.",
     "noEmailFound": "Nenhum email ou email não encontrado",
 
+    "@_": {"description": "Projects Page"},
     "noProjectsFound": "Nenhum projeto encontrado",
     "noDescription": "Sem descrição",
 
+    "@_": {"description": "Shifts Page"},
     "noShifts": "Sem turnos",
     "noShiftLogs": "Sem registos de turnos",
     "noShiftsExclamation": "Sem turnos!",
@@ -65,30 +77,43 @@
     "shiftLogs": "Registos de Turnos",
     "noProjectAddress": "Sem endereço do projeto",
     "elapsedTime": "Tempo decorrido: {hours}:{minutes}:{seconds}",
+    "ongoing": "Em curso",
+    "menu": "Menu",
+    "back": "Voltar",
+    "moreOptions": "Mais opções",
+    "aiAssistant": "Assistente IA",
+    "home": "Início",
+    "chat": "Chat",
 
+    "@_": {"description": "Task Page"},
     "updateTask": "Atualizar Tarefa",
     "createTask": "Criar Tarefa",
     "deleteTask": "Eliminar Tarefa",
 
+    "@_": {"description": "Task Comment Section"},
     "comments": "Comentários",
     "addComment": "Adicionar Comentário",
 
+    "@_": {"description": "Task List Item View"},
     "lastUpdated": "Última atualização: {date}",
     "dueDate": "Prazo: {date}",
     "notAvailable": "N/D",
 
+    "@_": {"description": "Task Priority View"},
     "veryHigh": "Muito Alta",
     "high": "Alta", 
     "normal": "Normal",
     "low": "Baixa",
     "veryLow": "Muito Baixa",
 
+    "@_": {"description": "Task Status View"},
     "open": "Aberta",
     "inProgress": "Em Progresso",
     "finished": "Concluída",
     "cancelled": "Cancelada", 
     "archived": "Arquivada",
 
+    "@_": {"description": "Manage Team Users Page"},
     "noOrgSelectedWrapWithGuard": "Erro - Nenhuma organização selecionada. Envolver com OrgGuard",
     "error": "Erro: {error}",
     "noTeamSelected": "Erro - Nenhuma equipa selecionada.",
@@ -96,11 +121,14 @@
     "noUsersInTeam": "Nenhum utilizador encontrado nesta equipa.",
     "noEmailOrNotFound": "Nenhum email ou email não encontrado",
 
+    "@_": {"description": "Speech State Control Button Widget"},
     "unknownState": "Estado desconhecido: {state}",
     "initError": "Erro de inicialização: {error}",
 
+    "@_": {"description": "Speech Transcribed Widget"},
     "saySomething": "Diga algo...",
 
+    "@_": {"description": "Drawer View"},
     "settings": "Definições",
     "menu": "Menu",
     "account": "Conta",
@@ -125,18 +153,56 @@
     "shifts": "Turnos",
     "notes": "Notas",
 
+    "@_": {"description": "Clock In Out Card"},
     "clockInOut": "Entrada/saída",
     "startShift": "Iniciar Turno",
     "endShift": "Terminar Turno",
     "clockedInAt": "Entrada registada às {time}",
 
+    "@_": {"description": "Notes Home Card"},
     "noNotes": "Sem notas",
 
+    "@_": {"description": "Shift Home Card"},
     "todaysShift": "Turno de Hoje",
     "noActiveShift": "Sem turno ativo",
     "timeRange": "{startTime} até {endTime}",
 
+    "@_": {"description": "Task Home Card"},
     "todaysTasks": "Tarefas de Hoje",
     "noTasksDueToday": "Sem tarefas para hoje",
-    "seeAll": "Ver Tudo"
+    "seeAll": "Ver Tudo",
+
+    "@_": {"description": "Sign In Up Page"},
+    "signInUp": "Entrar/Cadastrar",
+    "termsAndConditions": "Termos e Condições",
+    "username": "Nome de utilizador",
+    "pleaseEnterSomething": "Por favor, insira algo",
+    "iHaveReadAndAgreeToThe": "Li e concordo com os ",
+
+    "@_": {"description": "Main Scaffold"},
+    "unknownError": "Erro desconhecido",
+
+    "@_": {"description": "Base Due Date Selection Field"},
+    "chooseDueDate": "Escolher uma Data de Vencimento",
+
+    "@_": {"description": "Duration Formatting"},
+    "durationFormat": "{hours}:{minutes} horas",
+    "durationHoursOnly": "{hours} {hours, plural, =1{hora} other{horas}}",
+    "zeroHours": "0 horas",
+
+    "@_": {"description": "PDF From Note"},
+    "pdfPersonal": "Pessoal",
+    "pdfCreatedBy": "Criado por {email} em {date}",
+    "pdfStatus": "Status: {status}",
+    "pdfDescription": "Descrição",
+    "pdfAddress": "Endereço", 
+    "pdfActionRequired": "Ação Necessária",
+    "pdfImageAttachments": "Anexos de imagem",
+    "pdfOtherAttachments": "Outros anexos",
+
+    "@_": {"description": "Tasks List Page"},
+    "tasksListOpen": "Aberta",
+    "tasksListInProgress": "Em Progresso",
+    "tasksListFinished": "Concluída",
+    "createNewTask": "Criar Nova Tarefa"
 }

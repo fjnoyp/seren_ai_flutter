@@ -17,7 +17,7 @@ import 'dart:async'; // Add this import
 
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
-final DateFormat listDateFormat = DateFormat('HH:mm');
+final listDateFormat = DateFormat.jm();
 
 class ShiftsPage extends HookConsumerWidget {
   const ShiftsPage({super.key});
@@ -45,6 +45,7 @@ class ShiftsPage extends HookConsumerWidget {
     return Column(
       children: [
         TableCalendar(
+          locale: AppLocalizations.of(context)!.localeName,
           firstDay: DateTime(2010),
           lastDay: DateTime(2030),
           focusedDay: focusedDay.value,
@@ -164,7 +165,7 @@ class _DayShiftsWidget extends HookConsumerWidget {
                               const Icon(Icons.location_on_outlined),
                               const SizedBox(width: 10),
                               Text(shift.parentProject?.address ??
-                                  'No project address'),
+                                  AppLocalizations.of(context)!.noProjectAddress),
                             ],
                           ),
                         ),
@@ -219,7 +220,7 @@ class _ShiftLogs extends ConsumerWidget {
         return Padding(
           padding: const EdgeInsets.symmetric(vertical: 4.0),
           child: Text(
-            '${listDateFormat.format(log.clockInDatetime.toLocal())} - ${log.clockOutDatetime != null ? listDateFormat.format(log.clockOutDatetime!.toLocal()) : 'Ongoing'}',
+            '${listDateFormat.format(log.clockInDatetime.toLocal())} - ${log.clockOutDatetime != null ? listDateFormat.format(log.clockOutDatetime!.toLocal()) : AppLocalizations.of(context)!.ongoing}',
             style: const TextStyle(fontSize: 12),
           ),
         );
@@ -247,7 +248,7 @@ class _ShiftTimeRangesList extends ConsumerWidget {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: shiftTimeRanges.map((timeframe) {
         return Text(
-          '${listDateFormat.format(timeframe.start.toLocal())} - ${listDateFormat.format(timeframe.end.toLocal())} - ${timeframe.duration.formatDuration()}',
+          '${listDateFormat.format(timeframe.start.toLocal())} - ${listDateFormat.format(timeframe.end.toLocal())} - ${timeframe.duration.formatDuration(context)}',
           style: const TextStyle(fontWeight: FontWeight.bold),
         );
       }).toList(),

@@ -81,7 +81,7 @@ class _ClockInOutInnerCard extends ConsumerWidget {
             if (curLog != null)
               Text(
                 AppLocalizations.of(context)!.clockedInAt(
-                  DateFormat('h:mm').format(curLog.clockInDatetime)
+                  DateFormat.Hm().format(curLog.clockInDatetime)
                 ),
                 style: Theme.of(context)
                     .textTheme

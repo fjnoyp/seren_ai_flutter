@@ -61,7 +61,9 @@ class _ShiftInnerCard extends ConsumerWidget {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Text(
-              DateFormat('EEEE, d MMM').format(DateTime.now()),
+              DateFormat.EEEE(AppLocalizations.of(context)!.localeName)
+                  .add_MMMd()
+                  .format(DateTime.now()),
               style: Theme.of(context)
                   .textTheme
                   .bodySmall
@@ -77,9 +79,9 @@ class _ShiftInnerCard extends ConsumerWidget {
                 const SizedBox(width: 8),
                 Text(
                   AppLocalizations.of(context)!.timeRange(
-                      DateFormat('H:mm')
+                      DateFormat.Hm()
                           .format(activeShiftRanges.first.start.toLocal()),
-                      DateFormat('H:mm')
+                      DateFormat.Hm()
                           .format(activeShiftRanges.first.end.toLocal())),
                   style: Theme.of(context).textTheme.bodySmall?.copyWith(
                       color: Theme.of(context).colorScheme.onSurface),

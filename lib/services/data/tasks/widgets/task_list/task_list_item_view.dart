@@ -11,12 +11,12 @@ import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 class TaskListItemView extends ConsumerWidget {
   final JoinedTaskModel joinedTask;
-  final DateFormat listDateFormat = DateFormat('MMM dd');
-
   TaskListItemView({Key? key, required this.joinedTask}) : super(key: key);
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+  final listDateFormat = DateFormat.MMMd(AppLocalizations.of(context)!.localeName);
+
     final theme = Theme.of(context);
 
     final task = joinedTask.task;

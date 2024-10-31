@@ -7,6 +7,7 @@ import 'package:seren_ai_flutter/services/data/notes/models/joined_note_model.da
 import 'package:seren_ai_flutter/services/data/notes/note_attachments_handler.dart';
 import 'package:seren_ai_flutter/services/data/notes/ui_state/cur_note_state_provider.dart';
 import 'package:seren_ai_flutter/services/data/notes/ui_state/cur_note_states.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 class NoteToPdfConverter extends Document {
   final WidgetRef ref;
@@ -54,33 +55,37 @@ class NoteToPdfConverter extends Document {
         style: const TextStyle(fontSize: 28.0),
       ),
       Text(
-        joinedNote.project?.name ?? 'Personal',
+        joinedNote.project?.name ?? AppLocalizations.of(ref.context)!.pdfPersonal,
         style: const TextStyle(fontSize: 16.0),
       ),
       SizedBox(height: 16.0),
       Text(
-          'Created by ${joinedNote.authorUser?.email ?? ''} on ${DateFormat('MMM d, yyyy').format(joinedNote.note.createdAt!)}'),
+        AppLocalizations.of(ref.context)!.pdfCreatedBy(
+          joinedNote.authorUser?.email ?? '',
+          DateFormat.yMMMd(AppLocalizations.of(ref.context)!.localeName).format(joinedNote.note.createdAt!),
+        ),
+      ),
       SizedBox(height: 16.0),
-      Text('Status: ${joinedNote.note.status?.toString().enumToHumanReadable}'),
+      Text(AppLocalizations.of(ref.context)!.pdfStatus(joinedNote.note.status?.toString().enumToHumanReadable ?? '')),
     ];
   }
 
   List<Widget> _bodyWidgets(JoinedNoteModel joinedNote) {
     return [
       Text(
-        'Description',
+        AppLocalizations.of(ref.context)!.pdfDescription,
         style: TextStyle(fontStyle: FontStyle.italic),
       ),
       Text(joinedNote.note.description ?? ''),
       SizedBox(height: 16.0),
       Text(
-        'Address',
+        AppLocalizations.of(ref.context)!.pdfAddress,
         style: TextStyle(fontStyle: FontStyle.italic),
       ),
       Text(joinedNote.note.address ?? ''),
       SizedBox(height: 16.0),
       Text(
-        'Action Required',
+        AppLocalizations.of(ref.context)!.pdfActionRequired,
         style: TextStyle(fontStyle: FontStyle.italic),
       ),
       Text(joinedNote.note.actionRequired ?? ''),
@@ -122,7 +127,7 @@ class NoteToPdfConverter extends Document {
 
     return [
       Text(
-        'Image attachments',
+        AppLocalizations.of(ref.context)!.pdfImageAttachments,
         style: TextStyle(fontStyle: FontStyle.italic),
       ),
       SizedBox(height: 8.0),
@@ -135,7 +140,7 @@ class NoteToPdfConverter extends Document {
       ),
       SizedBox(height: 16.0),
       Text(
-        'Other attachments',
+        AppLocalizations.of(ref.context)!.pdfOtherAttachments,
         style: TextStyle(fontStyle: FontStyle.italic),
       ),
       ...fileAttachments,

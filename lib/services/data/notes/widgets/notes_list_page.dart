@@ -83,7 +83,8 @@ class _NoteListByProjectId extends ConsumerWidget {
     // TODO: use note list states instead to better handle errors
     return switch (notes) {
       null => const Center(child: CircularProgressIndicator()),
-      [] => Center(child: Text(AppLocalizations.of(context)!.thisProjectHasNoNotes)),
+      [] => Center(
+          child: Text(AppLocalizations.of(context)!.thisProjectHasNoNotes)),
       List() => ListView.builder(
           itemCount: notes.length,
           itemBuilder: (context, index) => _NoteItem(notes[index]),
@@ -108,7 +109,7 @@ class _NoteItem extends ConsumerWidget {
       trailing: Text(
         note.createdAt != null
             // TODO: format using localizations
-            ? DateFormat(AppLocalizations.of(context)!.noteItemDateTimeFormat).format(note.createdAt!)
+            ? DateFormat.yMd(AppLocalizations.of(context)!.localeName).add_jm().format(note.createdAt!)
             : '',
         style: const TextStyle(fontSize: 12),
       ),
