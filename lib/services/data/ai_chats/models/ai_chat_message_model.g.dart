@@ -13,8 +13,6 @@ AiChatMessageModel _$AiChatMessageModelFromJson(Map<String, dynamic> json) =>
       content: json['content'] as String,
       parentChatThreadId: json['parent_chat_thread_id'] as String,
       parentLgRunId: json['parent_lg_run_id'] as String?,
-      additionalKwargs:
-          AiChatMessageModel._parseAdditionalKwargs(json['additional_kwargs']),
     );
 
 Map<String, dynamic> _$AiChatMessageModelToJson(AiChatMessageModel instance) =>
@@ -24,7 +22,6 @@ Map<String, dynamic> _$AiChatMessageModelToJson(AiChatMessageModel instance) =>
       'content': instance.content,
       'parent_chat_thread_id': instance.parentChatThreadId,
       'parent_lg_run_id': instance.parentLgRunId,
-      'additional_kwargs': instance.additionalKwargs,
     };
 
 const _$AiChatMessageTypeEnumMap = {

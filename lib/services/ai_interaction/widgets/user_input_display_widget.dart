@@ -1,7 +1,10 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:seren_ai_flutter/services/ai_interaction/ai_chat_api_service_provider.dart';
-import 'package:seren_ai_flutter/services/data/ai_chats/last_ai_message_listener_provider.dart';
+import 'package:hooks_riverpod/hooks_riverpod.dart';
+import 'package:seren_ai_flutter/services/ai_interaction/ai_chat_service_provider.dart';
+import 'package:seren_ai_flutter/services/ai_interaction/ai_tool_response_executor.dart';
+import 'package:seren_ai_flutter/services/ai_interaction/last_ai_message_listener_provider.dart';
 import 'package:seren_ai_flutter/services/data/ai_chats/models/ai_chat_message_model.dart';
 import 'package:seren_ai_flutter/services/speech_to_text/widgets/speech_state_control_button_widget.dart';
 import 'package:seren_ai_flutter/services/speech_to_text/widgets/speech_transcribed_widget.dart';
@@ -47,7 +50,7 @@ class UserInputDisplayWidget extends ConsumerWidget {
                   );
                 },
               ),
-              const DisplayAiResponseWidget(),
+              const DisplayAiResultsWidget(),
               const SpeechTranscribedWidget(),
               const SpeechStateControlButtonWidget(),
               UserInputTextDisplayWidget(),
@@ -68,28 +71,69 @@ class UserInputDisplayWidget extends ConsumerWidget {
   }
 }
 
-class DisplayAiResponseWidget extends ConsumerWidget {
-  const DisplayAiResponseWidget({super.key});
+class DisplayAiResultsWidget extends HookConsumerWidget {
+  const DisplayAiResultsWidget({super.key});
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {    
-    final lastAiMessage = ref.watch(lastAiMessageListenerProvider);    
+    final lastAiMessages = ref.watch(lastAiMessageListenerProvider);    
+    final isVisible = useState(lastAiMessages.isNotEmpty);
+
+    useEffect(() {
+      if (lastAiMessages.isNotEmpty) {
+        isVisible.value = true;
+      }
+      return null;
+    }, [lastAiMessages]);
+
     return Visibility(
-      visible: lastAiMessage != null,
-      child: lastAiMessage != null
-          ? Card(
-              color: Theme.of(context).colorScheme.primary,
-              margin: const EdgeInsets.symmetric(vertical: 5.0),
-              child: Padding(
-                padding: const EdgeInsets.all(8.0),
-                child: Text(
-                  lastAiMessage.content,
-                  style: Theme.of(context).textTheme.bodyMedium?.copyWith(color: Colors.white),
+      visible: isVisible.value, 
+      child: Card(
+        color: Theme.of(context).colorScheme.primary,
+        margin: const EdgeInsets.symmetric(vertical: 5.0),
+        child: Padding(
+          padding: const EdgeInsets.all(8.0),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Container(
+                constraints: const BoxConstraints(maxHeight: 200),
+                child: ListView.builder(
+                  itemCount: lastAiMessages.length,
+                  itemBuilder: (context, index) {
+                    return DisplayAiResultWidget(aiResult: lastAiMessages[index]);
+                  },
                 ),
               ),
-            )
-          : const SizedBox.shrink(),
+              IconButton(
+                icon: const Icon(Icons.check, color: Colors.white),
+                onPressed: () {
+                  isVisible.value = false;
+                },
+              ),
+            ],
+          ),
+        ),
+      ),
     );
+  }
+}
+
+class DisplayAiResultWidget extends ConsumerWidget {
+  final AiResult aiResult;
+  const DisplayAiResultWidget({super.key, required this.aiResult});
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    String displayText = '';
+    
+    if (aiResult is AiChatMessageModel) {
+      displayText = (aiResult as AiChatMessageModel).content;
+    } else if (aiResult is ToolResponseResult) {
+      displayText = (aiResult as ToolResponseResult).message;
+    }
+
+    return Text(displayText);
   }
 }
 
