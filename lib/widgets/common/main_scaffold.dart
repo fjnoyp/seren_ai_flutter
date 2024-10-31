@@ -3,6 +3,7 @@ import 'package:flutter_svg/svg.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:seren_ai_flutter/constants.dart';
 import 'package:seren_ai_flutter/services/ai_interaction/widgets/user_input_display_widget.dart';
+import 'package:seren_ai_flutter/services/data/db_setup/app_config.dart';
 import 'drawer_view.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
@@ -76,7 +77,17 @@ class MainScaffold extends HookWidget {
               style: theme.appBarTheme.titleTextStyle,
             ),
           ),
-          actions: actions,
+          actions: [
+            if (!AppConfig.isProdMode) 
+              const Text(
+                'Dev',
+                style: TextStyle(color: Colors.red, fontWeight: FontWeight.bold),
+              ),
+            IconButton(
+              icon: Icon(Icons.more_vert, color: theme.iconTheme.color),
+              onPressed: () {},
+            ),
+          ],
         ),
         drawer: const DrawerView(),
         body: Stack(
