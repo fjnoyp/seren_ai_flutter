@@ -85,7 +85,8 @@ class AppState extends State<App> {
               final title =
                   mode == EditablePageMode.create ? 'Create Task' : 'View Task';
 
-              return _GuardScaffold(title, TaskPage(mode: mode));
+              return _GuardScaffold(title, TaskPage(mode: mode),
+                  actions: args['actions']);
             },
             aiChatsRoute: (context) =>
                 const _GuardScaffold('AI Chat Page', AIChatsPage()),
@@ -103,7 +104,8 @@ class AppState extends State<App> {
               final title =
                   mode == EditablePageMode.create ? 'Create Note' : 'View Note';
 
-              return _GuardScaffold(title, NotePage(mode: mode));
+              return _GuardScaffold(title, NotePage(mode: mode),
+                  actions: args['actions']);
             },
             termsAndConditionsRoute: (context) =>
                 const TermsAndConditionsWebview(),
@@ -184,16 +186,17 @@ class _AuthGuardScaffold extends StatelessWidget {
 }
 
 class _GuardScaffold extends StatelessWidget {
-  const _GuardScaffold(this.title, this.body);
+  const _GuardScaffold(this.title, this.body, {this.actions});
 
   final String title;
   final Widget body;
+  final List<Widget>? actions;
 
   @override
   Widget build(BuildContext context) {
     return AuthGuard(
       child: OrgGuard(
-        child: MainScaffold(title: title, body: body),
+        child: MainScaffold(title: title, body: body, actions: actions),
       ),
     );
   }

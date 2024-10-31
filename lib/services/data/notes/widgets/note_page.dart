@@ -12,6 +12,7 @@ import 'package:seren_ai_flutter/services/data/notes/notes_read_provider.dart';
 import 'package:seren_ai_flutter/services/data/notes/ui_state/cur_note_state_provider.dart';
 import 'package:seren_ai_flutter/services/data/notes/ui_state/cur_note_states.dart';
 import 'package:seren_ai_flutter/services/data/notes/widgets/delete_note_button.dart';
+import 'package:seren_ai_flutter/services/data/notes/widgets/edit_note_button.dart';
 import 'package:seren_ai_flutter/services/data/notes/widgets/form/note_selection_fields.dart';
 import 'package:seren_ai_flutter/services/data/notes/widgets/pdf/share_note_button.dart';
 import 'package:seren_ai_flutter/services/data/notes/widgets/note_attachments/note_attachment_section.dart';
@@ -57,18 +58,6 @@ class NotePage extends HookConsumerWidget {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  if (mode == EditablePageMode.edit)
-                    // TODO: move to app bar
-                    Align(
-                      alignment: Alignment.topRight,
-                      child: DeleteNoteButton(
-                          noteId: curNoteState.joinedNote.note.id),
-                    ),
-                  if (mode == EditablePageMode.readOnly)
-                    Align(
-                      alignment: Alignment.topRight,
-                      child: ShareNoteButton(curNoteState.joinedNote.note.id),
-                    ),
                   isEnabled
                       ? NoteNameField(enabled: true)
                       : Text(
@@ -151,15 +140,6 @@ class NotePage extends HookConsumerWidget {
                       ),
                     ),
 
-                  if (mode == EditablePageMode.readOnly)
-                    ElevatedButton(
-                        onPressed: () {
-                          Navigator.pop(context);
-                          openNotePage(context, ref,
-                              mode: EditablePageMode.edit);
-                        },
-                        child: const Text('Edit')),
-
                   const SizedBox(height: 32),
                 ],
               ),
@@ -204,5 +184,15 @@ Future<void> openNotePage(BuildContext context, WidgetRef ref,
     }
   }
 
-  await Navigator.pushNamed(context, notePageRoute, arguments: {'mode': mode});
+  final actions = switch (mode) {
+    EditablePageMode.edit => [const DeleteNoteButton()],
+    EditablePageMode.readOnly => [
+        const EditNoteButton(),
+        const ShareNoteButton(),
+      ],
+    _ => null,
+  };
+
+  await Navigator.pushNamed(context, notePageRoute,
+      arguments: {'mode': mode, 'actions': actions});
 }

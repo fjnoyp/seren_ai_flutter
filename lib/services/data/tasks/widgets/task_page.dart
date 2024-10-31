@@ -10,6 +10,7 @@ import 'package:seren_ai_flutter/services/data/tasks/ui_state/cur_task_provider.
 import 'package:seren_ai_flutter/services/data/tasks/models/joined_task_model.dart';
 import 'package:seren_ai_flutter/services/data/tasks/ui_state/cur_task_states.dart';
 import 'package:seren_ai_flutter/services/data/tasks/widgets/delete_task_button.dart';
+import 'package:seren_ai_flutter/services/data/tasks/widgets/edit_task_button.dart';
 import 'package:seren_ai_flutter/services/data/tasks/widgets/joined_task_save_provider.dart';
 import 'package:seren_ai_flutter/services/data/tasks/widgets/form/task_selection_fields.dart';
 import 'package:seren_ai_flutter/services/data/tasks/widgets/task_comments/task_comment_section.dart';
@@ -64,11 +65,6 @@ class TaskPage extends HookConsumerWidget {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            if (mode == EditablePageMode.edit)
-              Align(
-                alignment: Alignment.topRight,
-                child: DeleteTaskButton(taskId: curTask?.task.id ?? ''),
-              ),
             TaskProjectSelectionField(enabled: isEnabled),
 
             // Title Input
@@ -127,15 +123,6 @@ class TaskPage extends HookConsumerWidget {
                       : 'Create Task'),
                 ),
               ),
-
-            if (mode == EditablePageMode.readOnly)
-              ElevatedButton(
-                  onPressed: () {
-                    // remove self from stack
-                    Navigator.pop(context);
-                    openTaskPage(context, ref, mode: EditablePageMode.edit);
-                  },
-                  child: const Text('Edit')),
 
             const SizedBox(height: 32),
           ],
@@ -236,5 +223,12 @@ Future<void> openTaskPage(BuildContext context, WidgetRef ref,
     }
   }
 
-  await Navigator.pushNamed(context, taskPageRoute, arguments: {'mode': mode});
+  final actions = switch (mode) {
+    EditablePageMode.edit => [const DeleteTaskButton()],
+    EditablePageMode.readOnly => [const EditTaskButton()],
+    _ => null,
+  };
+
+  await Navigator.pushNamed(context, taskPageRoute,
+      arguments: {'mode': mode, 'actions': actions});
 }

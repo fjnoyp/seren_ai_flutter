@@ -10,6 +10,7 @@ class MainScaffold extends HookWidget {
   final Widget body;
   final FloatingActionButton? floatingActionButton;
   final bool showBottomBar;
+  final List<Widget>? actions;
 
   const MainScaffold({
     super.key,
@@ -17,6 +18,7 @@ class MainScaffold extends HookWidget {
     required this.body,
     this.floatingActionButton,
     this.showBottomBar = true,
+    this.actions,
   });
 
   @override
@@ -70,12 +72,7 @@ class MainScaffold extends HookWidget {
               style: theme.appBarTheme.titleTextStyle,
             ),
           ),
-          actions: [
-            IconButton(
-              icon: Icon(Icons.more_vert, color: theme.iconTheme.color),
-              onPressed: () {},
-            ),
-          ],
+          actions: actions,
         ),
         drawer: const DrawerView(),
         body: Stack(
