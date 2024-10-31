@@ -1,16 +1,17 @@
 // GENERATED CODE - DO NOT MODIFY BY HAND
 
-part of 'shift_model.dart';
+part of 'user_project_assignment_model.dart';
 
 // **************************************************************************
 // JsonSerializableGenerator
 // **************************************************************************
 
-ShiftModel _$ShiftModelFromJson(Map<String, dynamic> json) => ShiftModel(
+UserProjectAssignmentModel _$UserProjectAssignmentModelFromJson(
+        Map<String, dynamic> json) =>
+    UserProjectAssignmentModel(
       id: json['id'] as String?,
-      name: json['name'] as String,
-      authorUserId: json['author_user_id'] as String,
-      parentProjectId: json['parent_project_id'] as String,
+      userId: json['userId'] as String,
+      projectId: json['projectId'] as String,
       createdAt: json['created_at'] == null
           ? null
           : DateTime.parse(json['created_at'] as String),
@@ -19,12 +20,12 @@ ShiftModel _$ShiftModelFromJson(Map<String, dynamic> json) => ShiftModel(
           : DateTime.parse(json['updated_at'] as String),
     );
 
-Map<String, dynamic> _$ShiftModelToJson(ShiftModel instance) =>
+Map<String, dynamic> _$UserProjectAssignmentModelToJson(
+        UserProjectAssignmentModel instance) =>
     <String, dynamic>{
       'id': instance.id,
-      'name': instance.name,
-      'author_user_id': instance.authorUserId,
-      'parent_project_id': instance.parentProjectId,
+      'userId': instance.userId,
+      'projectId': instance.projectId,
       'created_at': instance.createdAt?.toIso8601String(),
       'updated_at': instance.updatedAt?.toIso8601String(),
     };

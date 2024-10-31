@@ -1,44 +1,41 @@
 import 'package:json_annotation/json_annotation.dart';
 import 'package:seren_ai_flutter/services/data/common/uuid.dart';
 
-part 'user_project_roles.g.dart';
+part 'team_project_assignment_model.g.dart';
 
 @JsonSerializable()
-class UserProjectRoles {
+class TeamProjectAssignmentModel {
   final String id;
-  final String userId;
+  final String teamId;
   final String projectId;
-  final String projectRole;
   @JsonKey(name: 'created_at')
   final DateTime? createdAt;
   @JsonKey(name: 'updated_at')
   final DateTime? updatedAt;
 
-  UserProjectRoles({
+  TeamProjectAssignmentModel({
     String? id,
-    required this.userId,
+    required this.teamId,
     required this.projectId,
-    required this.projectRole,
     this.createdAt,
     this.updatedAt,
   }) : id = id ?? uuid.v4();
 
-  factory UserProjectRoles.fromJson(Map<String, dynamic> json) => _$UserProjectRolesFromJson(json);
-  Map<String, dynamic> toJson() => _$UserProjectRolesToJson(this);
+  factory TeamProjectAssignmentModel.fromJson(Map<String, dynamic> json) =>
+      _$TeamProjectAssignmentModelFromJson(json);
+  Map<String, dynamic> toJson() => _$TeamProjectAssignmentModelToJson(this);
 
-  UserProjectRoles copyWith({
+  TeamProjectAssignmentModel copyWith({
     String? id,
-    String? userId,
+    String? teamId,
     String? projectId,
-    String? projectRole,
     DateTime? createdAt,
     DateTime? updatedAt,
   }) {
-    return UserProjectRoles(
+    return TeamProjectAssignmentModel(
       id: id ?? this.id,
-      userId: userId ?? this.userId,
+      teamId: teamId ?? this.teamId,
       projectId: projectId ?? this.projectId,
-      projectRole: projectRole ?? this.projectRole,
       createdAt: createdAt ?? this.createdAt,
       updatedAt: updatedAt ?? this.updatedAt,
     );

@@ -1,5 +1,4 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:seren_ai_flutter/services/data/db_setup/db_provider.dart';
 import 'package:seren_ai_flutter/services/data/orgs/cur_org/cur_org_id_provider.dart';
 import 'package:seren_ai_flutter/services/data/orgs/cur_org/is_cur_user_org_admin_listener_provider.dart';
 import 'package:seren_ai_flutter/services/data/projects/cur_user_projects_listener_provider.dart';
@@ -21,7 +20,7 @@ final curUserViewableProjectsListenerProvider =
 
     return allProjects ?? [];
   } else {
-    // get all projects that the current user has a role in
+    // get all projects that the current user is assigned to
     final userProjects = ref.watch(curUserProjectsListenerProvider);
     return userProjects ?? [];
   }

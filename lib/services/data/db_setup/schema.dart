@@ -5,56 +5,50 @@ const orgsTable = 'orgs';
 const teamsTable = 'teams';
 const projectsTable = 'projects';
 const userOrgRolesTable = 'user_org_roles';
-const userTeamRolesTable = 'user_team_roles';
-const userProjectRolesTable = 'user_project_roles';
-
+const userTeamAssignmentsTable = 'user_team_assignments';
+const userProjectAssignmentsTable = 'user_project_assignments';
+const teamProjectAssignmentsTable = 'team_project_assignments';
 // TODO p5: generate from model classes ...
 // Generate Schema classes that create the Table schemas
 // And provide field getters for constructing queries
 
 const permissionSchemas = [
   Table(usersTable, [
-    // Column.text('id'),
     Column.text('parent_auth_user_id'),
     Column.text('email'),
     Column.text('default_project_id'),
     Column.text('default_team_id'),
   ]),
   Table(orgsTable, [
-    // Column.text('id'),
     Column.text('name'),
     Column.text('address'),
   ]),
   Table(teamsTable, [
-    // Column.text('id'),
     Column.text('name'),
     Column.text('parent_org_id'),
   ]),
   Table(projectsTable, [
-    // Column.text('id'),
     Column.text('name'),
     Column.text('description'),
     Column.text('address'),
     Column.text('parent_org_id'),
-    Column.text('parent_team_id'),
   ]),
   Table(userOrgRolesTable, [
-    // Column.text('id'),
     Column.text('user_id'),
     Column.text('org_id'),
     Column.text('org_role'),
   ]),
-  Table(userTeamRolesTable, [
-    // Column.text('id'),
+  Table(userTeamAssignmentsTable, [
     Column.text('user_id'),
     Column.text('team_id'),
-    Column.text('team_role'),
   ]),
-  Table(userProjectRolesTable, [
-    // Column.text('id'),
+  Table(userProjectAssignmentsTable, [
     Column.text('user_id'),
     Column.text('project_id'),
-    Column.text('project_role'),
+  ]),
+  Table(teamProjectAssignmentsTable, [
+    Column.text('team_id'),
+    Column.text('project_id'),
   ]),
 ];
 
@@ -64,7 +58,6 @@ const taskUserAssignmentsTable = 'task_user_assignments';
 
 const tasksSchemas = [
   Table(tasksTable, [
-    // Column.text('id'),
     Column.text('name'),
     Column.text('description'),
     Column.text('status'),
@@ -73,7 +66,6 @@ const tasksSchemas = [
     Column.text('created_date'),
     Column.text('last_updated_date'),
     Column.text('author_user_id'),
-    Column.text('parent_team_id'),
     Column.text('parent_project_id'),
     Column.text('estimated_duration_minutes'),
   ]),
@@ -102,6 +94,7 @@ const aiChatSchemas = [
     // Column.text('created_at'),
     Column.text('parent_lg_thread_id'),
     Column.text('parent_org_id'),
+    Column.text('parent_lg_assistant_id'),
   ]),
   Table(aiChatMessagesTable, [
     // Column.text('id'),
@@ -125,7 +118,6 @@ const shiftSchemas = [
     // Column.text('id'),
     Column.text('name'),
     Column.text('author_user_id'),
-    Column.text('parent_team_id'),
     Column.text('parent_project_id'),
   ]),
   Table(shiftUserAssignmentsTable, [

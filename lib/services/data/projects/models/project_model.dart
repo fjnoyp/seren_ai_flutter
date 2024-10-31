@@ -15,9 +15,6 @@ class ProjectModel implements IHasId {
   @JsonKey(name: 'parent_org_id')
   final String parentOrgId;
 
-  @JsonKey(name: 'parent_team_id')
-  final String? parentTeamId;
-
   @JsonKey(name: 'created_at')
   final DateTime? createdAt;
 
@@ -30,7 +27,6 @@ class ProjectModel implements IHasId {
     this.description,
     this.address,
     required this.parentOrgId,
-    required this.parentTeamId,
     this.createdAt,
     this.updatedAt,
   }) : id = id ?? uuid.v4();

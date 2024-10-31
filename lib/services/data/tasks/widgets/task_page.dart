@@ -69,7 +69,6 @@ class TaskPage extends HookConsumerWidget {
                 alignment: Alignment.topRight,
                 child: DeleteTaskButton(taskId: curTask?.task.id ?? ''),
               ),
-            TaskTeamSelectionField(enabled: isEnabled),
             TaskProjectSelectionField(enabled: isEnabled),
 
             // Title Input

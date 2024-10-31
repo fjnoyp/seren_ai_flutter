@@ -5,7 +5,6 @@ import 'package:seren_ai_flutter/services/data/tasks/models/joined_task_model.da
 import 'package:seren_ai_flutter/services/data/tasks/models/task_model.dart';
 import 'package:intl/intl.dart';
 import 'package:seren_ai_flutter/services/data/tasks/widgets/task_list/task_priority_view.dart';
-import 'package:seren_ai_flutter/constants.dart';
 import 'package:seren_ai_flutter/services/data/tasks/widgets/task_page.dart';
 import 'package:seren_ai_flutter/services/data/tasks/widgets/ui_constants.dart';
 
@@ -20,8 +19,6 @@ class TaskListItemView extends ConsumerWidget {
     final theme = Theme.of(context);
 
     final task = joinedTask.task;
-    final authorUser = joinedTask.authorUser;
-    final team = joinedTask.team;
     final project = joinedTask.project;
 
     final updatedAt = task.updatedAt;
