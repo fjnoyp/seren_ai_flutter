@@ -5,4 +5,11 @@ extension DateTimeRangeExtension on DateTimeRange {
     return (start.isBefore(other.end) && end.isAfter(other.start)) ||
            (other.start.isBefore(end) && other.end.isAfter(start));
   }
+
+  DateTimeRange convertToLocal() {
+    return DateTimeRange(
+      start: start.toLocal(),
+      end: end.toLocal(),
+    );
+  }
 }

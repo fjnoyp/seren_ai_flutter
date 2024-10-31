@@ -1,9 +1,11 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:seren_ai_flutter/services/ai_interaction/ai_tool_response_executor.dart';
+import 'package:seren_ai_flutter/services/ai_interaction/ai_tool_response_model.dart';
 import 'package:seren_ai_flutter/services/auth/auth_states.dart';
 import 'package:seren_ai_flutter/services/auth/cur_auth_state_provider.dart';
 import 'package:seren_ai_flutter/services/data/ai_chats/models/ai_chat_message_model.dart';
 import 'package:seren_ai_flutter/services/data/common/status_enum.dart';
-import 'package:seren_ai_flutter/services/data/orgs/cur_org/cur_org_id_provider.dart';
+import 'package:seren_ai_flutter/services/data/orgs/cur_org/cur_user_org_id_provider.dart';
 import 'package:seren_ai_flutter/services/text_to_speech/text_to_speech_notifier.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
@@ -20,8 +22,7 @@ final isAiRespondingProvider = StateProvider<bool>((ref) => false);
 
 final isAiEditingProvider = StateProvider<bool>((ref) => false);
 
-final aiChatServiceProvider =
-    Provider<AIChatService>(AIChatService.new);
+final aiChatServiceProvider = Provider<AIChatService>(AIChatService.new);
 
 class AIChatService {
   final Ref ref;
@@ -31,7 +32,7 @@ class AIChatService {
   Future<List<AiChatMessageModel>> sendMessage(String message) async {
     ref.read(isAiRespondingProvider.notifier).state = true;
 
-    final curOrgId = ref.read(curOrgIdProvider);
+    final curOrgId = ref.read(curUserOrgIdProvider);
     final curAuthUserState = ref.read(curAuthStateProvider);
 
     final curUser = switch (curAuthUserState) {
@@ -48,8 +49,15 @@ class AIChatService {
       final aiChatMessages = await _sendMessage(
           message: message, userId: curUser.id, orgId: curOrgId);
 
+      await executeAiChatMessages(aiChatMessages);
+
+      // TODO p1: for AiInfoRequestModel with showOnly = true, should we update ai state still?
+      // If so new API will need to be tested
+
       // Speak the result
       await speakAiMessage(aiChatMessages);
+
+      ref.read(isAiRespondingProvider.notifier).state = false;
 
       return aiChatMessages;
     } catch (e) {
@@ -73,23 +81,56 @@ class AIChatService {
       {required String message,
       required String userId,
       required String orgId}) async {
-    final response = await Supabase.instance.client.functions.invoke(
-      'chatv2/chat',
-      method: HttpMethod.post,
-      headers: {'Content-Type': 'application/json'},
-      body: {'user-message': message, 'user-id': userId, 'org-id': orgId},
-    );
+    try {
+      print('Sending message to Supabase function...'); // Debug log
+      final response = await Supabase.instance.client.functions.invoke(
+        'chatv2/chat',
+        method: HttpMethod.post,
+        headers: {'Content-Type': 'application/json'},
+        body: {'user-message': message, 'user-id': userId, 'org-id': orgId},
+      );
 
-    if (response.status != 200) {
-      throw Exception('Failed to send message: ${response.data}');
-    }
+      if (response.status != 200) {
+        throw Exception(
+            'Failed to send message. Status: ${response.status}, Data: ${response.data}');
+      }
 
-    if (response.data is List) {
-      return AiChatMessageModel.fromJsonList(response.data as List);
-    } else {
-      throw Exception('Unexpected response format: ${response.data}');
+      if (response.data == null) {
+        throw Exception('Response data is null');
+      }
+
+      if (response.data is List) {
+        return AiChatMessageModel.fromJsonList(response.data as List);
+      } else {
+        throw Exception('Unexpected response format: ${response.data}');
+      }
+    } catch (e, stackTrace) {
+      print('Error in _sendMessage: $e'); // Debug log
+      rethrow;
     }
   }
+
+  Future<void> executeAiChatMessages(
+      List<AiChatMessageModel> aiChatMessages) async {
+    // TODO p0: update last ai message provider to be manually updated by the code flow here
+
+    // Read the chat response and identify ToolMessages
+    List<AiToolResponseModel>? toolResponses = aiChatMessages
+        .where((msg) => msg.isAiToolResponse())
+        .expand((msg) => msg.getAiToolResponses() ?? List<AiToolResponseModel>.empty())
+        .toList() as List<AiToolResponseModel>?;
+
+    if (toolResponses != null && toolResponses.isNotEmpty) {
+      await ref.read(aiToolResponseExecutorProvider).executeToolResponses(toolResponses);
+    }
+  }
+
+
+
+
+
+
+
 
   Future<void> testAiCreateTask(BuildContext context) async {
     // TEST calling Supabase Edge Function
