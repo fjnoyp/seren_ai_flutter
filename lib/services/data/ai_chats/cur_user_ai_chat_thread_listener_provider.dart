@@ -4,7 +4,7 @@ import 'package:seren_ai_flutter/services/auth/cur_auth_state_provider.dart';
 import 'package:seren_ai_flutter/services/data/ai_chats/models/ai_chat_thread_model.dart';
 import 'package:seren_ai_flutter/services/data/db_setup/db_provider.dart';
 import 'package:seren_ai_flutter/services/data/ai_chats/models/ai_chat_message_model.dart';
-import 'package:seren_ai_flutter/services/data/orgs/cur_org/cur_org_id_provider.dart';
+import 'package:seren_ai_flutter/services/data/orgs/cur_org/cur_user_org_id_provider.dart';
 
 final curUserAiChatThreadListenerProvider =
     NotifierProvider<CurUserAiChatThreadListenerNotifier, AiChatThreadModel?>(
@@ -19,7 +19,7 @@ class CurUserAiChatThreadListenerNotifier extends Notifier<AiChatThreadModel?> {
       _ => null,
     };
 
-    final watchedCurOrgId = ref.watch(curOrgIdProvider);
+    final watchedCurOrgId = ref.watch(curUserOrgIdProvider);
 
     if (watchedCurAuthUser == null || watchedCurOrgId == null) {
       return null;

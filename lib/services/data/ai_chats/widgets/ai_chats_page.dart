@@ -1,7 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
-import 'package:seren_ai_flutter/services/ai_interaction/ai_chat_api_service_provider.dart';
+import 'package:seren_ai_flutter/common/utils/string_extension.dart';
+import 'package:seren_ai_flutter/services/ai_interaction/ai_chat_service_provider.dart';
+import 'package:seren_ai_flutter/services/ai_interaction/ai_tool_response_executor.dart';
+import 'package:seren_ai_flutter/services/ai_interaction/ai_tool_response_model.dart';
 import 'package:seren_ai_flutter/services/data/ai_chats/cur_user_ai_chat_thread_listener_provider.dart';
 import 'package:seren_ai_flutter/services/data/ai_chats/cur_user_chat_messages_listener_provider.dart';
 import 'package:seren_ai_flutter/services/data/ai_chats/models/ai_chat_thread_model.dart';
@@ -15,6 +18,7 @@ class AIChatsPage extends HookConsumerWidget {
 
     return ListView(
       children: [
+        const TestAiWidget(),
         TextField(
           controller: messageController,
           decoration: InputDecoration(
@@ -35,6 +39,46 @@ class AIChatsPage extends HookConsumerWidget {
         const ChatMessagesDisplay(),
         const SizedBox(height: 200),
       ],
+    );
+  }
+}
+
+class TestAiWidget extends HookConsumerWidget {
+  const TestAiWidget({super.key});
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+
+    final responseState = useState<String?>(null);
+
+
+    final requestShiftInfo = AiInfoRequestModel(infoRequestType: AiInfoRequestType.currentShift);
+
+    final List<AiToolResponseModel> testToolResponses = [requestShiftInfo];
+
+    return Container(
+      decoration: BoxDecoration(
+        border: Border.all(color: Colors.blue, width: 2), // Draw border
+        borderRadius: BorderRadius.circular(8), // Optional: rounded corners
+      ),
+      padding: const EdgeInsets.all(8), // Optional: padding inside the container
+      child: Column(
+        children: [
+          ElevatedButton(
+            onPressed: () async {
+              try {
+                await ref.read(aiToolResponseExecutorProvider).executeToolResponses(testToolResponses);
+              } catch (e) {
+                responseState.value = e.toString();
+              }
+            },
+            child: const Text('Test AI'),
+          ),
+          if (responseState.value != null) ...[
+            const SizedBox(height: 16),
+            Text('Response: ${responseState.value}'),
+          ],
+        ],
+      ),
     );
   }
 }
@@ -66,6 +110,8 @@ class ChatThreadCard extends StatelessWidget {
           children: [
             SelectableText('Author: ${thread.authorUserId}'),
             SelectableText('Parent LG Thread ID: ${thread.parentLgThreadId}'),
+            SelectableText(
+                'Parent LG Assistant ID: ${thread.parentLgAssistantId}'),
           ],
         ),
       ),
@@ -99,33 +145,124 @@ class MessageCard extends HookWidget {
   @override
   Widget build(BuildContext context) {
     final isExpanded = useState(false);
-
     return Card(
-      child: Column(
-        children: [
-          ListTile(
-            title: Text('Type: ${message.type}'),
-            subtitle: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
+      shape: RoundedRectangleBorder(
+        side: BorderSide(width: 2), // More pronounced border
+        borderRadius: BorderRadius.circular(8), // Optional: rounded corners
+      ),
+      child: Padding(
+        padding: const EdgeInsets.all(12.0),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                TextButton(
-                  child: Text(isExpanded.value ? 'Collapse' : 'Expand'),
-                  onPressed: () {
-                    isExpanded.value = !isExpanded.value;
-                  },
-                ),
                 Text(
-                  isExpanded.value
-                      ? message.content
-                      : (message.content.length > 50
-                          ? '${message.content.substring(0, 50)}...'
-                          : message.content),
+                  message.type.toString().enumToHumanReadable,
+                  style: Theme.of(context).textTheme.titleMedium,
+                ),
+                TextButton.icon(
+                  icon: Icon(
+                      isExpanded.value ? Icons.expand_less : Icons.expand_more),
+                  label: Text(isExpanded.value ? 'Less' : 'More'),
+                  onPressed: () => isExpanded.value = !isExpanded.value,
                 ),
               ],
             ),
-          ),
-        ],
+            const Divider(),
+            Text(
+              'Content:',
+              style: Theme.of(context).textTheme.titleSmall?.copyWith(
+                    fontWeight: FontWeight.bold,
+                  ),
+            ),
+            if (message.isAiToolResponse())
+              DisplayToolResponse(
+                  toolResponses: message.getAiToolResponses() ?? [])
+            else
+              DisplayContent(
+                  content: message.content, isExpanded: isExpanded.value),
+            const SizedBox(height: 8),
+            if (isExpanded.value) ...[
+              const SizedBox(height: 16),
+              const SizedBox(height: 8),
+              Text('ID: ${message.id}'),
+              Text('Thread ID: ${message.parentChatThreadId}'),
+              if (message.parentLgRunId != null)
+                Text('LG Run ID: ${message.parentLgRunId}'),
+            ],
+          ],
+        ),
       ),
+    );
+  }
+}
+
+class DisplayContent extends StatelessWidget {
+  final String content;
+  final bool isExpanded;
+
+  const DisplayContent(
+      {super.key, required this.content, this.isExpanded = false});
+
+  @override
+  Widget build(BuildContext context) {
+    return Text(
+      isExpanded
+          ? content
+          : (content.length > 100
+              ? '${content.substring(0, 100)}...'
+              : content),
+      style: Theme.of(context).textTheme.bodyMedium,
+    );
+  }
+}
+
+class DisplayToolResponse extends StatelessWidget {
+  final List<AiToolResponseModel> toolResponses;
+
+  const DisplayToolResponse({super.key, required this.toolResponses});
+
+  @override
+  Widget build(BuildContext context) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        const SizedBox(height: 8),
+        ...toolResponses.map((response) {
+          final responseType = response.responseType.value;
+
+          // Create a widget for each response with better formatting
+          return Padding(
+            padding: const EdgeInsets.symmetric(vertical: 4.0),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  'Response Type: $responseType',
+                  style: Theme.of(context).textTheme.titleSmall?.copyWith(
+                        fontWeight: FontWeight.bold,
+                      ),
+                ),
+                if (response is AiActionRequestModel) ...[
+                  Text(
+                      'Action Request Type: ${response.actionRequestType.value}'),
+                  Text('Args: ${response.args}'),
+                ] else if (response is AiUiActionModel) ...[
+                  Text('UI Action Type: ${response.uiActionType.value}'),
+                  Text('Args: ${response.args}'),
+                ] else if (response is AiInfoRequestModel) ...[
+                  Text('Info Request Type: ${response.infoRequestType.value}'),
+                  Text('Args: ${response.args}'),
+                  Text('Show Only: ${response.showOnly}'),
+                ],
+                const SizedBox(height: 8), // Add space between responses
+              ],
+            ),
+          );
+        }).toList(),
+      ],
     );
   }
 }
