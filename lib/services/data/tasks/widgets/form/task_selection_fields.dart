@@ -5,26 +5,9 @@ import 'package:seren_ai_flutter/services/data/common/widgets/form/base_priority
 import 'package:seren_ai_flutter/services/data/common/widgets/form/base_project_selection_field.dart';
 import 'package:seren_ai_flutter/services/data/common/widgets/form/base_status_selection_field.dart';
 import 'package:seren_ai_flutter/services/data/common/widgets/form/base_task_name_field.dart';
-import 'package:seren_ai_flutter/services/data/common/widgets/form/base_team_selection_field.dart';
 import 'package:seren_ai_flutter/services/data/projects/cur_user_viewable_projects_listener_provider.dart';
 import 'package:seren_ai_flutter/services/data/tasks/ui_state/cur_task_provider.dart';
 import 'package:seren_ai_flutter/services/data/tasks/ui_state/cur_task_states.dart';
-import 'package:seren_ai_flutter/services/data/teams/cur_team/cur_user_viewable_teams_listener_provider.dart';
-
-class TaskTeamSelectionField extends BaseTeamSelectionField {
-  TaskTeamSelectionField({
-    super.key,
-    required super.enabled,
-  }) : super(
-          teamProvider: curTaskProvider.select((state) => switch (state) {
-                LoadedCurTaskState() => state.task.team,
-                _ => null,
-              }),
-          selectableTeamsProvider: curUserViewableTeamsListenerProvider,
-          updateTeam: (ref, team) =>
-              ref.read(curTaskProvider.notifier).updateTeam(team),
-        );
-}
 
 class TaskProjectSelectionField extends BaseProjectSelectionField {
   TaskProjectSelectionField({

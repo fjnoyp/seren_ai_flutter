@@ -32,9 +32,6 @@ class TaskModel implements IHasId{
   @JsonKey(name: 'author_user_id')
   final String authorUserId;
 
-  @JsonKey(name: 'parent_team_id')
-  final String? parentTeamId;
-
   @JsonKey(name: 'parent_project_id')
   final String parentProjectId;
 
@@ -50,8 +47,7 @@ class TaskModel implements IHasId{
     this.dueDate,
     this.createdAt,
     this.updatedAt,
-    required this.authorUserId,    
-    this.parentTeamId,
+    required this.authorUserId,
     required this.parentProjectId,
     this.estimatedDurationMinutes,
   }) : id = id ?? uuid.v4();
@@ -68,7 +64,6 @@ class TaskModel implements IHasId{
       createdAt: now,
       updatedAt: now,
       authorUserId: '',  // This should be set to the current user's ID in practice
-      parentTeamId: null,
       parentProjectId: '',  // This should be set to a valid project ID in practice
       estimatedDurationMinutes: null,
     );
@@ -84,7 +79,6 @@ class TaskModel implements IHasId{
     DateTime? createdAt,
     DateTime? updatedAt,
     String? authorUserId,
-    String? parentTeamId,
     String? parentProjectId,
     int? estimatedDurationMinutes,
   }) {
@@ -98,7 +92,6 @@ class TaskModel implements IHasId{
       createdAt: createdAt ?? this.createdAt,
       updatedAt: updatedAt ?? this.updatedAt,
       authorUserId: authorUserId ?? this.authorUserId,
-      parentTeamId: parentTeamId ?? this.parentTeamId,
       parentProjectId: parentProjectId ?? this.parentProjectId,
       estimatedDurationMinutes: estimatedDurationMinutes ?? this.estimatedDurationMinutes,
     );

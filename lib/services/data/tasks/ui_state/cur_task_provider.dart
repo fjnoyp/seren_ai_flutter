@@ -10,8 +10,6 @@ import 'package:seren_ai_flutter/services/data/tasks/models/task_comments_model.
 import 'package:seren_ai_flutter/services/data/tasks/models/task_model.dart';
 import 'package:seren_ai_flutter/services/data/tasks/task_comments/task_comments_listener_fam_provider.dart';
 import 'package:seren_ai_flutter/services/data/tasks/task_comments_db_provider.dart';
-import 'package:seren_ai_flutter/services/data/teams/models/team_model.dart';
-import 'package:seren_ai_flutter/services/data/teams/teams_read_provider.dart';
 import 'package:seren_ai_flutter/services/data/users/models/user_model.dart';
 import 'package:seren_ai_flutter/services/data/tasks/ui_state/cur_task_states.dart';
 
@@ -37,10 +35,6 @@ class CurTaskNotifier extends Notifier<CurTaskState> {
         _ => null,
       }
           case final curUser?) {
-        final defaultTeam =
-            await ref.read(teamsReadProvider).getItem(eqFilters: [
-          {'key': 'id', 'value': curUser.defaultTeamId}
-        ]);
         final defaultProject =
             await ref.read(projectsReadProvider).getItem(eqFilters: [
           {'key': 'id', 'value': curUser.defaultProjectId}
@@ -49,10 +43,8 @@ class CurTaskNotifier extends Notifier<CurTaskState> {
           authorUser: curUser,
           task: TaskModel.defaultTask().copyWith(
             authorUserId: curUser.id,
-            parentTeamId: defaultTeam?.id,
             parentProjectId: defaultProject?.id,
           ),
-          team: defaultTeam,
           project: defaultProject,
         );
         state = LoadedCurTaskState(newTask);
@@ -175,15 +167,6 @@ class CurTaskNotifier extends Notifier<CurTaskState> {
     }
   }
 
-  void updateTeam(TeamModel? team) {
-    if (state is LoadedCurTaskState) {
-      final loadedState = state as LoadedCurTaskState;
-      state = LoadedCurTaskState(loadedState.task.copyWith(
-          task: loadedState.task.task.copyWith(parentTeamId: team?.id),
-          team: team));
-    }
-  }
-
   void updateAllFields(JoinedTaskModel joinedTask) {
     state = LoadedCurTaskState(joinedTask);
   }
@@ -235,14 +218,6 @@ final curTaskProjectProvider = Provider<ProjectModel?>((ref) {
   final curTaskState = ref.watch(curTaskProvider);
   return switch (curTaskState) {
     LoadedCurTaskState() => curTaskState.task.project,
-    _ => null,
-  };
-});
-
-final curTaskTeamProvider = Provider<TeamModel?>((ref) {
-  final curTaskState = ref.watch(curTaskProvider);
-  return switch (curTaskState) {
-    LoadedCurTaskState() => curTaskState.task.team,
     _ => null,
   };
 });

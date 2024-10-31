@@ -13,9 +13,6 @@ class ShiftModel implements IHasId {
   @JsonKey(name: 'author_user_id')
   final String authorUserId;
   
-  @JsonKey(name: 'parent_team_id')
-  final String? parentTeamId;
-  
   @JsonKey(name: 'parent_project_id')
   final String parentProjectId;
 
@@ -29,7 +26,6 @@ class ShiftModel implements IHasId {
     String? id,
     required this.name,
     required this.authorUserId,
-    this.parentTeamId,
     required this.parentProjectId,
     this.createdAt,
     this.updatedAt,
@@ -50,7 +46,6 @@ class ShiftModel implements IHasId {
     String? id,
     String? name,
     String? authorUserId,
-    String? parentTeamId,
     String? parentProjectId,
     DateTime? createdAt,
     DateTime? updatedAt,
@@ -59,7 +54,6 @@ class ShiftModel implements IHasId {
       id: id ?? this.id,
       name: name ?? this.name,
       authorUserId: authorUserId ?? this.authorUserId,
-      parentTeamId: parentTeamId ?? this.parentTeamId,
       parentProjectId: parentProjectId ?? this.parentProjectId,
       createdAt: createdAt ?? this.createdAt,
       updatedAt: updatedAt ?? this.updatedAt,

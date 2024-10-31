@@ -1,17 +1,17 @@
 // GENERATED CODE - DO NOT MODIFY BY HAND
 
-part of 'user_project_roles.dart';
+part of 'team_project_assignment_model.dart';
 
 // **************************************************************************
 // JsonSerializableGenerator
 // **************************************************************************
 
-UserProjectRoles _$UserProjectRolesFromJson(Map<String, dynamic> json) =>
-    UserProjectRoles(
+TeamProjectAssignmentModel _$TeamProjectAssignmentModelFromJson(
+        Map<String, dynamic> json) =>
+    TeamProjectAssignmentModel(
       id: json['id'] as String?,
-      userId: json['userId'] as String,
+      teamId: json['teamId'] as String,
       projectId: json['projectId'] as String,
-      projectRole: json['projectRole'] as String,
       createdAt: json['created_at'] == null
           ? null
           : DateTime.parse(json['created_at'] as String),
@@ -20,12 +20,12 @@ UserProjectRoles _$UserProjectRolesFromJson(Map<String, dynamic> json) =>
           : DateTime.parse(json['updated_at'] as String),
     );
 
-Map<String, dynamic> _$UserProjectRolesToJson(UserProjectRoles instance) =>
+Map<String, dynamic> _$TeamProjectAssignmentModelToJson(
+        TeamProjectAssignmentModel instance) =>
     <String, dynamic>{
       'id': instance.id,
-      'userId': instance.userId,
+      'teamId': instance.teamId,
       'projectId': instance.projectId,
-      'projectRole': instance.projectRole,
       'created_at': instance.createdAt?.toIso8601String(),
       'updated_at': instance.updatedAt?.toIso8601String(),
     };

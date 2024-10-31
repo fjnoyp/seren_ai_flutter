@@ -2,7 +2,6 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:seren_ai_flutter/services/auth/auth_states.dart';
 import 'package:seren_ai_flutter/services/auth/cur_auth_state_provider.dart';
 import 'package:seren_ai_flutter/services/data/db_setup/db_provider.dart';
-import 'package:seren_ai_flutter/services/data/orgs/cur_org/is_cur_user_org_admin_listener_provider.dart';
 import 'package:seren_ai_flutter/services/data/projects/models/project_model.dart';
 
 // Provide all projects for current user
@@ -26,13 +25,23 @@ class CurUserProjectsListenerNotifier extends Notifier<List<ProjectModel>?> {
 
     final db = ref.read(dbProvider);
 
-    // Get all projects which user is assigned to
+    // Get all projects which user has access to (both direct and via teams)
     // TODO p2: org admins should be able to see all projects
     final query = '''
-    SELECT p.*
+    SELECT DISTINCT p.*
     FROM projects p
-    JOIN user_project_roles upr on p.id = upr.project_id
-    WHERE upr.user_id = '${watchedCurAuthUser.id}'; 
+    WHERE p.id IN (
+        -- Direct project assignments
+        SELECT project_id 
+        FROM user_project_assignments 
+        WHERE user_id = '${watchedCurAuthUser.id}'
+        UNION
+        -- Team-based project assignments
+        SELECT project_id 
+        FROM team_project_assignments tpa
+        INNER JOIN user_team_assignments uta ON uta.team_id = tpa.team_id
+        WHERE uta.user_id = '${watchedCurAuthUser.id}'
+    );
     ''';
 
     final subscription = db.watch(query).listen((results) {

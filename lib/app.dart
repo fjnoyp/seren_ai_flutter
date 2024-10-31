@@ -15,7 +15,6 @@ import 'package:seren_ai_flutter/services/data/orgs/widgets/org_guard.dart';
 import 'package:seren_ai_flutter/services/data/projects/widgets/projects_page.dart';
 import 'package:seren_ai_flutter/services/data/shifts/widgets/shifts_page.dart';
 import 'package:seren_ai_flutter/services/data/tasks/widgets/task_page.dart';
-import 'package:seren_ai_flutter/services/data/teams/widgets/manage_team_users_page.dart';
 import 'package:seren_ai_flutter/services/ai_interaction/stt_orchestrator_provider.dart.dart';
 import 'package:seren_ai_flutter/widgets/home/home_page.dart';
 import 'package:seren_ai_flutter/widgets/common/main_scaffold.dart';
@@ -73,8 +72,6 @@ class AppState extends State<App> {
                 'Choose Organization', ChooseOrgPage()),
             manageOrgUsersRoute: (context) => const _GuardScaffold(
                 'Manage Organization Users', ManageOrgUsersPage()),
-            manageTeamUsersRoute: (context) => const _GuardScaffold(
-                'Manage Team Users', ManageTeamUsersPage()),
             projectsRoute: (context) =>
                 const _GuardScaffold('Projects', ProjectsPage()),
             tasksRoute: (context) =>
