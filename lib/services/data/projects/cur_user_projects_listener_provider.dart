@@ -27,20 +27,20 @@ class CurUserProjectsListenerNotifier extends Notifier<List<ProjectModel>?> {
 
     // Get all projects which user has access to (both direct and via teams)
     // TODO p2: org admins should be able to see all projects
-    const query = '''
+    final query = '''
     SELECT DISTINCT p.*
     FROM projects p
     WHERE p.id IN (
         -- Direct project assignments
         SELECT project_id 
         FROM user_project_assignments 
-        WHERE user_id = :user_id
+        WHERE user_id = '${watchedCurAuthUser.id}'
         UNION
         -- Team-based project assignments
         SELECT project_id 
         FROM team_project_assignments tpa
         INNER JOIN user_team_assignments uta ON uta.team_id = tpa.team_id
-        WHERE uta.user_id = :user_id
+        WHERE uta.user_id = '${watchedCurAuthUser.id}'
     );
     ''';
 
