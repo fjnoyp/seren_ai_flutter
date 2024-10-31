@@ -22,7 +22,6 @@ TaskModel _$TaskModelFromJson(Map<String, dynamic> json) => TaskModel(
           ? null
           : DateTime.parse(json['updated_at'] as String),
       authorUserId: json['author_user_id'] as String,
-      parentTeamId: json['parent_team_id'] as String?,
       parentProjectId: json['parent_project_id'] as String,
       estimatedDurationMinutes:
           (json['estimated_duration_minutes'] as num?)?.toInt(),
@@ -38,7 +37,6 @@ Map<String, dynamic> _$TaskModelToJson(TaskModel instance) => <String, dynamic>{
       'created_at': instance.createdAt?.toIso8601String(),
       'updated_at': instance.updatedAt?.toIso8601String(),
       'author_user_id': instance.authorUserId,
-      'parent_team_id': instance.parentTeamId,
       'parent_project_id': instance.parentProjectId,
       'estimated_duration_minutes': instance.estimatedDurationMinutes,
     };

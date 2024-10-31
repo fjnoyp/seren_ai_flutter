@@ -3,11 +3,8 @@ import 'package:seren_ai_flutter/services/data/db_setup/db_provider.dart';
 import 'package:seren_ai_flutter/services/data/projects/projects_read_provider.dart';
 import 'package:seren_ai_flutter/services/data/tasks/cur_tasks/cur_user_viewable_tasks_listener_provider.dart';
 import 'package:seren_ai_flutter/services/data/tasks/models/joined_task_model.dart';
-import 'package:seren_ai_flutter/services/data/tasks/models/joined_task_user_assignments_model.dart';
 import 'package:seren_ai_flutter/services/data/tasks/models/task_comments_model.dart';
 import 'package:seren_ai_flutter/services/data/tasks/models/task_model.dart';
-import 'package:seren_ai_flutter/services/data/tasks/models/task_user_assignments_model.dart';
-import 'package:seren_ai_flutter/services/data/teams/teams_read_provider.dart';
 import 'package:seren_ai_flutter/services/data/users/models/user_model.dart';
 import 'package:seren_ai_flutter/services/data/users/users_read_provider.dart';
 
@@ -50,11 +47,6 @@ class JoinedCurUserTasksListenerNotifier
     final authorUser =
         await ref.watch(usersReadProvider).getItem(id: task.authorUserId);
 
-    // Fetch team
-    final team = task.parentTeamId != null
-        ? await ref.watch(teamsReadProvider).getItem(id: task.parentTeamId!)
-        : null;
-
     // Fetch project
     final project =
         await ref.watch(projectsReadProvider).getItem(id: task.parentProjectId);
@@ -83,7 +75,6 @@ class JoinedCurUserTasksListenerNotifier
     return JoinedTaskModel(
       task: task,
       authorUser: authorUser,
-      team: team,
       project: project,
       assignees: assignedUsers,
       comments: comments,
@@ -101,14 +92,6 @@ class JoinedCurUserTasksListenerNotifier
         watchedCurUserTasks.map((task) => task.authorUserId).toSet();
     final authorUsers =
         await ref.watch(usersReadProvider).getItems(ids: authorUserIds);
-
-    // Fetch teams
-    final Set<String> teamIds = watchedCurUserTasks
-        .map((task) => task.parentTeamId)
-        .where((id) => id != null)
-        .map((id) => id!)
-        .toSet();
-    final teams = await ref.watch(teamsReadProvider).getItems(ids: teamIds);
 
     // Fetch projects
     final projectIds =
@@ -152,8 +135,6 @@ class JoinedCurUserTasksListenerNotifier
     final joinedTasks = watchedCurUserTasks.map((task) {
       final authorUser =
           authorUsers.firstWhereOrNull((user) => user.id == task.authorUserId);
-      final team =
-          teams.firstWhereOrNull((team) => team.id == task.parentTeamId);
       final project = projects
           .firstWhereOrNull((project) => project.id == task.parentProjectId);
       final assignedUsers = taskAssignments[task.id] ?? [];
@@ -162,7 +143,6 @@ class JoinedCurUserTasksListenerNotifier
       return JoinedTaskModel(
           task: task,
           authorUser: authorUser,
-          team: team,
           project: project,
           assignees: assignedUsers,
           comments: taskComments);
