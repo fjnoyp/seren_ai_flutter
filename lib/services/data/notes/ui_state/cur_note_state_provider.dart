@@ -27,7 +27,7 @@ class CurNoteNotifier extends Notifier<CurNoteState> {
         .fetchNoteAttachments(firstLoad: true, noteId: curNoteId);
   }
 
-  Future<void> setToNewNote() async {
+  Future<void> setToNewNote({String? parentProjectId}) async {
     state = LoadingCurNoteState();
     try {
       final curUser =
@@ -35,7 +35,8 @@ class CurNoteNotifier extends Notifier<CurNoteState> {
 
       final newNote = NoteModel.defaultNote().copyWith(
         authorUserId: curUser.id,
-        parentProjectId: curUser.defaultProjectId,
+        parentProjectId: parentProjectId,
+        setAsPersonal: parentProjectId == null,
       );
 
       state =
@@ -113,10 +114,19 @@ class CurNoteNotifier extends Notifier<CurNoteState> {
     }
   }
 
-  Future<void> saveNote() async {
+  Future<void> saveNote({bool isNewNote = false}) async {
     if (state is LoadedCurNoteState) {
       final loadedState = state as LoadedCurNoteState;
-      await ref.read(notesReadProvider).upsertItem(loadedState.joinedNote.note);
+
+      if (isValidNote()) {
+        if (isNewNote) {
+          ref.read(curNoteStateProvider.notifier).updateDate(DateTime.now());
+        }
+
+        await ref
+            .read(notesReadProvider)
+            .upsertItem(loadedState.joinedNote.note);
+      }
     }
   }
 }

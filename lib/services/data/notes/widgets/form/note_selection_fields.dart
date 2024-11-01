@@ -6,6 +6,7 @@ import 'package:seren_ai_flutter/services/data/common/widgets/form/base_task_nam
 import 'package:seren_ai_flutter/services/data/notes/ui_state/cur_note_state_provider.dart';
 import 'package:seren_ai_flutter/services/data/notes/ui_state/cur_note_states.dart';
 import 'package:seren_ai_flutter/services/data/projects/cur_user_viewable_projects_listener_provider.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 class NoteNameField extends BaseNameField {
   NoteNameField({
@@ -81,12 +82,13 @@ class NoteAddressSelectionField extends BaseTextBlockEditSelectionField {
 class NoteActionRequiredSelectionField extends BaseTextBlockEditSelectionField {
   NoteActionRequiredSelectionField({
     super.key,
+    required BuildContext context,
     required super.enabled,
   }) : super(
           descriptionProvider: curNoteActionRequiredProvider,
           updateDescription: (ref, actionRequired) => ref
               .read(curNoteStateProvider.notifier)
               .updateActionRequired(actionRequired),
-          labelWidget: const Text('Action required'),
+          labelWidget: Text(AppLocalizations.of(context)!.actionRequired),
         );
 }
