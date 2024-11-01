@@ -2,7 +2,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:seren_ai_flutter/services/auth/auth_states.dart';
 import 'package:seren_ai_flutter/services/auth/cur_auth_state_provider.dart';
 import 'package:seren_ai_flutter/services/data/projects/projects_read_provider.dart';
-import 'package:seren_ai_flutter/services/data/shifts/cur_shifts/cur_user_shifts_listener_provider.dart';
+import 'package:seren_ai_flutter/services/data/shifts/z_graveyard/cur_shifts/cur_user_shifts_listener_provider.dart';
 import 'package:seren_ai_flutter/services/data/shifts/models/joined_shift_model.dart';
 
 final curUserJoinedShiftsListenerProvider = NotifierProvider<

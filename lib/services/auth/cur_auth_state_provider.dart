@@ -21,6 +21,13 @@ class CurAuthUserNotifier extends Notifier<AppAuthState> {
     return InitialAuthState();
   }
 
+  UserModel? getCurrentUser() {
+    return switch (state) {
+      LoggedInAuthState(user: final user) => user,
+      _ => null,
+    };
+  }
+
   Future<void> _updateUser(User? user) async {
     if (user?.id == null) {
       state = LoggedOutAuthState();
