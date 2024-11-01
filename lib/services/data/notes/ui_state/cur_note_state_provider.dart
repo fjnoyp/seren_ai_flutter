@@ -65,8 +65,6 @@ class CurNoteNotifier extends Notifier<CurNoteState> {
     }
   }
 
-  // TODO: we shouldn't be able to freely update date
-  // refactor to set date only when creating new note
   void updateDate(DateTime date) {
     if (state is LoadedCurNoteState) {
       final loadedState = state as LoadedCurNoteState;
@@ -114,15 +112,11 @@ class CurNoteNotifier extends Notifier<CurNoteState> {
     }
   }
 
-  Future<void> saveNote({bool isNewNote = false}) async {
+  Future<void> saveNote() async {
     if (state is LoadedCurNoteState) {
       final loadedState = state as LoadedCurNoteState;
 
       if (isValidNote()) {
-        if (isNewNote) {
-          ref.read(curNoteStateProvider.notifier).updateDate(DateTime.now());
-        }
-
         await ref
             .read(notesReadProvider)
             .upsertItem(loadedState.joinedNote.note);

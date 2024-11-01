@@ -80,6 +80,10 @@ class NotePage extends HookConsumerWidget {
                       children: [
                         NoteProjectSelectionField(enabled: isEnabled),
                         const Divider(),
+                        if (isEnabled) ...[
+                          NoteDateSelectionField(),
+                          const Divider(),
+                        ],
                         NoteDescriptionSelectionField(enabled: isEnabled),
                         const Divider(),
                         NoteAddressSelectionField(enabled: isEnabled),
@@ -103,9 +107,7 @@ class NotePage extends HookConsumerWidget {
                       width: double.infinity,
                       child: ElevatedButton(
                         onPressed: () {
-                          ref.read(curNoteStateProvider.notifier).saveNote(
-                                isNewNote: mode == EditablePageMode.create,
-                              );
+                          ref.read(curNoteStateProvider.notifier).saveNote();
 
                           // TODO: handle error cases
                           if (context.mounted) {
@@ -122,54 +124,12 @@ class NotePage extends HookConsumerWidget {
                       ),
                     ),
 
-                  if (mode == EditablePageMode.readOnly)
-                    ElevatedButton(
-                        onPressed: () {
-                          Navigator.pop(context);
-                          openNotePage(context, ref,
-                              mode: EditablePageMode.edit);
-                        },
-                        child: Text(AppLocalizations.of(context)!.edit)),
                   const SizedBox(height: 32),
                 ],
               ),
             ),
           ),
       },
-    );
-  }
-
-  Future<dynamic> _saveNoteWithConfirmation(
-      BuildContext context, WidgetRef ref) {
-    return showDialog(
-      context: context,
-      builder: (context) => AlertDialog(
-        content: Text(
-          AppLocalizations.of(context)!.saveNoteToProject(
-            (ref.read(curNoteStateProvider) as LoadedCurNoteState)
-                .joinedNote
-                .project!
-                .name,
-          ),
-        ),
-        actions: [
-          TextButton(
-              onPressed: () => Navigator.pop(context),
-              child: Text(AppLocalizations.of(context)!.cancel)),
-          ElevatedButton(
-              onPressed: () {
-                ref.read(curNoteStateProvider.notifier).saveNote(
-                      isNewNote: mode == EditablePageMode.create,
-                    );
-
-                // TODO: handle error cases
-                if (context.mounted) {
-                  Navigator.pop(context, true);
-                }
-              },
-              child: Text(AppLocalizations.of(context)!.save)),
-        ],
-      ),
     );
   }
 }

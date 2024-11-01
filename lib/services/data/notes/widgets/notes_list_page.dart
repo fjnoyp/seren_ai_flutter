@@ -51,30 +51,32 @@ class _SelectProjectWidget extends ConsumerWidget {
 
     return (projects?.isEmpty ?? true)
         ? Text(AppLocalizations.of(context)!.loadingProjects)
-        : ListView.separated(
+        : SingleChildScrollView(
             scrollDirection: Axis.horizontal,
-            itemCount: projects!.length + 1,
-            separatorBuilder: (context, index) => const SizedBox(width: 8),
-            itemBuilder: (context, index) => index == 0
-                ? Padding(
-                    padding: const EdgeInsets.only(left: 8.0),
+            child: Row(
+              children: [
+                Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 4),
+                  child: FilterChip(
+                    selected: curProjectId.value == null,
+                    onSelected: (value) => curProjectId.value = null,
+                    label: Text(AppLocalizations.of(context)!.personal),
+                    showCheckmark: false,
+                  ),
+                ),
+                ...projects!.map(
+                  (project) => Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 4),
                     child: FilterChip(
-                      selected: curProjectId.value == null,
-                      onSelected: (value) => curProjectId.value = null,
-                      label: Text(AppLocalizations.of(context)!.personal),
-                      showCheckmark: false,
-                    ),
-                  )
-                : Padding(
-                    padding: const EdgeInsets.only(left: 8.0),
-                    child: FilterChip(
-                      selected: curProjectId.value == projects[index - 1].id,
-                      onSelected: (value) =>
-                          curProjectId.value = projects[index - 1].id,
-                      label: Text(projects[index - 1].name),
+                      selected: curProjectId.value == project.id,
+                      onSelected: (value) => curProjectId.value = project.id,
+                      label: Text(project.name),
                       showCheckmark: false,
                     ),
                   ),
+                ),
+              ],
+            ),
           );
   }
 }
@@ -115,10 +117,9 @@ class _NoteItem extends ConsumerWidget {
       ),
       trailing: Text(
         note.createdAt != null
-            // TODO: format using localizations
             ? DateFormat.yMd(AppLocalizations.of(context)!.localeName)
                 .add_jm()
-                .format(note.createdAt!)
+                .format(note.date!.toLocal())
             : '',
         style: const TextStyle(fontSize: 12),
       ),
