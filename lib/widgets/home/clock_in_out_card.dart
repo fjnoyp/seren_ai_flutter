@@ -2,9 +2,9 @@ import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:intl/intl.dart';
-import 'package:seren_ai_flutter/services/data/shifts/cur_shifts/cur_user_joined_shifts_listener_provider.dart';
-import 'package:seren_ai_flutter/services/data/shifts/cur_shifts/cur_user_shift_log/cur_user_cur_shift_log_fam_provider.dart';
-import 'package:seren_ai_flutter/services/data/shifts/cur_shifts/cur_user_shift_log/cur_user_cur_shift_log_notifier_provider.dart';
+import 'package:seren_ai_flutter/services/data/shifts/z_graveyard/cur_shifts/cur_user_joined_shifts_listener_provider.dart';
+import 'package:seren_ai_flutter/services/data/shifts/z_graveyard/cur_shifts/cur_user_shift_log/cur_user_cur_shift_log_fam_provider.dart';
+import 'package:seren_ai_flutter/services/data/shifts/z_graveyard/cur_shifts/cur_user_shift_log/cur_user_cur_shift_log_notifier_provider.dart';
 import 'package:seren_ai_flutter/services/data/shifts/models/joined_shift_model.dart';
 import 'package:seren_ai_flutter/widgets/home/base_home_card.dart';
 

@@ -3,9 +3,9 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:intl/intl.dart';
 import 'package:seren_ai_flutter/constants.dart';
-import 'package:seren_ai_flutter/services/data/shifts/cur_shifts/cur_user_active_shift_ranges_fam_provider.dart';
-import 'package:seren_ai_flutter/services/data/shifts/cur_shifts/cur_user_joined_shifts_listener_provider.dart';
-import 'package:seren_ai_flutter/services/data/shifts/cur_shifts/cur_user_joined_shift_provider.dart';
+import 'package:seren_ai_flutter/services/data/shifts/z_graveyard/cur_shifts/cur_user_active_shift_ranges_fam_provider.dart';
+import 'package:seren_ai_flutter/services/data/shifts/z_graveyard/cur_shifts/cur_user_joined_shifts_listener_provider.dart';
+import 'package:seren_ai_flutter/services/data/shifts/z_graveyard/cur_shifts/cur_user_joined_shift_provider.dart';
 import 'package:seren_ai_flutter/widgets/home/base_home_card.dart';
 
 class ShiftCard extends StatelessWidget {
