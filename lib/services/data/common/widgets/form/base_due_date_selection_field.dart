@@ -7,13 +7,13 @@ import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 class BaseDueDateSelectionField extends ConsumerWidget {
   final bool enabled;
   final ProviderListenable<DateTime?> dueDateProvider;
-  final Function(WidgetRef, BuildContext) pickAndUpdateDueDate;
+  final Function(WidgetRef, DateTime) updateDueDate;
 
   const BaseDueDateSelectionField({
     super.key,
     required this.enabled,
     required this.dueDateProvider,
-    required this.pickAndUpdateDueDate,
+    required this.updateDueDate,
   });
 
   @override
@@ -27,9 +27,45 @@ class BaseDueDateSelectionField extends ConsumerWidget {
       enabled: enabled,
       value: dueDate?.toLocal(),
       showSelectionModal: (BuildContext context) async {
-        await pickAndUpdateDueDate(ref, context);
+        return _pickDueDate(context, initialDate: dueDate ?? DateTime.now())
+            .then(
+          (pickedDateTime) => pickedDateTime != null
+              ? updateDueDate(ref, pickedDateTime)
+              : null,
+        );
       },
     );
+  }
+
+  Future<DateTime?> _pickDueDate(
+    BuildContext context, {
+    required DateTime initialDate,
+  }) async {
+    final DateTime? pickedDate = await showDatePicker(
+      context: context,
+      initialDate: initialDate,
+      firstDate: DateTime(2000),
+      lastDate: DateTime(2100),
+    );
+
+    if (pickedDate != null) {
+      final TimeOfDay? pickedTime = await showTimePicker(
+        context: context,
+        initialTime: TimeOfDay.fromDateTime(initialDate),
+      );
+
+      if (pickedTime != null) {
+        return DateTime(
+          pickedDate.year,
+          pickedDate.month,
+          pickedDate.day,
+          pickedTime.hour,
+          pickedTime.minute,
+        ).toUtc();
+      }
+    }
+
+    return null;
   }
 
   String _valueToString(DateTime? date, {required BuildContext context}) {
