@@ -1,3 +1,4 @@
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:intl/intl.dart';
@@ -12,7 +13,7 @@ class ShiftCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return BaseHomeCard(
-      title: "Today's Shift",
+      title: AppLocalizations.of(context)!.todaysShift,
       color: Theme.of(context).colorScheme.primaryContainer,
       child: Center(
         child: Consumer(
@@ -26,13 +27,13 @@ class ShiftCard extends StatelessWidget {
             )));
             return switch (joinedShifts) {
               null => const CircularProgressIndicator(),
-              [] => const Text('No shifts'),
+              [] => Text(AppLocalizations.of(context)!.noShifts),
               List() => activeShiftRanges.isNotEmpty
                   ? InkWell(
                       onTap: () => Navigator.of(context).pushNamed(shiftsRoute),
                       child: _ShiftInnerCard(activeShiftRanges),
                     )
-                  : const Text('No active shift'),
+                  : Text(AppLocalizations.of(context)!.noActiveShift),
             };
           },
         ),
@@ -60,7 +61,9 @@ class _ShiftInnerCard extends ConsumerWidget {
           // crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Text(
-              DateFormat('EEEE, d MMM').format(DateTime.now()),
+              DateFormat.EEEE(AppLocalizations.of(context)!.localeName)
+                  .add_MMMd()
+                  .format(DateTime.now()),
               style: Theme.of(context)
                   .textTheme
                   .bodySmall
@@ -77,7 +80,11 @@ class _ShiftInnerCard extends ConsumerWidget {
                 const SizedBox(width: 8),
                 Flexible(
                   child: Text(
-                    "${DateFormat('H:mm').format(activeShiftRanges.first.start.toLocal())} to ${DateFormat('H:mm').format(activeShiftRanges.first.end.toLocal())}", //"9:00 to 18:00",
+                    AppLocalizations.of(context)!.timeRange(
+                      DateFormat.Hm()
+                          .format(activeShiftRanges.first.start.toLocal()),
+                      DateFormat.Hm()
+                          .format(activeShiftRanges.first.end.toLocal())),
                     style: Theme.of(context).textTheme.bodySmall?.copyWith(
                         color: Theme.of(context).colorScheme.onSurface),
                   ),

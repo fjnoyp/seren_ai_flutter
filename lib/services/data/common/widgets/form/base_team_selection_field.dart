@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:seren_ai_flutter/services/data/common/widgets/form/selection_field.dart';
 import 'package:seren_ai_flutter/services/data/teams/models/team_model.dart';
@@ -23,12 +24,17 @@ class BaseTeamSelectionField extends ConsumerWidget {
     final selectableTeams = ref.watch(selectableTeamsProvider);
 
     return AnimatedModalSelectionField<TeamModel>(
-      labelWidget: const SizedBox(
+      labelWidget: SizedBox(
         width: 60,
-        child: Text('Team', style: TextStyle(fontWeight: FontWeight.bold)),
+        child: Text(
+          AppLocalizations.of(context)!.team,
+          style: const TextStyle(fontWeight: FontWeight.bold)
+        ),
       ),
-      validator: (team) => team == null ? 'Team is required' : null,
-      valueToString: (team) => team?.name ?? 'Select a Team',
+      validator: (team) => team == null 
+          ? AppLocalizations.of(context)!.teamIsRequired 
+          : null,
+      valueToString: (team) => team?.name ?? AppLocalizations.of(context)!.selectATeam,
       enabled: enabled,
       value: curTaskTeam,
       options: selectableTeams ?? [],

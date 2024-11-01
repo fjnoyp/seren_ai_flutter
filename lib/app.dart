@@ -1,5 +1,6 @@
 import 'package:app_links/app_links.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:logging/logging.dart';
 import 'package:seren_ai_flutter/constants.dart';
@@ -65,44 +66,52 @@ class AppState extends State<App> {
           initialRoute: initialRoute,
           routes: {
             signInUpRoute: (context) => Scaffold(
-                appBar: AppBar(title: const Text('Sign In/Up'), centerTitle: true),
-                body: const SignInUpPage(),),
-            homeRoute: (context) => const _GuardScaffold('Home', HomePage()),
-            chooseOrgRoute: (context) => const _AuthGuardScaffold(
-                'Choose Organization', ChooseOrgPage()),
-            manageOrgUsersRoute: (context) => const _GuardScaffold(
-                'Manage Organization Users', ManageOrgUsersPage()),
-            projectsRoute: (context) =>
-                const _GuardScaffold('Projects', ProjectsPage()),
-            tasksRoute: (context) =>
-                const _GuardScaffold('Tasks', TasksListPage()),
+                appBar: AppBar(title: Text(AppLocalizations.of(context)!.signInUp), centerTitle: true),
+                body: const SignInUpPage()),
+            homeRoute: (context) => _GuardScaffold(
+                AppLocalizations.of(context)!.home, 
+                const HomePage()),
+            chooseOrgRoute: (context) => _AuthGuardScaffold(
+                AppLocalizations.of(context)!.chooseOrganization, 
+                const ChooseOrgPage()),
+            manageOrgUsersRoute: (context) => _GuardScaffold(
+                AppLocalizations.of(context)!.orgAdminManageOrgUsers, 
+                const ManageOrgUsersPage()),
+            projectsRoute: (context) => _GuardScaffold(
+                AppLocalizations.of(context)!.projects, 
+                const ProjectsPage()),
+            tasksRoute: (context) => _GuardScaffold(
+                AppLocalizations.of(context)!.tasks, 
+                const TasksListPage()),
             taskPageRoute: (context) {
-              // TODO p3: add taskId to args
-              // Cannot use implicits or else dynamic routes will not work
-              final args = ModalRoute.of(context)!.settings.arguments
-                  as Map<String, dynamic>;
+              final args = ModalRoute.of(context)!.settings.arguments as Map<String, dynamic>;
               final mode = args['mode'] as EditablePageMode;
-              final title =
-                  mode == EditablePageMode.create ? 'Create Task' : 'View Task';
+              final title = mode == EditablePageMode.create 
+                  ? AppLocalizations.of(context)!.createTask 
+                  : AppLocalizations.of(context)!.updateTask;
 
               return _GuardScaffold(title, TaskPage(mode: mode),
                   actions: args['actions']);
             },
-            aiChatsRoute: (context) =>
-                const _GuardScaffold('AI Chat Page', AIChatsPage()),
-            shiftsRoute: (context) =>
-                const _GuardScaffold('Shifts', ShiftsPage()),
+            aiChatsRoute: (context) => _GuardScaffold(
+                AppLocalizations.of(context)!.aiChatThreads, 
+                const AIChatsPage()),
+            shiftsRoute: (context) => _GuardScaffold(
+                AppLocalizations.of(context)!.shifts, 
+                const ShiftsPage()),
             testRoute: (context) => const _GuardScaffold('Test', TestPage()),
-            testSQLPageRoute: (context) =>
-                _GuardScaffold('Test SQL Page', TestSQLPage()),
-            noteListRoute: (context) =>
-                const _GuardScaffold('Notes', NoteListPage()),
+            testSQLPageRoute: (context) => _GuardScaffold(
+                AppLocalizations.of(context)!.testSQL, 
+                TestSQLPage()),
+            noteListRoute: (context) => _GuardScaffold(
+                AppLocalizations.of(context)!.notes, 
+                const NoteListPage()),
             notePageRoute: (context) {
-              final args = ModalRoute.of(context)!.settings.arguments
-                  as Map<String, dynamic>;
+              final args = ModalRoute.of(context)!.settings.arguments as Map<String, dynamic>;
               final mode = args['mode'] as EditablePageMode;
-              final title =
-                  mode == EditablePageMode.create ? 'Create Note' : 'View Note';
+              final title = mode == EditablePageMode.create 
+                  ? AppLocalizations.of(context)!.createNote 
+                  : AppLocalizations.of(context)!.updateNote;
 
               return _GuardScaffold(title, NotePage(mode: mode),
                   actions: args['actions']);
@@ -132,6 +141,12 @@ class AppState extends State<App> {
             // Handle other routes here if needed
             return null;
           },
+          localizationsDelegates: AppLocalizations.localizationsDelegates,
+          supportedLocales: const [
+            Locale('en' /*, 'US'*/),
+            Locale('pt', 'PT'),
+            Locale('pt', 'BR'),
+          ],
         );
       },
     );

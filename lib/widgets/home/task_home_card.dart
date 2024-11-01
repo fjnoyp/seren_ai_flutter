@@ -10,6 +10,7 @@ import 'package:seren_ai_flutter/services/data/tasks/cur_tasks/joined_cur_user_t
 import 'package:seren_ai_flutter/services/data/tasks/models/task_model.dart';
 import 'package:seren_ai_flutter/services/data/tasks/widgets/task_page.dart';
 import 'package:seren_ai_flutter/widgets/home/base_home_card.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 class TaskCardItem extends ConsumerWidget {
   final TaskModel task;
@@ -62,7 +63,7 @@ class TaskHomeCard extends ConsumerWidget {
 
     return BaseHomeCard(
       color: Theme.of(context).colorScheme.primaryContainer,
-      title: "Today's Tasks",
+      title: AppLocalizations.of(context)!.todaysTasks,
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
@@ -70,7 +71,7 @@ class TaskHomeCard extends ConsumerWidget {
             fit:
                 FlexFit.tight, // Ensures the child takes up the available space
             child: openTasks?.isEmpty ?? true
-                ? const Center(child: Text('No tasks due today'))
+                ? Center(child: Text(AppLocalizations.of(context)!.noTasksDueToday))
                 : Column(
                     mainAxisAlignment: MainAxisAlignment.center,
                     // Changed from ListView to Column
@@ -99,7 +100,7 @@ class TaskHomeCard extends ConsumerWidget {
                               ),
                               child: Center(
                                 child: Text(
-                                  "See All",
+                                  AppLocalizations.of(context)!.seeAll,
                                   style: Theme.of(context).textTheme.bodySmall,
                                 ),
                               ),

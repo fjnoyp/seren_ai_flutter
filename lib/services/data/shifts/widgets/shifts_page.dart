@@ -15,7 +15,9 @@ import 'package:table_calendar/table_calendar.dart';
 
 import 'dart:async'; // Add this import
 
-final DateFormat listDateFormat = DateFormat('HH:mm');
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+
+final listDateFormat = DateFormat.jm();
 
 class ShiftsPage extends HookConsumerWidget {
   const ShiftsPage({super.key});
@@ -33,7 +35,7 @@ class ShiftsPage extends HookConsumerWidget {
     }
 
     if (joinedShifts.isEmpty) {
-      return const Center(child: Text('No shifts'));
+      return Center(child: Text(AppLocalizations.of(context)!.noShifts));
     }
 
     final selectedShift = joinedShifts[0];
@@ -43,6 +45,7 @@ class ShiftsPage extends HookConsumerWidget {
     return Column(
       children: [
         TableCalendar(
+          locale: AppLocalizations.of(context)!.localeName,
           firstDay: DateTime(2010),
           lastDay: DateTime(2030),
           focusedDay: focusedDay.value,
@@ -162,7 +165,7 @@ class _DayShiftsWidget extends HookConsumerWidget {
                               const Icon(Icons.location_on_outlined),
                               const SizedBox(width: 10),
                               Text(shift.parentProject?.address ??
-                                  'No project address'),
+                                  AppLocalizations.of(context)!.noProjectAddress),
                             ],
                           ),
                         ),
@@ -174,7 +177,7 @@ class _DayShiftsWidget extends HookConsumerWidget {
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
                               Text(
-                                'Shift Logs',
+                                AppLocalizations.of(context)!.shiftLogs,
                                 style: theme.textTheme.titleMedium,
                               ),
                               _ShiftLogs(shiftId, day),
@@ -205,7 +208,7 @@ class _ShiftLogs extends ConsumerWidget {
         curUserShiftLogsFamListenerProvider((shiftId: shiftId, day: day)));
 
     if (shiftLogs == null || shiftLogs.isEmpty) {
-      return const Text('No shift logs');
+      return Text(AppLocalizations.of(context)!.noShiftLogs);
     }
 
     return ListView.builder(
@@ -217,7 +220,7 @@ class _ShiftLogs extends ConsumerWidget {
         return Padding(
           padding: const EdgeInsets.symmetric(vertical: 4.0),
           child: Text(
-            '${listDateFormat.format(log.clockInDatetime.toLocal())} - ${log.clockOutDatetime != null ? listDateFormat.format(log.clockOutDatetime!.toLocal()) : 'Ongoing'}',
+            '${listDateFormat.format(log.clockInDatetime.toLocal())} - ${log.clockOutDatetime != null ? listDateFormat.format(log.clockOutDatetime!.toLocal()) : AppLocalizations.of(context)!.ongoing}',
             style: const TextStyle(fontSize: 12),
           ),
         );
@@ -238,14 +241,14 @@ class _ShiftTimeRangesList extends ConsumerWidget {
         curUserActiveShiftRangesFamProvider((shiftId: shiftId, day: day)));
 
     if (shiftTimeRanges.isEmpty) {
-      return const Text('No shifts!');
+      return Text(AppLocalizations.of(context)!.noShifts);
     }
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: shiftTimeRanges.map((timeframe) {
         return Text(
-          '${listDateFormat.format(timeframe.start.toLocal())} - ${listDateFormat.format(timeframe.end.toLocal())} - ${timeframe.duration.formatDuration()}',
+          '${listDateFormat.format(timeframe.start.toLocal())} - ${listDateFormat.format(timeframe.end.toLocal())} - ${timeframe.duration.formatDuration(context)}',
           style: const TextStyle(fontWeight: FontWeight.bold),
         );
       }).toList(),
@@ -290,7 +293,7 @@ class _ClockInClockOut extends HookConsumerWidget {
       if (curLog == null) {
         return OutlinedButton(
           onPressed: () => notifier.clockIn(),
-          child: const Text('Clock In'),
+          child: Text(AppLocalizations.of(context)!.clockIn),
         );
       } else if (curLog.clockOutDatetime == null) {
         return Column(
@@ -298,15 +301,18 @@ class _ClockInClockOut extends HookConsumerWidget {
           children: [
             OutlinedButton(
               onPressed: () => notifier.clockOut(),
-              child: const Text('Clock Out'),
+              child: Text(AppLocalizations.of(context)!.clockOut),
             ),
-            Text(
-                'Elapsed Time: ${elapsedTime.value.inHours}:${(elapsedTime.value.inMinutes % 60).toString().padLeft(2, '0')}:${(elapsedTime.value.inSeconds % 60).toString().padLeft(2, '0')}'),
+            Text(AppLocalizations.of(context)!.elapsedTime(
+              elapsedTime.value.inHours.toString(),
+              (elapsedTime.value.inMinutes % 60).toString().padLeft(2, '0'),
+              (elapsedTime.value.inSeconds % 60).toString().padLeft(2, '0')
+            )),
           ],
         );
       } else {
         timer?.cancel(); // Cancel timer when shift is completed
-        return const Text('Shift completed');
+        return Text(AppLocalizations.of(context)!.shiftCompleted);
       }
     }
     return const SizedBox.shrink(); // Return an empty widget if not the same day
