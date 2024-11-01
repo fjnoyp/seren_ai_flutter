@@ -4,6 +4,7 @@ import 'package:seren_ai_flutter/services/speech_to_text/speech_to_text_listen_s
 import 'package:seren_ai_flutter/services/speech_to_text/speech_to_text_service_provider.dart';
 import 'package:seren_ai_flutter/services/speech_to_text/speech_to_text_status_provider.dart';
 import 'package:seren_ai_flutter/services/speech_to_text/widgets/speech_volume_widget.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 
 // Button to start/stop listening
@@ -93,7 +94,7 @@ class SpeechStateControlButtonWidget extends ConsumerWidget {
           );
           break;
         default:
-          topView = Text('Unknown state: ${statusState.speechState}');
+          topView = Text(AppLocalizations.of(context)!.unknownState(statusState.speechState.toString()));
       }
 
       columnChildren.add(topView);
@@ -125,7 +126,7 @@ class SpeechStateControlButtonWidget extends ConsumerWidget {
       if (statusState.error.isEmpty) {
         return const CircularProgressIndicator();
       } else {
-        return Text('Init error: ${statusState.error}');
+        return Text(AppLocalizations.of(context)!.initError(statusState.error));
       }
     }
   }

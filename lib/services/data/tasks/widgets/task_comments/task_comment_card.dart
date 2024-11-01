@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:seren_ai_flutter/services/data/tasks/models/joined_task_comments_model.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 class TaskCommentCard extends StatelessWidget {
   const TaskCommentCard(
@@ -36,7 +37,7 @@ class TaskCommentCard extends StatelessWidget {
                   ),
                 ),
                 Text(
-                  DateFormat('MMMM, d   hh:mm a').format(
+                  DateFormat.MMMMd(AppLocalizations.of(context)!.localeName).add_jm().format(
                       comment.comment.updatedAt?.toLocal() ??
                           comment.comment.createdAt!.toLocal()),
                 ),

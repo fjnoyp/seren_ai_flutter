@@ -1,9 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:seren_ai_flutter/services/data/orgs/cur_org/cur_org_id_provider.dart';
-import 'package:seren_ai_flutter/services/data/orgs/cur_org/joined_cur_user_org_roles_listener_provider.dart';
-import 'package:seren_ai_flutter/services/data/orgs/models/joined_user_org_role_model.dart';
 import 'package:seren_ai_flutter/services/data/orgs/user_org_roles/joined_user_org_roles_listener_fam_provider.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 class ManageOrgUsersPage extends ConsumerWidget {
   const ManageOrgUsersPage({super.key});
@@ -13,19 +12,19 @@ class ManageOrgUsersPage extends ConsumerWidget {
     final curOrgId = ref.watch(curOrgIdProvider);
 
     if(curOrgId == null){
-      return const Center(child: Text('Error - No organization selected.'));
+      return Center(child: Text(AppLocalizations.of(context)!.noOrgSelected));
     }
 
     final joinedOrgRoles = ref.watch(joinedUserOrgRolesListenerFamProvider(curOrgId));
 
     return joinedOrgRoles == null || joinedOrgRoles.isEmpty
-          ? const Center(child: Text('No users found in this organization.'))
+          ? Center(child: Text(AppLocalizations.of(context)!.noUsersInOrg))
           : ListView.builder(
               itemCount: joinedOrgRoles.length,
               itemBuilder: (context, index) {
                 final joinedRole = joinedOrgRoles[index];
                 return ListTile(
-                  title: Text(joinedRole.user?.email ?? 'No email or email not found'),
+                  title: Text(joinedRole.user?.email ?? AppLocalizations.of(context)!.noEmailFound),
                   subtitle: Text(joinedRole.orgRole.orgRole),
                   /*
                   trailing: IconButton(

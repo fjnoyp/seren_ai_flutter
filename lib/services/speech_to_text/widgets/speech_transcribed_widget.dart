@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:seren_ai_flutter/services/speech_to_text/speech_to_text_listen_state_provider.dart';
 import 'package:seren_ai_flutter/services/speech_to_text/speech_to_text_service_provider.dart';
 import 'package:seren_ai_flutter/services/speech_to_text/speech_to_text_status_provider.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 // Display transcribed text
 class SpeechTranscribedWidget extends ConsumerWidget {
@@ -33,7 +34,7 @@ class SpeechTranscribedWidget extends ConsumerWidget {
               child: Padding(
                 padding: const EdgeInsets.all(8.0),
                 child: Text(
-                  textState.text.isEmpty ? 'Say something...' : textState.text,
+                  textState.text.isEmpty ? AppLocalizations.of(context)!.saySomething : textState.text,
                   textAlign: TextAlign.center,
                   style: TextStyle(
                       fontSize: 16.0,

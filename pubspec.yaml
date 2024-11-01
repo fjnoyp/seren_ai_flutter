@@ -12,6 +12,8 @@ environment:
 dependencies:
   flutter:
     sdk: flutter
+  flutter_localizations:
+    sdk: flutter
   cupertino_icons: ^1.0.6
   flutter_riverpod: ^2.5.1
 
@@ -92,3 +94,5 @@ flutter:
   #       - asset: assets/icons/FeatherIcons.ttf
   assets:
     - assets/images/AI button.svg
+
+  generate: true

@@ -2,6 +2,7 @@ import 'dart:io';
 
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:seren_ai_flutter/services/data/notes/note_attachments_handler.dart';
@@ -45,7 +46,7 @@ class _AddAttachmentButton extends ConsumerWidget {
             await _pickAndUploadFile(ref);
           } else {
             ScaffoldMessenger.of(context).showSnackBar(
-              const SnackBar(content: Text('Photos permission denied')),
+              SnackBar(content: Text(AppLocalizations.of(context)!.photosPermissionDenied)),
             );
           }
         } else {
@@ -53,7 +54,7 @@ class _AddAttachmentButton extends ConsumerWidget {
         }
       },
       icon: const Icon(Icons.add),
-      label: const Text('Add Attachment'),
+      label: Text(AppLocalizations.of(context)!.addAttachment),
     );
   }
 
@@ -126,11 +127,13 @@ class _DeleteAttachmentDialog extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     return AlertDialog(
-      content: Text('Delete ${Uri.decodeFull(attachmentUrl).split('/').last}?'),
+      content: Text(AppLocalizations.of(context)!.deleteAttachment(
+        Uri.decodeFull(attachmentUrl).split('/').last
+      )),
       actions: [
         TextButton(
           onPressed: () => Navigator.pop(context),
-          child: const Text('Cancel'),
+          child: Text(AppLocalizations.of(context)!.cancel),
         ),
         ElevatedButton(
           onPressed: () {
@@ -140,7 +143,7 @@ class _DeleteAttachmentDialog extends ConsumerWidget {
                 );
             Navigator.pop(context);
           },
-          child: const Text('Delete'),
+          child: Text(AppLocalizations.of(context)!.delete),
         ),
       ],
     );
@@ -171,8 +174,8 @@ class _AttachmentPreview extends ConsumerWidget {
           _ => Column(
               mainAxisSize: MainAxisSize.min,
               children: [
-                const Text(
-                  'Not able to preview this file.\n You can try opening it locally.',
+                Text(
+                  AppLocalizations.of(context)!.notAbleToPreview,
                   textAlign: TextAlign.center,
                 ),
                 TextButton(
@@ -183,7 +186,7 @@ class _AttachmentPreview extends ConsumerWidget {
                         noteId:
                             ref.read(curNoteStateProvider.notifier).curNoteId,
                       ),
-                  child: const Text('Open file'),
+                  child: Text(AppLocalizations.of(context)!.openFile),
                 ),
               ],
             ),

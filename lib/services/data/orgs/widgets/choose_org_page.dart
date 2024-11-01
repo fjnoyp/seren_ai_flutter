@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:seren_ai_flutter/services/data/orgs/cur_org/cur_org_id_provider.dart';
 import 'package:seren_ai_flutter/services/data/orgs/cur_org/joined_cur_user_org_roles_listener_provider.dart';
-import 'package:seren_ai_flutter/services/data/orgs/user_org_roles/joined_user_org_roles_listener_fam_provider.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 class ChooseOrgPage extends ConsumerWidget {
   const ChooseOrgPage({super.key});
@@ -13,16 +13,15 @@ class ChooseOrgPage extends ConsumerWidget {
     final curOrgId = ref.watch(curOrgIdProvider);
 
     if(orgRoles == null) {
-      return const Center(
-        child: 
-            Text('Waiting for orgRoles to load...'),
+      return Center(
+        child: Text(AppLocalizations.of(context)!.waitingForOrgRoles),
       );      
     }
 
     final theme = Theme.of(context);
 
     return orgRoles.isEmpty
-          ? const Center(child: Text('No organizations available'))
+          ? Center(child: Text(AppLocalizations.of(context)!.noOrganizations))
           : ListView.builder(
               itemCount: orgRoles.length,
               itemBuilder: (context, index) {
@@ -32,7 +31,7 @@ class ChooseOrgPage extends ConsumerWidget {
                 final orgRoleModel = orgRole.orgRole;
 
                 if(orgModel == null) {
-                  return const Text('Error cannot load organization');
+                  return Text(AppLocalizations.of(context)!.errorCannotLoadOrg);
                 }
 
 

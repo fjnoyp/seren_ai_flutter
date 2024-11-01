@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:seren_ai_flutter/widgets/home/clock_in_out_card.dart';
 import 'package:seren_ai_flutter/widgets/home/notes_home_card.dart';
 import 'package:seren_ai_flutter/widgets/home/shift_home_card.dart';
@@ -20,7 +21,7 @@ class HomePage extends StatelessWidget {
               child: Padding(
                 padding: const EdgeInsets.all(30.0),
                 child: Text(
-                  'Welcome,\nLetty!',
+                  AppLocalizations.of(context)!.welcome('Letty'),
                   style: Theme.of(context).textTheme.headlineMedium,
                 ),
               ),
