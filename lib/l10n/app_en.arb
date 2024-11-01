@@ -70,6 +70,7 @@
     "edit": "Edit",
     "deleteNote": "Delete Note",
     "userNotAuthenticated": "Error: Current user is not authenticated.",
+    "actionRequired": "Action required",
 
     "@_": {"description": "Notes List Page"},
     "loadingProjects": "Loading projects...",
@@ -333,5 +334,16 @@
     "tasksListOpen": "Open",
     "tasksListInProgress": "In Progress",
     "tasksListFinished": "Finished",
-    "createNewTask": "Create New Task"
+    "createNewTask": "Create New Task",
+
+    "@_": {"description": "Note Save Dialog"},
+    "saveNoteToProject": "Save note to {projectName}?",
+    "@saveNoteToProject": {
+        "placeholders": {
+            "projectName": {
+                "type": "String",
+                "example": "Project 1"
+            }
+        }
+    }
 }

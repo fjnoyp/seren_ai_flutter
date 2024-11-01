@@ -109,7 +109,8 @@ class TaskPage extends HookConsumerWidget {
                     };
 
                     if (curAuthUser == null) {
-                      log.severe(AppLocalizations.of(context)!.userNotAuthenticated);
+                      log.severe(
+                          AppLocalizations.of(context)!.userNotAuthenticated);
                       return;
                     }
 
@@ -125,14 +126,6 @@ class TaskPage extends HookConsumerWidget {
                 ),
               ),
 
-            if (mode == EditablePageMode.readOnly)
-              ElevatedButton(
-                  onPressed: () {
-                    // remove self from stack
-                    Navigator.pop(context);
-                    openTaskPage(context, ref, mode: EditablePageMode.edit);
-                  },
-                  child: Text(AppLocalizations.of(context)!.edit)),
             const SizedBox(height: 32),
           ],
         ),

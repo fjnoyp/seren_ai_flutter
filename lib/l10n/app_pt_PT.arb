@@ -38,6 +38,7 @@
     "edit": "Editar",
     "deleteNote": "Eliminar Nota",
     "userNotAuthenticated": "Erro: O utilizador atual não está autenticado.",
+    "actionRequired": "Ação necessária",
 
     "@_": {"description": "Notes List Page"},
     "loadingProjects": "A carregar projetos...",
@@ -204,5 +205,8 @@
     "tasksListOpen": "Aberta",
     "tasksListInProgress": "Em Progresso",
     "tasksListFinished": "Concluída",
-    "createNewTask": "Criar Nova Tarefa"
+    "createNewTask": "Criar Nova Tarefa",
+
+    "@_": {"description": "Note Save Dialog"},
+    "saveNoteToProject": "Guardar nota em {projectName}?"
 }
