@@ -14,6 +14,7 @@ import 'package:seren_ai_flutter/services/data/tasks/widgets/edit_task_button.da
 import 'package:seren_ai_flutter/services/data/tasks/widgets/joined_task_save_provider.dart';
 import 'package:seren_ai_flutter/services/data/tasks/widgets/form/task_selection_fields.dart';
 import 'package:seren_ai_flutter/services/data/tasks/widgets/task_comments/task_comment_section.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 /* === Thoughts on ai generation of create task === 
 1) Tasks must be assigned to specific users / projects 
@@ -108,7 +109,7 @@ class TaskPage extends HookConsumerWidget {
                     };
 
                     if (curAuthUser == null) {
-                      log.severe('Error: Current user is not authenticated.');
+                      log.severe(AppLocalizations.of(context)!.userNotAuthenticated);
                       return;
                     }
 
@@ -119,11 +120,19 @@ class TaskPage extends HookConsumerWidget {
                     foregroundColor: theme.colorScheme.onSecondary,
                   ),
                   child: Text(mode == EditablePageMode.edit
-                      ? 'Update Task'
-                      : 'Create Task'),
+                      ? AppLocalizations.of(context)!.updateTask
+                      : AppLocalizations.of(context)!.createTask),
                 ),
               ),
 
+            if (mode == EditablePageMode.readOnly)
+              ElevatedButton(
+                  onPressed: () {
+                    // remove self from stack
+                    Navigator.pop(context);
+                    openTaskPage(context, ref, mode: EditablePageMode.edit);
+                  },
+                  child: Text(AppLocalizations.of(context)!.edit)),
             const SizedBox(height: 32),
           ],
         ),

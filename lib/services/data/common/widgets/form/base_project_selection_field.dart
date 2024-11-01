@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:seren_ai_flutter/services/data/common/widgets/form/selection_field.dart';
 import 'package:seren_ai_flutter/services/data/projects/models/project_model.dart';
@@ -25,16 +26,23 @@ class BaseProjectSelectionField extends ConsumerWidget {
     final selectableProjects = ref.watch(selectableProjectsProvider);
 
     return AnimatedModalSelectionField<ProjectModel>(
-      labelWidget: const SizedBox(
+      labelWidget: SizedBox(
         width: 60,
-        child: Text('Project', style: TextStyle(fontWeight: FontWeight.bold)),
+        child: Text(
+          AppLocalizations.of(context)!.project,
+          style: const TextStyle(fontWeight: FontWeight.bold),
+        ),
       ),
       validator: isProjectRequired
-          ? (project) => project == null ? 'Project is required' : null
+          ? (project) => project == null 
+              ? AppLocalizations.of(context)!.projectIsRequired 
+              : null
           : (_) => null,
       valueToString: (project) =>
           project?.name ??
-          (isProjectRequired ? 'Select a Project' : 'Personal'),
+          (isProjectRequired 
+              ? AppLocalizations.of(context)!.selectAProject 
+              : AppLocalizations.of(context)!.personal),
       enabled: enabled,
       value: curItemProject,
       options: selectableProjects ?? [],

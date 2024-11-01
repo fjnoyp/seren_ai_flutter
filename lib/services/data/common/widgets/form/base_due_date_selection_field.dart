@@ -2,8 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:intl/intl.dart';
 import 'package:seren_ai_flutter/services/data/common/widgets/form/selection_field.dart';
-
-final DateFormat _dayFormat = DateFormat('MMM d, yyyy HH:mm');
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 class BaseDueDateSelectionField extends ConsumerWidget {
   final bool enabled;
@@ -24,7 +23,7 @@ class BaseDueDateSelectionField extends ConsumerWidget {
     return AnimatedSelectionField<DateTime>(
       labelWidget: const Icon(Icons.date_range),
       validator: _validator,
-      valueToString: _valueToString,
+      valueToString: (date) => _valueToString(date, context: context),
       enabled: enabled,
       value: dueDate?.toLocal(),
       showSelectionModal: (BuildContext context) async {
@@ -33,8 +32,12 @@ class BaseDueDateSelectionField extends ConsumerWidget {
     );
   }
 
-  String _valueToString(DateTime? date) {
-    return date == null ? 'Choose a Due Date' : _dayFormat.format(date);
+  String _valueToString(DateTime? date, {required BuildContext context}) {
+    final dayFormat =
+        DateFormat.yMMMd(AppLocalizations.of(context)!.localeName).add_jm();
+    return date == null
+        ? AppLocalizations.of(context)!.chooseDueDate
+        : dayFormat.format(date);
   }
 
   String? _validator(DateTime? date) {

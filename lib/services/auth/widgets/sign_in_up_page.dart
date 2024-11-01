@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:seren_ai_flutter/constants.dart';
 import 'package:seren_ai_flutter/services/data/users/models/user_model.dart';
 import 'package:supabase_auth_ui/supabase_auth_ui.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 class SignInUpPage extends StatelessWidget {
   const SignInUpPage({super.key});
@@ -36,11 +37,11 @@ class SignInUpPage extends StatelessWidget {
           metadataFields: [
             MetaDataField(
               prefixIcon: const Icon(Icons.person),
-              label: 'Username',
+              label: AppLocalizations.of(context)!.username,
               key: 'username',
               validator: (val) {
                 if (val == null || val.isEmpty) {
-                  return 'Please enter something';
+                  return AppLocalizations.of(context)!.pleaseEnterSomething;
                 }
                 return null;
               },
@@ -50,9 +51,9 @@ class SignInUpPage extends StatelessWidget {
               isRequired: true,
               checkboxPosition: ListTileControlAffinity.leading,
               richLabelSpans: [
-                const TextSpan(text: 'I have read and agree to the '),
+                TextSpan(text: AppLocalizations.of(context)!.iHaveReadAndAgreeToThe),
                 TextSpan(
-                  text: 'Terms and Conditions',
+                  text: AppLocalizations.of(context)!.termsAndConditions,
                   style: TextStyle(
                     color: Theme.of(context).colorScheme.tertiary,
                   ),

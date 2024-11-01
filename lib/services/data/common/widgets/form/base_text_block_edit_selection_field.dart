@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:seren_ai_flutter/services/data/common/widgets/form/selection_field.dart';
@@ -25,9 +26,9 @@ class BaseTextBlockEditSelectionField extends ConsumerWidget {
       labelWidget: labelWidget ?? const Icon(Icons.description),
       validator: (description) => null,
       // description == null || description.isEmpty
-      //     ? 'Text is required'
+      //     ? AppLocalizations.of(context)!.textIsRequired
       //     : null,
-      valueToString: (description) => description ?? 'Enter Text',
+      valueToString: (description) => description ?? AppLocalizations.of(context)!.enterText,
       enabled: enabled,
       value: curDescription,
       onValueChanged: updateDescription,
@@ -74,9 +75,9 @@ class TextBlockWritingModal extends HookWidget {
             TextField(
               controller: descriptionController,
               maxLines: 5,
-              decoration: const InputDecoration(
-                hintText: 'Enter text here...',
-                border: OutlineInputBorder(),
+              decoration: InputDecoration(
+                hintText: AppLocalizations.of(context)!.enterTextHere,
+                border: const OutlineInputBorder(),
               ),
             ),
             const SizedBox(height: 16),
@@ -86,8 +87,8 @@ class TextBlockWritingModal extends HookWidget {
                   onDescriptionChanged(ref, descriptionController.text);
                   Navigator.pop(context);
                 },
-                child: const Text('Save'),
-              );
+                child: Text(AppLocalizations.of(context)!.save),
+                );
             }),
           ],
         ),
