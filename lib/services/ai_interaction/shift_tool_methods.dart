@@ -3,10 +3,10 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:seren_ai_flutter/services/ai_interaction/ai_tool_response_executor.dart';
 import 'package:seren_ai_flutter/services/ai_interaction/ai_tool_response_model.dart';
 
-import 'package:seren_ai_flutter/services/data/shifts/cur_shifts/cur_user_active_shift_ranges_fam_provider.dart';
-import 'package:seren_ai_flutter/services/data/shifts/cur_shifts/cur_user_joined_shift_provider.dart';
-import 'package:seren_ai_flutter/services/data/shifts/cur_shifts/cur_user_shift_log/cur_user_cur_shift_log_notifier_provider.dart';
-import 'package:seren_ai_flutter/services/data/shifts/cur_shifts/shift_day_fam_listener_providers/cur_user_shift_logs_fam_listener_provider.dart';
+import 'package:seren_ai_flutter/services/data/shifts/z_graveyard/cur_shifts/cur_user_active_shift_ranges_fam_provider.dart';
+import 'package:seren_ai_flutter/services/data/shifts/z_graveyard/cur_shifts/cur_user_joined_shift_provider.dart';
+import 'package:seren_ai_flutter/services/data/shifts/z_graveyard/cur_shifts/cur_user_shift_log/cur_user_cur_shift_log_notifier_provider.dart';
+import 'package:seren_ai_flutter/services/data/shifts/z_graveyard/cur_shifts/shift_day_fam_listener_providers/cur_user_shift_logs_fam_listener_provider.dart';
 
 class ShiftInfoResult extends ToolResponseResult {
   final List<DateTimeRange> activeShiftRanges;  

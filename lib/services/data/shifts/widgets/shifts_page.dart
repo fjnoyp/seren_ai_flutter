@@ -3,14 +3,15 @@ import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:intl/intl.dart';
 import 'package:seren_ai_flutter/common/utils/duration_extension.dart';
-import 'package:seren_ai_flutter/services/data/shifts/cur_shifts/cur_user_active_shift_ranges_fam_provider.dart';
-
-import 'package:seren_ai_flutter/services/data/shifts/cur_shifts/cur_user_joined_shifts_listener_provider.dart';
-import 'package:seren_ai_flutter/services/data/shifts/cur_shifts/cur_user_joined_shift_provider.dart';
-import 'package:seren_ai_flutter/services/data/shifts/cur_shifts/cur_user_shift_log/cur_user_cur_shift_log_fam_provider.dart';
-import 'package:seren_ai_flutter/services/data/shifts/cur_shifts/cur_user_shift_log/cur_user_cur_shift_log_notifier_provider.dart';
-import 'package:seren_ai_flutter/services/data/shifts/cur_shifts/shift_day_fam_listener_providers/cur_user_shift_logs_fam_listener_provider.dart';
+import 'package:seren_ai_flutter/services/auth/auth_states.dart';
+import 'package:seren_ai_flutter/services/auth/cur_auth_state_provider.dart';
 import 'package:seren_ai_flutter/services/data/shifts/models/joined_shift_model.dart';
+import 'package:seren_ai_flutter/services/data/shifts/providers/cur_user_shift_provider.dart';
+import 'package:seren_ai_flutter/services/data/shifts/providers/open_shift_log_providers.dart';
+import 'package:seren_ai_flutter/services/data/shifts/providers/shift_logs_provider.dart';
+import 'package:seren_ai_flutter/services/data/shifts/providers/shift_time_ranges_providers.dart';
+import 'package:seren_ai_flutter/services/data/shifts/repositories/shift_logs_repository.dart';
+import 'package:seren_ai_flutter/services/data/shifts/repositories/shift_logs_service.dart';
 import 'package:seren_ai_flutter/services/data/shifts/widgets/debug_shifts_full_day_view.dart';
 import 'package:table_calendar/table_calendar.dart';
 
@@ -28,15 +29,19 @@ class ShiftsPage extends HookConsumerWidget {
     final selectedDay = useState(DateTime.now().toUtc());
     final focusedDay = useState(DateTime.now().toUtc());
 
-    final joinedShiftState = ref.watch(curUserJoinedShiftProvider);
+    final joinedShiftState = ref.watch(curUserShiftProvider);
 
-    if(joinedShiftState is CurUserJoinedShiftLoading) {
+    if(joinedShiftState is CurUserShiftLoading) {
       return const Center(child: CircularProgressIndicator());
     }
 
+    if(joinedShiftState is CurUserShiftError) {
+      return Center(child: Text(joinedShiftState.errorMessage));
+    }
+
     JoinedShiftModel? curJoinedShift; 
-    if(joinedShiftState is CurUserJoinedShiftLoaded) {
-      curJoinedShift = joinedShiftState.joinedShift;
+    if(joinedShiftState is CurUserShiftLoaded) {
+      curJoinedShift = joinedShiftState.shift;
     }
 
     if(curJoinedShift == null) {
@@ -100,6 +105,42 @@ class ShiftsPage extends HookConsumerWidget {
           child: _DayShiftsWidget(day: selectedDay.value, shift: curJoinedShift),
         ),
       ],
+    );
+  }
+}
+
+class TestWidget extends ConsumerWidget {
+  final DateTime day;
+  final JoinedShiftModel shift;
+
+  const TestWidget({super.key, required this.day, required this.shift});
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final curAuthUserState = ref.watch(curAuthStateProvider);
+    final curUserId = switch (curAuthUserState) {
+      LoggedInAuthState() => curAuthUserState.user,
+      _ => null,
+    };
+
+    if (curUserId == null) {
+      return const Text('No user id');
+    }
+
+    final activeShiftRanges = ref.watch(shiftTimeRangesProvider((shiftId: shift.shift.id, day: day.toUtc(), userId: curUserId.id)));
+    return activeShiftRanges.when(
+      data: (ranges) {
+        if (ranges.isEmpty) {
+          return const Text('No active shift ranges');
+        }
+        return Column(
+          children: ranges.map((range) {
+            return Text('Active Shift Range: ${range.start} - ${range.end}');
+          }).toList(),
+        );
+      },
+      loading: () => const CircularProgressIndicator(),
+      error: (error, stack) => SelectableText('Error: $error'),
     );
   }
 }
@@ -207,19 +248,27 @@ class _ShiftLogs extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final shiftLogs = ref.watch(
-        curUserShiftLogsFamListenerProvider((shiftId: shiftId, day: day)));
+    final shiftLogsStream = ref.watch(
+        curUserShiftLogsProvider((shiftId: shiftId, day: day)));
 
-    if (shiftLogs == null || shiftLogs.isEmpty) {
-      return Text(AppLocalizations.of(context)!.noShiftLogs);
+    if (shiftLogsStream.hasError) {
+      return const Text('Error loading shift logs');
+    }
+
+    if (shiftLogsStream.isLoading) {
+      return const CircularProgressIndicator();
+    }
+
+    if (shiftLogsStream.value == null || shiftLogsStream.value!.isEmpty) {
+      return const Text('No shift logs');
     }
 
     return ListView.builder(
       shrinkWrap: true,
       physics: const NeverScrollableScrollPhysics(),
-      itemCount: shiftLogs.length,
+      itemCount: shiftLogsStream.value!.length,
       itemBuilder: (context, index) {
-        final log = shiftLogs[index];
+        final log = shiftLogsStream.value![index];
         return Padding(
           padding: const EdgeInsets.symmetric(vertical: 4.0),
           child: Text(
@@ -240,16 +289,24 @@ class _ShiftTimeRangesList extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final shiftTimeRanges = ref.watch(
-        curUserActiveShiftRangesFamProvider((shiftId: shiftId, day: day)));
+    final shiftTimeRangesStream = ref.watch(
+        curUserShiftTimeRangesProvider((shiftId: shiftId, day: day)));
 
-    if (shiftTimeRanges.isEmpty) {
-      return Text(AppLocalizations.of(context)!.noShifts);
+    if (shiftTimeRangesStream.hasError) { 
+      return const Text('Error loading shift time ranges');
+    }
+
+    if (shiftTimeRangesStream.isLoading) {
+      return const CircularProgressIndicator();
+    }
+
+    if (shiftTimeRangesStream.value == null || shiftTimeRangesStream.value!.isEmpty) {
+      return const Text('No shifts!');
     }
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
-      children: shiftTimeRanges.map((timeframe) {
+      children: shiftTimeRangesStream.value!.map((timeframe) {
         return Text(
           '${listDateFormat.format(timeframe.start.toLocal())} - ${listDateFormat.format(timeframe.end.toLocal())} - ${timeframe.duration.formatDuration(context)}',
           style: const TextStyle(fontWeight: FontWeight.bold),
@@ -276,9 +333,22 @@ class _ClockInClockOut extends HookConsumerWidget {
     if (day.day == curDateTime.day &&
         day.month == curDateTime.month &&
         day.year == curDateTime.year) {
-      final curLog = ref.watch(curUserCurShiftLogFamProvider(shiftId));
-      final notifier = ref.read(curUserCurShiftLogNotifierProvider(shiftId));
 
+      final curLogStream = ref.watch(curUserOpenShiftLogProvider((shiftId))); 
+
+      if (curLogStream.hasError) {
+        return const Text('Error loading shift logs');
+      }
+
+      if (curLogStream.isLoading) {
+        return const CircularProgressIndicator();
+      }
+
+      final shiftLogService = ref.watch(shiftLogServiceProvider); 
+
+      final curLog = curLogStream.value;
+
+      
       // Start timer if curLog is not null and clocked in
       useEffect(() {
         if (curLog != null && curLog.clockOutDatetime == null) {
@@ -295,16 +365,16 @@ class _ClockInClockOut extends HookConsumerWidget {
 
       if (curLog == null) {
         return OutlinedButton(
-          onPressed: () => notifier.clockIn(),
-          child: Text(AppLocalizations.of(context)!.clockIn),
+          onPressed: () => shiftLogService.clockIn(shiftId),
+          child: const Text('Clock In'),
         );
       } else if (curLog.clockOutDatetime == null) {
         return Column(
           mainAxisSize: MainAxisSize.min,
           children: [
             OutlinedButton(
-              onPressed: () => notifier.clockOut(),
-              child: Text(AppLocalizations.of(context)!.clockOut),
+              onPressed: () => shiftLogService.clockOut(shiftId),
+              child: const Text('Clock Out'),
             ),
             Text(AppLocalizations.of(context)!.elapsedTime(
               elapsedTime.value.inHours.toString(),
