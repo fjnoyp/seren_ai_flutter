@@ -8,13 +8,13 @@ import 'package:seren_ai_flutter/services/data/shifts/cur_shifts/shift_day_fam_l
 
   // TODO p3: missing multiday shift support + local timezone support
 
+/// Provides shift times for a specific shift and day 
 final curUserActiveShiftRangesFamProvider = NotifierProvider.family<CurUserActiveShiftRangesFamNotifier, List<DateTimeRange>, ({String shiftId, DateTime day})>(CurUserActiveShiftRangesFamNotifier.new);
 
 class CurUserActiveShiftRangesFamNotifier extends FamilyNotifier<List<DateTimeRange>, ({String shiftId, DateTime day})> {
   @override
   List<DateTimeRange> build(({String shiftId, DateTime day}) args) {
     final timeframes = ref.watch(curUserShiftTimeframesFamListenerProvider(args.shiftId));
-    final logs = ref.watch(curUserShiftLogsFamListenerProvider((shiftId: args.shiftId, day: args.day)));
     final overrides = ref.watch(curUserShiftOverridesFamListenerProvider((shiftId: args.shiftId, day: args.day)));
 
     return _getShiftTimeRangesForDay(args.day, timeframes ?? [], overrides ?? []);
