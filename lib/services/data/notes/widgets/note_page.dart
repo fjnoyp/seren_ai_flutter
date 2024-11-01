@@ -65,10 +65,10 @@ class NotePage extends HookConsumerWidget {
                           style: Theme.of(context).textTheme.headlineMedium,
                         ),
                   const SizedBox(height: 8),
-                  // TODO: change together with localizations
                   if (!isEnabled)
-                    Text(DateFormat.yMd()
-                        .format(ref.watch(curNoteDateProvider)!)),
+                    Text(
+                        DateFormat.yMd(AppLocalizations.of(context)!.localeName)
+                            .format(ref.watch(curNoteDateProvider)!)),
                   const Divider(),
 
                   // ======================
@@ -80,11 +80,18 @@ class NotePage extends HookConsumerWidget {
                       children: [
                         NoteProjectSelectionField(enabled: isEnabled),
                         const Divider(),
+                        if (isEnabled) ...[
+                          NoteDateSelectionField(),
+                          const Divider(),
+                        ],
                         NoteDescriptionSelectionField(enabled: isEnabled),
                         const Divider(),
                         NoteAddressSelectionField(enabled: isEnabled),
                         const Divider(),
-                        NoteActionRequiredSelectionField(enabled: isEnabled),
+                        NoteActionRequiredSelectionField(
+                          enabled: isEnabled,
+                          context: context,
+                        ),
                         const Divider(),
                         NoteStatusSelectionField(enabled: isEnabled),
                         const Divider(),
@@ -99,23 +106,12 @@ class NotePage extends HookConsumerWidget {
                     SizedBox(
                       width: double.infinity,
                       child: ElevatedButton(
-                        onPressed: () async {
-                          final isValidNote = ref
-                              .read(curNoteStateProvider.notifier)
-                              .isValidNote();
+                        onPressed: () {
+                          ref.read(curNoteStateProvider.notifier).saveNote();
 
-                          if (isValidNote) {
-                            if (mode == EditablePageMode.create) {
-                              ref
-                                  .read(curNoteStateProvider.notifier)
-                                  .updateDate(DateTime.now());
-                            }
-                            ref.read(curNoteStateProvider.notifier).saveNote();
-
-                            // TODO: handle error cases
-                            if (context.mounted) {
-                              Navigator.pop(context, true);
-                            }
+                          // TODO: handle error cases
+                          if (context.mounted) {
+                            Navigator.pop(context, true);
                           }
                         },
                         style: ElevatedButton.styleFrom(
@@ -128,14 +124,6 @@ class NotePage extends HookConsumerWidget {
                       ),
                     ),
 
-                  if (mode == EditablePageMode.readOnly)
-                    ElevatedButton(
-                        onPressed: () {
-                          Navigator.pop(context);
-                          openNotePage(context, ref,
-                              mode: EditablePageMode.edit);
-                        },
-                        child: Text(AppLocalizations.of(context)!.edit)),
                   const SizedBox(height: 32),
                 ],
               ),
@@ -163,13 +151,9 @@ Future<void> openNotePage(BuildContext context, WidgetRef ref,
       throw Exception(AppLocalizations.of(context)!.userNotAuthenticated);
     }
 
-    // TODO: verify if isn't better to use the current project id than the default one in this case
-    // if (parentProjectId == null) {
-    //   throw ArgumentError(
-    //       AppLocalizations.of(context)!.parentProjectIdRequired);
-    // }
-
-    ref.read(curNoteStateProvider.notifier).setToNewNote();
+    ref.read(curNoteStateProvider.notifier).setToNewNote(
+          parentProjectId: parentProjectId,
+        );
   } else if (mode == EditablePageMode.edit ||
       mode == EditablePageMode.readOnly) {
     if (noteId != null) {

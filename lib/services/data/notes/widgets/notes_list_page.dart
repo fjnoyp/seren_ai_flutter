@@ -22,7 +22,7 @@ class NoteListPage extends HookConsumerWidget {
 
     return Column(
       children: [
-        _ProjectDropDown(curProjectId),
+        _SelectProjectWidget(curProjectId),
         Expanded(child: _NoteListByProjectId(curProjectId.value)),
         CreateItemBottomButton(
           onPressed: () {
@@ -40,34 +40,43 @@ class NoteListPage extends HookConsumerWidget {
   }
 }
 
-class _ProjectDropDown extends ConsumerWidget {
-  const _ProjectDropDown(this.curProjectId);
+class _SelectProjectWidget extends ConsumerWidget {
+  const _SelectProjectWidget(this.curProjectId);
 
   final ValueNotifier<String?> curProjectId;
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final projects = ref.watch(curUserViewableProjectsListenerProvider);
-    // TODO: improve UI by using a disabled dropdown instead
+
     return (projects?.isEmpty ?? true)
         ? Text(AppLocalizations.of(context)!.loadingProjects)
-        : DropdownButton<String?>(
-            value: curProjectId.value,
-            items: [
-              DropdownMenuItem<String?>(
-                value: null,
-                child: Text(AppLocalizations.of(context)!.personal),
-              ),
-              ...projects!.map(
-                (project) => DropdownMenuItem<String?>(
-                  value: project.id,
-                  child: Text(project.name),
+        : SingleChildScrollView(
+            scrollDirection: Axis.horizontal,
+            child: Row(
+              children: [
+                Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 4),
+                  child: FilterChip(
+                    selected: curProjectId.value == null,
+                    onSelected: (value) => curProjectId.value = null,
+                    label: Text(AppLocalizations.of(context)!.personal),
+                    showCheckmark: false,
+                  ),
                 ),
-              ),
-            ],
-            onChanged: (value) {
-              curProjectId.value = value;
-            },
+                ...projects!.map(
+                  (project) => Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 4),
+                    child: FilterChip(
+                      selected: curProjectId.value == project.id,
+                      onSelected: (value) => curProjectId.value = project.id,
+                      label: Text(project.name),
+                      showCheckmark: false,
+                    ),
+                  ),
+                ),
+              ],
+            ),
           );
   }
 }
@@ -108,8 +117,9 @@ class _NoteItem extends ConsumerWidget {
       ),
       trailing: Text(
         note.createdAt != null
-            // TODO: format using localizations
-            ? DateFormat.yMd(AppLocalizations.of(context)!.localeName).add_jm().format(note.createdAt!)
+            ? DateFormat.yMd(AppLocalizations.of(context)!.localeName)
+                .add_jm()
+                .format(note.date!.toLocal())
             : '',
         style: const TextStyle(fontSize: 12),
       ),

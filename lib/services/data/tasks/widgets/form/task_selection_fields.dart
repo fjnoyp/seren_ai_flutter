@@ -72,8 +72,8 @@ class TaskDueDateSelectionField extends BaseDueDateSelectionField {
                 LoadedCurTaskState() => state.task.task.dueDate,
                 _ => null,
               }),
-          pickAndUpdateDueDate: (ref, context) =>
-              ref.read(curTaskProvider.notifier).pickAndUpdateDueDate(context),
+          updateDueDate: (ref, pickedDateTime) =>
+              ref.read(curTaskProvider.notifier).updateDueDate(pickedDateTime),
         );
 }
 
@@ -82,10 +82,11 @@ class TaskDescriptionSelectionField extends BaseTextBlockEditSelectionField {
     super.key,
     required super.enabled,
   }) : super(
-          descriptionProvider: curTaskProvider.select((state) => switch (state) {
-                LoadedCurTaskState() => state.task.task.description,
-                _ => null,
-              }),
+          descriptionProvider:
+              curTaskProvider.select((state) => switch (state) {
+                    LoadedCurTaskState() => state.task.task.description,
+                    _ => null,
+                  }),
           updateDescription: (ref, description) =>
               ref.read(curTaskProvider.notifier).updateDescription(description),
         );
