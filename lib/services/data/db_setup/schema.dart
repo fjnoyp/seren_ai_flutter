@@ -75,8 +75,8 @@ const tasksSchemas = [
     Column.text('parent_task_id'),
     Column.text('created_date'),
     Column.text('content'),
-    Column.text('start_date_time'),
-    Column.text('end_date_time'),
+    Column.text('start_datetime'),
+    Column.text('end_datetime'),
   ]),
   Table(taskUserAssignmentsTable, [
     // Column.text('id'),
