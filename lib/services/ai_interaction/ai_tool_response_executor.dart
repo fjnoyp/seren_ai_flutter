@@ -2,7 +2,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:seren_ai_flutter/services/ai_interaction/ai_chat_service_provider.dart';
 import 'package:seren_ai_flutter/services/ai_interaction/ai_tool_response_model.dart';
 import 'package:seren_ai_flutter/services/ai_interaction/last_ai_message_listener_provider.dart';
-import 'package:seren_ai_flutter/services/ai_interaction/shift_tool_methods.dart';
+import 'package:seren_ai_flutter/services/data/shifts/shift_tool_methods.dart';
 
 
 /// Encapsulate information to return to ai
@@ -32,7 +32,7 @@ class AiToolResponseExecutor {
     ref.read(lastAiMessageListenerProvider.notifier).addLastToolResponseResult(result);
   }
 
-  Future<void> executeToolResponses(
+  Future<List<ToolResponseResult>> executeToolResponses(
       List<AiToolResponseModel> toolResponses) async {
     final results = await getToolResponseResults(toolResponses);
 
@@ -43,6 +43,8 @@ class AiToolResponseExecutor {
         callbackAi(result.message);
       }
     }
+
+    return results;
   }
 
   // Route ToolResponse to the correct method
