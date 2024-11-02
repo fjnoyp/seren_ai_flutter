@@ -4,7 +4,7 @@ import 'package:seren_ai_flutter/services/data/shifts/providers/cur_shift_state_
 import 'package:seren_ai_flutter/services/data/shifts/models/joined_shift_model.dart';
 
 /// Helper to create providers that depend on authenticated user and/or current shift
-class CurShiftDependencyProvider {
+class ShiftDependencyProvider {
   static AsyncValue<T> watch<T>({
     required Ref ref,
     required T Function(String userId, JoinedShiftModel shift) builder,
