@@ -1,25 +1,15 @@
 import 'package:hooks_riverpod/hooks_riverpod.dart';
-import 'package:seren_ai_flutter/services/auth/auth_states.dart';
-import 'package:seren_ai_flutter/services/auth/cur_auth_state_provider.dart';
 import 'package:seren_ai_flutter/services/data/shifts/models/joined_shift_model.dart';
 import 'package:seren_ai_flutter/services/data/shifts/repositories/shifts_repository.dart';
+import 'package:seren_ai_flutter/services/auth/cur_auth_dependency_provider.dart';
 
-final shiftsProvider = StreamProvider.autoDispose
-    .family<List<JoinedShiftModel>, String>((ref, userId) {
-  return ref.watch(shiftsRepositoryProvider).watchUserShifts(
-    userId: userId,
-  );
-});
-
+// TODO p2: we provide shifts ignoring what current org is 
+// If user is in multiple orgs, we show all shifts which could cause confusion
 final curUserShiftsProvider = StreamProvider.autoDispose<List<JoinedShiftModel>>((ref) {
-  final curAuthUserState = ref.watch(curAuthStateProvider);
-  final curUser = switch (curAuthUserState) {
-    LoggedInAuthState() => curAuthUserState.user,
-    _ => throw Exception('curUser is null'),
-  };
-
-  return ref.watch(shiftsRepositoryProvider).watchUserShifts(
-    userId: curUser.id,
+  return CurAuthDependencyProvider.watchStream<List<JoinedShiftModel>>(
+    ref: ref,
+    builder: (userId) {
+      return ref.watch(shiftsRepositoryProvider).watchUserShifts(userId: userId);
+    },
   );
 });
-
