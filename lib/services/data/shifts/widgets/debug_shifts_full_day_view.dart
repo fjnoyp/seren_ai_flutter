@@ -1,7 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:logging/logging.dart';
-import 'package:seren_ai_flutter/services/data/shifts/providers/combined_shift_data_provider.dart';
+import 'package:seren_ai_flutter/services/data/common/widgets/async_value_handler_widget.dart';
+import 'package:seren_ai_flutter/services/data/shifts/providers/shift_logs_provider.dart';
+import 'package:seren_ai_flutter/services/data/shifts/providers/shift_overrides_provider.dart';
+import 'package:seren_ai_flutter/services/data/shifts/providers/shift_time_ranges_providers.dart';
+import 'package:seren_ai_flutter/services/data/shifts/providers/shift_timeframes_provider.dart';
 
 final log = Logger('debugShiftsFullDayView');
 
@@ -10,33 +14,19 @@ const double timeBlockWidth = 50;
 Widget debugShiftsFullDayView(String shiftId, DateTime day) {
   return Consumer(
     builder: (context, ref, child) {
-      // TODO p5: split providers so one update doesn't trigger entire rebuild
 
-      /*
-      final timeframes = ref.watch(curUserShiftTimeframesFamListenerProvider(shiftId));
-      final logs = ref.watch(curUserShiftLogsFamListenerProvider((shiftId: shiftId, day: day)));
-      final overrides = ref.watch(curUserShiftOverridesFamListenerProvider((shiftId: shiftId, day: day)));
-      final shiftTimeRanges = ref.watch(curUserActiveShiftRangesFamProvider((shiftId: shiftId, day: day)));
-      */
+      final timeframesAsync = ref.watch(shiftTimeframesProvider(shiftId));
+      final logsAsync = ref.watch(curUserShiftLogsProvider((day: day)));
+      final overridesAsync = ref.watch(curUserShiftOverridesProvider((day: day)));
+      final rangesAsync = ref.watch(curUserShiftTimeRangesProvider((day: day)));
 
-      
-      final combinedShiftData = ref.watch(combinedShiftDataProvider((shiftId, day)));
-
-      final timeframes = combinedShiftData.value?.timeframes;
-      final logs = combinedShiftData.value?.logs;
-      final overrides = combinedShiftData.value?.overrides;
-      final shiftTimeRanges = combinedShiftData.value?.ranges;
-      
-      if(combinedShiftData.isLoading) {
-        return const CircularProgressIndicator();
-      }
-
-      if(combinedShiftData.hasError) {
-        return const Text('Error loading data');
-      }
-
-
-      return SizedBox(
+      return AsyncValueHandlerWidget4(
+        value1: timeframesAsync,
+        value2: logsAsync,
+        value3: overridesAsync,
+        value4: rangesAsync,
+        data: (timeframes, logs, overrides, shiftTimeRanges) {
+          return SizedBox(
         height: 450,
         width: double.infinity,
         child: LayoutBuilder(
@@ -156,6 +146,10 @@ Widget debugShiftsFullDayView(String shiftId, DateTime day) {
           },
         ),
       );
+        },
+      );
+
+      
     },
   );
 }
