@@ -15,6 +15,7 @@ import 'package:seren_ai_flutter/services/data/orgs/widgets/choose_org_page.dart
 import 'package:seren_ai_flutter/services/data/orgs/widgets/manage_org_users_page.dart';
 import 'package:seren_ai_flutter/services/data/orgs/widgets/org_guard.dart';
 import 'package:seren_ai_flutter/services/data/projects/widgets/projects_page.dart';
+import 'package:seren_ai_flutter/services/data/shifts/providers/cur_shift_state_provider.dart';
 import 'package:seren_ai_flutter/services/data/shifts/widgets/shifts_page.dart';
 import 'package:seren_ai_flutter/services/data/tasks/widgets/task_page.dart';
 import 'package:seren_ai_flutter/services/ai_interaction/stt_orchestrator_provider.dart.dart';
@@ -49,8 +50,10 @@ class AppState extends State<App> {
   Widget build(BuildContext context) {
     return Consumer(
       builder: (context, ref, child) {
-        // Initiate the orchestrator
+
+        // === Permanent Providers ===        
         ref.read(sttOrchestratorProvider);
+        ref.read(curShiftStateProvider);
 
         //final firstUserValue = ref.read(curAuthUserProvider);
         final initialRoute = Supabase.instance.client.auth.currentUser == null

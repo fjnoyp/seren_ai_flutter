@@ -4,13 +4,13 @@ import 'package:seren_ai_flutter/services/data/db_setup/db_provider.dart';
 import 'package:seren_ai_flutter/services/data/shifts/repositories/base_repository.dart';
 import 'package:seren_ai_flutter/services/data/shifts/repositories/shift_queries.dart';
 
-final shiftRangesRepositoryProvider = Provider<ShiftRangesRepository>((ref) {
-  return ShiftRangesRepository(ref.watch(dbProvider));
+final shiftTimeRangesRepositoryProvider = Provider<ShiftTimeRangesRepository>((ref) {
+  return ShiftTimeRangesRepository(ref.watch(dbProvider));
 });
 
 /// Get active shift ranges (timeframes and overrides) for a given day
-class ShiftRangesRepository extends BaseRepository<DateTimeRange> {
-  const ShiftRangesRepository(super.db);
+class ShiftTimeRangesRepository extends BaseRepository<DateTimeRange> {
+  const ShiftTimeRangesRepository(super.db);
 
   @override
   Set<String> get watchTables => {

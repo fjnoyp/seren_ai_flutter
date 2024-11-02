@@ -53,7 +53,11 @@ class TestAiWidget extends HookConsumerWidget {
 
     final requestShiftInfo = AiInfoRequestModel(infoRequestType: AiInfoRequestType.currentShift);
 
-    final List<AiToolResponseModel> testToolResponses = [requestShiftInfo];
+    final requestClockIn = AiActionRequestModel(actionRequestType: AiActionRequestType.clockIn);
+
+    final requestClockOut = AiActionRequestModel(actionRequestType: AiActionRequestType.clockOut);
+
+    final List<AiToolResponseModel> testToolResponses = [requestShiftInfo, requestClockOut];
 
     return Container(
       decoration: BoxDecoration(
@@ -66,7 +70,8 @@ class TestAiWidget extends HookConsumerWidget {
           ElevatedButton(
             onPressed: () async {
               try {
-                await ref.read(aiToolResponseExecutorProvider).executeToolResponses(testToolResponses);
+                final results = await ref.read(aiToolResponseExecutorProvider).executeToolResponses(testToolResponses);
+                responseState.value = results.map((result) => result.message).join('\n');
               } catch (e) {
                 responseState.value = e.toString();
               }
