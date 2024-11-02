@@ -4,9 +4,6 @@ import 'package:seren_ai_flutter/services/data/common/base_table_db.dart';
 import 'package:seren_ai_flutter/services/data/shifts/models/shift_log_model.dart';
 import 'package:seren_ai_flutter/services/data/shifts/repositories/shift_logs_repository.dart';
 
-final shiftLogServiceProvider = Provider<ShiftLogService>((ref) {
-  return ShiftLogService(ref);
-});
 
 class ShiftLogService extends BaseTableDb<ShiftLogModel> {
   final ShiftLogsRepository _repository;
