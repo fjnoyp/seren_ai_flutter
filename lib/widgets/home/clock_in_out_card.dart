@@ -6,7 +6,7 @@ import 'package:seren_ai_flutter/services/data/shifts/models/joined_shift_model.
 import 'package:seren_ai_flutter/services/data/shifts/models/shift_log_model.dart';
 import 'package:seren_ai_flutter/services/data/common/widgets/async_value_handler_widget.dart';
 import 'package:seren_ai_flutter/services/data/shifts/providers/shift_logs_service_provider.dart';
-import 'package:seren_ai_flutter/services/data/shifts/providers/shift_state_provider.dart';
+import 'package:seren_ai_flutter/services/data/shifts/providers/cur_shift_state_provider.dart';
 import 'package:seren_ai_flutter/services/data/shifts/providers/open_shift_log_provider.dart';
 import 'package:seren_ai_flutter/services/data/shifts/repositories/shift_logs_service.dart';
 import 'package:seren_ai_flutter/widgets/home/base_home_card.dart';
@@ -23,13 +23,13 @@ class ClockInOutCard extends StatelessWidget {
         child: Consumer(
           builder: (context, ref, child) {
             // TODO: refactor to use handable error states
-            final shiftState = ref.watch(curUserShiftStateProvider);
+            final shiftState = ref.watch(curShiftStateProvider);
             return switch (shiftState) {
-              CurUserShiftLoading() => const CircularProgressIndicator(),
-              CurUserShiftLoaded(joinedShift: final shift) => shift == null 
+              CurShiftLoading() => const CircularProgressIndicator(),
+              CurShiftLoaded(joinedShift: final shift) => shift == null 
                 ? Text(AppLocalizations.of(context)!.noShifts)
                 : _ClockInOutInnerCard(),
-              CurUserShiftError(errorMessage: final errorMessage) => Text(errorMessage),
+              CurShiftError(errorMessage: final errorMessage) => Text(errorMessage),
             };
           },
         ),
