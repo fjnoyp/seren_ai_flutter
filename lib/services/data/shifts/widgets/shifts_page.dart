@@ -3,13 +3,12 @@ import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:intl/intl.dart';
 import 'package:seren_ai_flutter/common/utils/duration_extension.dart';
-import 'package:seren_ai_flutter/services/auth/auth_states.dart';
 import 'package:seren_ai_flutter/services/auth/cur_auth_state_provider.dart';
 import 'package:seren_ai_flutter/services/data/shifts/models/joined_shift_model.dart';
 import 'package:seren_ai_flutter/services/data/common/widgets/async_value_handler_widget.dart';
 import 'package:seren_ai_flutter/services/data/shifts/providers/open_shift_log_provider.dart';
 import 'package:seren_ai_flutter/services/data/shifts/providers/shift_logs_service_provider.dart';
-import 'package:seren_ai_flutter/services/data/shifts/providers/shift_state_provider.dart';
+import 'package:seren_ai_flutter/services/data/shifts/providers/cur_shift_state_provider.dart';
 import 'package:seren_ai_flutter/services/data/shifts/providers/shift_logs_provider.dart';
 import 'package:seren_ai_flutter/services/data/shifts/providers/shift_time_ranges_providers.dart';
 import 'package:seren_ai_flutter/services/data/shifts/widgets/debug_shifts_full_day_view.dart';
@@ -29,13 +28,13 @@ class ShiftsPage extends HookConsumerWidget {
     final selectedDay = useState(DateTime.now().toUtc());
     final focusedDay = useState(DateTime.now().toUtc());
 
-    final joinedShiftState = ref.watch(curUserShiftStateProvider);
+    final joinedShiftState = ref.watch(curShiftStateProvider);
 
-    return AsyncValueHandlerWidget<CurUserShiftState>(
+    return AsyncValueHandlerWidget<CurShiftState>(
       value: AsyncValue.data(joinedShiftState),
       data: (state) {
         JoinedShiftModel? curJoinedShift;
-        if (state is CurUserShiftLoaded) {
+        if (state is CurShiftLoaded) {
           curJoinedShift = state.joinedShift;
         }
 
