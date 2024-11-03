@@ -3,8 +3,11 @@ import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:seren_ai_flutter/common/utils/string_extension.dart';
 import 'package:seren_ai_flutter/services/ai_interaction/ai_chat_service_provider.dart';
-import 'package:seren_ai_flutter/services/ai_interaction/ai_tool_response_executor.dart';
-import 'package:seren_ai_flutter/services/ai_interaction/ai_tool_response_model.dart';
+import 'package:seren_ai_flutter/services/ai_interaction/ai_request/ai_request_executor.dart';
+import 'package:seren_ai_flutter/services/ai_interaction/ai_request/models/ai_action_request_model.dart';
+import 'package:seren_ai_flutter/services/ai_interaction/ai_request/models/ai_info_request_model.dart';
+import 'package:seren_ai_flutter/services/ai_interaction/ai_request/models/ai_request_model.dart';
+import 'package:seren_ai_flutter/services/ai_interaction/ai_request/models/ai_ui_action_request_model.dart';
 import 'package:seren_ai_flutter/services/data/ai_chats/cur_user_ai_chat_thread_listener_provider.dart';
 import 'package:seren_ai_flutter/services/data/ai_chats/cur_user_chat_messages_listener_provider.dart';
 import 'package:seren_ai_flutter/services/data/ai_chats/models/ai_chat_thread_model.dart';
@@ -57,7 +60,7 @@ class TestAiWidget extends HookConsumerWidget {
 
     final requestClockOut = AiActionRequestModel(actionRequestType: AiActionRequestType.clockOut);
 
-    final List<AiToolResponseModel> testToolResponses = [requestShiftInfo, requestClockOut];
+    final List<AiRequestModel> testToolResponses = [requestShiftInfo, requestClockOut];
 
     return Container(
       decoration: BoxDecoration(
@@ -70,7 +73,7 @@ class TestAiWidget extends HookConsumerWidget {
           ElevatedButton(
             onPressed: () async {
               try {
-                final results = await ref.read(aiToolResponseExecutorProvider).executeToolResponses(testToolResponses);
+                final results = await ref.read(aiRequestExecutorProvider).executeAiRequests(testToolResponses);
                 responseState.value = results.map((result) => result.message).join('\n');
               } catch (e) {
                 responseState.value = e.toString();
@@ -182,9 +185,9 @@ class MessageCard extends HookWidget {
                     fontWeight: FontWeight.bold,
                   ),
             ),
-            if (message.isAiToolResponse())
+            if (message.isAiRequest())
               DisplayToolResponse(
-                  toolResponses: message.getAiToolResponses() ?? [])
+                  toolResponses: message.getAiRequests() ?? [])
             else
               DisplayContent(
                   content: message.content, isExpanded: isExpanded.value),
@@ -225,7 +228,7 @@ class DisplayContent extends StatelessWidget {
 }
 
 class DisplayToolResponse extends StatelessWidget {
-  final List<AiToolResponseModel> toolResponses;
+  final List<AiRequestModel> toolResponses;
 
   const DisplayToolResponse({super.key, required this.toolResponses});
 
@@ -236,7 +239,7 @@ class DisplayToolResponse extends StatelessWidget {
       children: [
         const SizedBox(height: 8),
         ...toolResponses.map((response) {
-          final responseType = response.responseType.value;
+          final responseType = response.requestType.value;
 
           // Create a widget for each response with better formatting
           return Padding(
@@ -254,7 +257,7 @@ class DisplayToolResponse extends StatelessWidget {
                   Text(
                       'Action Request Type: ${response.actionRequestType.value}'),
                   Text('Args: ${response.args}'),
-                ] else if (response is AiUiActionModel) ...[
+                ] else if (response is AiUiActionRequestModel) ...[
                   Text('UI Action Type: ${response.uiActionType.value}'),
                   Text('Args: ${response.args}'),
                 ] else if (response is AiInfoRequestModel) ...[
