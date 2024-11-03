@@ -1,6 +1,8 @@
+import 'package:collection/collection.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:seren_ai_flutter/services/ai_interaction/ai_tool_response_executor.dart';
-import 'package:seren_ai_flutter/services/ai_interaction/ai_tool_response_model.dart';
+import 'package:seren_ai_flutter/services/ai_interaction/ai_request/ai_request_executor.dart';
+import 'package:seren_ai_flutter/services/ai_interaction/ai_request/models/ai_request_model.dart';
+import 'package:seren_ai_flutter/services/ai_interaction/testing/sample_ai_chat_message_models.dart';
 import 'package:seren_ai_flutter/services/auth/cur_auth_state_provider.dart';
 import 'package:seren_ai_flutter/services/data/ai_chats/models/ai_chat_message_model.dart';
 import 'package:seren_ai_flutter/services/data/common/status_enum.dart';
@@ -14,7 +16,6 @@ import 'package:seren_ai_flutter/services/data/tasks/ui_state/cur_task_provider.
 import 'package:seren_ai_flutter/services/data/tasks/models/joined_task_model.dart';
 import 'package:seren_ai_flutter/services/data/tasks/models/task_model.dart';
 import 'package:seren_ai_flutter/services/data/tasks/widgets/task_page.dart';
-import 'package:seren_ai_flutter/services/data/teams/models/team_model.dart';
 import 'package:seren_ai_flutter/services/data/users/models/user_model.dart';
 
 final isAiRespondingProvider = StateProvider<bool>((ref) => false);
@@ -45,15 +46,17 @@ class AIChatService {
     }
 
     try {
-      final aiChatMessages = await _sendMessage(
-          message: message, userId: curUser.id, orgId: curOrgId);
+      bool isTest = false;
+
+      List<AiChatMessageModel> aiChatMessages = [];
+      if (!isTest) {
+        aiChatMessages = await _sendMessage(
+            message: message, userId: curUser.id, orgId: curOrgId);
+      } else {
+        aiChatMessages = _getTestAiChatMessages();
+      }
 
       await executeAiChatMessages(aiChatMessages);
-
-      // TODO p1: for AiInfoRequestModel with showOnly = true, should we update ai state still?
-      // If so new API will need to be tested
-
-      // Speak the result
       await speakAiMessage(aiChatMessages);
 
       ref.read(isAiRespondingProvider.notifier).state = false;
@@ -67,10 +70,25 @@ class AIChatService {
     }
   }
 
+  List<AiChatMessageModel> _getTestAiChatMessages() {
+    final allMessages = [
+      sampleClockInRequest,
+      sampleClockOutRequest,
+      sampleCurrentShiftInfoRequest, 
+      sampleShiftHistoryRequest, // TBD 
+      sampleShiftsPageRequest // TBD 
+    ];
+    return [sampleClockOutRequest];
+  }
+
   Future<void> speakAiMessage(List<AiChatMessageModel> result) async {
     // TODO: consolidate duplicated code from stt_orchestrator_provider.dart
-    final aiMessage = result.firstWhere((element) =>
+    final aiMessage = result.firstWhereOrNull((element) =>
         element.type == AiChatMessageType.ai && element.content.isNotEmpty);
+
+    if (aiMessage == null) {
+      return;
+    }
 
     final textToSpeech = ref.read(textToSpeechServiceProvider);
     await textToSpeech.speak(aiMessage.content);
@@ -114,22 +132,17 @@ class AIChatService {
     // TODO p0: update last ai message provider to be manually updated by the code flow here
 
     // Read the chat response and identify ToolMessages
-    List<AiToolResponseModel>? toolResponses = aiChatMessages
-        .where((msg) => msg.isAiToolResponse())
-        .expand((msg) => msg.getAiToolResponses() ?? List<AiToolResponseModel>.empty())
-        .toList() as List<AiToolResponseModel>?;
+    List<AiRequestModel>? toolResponses = aiChatMessages
+        .where((msg) => msg.isAiRequest())
+        .expand((msg) => msg.getAiRequests() ?? List<AiRequestModel>.empty())
+        .toList() as List<AiRequestModel>?;
 
     if (toolResponses != null && toolResponses.isNotEmpty) {
-      await ref.read(aiToolResponseExecutorProvider).executeToolResponses(toolResponses);
+      await ref
+          .read(aiRequestExecutorProvider)
+          .executeAiRequests(toolResponses);
     }
   }
-
-
-
-
-
-
-
 
   Future<void> testAiCreateTask(BuildContext context) async {
     // TEST calling Supabase Edge Function

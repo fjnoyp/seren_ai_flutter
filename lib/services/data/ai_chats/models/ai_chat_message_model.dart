@@ -1,6 +1,6 @@
 import 'package:json_annotation/json_annotation.dart';
-import 'package:seren_ai_flutter/services/ai_interaction/ai_tool_response_model.dart';
 import 'package:seren_ai_flutter/services/ai_interaction/last_ai_message_listener_provider.dart';
+import 'package:seren_ai_flutter/services/ai_interaction/ai_request/models/ai_request_model.dart';
 import 'package:seren_ai_flutter/services/data/common/i_has_id.dart';
 import 'package:seren_ai_flutter/services/data/common/uuid.dart';
 import 'dart:convert';
@@ -43,16 +43,16 @@ class AiChatMessageModel extends AiResult implements IHasId  {
     );
   }
 
-  bool isAiToolResponse() {
+  bool isAiRequest() {
     return type == AiChatMessageType.tool && 
-    content.contains('response_type');
+    content.contains('request_type');
   }
 
-  List<AiToolResponseModel>? getAiToolResponses() {
-    if (isAiToolResponse()) {
+  List<AiRequestModel>? getAiRequests() {
+    if (isAiRequest()) {
       final List<dynamic> decoded = json.decode(content) as List<dynamic>;
       return decoded
-          .map((item) => AiToolResponseModel.fromJson(item as Map<String, dynamic>))
+          .map((item) => AiRequestModel.fromJson(item as Map<String, dynamic>))
           .toList();
     }
     return null;
