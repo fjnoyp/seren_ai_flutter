@@ -30,14 +30,10 @@ class ShiftsPage extends HookConsumerWidget {
 
     final joinedShiftState = ref.watch(curShiftStateProvider);
 
-    return AsyncValueHandlerWidget<CurShiftState>(
-      value: AsyncValue.data(joinedShiftState),
-      data: (state) {
-        JoinedShiftModel? curJoinedShift;
-        if (state is CurShiftLoaded) {
-          curJoinedShift = state.joinedShift;
-        }
-
+    return joinedShiftState.when(
+      loading: () => const Center(child: CircularProgressIndicator()),
+      error: (error, stackTrace) => Center(child: Text('Error: $error')),
+      data: (curJoinedShift) {
         if (curJoinedShift == null) {
           return const Center(child: Text('No active shift'));
         }
