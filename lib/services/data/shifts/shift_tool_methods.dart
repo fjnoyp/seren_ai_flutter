@@ -28,27 +28,26 @@ class ShiftClockInOutResult extends AiRequestResult {
     required super.showOnly,
   });
 }
-
 class ShiftToolMethods {
 
   ({String userId, String shiftId})? _getAuthAndShiftInfo(Ref ref) {
     final curAuthState = ref.read(curAuthStateProvider);
-    final curShiftState = ref.read(curShiftStateProvider);
+    final curShiftState = ref.watch(curShiftStateProvider);
 
     if (curAuthState is! LoggedInAuthState) {
       return null;
     }
 
-    if (curShiftState is! CurShiftLoaded) {
-      return null;
-    }
-
-    final joinedShift = curShiftState.joinedShift;
-    if (joinedShift == null) {
-      return null;
-    }
-
-    return (userId: curAuthState.user.id, shiftId: joinedShift.shift.id);
+    return curShiftState.when(
+      loading: () => null,
+      error: (error, stackTrace) => null,
+      data: (joinedShift) {
+        if (joinedShift == null) {
+          return null;
+        }
+        return (userId: curAuthState.user.id, shiftId: joinedShift.shift.id);
+      },
+    );
   }
 
   AiRequestResult handleNoAuthOrShiftInfo({AiInfoRequestModel? infoRequest}) {

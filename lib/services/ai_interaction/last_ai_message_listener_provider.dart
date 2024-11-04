@@ -41,6 +41,7 @@ class LastAiMessageListenerNotifier extends Notifier<List<AiResult>> {
 
       state = List.from(state)..add(result);
 
+    _timer?.cancel();
     
     // For ToolResponseResult, use content length for timeout if available
     final timeoutSeconds = result.message.isNotEmpty
