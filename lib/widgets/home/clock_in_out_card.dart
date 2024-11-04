@@ -10,7 +10,6 @@ import 'package:seren_ai_flutter/services/data/shifts/providers/cur_shift_state_
 import 'package:seren_ai_flutter/services/data/shifts/providers/open_shift_log_provider.dart';
 import 'package:seren_ai_flutter/services/data/shifts/repositories/shift_logs_service.dart';
 import 'package:seren_ai_flutter/widgets/home/base_home_card.dart';
-
 class ClockInOutCard extends StatelessWidget {
   const ClockInOutCard({super.key});
 
@@ -22,15 +21,16 @@ class ClockInOutCard extends StatelessWidget {
       child: Center(
         child: Consumer(
           builder: (context, ref, child) {
-            // TODO: refactor to use handable error states
             final shiftState = ref.watch(curShiftStateProvider);
-            return switch (shiftState) {
-              CurShiftLoading() => const CircularProgressIndicator(),
-              CurShiftLoaded(joinedShift: final shift) => shift == null 
-                ? Text(AppLocalizations.of(context)!.noShifts)
-                : _ClockInOutInnerCard(),
-              CurShiftError(errorMessage: final errorMessage) => Text(errorMessage),
-            };
+            return shiftState.when(
+              data: (shift) {
+                return shift == null 
+                  ? Text(AppLocalizations.of(context)!.noShifts)
+                  : const _ClockInOutInnerCard();
+              },
+              loading: () => const CircularProgressIndicator(),
+              error: (error, stack) => Text(error.toString()),
+            );
           },
         ),
       ),

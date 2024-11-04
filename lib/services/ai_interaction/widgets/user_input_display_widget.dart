@@ -1,7 +1,12 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:seren_ai_flutter/services/ai_interaction/ai_chat_service_provider.dart';
+import 'package:seren_ai_flutter/services/ai_interaction/ai_request/ai_request_executor.dart';
+import 'package:seren_ai_flutter/services/ai_interaction/ai_request/models/ai_action_request_model.dart';
+import 'package:seren_ai_flutter/services/ai_interaction/ai_request/models/ai_info_request_model.dart';
+import 'package:seren_ai_flutter/services/ai_interaction/ai_request/models/ai_request_model.dart';
 import 'package:seren_ai_flutter/services/ai_interaction/widgets/ai_results_widget.dart';
 import 'package:seren_ai_flutter/services/speech_to_text/widgets/speech_state_control_button_widget.dart';
 import 'package:seren_ai_flutter/services/speech_to_text/widgets/speech_transcribed_widget.dart';
@@ -47,6 +52,7 @@ class UserInputDisplayWidget extends ConsumerWidget {
                   );
                 },
               ),
+              const TestAiWidget(),
               const AiResultsWidget(),
               const SpeechTranscribedWidget(),
               const SpeechStateControlButtonWidget(),
@@ -63,6 +69,51 @@ class UserInputDisplayWidget extends ConsumerWidget {
             ],
           ),
         ),
+      ),
+    );
+  }
+}
+
+class TestAiWidget extends HookConsumerWidget {
+  const TestAiWidget({super.key});
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+
+    final responseState = useState<String?>(null);
+
+
+    final requestShiftInfo = AiInfoRequestModel(infoRequestType: AiInfoRequestType.currentShift);
+
+    final requestClockIn = AiActionRequestModel(actionRequestType: AiActionRequestType.clockIn);
+
+    final requestClockOut = AiActionRequestModel(actionRequestType: AiActionRequestType.clockOut);
+
+    final List<AiRequestModel> testToolResponses = [requestShiftInfo, requestClockOut];
+
+    return Container(
+      decoration: BoxDecoration(
+        border: Border.all(color: Colors.blue, width: 2), // Draw border
+        borderRadius: BorderRadius.circular(8), // Optional: rounded corners
+      ),
+      padding: const EdgeInsets.all(8), // Optional: padding inside the container
+      child: Column(
+        children: [
+          ElevatedButton(
+            onPressed: () async {
+              try {
+                final results = await ref.read(aiRequestExecutorProvider).executeAiRequests(testToolResponses);
+                responseState.value = results.map((result) => result.message).join('\n');
+              } catch (e) {
+                responseState.value = e.toString();
+              }
+            },
+            child: const Text('Test AI'),
+          ),
+          if (responseState.value != null) ...[
+            const SizedBox(height: 16),
+            Text('Response: ${responseState.value}'),
+          ],
+        ],
       ),
     );
   }
