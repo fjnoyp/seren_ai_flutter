@@ -16,7 +16,9 @@ class AiResultsWidget extends HookConsumerWidget {
     final isVisible = useState(lastAiMessages.isNotEmpty);
 
     useEffect(() {
-      if (lastAiMessages.isNotEmpty) {
+      if (lastAiMessages.isEmpty) {
+        isVisible.value = false;
+      } else {
         isVisible.value = true;
       }
       return null;

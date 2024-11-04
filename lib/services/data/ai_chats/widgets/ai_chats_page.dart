@@ -21,7 +21,6 @@ class AIChatsPage extends HookConsumerWidget {
 
     return ListView(
       children: [
-        const TestAiWidget(),
         TextField(
           controller: messageController,
           decoration: InputDecoration(
@@ -46,50 +45,7 @@ class AIChatsPage extends HookConsumerWidget {
   }
 }
 
-class TestAiWidget extends HookConsumerWidget {
-  const TestAiWidget({super.key});
-  @override
-  Widget build(BuildContext context, WidgetRef ref) {
 
-    final responseState = useState<String?>(null);
-
-
-    final requestShiftInfo = AiInfoRequestModel(infoRequestType: AiInfoRequestType.currentShift);
-
-    final requestClockIn = AiActionRequestModel(actionRequestType: AiActionRequestType.clockIn);
-
-    final requestClockOut = AiActionRequestModel(actionRequestType: AiActionRequestType.clockOut);
-
-    final List<AiRequestModel> testToolResponses = [requestShiftInfo, requestClockOut];
-
-    return Container(
-      decoration: BoxDecoration(
-        border: Border.all(color: Colors.blue, width: 2), // Draw border
-        borderRadius: BorderRadius.circular(8), // Optional: rounded corners
-      ),
-      padding: const EdgeInsets.all(8), // Optional: padding inside the container
-      child: Column(
-        children: [
-          ElevatedButton(
-            onPressed: () async {
-              try {
-                final results = await ref.read(aiRequestExecutorProvider).executeAiRequests(testToolResponses);
-                responseState.value = results.map((result) => result.message).join('\n');
-              } catch (e) {
-                responseState.value = e.toString();
-              }
-            },
-            child: const Text('Test AI'),
-          ),
-          if (responseState.value != null) ...[
-            const SizedBox(height: 16),
-            Text('Response: ${responseState.value}'),
-          ],
-        ],
-      ),
-    );
-  }
-}
 
 class ChatThreadDisplay extends ConsumerWidget {
   const ChatThreadDisplay({Key? key}) : super(key: key);
