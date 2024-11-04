@@ -1,5 +1,5 @@
 {
-    "@_": {"description": "Home Page"},
+    "@_": {"description": "General/Common"},
     "welcome": "Welcome,\n{userName}!",
     "@welcome": {
         "placeholders": {
@@ -9,8 +9,54 @@
             }
         }
     },
+    "save": "Save",
+    "cancel": "Cancel",
+    "delete": "Delete",
+    "edit": "Edit",
+    "error": "Error: {error}",
+    "@error": {
+        "placeholders": {
+            "error": {"type": "String"}
+        }
+    },
+    "back": "Back",
+    "menu": "Menu",
+    "moreOptions": "More Options",
+    "home": "Home",
+    "settings": "Settings",
+    "account": "Account",
+    "email": "Email",
+    "notAvailable": "N/A",
+    "unknownError": "Unknown error",
+    "userNotAuthenticated": "Error: Current user is not authenticated.",
+    "actionRequired": "Action required",
+    "noEmailFound": "No email or email not found",
+    "noDescription": "No description",
+    "app": "App",
+    "colorScheme": "Color Scheme",
+    "system": "System",
+    "light": "Light", 
+    "dark": "Dark",
+    "about": "About",
+    "enterText": "Enter Text",
+    "enterTextHere": "Enter text here...",
+    "testSQL": "Test SQL",
 
-    "@_": {"description": "AI Chats Page"},
+    "@_": {"description": "Authentication"},
+    "signInUp": "Sign In/Up",
+    "termsAndConditions": "Terms and Conditions",
+    "username": "Username",
+    "pleaseEnterSomething": "Please enter something",
+    "iHaveReadAndAgreeToThe": "I have read and agree to the ",
+    "noAuthUser": "No Auth User",
+    "subscription": "Subscription",
+    "premium": "Premium",
+    "signOut": "Sign Out",
+
+    "@_": {"description": "AI Chat"},
+    "aiAssistant": "AI Assistant",
+    "aiChatThreads": "AI Chat Threads",
+    "chat": "Chat",
     "noChatThreadAvailable": "No chat thread available",
     "noMessagesAvailable": "No messages available",
     "messageType": "Type: {messageType}",
@@ -24,8 +70,25 @@
     },
     "collapse": "Collapse",
     "expand": "Expand",
+    "saySomething": "Say something...",
 
-    "@_": {"description": "Base Assignees Selection Field"},
+    "@_": {"description": "Organization"},
+    "chooseOrganization": "Choose Organization",
+    "waitingForOrgRoles": "Waiting for orgRoles to load...",
+    "noOrganizations": "No organizations available",
+    "errorCannotLoadOrg": "Error cannot load organization",
+    "noOrgSelected": "Error - No org selected. Wrap with OrgGuard",
+    "noUsersInOrg": "No users found in this organization.",
+    "orgAdminManageOrgUsers": "Org Admin - Manage Org Users",
+
+    "@_": {"description": "Projects"},
+    "project": "Project",
+    "projects": "Projects",
+    "selectAProject": "Select a Project",
+    "personal": "Personal",
+    "projectIsRequired": "Project is required",
+    "noProjectsFound": "No projects found",
+    "loadingProjects": "Loading projects...",
     "onlyUsersInProjectCanBeAssigned": "Only users in {projectName} can be assigned",
     "@onlyUsersInProjectCanBeAssigned": {
         "placeholders": {
@@ -37,8 +100,6 @@
     },
     "onlyUsersIn": "Only users in ",
     "canBeAssigned": " can be assigned",
-    "chooseAssignees": "Choose Assignees",
-    "save": "Save",
     "addUsersTo": "Add Users to {projectName}",
     "@addUsersTo": {
         "placeholders": {
@@ -49,39 +110,55 @@
         }
     },
 
-    "@_": {"description": "Base Project Selection Field"},
-    "project": "Project",
-    "selectAProject": "Select a Project",
-    "personal": "Personal",
-    "projectIsRequired": "Project is required",
-
-    "@_": {"description": "Base Team Selection Field"},
+    "@_": {"description": "Teams"},
     "team": "Team",
     "selectATeam": "Select a Team",
     "teamIsRequired": "Team is required",
+    "noTeamSelected": "Error - No team selected.",
+    "selectATeamDropdown": "Select a team",
+    "noUsersInTeam": "No users found in this team.",
+    "noEmailOrNotFound": "No email or email not found",
 
-    "@_": {"description": "Base Text Block Edit Selection Field"},
-    "enterTextHere": "Enter text here...",
-    "enterText": "Enter Text",
-
-    "@_": {"description": "Note Page"},
+    "@_": {"description": "Notes"},
+    "notes": "Notes",
     "updateNote": "Update Note",
     "createNote": "Create Note",
-    "edit": "Edit",
     "deleteNote": "Delete Note",
-    "userNotAuthenticated": "Error: Current user is not authenticated.",
-    "actionRequired": "Action required",
-
-    "@_": {"description": "Notes List Page"},
-    "loadingProjects": "Loading projects...",
     "createNewNote": "Create New Note",
     "thisProjectHasNoNotes": "This project has no notes yet",
+    "noNotes": "No notes",
+    "saveNoteToProject": "Save note to {projectName}?",
+    "@saveNoteToProject": {
+        "placeholders": {
+            "projectName": {
+                "type": "String",
+                "example": "Project 1"
+            }
+        }
+    },
+    "pdfPersonal": "Personal",
+    "pdfCreatedBy": "Created by {email} on {date}",
+    "@pdfCreatedBy": {
+        "placeholders": {
+            "email": {"type": "String"},
+            "date": {"type": "String"}
+        }
+    },
+    "pdfStatus": "Status: {status}",
+    "@pdfStatus": {
+        "placeholders": {
+            "status": {"type": "String"}
+        }
+    },
+    "pdfDescription": "Description",
+    "pdfAddress": "Address",
+    "pdfActionRequired": "Action Required",
+    "pdfImageAttachments": "Image attachments",
+    "pdfOtherAttachments": "Other attachments",
 
-    "@_": {"description": "Note Attachment Section"},
+    "@_": {"description": "Note Attachments"},
     "addAttachment": "Add Attachment",
     "photosPermissionDenied": "Photos permission denied",
-    "delete": "Delete",
-    "cancel": "Cancel",
     "deleteAttachment": "Delete {fileName}?",
     "@deleteAttachment": {
         "placeholders": {
@@ -94,21 +171,8 @@
     "notAbleToPreview": "Not able to preview this file.\n You can try opening it locally.",
     "openFile": "Open file",
 
-    "@_": {"description": "Choose Org Page"},
-    "waitingForOrgRoles": "Waiting for orgRoles to load...",
-    "noOrganizations": "No organizations available",
-    "errorCannotLoadOrg": "Error cannot load organization",
-
-    "@_": {"description": "Manage Org Users Page"},
-    "noOrgSelected": "Error - No org selected. Wrap with OrgGuard",
-    "noUsersInOrg": "No users found in this organization.",
-    "noEmailFound": "No email or email not found",
-
-    "@_": {"description": "Projects Page"},
-    "noProjectsFound": "No projects found",
-    "noDescription": "No description",
-
-    "@_": {"description": "Shifts Page"},
+    "@_": {"description": "Shifts"},
+    "shifts": "Shifts",
     "noShifts": "No shifts",
     "noShiftLogs": "No shift logs",
     "noShiftsExclamation": "No shifts!",
@@ -126,23 +190,32 @@
         }
     },
     "ongoing": "Ongoing",
-    "menu": "Menu",
-    "back": "Back",
-    "moreOptions": "More Options",
-    "aiAssistant": "AI Assistant",
-    "home": "Home",
-    "chat": "Chat",
+    "clockInOut": "Clock in/out",
+    "startShift": "Start Shift",
+    "endShift": "End Shift",
+    "clockedInAt": "Clocked in at {time}",
+    "@clockedInAt": {
+        "placeholders": {
+            "time": {"type": "String"}
+        }
+    },
+    "todaysShift": "Today's Shift",
+    "noActiveShift": "No active shift",
+    "timeRange": "{startTime} to {endTime}",
+    "@timeRange": {
+        "placeholders": {
+            "startTime": {"type": "String"},
+            "endTime": {"type": "String"}
+        }
+    },
 
-    "@_": {"description": "Task Page"},
+    "@_": {"description": "Tasks"},
+    "tasks": "Tasks",
     "updateTask": "Update Task",
     "createTask": "Create Task",
     "deleteTask": "Delete Task",
-
-    "@_": {"description": "Task Comment Section"},
     "comments": "Comments",
     "addComment": "Add Comment",
-
-    "@_": {"description": "Task List Item View"},
     "lastUpdated": "Last updated: {date}",
     "@lastUpdated": {
         "placeholders": {
@@ -155,36 +228,27 @@
             "date": {"type": "String"}
         }
     },
-    "notAvailable": "N/A",
-
-    "@_": {"description": "Task Priority View"},
+    "chooseDueDate": "Choose a Due Date",
     "veryHigh": "Very High",
     "high": "High", 
     "normal": "Normal",
     "low": "Low",
     "veryLow": "Very Low",
-
-    "@_": {"description": "Task Status View"},
     "open": "Open",
     "inProgress": "In Progress",
     "finished": "Finished",
     "cancelled": "Cancelled", 
     "archived": "Archived",
+    "todaysTasks": "Today's Tasks",
+    "noTasksDueToday": "No tasks due today",
+    "seeAll": "See All",
+    "tasksListOpen": "Open",
+    "tasksListInProgress": "In Progress",
+    "tasksListFinished": "Finished",
+    "createNewTask": "Create New Task",
+    "chooseAssignees": "Choose Assignees",
 
-    "@_": {"description": "Manage Team Users Page"},
-    "noOrgSelectedWrapWithGuard": "Error - No org selected. Wrap with OrgGuard",
-    "error": "Error: {error}",
-    "@error": {
-        "placeholders": {
-            "error": {"type": "String"}
-        }
-    },
-    "noTeamSelected": "Error - No team selected.",
-    "selectATeamDropdown": "Select a team",
-    "noUsersInTeam": "No users found in this team.",
-    "noEmailOrNotFound": "No email or email not found",
-
-    "@_": {"description": "Speech State Control Button Widget"},
+    "@_": {"description": "Speech Recognition"},
     "unknownState": "Unknown state: {state}",
     "@unknownState": {
         "placeholders": {
@@ -197,84 +261,6 @@
             "error": {"type": "String"}
         }
     },
-
-    "@_": {"description": "Speech Transcribed Widget"},
-    "saySomething": "Say something...",
-
-    "@_": {"description": "Drawer View"},
-    "settings": "Settings",
-    "menu": "Menu",
-    "account": "Account",
-    "noAuthUser": "No Auth User",
-    "email": "Email",
-    "subscription": "Subscription",
-    "premium": "Premium",
-    "signOut": "Sign Out",
-    "app": "App",
-    "colorScheme": "Color Scheme",
-    "system": "System",
-    "light": "Light", 
-    "dark": "Dark",
-    "about": "About",
-    "home": "Home",
-    "chooseOrganization": "Choose Organization",
-    "orgAdminManageOrgUsers": "Org Admin - Manage Org Users",
-    "projects": "Projects",
-    "tasks": "Tasks",
-    "testSQL": "Test SQL",
-    "aiChatThreads": "AI Chat Threads",
-    "shifts": "Shifts",
-    "notes": "Notes",
-
-    "@_": {"description": "Clock In Out Card"},
-    "clockInOut": "Clock in/out",
-    "noShifts": "No shifts",
-    "startShift": "Start Shift",
-    "endShift": "End Shift",
-    "clockedInAt": "Clocked in at {time}",
-    "@clockedInAt": {
-        "placeholders": {
-            "time": {"type": "String"}
-        }
-    },
-
-    "@_": {"description": "Notes Home Card"},
-    "noNotes": "No notes",
-
-    "@_": {"description": "Shift Home Card"},
-    "todaysShift": "Today's Shift",
-    "noActiveShift": "No active shift",
-    "timeRange": "{startTime} to {endTime}",
-    "@timeRange": {
-        "placeholders": {
-            "startTime": {"type": "String"},
-            "endTime": {"type": "String"}
-        }
-    },
-
-    "@_": {"description": "Task Home Card"},
-    "todaysTasks": "Today's Tasks",
-    "noTasksDueToday": "No tasks due today",
-    "seeAll": "See All",
-
-    "@_": {"description": "Sign In Up Page"},
-    "signInUp": "Sign In/Up",
-    "termsAndConditions": "Terms and Conditions",
-    "username": "Username",
-    "pleaseEnterSomething": "Please enter something",
-    "iHaveReadAndAgreeToThe": "I have read and agree to the ",
-
-    "@_": {"description": "Main Scaffold"},
-    "menu": "Menu",
-    "back": "Back",
-    "moreOptions": "More options",
-    "aiAssistant": "AI Assistant",
-    "chat": "Chat",
-    "unknownError": "Unknown error",
-    "saySomething": "Say something...",
-
-    "@_": {"description": "Base Due Date Selection Field"},
-    "chooseDueDate": "Choose a Due Date",
 
     "@_": {"description": "Duration Formatting"},
     "durationFormat": "{hours}:{minutes} hours",
@@ -301,49 +287,5 @@
             }
         }
     },
-    "zeroHours": "0 hours",
-
-    "@_": {"description": "PDF From Note"},
-    "pdfPersonal": "Personal",
-    "pdfCreatedBy": "Created by {email} on {date}",
-    "@pdfCreatedBy": {
-        "placeholders": {
-            "email": {
-                "type": "String"
-            },
-            "date": {
-                "type": "String"
-            }
-        }
-    },
-    "pdfStatus": "Status: {status}",
-    "@pdfStatus": {
-        "placeholders": {
-            "status": {
-                "type": "String"
-            }
-        }
-    },
-    "pdfDescription": "Description",
-    "pdfAddress": "Address",
-    "pdfActionRequired": "Action Required",
-    "pdfImageAttachments": "Image attachments",
-    "pdfOtherAttachments": "Other attachments",
-
-    "@_": {"description": "Tasks List Page"},
-    "tasksListOpen": "Open",
-    "tasksListInProgress": "In Progress",
-    "tasksListFinished": "Finished",
-    "createNewTask": "Create New Task",
-
-    "@_": {"description": "Note Save Dialog"},
-    "saveNoteToProject": "Save note to {projectName}?",
-    "@saveNoteToProject": {
-        "placeholders": {
-            "projectName": {
-                "type": "String",
-                "example": "Project 1"
-            }
-        }
-    }
+    "zeroHours": "0 hours"
 }
