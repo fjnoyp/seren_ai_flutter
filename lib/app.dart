@@ -25,7 +25,6 @@ import 'package:seren_ai_flutter/services/data/tasks/widgets/tasks_list_page.dar
 import 'package:seren_ai_flutter/widgets/test_page.dart';
 import 'package:seren_ai_flutter/widgets/test_sql_page.dart';
 import 'package:seren_ai_flutter/widgets/common/theme_data.dart';
-import 'package:supabase_flutter/supabase_flutter.dart';
 
 final log = Logger('App');
 
@@ -56,9 +55,6 @@ class AppState extends State<App> {
         ref.read(curShiftStateProvider);
 
         //final firstUserValue = ref.read(curAuthUserProvider);
-        final initialRoute = Supabase.instance.client.auth.currentUser == null
-            ? signInUpRoute
-            : tasksRoute;
 
         final themeMode = ref.watch(themeSNP);
 
@@ -66,7 +62,7 @@ class AppState extends State<App> {
           theme: lightTheme,
           darkTheme: darkTheme,
           themeMode: themeMode,
-          initialRoute: initialRoute,
+          initialRoute: homeRoute,
           routes: {
             signInUpRoute: (context) => Scaffold(
                 appBar: AppBar(title: Text(AppLocalizations.of(context)!.signInUp), centerTitle: true),

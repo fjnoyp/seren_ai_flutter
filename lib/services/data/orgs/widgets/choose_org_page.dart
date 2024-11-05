@@ -1,59 +1,58 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:seren_ai_flutter/services/data/orgs/cur_org/cur_user_org_id_provider.dart';
-import 'package:seren_ai_flutter/services/data/orgs/cur_org/joined_cur_user_org_roles_listener_provider.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+import 'package:seren_ai_flutter/services/data/orgs/providers/cur_org_dependency_provider.dart';
+import 'package:seren_ai_flutter/services/data/orgs/providers/cur_user_org_roles_provider.dart';
+import 'package:seren_ai_flutter/services/data/orgs/providers/cur_user_org_service_provider.dart';
 
 class ChooseOrgPage extends ConsumerWidget {
   const ChooseOrgPage({super.key});
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final orgRoles = ref.watch(joinedCurUserOrgRolesListenerProvider);
-    final curOrgId = ref.watch(curUserOrgIdProvider);
-
-    if(orgRoles == null) {
-      return Center(
-        child: Text(AppLocalizations.of(context)!.waitingForOrgRoles),
-      );      
-    }
+    final curOrgId = ref.watch(curOrgDependencyProvider);
+    final orgRoles = ref.watch(joinedCurUserRolesProvider);
 
     final theme = Theme.of(context);
 
-    return orgRoles.isEmpty
-          ? Center(child: Text(AppLocalizations.of(context)!.noOrganizations))
-          : ListView.builder(
-              itemCount: orgRoles.length,
-              itemBuilder: (context, index) {
-                final orgRole = orgRoles[index];
+    return orgRoles.valueOrNull == null
+        ? Center(child: Text(AppLocalizations.of(context)!.noOrganizations))
+        : ListView.builder(
+            itemCount: orgRoles.valueOrNull!.length,
+            itemBuilder: (context, index) {
+              final orgRole = orgRoles.valueOrNull![index];
 
-                final orgModel = orgRole.org; 
-                final orgRoleModel = orgRole.orgRole;
+              final orgModel = orgRole.org;
+              final orgRoleModel = orgRole.orgRole;
 
-                if(orgModel == null) {
-                  return Text(AppLocalizations.of(context)!.errorCannotLoadOrg);
-                }
+              if (orgModel == null) {
+                return Text(AppLocalizations.of(context)!.errorCannotLoadOrg);
+              }
 
+              final isSelected = curOrgId == orgModel.id;
 
-                final isSelected = curOrgId == orgModel.id;
-
-                return Container(
-                  margin: const EdgeInsets.symmetric(vertical: 8.0, horizontal: 16.0),
-                  decoration: BoxDecoration(
-                    border: Border.all(color: Colors.grey),
-                    borderRadius: BorderRadius.circular(8.0),
-                    color: isSelected ? theme.colorScheme.primary : Colors.transparent,
-                  ),
-                  child: ListTile(
-                    contentPadding: const EdgeInsets.all(16.0),
-                    title: Center(child: Text(orgModel.name)),
-                    subtitle: Center(child: Text(orgRoleModel.orgRole)),
-                    onTap: () {
-                      ref.read(curUserOrgIdProvider.notifier).setDesiredOrgId(orgModel.id);
-                    },
-                  ),
-                );
-              },
-      );
+              return Container(
+                margin:
+                    const EdgeInsets.symmetric(vertical: 8.0, horizontal: 16.0),
+                decoration: BoxDecoration(
+                  border: Border.all(color: Colors.grey),
+                  borderRadius: BorderRadius.circular(8.0),
+                  color: isSelected
+                      ? theme.colorScheme.primary
+                      : Colors.transparent,
+                ),
+                child: ListTile(
+                  contentPadding: const EdgeInsets.all(16.0),
+                  title: Center(child: Text(orgModel.name)),
+                  subtitle: Center(child: Text(orgRoleModel.orgRole)),
+                  onTap: () {
+                    ref
+                        .read(curUserOrgServiceProvider)
+                        .setDesiredOrgId(orgModel.id);
+                  },
+                ),
+              );
+            },
+          );
   }
 }
