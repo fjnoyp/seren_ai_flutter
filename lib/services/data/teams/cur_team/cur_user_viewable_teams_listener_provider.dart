@@ -7,7 +7,7 @@
 
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:seren_ai_flutter/services/data/db_setup/db_provider.dart';
-import 'package:seren_ai_flutter/services/data/orgs/cur_org/cur_org_id_provider.dart';
+import 'package:seren_ai_flutter/services/data/orgs/cur_org/cur_user_org_id_provider.dart';
 import 'package:seren_ai_flutter/services/data/orgs/cur_org/is_cur_user_org_admin_listener_provider.dart';
 import 'package:seren_ai_flutter/services/data/teams/cur_team/joined_cur_user_team_assignments_listener_provider.dart';
 import 'package:seren_ai_flutter/services/data/teams/models/team_model.dart';
@@ -23,7 +23,7 @@ class CurUserViewableTeamsListenerProvider extends Notifier<List<TeamModel>?> {
         ref.watch(isCurUserOrgAdminListenerProvider);
 
     if (watchedIsCurUserOrgAdmin) {
-      final watchedCurOrgId = ref.watch(curOrgIdProvider);
+      final watchedCurOrgId = ref.watch(curUserOrgIdProvider);
       final query =
           "SELECT * FROM teams WHERE parent_org_id = '$watchedCurOrgId'";
 

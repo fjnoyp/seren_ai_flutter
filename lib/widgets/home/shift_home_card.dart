@@ -2,53 +2,51 @@ import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:intl/intl.dart';
+import 'package:seren_ai_flutter/common/utils/date_time_extension.dart';
 import 'package:seren_ai_flutter/constants.dart';
-import 'package:seren_ai_flutter/services/data/shifts/cur_shifts/cur_user_active_shift_ranges_fam_provider.dart';
-import 'package:seren_ai_flutter/services/data/shifts/cur_shifts/cur_user_joined_shifts_listener_provider.dart';
+import 'package:seren_ai_flutter/services/data/common/widgets/async_value_handler_widget.dart';
+
+import 'package:seren_ai_flutter/services/data/shifts/providers/shift_time_ranges_providers.dart';
+
 import 'package:seren_ai_flutter/widgets/home/base_home_card.dart';
 
-class ShiftCard extends StatelessWidget {
+class ShiftCard extends ConsumerWidget {
   const ShiftCard({super.key});
-
+  
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
     return BaseHomeCard(
       title: AppLocalizations.of(context)!.todaysShift,
       color: Theme.of(context).colorScheme.primaryContainer,
       child: Center(
-        child: Consumer(
-          builder: (context, ref, child) {
-            // TODO: refactor to use handable states - activeShiftRanges state is acting weird
-            final joinedShifts = ref.watch(curUserJoinedShiftsListenerProvider);
-            final activeShiftRanges = ref.watch(
-                curUserActiveShiftRangesFamProvider((
-              shiftId: joinedShifts?.first.shift.id ?? '',
-              day: DateTime.now().toUtc()
-            )));
-            return switch (joinedShifts) {
-              null => const CircularProgressIndicator(),
-              [] => Text(AppLocalizations.of(context)!.noShifts),
-              List() => activeShiftRanges.isNotEmpty
-                  ? InkWell(
-                      onTap: () => Navigator.of(context).pushNamed(shiftsRoute),
-                      child: _ShiftInnerCard(activeShiftRanges),
-                    )
-                  : Text(AppLocalizations.of(context)!.noActiveShift),
-            };
-          },
+        child: AsyncValueHandlerWidget<List<DateTimeRange>>(
+          value: ref.watch(curUserShiftTimeRangesProvider(
+            (day: DateTime.now().dateOnlyUTC())
+          )),
+          data: (ranges) {
+            
+            if (ranges.isEmpty) {
+              return const Text('No active shift ranges for today');
+            }
+
+            return InkWell(
+              onTap: () => Navigator.of(context).pushNamed(shiftsRoute),
+              child: _ShiftInnerCard(ranges),
+            );
+          },          
         ),
       ),
     );
   }
 }
 
-class _ShiftInnerCard extends ConsumerWidget {
+class _ShiftInnerCard extends StatelessWidget {
   const _ShiftInnerCard(this.activeShiftRanges);
 
   final List<DateTimeRange> activeShiftRanges;
 
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
+  Widget build(BuildContext context) {
     return Card(
       color: Theme.of(context).colorScheme.primary,
       shape: RoundedRectangleBorder(

@@ -23,10 +23,10 @@ class TaskCommentsModel implements IHasId {
 
   final String? content;
 
-  @JsonKey(name: 'start_date_time')
+  @JsonKey(name: 'start_datetime')
   final DateTime? startDateTime;
 
-  @JsonKey(name: 'end_date_time')
+  @JsonKey(name: 'end_datetime')
   final DateTime? endDateTime;
 
   TaskCommentsModel({

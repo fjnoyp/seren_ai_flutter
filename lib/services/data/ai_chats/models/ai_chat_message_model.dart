@@ -1,4 +1,6 @@
 import 'package:json_annotation/json_annotation.dart';
+import 'package:seren_ai_flutter/services/ai_interaction/last_ai_message_listener_provider.dart';
+import 'package:seren_ai_flutter/services/ai_interaction/ai_request/models/ai_request_model.dart';
 import 'package:seren_ai_flutter/services/data/common/i_has_id.dart';
 import 'package:seren_ai_flutter/services/data/common/uuid.dart';
 import 'dart:convert';
@@ -8,7 +10,7 @@ part 'ai_chat_message_model.g.dart';
 enum AiChatMessageType { ai, user, tool }
 
 @JsonSerializable()
-class AiChatMessageModel implements IHasId {
+class AiChatMessageModel extends AiResult implements IHasId  {
   @override
   final String id;
   @JsonKey(name: 'type')
@@ -20,8 +22,8 @@ class AiChatMessageModel implements IHasId {
   @JsonKey(name: 'parent_lg_run_id')
   final String? parentLgRunId;
 
-  @JsonKey(name: 'additional_kwargs', fromJson: _parseAdditionalKwargs)
-  final Map<String, dynamic>? additionalKwargs;
+  //@JsonKey(name: 'additional_kwargs', fromJson: _parseAdditionalKwargs)
+  //final Map<String, dynamic>? additionalKwargs;
 
   AiChatMessageModel({
     String? id,
@@ -29,7 +31,7 @@ class AiChatMessageModel implements IHasId {
     required this.content,
     required this.parentChatThreadId,
     this.parentLgRunId,
-    this.additionalKwargs,
+    //this.additionalKwargs,
   }) : id = id ?? uuid.v4();
 
   // Factory constructor for creating a AiChatMessage with default values
@@ -41,13 +43,28 @@ class AiChatMessageModel implements IHasId {
     );
   }
 
+  bool isAiRequest() {
+    return type == AiChatMessageType.tool && 
+    content.contains('request_type');
+  }
+
+  List<AiRequestModel>? getAiRequests() {
+    if (isAiRequest()) {
+      final List<dynamic> decoded = json.decode(content) as List<dynamic>;
+      return decoded
+          .map((item) => AiRequestModel.fromJson(item as Map<String, dynamic>))
+          .toList();
+    }
+    return null;
+  }
+
   AiChatMessageModel copyWith({
     String? id,
     AiChatMessageType? type,
     String? content,
     String? parentChatThreadId,
     String? parentLgRunId,
-    Map<String, dynamic>? additionalKwargs,
+    //Map<String, dynamic>? additionalKwargs,
   }) {
     return AiChatMessageModel(
       id: id ?? this.id,
@@ -55,7 +72,7 @@ class AiChatMessageModel implements IHasId {
       content: content ?? this.content,
       parentChatThreadId: parentChatThreadId ?? this.parentChatThreadId,
       parentLgRunId: parentLgRunId ?? this.parentLgRunId,
-      additionalKwargs: additionalKwargs ?? this.additionalKwargs,
+      //additionalKwargs: additionalKwargs ?? this.additionalKwargs,
     );
   }
 
@@ -65,18 +82,4 @@ class AiChatMessageModel implements IHasId {
 
   factory AiChatMessageModel.fromJson(Map<String, dynamic> json) => _$AiChatMessageModelFromJson(json);
   Map<String, dynamic> toJson() => _$AiChatMessageModelToJson(this);
-
-  static Map<String, dynamic>? _parseAdditionalKwargs(dynamic value) {
-    if (value is Map<String, dynamic>) {
-      return value;
-    } else if (value is String) {
-      try {
-        return jsonDecode(value) as Map<String, dynamic>;
-      } catch (e) {
-        print('Error parsing additional_kwargs: $e');
-        return null;
-      }
-    }
-    return null;
-  }
 }

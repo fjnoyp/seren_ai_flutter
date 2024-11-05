@@ -1,8 +1,28 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:seren_ai_flutter/services/auth/auth_states.dart';
 import 'package:seren_ai_flutter/services/data/db_setup/db_provider.dart';
 import 'package:seren_ai_flutter/services/data/users/models/user_model.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
+
+sealed class AppAuthState {}
+
+class InitialAuthState extends AppAuthState {}
+
+class LoadingAuthState extends AppAuthState {}
+
+class LoggedInAuthState extends AppAuthState {
+  final UserModel user;
+
+  LoggedInAuthState(this.user);
+}
+
+class LoggedOutAuthState extends AppAuthState {}
+
+class ErrorAuthState extends AppAuthState {
+  final String error;
+
+  ErrorAuthState({required this.error});
+}
+
 
 final curAuthStateProvider =
     NotifierProvider<CurAuthUserNotifier, AppAuthState>(
@@ -19,6 +39,13 @@ class CurAuthUserNotifier extends Notifier<AppAuthState> {
     });
 
     return InitialAuthState();
+  }
+
+  UserModel? getCurrentUser() {
+    return switch (state) {
+      LoggedInAuthState(user: final user) => user,
+      _ => null,
+    };
   }
 
   Future<void> _updateUser(User? user) async {
