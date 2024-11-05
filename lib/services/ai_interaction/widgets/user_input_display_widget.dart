@@ -17,13 +17,15 @@ final textFieldVisibilityProvider = StateProvider<bool>((ref) => false);
 /// Class to display user's voice input or manual text input
 ///
 class UserInputDisplayWidget extends ConsumerWidget {
-  const UserInputDisplayWidget({super.key});
+  const UserInputDisplayWidget(this.isAiAssistantExpanded, {super.key});
+
+  final ValueNotifier<bool> isAiAssistantExpanded;
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final isTextFieldVisible = ref.watch(textFieldVisibilityProvider);
     final theme = Theme.of(context);
-    
+
     // Get the height of the keyboard
     final keyboardHeight = MediaQuery.of(context).viewInsets.bottom;
 
@@ -40,6 +42,13 @@ class UserInputDisplayWidget extends ConsumerWidget {
           child: Column(
             mainAxisSize: MainAxisSize.min,
             children: [
+              Align(
+                alignment: Alignment.topRight,
+                child: IconButton(
+                  onPressed: () => isAiAssistantExpanded.value = false,
+                  icon: const Icon(Icons.close),
+                ),
+              ),
               Consumer(
                 builder: (context, ref, child) {
                   final isAiResponding = ref.watch(isAiRespondingProvider);
@@ -55,11 +64,12 @@ class UserInputDisplayWidget extends ConsumerWidget {
               const TestAiWidget(),
               const AiResultsWidget(),
               const SpeechTranscribedWidget(),
-              const SpeechStateControlButtonWidget(),
-              UserInputTextDisplayWidget(),
+              ref.read(textFieldVisibilityProvider.notifier).state
+                  ? UserInputTextDisplayWidget()
+                  : const SpeechStateControlButtonWidget(),
               SizedBox(height: keyboardHeight), // Add space for the keyboard
               IconButton(
-                icon: Icon(isTextFieldVisible ? Icons.cancel : Icons.keyboard),
+                icon: Icon(isTextFieldVisible ? Icons.mic : Icons.keyboard),
                 onPressed: () {
                   ref.read(textFieldVisibilityProvider.notifier).state =
                       !isTextFieldVisible;
