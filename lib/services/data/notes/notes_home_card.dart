@@ -13,10 +13,11 @@ class NotesCard extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final curUser = (ref.read(curAuthStateProvider) as LoggedInAuthState).user;
+    final curUser = ref.read(curUserProvider).value;
     // TODO: maybe we should show personal notes here too
     // TODO: sort list to pick the most recent ones
-    final notes = ref.watch(notesListenerFamProvider(curUser.defaultProjectId));
+    final notes =
+        ref.watch(notesListenerFamProvider(curUser?.defaultProjectId));
 
     // TODO: refactor to use handable error state
     return BaseHomeCard(

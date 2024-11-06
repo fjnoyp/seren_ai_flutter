@@ -1,13 +1,3 @@
-# Structure
-
-We adopt a service gropuing architecture, whereby services group the full stack functionality for a given feature. 
-
-For example, the data/ai_chats folder contains the data models, frontend widgets, and db service providers for accessing the data of ai_chats. 
-
-If needed, each service folder should ideally be able to become its own standalone flutter module. 
-
-When separating modules, think in terms of discrete use cases and reduce amount of cross module imports. 
-
 Powersync is used to sync the data between the client and the Supabase database. Thus raw SQL can be used to query the data and with proper sync rules setup in Powersync, users will not be able to see unauthed data. 
 
 Miro Board: 
@@ -20,19 +10,6 @@ https://www.figma.com/design/WD79K7Z9YAXc8SwoTU5r0n/Figma-basics?node-id=1669-16
 
 Basic AI Flows: 
 https://docs.google.com/document/d/1MAOogPCurlaLiia1DLNlKJt969z6Xy0RG4gjaaeKM1g/edit?usp=sharing
-
-#### Organizing Widgets
-
-Widgets that use multiple data classes should exist in the top level widgets folder. 
-Ideally all likewise widgets should be grouped together in sub folders. 
-
-Widgets that only display data of a specific table can exist in the data folder (ie. data/ai_chats/widgest/ai_chat_threads_page.dart) 
-
-#### data/
-Contains all classes for interacting with postgres data tables. 
-
-#### ai_interaction/
-Classes for interacting with LLM 
 
 # AI Interactions
 
