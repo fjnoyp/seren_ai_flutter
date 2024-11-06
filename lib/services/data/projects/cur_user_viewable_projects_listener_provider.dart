@@ -1,18 +1,18 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:seren_ai_flutter/services/data/orgs/cur_org/cur_user_org_id_provider.dart';
-import 'package:seren_ai_flutter/services/data/orgs/cur_org/is_cur_user_org_admin_listener_provider.dart';
+import 'package:seren_ai_flutter/services/data/orgs/providers/cur_org_dependency_provider.dart';
+import 'package:seren_ai_flutter/services/data/orgs/providers/is_cur_user_org_admin_listener_provider.dart';
 import 'package:seren_ai_flutter/services/data/projects/cur_user_projects_listener_provider.dart';
 import 'package:seren_ai_flutter/services/data/projects/models/project_model.dart';
 import 'package:seren_ai_flutter/services/data/projects/projects_listener_fam_provider.dart';
 
 final curUserViewableProjectsListenerProvider =
     Provider<List<ProjectModel>?>((ref) {
-  final watchedIsCurUserOrgAdmin = ref.watch(isCurUserOrgAdminListenerProvider);
+  final watchedIsCurUserOrgAdmin = ref.watch(isCurUserOrgAdminProvider);
 
-  if (watchedIsCurUserOrgAdmin) {
-    final watchedCurOrgId = ref.watch(curUserOrgIdProvider);
+  if (watchedIsCurUserOrgAdmin.valueOrNull == true) {
+    final watchedCurOrgId = ref.watch(curOrgDependencyProvider);
 
-    if(watchedCurOrgId == null) {
+    if (watchedCurOrgId == null) {
       return [];
     }
 

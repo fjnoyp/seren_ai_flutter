@@ -3,34 +3,13 @@ import 'package:seren_ai_flutter/services/data/db_setup/db_provider.dart';
 import 'package:seren_ai_flutter/services/data/users/models/user_model.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
-sealed class AppAuthState {}
+final curUserProvider =
+    NotifierProvider<CurUserNotifier, AsyncValue<UserModel?>>(
+        CurUserNotifier.new);
 
-class InitialAuthState extends AppAuthState {}
-
-class LoadingAuthState extends AppAuthState {}
-
-class LoggedInAuthState extends AppAuthState {
-  final UserModel user;
-
-  LoggedInAuthState(this.user);
-}
-
-class LoggedOutAuthState extends AppAuthState {}
-
-class ErrorAuthState extends AppAuthState {
-  final String error;
-
-  ErrorAuthState({required this.error});
-}
-
-
-final curAuthStateProvider =
-    NotifierProvider<CurAuthUserNotifier, AppAuthState>(
-        CurAuthUserNotifier.new);
-
-class CurAuthUserNotifier extends Notifier<AppAuthState> {
+class CurUserNotifier extends Notifier<AsyncValue<UserModel?>> {
   @override
-  AppAuthState build() {
+  AsyncValue<UserModel?> build() {
     final authUser = Supabase.instance.client.auth.currentUser;
     _updateUser(authUser);
 
@@ -38,29 +17,22 @@ class CurAuthUserNotifier extends Notifier<AppAuthState> {
       _updateUser(data.session?.user);
     });
 
-    return InitialAuthState();
-  }
-
-  UserModel? getCurrentUser() {
-    return switch (state) {
-      LoggedInAuthState(user: final user) => user,
-      _ => null,
-    };
+    return const AsyncValue.loading();
   }
 
   Future<void> _updateUser(User? user) async {
     if (user?.id == null) {
-      state = LoggedOutAuthState();
+      state = const AsyncValue.data(null);
       return;
     }
 
-    state = LoadingAuthState();
+    state = const AsyncValue.loading();
 
     try {
       final userModel = await _convertAuthUserIdToUserModel(user!.id);
-      state = LoggedInAuthState(userModel);
+      state = AsyncValue.data(userModel);
     } catch (error) {
-      state = ErrorAuthState(error: error.toString());
+      state = AsyncValue.error(error.toString(), StackTrace.empty);
     }
   }
 
@@ -78,6 +50,6 @@ class CurAuthUserNotifier extends Notifier<AppAuthState> {
   Future<void> signOut() async {
     await Supabase.instance.client.auth.signOut();
     await ref.read(dbProvider).disconnectAndClear();
-    state = LoggedOutAuthState();
+    state = const AsyncValue.data(null);
   }
 }

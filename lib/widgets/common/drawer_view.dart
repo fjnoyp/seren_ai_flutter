@@ -38,11 +38,7 @@ class DrawerView extends HookWidget {
             ),
             Consumer(
               builder: (context, ref, child) {
-                final curAuthUserState = ref.watch(curAuthStateProvider);
-                final user = switch (curAuthUserState) {
-                  LoggedInAuthState() => curAuthUserState.user,
-                  _ => null,
-                };
+                final user = ref.watch(curUserProvider).value;
 
                 if (user == null) {
                   return Center(
@@ -67,8 +63,7 @@ class DrawerView extends HookWidget {
                     leading: const Icon(Icons.logout),
                     title: Text(AppLocalizations.of(context)!.signOut,
                         style: const TextStyle(fontWeight: FontWeight.bold)),
-                    onTap: () =>
-                        ref.read(curAuthStateProvider.notifier).signOut(),
+                    onTap: () => ref.read(curUserProvider.notifier).signOut(),
                   ),
                 ]);
               },

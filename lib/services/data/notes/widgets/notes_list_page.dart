@@ -16,8 +16,8 @@ class NoteListPage extends HookConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final curUser = (ref.read(curAuthStateProvider) as LoggedInAuthState).user;
-    final curProjectId = useState<String?>(curUser.defaultProjectId);
+    final curUser = ref.read(curUserProvider).value;
+    final curProjectId = useState<String?>(curUser?.defaultProjectId);
 
     return Column(
       children: [

@@ -27,16 +27,12 @@ class CurTaskNotifier extends Notifier<CurTaskState> {
   Future<void> setToNewTask() async {
     state = LoadingCurTaskState();
     try {
-      final curAuthUserState = ref.read(curAuthStateProvider);
-      if (switch (curAuthUserState) {
-        LoggedInAuthState() => curAuthUserState.user,
-        _ => null,
-      }
-          case final curUser?) {
+      if (ref.read(curUserProvider).value case final curUser?) {
         final defaultProject =
             await ref.read(projectsReadProvider).getItem(eqFilters: [
           {'key': 'id', 'value': curUser.defaultProjectId}
         ]);
+
         final newTask = JoinedTaskModel.empty().copyWith(
           authorUser: curUser,
           task: TaskModel.defaultTask().copyWith(
@@ -45,6 +41,7 @@ class CurTaskNotifier extends Notifier<CurTaskState> {
           ),
           project: defaultProject,
         );
+
         state = LoadedCurTaskState(newTask);
       } else {
         throw Exception('Error: Current user is not authenticated.');
@@ -134,11 +131,7 @@ class CurTaskNotifier extends Notifier<CurTaskState> {
   void addComment(String text) {
     if (state is LoadedCurTaskState) {
       final loadedState = state as LoadedCurTaskState;
-      final curAuthUserState = ref.read(curAuthStateProvider);
-      final curUser = switch (curAuthUserState) {
-        LoggedInAuthState() => curAuthUserState.user,
-        _ => null,
-      };
+      final curUser = ref.read(curUserProvider).value;
       final comment = TaskCommentsModel(
         authorUserId: curUser!.id,
         parentTaskId: loadedState.task.task.id,

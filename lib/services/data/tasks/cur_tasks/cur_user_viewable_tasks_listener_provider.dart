@@ -11,11 +11,7 @@ final curUserViewableTasksListenerProvider =
 class CurUserViewableTasksListenerNotifier extends Notifier<List<TaskModel>?> {
   @override
   List<TaskModel>? build() {
-    final curAuthUserState = ref.read(curAuthStateProvider);
-    final watchedCurAuthUser = switch (curAuthUserState) {
-      LoggedInAuthState() => curAuthUserState.user,
-      _ => null,
-    };
+    final watchedCurAuthUser = ref.read(curUserProvider).value;
 
     if (watchedCurAuthUser == null) {
       return null;
