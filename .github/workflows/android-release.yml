@@ -1,9 +1,6 @@
 name: Android Release
 
 on:
-  push:
-    branches:
-      - main  # Only run when changes are pushed to main
   workflow_dispatch:  # Allows manual triggers from GitHub UI
     inputs:
       build_mode:
