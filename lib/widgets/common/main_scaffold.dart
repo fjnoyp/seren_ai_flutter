@@ -26,7 +26,7 @@ class MainScaffold extends HookWidget {
   @override
   Widget build(BuildContext context) {
     // final enableAiBar = true;
-    final isListening = useState(false);
+    final isAiAssistantExpanded = useState(false);
 
     final theme = Theme.of(context);
 
@@ -113,8 +113,8 @@ class MainScaffold extends HookWidget {
         */
 
         bottomNavigationBar: showBottomBar
-            ? isListening.value
-                ? const UserInputDisplayWidget()
+            ? isAiAssistantExpanded.value
+                ? UserInputDisplayWidget(isAiAssistantExpanded)
                 : BottomAppBar(
                     notchMargin: 0,
                     child: Row(
@@ -140,12 +140,12 @@ class MainScaffold extends HookWidget {
             : null,
         floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
         floatingActionButton: showBottomBar
-            ? isListening.value
+            ? isAiAssistantExpanded.value
                 ? null
                 : Tooltip(
                     message: AppLocalizations.of(context)!.aiAssistant,
                     child: GestureDetector(
-                      onTap: () => isListening.value = true,
+                      onTap: () => isAiAssistantExpanded.value = true,
                       child: Hero(
                           tag: 'ai-button',
                           child: SizedBox(
