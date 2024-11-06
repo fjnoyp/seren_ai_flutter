@@ -33,12 +33,7 @@ class AIChatService {
     ref.read(isAiRespondingProvider.notifier).state = true;
 
     final curOrgId = ref.watch(curOrgDependencyProvider);
-    final curAuthUserState = ref.read(curAuthStateProvider);
-
-    final curUser = switch (curAuthUserState) {
-      LoggedInAuthState() => curAuthUserState.user,
-      _ => null,
-    };
+    final curUser = ref.read(curUserProvider).value;
 
     if (curUser == null || curOrgId == null) {
       ref.read(isAiRespondingProvider.notifier).state = false;

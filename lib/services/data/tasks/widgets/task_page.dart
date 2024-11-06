@@ -101,11 +101,7 @@ class TaskPage extends HookConsumerWidget {
                 width: double.infinity,
                 child: ElevatedButton(
                   onPressed: () async {
-                    final curAuthUserState = ref.read(curAuthStateProvider);
-                    final curAuthUser = switch (curAuthUserState) {
-                      LoggedInAuthState() => curAuthUserState.user,
-                      _ => null,
-                    };
+                    final curAuthUser = ref.read(curUserProvider).value;
 
                     if (curAuthUser == null) {
                       log.severe(

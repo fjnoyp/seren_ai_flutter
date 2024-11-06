@@ -4,7 +4,6 @@ import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:intl/intl.dart';
 import 'package:logging/logging.dart';
 import 'package:seren_ai_flutter/constants.dart';
-import 'package:seren_ai_flutter/services/auth/cur_auth_state_provider.dart';
 import 'package:seren_ai_flutter/services/data/common/widgets/editablePageModeEnum.dart';
 import 'package:seren_ai_flutter/services/data/notes/note_attachments_handler.dart';
 import 'package:seren_ai_flutter/services/data/notes/notes_read_provider.dart';
@@ -141,15 +140,6 @@ Future<void> openNotePage(BuildContext context, WidgetRef ref,
   Navigator.popUntil(context, (route) => route.settings.name != notePageRoute);
 
   if (mode == EditablePageMode.create) {
-    final curAuthUserState = ref.read(curAuthStateProvider);
-    final authUser = switch (curAuthUserState) {
-      LoggedInAuthState() => curAuthUserState.user,
-      _ => null,
-    };
-    if (authUser == null) {
-      throw Exception(AppLocalizations.of(context)!.userNotAuthenticated);
-    }
-
     ref.read(curNoteStateProvider.notifier).setToNewNote(
           parentProjectId: parentProjectId,
         );

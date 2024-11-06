@@ -11,11 +11,7 @@ final curUserAiChatThreadListenerProvider =
 class CurUserAiChatThreadListenerNotifier extends Notifier<AiChatThreadModel?> {
   @override
   AiChatThreadModel? build() {
-    final curAuthUserState = ref.read(curAuthStateProvider);
-    final watchedCurAuthUser = switch (curAuthUserState) {
-      LoggedInAuthState() => curAuthUserState.user,
-      _ => null,
-    };
+    final watchedCurAuthUser = ref.read(curUserProvider).value;
 
     final watchedCurOrgId = ref.watch(curOrgDependencyProvider);
 
