@@ -83,17 +83,26 @@ jobs:
           # Verify APK
           jarsigner -verify build/app/outputs/apk/release/app-release-unsigned.apk
 
+      - name: Align APK using zipalign
+        run: |
+          ${ANDROID_HOME}/build-tools/33.0.1/zipalign -v -p 4 \
+          build/app/outputs/apk/release/app-release-unsigned.apk \
+          build/app/outputs/apk/release/app-release-aligned.apk
+
       - name: Install Firebase CLI and Setup Service Account
         env:
           GOOGLE_SERVICE_ACCOUNT_JSON: ${{ secrets.GOOGLE_SERVICE_ACCOUNT_JSON }}
         run: |
             npm install -g firebase-tools
-            echo -n "$GOOGLE_SERVICE_ACCOUNT_JSON" > ${{ github.workspace }}/gsa.json
+            echo "$GOOGLE_SERVICE_ACCOUNT_JSON" > service-account.json
 
       - name: Upload APK to Firebase App Distribution
+        env:
+          GOOGLE_APPLICATION_CREDENTIALS: ${{ github.workspace }}/service-account.json
         run: |
-            FILE_PATH=$(find build/app/outputs/apk/release -name '*.apk' -print -quit) && [ -n "$FILE_PATH" ]
-
-            firebase appdistribution:distribute $FILE_PATH \
+            FILE_PATH="build/app/outputs/apk/release/app-release-aligned.apk"
+            
+            firebase appdistribution:distribute "$FILE_PATH" \
             --app ${{ secrets.FIREBASE_ANDROID_APP_ID }} \
-            --groups 'beta_testers'
+            --groups 'beta_testers' \
+            --json
