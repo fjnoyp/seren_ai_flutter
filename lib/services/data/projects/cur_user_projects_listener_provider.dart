@@ -12,11 +12,7 @@ final curUserProjectsListenerProvider =
 class CurUserProjectsListenerNotifier extends Notifier<List<ProjectModel>?> {
   @override
   List<ProjectModel>? build() {
-    final curAuthUserState = ref.watch(curAuthStateProvider);
-    final watchedCurAuthUser = switch (curAuthUserState) {
-      LoggedInAuthState() => curAuthUserState.user,
-      _ => null,
-    };
+    final watchedCurAuthUser = ref.watch(curUserProvider).value;
 
     if (watchedCurAuthUser == null) {
       return null;

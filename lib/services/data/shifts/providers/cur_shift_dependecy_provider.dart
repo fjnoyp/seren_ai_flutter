@@ -3,24 +3,13 @@ import 'package:seren_ai_flutter/services/auth/cur_auth_state_provider.dart';
 import 'package:seren_ai_flutter/services/data/shifts/providers/cur_shift_state_provider.dart';
 import 'package:seren_ai_flutter/services/data/shifts/models/joined_shift_model.dart';
 
-/// Helper Provider that provides the current auth id and shift for other providers 
+/// Helper Provider that provides the current auth id and shift for other providers
 class CurShiftDependencyProvider {
   static AsyncValue<T> watch<T>({
     required Ref ref,
     required T Function(String userId, JoinedShiftModel shift) builder,
   }) {
-    // Handle auth state first
-    final authState = ref.watch(curAuthStateProvider);
-
-    if (authState is LoadingAuthState) {
-      return const AsyncValue.loading();
-    }
-    if (authState is LoggedOutAuthState) {
-      return const AsyncValue.error('Not authenticated', StackTrace.empty);
-    }
-    if (authState is! LoggedInAuthState) {
-      return const AsyncValue.error('Invalid auth state', StackTrace.empty);
-    }
+    final authState = ref.watch(curUserProvider);
     final shiftState = ref.watch(curShiftStateProvider);
 
     return shiftState.when(
@@ -32,7 +21,7 @@ class CurShiftDependencyProvider {
         }
         // All dependencies satisfied, build the result
         return AsyncValue.data(builder(
-          authState.user.id,
+          authState.value!.id,
           joinedShift,
         ));
       },
@@ -43,14 +32,9 @@ class CurShiftDependencyProvider {
     required Ref ref,
     required Stream<T> Function(String userId, JoinedShiftModel shift) builder,
   }) {
-    // Handle auth state first
-    final authState = ref.watch(curAuthStateProvider);
-    if (authState is! LoggedInAuthState) {
-      return Stream.error('Not authenticated');
-    }
-
-    // Then handle shift state
+    final authState = ref.watch(curUserProvider);
     final shiftState = ref.watch(curShiftStateProvider);
+
     return shiftState.when(
       loading: () => Stream.error('Loading shift state'),
       error: (error, stackTrace) =>
@@ -62,7 +46,7 @@ class CurShiftDependencyProvider {
 
         // All dependencies satisfied, build the stream
         return builder(
-          authState.user.id,
+          authState.value!.id,
           joinedShift,
         );
       },

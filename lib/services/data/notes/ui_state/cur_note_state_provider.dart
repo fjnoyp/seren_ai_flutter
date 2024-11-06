@@ -29,11 +29,10 @@ class CurNoteNotifier extends Notifier<CurNoteState> {
   Future<void> setToNewNote({String? parentProjectId}) async {
     state = LoadingCurNoteState();
     try {
-      final curUser =
-          (ref.read(curAuthStateProvider) as LoggedInAuthState).user;
+      final curUser = ref.read(curUserProvider).value;
 
       final newNote = NoteModel.defaultNote().copyWith(
-        authorUserId: curUser.id,
+        authorUserId: curUser!.id,
         parentProjectId: parentProjectId,
         setAsPersonal: parentProjectId == null,
       );

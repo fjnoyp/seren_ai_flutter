@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:seren_ai_flutter/constants.dart';
 import 'package:seren_ai_flutter/services/auth/cur_auth_state_provider.dart';
+import 'package:seren_ai_flutter/services/data/common/widgets/async_value_handler_widget.dart';
 
 /// Ensure user authenticated or redirect to signInUp page
 class AuthGuard extends ConsumerWidget {
@@ -11,21 +12,23 @@ class AuthGuard extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final authState = ref.watch(curAuthStateProvider);
+    return AsyncValueHandlerWidget(
+      value: ref.watch(curUserProvider),
+      data: (user) => user == null ? const _NavigateToSignInUp() : child,
+      error: (error, _) => const _NavigateToSignInUp(),
+    );
+  }
+}
 
-    if (authState is LoggedOutAuthState || authState is ErrorAuthState) {
-      WidgetsBinding.instance.addPostFrameCallback((_) {
-        Navigator.of(context)
-            .pushNamedAndRemoveUntil(signInUpRoute, (route) => false);
-      });
-    }
+class _NavigateToSignInUp extends StatelessWidget {
+  const _NavigateToSignInUp();
 
-    return switch (authState) {
-      LoggedInAuthState() => child,
-      LoadingAuthState() || InitialAuthState() => const Center(
-          child: CircularProgressIndicator(),
-        ),
-      ErrorAuthState() || LoggedOutAuthState() => const SizedBox.shrink(),
-    };
+  @override
+  Widget build(BuildContext context) {
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      Navigator.of(context)
+          .pushNamedAndRemoveUntil(signInUpRoute, (route) => false);
+    });
+    return const SizedBox.shrink();
   }
 }

@@ -1,8 +1,6 @@
 import 'package:json_annotation/json_annotation.dart';
 import 'package:seren_ai_flutter/services/data/common/i_has_id.dart';
 import 'package:seren_ai_flutter/services/data/common/uuid.dart';
-import 'package:seren_ai_flutter/services/data/orgs/models/org_model.dart';
-import 'package:seren_ai_flutter/services/data/users/models/user_model.dart';
 
 part 'user_org_role_model.g.dart';
 

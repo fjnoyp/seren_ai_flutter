@@ -3,7 +3,6 @@ import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:intl/intl.dart';
 import 'package:seren_ai_flutter/common/utils/duration_extension.dart';
-import 'package:seren_ai_flutter/services/auth/cur_auth_state_provider.dart';
 import 'package:seren_ai_flutter/services/data/shifts/models/joined_shift_model.dart';
 import 'package:seren_ai_flutter/services/data/common/widgets/async_value_handler_widget.dart';
 import 'package:seren_ai_flutter/services/data/shifts/providers/open_shift_log_provider.dart';
@@ -92,7 +91,8 @@ class ShiftsPage extends HookConsumerWidget {
               ),
             ),
             Expanded(
-              child: _DayShiftsWidget(day: selectedDay.value, shift: curJoinedShift),
+              child: _DayShiftsWidget(
+                  day: selectedDay.value, shift: curJoinedShift),
             ),
           ],
         );
@@ -108,18 +108,9 @@ class TestWidget extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final curAuthUserState = ref.watch(curAuthStateProvider);
-    final curUserId = switch (curAuthUserState) {
-      LoggedInAuthState() => curAuthUserState.user,
-      _ => null,
-    };
+    final activeShiftRanges =
+        ref.watch(curUserShiftTimeRangesProvider((day: day)));
 
-    if (curUserId == null) {
-      return const Text('No user id');
-    }
-
-    final activeShiftRanges = ref.watch(curUserShiftTimeRangesProvider((day: day)));
-    
     return AsyncValueHandlerWidget<List<DateTimeRange>>(
       value: activeShiftRanges,
       data: (ranges) {
@@ -199,7 +190,8 @@ class _DayShiftsWidget extends HookConsumerWidget {
                               const Icon(Icons.location_on_outlined),
                               const SizedBox(width: 10),
                               Text(shift.parentProject?.address ??
-                                  AppLocalizations.of(context)!.noProjectAddress),
+                                  AppLocalizations.of(context)!
+                                      .noProjectAddress),
                             ],
                           ),
                         ),
@@ -222,8 +214,7 @@ class _DayShiftsWidget extends HookConsumerWidget {
             ],
           ),
         ),
-        Positioned(
-            bottom: 36.0, child: _ClockInClockOut(day: day)),
+        Positioned(bottom: 36.0, child: _ClockInClockOut(day: day)),
       ],
     );
   }
@@ -272,7 +263,8 @@ class _ShiftTimeRangesList extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final shiftTimeRangesStream = ref.watch(curUserShiftTimeRangesProvider((day: day)));
+    final shiftTimeRangesStream =
+        ref.watch(curUserShiftTimeRangesProvider((day: day)));
 
     return AsyncValueHandlerWidget(
       value: shiftTimeRangesStream,
@@ -309,7 +301,6 @@ class _ClockInClockOut extends HookConsumerWidget {
     if (day.day == curDateTime.day &&
         day.month == curDateTime.month &&
         day.year == curDateTime.year) {
-
       final curLogStream = ref.watch(curUserOpenShiftLogProvider);
       final curUserShiftLogActions = ref.watch(curUserShiftLogActionsProvider);
 
@@ -341,10 +332,13 @@ class _ClockInClockOut extends HookConsumerWidget {
                   child: const Text('Clock Out'),
                 ),
                 Text(AppLocalizations.of(context)!.elapsedTime(
-                  elapsedTime.value.inHours.toString(),
-                  (elapsedTime.value.inMinutes % 60).toString().padLeft(2, '0'),
-                  (elapsedTime.value.inSeconds % 60).toString().padLeft(2, '0')
-                )),
+                    elapsedTime.value.inHours.toString(),
+                    (elapsedTime.value.inMinutes % 60)
+                        .toString()
+                        .padLeft(2, '0'),
+                    (elapsedTime.value.inSeconds % 60)
+                        .toString()
+                        .padLeft(2, '0'))),
               ],
             );
           } else {

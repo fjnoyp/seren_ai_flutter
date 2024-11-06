@@ -28,13 +28,13 @@ class ShiftClockInOutResult extends AiRequestResult {
     required super.showOnly,
   });
 }
-class ShiftToolMethods {
 
+class ShiftToolMethods {
   ({String userId, String shiftId})? _getAuthAndShiftInfo(Ref ref) {
-    final curAuthState = ref.read(curAuthStateProvider);
+    final curAuthState = ref.read(curUserProvider);
     final curShiftState = ref.watch(curShiftStateProvider);
 
-    if (curAuthState is! LoggedInAuthState) {
+    if (curAuthState.value == null) {
       return null;
     }
 
@@ -45,7 +45,10 @@ class ShiftToolMethods {
         if (joinedShift == null) {
           return null;
         }
-        return (userId: curAuthState.user.id, shiftId: joinedShift.shift.id);
+        return (
+          userId: curAuthState.value!.id,
+          shiftId: joinedShift.shift.id,
+        );
       },
     );
   }
@@ -81,7 +84,9 @@ class ShiftToolMethods {
     final info = _getAuthAndShiftInfo(ref);
     if (info == null) return handleNoAuthOrShiftInfo();
 
-    final result = await ref.read(shiftLogServiceProvider).clockIn(userId: info.userId, shiftId: info.shiftId);
+    final result = await ref
+        .read(shiftLogServiceProvider)
+        .clockIn(userId: info.userId, shiftId: info.shiftId);
 
     if (result.error != null) {
       return ShiftClockInOutResult(
@@ -97,14 +102,15 @@ class ShiftToolMethods {
       message: 'Successfully clocked in!',
       showOnly: true,
     );
-
   }
 
   Future<AiRequestResult> clockOut({required Ref ref}) async {
     final info = _getAuthAndShiftInfo(ref);
     if (info == null) return handleNoAuthOrShiftInfo();
 
-    final result = await ref.read(shiftLogServiceProvider).clockOut(userId: info.userId, shiftId: info.shiftId);
+    final result = await ref
+        .read(shiftLogServiceProvider)
+        .clockOut(userId: info.userId, shiftId: info.shiftId);
 
     if (result.error != null) {
       return ShiftClockInOutResult(

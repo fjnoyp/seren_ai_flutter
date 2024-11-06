@@ -6,7 +6,7 @@ import 'package:seren_ai_flutter/services/ai_interaction/testing/sample_ai_chat_
 import 'package:seren_ai_flutter/services/auth/cur_auth_state_provider.dart';
 import 'package:seren_ai_flutter/services/data/ai_chats/models/ai_chat_message_model.dart';
 import 'package:seren_ai_flutter/services/data/common/status_enum.dart';
-import 'package:seren_ai_flutter/services/data/orgs/cur_org/cur_user_org_id_provider.dart';
+import 'package:seren_ai_flutter/services/data/orgs/providers/cur_org_dependency_provider.dart';
 import 'package:seren_ai_flutter/services/text_to_speech/text_to_speech_notifier.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
@@ -32,13 +32,8 @@ class AIChatService {
   Future<List<AiChatMessageModel>> sendMessage(String message) async {
     ref.read(isAiRespondingProvider.notifier).state = true;
 
-    final curOrgId = ref.read(curUserOrgIdProvider);
-    final curAuthUserState = ref.read(curAuthStateProvider);
-
-    final curUser = switch (curAuthUserState) {
-      LoggedInAuthState() => curAuthUserState.user,
-      _ => null,
-    };
+    final curOrgId = ref.watch(curOrgDependencyProvider);
+    final curUser = ref.read(curUserProvider).value;
 
     if (curUser == null || curOrgId == null) {
       ref.read(isAiRespondingProvider.notifier).state = false;
@@ -74,9 +69,9 @@ class AIChatService {
     final allMessages = [
       sampleClockInRequest,
       sampleClockOutRequest,
-      sampleCurrentShiftInfoRequest, 
-      sampleShiftHistoryRequest, // TBD 
-      sampleShiftsPageRequest // TBD 
+      sampleCurrentShiftInfoRequest,
+      sampleShiftHistoryRequest, // TBD
+      sampleShiftsPageRequest // TBD
     ];
     return [sampleClockOutRequest];
   }

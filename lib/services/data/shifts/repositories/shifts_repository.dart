@@ -1,9 +1,7 @@
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:seren_ai_flutter/services/data/db_setup/db_provider.dart';
-import 'package:seren_ai_flutter/services/data/projects/models/project_model.dart';
 import 'package:seren_ai_flutter/services/data/shifts/models/joined_shift_model.dart';
-import 'package:seren_ai_flutter/services/data/shifts/models/shift_model.dart';
-import 'package:seren_ai_flutter/services/data/shifts/repositories/base_repository.dart';
+import 'package:seren_ai_flutter/services/data/common/base_repository.dart';
 import 'package:seren_ai_flutter/services/data/shifts/repositories/shift_queries.dart';
 
 final shiftsRepositoryProvider = Provider<ShiftsRepository>((ref) {
