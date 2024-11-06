@@ -83,10 +83,7 @@ class MainScaffold extends HookWidget {
                 'Dev',
                 style: TextStyle(color: Colors.red, fontWeight: FontWeight.bold),
               ),
-            IconButton(
-              icon: Icon(Icons.more_vert, color: theme.iconTheme.color),
-              onPressed: () {},
-            ),
+            ...actions ?? [],
           ],
         ),
         drawer: const DrawerView(),
