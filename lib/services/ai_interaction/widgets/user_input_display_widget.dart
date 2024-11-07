@@ -7,10 +7,14 @@ import 'package:seren_ai_flutter/services/ai_interaction/ai_request/ai_request_e
 import 'package:seren_ai_flutter/services/ai_interaction/ai_request/models/ai_action_request_model.dart';
 import 'package:seren_ai_flutter/services/ai_interaction/ai_request/models/ai_info_request_model.dart';
 import 'package:seren_ai_flutter/services/ai_interaction/ai_request/models/ai_request_model.dart';
+import 'package:seren_ai_flutter/services/ai_interaction/langgraph/langgraph_service.dart';
+import 'package:seren_ai_flutter/services/ai_interaction/langgraph/test_langgraph_api.dart';
+
 import 'package:seren_ai_flutter/services/ai_interaction/widgets/ai_results_widget.dart';
+import 'package:seren_ai_flutter/services/auth/cur_auth_state_provider.dart';
+import 'package:seren_ai_flutter/services/data/orgs/cur_org/cur_user_org_id_provider.dart';
 import 'package:seren_ai_flutter/services/speech_to_text/widgets/speech_state_control_button_widget.dart';
 import 'package:seren_ai_flutter/services/speech_to_text/widgets/speech_transcribed_widget.dart';
-
 
 final textFieldVisibilityProvider = StateProvider<bool>((ref) => false);
 
@@ -40,6 +44,7 @@ class UserInputDisplayWidget extends ConsumerWidget {
         child: Padding(
           padding: const EdgeInsets.all(8.0),
           child: Column(
+            crossAxisAlignment: CrossAxisAlignment.stretch,
             mainAxisSize: MainAxisSize.min,
             children: [
               Align(
@@ -54,14 +59,14 @@ class UserInputDisplayWidget extends ConsumerWidget {
                   final isAiResponding = ref.watch(isAiRespondingProvider);
                   return Visibility(
                     visible: isAiResponding,
-                    child: 
-                            CircularProgressIndicator(
-                              valueColor: AlwaysStoppedAnimation<Color>(Theme.of(context).colorScheme.primary),
-                            ),
+                    child: CircularProgressIndicator(
+                      valueColor: AlwaysStoppedAnimation<Color>(
+                          Theme.of(context).colorScheme.primary),
+                    ),
                   );
                 },
               ),
-              const TestAiWidget(),
+              const TestLanggraphWidget(),
               const AiResultsWidget(),
               const SpeechTranscribedWidget(),
               ref.read(textFieldVisibilityProvider.notifier).state
@@ -84,44 +89,117 @@ class UserInputDisplayWidget extends ConsumerWidget {
   }
 }
 
-class TestAiWidget extends HookConsumerWidget {
-  const TestAiWidget({super.key});
+class TestLanggraphWidget extends HookConsumerWidget {
+  const TestLanggraphWidget({super.key});
+
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-
     final responseState = useState<String?>(null);
 
+    final langgraphService = ref.watch(langgraphServiceProvider);
 
-    final requestShiftInfo = AiInfoRequestModel(infoRequestType: AiInfoRequestType.currentShift);
+    return Column(
+      children: [
+        ElevatedButton(
+          onPressed: () async {
+            try {
+              final curUser =
+                  (ref.read(curAuthStateProvider) as LoggedInAuthState).user;
 
-    final requestClockIn = AiActionRequestModel(actionRequestType: AiActionRequestType.clockIn);
+              final curOrg = ref.read(curUserOrgIdProvider);
 
-    final requestClockOut = AiActionRequestModel(actionRequestType: AiActionRequestType.clockOut);
+              // final user2Id = '8c518695-0278-4a0d-9727-136eec2f71c3';
 
-    final List<AiRequestModel> testToolResponses = [requestShiftInfo, requestClockOut];
+              //  final result = await langgraphService.langgraphDbOperations
+              //      .getOrCreateAiChatThread(user2Id, curOrg!);
+
+              final result = await langgraphService.sendUserMessage(
+                  'what is my shift today?', curUser.id, curOrg!);
+
+              responseState.value = result
+                  .map((message) => message.toJson().toString())
+                  .toList()
+                  .toString();
+            } catch (e) {
+              responseState.value = 'Error: ${e.toString()}\nStack Trace: ${StackTrace.current}';
+            }
+          },
+          child: const Text('Test Get Run'),
+        ),
+        if (responseState.value != null)
+          Padding(
+            padding: const EdgeInsets.all(8.0),
+            child: SelectableText('Response: ${responseState.value}'),
+          ),
+      ],
+    );
+  }
+}
+
+class TestAiWidget extends HookConsumerWidget {
+  const TestAiWidget({super.key});
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final responseState = useState<String?>(null);
+    final isVisible = useState<bool>(true); // State to show/hide contents
+
+    final requestShiftInfo =
+        AiInfoRequestModel(infoRequestType: AiInfoRequestType.currentShift);
+    final requestClockIn =
+        AiActionRequestModel(actionRequestType: AiActionRequestType.clockIn);
+    final requestClockOut =
+        AiActionRequestModel(actionRequestType: AiActionRequestType.clockOut);
+    final List<AiRequestModel> testToolResponses = [
+      requestShiftInfo,
+      requestClockOut
+    ];
 
     return Container(
-      decoration: BoxDecoration(
-        border: Border.all(color: Colors.blue, width: 2), // Draw border
-        borderRadius: BorderRadius.circular(8), // Optional: rounded corners
-      ),
-      padding: const EdgeInsets.all(8), // Optional: padding inside the container
+      padding: const EdgeInsets.all(4), // Reduced padding
       child: Column(
         children: [
-          ElevatedButton(
-            onPressed: () async {
-              try {
-                final results = await ref.read(aiRequestExecutorProvider).executeAiRequests(testToolResponses);
-                responseState.value = results.map((result) => result.message).join('\n');
-              } catch (e) {
-                responseState.value = e.toString();
-              }
-            },
-            child: const Text('Test AI'),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.end,
+            children: [
+              IconButton(
+                icon: Icon(isVisible.value
+                    ? Icons.hide_source
+                    : Icons.bug_report_outlined),
+                onPressed: () {
+                  isVisible.value = !isVisible.value; // Toggle visibility
+                },
+              ),
+            ],
           ),
-          if (responseState.value != null) ...[
-            const SizedBox(height: 16),
-            Text('Response: ${responseState.value}'),
+          if (isVisible.value) ...[
+            ElevatedButton(
+              onPressed: () async {
+                try {
+                  final results = await ref
+                      .read(aiRequestExecutorProvider)
+                      .executeAiRequests(testToolResponses);
+                  responseState.value =
+                      results.map((result) => result.message).join('\n');
+                } catch (e) {
+                  responseState.value = e.toString();
+                }
+              },
+              child: const Text('Execute Ai Request'),
+            ),
+            if (responseState.value != null) ...[
+              Container(
+                padding:
+                    const EdgeInsets.symmetric(vertical: 8.0), // Added padding
+                decoration: BoxDecoration(
+                  border:
+                      Border.all(color: Colors.blue, width: 1), // Blue border
+                  borderRadius:
+                      BorderRadius.circular(6), // Smaller rounded corners
+                ),
+                child: Text('Response: ${responseState.value}'),
+              ),
+            ],
           ],
         ],
       ),
@@ -179,7 +257,6 @@ class UserInputTextDisplayWidget extends ConsumerWidget {
                 IconButton(
                   icon: Icon(Icons.check_box_outlined, size: 20),
                   onPressed: () async {
-
                     ref.read(textFieldVisibilityProvider.notifier).state =
                         false;
 
