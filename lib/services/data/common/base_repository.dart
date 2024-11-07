@@ -25,4 +25,19 @@ abstract class BaseRepository<T> {
     final results = await db.execute(query, params.values.toList());
     return results.map((row) => fromJson(row)).toList();
   }
+
+  Stream<T> watchSingle(String query, Map<String, dynamic> params) {
+    return db
+        .watch(
+          query,
+          parameters: params.values.toList(),
+          triggerOnTables: watchTables,
+        )
+        .map((results) => fromJson(results.first));
+  }
+
+  Future<T> getSingle(String query, Map<String, dynamic> params) async {
+    final results = await db.execute(query, params.values.toList());
+    return fromJson(results.first);
+  }
 }

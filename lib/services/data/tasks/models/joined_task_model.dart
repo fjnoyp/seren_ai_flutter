@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 import 'package:seren_ai_flutter/services/data/projects/models/project_model.dart';
 import 'package:seren_ai_flutter/services/data/tasks/models/task_comments_model.dart';
 import 'package:seren_ai_flutter/services/data/tasks/models/task_model.dart';
@@ -43,18 +45,38 @@ class JoinedTaskModel {
     );
   }
 
-  /*
-  static Future<JoinedTaskModel> fromTaskModel(WidgetRef ref, TaskModel taskModel) async {
+  factory JoinedTaskModel.fromJson(Map<String, dynamic> json) {
+    final taskJson = jsonDecode(json['task']);
+    final authorUserJson = jsonDecode(json['author_user']);
+    final projectJson = jsonDecode(json['project']);
+    final decodedAssignees = jsonDecode(json['assignees']);
+    final assigneesJson = decodedAssignees.first == null
+        ? []
+        : decodedAssignees;
+    final decodedComments = jsonDecode(json['comments']);
+    final commentsJson = decodedComments.first == null
+        ? []
+        : decodedComments;
 
-    final authorId = taskModel.authorUserId;
-    final authorUser = await ref.read(usersReadProvider).getItem(id: authorId);
+    final task = TaskModel.fromJson(taskJson);
+    final authorUser = UserModel.fromJson(authorUserJson);
+    final project = ProjectModel.fromJson(projectJson);
+    final assignees = <UserModel>[
+      ...assigneesJson.map((e) => UserModel.fromJson(e))
+    ];
+    final comments = <TaskCommentsModel>[
+      ...commentsJson.map((e) => TaskCommentsModel.fromJson(e))
+    ];
 
-    final projectId = taskModel.parentProjectId;
-    final project = await ref.read(projectsReadProvider).getItem(id: projectId);
-
-    // TODO p5: fetch assignees and comments as well 
-
-    return JoinedTaskModel(task: taskModel, authorUser: authorUser, project: project, team: team);
+    return JoinedTaskModel(
+      task: task,
+      authorUser: authorUser,
+      project: project,
+      assignees: assignees,
+      comments: comments,
+    );
   }
-  */
+
+  bool get isValidTask =>
+      task.name.isNotEmpty && task.parentProjectId.isNotEmpty;
 }

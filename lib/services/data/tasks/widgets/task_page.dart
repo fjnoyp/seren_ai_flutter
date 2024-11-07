@@ -5,12 +5,11 @@ import 'package:seren_ai_flutter/constants.dart';
 import 'package:seren_ai_flutter/services/auth/cur_auth_state_provider.dart';
 import 'package:seren_ai_flutter/services/data/common/widgets/editablePageModeEnum.dart';
 import 'package:seren_ai_flutter/services/data/projects/cur_user_viewable_projects_listener_provider.dart';
-import 'package:seren_ai_flutter/services/data/tasks/ui_state/cur_task_provider.dart';
+import 'package:seren_ai_flutter/services/data/tasks/providers/cur_task_service_provider.dart';
+import 'package:seren_ai_flutter/services/data/tasks/providers/cur_task_state_provider.dart';
 import 'package:seren_ai_flutter/services/data/tasks/models/joined_task_model.dart';
-import 'package:seren_ai_flutter/services/data/tasks/ui_state/cur_task_states.dart';
-import 'package:seren_ai_flutter/services/data/tasks/widgets/delete_task_button.dart';
-import 'package:seren_ai_flutter/services/data/tasks/widgets/edit_task_button.dart';
-import 'package:seren_ai_flutter/services/data/tasks/widgets/joined_task_save_provider.dart';
+import 'package:seren_ai_flutter/services/data/tasks/widgets/action_buttons/delete_task_button.dart';
+import 'package:seren_ai_flutter/services/data/tasks/widgets/action_buttons/edit_task_button.dart';
 import 'package:seren_ai_flutter/services/data/tasks/widgets/form/task_selection_fields.dart';
 import 'package:seren_ai_flutter/services/data/tasks/widgets/task_comments/task_comment_section.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
@@ -52,12 +51,9 @@ class TaskPage extends HookConsumerWidget {
 
     final isEnabled = mode != EditablePageMode.readOnly;
 
-    final curTaskState = ref.watch(curTaskProvider);
+    final curTaskState = ref.watch(curTaskStateProvider);
 
-    final curTask = switch (curTaskState) {
-      LoadedCurTaskState() => curTaskState.task,
-      _ => null,
-    };
+    final curTask = curTaskState.value;
 
     return SingleChildScrollView(
       child: Padding(
@@ -130,17 +126,14 @@ class TaskPage extends HookConsumerWidget {
 
   Future<void> _validateTaskAndMaybeSave(
       WidgetRef ref, BuildContext context) async {
-    final curTaskState = ref.read(curTaskProvider);
+    final curTaskState = ref.read(curTaskStateProvider);
 
-    final curJoinedTask = switch (curTaskState) {
-      LoadedCurTaskState() => curTaskState.task,
-      _ => null,
-    };
+    final curJoinedTask = curTaskState.value;
 
-    final isValidTask = ref.read(curTaskProvider.notifier).isValidTask();
+    final isValidTask = curJoinedTask?.isValidTask ?? false;
 
     if (isValidTask) {
-      await ref.read(joinedTaskSaveProvider).saveTask(curJoinedTask!);
+      await ref.read(curTaskServiceProvider).saveTask();
 
       if (context.mounted) {
         Navigator.pop(context);
@@ -172,9 +165,7 @@ class TaskPage extends HookConsumerWidget {
               return ListTile(
                 title: Text(project.name),
                 onTap: () {
-                  ref
-                      .read(curTaskProvider.notifier)
-                      .updateParentProject(project);
+                  ref.read(curTaskServiceProvider).updateParentProject(project);
                   Navigator.pop(context, project);
                 },
               );
@@ -192,7 +183,7 @@ class TaskPage extends HookConsumerWidget {
 Future<void> openBlankTaskPage(BuildContext context, Ref ref) async {
   Navigator.popUntil(context, (route) => route.settings.name != taskPageRoute);
 
-  ref.read(curTaskProvider.notifier).setToNewTask();
+  ref.read(curTaskServiceProvider).createTask();
 
   await Navigator.pushNamed(context, taskPageRoute,
       arguments: {'mode': EditablePageMode.create});
@@ -207,16 +198,16 @@ Future<void> openTaskPage(BuildContext context, WidgetRef ref,
 
   // CREATE - wipe existing task state
   if (mode == EditablePageMode.create) {
-    ref.read(curTaskProvider.notifier).setToNewTask();
+    ref.read(curTaskServiceProvider).createTask();
   }
   // EDIT/READ - optionally load provided initial task
   else if (mode == EditablePageMode.edit || mode == EditablePageMode.readOnly) {
     // initialJoinedTask can be null if we are opening an existing task page for edit
     if (initialJoinedTask != null) {
-      ref.read(curTaskProvider.notifier).setNewTask(initialJoinedTask);
+      ref.read(curTaskServiceProvider).loadTask(initialJoinedTask);
 
       // TODO: modify to have comments listened to in realtime
-      ref.read(curTaskProvider.notifier).updateComments();
+      ref.read(curTaskServiceProvider).updateComments();
     }
   }
 

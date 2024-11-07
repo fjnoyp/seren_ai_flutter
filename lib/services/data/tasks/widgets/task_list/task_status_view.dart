@@ -1,12 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:seren_ai_flutter/services/data/common/status_enum.dart';
-import 'package:seren_ai_flutter/services/data/tasks/models/task_model.dart';
-import 'package:seren_ai_flutter/services/data/tasks/widgets/ui_constants.dart';
 
 class TaskStatusView extends StatelessWidget {
   final StatusEnum status;
 
-  const TaskStatusView({Key? key, required this.status}) : super(key: key);
+  const TaskStatusView({super.key, required this.status});
 
   @override
   Widget build(BuildContext context) {
@@ -22,7 +20,7 @@ class TaskStatusView extends StatelessWidget {
       child: Row(
         children: [
           Icon(getTaskStatusIcon(status), color: color, size: 16),
-          Text('${status.toString().split('.').last}',
+          Text(status.toString().split('.').last,
               style: theme.textTheme.labelSmall!.copyWith(color: color)),
         ],
       ),
