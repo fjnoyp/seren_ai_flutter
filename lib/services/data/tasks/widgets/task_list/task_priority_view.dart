@@ -1,11 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:seren_ai_flutter/services/data/tasks/models/task_model.dart';
-import 'package:seren_ai_flutter/services/data/tasks/widgets/ui_constants.dart';
 
 class TaskPriorityView extends StatelessWidget {
   final PriorityEnum priority;
 
-  const TaskPriorityView({Key? key, required this.priority}) : super(key: key);
+  const TaskPriorityView({super.key, required this.priority});
 
   @override
   Widget build(BuildContext context) {
@@ -21,7 +20,7 @@ class TaskPriorityView extends StatelessWidget {
       child: Row(
         children: [
           Icon(Icons.priority_high, color: color, size: 16),
-          Text('${priority.toString().split('.').last}',
+          Text(priority.toString().split('.').last,
               style: theme.textTheme.labelSmall!.copyWith(color: color)),
         ],
       ),

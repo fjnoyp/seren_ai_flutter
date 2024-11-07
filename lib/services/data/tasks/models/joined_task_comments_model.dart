@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:seren_ai_flutter/services/data/tasks/models/task_comments_model.dart';
 import 'package:seren_ai_flutter/services/data/users/models/user_model.dart';
@@ -15,7 +17,6 @@ class JoinedTaskCommentsModel {
     this.parentTask,
   });
 
-  // obs.: I think it's a better idea to use a factory constructor instead of a static method
   factory JoinedTaskCommentsModel.empty() {
     return JoinedTaskCommentsModel(
       comment: TaskCommentsModel(authorUserId: '', parentTaskId: ''),
@@ -24,8 +25,7 @@ class JoinedTaskCommentsModel {
     );
   }
 
-  // obs.:
-  Future<JoinedTaskCommentsModel> setUser(NotifierProviderRef ref) async {
+  Future<JoinedTaskCommentsModel> setUser(Ref ref) async {
     return copyWith(
       authorUser:
           await ref.read(usersReadProvider).getItem(id: comment.authorUserId),
@@ -41,6 +41,24 @@ class JoinedTaskCommentsModel {
       comment: comment ?? this.comment,
       authorUser: authorUser ?? this.authorUser,
       parentTask: parentTask ?? this.parentTask,
+    );
+  }
+
+  factory JoinedTaskCommentsModel.fromJson(Map<String, dynamic> json) {
+    final commentJson = jsonDecode(json['comment']);
+    final authorUserJson = jsonDecode(json['author_user']);
+    final parentTaskJson = jsonDecode(json['parent_task']);
+
+    final comment = TaskCommentsModel.fromJson(commentJson);
+    final authorUser =
+        authorUserJson != null ? UserModel.fromJson(authorUserJson) : null;
+    final parentTask =
+        parentTaskJson != null ? TaskModel.fromJson(parentTaskJson) : null;
+
+    return JoinedTaskCommentsModel(
+      comment: comment,
+      authorUser: authorUser,
+      parentTask: parentTask,
     );
   }
 }
