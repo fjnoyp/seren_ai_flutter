@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:seren_ai_flutter/services/data/common/widgets/async_value_handler_widget.dart';
 import 'package:seren_ai_flutter/services/data/common/widgets/form/base_task_comment_field.dart';
-import 'package:seren_ai_flutter/services/data/tasks/task_comments/joined_task_comments_listener_fam_provider.dart';
-import 'package:seren_ai_flutter/services/data/tasks/ui_state/cur_task_provider.dart';
+import 'package:seren_ai_flutter/services/data/tasks/providers/cur_task_service_provider.dart';
+import 'package:seren_ai_flutter/services/data/tasks/providers/cur_task_state_provider.dart';
+import 'package:seren_ai_flutter/services/data/tasks/providers/joined_task_comments_provider.dart';
 import 'package:seren_ai_flutter/services/data/tasks/widgets/task_comments/task_comment_card.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
@@ -20,8 +22,6 @@ class _TaskCommentSectionState extends ConsumerState<TaskCommentSection> {
 
   @override
   Widget build(BuildContext context) {
-    final joinedComments =
-        ref.watch(joinedTaskCommentsListenerFamProvider(widget.taskId));
     final theme = Theme.of(context);
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 8.0),
@@ -29,8 +29,8 @@ class _TaskCommentSectionState extends ConsumerState<TaskCommentSection> {
         children: [
           Row(
             children: [
-              Text(AppLocalizations.of(context)!.comments, 
-                   style: theme.textTheme.titleMedium),
+              Text(AppLocalizations.of(context)!.comments,
+                  style: theme.textTheme.titleMedium),
               if (!showTextField)
                 IconButton(
                   onPressed: () => setState(() => showTextField = true),
@@ -42,12 +42,16 @@ class _TaskCommentSectionState extends ConsumerState<TaskCommentSection> {
                 ),
             ],
           ),
-          ListView.builder(
-            shrinkWrap: true,
-            itemCount: joinedComments?.length ?? 0,
-            physics: const NeverScrollableScrollPhysics(),
-            itemBuilder: (context, index) =>
-                TaskCommentCard(joinedComments![index]),
+          AsyncValueHandlerWidget(
+            value: ref.watch(joinedTaskCommentsProvider),
+            data: (joinedComments) => ListView.builder(
+              shrinkWrap: true,
+              itemCount: joinedComments?.length ?? 0,
+              physics: const NeverScrollableScrollPhysics(),
+              itemBuilder: (context, index) =>
+                  TaskCommentCard(joinedComments![index]),
+            ),
+            error: (e, st) => throw Exception(e),
           ),
           if (showTextField)
             _TaskCommentField(
@@ -65,9 +69,9 @@ class _TaskCommentField extends BaseTaskCommentField {
   _TaskCommentField({required this.onSubmit})
       : super(
           enabled: true,
-          commentProvider: curTaskProvider.select((state) => ''),
+          commentProvider: curTaskStateProvider.select((state) => ''),
           addComment: (ref, text) {
-            ref.read(curTaskProvider.notifier).addComment(text);
+            ref.read(curTaskServiceProvider).addComment(text);
             onSubmit();
           },
         );

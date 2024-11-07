@@ -18,12 +18,12 @@ TaskCommentsModel _$TaskCommentsModelFromJson(Map<String, dynamic> json) =>
           ? null
           : DateTime.parse(json['updated_at'] as String),
       content: json['content'] as String?,
-      startDateTime: json['start_date_time'] == null
+      startDateTime: json['start_datetime'] == null
           ? null
-          : DateTime.parse(json['start_date_time'] as String),
-      endDateTime: json['end_date_time'] == null
+          : DateTime.parse(json['start_datetime'] as String),
+      endDateTime: json['end_datetime'] == null
           ? null
-          : DateTime.parse(json['end_date_time'] as String),
+          : DateTime.parse(json['end_datetime'] as String),
     );
 
 Map<String, dynamic> _$TaskCommentsModelToJson(TaskCommentsModel instance) =>
@@ -34,6 +34,6 @@ Map<String, dynamic> _$TaskCommentsModelToJson(TaskCommentsModel instance) =>
       'created_at': instance.createdAt?.toIso8601String(),
       'updated_at': instance.updatedAt?.toIso8601String(),
       'content': instance.content,
-      'start_date_time': instance.startDateTime?.toIso8601String(),
-      'end_date_time': instance.endDateTime?.toIso8601String(),
+      'start_datetime': instance.startDateTime?.toIso8601String(),
+      'end_datetime': instance.endDateTime?.toIso8601String(),
     };

@@ -4,21 +4,20 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 /// Base loading and error widgets
 class _DefaultLoading extends StatelessWidget {
   const _DefaultLoading();
-  
+
   @override
-  Widget build(BuildContext context) => 
-    const Center(child: CircularProgressIndicator());
+  Widget build(BuildContext context) =>
+      const Center(child: CircularProgressIndicator());
 }
 
 class _DefaultError extends StatelessWidget {
   const _DefaultError(this.error, [this.stackTrace]);
-  
+
   final Object error;
   final StackTrace? stackTrace;
-  
+
   @override
-  Widget build(BuildContext context) => 
-    Center(child: Text(error.toString()));
+  Widget build(BuildContext context) => Center(child: Text(error.toString()));
 }
 
 /// Single value
