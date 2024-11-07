@@ -29,6 +29,17 @@ class AIChatService {
 
   AIChatService(this.ref);
 
+  Future<void> sendAiRequestResult(List<AiRequestResult> results) async {
+
+    
+    // final response = await Supabase.instance.client.functions.invoke(
+    //     'chatv2/ai_request_result',
+    //     method: HttpMethod.post,
+    //     headers: {'Content-Type': 'application/json'},
+    //     body: {'message': message, 'show-only' : showOnly, 'user-id': userId, 'org-id': orgId},
+    //   );
+  }
+
   Future<List<AiChatMessageModel>> sendMessage(String message) async {
     ref.read(isAiRespondingProvider.notifier).state = true;
 
