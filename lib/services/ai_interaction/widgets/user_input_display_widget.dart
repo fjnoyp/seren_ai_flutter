@@ -1,19 +1,9 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:seren_ai_flutter/services/ai_interaction/ai_chat_service_provider.dart';
-import 'package:seren_ai_flutter/services/ai_interaction/ai_request/ai_request_executor.dart';
-import 'package:seren_ai_flutter/services/ai_interaction/ai_request/models/ai_action_request_model.dart';
-import 'package:seren_ai_flutter/services/ai_interaction/ai_request/models/ai_info_request_model.dart';
-import 'package:seren_ai_flutter/services/ai_interaction/ai_request/models/ai_request_model.dart';
-import 'package:seren_ai_flutter/services/ai_interaction/langgraph/langgraph_service.dart';
-import 'package:seren_ai_flutter/services/ai_interaction/langgraph/models/lg_ai_request_result_model.dart';
-import 'package:seren_ai_flutter/services/ai_interaction/langgraph/test_langgraph_api.dart';
 
 import 'package:seren_ai_flutter/services/ai_interaction/widgets/ai_results_widget.dart';
-import 'package:seren_ai_flutter/services/auth/cur_auth_state_provider.dart';
-import 'package:seren_ai_flutter/services/data/orgs/providers/cur_org_dependency_provider.dart';
 import 'package:seren_ai_flutter/services/speech_to_text/widgets/speech_state_control_button_widget.dart';
 import 'package:seren_ai_flutter/services/speech_to_text/widgets/speech_transcribed_widget.dart';
 
@@ -138,7 +128,7 @@ class UserInputTextDisplayWidget extends ConsumerWidget {
               mainAxisAlignment: MainAxisAlignment.end,
               children: [
                 IconButton(
-                  icon: Icon(Icons.check_box_outlined, size: 20),
+                  icon: const Icon(Icons.check_box_outlined, size: 20),
                   onPressed: () async {
                     ref.read(textFieldVisibilityProvider.notifier).state =
                         false;
@@ -152,7 +142,7 @@ class UserInputTextDisplayWidget extends ConsumerWidget {
                   color: theme.colorScheme.primary,
                 ),
                 IconButton(
-                  icon: Icon(Icons.close_outlined, size: 20),
+                  icon: const Icon(Icons.close_outlined, size: 20),
                   onPressed: () {
                     ref.read(textFieldVisibilityProvider.notifier).state =
                         false;

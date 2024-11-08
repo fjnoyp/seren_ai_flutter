@@ -1,6 +1,5 @@
 
 import 'package:flutter/material.dart';
-import 'package:seren_ai_flutter/services/ai_interaction/ai_request/ai_request_executor.dart';
 import 'package:seren_ai_flutter/services/data/ai_chats/models/ai_chat_message_model.dart';
 import 'package:seren_ai_flutter/services/data/shifts/shift_tool_methods.dart';
 
@@ -23,7 +22,7 @@ var aiRequestResults = [
     message: 'Current shift time ranges message for ai',
     showOnly: false, 
     activeShiftRanges: [
-      DateTimeRange(start: DateTime.now(), end: DateTime.now().add(Duration(hours: 8))),
+      DateTimeRange(start: DateTime.now(), end: DateTime.now().add(const Duration(hours: 8))),
     ],
   ),
   ShiftClockInOutResultModel(

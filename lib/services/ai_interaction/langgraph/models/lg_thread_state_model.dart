@@ -1,6 +1,4 @@
 // Model to represent thread state with focus on messages
-import 'dart:convert';
-import 'dart:math';
 
 import 'package:seren_ai_flutter/services/ai_interaction/langgraph/models/lg_ai_base_message_model.dart';
 
