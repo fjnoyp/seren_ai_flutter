@@ -43,17 +43,15 @@ class AiChatMessageModel extends AiResult implements IHasId  {
     );
   }
 
-  bool isAiRequest() {
+  bool isAiToolRequest() {
     return type == AiChatMessageType.tool && 
     content.contains('request_type');
   }
 
-  List<AiRequestModel>? getAiRequests() {
-    if (isAiRequest()) {
-      final List<dynamic> decoded = json.decode(content) as List<dynamic>;
-      return decoded
-          .map((item) => AiRequestModel.fromJson(item as Map<String, dynamic>))
-          .toList();
+  AiRequestModel? getAiRequest() {
+    if (isAiToolRequest()) {
+      final Map<String, dynamic> decoded = json.decode(content) as Map<String, dynamic>;
+      return AiRequestModel.fromJson(decoded);
     }
     return null;
   }

@@ -13,6 +13,10 @@ class AiRequestResult extends AiResult {
   final bool showOnly;
 
   AiRequestResult({required this.message, required this.showOnly});
+
+  copyWith({required String message, required bool showOnly}) {
+    return AiRequestResult(message: message, showOnly: showOnly);
+  }
 }
 
 final aiRequestExecutorProvider =
@@ -24,94 +28,73 @@ class AiRequestExecutor {
 
   AiRequestExecutor(this.ref);
 
-  void callbackAi(String message) {
-    // TODO p0: send as tool message not as human message!
-    //ref.read(aiChatServiceProvider).sendMessage(message);
-  }
-
-  void updateLastAiMessage(AiRequestResult result) {
-    ref
-        .read(lastAiMessageListenerProvider.notifier)
-        .addLastToolResponseResult(result);
-  }
-
-  Future<List<AiRequestResult>> executeAiRequests(
-      List<AiRequestModel> aiRequests) async {
-    final results = await getToolResponseResults(aiRequests);
-
-    for (var result in results) {
-      if (result.showOnly) {
-        updateLastAiMessage(result);
-      } else {
-        callbackAi(result.message);
-      }
-    }
-
-    return results;
+  Future<AiRequestResult> executeAiRequest(
+      AiRequestModel aiRequest) async {
+    final result = await getToolResponseResult(aiRequest);
+    return result;
   }
 
   // Route ToolResponse to the correct method
-  Future<List<AiRequestResult>> getToolResponseResults(
-      List<AiRequestModel> toolResponses) async {
-    List<AiRequestResult> results = [];
+  Future<AiRequestResult> getToolResponseResult(
+      AiRequestModel toolResponse) async {
+
+    AiRequestResult result; 
 
     // Iterate through identified tool responses
-    for (var response in toolResponses) {
-      switch (response.requestType) {
-        case AiRequestType.uiAction:
-          results.addAll(
-              await _handleUiActionRequest(response as AiUiActionRequestModel));
-          break;
+    switch (toolResponse.requestType) {
+      case AiRequestType.uiAction:
+        result = await _handleUiActionRequest(toolResponse as AiUiActionRequestModel);
+        break;
 
         case AiRequestType.infoRequest:
-          results
-              .addAll(await _handleInfoRequest(response as AiInfoRequestModel));
-          break;
+        result = await _handleInfoRequest(toolResponse as AiInfoRequestModel);
+        break;
 
-        case AiRequestType.actionRequest:
-          results.addAll(
-              await _handleActionRequest(response as AiActionRequestModel));
-          break;
-      }
+      case AiRequestType.actionRequest:
+        result = await _handleActionRequest(toolResponse as AiActionRequestModel);
+        break;
+
+      default:
+        throw Exception('Unknown tool response type: ${toolResponse.requestType}');
     }
 
-    return results;
+    return result;
   }
 
-  Future<List<AiRequestResult>> _handleUiActionRequest(
+  Future<AiRequestResult> _handleUiActionRequest(
       AiUiActionRequestModel uiAction) async {
     switch (uiAction.uiActionType) {
       case AiUIActionRequestType.shiftsPage:
         // TODO p1: open shifts page
-        return [];
+        throw Exception('Not implemented');
       default:
         throw Exception('Unknown UI action type: ${uiAction.uiActionType}');
     }
   }
 
-  Future<List<AiRequestResult>> _handleInfoRequest(
+  Future<AiRequestResult> _handleInfoRequest(
       AiInfoRequestModel infoRequest) async {
     switch (infoRequest.infoRequestType) {
       case AiInfoRequestType.shiftHistory:
         // TODO p1: determine how this will be used first
-        return [];
+        throw Exception('Not implemented');
       case AiInfoRequestType.currentShift:
         final shiftInfoResult = await shiftToolMethods.getCurrentShiftInfo(
             ref: ref, infoRequest: infoRequest);
-        return [shiftInfoResult];
+        return shiftInfoResult;
       default:
         throw Exception(
             'Unknown info request type: ${infoRequest.infoRequestType}');
     }
   }
 
-  Future<List<AiRequestResult>> _handleActionRequest(
+  Future<AiRequestResult> _handleActionRequest(
       AiActionRequestModel actionRequest) async {
     switch (actionRequest.actionRequestType) {
       case AiActionRequestType.clockIn:
-        return [await shiftToolMethods.clockIn(ref: ref)];
+        return await shiftToolMethods.clockIn(ref: ref);
       case AiActionRequestType.clockOut:
-        return [await shiftToolMethods.clockOut(ref: ref)];
+        return await shiftToolMethods.clockOut(ref: ref);
       default:
         throw Exception(
             'Unknown action request type: ${actionRequest.actionRequestType}');
