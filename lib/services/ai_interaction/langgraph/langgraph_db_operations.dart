@@ -7,8 +7,11 @@ import 'package:seren_ai_flutter/services/ai_interaction/langgraph/langgraph_api
 import 'package:seren_ai_flutter/services/ai_interaction/langgraph/models/lg_ai_base_message_model.dart';
 import 'package:seren_ai_flutter/services/ai_interaction/langgraph/models/lg_ai_chat_message_role.dart';
 import 'package:seren_ai_flutter/services/ai_interaction/langgraph/models/lg_ai_request_result_model.dart';
+import 'package:seren_ai_flutter/services/data/ai_chats/models/ai_chat_message_model.dart';
 import 'package:seren_ai_flutter/services/data/ai_chats/models/ai_chat_thread_model.dart';
 
+
+// TODO p3 - for consistency - langgraph folder should have no supabase db methods, and these should instead be DI injected from the data service 
 class LanggraphDbOperations {
   final PowerSyncDatabase db;
   final LanggraphApi langgraphApi;
@@ -102,30 +105,45 @@ class LanggraphDbOperations {
   ///   }
   /// ]
   String _parseAiMessageContent(String content) {
-    final List<dynamic> parsedContent = json.decode(content);
-    StringBuffer result = StringBuffer();
-
-    for (var item in parsedContent) {
-      if (item['type'] == 'text') {
-        result.writeln(item['text']);
-      } else if (item['type'] == 'tool_use') {
-        result.writeln(item['name']);
+    try {
+      final List<dynamic> parsedContent = json.decode(content);
+      
+      // Verify the expected format with type field
+      if (!parsedContent.every((item) => item is Map && item.containsKey('type'))) {
+        return content;
       }
-    }
 
-    return result.toString().trim();
+      StringBuffer result = StringBuffer();
+      for (var item in parsedContent) {
+        if (item['type'] == 'text') {
+          result.writeln(item['text']);
+        } else if (item['type'] == 'tool_use') {
+          result.writeln('Calling tool: ${item['name']}');
+        }
+      }
+
+      return result.toString().trim();
+    } catch (e) {
+      // If parsing fails, return original content
+      return content;
+    }
   }
 
-  Future<List<LgAiBaseMessageModel>> saveLgBaseMessageModels({
+  Future<List<AiChatMessageModel>> saveLgBaseMessageModels({
     required List<LgAiBaseMessageModel> messages,
     required String parentChatThreadId,
     //required String parentLgRunId,
   }) async {
-    final createdMessages = <LgAiBaseMessageModel>[];
+    final createdMessages = <AiChatMessageModel>[];
 
     for (final message in messages) {
       try {
-        final content = _parseAiMessageContent(message.content);
+
+        var content = message.content;
+        if(message.type == LgAiChatMessageRole.ai) {
+          content = _parseAiMessageContent(message.content);
+        } 
+
         final messageRows = await db.execute('''
           INSERT INTO ai_chat_messages (
             id,
@@ -147,7 +165,7 @@ class LanggraphDbOperations {
           throw Exception('Failed to insert AI chat message');
         }
 
-        createdMessages.add(LgAiBaseMessageModel.fromJson(messageRows.first));
+        createdMessages.add(AiChatMessageModel.fromJson(messageRows.first));
       } catch (e) {
         print('Failed to insert message: $e');
         rethrow;
@@ -173,17 +191,19 @@ class LanggraphDbOperations {
       throw Exception('No messages found for thread');
     }
 
-    final lastMessage = messageRows.first;
+    final lastMessageString = messageRows.first;
+
+    final lastMessage = LgAiBaseMessageModel.fromJson(lastMessageString);
 
     // Verify it's a tool message
-    if (lastMessage['type'] == LgAiChatMessageRole.tool.toString()) {
+    if (lastMessage.type== LgAiChatMessageRole.tool) {
       // Update the content with the result
       final updateRows = await db.execute('''
         UPDATE ai_chat_messages
         SET content = ?
         WHERE id = ?
         RETURNING *
-      ''', [result.message, lastMessage['id']]);
+      ''', [result.message, lastMessage.id]);
 
       if (updateRows.isEmpty) {
         throw Exception('Failed to update tool message');

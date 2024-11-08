@@ -68,7 +68,7 @@ class LanggraphApi {
 
   Stream<LgAiBaseMessageModel> streamRun({
     required String threadId,
-    required String assistantId, 
+    required String assistantId,
     required String streamMode,
     LgInputModel? input,
     Duration timeout = const Duration(minutes: 5),
@@ -124,8 +124,7 @@ class LanggraphApi {
               for (final messageJson in messagesJson) {
                 yield LgAiBaseMessageModel.fromJson(messageJson);
               }
-            }
-            else if (responseJson.containsKey("tools")) {
+            } else if (responseJson.containsKey("tools")) {
               // tools.messages
 
               final messagesJson = responseJson["tools"]["messages"];
@@ -159,19 +158,53 @@ class LanggraphApi {
     return LgThreadStateModel.fromJson(response.data);
   }
 
-  Future<void> updateThreadState(
+  Future<void> addMessageToThreadState(
     String threadId, {
     String? asNode,
-    required LgThreadStateModel state,
+    required LgAiBaseMessageModel message,
   }) async {
-    await _dio.put(
-      '$baseUrl/threads/$threadId/state',
-      data: {
-        if (asNode != null) 'as_node': asNode,
-        ...state.toJson(),
-      },
-    );
+    try {
+      final requestData = {
+        "as_node": "execute_ai_request_on_client",
+        "values": {
+          "messages": [
+            message.toJson(),
+          ]
+        }
+      };
+
+      final response = await _dio.post('$baseUrl/threads/$threadId/state',
+          data: requestData,
+          options: Options(
+            headers: {
+              'Content-Type': 'application/json',
+            },
+          ));
+
+      if (response.statusCode != 200) {
+        throw Exception('Failed to update thread state: ${response.data}');
+      }
+    } catch (e) {
+      rethrow;
+    }
   }
+
+  /*
+curl --request POST \
+  --url http://localhost:8123/threads/c55a9029-ef0b-4160-b0d5-bce5e0930be2/state \
+  --header 'Content-Type: application/json' \
+  --data '{
+  "as_node": "execute_ai_request_on_client",
+  "values": {    
+    "messages": [
+      {
+        "content": "this is a human message",
+        "type": "human"
+      }
+    ] 
+  }
+}'
+*/
 
   Future<List<LgAssistantModel>> searchAssistants({
     Map<String, dynamic>? metadata,
@@ -197,13 +230,3 @@ class LanggraphApi {
     }
   }
 }
-
-
-
-
-
-
-
-
-
-

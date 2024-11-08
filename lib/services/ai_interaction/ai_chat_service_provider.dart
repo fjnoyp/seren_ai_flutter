@@ -2,6 +2,9 @@ import 'package:collection/collection.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:seren_ai_flutter/services/ai_interaction/ai_request/ai_request_executor.dart';
 import 'package:seren_ai_flutter/services/ai_interaction/ai_request/models/ai_request_model.dart';
+import 'package:seren_ai_flutter/services/ai_interaction/langgraph/langgraph_service.dart';
+import 'package:seren_ai_flutter/services/ai_interaction/langgraph/models/lg_ai_base_message_model.dart';
+import 'package:seren_ai_flutter/services/ai_interaction/last_ai_message_listener_provider.dart';
 import 'package:seren_ai_flutter/services/ai_interaction/testing/sample_ai_chat_message_models.dart';
 import 'package:seren_ai_flutter/services/auth/cur_auth_state_provider.dart';
 import 'package:seren_ai_flutter/services/data/ai_chats/models/ai_chat_message_model.dart';
@@ -18,6 +21,10 @@ import 'package:seren_ai_flutter/services/data/tasks/models/task_model.dart';
 import 'package:seren_ai_flutter/services/data/tasks/widgets/task_page.dart';
 import 'package:seren_ai_flutter/services/data/users/models/user_model.dart';
 
+import 'package:logging/logging.dart';
+
+final log = Logger('AIChatService');
+
 final isAiRespondingProvider = StateProvider<bool>((ref) => false);
 
 final isAiEditingProvider = StateProvider<bool>((ref) => false);
@@ -29,21 +36,22 @@ class AIChatService {
 
   AIChatService(this.ref);
 
-  Future<void> sendAiRequestResult(List<AiRequestResult> results) async {
+  Future<void> sendAiRequestResult(AiRequestResult aiRequestResult) async {
+    final curOrgId = ref.watch(curOrgDependencyProvider);
+    final curUser = ref.read(curUserProvider).value;
 
-    
-    // final response = await Supabase.instance.client.functions.invoke(
-    //     'chatv2/ai_request_result',
-    //     method: HttpMethod.post,
-    //     headers: {'Content-Type': 'application/json'},
-    //     body: {'message': message, 'show-only' : showOnly, 'user-id': userId, 'org-id': orgId},
-    //   );
+    if (curUser == null || curOrgId == null) {
+      throw Exception('No current user or org id found');
+    }
+
+    ref.read(langgraphServiceProvider).sendAiRequestResult(curUser.id, curOrgId, aiRequestResult);
+
   }
 
   Future<List<AiChatMessageModel>> sendMessage(String message) async {
     ref.read(isAiRespondingProvider.notifier).state = true;
 
-    final curOrgId = ref.watch(curOrgDependencyProvider);
+    final curOrgId = ref.read(curOrgDependencyProvider);
     final curUser = ref.read(curUserProvider).value;
 
     if (curUser == null || curOrgId == null) {
@@ -56,16 +64,18 @@ class AIChatService {
 
       List<AiChatMessageModel> aiChatMessages = [];
       if (!isTest) {
-        aiChatMessages = await _sendMessage(
-            message: message, userId: curUser.id, orgId: curOrgId);
+        aiChatMessages = await ref.read(langgraphServiceProvider).sendUserMessage(message, curUser.id, curOrgId);
       } else {
         aiChatMessages = _getTestAiChatMessages();
       }
 
+      ref.read(lastAiMessageListenerProvider.notifier).addLastAiMessage(aiChatMessages.first);
+
       await executeAiChatMessages(aiChatMessages);
-      await speakAiMessage(aiChatMessages);
 
       ref.read(isAiRespondingProvider.notifier).state = false;
+
+      await speakAiMessage(aiChatMessages);
 
       return aiChatMessages;
     } catch (e) {
@@ -100,55 +110,59 @@ class AIChatService {
     await textToSpeech.speak(aiMessage.content);
   }
 
-  Future<List<AiChatMessageModel>> _sendMessage(
-      {required String message,
-      required String userId,
-      required String orgId}) async {
-    try {
-      print('Sending message to Supabase function...'); // Debug log
-      final response = await Supabase.instance.client.functions.invoke(
-        'chatv2/chat',
-        method: HttpMethod.post,
-        headers: {'Content-Type': 'application/json'},
-        body: {'user-message': message, 'user-id': userId, 'org-id': orgId},
-      );
-
-      if (response.status != 200) {
-        throw Exception(
-            'Failed to send message. Status: ${response.status}, Data: ${response.data}');
-      }
-
-      if (response.data == null) {
-        throw Exception('Response data is null');
-      }
-
-      if (response.data is List) {
-        return AiChatMessageModel.fromJsonList(response.data as List);
-      } else {
-        throw Exception('Unexpected response format: ${response.data}');
-      }
-    } catch (e, stackTrace) {
-      print('Error in _sendMessage: $e'); // Debug log
-      rethrow;
-    }
-  }
 
   Future<void> executeAiChatMessages(
       List<AiChatMessageModel> aiChatMessages) async {
     // TODO p0: update last ai message provider to be manually updated by the code flow here
+    
 
     // Read the chat response and identify ToolMessages
     List<AiRequestModel>? toolResponses = aiChatMessages
-        .where((msg) => msg.isAiRequest())
-        .expand((msg) => msg.getAiRequests() ?? List<AiRequestModel>.empty())
-        .toList() as List<AiRequestModel>?;
+        .where((msg) => msg.isAiToolRequest())         
+        .expand((msg) => [msg.getAiRequest()!])
+        .toList() as List<AiRequestModel>?;    
 
     if (toolResponses != null && toolResponses.isNotEmpty) {
-      await ref
+
+      if(toolResponses.length > 1){
+        log.warning('Multiple tool responses found in executeAiChatMessages, ignoring all but the first');
+      }
+
+        final result = await ref
           .read(aiRequestExecutorProvider)
-          .executeAiRequests(toolResponses);
+          .executeAiRequest(toolResponses[0]);
+
+
+    if (result.showOnly) {
+        updateLastAiMessage(result);
+      } else {
+        callbackAi(result);
+      }
+    
     }
   }
+
+
+
+  void callbackAi(AiRequestResult result) {
+    ref
+        .read(lastAiMessageListenerProvider.notifier)
+        .addLastToolResponseResult(result.copyWith(message: '<AI CALLED AGAIN>${result.message}', showOnly: false));
+        
+    sendAiRequestResult(result);
+  }
+
+  void updateLastAiMessage(AiRequestResult result) {
+    ref
+        .read(lastAiMessageListenerProvider.notifier)
+        .addLastToolResponseResult(result);
+  }
+
+}
+
+
+
+/*
 
   Future<void> testAiCreateTask(BuildContext context) async {
     // TEST calling Supabase Edge Function
@@ -209,4 +223,4 @@ class AIChatService {
 
     ref.read(isAiEditingProvider.notifier).state = false;
   }
-}
+  */
