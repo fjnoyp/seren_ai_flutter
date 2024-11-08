@@ -1,6 +1,7 @@
 
 import 'package:flutter/material.dart';
 import 'package:seren_ai_flutter/services/data/ai_chats/models/ai_chat_message_model.dart';
+import 'package:seren_ai_flutter/services/data/ai_chats/models/ai_chat_message_type.dart';
 import 'package:seren_ai_flutter/services/data/shifts/shift_tool_methods.dart';
 
 var aiMessagesResults = [
