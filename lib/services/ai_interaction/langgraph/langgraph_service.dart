@@ -1,15 +1,10 @@
 // What are the methods needed
 // What methods are they calling
 
-import 'package:seren_ai_flutter/services/ai_interaction/ai_request/ai_request_executor.dart';
 import 'package:seren_ai_flutter/services/ai_interaction/langgraph/langgraph_api.dart';
-import 'package:seren_ai_flutter/services/ai_interaction/langgraph/langgraph_db_operations.dart';
 import 'package:seren_ai_flutter/services/ai_interaction/langgraph/models/lg_ai_base_message_model.dart';
 import 'package:seren_ai_flutter/services/ai_interaction/langgraph/models/lg_ai_chat_message_role.dart';
-import 'package:seren_ai_flutter/services/ai_interaction/langgraph/models/lg_ai_request_result_model.dart';
 import 'package:seren_ai_flutter/services/ai_interaction/langgraph/models/lg_input_model.dart';
-import 'package:seren_ai_flutter/services/data/ai_chats/models/ai_chat_message_model.dart';
-import 'package:seren_ai_flutter/services/data/ai_chats/models/ai_chat_thread_model.dart';
 import 'package:seren_ai_flutter/services/data/db_setup/app_config.dart';
 
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -29,23 +24,26 @@ final langgraphServiceProvider = Provider<LanggraphService>((ref) {
 class LanggraphService {
   late final LanggraphApi langgraphApi;
   final PowerSyncDatabase db;
-  late final LanggraphDbOperations _langgraphDbOperations;
+  //late final LanggraphDbOperations _langgraphDbOperations;
 
   LanggraphService({required this.db}) {
     langgraphApi = LanggraphApi(
       apiKey: AppConfig.langgraphApiKey,
       baseUrl: AppConfig.langgraphBaseUrl,
     );
-    _langgraphDbOperations =
-        LanggraphDbOperations(db: db, langgraphApi: langgraphApi);
+    //_langgraphDbOperations =
+    //    LanggraphDbOperations(db: db, langgraphApi: langgraphApi);
   }
 
   /// Top level method for sending a user message to the Langgraph API AI
-  Future<List<AiChatMessageModel>> sendUserMessage(
-      String userMessage, String userId, String orgId) async {
+  Future<List<LgAiBaseMessageModel>> sendUserMessage({
+    required String userMessage,
+    required String lgThreadId,
+    required String lgAssistantId,
+  }) async {
     // Create or Get thread info stored in DB AiChatThread table
-    final aiChatThread =
-        await _langgraphDbOperations.getOrCreateAiChatThread(userId, orgId);
+    // final aiChatThread =
+    //     await _langgraphDbOperations.getOrCreateAiChatThread(userId, orgId);
 
     // Create input for the Langgraph API
     final lgInput = LgInputModel(messages: [
@@ -53,68 +51,79 @@ class LanggraphService {
     ]);
 
     // Save user message to DB AiChatMessage table
-    await _langgraphDbOperations.saveUserAiChatMessage(
-        userMessage, aiChatThread.id, LgAiChatMessageRole.user);
+    // await _langgraphDbOperations.saveUserAiChatMessage(
+    //     userMessage, aiChatThread.id, LgAiChatMessageRole.user);
 
     final lgBaseMessages =
-        await runAi(aiChatThread: aiChatThread, lgInput: lgInput);
+        await runAi(
+          lgThreadId: lgThreadId, 
+          lgAssistantId: lgAssistantId, 
+          lgInput: lgInput);
 
-    final aiChatMessages = await _langgraphDbOperations.saveLgBaseMessageModels(
-      messages: lgBaseMessages,
-      parentChatThreadId: aiChatThread.id,
-    );
+    // final aiChatMessages = await _langgraphDbOperations.saveLgBaseMessageModels(
+    //   messages: lgBaseMessages,
+    //   parentChatThreadId: aiChatThread.id,
+    // );
 
-    return aiChatMessages;
+    return lgBaseMessages;
   }
 
-  Future<List<AiChatMessageModel>> sendAiRequestResult(
-      String userId, String orgId, AiRequestResultModel aiRequestResult) async {
-    final lgAiRequestResultModel = LgAiRequestResultModel(
-        message: aiRequestResult.message, showOnly: aiRequestResult.showOnly);
+  Future<List<LgAiBaseMessageModel>> updateLastToolMessageWithResult({
+    required String resultString,
+    required bool showOnly,
+    required String lgThreadId,
+    required String lgAssistantId,
+  }) async {
+//     final lgAiRequestResultModel = LgAiRequestResultModel(
+//         message: aiRequestResult.message, showOnly: aiRequestResult.showOnly);
 
-// Create or Get thread info stored in DB AiChatThread table
-    final aiChatThread =
-        await _langgraphDbOperations.getOrCreateAiChatThread(userId, orgId);
+// // Create or Get thread info stored in DB AiChatThread table
+//     final aiChatThread =
+//         await _langgraphDbOperations.getOrCreateAiChatThread(userId, orgId);
 
-    final showOnly = lgAiRequestResultModel.showOnly;
+    // final showOnly = lgAiRequestResultModel.showOnly;
 
-    await _langgraphDbOperations.saveAiRequestResult(
-      aiRequestResult: aiRequestResult,
-      parentChatThreadId: aiChatThread.id,
-    );
+    // await _langgraphDbOperations.saveAiRequestResult(
+    //   aiRequestResult: aiRequestResult,
+    //   parentChatThreadId: aiChatThread.id,
+    // );
 
     await updateLastToolMessageThreadState(
-      lgThreadId: aiChatThread.parentLgThreadId,
-      result: lgAiRequestResultModel,
+      lgThreadId: lgThreadId,
+      resultString: resultString,
     );
 
     if (!showOnly) {
       // Resume the invokation of the ai
       final lgBaseMessages =
-          await runAi(aiChatThread: aiChatThread, lgInput: null);
+          await runAi(
+            lgThreadId: lgThreadId, 
+            lgAssistantId: lgAssistantId, 
+            lgInput: null);
 
-      final aiChatMessages =
-          await _langgraphDbOperations.saveLgBaseMessageModels(
-        messages: lgBaseMessages,
-        parentChatThreadId: aiChatThread.id,
-      );
+      // final aiChatMessages =
+      //     await _langgraphDbOperations.saveLgBaseMessageModels(
+      //   messages: lgBaseMessages,
+      //   parentChatThreadId: lgThreadId,
+      // );
 
-      return aiChatMessages;
+      return lgBaseMessages;
     }
 
     return [];
   }
 
   Future<List<LgAiBaseMessageModel>> runAi({
-    required AiChatThreadModel aiChatThread,
+    required String lgThreadId,
+    required String lgAssistantId,    
     LgInputModel? lgInput,
   }) async {
     // Collect all messages from the stream
     final messages = <LgAiBaseMessageModel>[];
 
     await for (final message in langgraphApi.streamRun(
-      threadId: aiChatThread.parentLgThreadId,
-      assistantId: aiChatThread.parentLgAssistantId,
+      threadId: lgThreadId,
+      assistantId: lgAssistantId,
       input: lgInput,
       streamMode: 'updates',
     )) {
@@ -126,7 +135,7 @@ class LanggraphService {
 
   Future<void> updateLastToolMessageThreadState({
     required String lgThreadId,
-    required LgAiRequestResultModel result,
+    required String resultString,
   }) async {
     final currentState = await langgraphApi.getThreadState(lgThreadId);
 
@@ -143,10 +152,25 @@ class LanggraphService {
       await langgraphApi.addMessageToThreadState(
         lgThreadId,
         asNode: 'execute_ai_request_on_client',
-        message: lastMessage.copyWithContent(result.message),
+        message: lastMessage.copyWithContent(resultString),
       );
     } else {
       throw Exception('Last message is not a tool message');
     }
+  }
+
+  // TODO p2: search for matching assistant before creating a new one ...
+  Future<(String, String)> createNewThread({
+    required String name,
+    Map<String, String>? config,
+    Map<String, String>? metadata,
+  }) async {
+    final newLgThreadId = await langgraphApi.createThread();
+    final newLgAssistantId = await langgraphApi.createAssistant(
+      name: name,
+      config: config,
+      metadata: metadata,
+    );
+    return (newLgThreadId, newLgAssistantId);
   }
 }
