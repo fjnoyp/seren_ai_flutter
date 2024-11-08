@@ -1,5 +1,4 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:seren_ai_flutter/services/ai_interaction/ai_chat_service_provider.dart';
 import 'package:seren_ai_flutter/services/ai_interaction/last_ai_message_listener_provider.dart';
 import 'package:seren_ai_flutter/services/ai_interaction/ai_request/models/ai_action_request_model.dart';
 import 'package:seren_ai_flutter/services/ai_interaction/ai_request/models/ai_info_request_model.dart';
@@ -7,15 +6,17 @@ import 'package:seren_ai_flutter/services/ai_interaction/ai_request/models/ai_re
 import 'package:seren_ai_flutter/services/ai_interaction/ai_request/models/ai_ui_action_request_model.dart';
 import 'package:seren_ai_flutter/services/data/shifts/shift_tool_methods.dart';
 
-/// Result of an AI Request execution
-class AiRequestResult extends AiResult {
+/// Result of an AI Request execution. 
+/// 
+/// Only the message field is sent to ai, all other fields are for display purposes. 
+class AiRequestResultModel extends AiResult {
   final String message;
   final bool showOnly;
 
-  AiRequestResult({required this.message, required this.showOnly});
+  AiRequestResultModel({required this.message, required this.showOnly});
 
   copyWith({required String message, required bool showOnly}) {
-    return AiRequestResult(message: message, showOnly: showOnly);
+    return AiRequestResultModel(message: message, showOnly: showOnly);
   }
 }
 
@@ -28,17 +29,17 @@ class AiRequestExecutor {
 
   AiRequestExecutor(this.ref);
 
-  Future<AiRequestResult> executeAiRequest(
+  Future<AiRequestResultModel> executeAiRequest(
       AiRequestModel aiRequest) async {
     final result = await getToolResponseResult(aiRequest);
     return result;
   }
 
   // Route ToolResponse to the correct method
-  Future<AiRequestResult> getToolResponseResult(
+  Future<AiRequestResultModel> getToolResponseResult(
       AiRequestModel toolResponse) async {
 
-    AiRequestResult result; 
+    AiRequestResultModel result; 
 
     // Iterate through identified tool responses
     switch (toolResponse.requestType) {
@@ -61,7 +62,7 @@ class AiRequestExecutor {
     return result;
   }
 
-  Future<AiRequestResult> _handleUiActionRequest(
+  Future<AiRequestResultModel> _handleUiActionRequest(
       AiUiActionRequestModel uiAction) async {
     switch (uiAction.uiActionType) {
       case AiUIActionRequestType.shiftsPage:
@@ -72,7 +73,7 @@ class AiRequestExecutor {
     }
   }
 
-  Future<AiRequestResult> _handleInfoRequest(
+  Future<AiRequestResultModel> _handleInfoRequest(
       AiInfoRequestModel infoRequest) async {
     switch (infoRequest.infoRequestType) {
       case AiInfoRequestType.shiftHistory:
@@ -88,7 +89,7 @@ class AiRequestExecutor {
     }
   }
 
-  Future<AiRequestResult> _handleActionRequest(
+  Future<AiRequestResultModel> _handleActionRequest(
       AiActionRequestModel actionRequest) async {
     switch (actionRequest.actionRequestType) {
       case AiActionRequestType.clockIn:

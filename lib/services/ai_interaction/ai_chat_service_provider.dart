@@ -31,12 +31,23 @@ final isAiEditingProvider = StateProvider<bool>((ref) => false);
 
 final aiChatServiceProvider = Provider<AIChatService>(AIChatService.new);
 
+
+/*
+TODO: 
+
+1. ideally move out langgraph_db_operations 
+2. have an intermediate class dedicated to converting from our data to langgraph data 
+3. in showOnly case - still store the result in the db 
+6. do not pass ref directly to service classes! 
+
+*/
 class AIChatService {
   final Ref ref;
 
   AIChatService(this.ref);
 
-  Future<void> sendAiRequestResult(AiRequestResult aiRequestResult) async {
+  Future<List<AiChatMessageModel>> sendAiRequestResult(
+      AiRequestResultModel aiRequestResult) async {
     final curOrgId = ref.watch(curOrgIdProvider);
     final curUser = ref.read(curUserProvider).value;
 
@@ -44,8 +55,18 @@ class AIChatService {
       throw Exception('No current user or org id found');
     }
 
-    ref.read(langgraphServiceProvider).sendAiRequestResult(curUser.id, curOrgId, aiRequestResult);
+    final aiChatMessages = await ref
+        .read(langgraphServiceProvider)
+        .sendAiRequestResult(curUser.id, curOrgId, aiRequestResult);
 
+    ref
+        .read(lastAiMessageListenerProvider.notifier)
+        .addLastAiMessage(aiChatMessages.first);
+
+    // Tip: When testing ai request execution - you can hardcode the aiChatMessages to test different flows
+    await executeAiRequests(aiChatMessages);
+
+    return aiChatMessages;
   }
 
   Future<List<AiChatMessageModel>> sendMessage(String message) async {
@@ -60,18 +81,18 @@ class AIChatService {
     }
 
     try {
-      bool isTest = false;
-
       List<AiChatMessageModel> aiChatMessages = [];
-      if (!isTest) {
-        aiChatMessages = await ref.read(langgraphServiceProvider).sendUserMessage(message, curUser.id, curOrgId);
-      } else {
-        aiChatMessages = _getTestAiChatMessages();
-      }
 
-      ref.read(lastAiMessageListenerProvider.notifier).addLastAiMessage(aiChatMessages.first);
+      aiChatMessages = await ref
+          .read(langgraphServiceProvider)
+          .sendUserMessage(message, curUser.id, curOrgId);
 
-      await executeAiChatMessages(aiChatMessages);
+      ref
+          .read(lastAiMessageListenerProvider.notifier)
+          .addLastAiMessage(aiChatMessages.first);
+
+      // Tip: When testing ai request execution - you can hardcode the aiChatMessages to test different flows
+      await executeAiRequests(aiChatMessages);
 
       ref.read(isAiRespondingProvider.notifier).state = false;
 
@@ -86,15 +107,44 @@ class AIChatService {
     }
   }
 
-  List<AiChatMessageModel> _getTestAiChatMessages() {
-    final allMessages = [
-      sampleClockInRequest,
-      sampleClockOutRequest,
-      sampleCurrentShiftInfoRequest,
-      sampleShiftHistoryRequest, // TBD
-      sampleShiftsPageRequest // TBD
-    ];
-    return [sampleClockOutRequest];
+  Future<void> executeAiRequests(
+      List<AiChatMessageModel> aiChatMessages) async {
+    // TODO p0: update last ai message provider to be manually updated by the code flow here
+
+    // Read the chat response and identify ToolMessages
+    List<AiRequestModel>? toolResponses = aiChatMessages
+        .where((msg) => msg.isAiToolRequest())
+        .expand((msg) => [msg.getAiRequest()!])
+        .toList() as List<AiRequestModel>?;
+
+    if (toolResponses != null && toolResponses.isNotEmpty) {
+      if (toolResponses.length > 1) {
+        log.warning(
+            'Multiple tool responses found in executeAiChatMessages, ignoring all but the first');
+      }
+
+      final result = await ref
+          .read(aiRequestExecutorProvider)
+          .executeAiRequest(toolResponses[0]);
+
+      if (result.showOnly) {
+        ref
+            .read(lastAiMessageListenerProvider.notifier)
+            .addLastToolResponseResult(result);
+      } else {
+        ref
+            .read(lastAiMessageListenerProvider.notifier)
+            .addLastToolResponseResult(result.copyWith(
+                message: '<AI CALLED AGAIN>${result.message}',
+                showOnly: false));
+
+        final followupMessages = await sendAiRequestResult(result);
+
+        ref
+            .read(lastAiMessageListenerProvider.notifier)
+            .addLastAiMessage(followupMessages.first);
+      }
+    }
   }
 
   Future<void> speakAiMessage(List<AiChatMessageModel> result) async {
@@ -109,60 +159,23 @@ class AIChatService {
     final textToSpeech = ref.read(textToSpeechServiceProvider);
     await textToSpeech.speak(aiMessage.content);
   }
-
-
-  Future<void> executeAiChatMessages(
-      List<AiChatMessageModel> aiChatMessages) async {
-    // TODO p0: update last ai message provider to be manually updated by the code flow here
-    
-
-    // Read the chat response and identify ToolMessages
-    List<AiRequestModel>? toolResponses = aiChatMessages
-        .where((msg) => msg.isAiToolRequest())         
-        .expand((msg) => [msg.getAiRequest()!])
-        .toList() as List<AiRequestModel>?;    
-
-    if (toolResponses != null && toolResponses.isNotEmpty) {
-
-      if(toolResponses.length > 1){
-        log.warning('Multiple tool responses found in executeAiChatMessages, ignoring all but the first');
-      }
-
-        final result = await ref
-          .read(aiRequestExecutorProvider)
-          .executeAiRequest(toolResponses[0]);
-
-
-    if (result.showOnly) {
-        updateLastAiMessage(result);
-      } else {
-        callbackAi(result);
-      }
-    
-    }
-  }
-
-
-
-  void callbackAi(AiRequestResult result) {
-    ref
-        .read(lastAiMessageListenerProvider.notifier)
-        .addLastToolResponseResult(result.copyWith(message: '<AI CALLED AGAIN>${result.message}', showOnly: false));
-        
-    sendAiRequestResult(result);
-  }
-
-  void updateLastAiMessage(AiRequestResult result) {
-    ref
-        .read(lastAiMessageListenerProvider.notifier)
-        .addLastToolResponseResult(result);
-  }
-
 }
 
 
 
 /*
+
+
+  List<AiChatMessageModel> _getTestAiChatMessages() {
+    final allMessages = [
+      sampleClockInRequest,
+      sampleClockOutRequest,
+      sampleCurrentShiftInfoRequest,
+      sampleShiftHistoryRequest, // TBD
+      sampleShiftsPageRequest // TBD
+    ];
+    return [sampleClockOutRequest];
+  }
 
   Future<void> testAiCreateTask(BuildContext context) async {
     // TEST calling Supabase Edge Function
