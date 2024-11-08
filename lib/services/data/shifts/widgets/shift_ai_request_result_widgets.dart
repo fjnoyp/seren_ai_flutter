@@ -2,7 +2,6 @@
 
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:seren_ai_flutter/services/ai_interaction/ai_request/ai_request_executor.dart';
 import 'package:seren_ai_flutter/services/data/shifts/shift_tool_methods.dart';
 
 class ShiftInfoResultWidget extends ConsumerWidget {
@@ -24,7 +23,7 @@ class ShiftInfoResultWidget extends ConsumerWidget {
               style: Theme.of(context).textTheme.bodyMedium,
             ),
           );
-        }).toList(),
+        }),
       ],
     );
   }

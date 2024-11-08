@@ -1,14 +1,10 @@
 
 
 import 'package:seren_ai_flutter/services/ai_interaction/langgraph/langgraph_api.dart';
-import 'package:seren_ai_flutter/services/ai_interaction/langgraph/langgraph_service.dart';
 import 'package:seren_ai_flutter/services/ai_interaction/langgraph/models/lg_ai_base_message_model.dart';
 import 'package:seren_ai_flutter/services/ai_interaction/langgraph/models/lg_ai_chat_message_role.dart';
 import 'package:seren_ai_flutter/services/ai_interaction/langgraph/models/lg_input_model.dart';
 
-import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:seren_ai_flutter/services/data/db_setup/db_provider.dart';
-import 'package:seren_ai_flutter/services/ai_interaction/langgraph/langgraph_service.dart';
 
 
 /*
@@ -33,8 +29,8 @@ curl --request POST \
 
 Future<void> testLanggraphClientMethods() async {
   final client = createLanggraphClient();
-  final threadId = 'c55a9029-ef0b-4160-b0d5-bce5e0930be2';
-  final assistantId = "07265b79-da09-4093-9f39-158867182e18";
+  const threadId = 'c55a9029-ef0b-4160-b0d5-bce5e0930be2';
+  const assistantId = "07265b79-da09-4093-9f39-158867182e18";
 
   //await streamRunExample('testing, please call getShiftInfo', client, threadId, assistantId);
 

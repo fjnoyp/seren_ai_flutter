@@ -5,7 +5,7 @@ import 'package:supabase_flutter/supabase_flutter.dart';
 class TestPage extends HookWidget {
   final String? param;
 
-  const TestPage({Key? key, this.param}) : super(key: key);
+  const TestPage({super.key, this.param});
 
   Future<void> _invokeFunction(TextEditingController inputController, ValueNotifier<String> response) async {
     final input = inputController.text;
@@ -33,7 +33,7 @@ class TestPage extends HookWidget {
 
     return Scaffold(
       appBar: AppBar(
-        title: Text('Test Page'),
+        title: const Text('Test Page'),
       ),
       body: Padding(
         padding: const EdgeInsets.all(16.0),
@@ -41,14 +41,14 @@ class TestPage extends HookWidget {
           children: [
             TextField(
               controller: inputController,
-              decoration: InputDecoration(labelText: 'Input'),
+              decoration: const InputDecoration(labelText: 'Input'),
             ),
-            SizedBox(height: 16),
+            const SizedBox(height: 16),
             ElevatedButton(
               onPressed: () => _invokeFunction(inputController, response),
-              child: Text('Invoke Function'),
+              child: const Text('Invoke Function'),
             ),
-            SizedBox(height: 16),
+            const SizedBox(height: 16),
             Text('Response: ${response.value}'),
           ],
         ),

@@ -3,7 +3,6 @@ import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:seren_ai_flutter/common/utils/string_extension.dart';
 import 'package:seren_ai_flutter/services/ai_interaction/ai_chat_service_provider.dart';
-import 'package:seren_ai_flutter/services/ai_interaction/ai_request/ai_request_executor.dart';
 import 'package:seren_ai_flutter/services/ai_interaction/ai_request/models/ai_action_request_model.dart';
 import 'package:seren_ai_flutter/services/ai_interaction/ai_request/models/ai_info_request_model.dart';
 import 'package:seren_ai_flutter/services/ai_interaction/ai_request/models/ai_request_model.dart';
@@ -48,7 +47,7 @@ class AIChatsPage extends HookConsumerWidget {
 
 
 class ChatThreadDisplay extends ConsumerWidget {
-  const ChatThreadDisplay({Key? key}) : super(key: key);
+  const ChatThreadDisplay({super.key});
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -62,7 +61,7 @@ class ChatThreadDisplay extends ConsumerWidget {
 class ChatThreadCard extends StatelessWidget {
   final AiChatThreadModel thread;
 
-  const ChatThreadCard({Key? key, required this.thread}) : super(key: key);
+  const ChatThreadCard({super.key, required this.thread});
 
   @override
   Widget build(BuildContext context) {
@@ -84,7 +83,7 @@ class ChatThreadCard extends StatelessWidget {
 }
 
 class ChatMessagesDisplay extends ConsumerWidget {
-  const ChatMessagesDisplay({Key? key}) : super(key: key);
+  const ChatMessagesDisplay({super.key});
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -104,14 +103,14 @@ class ChatMessagesDisplay extends ConsumerWidget {
 class MessageCard extends HookWidget {
   final AiChatMessageModel message;
 
-  const MessageCard({Key? key, required this.message}) : super(key: key);
+  const MessageCard({super.key, required this.message});
 
   @override
   Widget build(BuildContext context) {
     final isExpanded = useState(false);
     return Card(
       shape: RoundedRectangleBorder(
-        side: BorderSide(width: 2), // More pronounced border
+        side: const BorderSide(width: 2), // More pronounced border
         borderRadius: BorderRadius.circular(8), // Optional: rounded corners
       ),
       child: Padding(

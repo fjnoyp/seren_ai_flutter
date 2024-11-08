@@ -1,4 +1,3 @@
-import 'dart:io';
 
 import 'package:dio/dio.dart';
 import 'package:seren_ai_flutter/services/ai_interaction/langgraph/models/lg_ai_base_message_model.dart';
@@ -147,7 +146,7 @@ class LanggraphApi {
         } catch (e) {
           // Instead of just printing and continuing, we propagate the error
           yield* Stream.error(
-            'Error processing stream data: $e' + '\n \n $data \n\n',
+            'Error processing stream data: $e' '\n \n $data \n\n',
             StackTrace.current,
           );
           break; // Exit the stream after error

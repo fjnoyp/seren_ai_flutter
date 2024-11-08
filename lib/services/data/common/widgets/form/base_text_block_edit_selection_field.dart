@@ -43,6 +43,7 @@ class BaseTextBlockEditSelectionField extends ConsumerWidget {
             );
           },
         );
+        return null;
       },
     );
   }
@@ -53,10 +54,10 @@ class TextBlockWritingModal extends HookWidget {
   final void Function(WidgetRef, String) onDescriptionChanged;
 
   const TextBlockWritingModal({
-    Key? key,
+    super.key,
     required this.initialDescription,
     required this.onDescriptionChanged,
-  }) : super(key: key);
+  });
 
   @override
   Widget build(BuildContext context) {

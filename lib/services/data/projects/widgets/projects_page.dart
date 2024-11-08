@@ -5,7 +5,7 @@ import 'package:seren_ai_flutter/services/data/projects/models/project_model.dar
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 class ProjectsPage extends ConsumerWidget {
-  const ProjectsPage({Key? key}) : super(key: key);
+  const ProjectsPage({super.key});
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -28,7 +28,7 @@ class ProjectsPage extends ConsumerWidget {
 class ProjectListTile extends StatelessWidget {
   final ProjectModel project;
 
-  const ProjectListTile({Key? key, required this.project}) : super(key: key);
+  const ProjectListTile({super.key, required this.project});
 
   @override
   Widget build(BuildContext context) {

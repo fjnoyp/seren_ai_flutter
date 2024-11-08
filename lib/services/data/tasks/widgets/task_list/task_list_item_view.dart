@@ -11,7 +11,7 @@ import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 class TaskListItemView extends ConsumerWidget {
   final JoinedTaskModel joinedTask;
-  TaskListItemView({Key? key, required this.joinedTask}) : super(key: key);
+  const TaskListItemView({super.key, required this.joinedTask});
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -73,7 +73,7 @@ class TaskListItemView extends ConsumerWidget {
                       color: theme.colorScheme.onSurface.withOpacity(0.7)),
                 ),
               Padding(
-                padding: EdgeInsets.only(left: 8),
+                padding: const EdgeInsets.only(left: 8),
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [

@@ -33,6 +33,8 @@ class TasksNotifier extends Notifier<List<UserModel>> {
 class TestSQLPage extends HookConsumerWidget {
   final TextEditingController _sqlController = TextEditingController();
 
+  TestSQLPage({super.key});
+
   
 
   @override
@@ -42,7 +44,7 @@ class TestSQLPage extends HookConsumerWidget {
 
     return Scaffold(
       appBar: AppBar(
-        title: Text('Test SQL Page'),
+        title: const Text('Test SQL Page'),
       ),
       body: Padding(
         padding: const EdgeInsets.all(16.0),
@@ -50,14 +52,14 @@ class TestSQLPage extends HookConsumerWidget {
           children: [
             TextField(
               controller: _sqlController,
-              decoration: InputDecoration(
+              decoration: const InputDecoration(
                 labelText: 'Enter SQL query',
                 border: OutlineInputBorder(),
               ),
               maxLines: 3,
               minLines: 1,
             ),
-            SizedBox(height: 16),
+            const SizedBox(height: 16),
             ElevatedButton(
               onPressed: () async {
                 final db = ref.read(dbProvider);
@@ -65,7 +67,7 @@ class TestSQLPage extends HookConsumerWidget {
                 final items = results.map((row) => row.values).toList();                
                 sqlResult.value = items.toString();
               },
-              child: Text('Execute SQL'),
+              child: const Text('Execute SQL'),
             ),
             Text(sqlResult.value),
           ],

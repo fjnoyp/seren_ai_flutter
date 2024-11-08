@@ -14,12 +14,12 @@ class BaseHomeCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      padding: EdgeInsets.all(6),
+      padding: const EdgeInsets.all(6),
       decoration: BoxDecoration(
         color: color,
         borderRadius: BorderRadius.circular(4),
       ),
-      margin: EdgeInsets.all(2),
+      margin: const EdgeInsets.all(2),
       child: Column(
         children: [
           Row(
