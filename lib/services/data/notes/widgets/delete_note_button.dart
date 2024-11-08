@@ -1,8 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:seren_ai_flutter/services/data/notes/notes_read_provider.dart';
-import 'package:seren_ai_flutter/services/data/notes/ui_state/cur_note_state_provider.dart';
-import 'package:seren_ai_flutter/services/data/notes/ui_state/cur_note_states.dart';
+import 'package:seren_ai_flutter/services/data/notes/providers/cur_note_service_provider.dart';
 
 class DeleteNoteButton extends ConsumerWidget {
   const DeleteNoteButton({super.key});
@@ -13,12 +11,9 @@ class DeleteNoteButton extends ConsumerWidget {
       icon: const Icon(Icons.delete),
       // TODO: show a confirmation dialog before deleting
       onPressed: () async {
-        final notesDb = ref.watch(notesReadProvider);
-        notesDb
-            .deleteItem((ref.read(curNoteStateProvider) as LoadedCurNoteState)
-                .joinedNote
-                .note
-                .id)
+        await ref
+            .read(curNoteServiceProvider)
+            .deleteNote()
             .then((_) => Navigator.of(context).maybePop());
       },
     );

@@ -4,10 +4,9 @@ import 'package:pdf/pdf.dart';
 import 'package:pdf/widgets.dart';
 import 'package:seren_ai_flutter/common/utils/string_extension.dart';
 import 'package:seren_ai_flutter/services/data/notes/models/joined_note_model.dart';
-import 'package:seren_ai_flutter/services/data/notes/note_attachments_handler.dart';
-import 'package:seren_ai_flutter/services/data/notes/ui_state/cur_note_state_provider.dart';
-import 'package:seren_ai_flutter/services/data/notes/ui_state/cur_note_states.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+import 'package:seren_ai_flutter/services/data/notes/providers/cur_note_state_provider.dart';
+import 'package:seren_ai_flutter/services/data/notes/providers/note_attachments_service_provider.dart';
 
 class NoteToPdfConverter extends Document {
   final WidgetRef ref;
@@ -17,10 +16,9 @@ class NoteToPdfConverter extends Document {
   final pageFormat = PdfPageFormat.a4;
 
   Future<void> buildPdf() async {
-    final joinedNote =
-        (ref.watch(curNoteStateProvider) as LoadedCurNoteState).joinedNote;
+    final joinedNote = ref.watch(curNoteStateProvider).valueOrNull;
 
-    final attachmentWidgets = await _attachmentWidgets(joinedNote);
+    final attachmentWidgets = await _attachmentWidgets(joinedNote!);
 
     addPage(
       Page(
@@ -97,7 +95,7 @@ class NoteToPdfConverter extends Document {
   ) async {
     final imageAttachments = <MemoryImage>[];
     final fileAttachments = <UrlLink>[];
-    final attachments = ref.watch(noteAttachmentsHandlerProvider);
+    final attachments = ref.watch(noteAttachmentsServiceProvider);
 
     await Future.wait(
       attachments.map(
@@ -105,7 +103,7 @@ class NoteToPdfConverter extends Document {
           'png' || 'jpg' || 'jpeg' => imageAttachments.add(
               MemoryImage(
                 (await ref
-                        .read(noteAttachmentsHandlerProvider.notifier)
+                        .read(noteAttachmentsServiceProvider.notifier)
                         .createOrGetLocalFile(joinedNote.note.id, e))
                     .readAsBytesSync(),
               ),
