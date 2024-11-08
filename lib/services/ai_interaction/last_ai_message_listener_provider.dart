@@ -42,13 +42,13 @@ class LastAiMessageListenerNotifier extends Notifier<List<AiResult>> {
 
     // For ToolResponseResult, use content length for timeout if available
     final timeoutSeconds = message.content.isNotEmpty
-        ? (message.content.length ~/ 10).clamp(3, double.infinity).toInt()
+        ? (message.content.length ~/ 10).clamp(5, double.infinity).toInt()
         : 5;
     
-    _startTimer(seconds: 10);
+    _startTimer(seconds: timeoutSeconds);
   }
 
-  void addLastToolResponseResult(AiRequestResult result) {
+  void addLastToolResponseResult(AiRequestResultModel result) {
     // If there are existing results, add the new one
 
       state = List.from(state)..add(result);
@@ -57,7 +57,7 @@ class LastAiMessageListenerNotifier extends Notifier<List<AiResult>> {
     
     // For ToolResponseResult, use content length for timeout if available
     final timeoutSeconds = result.message.isNotEmpty
-        ? (result.message.length ~/ 10).clamp(3, double.infinity).toInt()
+        ? (result.message.length ~/ 10).clamp(5, double.infinity).toInt()
         : 5;
     
     _startTimer(seconds: timeoutSeconds);
