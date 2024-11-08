@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:seren_ai_flutter/services/data/shifts/widgets/clock_in_out_home_card.dart';
-import 'package:seren_ai_flutter/services/data/notes/notes_home_card.dart';
+import 'package:seren_ai_flutter/services/data/notes/widgets/notes_home_card.dart';
 import 'package:seren_ai_flutter/services/data/shifts/widgets/shift_home_card.dart';
 import 'package:seren_ai_flutter/services/data/tasks/widgets/task_home_card.dart';
 

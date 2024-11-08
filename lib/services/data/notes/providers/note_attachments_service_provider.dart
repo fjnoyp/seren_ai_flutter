@@ -6,11 +6,11 @@ import 'package:path_provider/path_provider.dart';
 import 'package:seren_ai_flutter/common/utils/string_extension.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
-final noteAttachmentsHandlerProvider =
-    NotifierProvider<NoteAttachmentsHandler, List<String>>(
-        () => NoteAttachmentsHandler());
+final noteAttachmentsServiceProvider =
+    NotifierProvider<NoteAttachmentsService, List<String>>(
+        () => NoteAttachmentsService());
 
-class NoteAttachmentsHandler extends Notifier<List<String>> {
+class NoteAttachmentsService extends Notifier<List<String>> {
   @override
   List<String> build() {
     return [];

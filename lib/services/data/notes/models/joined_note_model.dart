@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:seren_ai_flutter/services/data/common/status_enum.dart';
 import 'package:seren_ai_flutter/services/data/notes/models/note_model.dart';
@@ -67,5 +69,17 @@ class JoinedNoteModel {
 
     return JoinedNoteModel(
         note: noteModel, authorUser: authorUser, project: project);
+  }
+
+  factory JoinedNoteModel.fromJson(Map<String, dynamic> json) {
+    final noteJson = jsonDecode(json['note']);
+    final authorUserJson = jsonDecode(json['author_user']);
+    final projectJson = jsonDecode(json['project']);
+
+    final note = NoteModel.fromJson(noteJson);
+    final authorUser = UserModel.fromJson(authorUserJson);
+    final project = ProjectModel.fromJson(projectJson);
+
+    return JoinedNoteModel(note: note, authorUser: authorUser, project: project);
   }
 }
