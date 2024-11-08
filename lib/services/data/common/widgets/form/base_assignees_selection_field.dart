@@ -51,6 +51,7 @@ class BaseAssigneesSelectionField extends HookConsumerWidget {
             );
           },
         );
+        return null;
       },
     );
   }
