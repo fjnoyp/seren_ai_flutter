@@ -185,16 +185,20 @@ class AIChatService {
           .read(aiRequestExecutorProvider)
           .executeAiRequest(toolResponses[0]);
 
+      final isCallAgain = result.showOnly ? '' : '<AI CALLED AGAIN>';
       ref
           .read(lastAiMessageListenerProvider.notifier)
           .addLastToolResponseResult(result.copyWith(
-              message: '<AI CALLED AGAIN>${result.message}', showOnly: false));
+              message: '${isCallAgain}${result.message}',
+              showOnly: result.showOnly));
 
       final followupMessages = await sendAiRequestResult(result);
 
+      if (followupMessages.isNotEmpty) {
       ref
           .read(lastAiMessageListenerProvider.notifier)
           .addLastAiMessage(followupMessages.first);
+      }
     }
   }
 
