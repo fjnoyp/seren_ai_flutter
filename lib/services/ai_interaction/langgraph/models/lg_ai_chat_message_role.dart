@@ -4,9 +4,3 @@ enum LgAiChatMessageRole {
   user,
   tool,
 }
-
-extension LgAiChatMessageRoleExtension on LgAiChatMessageRole {
-  String toRawString() {
-    return name; // Returns 'ai', 'tool', or 'user'
-  }
-}

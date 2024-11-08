@@ -28,17 +28,17 @@ final langgraphServiceProvider = Provider<LanggraphService>((ref) {
 /// 
 /// Handles all db operations (store/retrieve) from our db. 
 class LanggraphService {
-  late final LanggraphApi _langgraphApi;
+  late final LanggraphApi langgraphApi;
   final PowerSyncDatabase db;
   late final LanggraphDbOperations _langgraphDbOperations;
 
   LanggraphService({required this.db}) {
-    _langgraphApi = LanggraphApi(
+    langgraphApi = LanggraphApi(
       apiKey: AppConfig.langgraphApiKey,
       baseUrl: AppConfig.langgraphBaseUrl,
     );
     _langgraphDbOperations =
-        LanggraphDbOperations(db: db, langgraphApi: _langgraphApi);
+        LanggraphDbOperations(db: db, langgraphApi: langgraphApi);
   }
 
   /// Top level method for sending a user message to the Langgraph API AI
@@ -69,7 +69,7 @@ class LanggraphService {
   }
 
   Future<List<AiChatMessageModel>> sendAiRequestResult(
-      String userId, String orgId, AiRequestResult aiRequestResult) async {
+      String userId, String orgId, AiRequestResultModel aiRequestResult) async {
     final lgAiRequestResultModel = LgAiRequestResultModel(
         message: aiRequestResult.message, showOnly: aiRequestResult.showOnly);
 
@@ -79,8 +79,8 @@ class LanggraphService {
 
     final showOnly = lgAiRequestResultModel.showOnly;
 
-    await _langgraphDbOperations.updateLastToolMessageWithResult(
-      result: lgAiRequestResultModel,
+    await _langgraphDbOperations.saveAiRequestResult(
+      aiRequestResult: aiRequestResult,
       parentChatThreadId: aiChatThread.id,
     );
 
@@ -113,7 +113,7 @@ class LanggraphService {
     // Collect all messages from the stream
     final messages = <LgAiBaseMessageModel>[];
 
-    await for (final message in _langgraphApi.streamRun(
+    await for (final message in langgraphApi.streamRun(
       threadId: aiChatThread.parentLgThreadId,
       assistantId: aiChatThread.parentLgAssistantId,
       input: lgInput,
@@ -129,7 +129,7 @@ class LanggraphService {
     required String lgThreadId,
     required LgAiRequestResultModel result,
   }) async {
-    final currentState = await _langgraphApi.getThreadState(lgThreadId);
+    final currentState = await langgraphApi.getThreadState(lgThreadId);
 
     final messages = currentState.messages;
 
@@ -141,7 +141,7 @@ class LanggraphService {
 
     // If the last message is a tool message, replace the content with the result
     if (lastMessage.type == LgAiChatMessageRole.tool) {
-      await _langgraphApi.addMessageToThreadState(
+      await langgraphApi.addMessageToThreadState(
         lgThreadId,
         asNode: 'execute_ai_request_on_client',
         message: lastMessage.copyWithContent(result.message),
