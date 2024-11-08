@@ -14,7 +14,7 @@ class OrgGuard extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final curOrgId = ref.watch(curOrgDependencyProvider);
+    final curOrgId = ref.watch(curOrgIdProvider);
 
     final curUserOrgs = ref.watch(curUserOrgsProvider);
     if (curUserOrgs.hasValue &&

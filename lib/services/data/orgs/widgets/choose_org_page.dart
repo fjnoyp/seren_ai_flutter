@@ -10,7 +10,7 @@ class ChooseOrgPage extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final curOrgId = ref.watch(curOrgDependencyProvider);
+    final curOrgId = ref.watch(curOrgIdProvider);
     final orgRoles = ref.watch(joinedCurUserRolesProvider);
 
     final theme = Theme.of(context);

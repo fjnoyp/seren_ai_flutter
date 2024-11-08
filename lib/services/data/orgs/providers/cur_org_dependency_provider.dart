@@ -5,7 +5,7 @@ import 'package:seren_ai_flutter/services/shared_preferences_provider.dart';
 // As we're using shared preferences, the call is synchronous
 // and we need to refresh the provider when the value changes.
 // it's done at lib/services/data/orgs/providers/cur_user_org_service_provider.dart
-final curOrgDependencyProvider = Provider<String?>((ref) {
+final curOrgIdProvider = Provider<String?>((ref) {
   final prefs = ref.read(sharedPreferencesProvider);
   return prefs.getString(orgIdKey);
 });

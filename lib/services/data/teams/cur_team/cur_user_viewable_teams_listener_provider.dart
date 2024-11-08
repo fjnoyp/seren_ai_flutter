@@ -22,7 +22,7 @@ class CurUserViewableTeamsListenerProvider extends Notifier<List<TeamModel>?> {
     final watchedIsCurUserOrgAdmin = ref.watch(isCurUserOrgAdminProvider);
 
     if (watchedIsCurUserOrgAdmin.valueOrNull == true) {
-      final watchedCurOrgId = ref.watch(curOrgDependencyProvider);
+      final watchedCurOrgId = ref.watch(curOrgIdProvider);
 
       final query =
           "SELECT * FROM teams WHERE parent_org_id = '$watchedCurOrgId'";

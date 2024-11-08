@@ -106,7 +106,7 @@ class TestLanggraphWidget extends HookConsumerWidget {
             try {
               final curUser = ref.read(curUserProvider).value;
 
-              final curOrg = ref.read(curOrgDependencyProvider);
+              final curOrg = ref.read(curOrgIdProvider);
 
               // final user2Id = '8c518695-0278-4a0d-9727-136eec2f71c3';
 
