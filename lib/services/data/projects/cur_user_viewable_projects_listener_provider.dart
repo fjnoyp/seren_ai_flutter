@@ -10,7 +10,7 @@ final curUserViewableProjectsListenerProvider =
   final watchedIsCurUserOrgAdmin = ref.watch(isCurUserOrgAdminProvider);
 
   if (watchedIsCurUserOrgAdmin.valueOrNull == true) {
-    final watchedCurOrgId = ref.watch(curOrgDependencyProvider);
+    final watchedCurOrgId = ref.watch(curOrgIdProvider);
 
     if (watchedCurOrgId == null) {
       return [];

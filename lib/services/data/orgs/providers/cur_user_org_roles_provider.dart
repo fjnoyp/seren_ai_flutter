@@ -20,7 +20,7 @@ final joinedCurUserRolesProvider =
 final joinedCurOrgRolesProvider =
     StreamProvider.autoDispose<List<JoinedUserOrgRoleModel>>(
   (ref) {
-    final orgId = ref.watch(curOrgDependencyProvider);
+    final orgId = ref.watch(curOrgIdProvider);
     return ref
         .watch(joinedUserOrgRolesRepositoryProvider)
         .watchJoinedUserOrgRolesByOrg(orgId ?? '');

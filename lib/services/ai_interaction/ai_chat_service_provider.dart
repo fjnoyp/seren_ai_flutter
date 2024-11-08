@@ -37,7 +37,7 @@ class AIChatService {
   AIChatService(this.ref);
 
   Future<void> sendAiRequestResult(AiRequestResult aiRequestResult) async {
-    final curOrgId = ref.watch(curOrgDependencyProvider);
+    final curOrgId = ref.watch(curOrgIdProvider);
     final curUser = ref.read(curUserProvider).value;
 
     if (curUser == null || curOrgId == null) {
@@ -51,7 +51,7 @@ class AIChatService {
   Future<List<AiChatMessageModel>> sendMessage(String message) async {
     ref.read(isAiRespondingProvider.notifier).state = true;
 
-    final curOrgId = ref.read(curOrgDependencyProvider);
+    final curOrgId = ref.read(curOrgIdProvider);
     final curUser = ref.read(curUserProvider).value;
 
     if (curUser == null || curOrgId == null) {

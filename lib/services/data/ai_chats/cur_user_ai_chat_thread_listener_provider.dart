@@ -13,7 +13,7 @@ class CurUserAiChatThreadListenerNotifier extends Notifier<AiChatThreadModel?> {
   AiChatThreadModel? build() {
     final watchedCurAuthUser = ref.read(curUserProvider).value;
 
-    final watchedCurOrgId = ref.watch(curOrgDependencyProvider);
+    final watchedCurOrgId = ref.watch(curOrgIdProvider);
 
     if (watchedCurAuthUser == null || watchedCurOrgId == null) {
       return null;
