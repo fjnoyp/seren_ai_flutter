@@ -4,10 +4,11 @@ import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:intl/intl.dart';
 import 'package:seren_ai_flutter/services/auth/cur_auth_state_provider.dart';
+import 'package:seren_ai_flutter/services/data/common/widgets/async_value_handler_widget.dart';
 import 'package:seren_ai_flutter/services/data/common/widgets/create_item_bottom_button.dart';
 import 'package:seren_ai_flutter/services/data/common/widgets/editablePageModeEnum.dart';
 import 'package:seren_ai_flutter/services/data/notes/models/note_model.dart';
-import 'package:seren_ai_flutter/services/data/notes/notes_listener_fam_provider.dart';
+import 'package:seren_ai_flutter/services/data/notes/providers/notes_provider.dart';
 import 'package:seren_ai_flutter/services/data/notes/widgets/note_page.dart';
 import 'package:seren_ai_flutter/services/data/projects/cur_user_viewable_projects_listener_provider.dart';
 
@@ -87,17 +88,17 @@ class _NoteListByProjectId extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final notes = ref.watch(notesListenerFamProvider(projectId));
-    // TODO: use note list states instead to better handle errors
-    return switch (notes) {
-      null => const Center(child: CircularProgressIndicator()),
-      [] => Center(
-          child: Text(AppLocalizations.of(context)!.thisProjectHasNoNotes)),
-      List() => ListView.builder(
+    return AsyncValueHandlerWidget(
+      value: ref.watch(curUserNotesProvider(projectId)),
+      data: (notes) => notes.isEmpty
+          ? Center(child: Text(AppLocalizations.of(context)!.thisProjectHasNoNotes))
+          : Center(
+          child: ListView.builder(
           itemCount: notes.length,
-          itemBuilder: (context, index) => _NoteItem(notes[index]),
+            itemBuilder: (context, index) => _NoteItem(notes[index]),
+          ),
         ),
-    };
+    );
   }
 }
 
