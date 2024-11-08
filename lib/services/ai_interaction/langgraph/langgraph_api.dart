@@ -22,7 +22,8 @@ class LanggraphApi {
     required this.baseUrl,
   }) {
     _dio.options.headers = {
-      'Authorization': 'Bearer $apiKey',
+      //'Authorization': 'Bearer $apiKey',
+      'X-Api-Key': apiKey,
       'Content-Type': 'application/json',
     };
   }
