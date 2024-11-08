@@ -58,8 +58,8 @@ Widget debugShiftsFullDayView(String shiftId, DateTime day) {
                             width: 15,
                             height: 20,
                             child: Text(
-                              '${index.toString().padLeft(2, '0')}',
-                              style: TextStyle(fontSize: 10),
+                              index.toString().padLeft(2, '0'),
+                              style: const TextStyle(fontSize: 10),
                               textAlign: TextAlign.right,
                             ),
                           ),
@@ -168,7 +168,7 @@ Widget _drawLineAtCurrentTime(DateTime day, double hourHeight) {
     top: top,
     left: 20,
     right: 0,
-    child: Divider(
+    child: const Divider(
       color: Colors.red,
       thickness: 2,
     ),
@@ -222,7 +222,7 @@ Widget _buildTimeBlock({
           alignment: Alignment.centerLeft,
           child: Text(
             label,
-            style: TextStyle(fontSize: 10, color: Colors.black),
+            style: const TextStyle(fontSize: 10, color: Colors.black),
             overflow: TextOverflow.ellipsis,
           ),
         ),

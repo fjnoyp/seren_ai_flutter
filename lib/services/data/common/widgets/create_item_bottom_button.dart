@@ -5,10 +5,10 @@ class CreateItemBottomButton extends StatelessWidget {
   final String buttonText;
 
   const CreateItemBottomButton({
-    Key? key,
+    super.key,
     required this.onPressed,
     required this.buttonText,
-  }) : super(key: key);
+  });
 
   @override
   Widget build(BuildContext context) {
