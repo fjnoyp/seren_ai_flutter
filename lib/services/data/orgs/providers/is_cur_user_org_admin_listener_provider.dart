@@ -9,7 +9,7 @@ final isCurUserOrgAdminProvider = StreamProvider<bool>(
       ref: ref,
       builder: (userId) {
         final repository = ref.watch(userOrgRolesRepositoryProvider);
-        final curOrgId = ref.watch(curOrgDependencyProvider);
+        final curOrgId = ref.watch(curOrgIdProvider);
 
         return repository.watchCurrentUserOrgRoles(userId).map(
           (roles) {
