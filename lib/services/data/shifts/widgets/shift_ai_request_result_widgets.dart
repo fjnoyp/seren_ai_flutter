@@ -6,7 +6,7 @@ import 'package:seren_ai_flutter/services/ai_interaction/ai_request/ai_request_e
 import 'package:seren_ai_flutter/services/data/shifts/shift_tool_methods.dart';
 
 class ShiftInfoResultWidget extends ConsumerWidget {
-  final ShiftInfoResult result;
+  final ShiftInfoResultModel result;
   const ShiftInfoResultWidget({super.key, required this.result});
 
   @override
@@ -31,7 +31,7 @@ class ShiftInfoResultWidget extends ConsumerWidget {
 }
 
 class ShiftClockInOutResultWidget extends ConsumerWidget {
-  final ShiftClockInOutResult result;
+  final ShiftClockInOutResultModel result;
   const ShiftClockInOutResultWidget({super.key, required this.result});
 
   @override

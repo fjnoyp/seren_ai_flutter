@@ -112,6 +112,14 @@ class LanggraphApi {
       )) {
         try {
           final decodedData = utf8.decode(data);
+
+          // Skip heartbeat messages
+          if (decodedData.trim() == ': heartbeat') {
+            print('skipping heartbeat message');
+            print(decodedData);
+            continue;
+          }
+
           final responseModel = LgRunStreamResponseModel.fromSSE(decodedData);
 
           if (responseModel.event == "updates") {
@@ -139,7 +147,7 @@ class LanggraphApi {
         } catch (e) {
           // Instead of just printing and continuing, we propagate the error
           yield* Stream.error(
-            'Error processing stream data: $e',
+            'Error processing stream data: $e' + '\n \n $data \n\n',
             StackTrace.current,
           );
           break; // Exit the stream after error
