@@ -9,19 +9,19 @@ import 'package:seren_ai_flutter/services/data/shifts/providers/cur_shift_state_
 import 'package:seren_ai_flutter/services/data/shifts/providers/shift_logs_service_provider.dart';
 import 'package:seren_ai_flutter/services/data/shifts/repositories/shift_time_ranges_repository.dart';
 
-class ShiftInfoResult extends AiRequestResult {
+class ShiftInfoResultModel extends AiRequestResultModel {
   final List<DateTimeRange> activeShiftRanges;
-  ShiftInfoResult({
+  ShiftInfoResultModel({
     required this.activeShiftRanges,
     required super.message,
     required super.showOnly,
   });
 }
 
-class ShiftClockInOutResult extends AiRequestResult {
+class ShiftClockInOutResultModel extends AiRequestResultModel {
   final bool hasError;
   final bool clockedIn;
-  ShiftClockInOutResult({
+  ShiftClockInOutResultModel({
     required this.clockedIn,
     this.hasError = false,
     required super.message,
@@ -53,14 +53,14 @@ class ShiftToolMethods {
     );
   }
 
-  AiRequestResult handleNoAuthOrShiftInfo({AiInfoRequestModel? infoRequest}) {
-    return AiRequestResult(
+  AiRequestResultModel handleNoAuthOrShiftInfo({AiInfoRequestModel? infoRequest}) {
+    return AiRequestResultModel(
       message: 'Not authenticated or no active shift',
       showOnly: infoRequest?.showOnly ?? true,
     );
   }
 
-  Future<AiRequestResult> getCurrentShiftInfo(
+  Future<AiRequestResultModel> getCurrentShiftInfo(
       {required Ref ref, required AiInfoRequestModel infoRequest}) async {
     final info = _getAuthAndShiftInfo(ref);
     if (info == null) return handleNoAuthOrShiftInfo(infoRequest: infoRequest);
@@ -72,15 +72,22 @@ class ShiftToolMethods {
               day: DateTime.now().toUtc(),
             );
 
-    return ShiftInfoResult(
+    if (timeRanges.isEmpty) {
+      return ShiftInfoResultModel(
+        activeShiftRanges: timeRanges,
+        message: 'No Shifts Today',
+        showOnly: infoRequest.showOnly,
+      );
+    }
+
+    return ShiftInfoResultModel(
       activeShiftRanges: timeRanges,
-      message:
-          'Current shift time ranges: ${timeRanges.map((range) => '${range.start.toLocal()} - ${range.end.toLocal()}').join('\n')}',
+      message: 'Current shift time ranges: ${timeRanges.map((range) => '${range.start.toLocal()} - ${range.end.toLocal()}').join('\n')}',
       showOnly: infoRequest.showOnly,
     );
   }
 
-  Future<AiRequestResult> clockIn({required Ref ref}) async {
+  Future<AiRequestResultModel> clockIn({required Ref ref}) async {
     final info = _getAuthAndShiftInfo(ref);
     if (info == null) return handleNoAuthOrShiftInfo();
 
@@ -89,7 +96,7 @@ class ShiftToolMethods {
         .clockIn(userId: info.userId, shiftId: info.shiftId);
 
     if (result.error != null) {
-      return ShiftClockInOutResult(
+      return ShiftClockInOutResultModel(
         clockedIn: false,
         hasError: true,
         message: result.error!,
@@ -97,14 +104,14 @@ class ShiftToolMethods {
       );
     }
 
-    return ShiftClockInOutResult(
+    return ShiftClockInOutResultModel(
       clockedIn: true,
       message: 'Successfully clocked in!',
       showOnly: true,
     );
   }
 
-  Future<AiRequestResult> clockOut({required Ref ref}) async {
+  Future<AiRequestResultModel> clockOut({required Ref ref}) async {
     final info = _getAuthAndShiftInfo(ref);
     if (info == null) return handleNoAuthOrShiftInfo();
 
@@ -113,7 +120,7 @@ class ShiftToolMethods {
         .clockOut(userId: info.userId, shiftId: info.shiftId);
 
     if (result.error != null) {
-      return ShiftClockInOutResult(
+      return ShiftClockInOutResultModel(
         clockedIn: false,
         hasError: true,
         message: result.error!,
@@ -121,7 +128,7 @@ class ShiftToolMethods {
       );
     }
 
-    return ShiftClockInOutResult(
+    return ShiftClockInOutResultModel(
       clockedIn: false,
       message: 'Successfully clocked out!',
       showOnly: true,

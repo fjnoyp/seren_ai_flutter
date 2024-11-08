@@ -3,6 +3,7 @@
 import 'dart:convert';
 
 import 'package:powersync/powersync.dart';
+import 'package:seren_ai_flutter/services/ai_interaction/ai_request/ai_request_executor.dart';
 import 'package:seren_ai_flutter/services/ai_interaction/langgraph/langgraph_api.dart';
 import 'package:seren_ai_flutter/services/ai_interaction/langgraph/models/lg_ai_base_message_model.dart';
 import 'package:seren_ai_flutter/services/ai_interaction/langgraph/models/lg_ai_chat_message_role.dart';
@@ -10,8 +11,7 @@ import 'package:seren_ai_flutter/services/ai_interaction/langgraph/models/lg_ai_
 import 'package:seren_ai_flutter/services/data/ai_chats/models/ai_chat_message_model.dart';
 import 'package:seren_ai_flutter/services/data/ai_chats/models/ai_chat_thread_model.dart';
 
-
-// TODO p3 - for consistency - langgraph folder should have no supabase db methods, and these should instead be DI injected from the data service 
+// TODO p3 - for consistency - langgraph folder should have no supabase db methods, and these should instead be DI injected from the data service
 class LanggraphDbOperations {
   final PowerSyncDatabase db;
   final LanggraphApi langgraphApi;
@@ -30,7 +30,7 @@ class LanggraphDbOperations {
         content,
         parent_chat_thread_id
       ) VALUES (?, ?, ?, ?)
-    ''', [uuid.v4(), role.toRawString(), message, parentChatThreadId]);
+    ''', [uuid.v4(), role.name, message, parentChatThreadId]);
   }
 
   // TODO: move to SQL?
@@ -91,7 +91,7 @@ class LanggraphDbOperations {
     // create new thread
   }
 
-  /// When Anthropic AI calls a tool 
+  /// When Anthropic AI calls a tool
   /// Response content is returned as a list of JSON objects and must be parsed
   /// expected format:
   /// [
@@ -107,9 +107,10 @@ class LanggraphDbOperations {
   String _parseAiMessageContent(String content) {
     try {
       final List<dynamic> parsedContent = json.decode(content);
-      
+
       // Verify the expected format with type field
-      if (!parsedContent.every((item) => item is Map && item.containsKey('type'))) {
+      if (!parsedContent
+          .every((item) => item is Map && item.containsKey('type'))) {
         return content;
       }
 
@@ -138,11 +139,10 @@ class LanggraphDbOperations {
 
     for (final message in messages) {
       try {
-
         var content = message.content;
-        if(message.type == LgAiChatMessageRole.ai) {
+        if (message.type == LgAiChatMessageRole.ai) {
           content = _parseAiMessageContent(message.content);
-        } 
+        }
 
         final messageRows = await db.execute('''
           INSERT INTO ai_chat_messages (
@@ -155,7 +155,7 @@ class LanggraphDbOperations {
           RETURNING *
         ''', [
           uuid.v4(),
-          message.type.toRawString(),
+          message.type.name,
           content,
           parentChatThreadId,
           message.id,
@@ -175,41 +175,19 @@ class LanggraphDbOperations {
     return createdMessages;
   }
 
-  Future<void> updateLastToolMessageWithResult({
-    required LgAiRequestResultModel result,
+  /// Note that in Langgraph state result replaces original tool message's content. 
+  /// But in our db we store 2 messages - the request and the result
+  Future<void> saveAiRequestResult({
+    required AiRequestResultModel aiRequestResult,
     required String parentChatThreadId,
   }) async {
-    // Get the last message for this thread
-    final messageRows = await db.execute('''
-      SELECT * FROM ai_chat_messages 
-      WHERE parent_chat_thread_id = ?
-      ORDER BY created_at DESC
-      LIMIT 1
-    ''', [parentChatThreadId]);
-
-    if (messageRows.isEmpty) {
-      throw Exception('No messages found for thread');
-    }
-
-    final lastMessageString = messageRows.first;
-
-    final lastMessage = LgAiBaseMessageModel.fromJson(lastMessageString);
-
-    // Verify it's a tool message
-    if (lastMessage.type== LgAiChatMessageRole.tool) {
-      // Update the content with the result
-      final updateRows = await db.execute('''
-        UPDATE ai_chat_messages
-        SET content = ?
-        WHERE id = ?
-        RETURNING *
-      ''', [result.message, lastMessage.id]);
-
-      if (updateRows.isEmpty) {
-        throw Exception('Failed to update tool message');
-      }
-    } else {
-      throw Exception('Last message is not a tool message');
-    }
+    await db.execute('''
+      INSERT INTO ai_chat_messages (
+        id,
+        type,
+        content,
+        parent_chat_thread_id
+      ) VALUES (?, ?, ?, ?)
+    ''', [uuid.v4(), LgAiChatMessageRole.tool.name, aiRequestResult.message, parentChatThreadId]);
   }
 }

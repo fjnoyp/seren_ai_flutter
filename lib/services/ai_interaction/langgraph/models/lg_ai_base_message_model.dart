@@ -39,7 +39,7 @@ class LgAiBaseMessageModel {
   Map<String, dynamic> toJson() {
     return {
       'content': content,
-      'type': type.toRawString(),
+      'type': type.name,
       'id': id,
       ..._additionalFields,
     };
@@ -53,7 +53,7 @@ class LgAiBaseMessageModel {
   LgAiBaseMessageModel copyWithContent(String newContent) {
     return LgAiBaseMessageModel(
       messageContent: newContent,
-      messageType: type.toRawString(),
+      messageType: type.name,
       id: id,
       additionalFields: _additionalFields,
     );
