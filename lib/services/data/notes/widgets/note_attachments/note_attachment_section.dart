@@ -5,8 +5,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:permission_handler/permission_handler.dart';
-import 'package:seren_ai_flutter/services/data/notes/note_attachments_handler.dart';
-import 'package:seren_ai_flutter/services/data/notes/ui_state/cur_note_state_provider.dart';
+import 'package:seren_ai_flutter/services/data/notes/providers/cur_note_service_provider.dart';
+import 'package:seren_ai_flutter/services/data/notes/providers/note_attachments_service_provider.dart';
 
 class NoteAttachmentSection extends ConsumerWidget {
   const NoteAttachmentSection(this.isEnabled, {super.key});
@@ -22,7 +22,7 @@ class NoteAttachmentSection extends ConsumerWidget {
           alignment: WrapAlignment.center,
           spacing: 16.0,
           children: [
-            ...ref.watch(noteAttachmentsHandlerProvider).map(
+            ...ref.watch(noteAttachmentsServiceProvider).map(
                 (e) => _AttachmentPreviewButton(e, enableDelete: isEnabled)),
           ],
         ),
@@ -63,9 +63,9 @@ class _AddAttachmentButton extends ConsumerWidget {
 
     if (result != null) {
       List<File> files = result.paths.map((path) => File(path!)).toList();
-      ref.read(noteAttachmentsHandlerProvider.notifier).uploadAttachments(
+      ref.read(noteAttachmentsServiceProvider.notifier).uploadAttachments(
             files,
-            noteId: ref.read(curNoteStateProvider.notifier).curNoteId,
+            noteId: ref.read(curNoteServiceProvider).curNoteId,
           );
     }
   }
@@ -137,9 +137,9 @@ class _DeleteAttachmentDialog extends ConsumerWidget {
         ),
         ElevatedButton(
           onPressed: () {
-            ref.read(noteAttachmentsHandlerProvider.notifier).deleteAttachment(
+            ref.read(noteAttachmentsServiceProvider.notifier).deleteAttachment(
                   fileUrl: attachmentUrl,
-                  noteId: ref.read(curNoteStateProvider.notifier).curNoteId,
+                  noteId: ref.read(curNoteServiceProvider).curNoteId,
                 );
             Navigator.pop(context);
           },
@@ -180,11 +180,10 @@ class _AttachmentPreview extends ConsumerWidget {
                 ),
                 TextButton(
                   onPressed: () => ref
-                      .read(noteAttachmentsHandlerProvider.notifier)
+                      .read(noteAttachmentsServiceProvider.notifier)
                       .openAttachmentLocally(
                         fileUrl: attachmentUrl,
-                        noteId:
-                            ref.read(curNoteStateProvider.notifier).curNoteId,
+                        noteId: ref.read(curNoteServiceProvider).curNoteId,
                       ),
                   child: Text(AppLocalizations.of(context)!.openFile),
                 ),
