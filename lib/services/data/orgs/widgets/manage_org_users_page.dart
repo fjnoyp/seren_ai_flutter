@@ -9,7 +9,7 @@ class ManageOrgUsersPage extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final curOrgId = ref.watch(curOrgDependencyProvider);
+    final curOrgId = ref.watch(curOrgIdProvider);
 
     if (curOrgId == null) {
       return Center(child: Text(AppLocalizations.of(context)!.noOrgSelected));

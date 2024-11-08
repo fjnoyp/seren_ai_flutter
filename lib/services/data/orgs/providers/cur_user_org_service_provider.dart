@@ -18,13 +18,13 @@ class CurUserOrgService {
     final prefs = ref.read(sharedPreferencesProvider);
     // TODO: desiredOrgId persistency should be per user
     await prefs.setString(orgIdKey, desiredOrgId);
-    ref.refresh(curOrgDependencyProvider);
+    ref.refresh(curOrgIdProvider);
   }
 
   Future<void> clearDesiredOrgId() async {
     final prefs = ref.read(sharedPreferencesProvider);
     // TODO: desiredOrgId persistency should be per user
     await prefs.remove(orgIdKey);
-    ref.refresh(curOrgDependencyProvider);
+    ref.refresh(curOrgIdProvider);
   }
 }
