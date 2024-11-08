@@ -141,9 +141,9 @@ class MessageCard extends HookWidget {
                     fontWeight: FontWeight.bold,
                   ),
             ),
-            if (message.isAiRequest())
+            if (message.isAiToolRequest())
               DisplayToolResponse(
-                  toolResponses: message.getAiRequests() ?? [])
+                  toolResponse: message.getAiRequest()!)
             else
               DisplayContent(
                   content: message.content, isExpanded: isExpanded.value),
@@ -182,11 +182,10 @@ class DisplayContent extends StatelessWidget {
     );
   }
 }
-
 class DisplayToolResponse extends StatelessWidget {
-  final List<AiRequestModel> toolResponses;
+  final AiRequestModel toolResponse;
 
-  const DisplayToolResponse({super.key, required this.toolResponses});
+  const DisplayToolResponse({super.key, required this.toolResponse});
 
   @override
   Widget build(BuildContext context) {
@@ -194,38 +193,35 @@ class DisplayToolResponse extends StatelessWidget {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         const SizedBox(height: 8),
-        ...toolResponses.map((response) {
-          final responseType = response.requestType.value;
+        // Get the response type from the toolResponse
 
-          // Create a widget for each response with better formatting
-          return Padding(
-            padding: const EdgeInsets.symmetric(vertical: 4.0),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
+         Padding(
+          padding: const EdgeInsets.symmetric(vertical: 4.0),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text(
+                'Response Type: ${toolResponse.requestType.value}',
+                style: Theme.of(context).textTheme.titleSmall?.copyWith(
+                      fontWeight: FontWeight.bold,
+                    ),
+              ),
+              if (toolResponse is AiActionRequestModel) ...[
                 Text(
-                  'Response Type: $responseType',
-                  style: Theme.of(context).textTheme.titleSmall?.copyWith(
-                        fontWeight: FontWeight.bold,
-                      ),
-                ),
-                if (response is AiActionRequestModel) ...[
-                  Text(
-                      'Action Request Type: ${response.actionRequestType.value}'),
-                  Text('Args: ${response.args}'),
-                ] else if (response is AiUiActionRequestModel) ...[
-                  Text('UI Action Type: ${response.uiActionType.value}'),
-                  Text('Args: ${response.args}'),
-                ] else if (response is AiInfoRequestModel) ...[
-                  Text('Info Request Type: ${response.infoRequestType.value}'),
-                  Text('Args: ${response.args}'),
-                  Text('Show Only: ${response.showOnly}'),
-                ],
-                const SizedBox(height: 8), // Add space between responses
+                    'Action Request Type: ${(toolResponse as AiActionRequestModel).actionRequestType.value}'),
+                Text('Args: ${(toolResponse as AiActionRequestModel).args}'),
+              ] else if (toolResponse is AiUiActionRequestModel) ...[
+                Text('UI Action Type: ${(toolResponse as AiUiActionRequestModel).uiActionType.value}'),
+                Text('Args: ${(toolResponse as AiUiActionRequestModel).args}'),
+              ] else if (toolResponse is AiInfoRequestModel) ...[
+                Text('Info Request Type: ${(toolResponse as AiInfoRequestModel).infoRequestType.value}'),
+                Text('Args: ${(toolResponse as AiInfoRequestModel).args}'),
+                Text('Show Only: ${(toolResponse as AiInfoRequestModel).showOnly}'),
               ],
-            ),
-          );
-        }).toList(),
+              const SizedBox(height: 8), // Add space between responses
+            ],
+          ),
+        ),
       ],
     );
   }

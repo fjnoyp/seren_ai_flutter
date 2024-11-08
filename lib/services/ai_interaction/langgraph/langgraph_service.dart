@@ -1,6 +1,7 @@
 // What are the methods needed
 // What methods are they calling
 
+import 'package:seren_ai_flutter/services/ai_interaction/ai_request/ai_request_executor.dart';
 import 'package:seren_ai_flutter/services/ai_interaction/langgraph/langgraph_api.dart';
 import 'package:seren_ai_flutter/services/ai_interaction/langgraph/langgraph_db_operations.dart';
 import 'package:seren_ai_flutter/services/ai_interaction/langgraph/models/lg_ai_base_message_model.dart';
@@ -8,6 +9,7 @@ import 'package:seren_ai_flutter/services/ai_interaction/langgraph/models/lg_ai_
 import 'package:seren_ai_flutter/services/ai_interaction/langgraph/models/lg_ai_request_result_model.dart';
 import 'package:seren_ai_flutter/services/ai_interaction/langgraph/models/lg_input_model.dart';
 import 'package:seren_ai_flutter/services/ai_interaction/langgraph/models/lg_thread_state_model.dart';
+import 'package:seren_ai_flutter/services/data/ai_chats/models/ai_chat_message_model.dart';
 import 'package:seren_ai_flutter/services/data/ai_chats/models/ai_chat_thread_model.dart';
 import 'package:seren_ai_flutter/services/data/db_setup/app_config.dart';
 
@@ -20,26 +22,31 @@ final langgraphServiceProvider = Provider<LanggraphService>((ref) {
   return LanggraphService(db: db);
 });
 
+/// Interface between the app and the Langgraph API.
+/// Only returns and accepts our own data types.
+/// Converts to necessary Langgraph types when sending to the API.
+/// 
+/// Handles all db operations (store/retrieve) from our db. 
 class LanggraphService {
   late final LanggraphApi _langgraphApi;
   final PowerSyncDatabase db;
-  late final LanggraphDbOperations langgraphDbOperations;
+  late final LanggraphDbOperations _langgraphDbOperations;
 
   LanggraphService({required this.db}) {
     _langgraphApi = LanggraphApi(
       apiKey: AppConfig.langgraphApiKey,
       baseUrl: AppConfig.langgraphBaseUrl,
     );
-    langgraphDbOperations =
+    _langgraphDbOperations =
         LanggraphDbOperations(db: db, langgraphApi: _langgraphApi);
   }
 
   /// Top level method for sending a user message to the Langgraph API AI
-  Future<List<LgAiBaseMessageModel>> sendUserMessage(
+  Future<List<AiChatMessageModel>> sendUserMessage(
       String userMessage, String userId, String orgId) async {
     // Create or Get thread info stored in DB AiChatThread table
     final aiChatThread =
-        await langgraphDbOperations.getOrCreateAiChatThread(userId, orgId);
+        await _langgraphDbOperations.getOrCreateAiChatThread(userId, orgId);
 
     // Create input for the Langgraph API
     final lgInput = LgInputModel(messages: [
@@ -47,45 +54,53 @@ class LanggraphService {
     ]);
 
     // Save user message to DB AiChatMessage table
-    await langgraphDbOperations.saveUserAiChatMessage(
+    await _langgraphDbOperations.saveUserAiChatMessage(
         userMessage, aiChatThread.id, LgAiChatMessageRole.user);
 
-    final messages = await runAi(aiChatThread: aiChatThread, lgInput: lgInput);
+    final lgBaseMessages =
+        await runAi(aiChatThread: aiChatThread, lgInput: lgInput);
 
-    await langgraphDbOperations.saveLgBaseMessageModels(
-      messages: messages,
+    final aiChatMessages = await _langgraphDbOperations.saveLgBaseMessageModels(
+      messages: lgBaseMessages,
       parentChatThreadId: aiChatThread.id,
     );
 
-    return messages;
+    return aiChatMessages;
   }
 
-  Future<List<LgAiBaseMessageModel>> sendAiRequestResult(
-      String userMessage,
-      String userId,
-      String orgId,
-      LgAiRequestResultModel lgAiRequestResultModel) async {
+  Future<List<AiChatMessageModel>> sendAiRequestResult(
+      String userId, String orgId, AiRequestResult aiRequestResult) async {
+    final lgAiRequestResultModel = LgAiRequestResultModel(
+        message: aiRequestResult.message, showOnly: aiRequestResult.showOnly);
+
 // Create or Get thread info stored in DB AiChatThread table
     final aiChatThread =
-        await langgraphDbOperations.getOrCreateAiChatThread(userId, orgId);
+        await _langgraphDbOperations.getOrCreateAiChatThread(userId, orgId);
 
     final showOnly = lgAiRequestResultModel.showOnly;
 
-    await langgraphDbOperations.updateLastToolMessageWithResult(
+    await _langgraphDbOperations.updateLastToolMessageWithResult(
       result: lgAiRequestResultModel,
       parentChatThreadId: aiChatThread.id,
     );
 
+    await updateLastToolMessageThreadState(
+      lgThreadId: aiChatThread.parentLgThreadId,
+      result: lgAiRequestResultModel,
+    );
+
     if (!showOnly) {
       // Resume the invokation of the ai
-      final messages = await runAi(aiChatThread: aiChatThread, lgInput: null);
+      final lgBaseMessages =
+          await runAi(aiChatThread: aiChatThread, lgInput: null);
 
-      await langgraphDbOperations.saveLgBaseMessageModels(
-        messages: messages,
+      final aiChatMessages =
+          await _langgraphDbOperations.saveLgBaseMessageModels(
+        messages: lgBaseMessages,
         parentChatThreadId: aiChatThread.id,
       );
 
-      return messages;
+      return aiChatMessages;
     }
 
     return [];
@@ -110,7 +125,7 @@ class LanggraphService {
     return messages;
   }
 
-  Future<void> updateLastToolMessageWithResult({
+  Future<void> updateLastToolMessageThreadState({
     required String lgThreadId,
     required LgAiRequestResultModel result,
   }) async {
@@ -126,24 +141,13 @@ class LanggraphService {
 
     // If the last message is a tool message, replace the content with the result
     if (lastMessage.type == LgAiChatMessageRole.tool) {
-      // Create updated state with modified message
-      final updatedState = LgThreadStateModel(
-        messages: [
-          ...messages.take(messages.length - 1),
-          LgAiBaseMessageModel(
-            messageContent: result.message,
-            messageType: lastMessage.type.toString(),
-            id: lastMessage.id,
-          )
-        ],
-        otherValues: currentState.otherValues,
-      );
-
-      await _langgraphApi.updateThreadState(
+      await _langgraphApi.addMessageToThreadState(
         lgThreadId,
         asNode: 'execute_ai_request_on_client',
-        state: updatedState,
+        message: lastMessage.copyWithContent(result.message),
       );
+    } else {
+      throw Exception('Last message is not a tool message');
     }
   }
 }

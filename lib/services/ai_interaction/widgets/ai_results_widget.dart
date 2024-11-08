@@ -50,6 +50,7 @@ class AiResultsWidget extends HookConsumerWidget {
                 icon: const Icon(Icons.check, color: Colors.white),
                 onPressed: () {
                   isVisible.value = false;
+                  ref.read(lastAiMessageListenerProvider.notifier).clearState();
                 },
               ),
             ],

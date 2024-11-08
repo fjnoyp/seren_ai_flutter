@@ -41,6 +41,7 @@ class LgAiBaseMessageModel {
       'content': content,
       'type': type.toRawString(),
       'id': id,
+      ..._additionalFields,
     };
   }
 
