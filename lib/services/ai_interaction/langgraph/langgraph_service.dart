@@ -8,7 +8,6 @@ import 'package:seren_ai_flutter/services/ai_interaction/langgraph/models/lg_ai_
 import 'package:seren_ai_flutter/services/ai_interaction/langgraph/models/lg_ai_chat_message_role.dart';
 import 'package:seren_ai_flutter/services/ai_interaction/langgraph/models/lg_ai_request_result_model.dart';
 import 'package:seren_ai_flutter/services/ai_interaction/langgraph/models/lg_input_model.dart';
-import 'package:seren_ai_flutter/services/ai_interaction/langgraph/models/lg_thread_state_model.dart';
 import 'package:seren_ai_flutter/services/data/ai_chats/models/ai_chat_message_model.dart';
 import 'package:seren_ai_flutter/services/data/ai_chats/models/ai_chat_thread_model.dart';
 import 'package:seren_ai_flutter/services/data/db_setup/app_config.dart';

@@ -12,9 +12,13 @@ typedef ToJson<T> = Map<String, dynamic> Function(T item);
 // And using futureProvider to fetch data once and not over and over again ...
 
 class BaseTableReadDb<T extends IHasId> extends BaseTableDb<T> {
+  @override
   final String tableName;
+  @override
   final FromJson<T> fromJson;
+  @override
   final ToJson<T> toJson;
+  @override
   final PowerSyncDatabase db;
 
   BaseTableReadDb({

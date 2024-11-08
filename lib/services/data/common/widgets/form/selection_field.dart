@@ -29,7 +29,7 @@ class AnimatedModalSelectionField<T> extends HookConsumerWidget {
     final colorAnimation = useAiActionColorAnimation(
       context,
       ref,
-      duration: Duration(seconds: 1),
+      duration: const Duration(seconds: 1),
       triggerValue: value,
     );
 
@@ -99,7 +99,7 @@ class ModalSelectionField<T> extends SelectionField<T> {
 }
 
 class AnimatedSelectionField<T> extends SelectionField<T> {
-  AnimatedSelectionField({
+  const AnimatedSelectionField({
     super.key,
     required super.value,
     super.onValueChanged,
@@ -116,7 +116,7 @@ class AnimatedSelectionField<T> extends SelectionField<T> {
     final colorAnimation = useAiActionColorAnimation(
       context,
       ref,
-      duration: Duration(seconds: 1),
+      duration: const Duration(seconds: 1),
       triggerValue: value,
     );
 
