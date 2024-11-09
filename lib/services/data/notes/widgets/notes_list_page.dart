@@ -10,7 +10,7 @@ import 'package:seren_ai_flutter/services/data/common/widgets/editablePageModeEn
 import 'package:seren_ai_flutter/services/data/notes/models/note_model.dart';
 import 'package:seren_ai_flutter/services/data/notes/providers/notes_provider.dart';
 import 'package:seren_ai_flutter/services/data/notes/widgets/note_page.dart';
-import 'package:seren_ai_flutter/services/data/projects/cur_user_viewable_projects_listener_provider.dart';
+import 'package:seren_ai_flutter/services/data/projects/providers/cur_user_viewable_projects_provider.dart';
 
 class NoteListPage extends HookConsumerWidget {
   const NoteListPage({super.key});
@@ -47,37 +47,40 @@ class _SelectProjectWidget extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final projects = ref.watch(curUserViewableProjectsListenerProvider);
-
-    return (projects?.isEmpty ?? true)
-        ? Text(AppLocalizations.of(context)!.loadingProjects)
-        : SingleChildScrollView(
-            scrollDirection: Axis.horizontal,
-            child: Row(
-              children: [
-                Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 4),
-                  child: FilterChip(
-                    selected: curProjectId.value == null,
-                    onSelected: (value) => curProjectId.value = null,
-                    label: Text(AppLocalizations.of(context)!.personal),
-                    showCheckmark: false,
-                  ),
-                ),
-                ...projects!.map(
-                  (project) => Padding(
+    return AsyncValueHandlerWidget(
+      value: ref.watch(curUserViewableProjectsProvider),
+      loading: () =>
+          Center(child: Text(AppLocalizations.of(context)!.loadingProjects)),
+      data: (projects) => (projects.isEmpty)
+          ? Center(child: Text(AppLocalizations.of(context)!.noProjectsFound))
+          : SingleChildScrollView(
+              scrollDirection: Axis.horizontal,
+              child: Row(
+                children: [
+                  Padding(
                     padding: const EdgeInsets.symmetric(horizontal: 4),
                     child: FilterChip(
-                      selected: curProjectId.value == project.id,
-                      onSelected: (value) => curProjectId.value = project.id,
-                      label: Text(project.name),
+                      selected: curProjectId.value == null,
+                      onSelected: (value) => curProjectId.value = null,
+                      label: Text(AppLocalizations.of(context)!.personal),
                       showCheckmark: false,
                     ),
                   ),
-                ),
-              ],
+                  ...projects.map(
+                    (project) => Padding(
+                      padding: const EdgeInsets.symmetric(horizontal: 4),
+                      child: FilterChip(
+                        selected: curProjectId.value == project.id,
+                        onSelected: (value) => curProjectId.value = project.id,
+                        label: Text(project.name),
+                        showCheckmark: false,
+                      ),
+                    ),
+                  ),
+                ],
+              ),
             ),
-          );
+    );
   }
 }
 
