@@ -14,7 +14,6 @@ import 'package:seren_ai_flutter/services/data/ai_chats/repositories/ai_chat_thr
 import 'package:seren_ai_flutter/services/data/orgs/providers/cur_org_dependency_provider.dart';
 import 'package:seren_ai_flutter/services/text_to_speech/text_to_speech_notifier.dart';
 
-
 import 'package:logging/logging.dart';
 
 final log = Logger('AIChatService');
@@ -26,8 +25,8 @@ final isAiEditingProvider = StateProvider<bool>((ref) => false);
 final aiChatServiceProvider = Provider<AIChatService>(AIChatService.new);
 
 /*
-TODO: 
-2. have an intermediate class dedicated to converting from our data to langgraph data 
+
+TODO p1: fix bug where ai keeps speaking 
 
 */
 class AIChatService {
@@ -35,35 +34,56 @@ class AIChatService {
 
   AIChatService(this.ref);
 
-  Future<List<AiChatMessageModel>> sendAiRequestResult(
-      AiRequestResultModel aiRequestResult) async {
-    final curOrgId = ref.watch(curOrgIdProvider);
+  Future<void> sendMessageToAi(String message) async {
+    final isAiRespondingNotifier = ref.read(isAiRespondingProvider.notifier);
+    final curOrgId = ref.read(curOrgIdProvider);
     final curUser = ref.read(curUserProvider).value;
+    final aiChatMessagesService = ref.read(aiChatMessagesServiceProvider);
+
+    isAiRespondingNotifier.state = true;
 
     if (curUser == null || curOrgId == null) {
+      isAiRespondingNotifier.state = false;
       throw Exception('No current user or org id found');
     }
 
-    // Get or create thread
-    final aiChatThread = await getOrCreateAiChatThread(curUser.id, curOrgId);
+    try {
+      // Get or create thread
+      final aiChatThread = await getOrCreateAiChatThread(curUser.id, curOrgId);
 
-    // Save aiRequestResult
-    await ref.read(aiChatMessagesServiceProvider).saveMessage(
-        AiChatMessageModel(
-            content: aiRequestResult.message,
-            type: AiChatMessageType.tool,
-            parentChatThreadId: aiChatThread.id));
+      // Save user message
+      await aiChatMessagesService.saveMessage(AiChatMessageModel(
+          content: message,
+          type: AiChatMessageType.user,
+          parentChatThreadId: aiChatThread.id));
 
-    final lgBaseMessages = await ref
-        .read(langgraphServiceProvider)
-        .updateLastToolMessageWithResult(
-          resultString: aiRequestResult.message,
-          showOnly: aiRequestResult.showOnly,
-          lgThreadId: aiChatThread.parentLgThreadId,
-          lgAssistantId: aiChatThread.parentLgAssistantId,
-        );
+      // Send message to Langgraph
+      await _runAi(aiChatThread: aiChatThread, userMessage: message);
 
-    // Save lgBaseMessages as aiChatMessages
+      isAiRespondingNotifier.state = false;
+    } catch (e) {
+      rethrow;
+    } finally {
+      isAiRespondingNotifier.state = false;
+    }
+  }
+
+  Future<void> _runAi({
+    required AiChatThreadModel aiChatThread,
+    String? userMessage,
+  }) async {
+    final langgraphService = ref.read(langgraphServiceProvider);
+    final lastAiMessageListener =
+        ref.read(lastAiMessageListenerProvider.notifier);
+    final aiChatMessagesService = ref.read(aiChatMessagesServiceProvider);
+
+    // Call Langgraph API
+    final lgBaseMessages = await langgraphService.runAi(
+        message: userMessage,
+        lgThreadId: aiChatThread.parentLgThreadId,
+        lgAssistantId: aiChatThread.parentLgAssistantId);
+
+    // Convert lgBaseMessages as aiChatMessages
     final aiChatMessages = lgBaseMessages
         .map((lgBaseMessage) => AiChatMessageModel(
             content: lgBaseMessage.content,
@@ -72,94 +92,30 @@ class AIChatService {
             parentChatThreadId: aiChatThread.id))
         .toList();
 
-    await ref.read(aiChatMessagesServiceProvider).saveMessages(aiChatMessages);
+    // Display ai response
+    lastAiMessageListener.addLastAiMessage(aiChatMessages.first);
+    speakAiMessage(aiChatMessages);
 
-    // Only if ai did followup response:
-    if (aiChatMessages.isNotEmpty) {
-      ref
-          .read(lastAiMessageListenerProvider.notifier)
-          .addLastAiMessage(aiChatMessages.first);
-      // Tip: When testing ai request execution - you can hardcode the aiChatMessages to test different flows
-      await tryExecuteAiRequests(aiChatMessages);
-    }
+    // Save response to DB
+    await aiChatMessagesService.saveMessages(aiChatMessages);
 
-    return aiChatMessages;
+    // Execute request if needed
+    await tryExecuteAiRequests(aiChatThread, aiChatMessages);
   }
 
-  Future<List<AiChatMessageModel>> sendMessage(String message) async {
-    ref.read(isAiRespondingProvider.notifier).state = true;
-
-    final curOrgId = ref.read(curOrgIdProvider);
-    final curUser = ref.read(curUserProvider).value;
-
-    if (curUser == null || curOrgId == null) {
-      ref.read(isAiRespondingProvider.notifier).state = false;
-      throw Exception('No current user or org id found');
-    }
-
-    try {
-      List<AiChatMessageModel> aiChatMessages = [];
-
-      // Get or create thread
-      final aiChatThread = await getOrCreateAiChatThread(curUser.id, curOrgId);
-
-      // Save user message
-      await ref.read(aiChatMessagesServiceProvider).saveMessage(
-          AiChatMessageModel(
-              content: message,
-              type: AiChatMessageType.user,
-              parentChatThreadId: aiChatThread.id));
-
-      // Call Langgraph API
-      final lgBaseMessages = await ref
-          .read(langgraphServiceProvider)
-          .sendUserMessage(
-              userMessage: message,
-              lgThreadId: aiChatThread.parentLgThreadId,
-              lgAssistantId: aiChatThread.parentLgAssistantId);
-
-      // Save lgBaseMessages as aiChatMessages
-      aiChatMessages = lgBaseMessages
-          .map((lgBaseMessage) => AiChatMessageModel(
-              content: lgBaseMessage.content,
-              type: AiChatMessageTypeExtension.fromLgAiChatMessageRole(
-                  lgBaseMessage.type),
-              parentChatThreadId: aiChatThread.id))
-          .toList();
-
-      // Save aiChatMessages
-      await ref
-          .read(aiChatMessagesServiceProvider)
-          .saveMessages(aiChatMessages);
-
-      ref
-          .read(lastAiMessageListenerProvider.notifier)
-          .addLastAiMessage(aiChatMessages.first);
-
-      // Tip: When testing ai request execution - you can hardcode the aiChatMessages to test different flows
-      await tryExecuteAiRequests(aiChatMessages);
-
-      ref.read(isAiRespondingProvider.notifier).state = false;
-
-      await speakAiMessage(aiChatMessages);
-
-      return aiChatMessages;
-    } catch (e) {
-      ref.read(isAiRespondingProvider.notifier).state = false;
-      rethrow;
-    } finally {
-      ref.read(isAiRespondingProvider.notifier).state = false;
-    }
-  }
-
-  Future<void> tryExecuteAiRequests(
+  Future<void> tryExecuteAiRequests(AiChatThreadModel aiChatThread,
       List<AiChatMessageModel> aiChatMessages) async {
-    // if there are no messages return
+    final lastAiMessageListener =
+        ref.read(lastAiMessageListenerProvider.notifier);
+    final aiRequestExecutor = ref.read(aiRequestExecutorProvider);
+    final aiChatMessagesService = ref.read(aiChatMessagesServiceProvider);
+    final langGraphService = ref.read(langgraphServiceProvider);
+
+    // === Check if Execution is needed ===
+
     if (aiChatMessages.isEmpty) {
       return;
     }
-
-    // TODO p0: update last ai message provider to be manually updated by the code flow here
 
     // Read the chat response and identify ToolMessages
     List<AiRequestModel>? toolResponses = aiChatMessages
@@ -167,36 +123,57 @@ class AIChatService {
         .expand((msg) => [msg.getAiRequest()!])
         .toList() as List<AiRequestModel>?;
 
-    if (toolResponses != null && toolResponses.isNotEmpty) {
-      if (toolResponses.length > 1) {
-        log.warning(
-            'Multiple tool responses found in executeAiChatMessages, ignoring all but the first');
-      }
-
-      final result = await ref
-          .read(aiRequestExecutorProvider)
-          .executeAiRequest(toolResponses[0]);
-
-      final isCallAgain = result.showOnly ? '' : '<AI CALLED AGAIN>';
-      ref
-          .read(lastAiMessageListenerProvider.notifier)
-          .addLastToolResponseResult(result.copyWith(
-              message: '$isCallAgain${result.message}',
-              showOnly: result.showOnly));
-
-      final followupMessages = await sendAiRequestResult(result);
-
-      if (followupMessages.isNotEmpty) {
-      ref
-          .read(lastAiMessageListenerProvider.notifier)
-          .addLastAiMessage(followupMessages.first);
-      }
+    if (toolResponses == null || toolResponses.isEmpty) {
+      return;
     }
+
+    if (toolResponses.length > 1) {
+      log.warning(
+          'Multiple tool responses found in executeAiChatMessages, ignoring all but the first');
+    }
+
+    // === Execute Request ===
+
+    final result = await aiRequestExecutor.executeAiRequest(toolResponses[0]);
+
+    // Display Result
+    final isCallAgain = result.showOnly ? '' : '<AI CALLED AGAIN>';
+    lastAiMessageListener.addLastToolResponseResult(result.copyWith(
+        message: '$isCallAgain${result.message}', showOnly: result.showOnly));
+    //speakAiMessage(aiChatMessages);
+
+    // Save Result to DB
+    await aiChatMessagesService.saveMessage(AiChatMessageModel(
+        content: result.message,
+        type: AiChatMessageType.tool,
+        parentChatThreadId: aiChatThread.id));
+
+    // Update LangGraph's Memory with the result of the request
+    await langGraphService.updateLastToolMessageWithResult(
+      resultString: result.message,
+      showOnly: result.showOnly,
+      lgThreadId: aiChatThread.parentLgThreadId,
+      lgAssistantId: aiChatThread.parentLgAssistantId,
+    );
+
+    // Check if AI should call again
+    if (result.showOnly) {
+      return;
+    }
+
+    // === Send Result to LangGraph for Followup ===
+
+    await _runAi(aiChatThread: aiChatThread, userMessage: null);
   }
 
   Future<AiChatThreadModel> getOrCreateAiChatThread(
       String userId, String orgId) async {
     final aiChatThreadsRepo = ref.read(aiChatThreadsRepositoryProvider);
+    final langgraphService = ref.read(langgraphServiceProvider);
+    final aiChatThreadsService = ref.read(aiChatThreadsServiceProvider);
+    final curOrgId = ref.read(curOrgIdProvider);
+    final curUser = ref.read(curUserProvider).value;
+
     final existingThread = await aiChatThreadsRepo.getUserThread(
       userId: userId,
       orgId: orgId,
@@ -206,16 +183,12 @@ class AIChatService {
       return existingThread;
     }
 
-    // Get org name and user email
-    final curOrgId = ref.read(curOrgIdProvider);
-    final curUser = ref.read(curUserProvider).value;
-
     // TODO p3: get org name for assistant name
     final name = '${curUser!.email} - $curOrgId';
 
     // Create new thread and assistant
     final (newLgThreadId, newLgAssistantId) =
-        await ref.read(langgraphServiceProvider).createNewThread(
+        await langgraphService.createNewThread(
       name: name,
       config: {
         'org_id': orgId,
@@ -234,7 +207,6 @@ class AIChatService {
       parentOrgId: orgId,
     );
 
-    final aiChatThreadsService = ref.read(aiChatThreadsServiceProvider);
     final result = await aiChatThreadsService.saveThread(newThread);
 
     if (result.error != null) {
@@ -245,6 +217,8 @@ class AIChatService {
   }
 
   Future<void> speakAiMessage(List<AiChatMessageModel> result) async {
+    final textToSpeech = ref.read(textToSpeechServiceProvider);
+
     // TODO: consolidate duplicated code from stt_orchestrator_provider.dart
     final aiMessage = result.firstWhereOrNull((element) =>
         element.type == AiChatMessageType.ai && element.content.isNotEmpty);
@@ -253,7 +227,6 @@ class AIChatService {
       return;
     }
 
-    final textToSpeech = ref.read(textToSpeechServiceProvider);
     await textToSpeech.speak(aiMessage.content);
   }
 }

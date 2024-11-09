@@ -135,7 +135,7 @@ class UserInputTextDisplayWidget extends ConsumerWidget {
 
                     await ref
                         .read(aiChatServiceProvider)
-                        .sendMessage(textEditingController.text);
+                        .sendMessageToAi(textEditingController.text);
 
                     textEditingController.clear();
                   },

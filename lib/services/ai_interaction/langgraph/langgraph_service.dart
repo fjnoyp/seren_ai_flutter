@@ -36,8 +36,8 @@ class LanggraphService {
   }
 
   /// Top level method for sending a user message to the Langgraph API AI
-  Future<List<LgAiBaseMessageModel>> sendUserMessage({
-    required String userMessage,
+  Future<List<LgAiBaseMessageModel>> runAi({
+    required String? message,
     required String lgThreadId,
     required String lgAssistantId,
   }) async {
@@ -46,16 +46,16 @@ class LanggraphService {
     //     await _langgraphDbOperations.getOrCreateAiChatThread(userId, orgId);
 
     // Create input for the Langgraph API
-    final lgInput = LgInputModel(messages: [
-      LgInputMessageModel(role: LgAiChatMessageRole.user, content: userMessage)
-    ]);
+    final lgInput = message != null ? LgInputModel(messages: [
+      LgInputMessageModel(role: LgAiChatMessageRole.user, content: message)
+    ]) : null;
 
     // Save user message to DB AiChatMessage table
     // await _langgraphDbOperations.saveUserAiChatMessage(
     //     userMessage, aiChatThread.id, LgAiChatMessageRole.user);
 
     final lgBaseMessages =
-        await runAi(
+        await _runAi(
           lgThreadId: lgThreadId, 
           lgAssistantId: lgAssistantId, 
           lgInput: lgInput);
@@ -68,7 +68,7 @@ class LanggraphService {
     return lgBaseMessages;
   }
 
-  Future<List<LgAiBaseMessageModel>> updateLastToolMessageWithResult({
+  Future<void> updateLastToolMessageWithResult({
     required String resultString,
     required bool showOnly,
     required String lgThreadId,
@@ -93,13 +93,13 @@ class LanggraphService {
       resultString: resultString,
     );
 
-    if (!showOnly) {
+    // if (!showOnly) {
       // Resume the invokation of the ai
-      final lgBaseMessages =
-          await runAi(
-            lgThreadId: lgThreadId, 
-            lgAssistantId: lgAssistantId, 
-            lgInput: null);
+      // final lgBaseMessages =
+      //     await runAi(
+      //       lgThreadId: lgThreadId, 
+      //       lgAssistantId: lgAssistantId, 
+      //       lgInput: null);
 
       // final aiChatMessages =
       //     await _langgraphDbOperations.saveLgBaseMessageModels(
@@ -107,13 +107,13 @@ class LanggraphService {
       //   parentChatThreadId: lgThreadId,
       // );
 
-      return lgBaseMessages;
-    }
+    //   return lgBaseMessages;
+    // }
 
-    return [];
+    // return [];
   }
 
-  Future<List<LgAiBaseMessageModel>> runAi({
+  Future<List<LgAiBaseMessageModel>> _runAi({
     required String lgThreadId,
     required String lgAssistantId,    
     LgInputModel? lgInput,
