@@ -5,7 +5,7 @@ import 'package:seren_ai_flutter/services/data/common/widgets/form/base_priority
 import 'package:seren_ai_flutter/services/data/common/widgets/form/base_project_selection_field.dart';
 import 'package:seren_ai_flutter/services/data/common/widgets/form/base_status_selection_field.dart';
 import 'package:seren_ai_flutter/services/data/common/widgets/form/base_task_name_field.dart';
-import 'package:seren_ai_flutter/services/data/projects/cur_user_viewable_projects_listener_provider.dart';
+import 'package:seren_ai_flutter/services/data/projects/providers/cur_user_viewable_projects_provider.dart';
 import 'package:seren_ai_flutter/services/data/tasks/providers/cur_task_service_provider.dart';
 import 'package:seren_ai_flutter/services/data/tasks/providers/cur_task_state_provider.dart';
 
@@ -16,7 +16,7 @@ class TaskProjectSelectionField extends BaseProjectSelectionField {
   }) : super(
           projectProvider:
               curTaskStateProvider.select((state) => state.value?.project),
-          selectableProjectsProvider: curUserViewableProjectsListenerProvider,
+          selectableProjectsProvider: curUserViewableProjectsProvider,
           updateProject: (ref, project) =>
               ref.read(curTaskServiceProvider).updateParentProject(project),
         );
