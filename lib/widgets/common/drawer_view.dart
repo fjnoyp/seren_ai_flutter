@@ -1,8 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:seren_ai_flutter/common/language_provider.dart';
 import 'package:seren_ai_flutter/constants.dart';
 import 'package:seren_ai_flutter/services/auth/cur_auth_state_provider.dart';
+import 'package:seren_ai_flutter/services/speech_to_text/speech_to_text_service_provider.dart';
+import 'package:seren_ai_flutter/services/text_to_speech/text_to_speech_notifier.dart';
 import 'package:seren_ai_flutter/widgets/common/theme_data.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
@@ -100,6 +103,44 @@ class DrawerView extends HookWidget {
                       DropdownMenuItem(
                         value: ThemeMode.dark,
                         child: Text(AppLocalizations.of(context)!.dark,
+                            style: theme.textTheme.bodySmall),
+                      ),
+                    ],
+                  ),
+                );
+              },
+            ),
+            Consumer(
+              builder: (context, ref, child) {
+                final language = ref.watch(languageSNP);
+                return ListTile(
+                  dense: true,
+                  leading: const Icon(Icons.language),
+                  title: Text(AppLocalizations.of(context)!.language,
+                      style: const TextStyle(fontWeight: FontWeight.bold)),
+                  trailing: DropdownButton<String>(
+                    value: language,
+                    onChanged: (String? newLanguage) {
+                      if (newLanguage != null) {
+                        ref.read(languageSNP.notifier).setLanguage(newLanguage);
+                        ref.read(speechToTextServiceProvider).language = newLanguage;
+                        ref.read(textToSpeechServiceProvider).language = newLanguage;
+                      }
+                    },
+                    items: [
+                      DropdownMenuItem(
+                        value: 'en_US',
+                        child: Text(AppLocalizations.of(context)!.english,
+                            style: theme.textTheme.bodySmall),
+                      ),
+                      DropdownMenuItem(
+                        value: 'pt_BR',
+                        child: Text(AppLocalizations.of(context)!.brazilianPortuguese,
+                            style: theme.textTheme.bodySmall),
+                      ),
+                      DropdownMenuItem(
+                        value: 'pt_PT',
+                        child: Text(AppLocalizations.of(context)!.europeanPortuguese,
                             style: theme.textTheme.bodySmall),
                       ),
                     ],

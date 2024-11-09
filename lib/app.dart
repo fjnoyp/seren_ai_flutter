@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:logging/logging.dart';
+import 'package:seren_ai_flutter/common/language_provider.dart';
 import 'package:seren_ai_flutter/constants.dart';
 import 'package:seren_ai_flutter/services/auth/widgets/auth_guard.dart';
 import 'package:seren_ai_flutter/services/auth/widgets/sign_in_up_page.dart';
@@ -49,14 +50,15 @@ class AppState extends State<App> {
   Widget build(BuildContext context) {
     return Consumer(
       builder: (context, ref, child) {
-
-        // === Permanent Providers ===        
+        // === Permanent Providers ===
         ref.read(sttOrchestratorProvider);
         ref.read(curShiftStateProvider);
 
         //final firstUserValue = ref.read(curAuthUserProvider);
 
         final themeMode = ref.watch(themeSNP);
+
+        final [languageCode, countryCode] = ref.watch(languageSNP).split('_');
 
         return MaterialApp(
           theme: lightTheme,
@@ -65,51 +67,49 @@ class AppState extends State<App> {
           initialRoute: homeRoute,
           routes: {
             signInUpRoute: (context) => Scaffold(
-                appBar: AppBar(title: Text(AppLocalizations.of(context)!.signInUp), centerTitle: true),
+                appBar: AppBar(
+                    title: Text(AppLocalizations.of(context)!.signInUp),
+                    centerTitle: true),
                 body: const SignInUpPage()),
             homeRoute: (context) => _GuardScaffold(
-                AppLocalizations.of(context)!.home, 
-                const HomePage()),
+                AppLocalizations.of(context)!.home, const HomePage()),
             chooseOrgRoute: (context) => _AuthGuardScaffold(
-                AppLocalizations.of(context)!.chooseOrganization, 
+                AppLocalizations.of(context)!.chooseOrganization,
                 const ChooseOrgPage()),
             manageOrgUsersRoute: (context) => _GuardScaffold(
-                AppLocalizations.of(context)!.orgAdminManageOrgUsers, 
+                AppLocalizations.of(context)!.orgAdminManageOrgUsers,
                 const ManageOrgUsersPage()),
             projectsRoute: (context) => _GuardScaffold(
-                AppLocalizations.of(context)!.projects, 
-                const ProjectsPage()),
+                AppLocalizations.of(context)!.projects, const ProjectsPage()),
             tasksRoute: (context) => _GuardScaffold(
-                AppLocalizations.of(context)!.tasks, 
-                const TasksListPage()),
+                AppLocalizations.of(context)!.tasks, const TasksListPage()),
             taskPageRoute: (context) {
-              final args = ModalRoute.of(context)!.settings.arguments as Map<String, dynamic>;
+              final args = ModalRoute.of(context)!.settings.arguments
+                  as Map<String, dynamic>;
               final mode = args['mode'] as EditablePageMode;
-              final title = mode == EditablePageMode.create 
-                  ? AppLocalizations.of(context)!.createTask 
+              final title = mode == EditablePageMode.create
+                  ? AppLocalizations.of(context)!.createTask
                   : AppLocalizations.of(context)!.updateTask;
 
               return _GuardScaffold(title, TaskPage(mode: mode),
                   actions: args['actions']);
             },
             aiChatsRoute: (context) => _GuardScaffold(
-                AppLocalizations.of(context)!.aiChatThreads, 
+                AppLocalizations.of(context)!.aiChatThreads,
                 const AIChatsPage()),
             shiftsRoute: (context) => _GuardScaffold(
-                AppLocalizations.of(context)!.shifts, 
-                const ShiftsPage()),
+                AppLocalizations.of(context)!.shifts, const ShiftsPage()),
             testRoute: (context) => const _GuardScaffold('Test', TestPage()),
             testSQLPageRoute: (context) => _GuardScaffold(
-                AppLocalizations.of(context)!.testSQL, 
-                TestSQLPage()),
+                AppLocalizations.of(context)!.testSQL, TestSQLPage()),
             noteListRoute: (context) => _GuardScaffold(
-                AppLocalizations.of(context)!.notes, 
-                const NoteListPage()),
+                AppLocalizations.of(context)!.notes, const NoteListPage()),
             notePageRoute: (context) {
-              final args = ModalRoute.of(context)!.settings.arguments as Map<String, dynamic>;
+              final args = ModalRoute.of(context)!.settings.arguments
+                  as Map<String, dynamic>;
               final mode = args['mode'] as EditablePageMode;
-              final title = mode == EditablePageMode.create 
-                  ? AppLocalizations.of(context)!.createNote 
+              final title = mode == EditablePageMode.create
+                  ? AppLocalizations.of(context)!.createNote
                   : AppLocalizations.of(context)!.updateNote;
 
               return _GuardScaffold(title, NotePage(mode: mode),
@@ -140,6 +140,7 @@ class AppState extends State<App> {
             // Handle other routes here if needed
             return null;
           },
+          locale: Locale(languageCode, countryCode),
           localizationsDelegates: AppLocalizations.localizationsDelegates,
           supportedLocales: const [
             Locale('en' /*, 'US'*/),
