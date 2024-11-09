@@ -24,13 +24,13 @@ class NotesRepository extends BaseRepository<NoteModel> {
     String? projectId,
   }) {
     return watch(
-        projectId == null
-            ? NoteQueries.getUserPersonalNotes
-            : NoteQueries.getProjectNotes,
-        {
-          'user_id': userId,
-          if (projectId != null) 'project_id': projectId,
-        });
+      projectId == null
+          ? NoteQueries.getUserPersonalNotes
+          : NoteQueries.getProjectNotes,
+      {
+        projectId == null ? 'user_id' : 'project_id': projectId,
+      },
+    );
   }
 
   Future<List<NoteModel>> getUserNotes({
@@ -38,12 +38,12 @@ class NotesRepository extends BaseRepository<NoteModel> {
     String? projectId,
   }) async {
     return get(
-        projectId == null
-            ? NoteQueries.getUserPersonalNotes
-            : NoteQueries.getProjectNotes,
-        {
-          'user_id': userId,
-          if (projectId != null) 'project_id': projectId,
-        });
+      projectId == null
+          ? NoteQueries.getUserPersonalNotes
+          : NoteQueries.getProjectNotes,
+      {
+        projectId == null ? 'user_id' : 'project_id': projectId,
+      },
+    );
   }
 }
