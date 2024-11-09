@@ -7,7 +7,7 @@ import 'package:seren_ai_flutter/services/data/projects/models/project_model.dar
 class BaseProjectSelectionField extends ConsumerWidget {
   final bool enabled;
   final ProviderListenable<ProjectModel?> projectProvider;
-  final ProviderListenable<List<ProjectModel>?> selectableProjectsProvider;
+  final AutoDisposeStreamProvider<List<ProjectModel>?> selectableProjectsProvider;
   final Function(WidgetRef, ProjectModel?) updateProject;
   final bool isProjectRequired;
 
@@ -45,7 +45,11 @@ class BaseProjectSelectionField extends ConsumerWidget {
               : AppLocalizations.of(context)!.personal),
       enabled: enabled,
       value: curItemProject,
-      options: selectableProjects ?? [],
+      options: selectableProjects.when(
+        data: (data) => data ?? [],
+        error: (error, _) => throw error,
+        loading: () => [],
+      ),
       onValueChanged: (ref, project) {
         updateProject(ref, project);
       },
