@@ -12,16 +12,8 @@ import 'package:seren_ai_flutter/services/data/ai_chats/repositories/ai_chat_mes
 import 'package:seren_ai_flutter/services/data/ai_chats/repositories/ai_chat_threads_repository.dart';
 import 'package:seren_ai_flutter/services/data/ai_chats/repositories/ai_chat_threads_service.dart';
 import 'package:seren_ai_flutter/services/data/orgs/providers/cur_org_dependency_provider.dart';
-import 'package:seren_ai_flutter/services/data/tasks/providers/cur_task_service_provider.dart';
 import 'package:seren_ai_flutter/services/text_to_speech/text_to_speech_notifier.dart';
-import 'package:supabase_flutter/supabase_flutter.dart';
 
-import 'package:flutter/material.dart';
-import 'package:seren_ai_flutter/services/data/projects/models/project_model.dart';
-import 'package:seren_ai_flutter/services/data/tasks/models/joined_task_model.dart';
-import 'package:seren_ai_flutter/services/data/tasks/models/task_model.dart';
-import 'package:seren_ai_flutter/services/data/tasks/widgets/task_page.dart';
-import 'package:seren_ai_flutter/services/data/users/models/user_model.dart';
 
 import 'package:logging/logging.dart';
 
@@ -189,7 +181,7 @@ class AIChatService {
       ref
           .read(lastAiMessageListenerProvider.notifier)
           .addLastToolResponseResult(result.copyWith(
-              message: '${isCallAgain}${result.message}',
+              message: '$isCallAgain${result.message}',
               showOnly: result.showOnly));
 
       final followupMessages = await sendAiRequestResult(result);
@@ -219,7 +211,7 @@ class AIChatService {
     final curUser = ref.read(curUserProvider).value;
 
     // TODO p3: get org name for assistant name
-    final name = '${curUser!.email} - ${curOrgId}';
+    final name = '${curUser!.email} - $curOrgId';
 
     // Create new thread and assistant
     final (newLgThreadId, newLgAssistantId) =
