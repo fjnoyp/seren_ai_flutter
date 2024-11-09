@@ -4,7 +4,7 @@ import 'package:logging/logging.dart';
 import 'package:seren_ai_flutter/constants.dart';
 import 'package:seren_ai_flutter/services/auth/cur_auth_state_provider.dart';
 import 'package:seren_ai_flutter/services/data/common/widgets/editablePageModeEnum.dart';
-import 'package:seren_ai_flutter/services/data/projects/cur_user_viewable_projects_listener_provider.dart';
+import 'package:seren_ai_flutter/services/data/projects/providers/cur_user_viewable_projects_provider.dart';
 import 'package:seren_ai_flutter/services/data/tasks/providers/cur_task_service_provider.dart';
 import 'package:seren_ai_flutter/services/data/tasks/providers/cur_task_state_provider.dart';
 import 'package:seren_ai_flutter/services/data/tasks/models/joined_task_model.dart';
@@ -157,13 +157,13 @@ class TaskPage extends HookConsumerWidget {
       builder: (BuildContext context) => Consumer(
         builder: (BuildContext context, WidgetRef ref, Widget? child) {
           final selectableProjects =
-              ref.read(curUserViewableProjectsListenerProvider);
+              ref.read(curUserViewableProjectsProvider);
           return ListView.builder(
-            itemCount: selectableProjects!.length,
+            itemCount: selectableProjects.valueOrNull?.length ?? 0,
             itemBuilder: (BuildContext context, int index) {
-              final project = selectableProjects[index];
+              final project = selectableProjects.valueOrNull?[index];
               return ListTile(
-                title: Text(project.name),
+                title: Text(project?.name ?? ''),
                 onTap: () {
                   ref.read(curTaskServiceProvider).updateParentProject(project);
                   Navigator.pop(context, project);
