@@ -4,7 +4,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:seren_ai_flutter/services/data/tasks/models/task_comments_model.dart';
 import 'package:seren_ai_flutter/services/data/users/models/user_model.dart';
 import 'package:seren_ai_flutter/services/data/tasks/models/task_model.dart';
-import 'package:seren_ai_flutter/services/data/users/users_read_provider.dart';
+import 'package:seren_ai_flutter/services/data/users/repositories/users_repository.dart';
 
 class JoinedTaskCommentsModel {
   final TaskCommentsModel comment;
@@ -26,10 +26,11 @@ class JoinedTaskCommentsModel {
   }
 
   Future<JoinedTaskCommentsModel> setUser(Ref ref) async {
-    return copyWith(
-      authorUser:
-          await ref.read(usersReadProvider).getItem(id: comment.authorUserId),
-    );
+    final user = await ref
+        .read(usersRepositoryProvider)
+        .getUser(userId: comment.authorUserId);
+
+    return copyWith(authorUser: user);
   }
 
   JoinedTaskCommentsModel copyWith({
