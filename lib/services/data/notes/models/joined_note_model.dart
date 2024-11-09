@@ -6,7 +6,7 @@ import 'package:seren_ai_flutter/services/data/notes/models/note_model.dart';
 import 'package:seren_ai_flutter/services/data/projects/models/project_model.dart';
 import 'package:seren_ai_flutter/services/data/projects/projects_read_provider.dart';
 import 'package:seren_ai_flutter/services/data/users/models/user_model.dart';
-import 'package:seren_ai_flutter/services/data/users/users_read_provider.dart';
+import 'package:seren_ai_flutter/services/data/users/repositories/users_repository.dart';
 
 class JoinedNoteModel {
   final NoteModel note;
@@ -60,7 +60,7 @@ class JoinedNoteModel {
   static Future<JoinedNoteModel> fromNoteModel(
       Ref ref, NoteModel noteModel) async {
     final authorId = noteModel.authorUserId;
-    final authorUser = await ref.read(usersReadProvider).getItem(id: authorId);
+    final authorUser = await ref.read(usersRepositoryProvider).getUser(userId: authorId);
 
     final projectId = noteModel.parentProjectId;
     final project = projectId != null
