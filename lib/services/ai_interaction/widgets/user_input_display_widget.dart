@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
+import 'package:seren_ai_flutter/constants.dart';
 import 'package:seren_ai_flutter/services/ai_interaction/ai_chat_service_provider.dart';
 
 import 'package:seren_ai_flutter/services/ai_interaction/widgets/ai_results_widget.dart';
@@ -53,6 +54,13 @@ class UserInputDisplayWidget extends ConsumerWidget {
                         onPressed: () => textToSpeechService.stop(),
                         icon: const Icon(Icons.volume_off),
                       ),
+                    IconButton(
+                      onPressed: () {
+                        isAiAssistantExpanded.value = false;
+                        Navigator.of(context).pushNamed(aiChatsRoute);
+                      },
+                      icon: const Icon(Icons.open_in_new),
+                    ),
                     IconButton(
                       onPressed: () => isAiAssistantExpanded.value = false,
                       icon: const Icon(Icons.close),
