@@ -126,7 +126,7 @@ class DrawerView extends HookWidget {
                         ref.read(textToSpeechServiceProvider).language = newLanguage;
                       }
                     },
-                    items: [
+                    items: const [
 
                     ],
                   ),
