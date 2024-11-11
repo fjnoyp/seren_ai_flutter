@@ -1,3 +1,4 @@
 {
-    "cmake.sourceDirectory": "/Users/kyle/Projects/seren_ai/seren_ai_flutter/windows/runner"
+    "cmake.sourceDirectory": "/Users/kyle/Projects/seren_ai/seren_ai_flutter/windows/runner",
+    "dart.allowTestsOutsideTestFolder": true
 }

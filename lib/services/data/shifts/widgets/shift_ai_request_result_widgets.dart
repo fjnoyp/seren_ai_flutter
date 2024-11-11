@@ -2,7 +2,10 @@
 
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:seren_ai_flutter/services/data/shifts/shift_tool_methods.dart';
+import 'package:seren_ai_flutter/services/data/shifts/tool_methods/models/shift_assignments_result_model.dart';
+import 'package:seren_ai_flutter/services/data/shifts/tool_methods/models/shift_clock_in_out_result_model.dart';
+import 'package:seren_ai_flutter/services/data/shifts/tool_methods/models/shift_log_results_model.dart';
+import 'package:seren_ai_flutter/services/data/shifts/tool_methods/shift_tool_methods.dart';
 
 // class ShiftInfoResultWidget extends ConsumerWidget {
 //   final ShiftAssignmentsResultModel result;
@@ -28,7 +31,6 @@ import 'package:seren_ai_flutter/services/data/shifts/shift_tool_methods.dart';
 //     );
 //   }
 // }
-
 class ShiftClockInOutResultWidget extends ConsumerWidget {
   final ShiftClockInOutResultModel result;
   const ShiftClockInOutResultWidget({super.key, required this.result});
@@ -40,15 +42,15 @@ class ShiftClockInOutResultWidget extends ConsumerWidget {
     return Row(
       children: [
         Icon(
-          result.hasError ? Icons.error : (result.clockedIn ? Icons.login : Icons.logout),
-          color: result.hasError ? theme.colorScheme.error : theme.colorScheme.onPrimary,
+          result.clockedIn ? Icons.login : Icons.logout,
+          color: theme.colorScheme.onPrimary,
         ),
         const SizedBox(width: 8),
         Expanded(
           child: Text(
-            result.message,
+            result.resultForAi,
             style: theme.textTheme.bodyMedium?.copyWith(
-              color: result.hasError ? theme.colorScheme.error : theme.colorScheme.onPrimary,
+              color: theme.colorScheme.onPrimary,
             ),
           ),
         ),
@@ -68,28 +70,45 @@ class ShiftLogsResultWidget extends ConsumerWidget {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Text(result.message),
+        Text(result.resultForAi),
         const SizedBox(height: 8),
-        ...result.shiftLogs.map((log) {
-          final endTime = log.clockOutDatetime?.toLocal().toString() ?? 'ONGOING';
-          return Padding(
-            padding: const EdgeInsets.only(left: 16.0),
-            child: Row(
-              children: [
-                Icon(
-                  log.clockOutDatetime == null ? Icons.timer : Icons.check_circle,
-                  size: 16,
-                  color: log.clockOutDatetime == null ? theme.colorScheme.primary : theme.colorScheme.onBackground,
+        ...result.shiftLogs.entries.map((entry) {
+          final date = entry.key;
+          final logs = entry.value;
+          
+          return Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Padding(
+                padding: const EdgeInsets.only(top: 8.0, bottom: 4.0),
+                child: Text(
+                  date.toLocal().toString().split(' ')[0],
+                  style: theme.textTheme.titleSmall,
                 ),
-                const SizedBox(width: 8),
-                Expanded(
-                  child: Text(
-                    '${log.clockInDatetime.toLocal().toString()} - $endTime',
-                    style: theme.textTheme.bodyMedium,
+              ),
+              ...logs.map((log) {
+                final endTime = log.clockOutDatetime?.toLocal().toString() ?? 'ONGOING';
+                return Padding(
+                  padding: const EdgeInsets.only(left: 16.0),
+                  child: Row(
+                    children: [
+                      Icon(
+                        log.clockOutDatetime == null ? Icons.timer : Icons.check_circle,
+                        size: 16,
+                        color: log.clockOutDatetime == null ? theme.colorScheme.primary : theme.colorScheme.onBackground,
+                      ),
+                      const SizedBox(width: 8),
+                      Expanded(
+                        child: Text(
+                          '${log.clockInDatetime.toLocal().toString()} - $endTime',
+                          style: theme.textTheme.bodyMedium,
+                        ),
+                      ),
+                    ],
                   ),
-                ),
-              ],
-            ),
+                );
+              }),
+            ],
           );
         }),
       ],
@@ -108,27 +127,44 @@ class ShiftAssignmentsResultWidget extends ConsumerWidget {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Text(result.message),
+        Text(result.resultForAi),
         const SizedBox(height: 8),
-        ...result.activeShiftRanges.map((range) {
-          return Padding(
-            padding: const EdgeInsets.only(left: 16.0),
-            child: Row(
-              children: [
-                Icon(
-                  Icons.schedule,
-                  size: 16,
-                  color: theme.colorScheme.primary,
+        ...result.shiftAssignments.entries.map((entry) {
+          final date = entry.key;
+          final ranges = entry.value;
+          
+          return Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Padding(
+                padding: const EdgeInsets.only(top: 8.0, bottom: 4.0),
+                child: Text(
+                  date.toLocal().toString().split(' ')[0],
+                  style: theme.textTheme.titleSmall,
                 ),
-                const SizedBox(width: 8),
-                Expanded(
-                  child: Text(
-                    '${range.start.toLocal().toString()} - ${range.end.toLocal().toString()}',
-                    style: theme.textTheme.bodyMedium,
+              ),
+              ...ranges.map((range) {
+                return Padding(
+                  padding: const EdgeInsets.only(left: 16.0),
+                  child: Row(
+                    children: [
+                      Icon(
+                        Icons.schedule,
+                        size: 16,
+                        color: theme.colorScheme.primary,
+                      ),
+                      const SizedBox(width: 8),
+                      Expanded(
+                        child: Text(
+                          '${range.start.toLocal().toString()} - ${range.end.toLocal().toString()}',
+                          style: theme.textTheme.bodyMedium,
+                        ),
+                      ),
+                    ],
                   ),
-                ),
-              ],
-            ),
+                );
+              }),
+            ],
           );
         }),
       ],
