@@ -36,6 +36,8 @@ class TextToSpeechService {
   }
 
   Future<void> speak(String text) async {
+    await flutterTts.stop();
+
     flutterTts.setVolume(1.0);
     flutterTts.setSpeechRate(.5);
     flutterTts.setPitch(.8);
