@@ -1,10 +1,10 @@
 import 'package:seren_ai_flutter/services/ai_interaction/langgraph/models/lg_ai_chat_message_role.dart';
 
 /// Input model for the Langgraph API
-class LgInputModel {
+class LgAgentStateModel {
   final List<LgInputMessageModel> messages;
 
-  LgInputModel({required this.messages});
+  LgAgentStateModel({required this.messages});
 
   Map<String, dynamic> toJson() {
     return {
