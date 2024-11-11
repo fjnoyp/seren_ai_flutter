@@ -5,6 +5,7 @@ import 'package:seren_ai_flutter/services/speech_to_text/speech_to_text_service_
 import 'package:seren_ai_flutter/services/speech_to_text/speech_to_text_status_provider.dart';
 import 'package:seren_ai_flutter/services/speech_to_text/widgets/speech_volume_widget.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+import 'package:seren_ai_flutter/services/text_to_speech/text_to_speech_notifier.dart';
 
 
 // Button to start/stop listening
@@ -77,7 +78,10 @@ class SpeechStateControlButtonWidget extends ConsumerWidget {
               child: IconButton(
                 icon:
                     const Icon(Icons.mic_none, size: 50.0, color: Colors.white),
-                onPressed: () => notifier.startListening(),
+                onPressed: () async {
+                  await ref.watch(textToSpeechServiceProvider).stop();
+                  notifier.startListening();
+                },
               ));
 
           break;
