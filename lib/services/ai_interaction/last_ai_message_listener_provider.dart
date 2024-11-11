@@ -35,7 +35,7 @@ class LastAiMessageListenerNotifier extends Notifier<List<AiResult>> {
     return [];
   }
 
-  void addLastAiMessage(AiChatMessageModel message) {
+  void addAiChatMessage(AiChatMessageModel message) {
     state = List.from(state)..add(message);
     _timer?.cancel();
 
@@ -47,20 +47,20 @@ class LastAiMessageListenerNotifier extends Notifier<List<AiResult>> {
     _startTimer(seconds: timeoutSeconds);
   }
 
-  void addLastToolResponseResult(AiRequestResultModel result) {
-    // If there are existing results, add the new one
+  // void addLastToolResponseResult(AiRequestResultModel result) {
+  //   // If there are existing results, add the new one
 
-      state = List.from(state)..add(result);
+  //     state = List.from(state)..add(result);
 
-    _timer?.cancel();
+  //   _timer?.cancel();
     
-    // For ToolResponseResult, use content length for timeout if available
-    final timeoutSeconds = result.message.isNotEmpty
-        ? (result.message.length ~/ 10).clamp(5, double.infinity).toInt()
-        : 5;
+  //   // For ToolResponseResult, use content length for timeout if available
+  //   final timeoutSeconds = result.resultForAi.isNotEmpty
+  //       ? (result.resultForAi.length ~/ 10).clamp(5, double.infinity).toInt()
+  //       : 5;
     
-    _startTimer(seconds: timeoutSeconds);
-  }
+  //   _startTimer(seconds: timeoutSeconds);
+  // }
 
   void clearState() {
     state = [];

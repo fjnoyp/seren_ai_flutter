@@ -116,8 +116,7 @@ class DrawerView extends HookWidget {
                 return ListTile(
                   dense: true,
                   leading: const Icon(Icons.language),
-                  title: Text(AppLocalizations.of(context)!.language,
-                      style: const TextStyle(fontWeight: FontWeight.bold)),
+               
                   trailing: DropdownButton<String>(
                     value: language,
                     onChanged: (String? newLanguage) {
@@ -128,21 +127,7 @@ class DrawerView extends HookWidget {
                       }
                     },
                     items: [
-                      DropdownMenuItem(
-                        value: 'en_US',
-                        child: Text(AppLocalizations.of(context)!.english,
-                            style: theme.textTheme.bodySmall),
-                      ),
-                      DropdownMenuItem(
-                        value: 'pt_BR',
-                        child: Text(AppLocalizations.of(context)!.brazilianPortuguese,
-                            style: theme.textTheme.bodySmall),
-                      ),
-                      DropdownMenuItem(
-                        value: 'pt_PT',
-                        child: Text(AppLocalizations.of(context)!.europeanPortuguese,
-                            style: theme.textTheme.bodySmall),
-                      ),
+
                     ],
                   ),
                 );
