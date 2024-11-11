@@ -6,6 +6,8 @@ import 'package:seren_ai_flutter/services/ai_interaction/ai_chat_service_provide
 import 'package:seren_ai_flutter/services/ai_interaction/widgets/ai_results_widget.dart';
 import 'package:seren_ai_flutter/services/speech_to_text/widgets/speech_state_control_button_widget.dart';
 import 'package:seren_ai_flutter/services/speech_to_text/widgets/speech_transcribed_widget.dart';
+import 'package:seren_ai_flutter/services/text_to_speech/text_to_speech_notifier.dart';
+import 'package:seren_ai_flutter/services/text_to_speech/text_to_speech_service.dart';
 
 final textFieldVisibilityProvider = StateProvider<bool>((ref) => false);
 
@@ -19,6 +21,7 @@ class UserInputDisplayWidget extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final isTextFieldVisible = ref.watch(textFieldVisibilityProvider);
+    final textToSpeechService = ref.watch(textToSpeechServiceProvider);
     final theme = Theme.of(context);
 
     // Get the height of the keyboard
@@ -40,9 +43,21 @@ class UserInputDisplayWidget extends ConsumerWidget {
             children: [
               Align(
                 alignment: Alignment.topRight,
-                child: IconButton(
-                  onPressed: () => isAiAssistantExpanded.value = false,
-                  icon: const Icon(Icons.close),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.end,
+                  children: [
+                    // TODO: maybe we should make this a persistent choice
+                    if (textToSpeechService.textToSpeechState ==
+                        TextToSpeechStateEnum.speaking)
+                      IconButton(
+                        onPressed: () => textToSpeechService.stop(),
+                        icon: const Icon(Icons.volume_off),
+                      ),
+                    IconButton(
+                      onPressed: () => isAiAssistantExpanded.value = false,
+                      icon: const Icon(Icons.close),
+                    ),
+                  ],
                 ),
               ),
               Consumer(
@@ -56,7 +71,7 @@ class UserInputDisplayWidget extends ConsumerWidget {
                     ),
                   );
                 },
-              ),              
+              ),
               const AiResultsWidget(),
               const SpeechTranscribedWidget(),
               ref.read(textFieldVisibilityProvider.notifier).state
@@ -78,7 +93,6 @@ class UserInputDisplayWidget extends ConsumerWidget {
     );
   }
 }
-
 
 class UserInputTextDisplayWidget extends ConsumerWidget {
   final TextEditingController textEditingController = TextEditingController();
