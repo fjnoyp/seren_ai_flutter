@@ -7,12 +7,6 @@ import 'package:seren_ai_flutter/services/ai_interaction/ai_request/models/reque
 import 'package:seren_ai_flutter/services/ai_interaction/ai_request/models/requests/ai_info_request_model.dart';
 import 'package:seren_ai_flutter/services/ai_interaction/ai_request/models/requests/ai_request_model.dart';
 import 'package:seren_ai_flutter/services/ai_interaction/ai_request/models/requests/ai_ui_action_request_model.dart';
-import 'package:seren_ai_flutter/services/data/ai_chats/cur_user_ai_chat_thread_listener_provider.dart';
-import 'package:seren_ai_flutter/services/data/ai_chats/cur_user_chat_messages_listener_provider.dart';
-import 'package:seren_ai_flutter/services/ai_interaction/ai_request/models/ai_action_request_model.dart';
-import 'package:seren_ai_flutter/services/ai_interaction/ai_request/models/ai_info_request_model.dart';
-import 'package:seren_ai_flutter/services/ai_interaction/ai_request/models/ai_request_model.dart';
-import 'package:seren_ai_flutter/services/ai_interaction/ai_request/models/ai_ui_action_request_model.dart';
 import 'package:seren_ai_flutter/services/data/ai_chats/models/ai_chat_thread_model.dart';
 import 'package:seren_ai_flutter/services/data/ai_chats/models/ai_chat_message_model.dart';
 import 'package:seren_ai_flutter/services/ai_interaction/widgets/testing/ai_debug_page.dart';

@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:seren_ai_flutter/services/ai_interaction/ai_request/ai_request_executor.dart';
 import 'package:seren_ai_flutter/services/ai_interaction/ai_request/models/results/ai_request_result_model.dart';
 class ShiftAssignmentsResultModel extends AiRequestResultModel {
   final Map<DateTime, List<DateTimeRange>> shiftAssignments;
