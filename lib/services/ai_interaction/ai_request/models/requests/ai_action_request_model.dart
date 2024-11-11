@@ -17,18 +17,17 @@ enum AiActionRequestType {
 
 /// Represent Action Request 
 class AiActionRequestModel extends AiRequestModel {
-  final AiActionRequestType actionRequestType;
-  final Map<String, String>? args;
+  final AiActionRequestType actionRequestType;  
 
   AiActionRequestModel({
     required this.actionRequestType,
-    this.args,
+    super.args,
   }) : super(AiRequestType.actionRequest);
 
   static AiActionRequestModel fromJson(Map<String, dynamic> json) {
     return AiActionRequestModel(
-      actionRequestType: AiActionRequestType.fromString(json['action_request_type']),
-      args: json['args']?.cast<String, String>(),
+      args: json['args'],
+      actionRequestType: AiActionRequestType.fromString(json['action_request_type']),      
     );
   }
 }

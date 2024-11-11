@@ -6,7 +6,7 @@ extension DurationFormatting on Duration {
     String twoDigits(int n) => n.toString();
     String hours = twoDigits(inHours);
     String minutes = twoDigits(inMinutes.remainder(60));
-    
+
     if (hours == "0" && minutes == "0") {
       return AppLocalizations.of(context)!.zeroHours;
     }

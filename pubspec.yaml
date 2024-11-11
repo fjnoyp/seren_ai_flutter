@@ -79,13 +79,11 @@ dependencies:
 
   firebase_core: ^3.6.0
   dio: ^5.7.0
-
-
-
-
-
-  flutter_test: any
+  
 dev_dependencies:
+  flutter_test:
+    sdk: flutter    # Note: flutter_test needs the SDK source
+    
   flutter_lints: ^4.0.0
 
   # for running: 

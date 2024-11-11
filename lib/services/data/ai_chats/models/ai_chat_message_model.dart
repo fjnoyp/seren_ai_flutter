@@ -1,4 +1,5 @@
 import 'package:json_annotation/json_annotation.dart';
+import 'package:seren_ai_flutter/services/ai_interaction/ai_request/models/results/ai_request_result_model.dart';
 import 'package:seren_ai_flutter/services/ai_interaction/last_ai_message_listener_provider.dart';
 import 'package:seren_ai_flutter/services/ai_interaction/ai_request/models/requests/ai_request_model.dart';
 import 'package:seren_ai_flutter/services/data/ai_chats/models/ai_chat_message_type.dart';
@@ -7,6 +8,15 @@ import 'package:seren_ai_flutter/services/data/common/uuid.dart';
 import 'dart:convert';
 
 part 'ai_chat_message_model.g.dart';
+
+enum AiChatMessageDisplayType {
+  user,
+  ai,
+  aiWithToolCall,
+  tool,
+  toolAiRequest,
+  toolAiResult,
+}
 
 @JsonSerializable()
 class AiChatMessageModel extends AiResult implements IHasId  {
@@ -42,15 +52,76 @@ class AiChatMessageModel extends AiResult implements IHasId  {
     );
   }
 
-  bool isAiToolRequest() {
-    return type == AiChatMessageType.tool && 
-    content.contains('request_type');
+  AiChatMessageDisplayType getDisplayType() {
+    switch (type) {
+      case AiChatMessageType.user:
+        return AiChatMessageDisplayType.user;
+      case AiChatMessageType.ai:
+        // If content is json list with tool_use, then it is a tool call
+        if (content.startsWith('[') && content.endsWith(']') && content.contains('tool_use')) {
+          return AiChatMessageDisplayType.aiWithToolCall;
+        }
+
+        return AiChatMessageDisplayType.ai;
+      case AiChatMessageType.tool:
+
+        // If content contains "request_type" then it is a request 
+        if (content.contains('request_type')) {
+          return AiChatMessageDisplayType.toolAiRequest;
+        }
+
+        // If content contains "result_type" then it is a result 
+        if (content.contains('result_type')) {
+          return AiChatMessageDisplayType.toolAiResult;
+        }
+
+        return AiChatMessageDisplayType.tool;
+    }
+  }
+
+  bool isAiRequest() {
+    return getDisplayType() == AiChatMessageDisplayType.toolAiRequest;
   }
 
   AiRequestModel? getAiRequest() {
-    if (isAiToolRequest()) {
+    if (isAiRequest()) {
       final Map<String, dynamic> decoded = json.decode(content) as Map<String, dynamic>;
       return AiRequestModel.fromJson(decoded);
+    }
+    return null;
+  }
+
+  bool isAiResult() {
+    return getDisplayType() == AiChatMessageDisplayType.toolAiResult;
+  }
+
+  AiRequestResultModel? getAiResult() {
+    if (isAiResult()) {
+      final Map<String, dynamic> decoded = json.decode(content) as Map<String, dynamic>;
+      return AiRequestResultModel.fromJson(decoded);
+    }
+    return null;
+  }
+
+    String? getAiMessage() {
+    if (getDisplayType() == AiChatMessageDisplayType.aiWithToolCall) {
+      try {
+        final List<dynamic> decoded = json.decode(content) as List<dynamic>;
+        // Look for the first object with type "text" and return its text field
+        for (final item in decoded) {
+          final Map<String, dynamic> messageItem = item as Map<String, dynamic>;
+          if (messageItem['type'] == 'text') {
+            return messageItem['text'] as String;
+          }
+        }
+      } catch (e) {
+        // If content is not JSON or doesn't match expected format,
+        // return the raw content
+        return content;
+      }
+    }
+    else if (getDisplayType() == AiChatMessageDisplayType.ai) {
+      return content;
     }
     return null;
   }
