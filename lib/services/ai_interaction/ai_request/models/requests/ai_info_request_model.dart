@@ -1,6 +1,6 @@
 import 'package:seren_ai_flutter/services/ai_interaction/ai_request/models/requests/ai_request_model.dart';
 
-/// Subtypes of Info Request Type 
+/// Subtypes of Info Request Type
 enum AiInfoRequestType {
   //shiftHistory('shift_history'),
   //currentShift('current_shift');
@@ -17,7 +17,8 @@ enum AiInfoRequestType {
     );
   }
 }
-abstract class AiInfoRequestModel extends AiRequestModel {
+
+abstract class AiInfoRequestModel implements AiRequestModel {
   final AiInfoRequestType infoRequestType;
   final Map<String, String>? args;
   final bool showOnly;
@@ -26,26 +27,28 @@ abstract class AiInfoRequestModel extends AiRequestModel {
     required this.infoRequestType,
     this.args,
     this.showOnly = true,
-  }) : super(AiRequestType.infoRequest);
+  });
 
-  static AiInfoRequestModel fromJson(Map<String, dynamic> json) {
+  @override
+  AiRequestType get requestType => AiRequestType.infoRequest;
 
-    final infoRequestType = AiInfoRequestType.fromString(json['info_request_type']);
+  factory AiInfoRequestModel.fromJson(Map<String, dynamic> json) {
+    try {
+      final infoRequestType =
+          AiInfoRequestType.fromString(json['info_request_type']);
 
-    switch(infoRequestType) {
-      case AiInfoRequestType.shiftAssignments:
-        return ShiftAssignmentsRequestModel.fromJson(json);
-      case AiInfoRequestType.shiftLogs:
-        return ShiftLogsRequestModel.fromJson(json);
-      default:
-        throw ArgumentError('Invalid AiInfoRequestType: ${json['info_request_type']}');
+      return switch (infoRequestType) {
+        AiInfoRequestType.shiftAssignments =>
+          ShiftAssignmentsRequestModel.fromJson(json),
+        AiInfoRequestType.shiftLogs => ShiftLogsRequestModel.fromJson(json),
+      };
+    } catch (e) {
+      throw ArgumentError('Invalid AiInfoRequestModel: $e');
     }
   }
 }
 
-
 class ShiftAssignmentsRequestModel extends AiInfoRequestModel {
-
   final List<int> dayOffsetsToGet;
 
   ShiftAssignmentsRequestModel({
@@ -59,12 +62,9 @@ class ShiftAssignmentsRequestModel extends AiInfoRequestModel {
       showOnly: json['show_only'] ?? true,
     );
   }
-
-  
 }
 
 class ShiftLogsRequestModel extends AiInfoRequestModel {
-
   final List<int> dayOffsetsToGet;
 
   ShiftLogsRequestModel({

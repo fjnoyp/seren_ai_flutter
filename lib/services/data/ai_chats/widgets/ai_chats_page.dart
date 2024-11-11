@@ -53,7 +53,9 @@ class AIChatsPage extends HookConsumerWidget {
                           onPressed: () {
                             final message = messageController.text;
                             if (message.isNotEmpty) {
-                              ref.read(aiChatServiceProvider).sendMessageToAi(message);
+                              ref
+                                  .read(aiChatServiceProvider)
+                                  .sendMessageToAi(message);
                               messageController.clear();
                             }
                           },
@@ -93,7 +95,7 @@ class ChatThreadCard extends HookWidget {
   @override
   Widget build(BuildContext context) {
     final isExpanded = useState(false);
-    
+
     return Card(
       child: ListTile(
         title: const Text('Chat Thread'),
@@ -114,7 +116,7 @@ class ChatThreadCard extends HookWidget {
                   'Parent LG Assistant ID: ${thread.parentLgAssistantId}'),
             ],
           ),
-          crossFadeState: isExpanded.value 
+          crossFadeState: isExpanded.value
               ? CrossFadeState.showSecond
               : CrossFadeState.showFirst,
           duration: const Duration(milliseconds: 300),
@@ -185,9 +187,8 @@ class MessageCard extends HookWidget {
                     fontWeight: FontWeight.bold,
                   ),
             ),
-            if (message.isAiToolRequest())
-              DisplayToolResponse(
-                  toolResponse: message.getAiRequest()!)
+            if (message.getAiRequest() case AiRequestModel toolResponse)
+              DisplayToolResponse(toolResponse: toolResponse)
             else
               DisplayContent(
                   content: message.content, isExpanded: isExpanded.value),
@@ -226,6 +227,7 @@ class DisplayContent extends StatelessWidget {
     );
   }
 }
+
 class DisplayToolResponse extends StatelessWidget {
   final AiRequestModel toolResponse;
 
@@ -239,7 +241,7 @@ class DisplayToolResponse extends StatelessWidget {
         const SizedBox(height: 8),
         // Get the response type from the toolResponse
 
-         Padding(
+        Padding(
           padding: const EdgeInsets.symmetric(vertical: 4.0),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
@@ -255,12 +257,15 @@ class DisplayToolResponse extends StatelessWidget {
                     'Action Request Type: ${(toolResponse as AiActionRequestModel).actionRequestType.value}'),
                 Text('Args: ${(toolResponse as AiActionRequestModel).args}'),
               ] else if (toolResponse is AiUiActionRequestModel) ...[
-                Text('UI Action Type: ${(toolResponse as AiUiActionRequestModel).uiActionType.value}'),
+                Text(
+                    'UI Action Type: ${(toolResponse as AiUiActionRequestModel).uiActionType.value}'),
                 Text('Args: ${(toolResponse as AiUiActionRequestModel).args}'),
               ] else if (toolResponse is AiInfoRequestModel) ...[
-                Text('Info Request Type: ${(toolResponse as AiInfoRequestModel).infoRequestType.value}'),
+                Text(
+                    'Info Request Type: ${(toolResponse as AiInfoRequestModel).infoRequestType.value}'),
                 Text('Args: ${(toolResponse as AiInfoRequestModel).args}'),
-                Text('Show Only: ${(toolResponse as AiInfoRequestModel).showOnly}'),
+                Text(
+                    'Show Only: ${(toolResponse as AiInfoRequestModel).showOnly}'),
               ],
               const SizedBox(height: 8), // Add space between responses
             ],
