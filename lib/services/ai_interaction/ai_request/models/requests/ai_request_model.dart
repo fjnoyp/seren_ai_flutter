@@ -2,9 +2,9 @@
 
 import 'dart:convert';
 
-import 'package:seren_ai_flutter/services/ai_interaction/ai_request/models/ai_action_request_model.dart';
-import 'package:seren_ai_flutter/services/ai_interaction/ai_request/models/ai_info_request_model.dart';
-import 'package:seren_ai_flutter/services/ai_interaction/ai_request/models/ai_ui_action_request_model.dart';
+import 'package:seren_ai_flutter/services/ai_interaction/ai_request/models/requests/ai_action_request_model.dart';
+import 'package:seren_ai_flutter/services/ai_interaction/ai_request/models/requests/ai_info_request_model.dart';
+import 'package:seren_ai_flutter/services/ai_interaction/ai_request/models/requests/ai_ui_action_request_model.dart';
 
 /// Type of Request from AI 
 enum AiRequestType {
