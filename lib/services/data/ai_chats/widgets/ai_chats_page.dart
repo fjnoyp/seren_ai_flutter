@@ -7,11 +7,12 @@ import 'package:seren_ai_flutter/services/ai_interaction/ai_request/models/ai_ac
 import 'package:seren_ai_flutter/services/ai_interaction/ai_request/models/ai_info_request_model.dart';
 import 'package:seren_ai_flutter/services/ai_interaction/ai_request/models/ai_request_model.dart';
 import 'package:seren_ai_flutter/services/ai_interaction/ai_request/models/ai_ui_action_request_model.dart';
-import 'package:seren_ai_flutter/services/data/ai_chats/cur_user_ai_chat_thread_listener_provider.dart';
-import 'package:seren_ai_flutter/services/data/ai_chats/cur_user_chat_messages_listener_provider.dart';
 import 'package:seren_ai_flutter/services/data/ai_chats/models/ai_chat_thread_model.dart';
 import 'package:seren_ai_flutter/services/data/ai_chats/models/ai_chat_message_model.dart';
 import 'package:seren_ai_flutter/services/ai_interaction/widgets/testing/ai_debug_page.dart';
+import 'package:seren_ai_flutter/services/data/ai_chats/providers/cur_user_ai_chat_messages_provider.dart';
+import 'package:seren_ai_flutter/services/data/ai_chats/providers/cur_user_ai_chat_thread_provider.dart';
+import 'package:seren_ai_flutter/services/data/common/widgets/async_value_handler_widget.dart';
 
 class AIChatsPage extends HookConsumerWidget {
   const AIChatsPage({super.key});
@@ -70,16 +71,17 @@ class AIChatsPage extends HookConsumerWidget {
   }
 }
 
-
 class ChatThreadDisplay extends ConsumerWidget {
   const ChatThreadDisplay({super.key});
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final chatThread = ref.watch(curUserAiChatThreadListenerProvider);
-    return chatThread == null
-        ? const Text('No chat thread available')
-        : ChatThreadCard(thread: chatThread);
+    return AsyncValueHandlerWidget(
+      value: ref.watch(curUserAiChatThreadProvider),
+      data: (chatThread) => chatThread == null
+          ? const Text('No chat thread available')
+          : ChatThreadCard(thread: chatThread),
+    );
   }
 }
 
@@ -127,16 +129,19 @@ class ChatMessagesDisplay extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final chatMessages = ref.watch(curUserChatMessagesListenerProvider);
-    return chatMessages == null
-        ? const Text('No messages available')
-        : ListView.builder(
-            shrinkWrap: true,
-            physics: const NeverScrollableScrollPhysics(),
-            itemCount: chatMessages.length,
-            itemBuilder: (context, index) =>
-                MessageCard(message: chatMessages[index]),
-          );
+    final chatMessages = ref.watch(curUserAiChatMessagesProvider);
+    return AsyncValueHandlerWidget(
+      value: chatMessages,
+      data: (chatMessages) => chatMessages.isEmpty
+          ? const Text('No messages available')
+          : ListView.builder(
+              shrinkWrap: true,
+              physics: const NeverScrollableScrollPhysics(),
+              itemCount: chatMessages.length,
+              itemBuilder: (context, index) =>
+                  MessageCard(message: chatMessages[index]),
+            ),
+    );
   }
 }
 
