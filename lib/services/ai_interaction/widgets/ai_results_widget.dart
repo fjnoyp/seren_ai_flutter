@@ -85,7 +85,7 @@ class DisplayAiResult extends ConsumerWidget {
         content = ShiftClockInOutResultWidget(result: aiResult as ShiftClockInOutResultModel);
       } else if (aiResult is ShiftLogsResultModel) {
         content = ShiftLogsResultWidget(result: aiResult as ShiftLogsResultModel);
-      } else if (aiResult is ShiftAssignmentsResultModel) {
+      } else if (aiResult is ShiftAssignmentsResultModel) {        
         content = ShiftAssignmentsResultWidget(result: aiResult as ShiftAssignmentsResultModel);
       }
       else {

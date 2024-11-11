@@ -27,8 +27,9 @@ enum AiRequestType {
 /// Represent an Ai Request for an action, info, or ui action
 abstract class AiRequestModel {
   final AiRequestType requestType;
+  final Map<String, dynamic>? args;
 
-  AiRequestModel(this.requestType);
+  AiRequestModel(this.requestType, {this.args});
 
   static AiRequestModel fromJson(Map<String, dynamic> json) {
     final requestType = AiRequestType.fromString(json['request_type']);
