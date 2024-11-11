@@ -1,6 +1,5 @@
 import 'dart:convert';
 
-import 'package:collection/collection.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:seren_ai_flutter/common/language_provider.dart';
 import 'package:seren_ai_flutter/services/ai_interaction/ai_request/ai_request_executor.dart';
@@ -16,10 +15,8 @@ import 'package:seren_ai_flutter/services/data/ai_chats/repositories/ai_chat_mes
 import 'package:seren_ai_flutter/services/data/ai_chats/repositories/ai_chat_threads_repository.dart';
 import 'package:seren_ai_flutter/services/data/ai_chats/repositories/ai_chat_threads_service.dart';
 import 'package:seren_ai_flutter/services/data/orgs/providers/cur_org_dependency_provider.dart';
-import 'package:seren_ai_flutter/services/text_to_speech/text_to_speech_notifier.dart';
 
 import 'package:logging/logging.dart';
-import 'package:intl/intl.dart';
 
 
 final log = Logger('AIChatService');

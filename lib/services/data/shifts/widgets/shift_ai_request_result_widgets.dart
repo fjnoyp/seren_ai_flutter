@@ -5,7 +5,6 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:seren_ai_flutter/services/data/shifts/tool_methods/models/shift_assignments_result_model.dart';
 import 'package:seren_ai_flutter/services/data/shifts/tool_methods/models/shift_clock_in_out_result_model.dart';
 import 'package:seren_ai_flutter/services/data/shifts/tool_methods/models/shift_log_results_model.dart';
-import 'package:seren_ai_flutter/services/data/shifts/tool_methods/shift_tool_methods.dart';
 
 // class ShiftInfoResultWidget extends ConsumerWidget {
 //   final ShiftAssignmentsResultModel result;
@@ -95,7 +94,7 @@ class ShiftLogsResultWidget extends ConsumerWidget {
                       Icon(
                         log.clockOutDatetime == null ? Icons.timer : Icons.check_circle,
                         size: 16,
-                        color: log.clockOutDatetime == null ? theme.colorScheme.primary : theme.colorScheme.onBackground,
+                        color: log.clockOutDatetime == null ? theme.colorScheme.primary : theme.colorScheme.onSurface,
                       ),
                       const SizedBox(width: 8),
                       Expanded(
