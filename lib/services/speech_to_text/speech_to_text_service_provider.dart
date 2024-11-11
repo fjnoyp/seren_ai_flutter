@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:io';
 
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:speech_to_text/speech_recognition_error.dart';
@@ -30,6 +31,10 @@ class SpeechToTextService {
       onSpeechToTextStateListener;
   Function(String status)? onErrorListener;
 
+  String _language = Platform.localeName;
+
+  set language(String language) => _language = language;
+
   /// Initializes the speech recognition service.
   Future<bool> init() async {
     if (!_isInitialized) {
@@ -59,6 +64,7 @@ class SpeechToTextService {
       listenFor: listenFor,
       pauseFor: pauseFor,
       onSoundLevelChange: (double level) => onSoundLevel(level),
+      localeId: _language,
     );
   }
 
