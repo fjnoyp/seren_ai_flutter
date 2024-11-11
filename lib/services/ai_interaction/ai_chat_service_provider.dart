@@ -1,5 +1,6 @@
 import 'package:collection/collection.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:seren_ai_flutter/common/language_provider.dart';
 import 'package:seren_ai_flutter/services/ai_interaction/ai_request/ai_request_executor.dart';
 import 'package:seren_ai_flutter/services/ai_interaction/ai_request/models/ai_request_model.dart';
 import 'package:seren_ai_flutter/services/ai_interaction/langgraph/langgraph_service.dart';
@@ -195,7 +196,7 @@ class AIChatService {
 
     // Get timezone offset string 
     final timezoneOffsetMinutes = DateTime.now().timeZoneOffset.inMinutes;    
-    final language = Intl.getCurrentLocale();
+    final language = ref.read(languageSNP);     
 
     // Create new thread and assistant
     final (newLgThreadId, newLgAssistantId) =
@@ -226,17 +227,17 @@ class AIChatService {
   }
 
   Future<void> speakAiMessage(List<AiChatMessageModel> result) async {
-    final textToSpeech = ref.read(textToSpeechServiceProvider);
+    // final textToSpeech = ref.read(textToSpeechServiceProvider);
 
-    // TODO: consolidate duplicated code from stt_orchestrator_provider.dart
-    final aiMessage = result.firstWhereOrNull((element) =>
-        element.type == AiChatMessageType.ai && element.content.isNotEmpty);
+    // // TODO: consolidate duplicated code from stt_orchestrator_provider.dart
+    // final aiMessage = result.firstWhereOrNull((element) =>
+    //     element.type == AiChatMessageType.ai && element.content.isNotEmpty);
 
-    if (aiMessage == null) {
-      return;
-    }
+    // if (aiMessage == null) {
+    //   return;
+    // }
 
-    await textToSpeech.speak(aiMessage.content);
+    // await textToSpeech.speak(aiMessage.content);
   }
 }
 
