@@ -2,9 +2,8 @@ import 'package:seren_ai_flutter/services/ai_interaction/ai_request/models/ai_re
 
 /// Subtypes of Action Request Type 
 enum AiActionRequestType {
-  clockIn('clock_in'),
-  clockOut('clock_out');
-
+  toggleClockInOrOut('toggle_clock_in_or_out');
+  
   final String value;
   const AiActionRequestType(this.value);
 
@@ -25,15 +24,6 @@ class AiActionRequestModel extends AiRequestModel {
     required this.actionRequestType,
     this.args,
   }) : super(AiRequestType.actionRequest);
-
-  @override
-  Map<String, dynamic> toJson() {
-    return {
-      ...super.toJson(),
-      'action_request_type': actionRequestType.value,
-      'args': args,
-    };
-  }
 
   static AiActionRequestModel fromJson(Map<String, dynamic> json) {
     return AiActionRequestModel(
