@@ -11,39 +11,64 @@ import 'package:seren_ai_flutter/services/data/ai_chats/cur_user_ai_chat_thread_
 import 'package:seren_ai_flutter/services/data/ai_chats/cur_user_chat_messages_listener_provider.dart';
 import 'package:seren_ai_flutter/services/data/ai_chats/models/ai_chat_thread_model.dart';
 import 'package:seren_ai_flutter/services/data/ai_chats/models/ai_chat_message_model.dart';
+import 'package:seren_ai_flutter/services/ai_interaction/widgets/testing/ai_debug_page.dart';
 
 class AIChatsPage extends HookConsumerWidget {
   const AIChatsPage({super.key});
+
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final messageController = useTextEditingController();
+    final isDebugMode = useState(false);
 
-    return ListView(
-      children: [
-        TextField(
-          controller: messageController,
-          decoration: InputDecoration(
-            labelText: 'Ask a question',
-            suffixIcon: IconButton(
-              icon: const Icon(Icons.send),
-              onPressed: () {
-                final message = messageController.text;
-                if (message.isNotEmpty) {
-                  ref.read(aiChatServiceProvider).sendMessageToAi(message);
-                  messageController.clear();
-                }
-              },
-            ),
+    return SingleChildScrollView(
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Row(
+            mainAxisAlignment: MainAxisAlignment.end,
+            children: [
+              IconButton(
+                icon: Icon(
+                  isDebugMode.value ? Icons.list : Icons.bug_report,
+                  size: 20,
+                ),
+                onPressed: () {
+                  isDebugMode.value = !isDebugMode.value;
+                },
+              ),
+            ],
           ),
-        ),
-        const ChatThreadDisplay(),
-        const ChatMessagesDisplay(),
-        const SizedBox(height: 200),
-      ],
+          isDebugMode.value
+              ? const AiDebugPage()
+              : Column(
+                  children: [
+                    TextField(
+                      controller: messageController,
+                      decoration: InputDecoration(
+                        labelText: 'Ask a question',
+                        suffixIcon: IconButton(
+                          icon: const Icon(Icons.send),
+                          onPressed: () {
+                            final message = messageController.text;
+                            if (message.isNotEmpty) {
+                              ref.read(aiChatServiceProvider).sendMessageToAi(message);
+                              messageController.clear();
+                            }
+                          },
+                        ),
+                      ),
+                    ),
+                    const ChatThreadDisplay(),
+                    const ChatMessagesDisplay(),
+                    const SizedBox(height: 200),
+                  ],
+                ),
+        ],
+      ),
     );
   }
 }
-
 
 
 class ChatThreadDisplay extends ConsumerWidget {
@@ -58,24 +83,39 @@ class ChatThreadDisplay extends ConsumerWidget {
   }
 }
 
-class ChatThreadCard extends StatelessWidget {
+class ChatThreadCard extends HookWidget {
   final AiChatThreadModel thread;
 
   const ChatThreadCard({super.key, required this.thread});
 
   @override
   Widget build(BuildContext context) {
+    final isExpanded = useState(false);
+    
     return Card(
       child: ListTile(
-        title: SelectableText('Chat Thread ID: ${thread.id}'),
-        subtitle: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            SelectableText('Author: ${thread.authorUserId}'),
-            SelectableText('Parent LG Thread ID: ${thread.parentLgThreadId}'),
-            SelectableText(
-                'Parent LG Assistant ID: ${thread.parentLgAssistantId}'),
-          ],
+        title: const Text('Chat Thread'),
+        trailing: IconButton(
+          icon: Icon(isExpanded.value ? Icons.expand_less : Icons.expand_more),
+          onPressed: () => isExpanded.value = !isExpanded.value,
+        ),
+        subtitle: AnimatedCrossFade(
+          firstChild: const SizedBox.shrink(),
+          secondChild: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              const Divider(),
+              SelectableText('Thread ID: ${thread.id}'),
+              SelectableText('Author: ${thread.authorUserId}'),
+              SelectableText('Parent LG Thread ID: ${thread.parentLgThreadId}'),
+              SelectableText(
+                  'Parent LG Assistant ID: ${thread.parentLgAssistantId}'),
+            ],
+          ),
+          crossFadeState: isExpanded.value 
+              ? CrossFadeState.showSecond
+              : CrossFadeState.showFirst,
+          duration: const Duration(milliseconds: 300),
         ),
       ),
     );

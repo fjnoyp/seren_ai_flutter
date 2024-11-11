@@ -4,6 +4,7 @@
 import 'package:seren_ai_flutter/services/ai_interaction/langgraph/langgraph_api.dart';
 import 'package:seren_ai_flutter/services/ai_interaction/langgraph/models/lg_ai_base_message_model.dart';
 import 'package:seren_ai_flutter/services/ai_interaction/langgraph/models/lg_ai_chat_message_role.dart';
+import 'package:seren_ai_flutter/services/ai_interaction/langgraph/models/lg_config_model.dart';
 import 'package:seren_ai_flutter/services/ai_interaction/langgraph/models/lg_input_model.dart';
 import 'package:seren_ai_flutter/services/data/db_setup/app_config.dart';
 
@@ -46,7 +47,7 @@ class LanggraphService {
     //     await _langgraphDbOperations.getOrCreateAiChatThread(userId, orgId);
 
     // Create input for the Langgraph API
-    final lgInput = message != null ? LgInputModel(messages: [
+    final lgInput = message != null ? LgAgentStateModel(messages: [
       LgInputMessageModel(role: LgAiChatMessageRole.user, content: message)
     ]) : null;
 
@@ -116,7 +117,7 @@ class LanggraphService {
   Future<List<LgAiBaseMessageModel>> _runAi({
     required String lgThreadId,
     required String lgAssistantId,    
-    LgInputModel? lgInput,
+    LgAgentStateModel? lgInput,
   }) async {
     // Collect all messages from the stream
     final messages = <LgAiBaseMessageModel>[];
@@ -162,15 +163,14 @@ class LanggraphService {
   // TODO p2: search for matching assistant before creating a new one ...
   Future<(String, String)> createNewThread({
     required String name,
-    Map<String, String>? config,
-    Map<String, String>? metadata,
+    required LgConfigSchemaModel lgConfig,
   }) async {
     final newLgThreadId = await langgraphApi.createThread();
     final newLgAssistantId = await langgraphApi.createAssistant(
       name: name,
-      config: config,
-      metadata: metadata,
+      lgConfig: lgConfig,
     );
     return (newLgThreadId, newLgAssistantId);
   }
+
 }

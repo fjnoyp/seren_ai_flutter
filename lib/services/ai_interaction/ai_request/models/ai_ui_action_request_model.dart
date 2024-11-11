@@ -25,14 +25,6 @@ class AiUiActionRequestModel extends AiRequestModel {
     this.args,
   }) : super(AiRequestType.uiAction);
 
-  @override
-  Map<String, dynamic> toJson() {
-    return {
-      ...super.toJson(),
-      'ui_action_request_type': uiActionType.value,
-      'args': args,
-    };
-  }
 
   static AiUiActionRequestModel fromJson(Map<String, dynamic> json) {
     return AiUiActionRequestModel(
