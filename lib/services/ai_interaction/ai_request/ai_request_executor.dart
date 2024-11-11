@@ -37,26 +37,26 @@ class AiRequestExecutor {
 
   // Route ToolResponse to the correct method
   Future<AiRequestResultModel> getToolResponseResult(
-      AiRequestModel toolResponse) async {
+      AiRequestModel aiRequest) async {
 
     AiRequestResultModel result; 
 
     // Iterate through identified tool responses
-    switch (toolResponse.requestType) {
+    switch (aiRequest.requestType) {
       case AiRequestType.uiAction:
-        result = await _handleUiActionRequest(toolResponse as AiUiActionRequestModel);
+        result = await _handleUiActionRequest(aiRequest as AiUiActionRequestModel);
         break;
 
         case AiRequestType.infoRequest:
-        result = await _handleInfoRequest(toolResponse as AiInfoRequestModel);
+        result = await _handleInfoRequest(aiRequest as AiInfoRequestModel);
         break;
 
       case AiRequestType.actionRequest:
-        result = await _handleActionRequest(toolResponse as AiActionRequestModel);
+        result = await _handleActionRequest(aiRequest as AiActionRequestModel);
         break;
 
       default:
-        throw Exception('Unknown tool response type: ${toolResponse.requestType}');
+        throw Exception('Unknown tool response type: ${aiRequest.requestType}');
     }
 
     return result;
@@ -76,13 +76,18 @@ class AiRequestExecutor {
   Future<AiRequestResultModel> _handleInfoRequest(
       AiInfoRequestModel infoRequest) async {
     switch (infoRequest.infoRequestType) {
-      case AiInfoRequestType.shiftHistory:
-        // TODO p1: determine how this will be used first
-        throw Exception('Not implemented');
-      case AiInfoRequestType.currentShift:
-        final shiftInfoResult = await shiftToolMethods.getCurrentShiftInfo(
-            ref: ref, infoRequest: infoRequest);
-        return shiftInfoResult;
+      case AiInfoRequestType.shiftAssignments:
+        return await shiftToolMethods.getShiftAssignments(
+            ref: ref, infoRequest: infoRequest as ShiftAssignmentsRequestModel);
+
+      case AiInfoRequestType.shiftLogs:
+        return await shiftToolMethods.getShiftLogs(
+            ref: ref, infoRequest: infoRequest as ShiftLogsRequestModel);
+
+      // case AiInfoRequestType.currentShift:
+      //   final shiftInfoResult = await shiftToolMethods.getCurrentShiftInfo(
+      //       ref: ref, infoRequest: infoRequest);
+      //   return shiftInfoResult;
       default:
         throw Exception(
             'Unknown info request type: ${infoRequest.infoRequestType}');
@@ -92,10 +97,8 @@ class AiRequestExecutor {
   Future<AiRequestResultModel> _handleActionRequest(
       AiActionRequestModel actionRequest) async {
     switch (actionRequest.actionRequestType) {
-      case AiActionRequestType.clockIn:
-        return await shiftToolMethods.clockIn(ref: ref);
-      case AiActionRequestType.clockOut:
-        return await shiftToolMethods.clockOut(ref: ref);
+      case AiActionRequestType.toggleClockInOrOut:
+        return await shiftToolMethods.toggleClockInOut(ref: ref);
       default:
         throw Exception(
             'Unknown action request type: ${actionRequest.actionRequestType}');

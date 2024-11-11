@@ -1,6 +1,8 @@
 // TODO p1: update logic to get multi day shift ranges based on timezone chosen 
 
 abstract class ShiftQueries {
+
+  // TODO p1: does not support breaks 
   /// Params:
   /// - day_start: DateTime
   /// - shift_id: String

@@ -19,7 +19,7 @@ var aiRequestResults = [
     type: AiChatMessageType.ai,
     parentChatThreadId: '',
   ),
-  ShiftInfoResultModel(
+  ShiftAssignmentsResultModel(
     message: 'Current shift time ranges message for ai',
     showOnly: false, 
     activeShiftRanges: [
