@@ -56,7 +56,7 @@ Future<void> streamRunExample(String content, LanggraphApi client, String thread
     threadId: threadId, 
     assistantId: assistantId, 
     streamMode: "updates",    
-    input: LgInputModel(
+    input: LgAgentStateModel(
       messages: [
         LgInputMessageModel(role: LgAiChatMessageRole.user, content: content)
       ]
@@ -91,24 +91,24 @@ Future<void> testCreateThread(LanggraphApi client) async {
   }
 }
 
-Future<void> testCreateAssistant(LanggraphApi client) async {
-  try {
-    final assistantId = await client.createAssistant(
-      name: "My Assistant",
-      config: {
-        'configurable': {
-          'org_id': '123',
-          'user_id': '456',
-        }
-      },
-      metadata: {}, // Optional
-      ifExists: "raise", // Or "update" or "return_existing"
-    );
-    print('Created assistant with ID: $assistantId');
-  } catch (e) {
-    print('Error creating assistant: $e');
-  }
-}
+// Future<void> testCreateAssistant(LanggraphApi client) async {
+//   try {
+//     final assistantId = await client.createAssistant(
+//       name: "My Assistant",
+//       config: {
+//         'configurable': {
+//           'org_id': '123',
+//           'user_id': '456',
+//         }
+//       },
+//       metadata: {}, // Optional
+//       ifExists: "raise", // Or "update" or "return_existing"
+//     );
+//     print('Created assistant with ID: $assistantId');
+//   } catch (e) {
+//     print('Error creating assistant: $e');
+//   }
+// }
 
 Future<void> testGetThreadState(LanggraphApi client, String threadId) async {
   try {

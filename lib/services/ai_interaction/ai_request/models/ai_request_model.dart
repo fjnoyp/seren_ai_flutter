@@ -30,10 +30,6 @@ abstract class AiRequestModel {
 
   AiRequestModel(this.requestType);
 
-  Map<String, dynamic> toJson() {
-    return {'request_type': requestType.value};
-  }
-
   static AiRequestModel fromJson(Map<String, dynamic> json) {
     final requestType = AiRequestType.fromString(json['request_type']);
 
@@ -44,6 +40,8 @@ abstract class AiRequestModel {
         return AiInfoRequestModel.fromJson(json);
       case AiRequestType.actionRequest:
         return AiActionRequestModel.fromJson(json);
+      default:
+        throw ArgumentError('Invalid AiRequestType: ${json['request_type']}');
     }
   }
 

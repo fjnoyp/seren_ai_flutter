@@ -7,6 +7,7 @@ import 'package:seren_ai_flutter/services/ai_interaction/ai_request/models/ai_ac
 import 'package:seren_ai_flutter/services/ai_interaction/ai_request/models/ai_info_request_model.dart';
 import 'package:seren_ai_flutter/services/ai_interaction/ai_request/models/ai_request_model.dart';
 import 'package:seren_ai_flutter/services/ai_interaction/langgraph/langgraph_service.dart';
+import 'package:seren_ai_flutter/services/ai_interaction/langgraph/models/lg_config_model.dart';
 
 import 'package:seren_ai_flutter/services/auth/cur_auth_state_provider.dart';
 import 'package:seren_ai_flutter/services/data/orgs/providers/cur_org_dependency_provider.dart';
@@ -29,6 +30,18 @@ class TestLanggraphWidget extends HookConsumerWidget {
 
               final curOrg = ref.read(curOrgIdProvider);
 
+              final assistantId = await langgraphService.langgraphApi.createAssistant(
+                name: 'Test Assistant',
+                lgConfig: LgConfigSchemaModel(
+                  userId: curUser!.id,
+                  orgId: curOrg!,
+                  timezoneOffsetMinutes: 30,
+                  language: 'pt',
+                ),
+              );
+
+              responseState.value = assistantId;
+
               // final user2Id = '8c518695-0278-4a0d-9727-136eec2f71c3';
 
               //  final result = await langgraphService.langgraphDbOperations
@@ -37,16 +50,16 @@ class TestLanggraphWidget extends HookConsumerWidget {
               // final result = await langgraphService.sendUserMessage(
               //     'what is my shift today?', curUser!.id, curOrg!);
 
-              final result = await langgraphService.langgraphApi.getThreadState(
-               'fbb8ef11-5f6b-4d28-a12a-1facb2969d98',               
-              );
+              // final result = await langgraphService.langgraphApi.getThreadState(
+              //  'fbb8ef11-5f6b-4d28-a12a-1facb2969d98',               
+              // );
 
-              final showMessages = result.messages.sublist(result.messages.length - 3);
+              // final showMessages = result.messages.sublist(result.messages.length - 3);
 
-              responseState.value = showMessages
-                  .map((message) => message.toJson().toString())
-                  .join('\n\n') // Add space formatting between each message
-                  .toString();
+              // responseState.value = showMessages
+              //     .map((message) => message.toJson().toString())
+              //     .join('\n\n') // Add space formatting between each message
+              //     .toString();
 
               // final result = await langgraphService.updateLastToolMessageThreadState(
               //   lgThreadId: 'fbb8ef11-5f6b-4d28-a12a-1facb2969d98',
@@ -94,16 +107,6 @@ class TestAiWidget extends HookConsumerWidget {
     final responseState = useState<String?>(null);
     final isVisible = useState<bool>(true); // State to show/hide contents
 
-    final requestShiftInfo =
-        AiInfoRequestModel(infoRequestType: AiInfoRequestType.currentShift);
-    final requestClockIn =
-        AiActionRequestModel(actionRequestType: AiActionRequestType.clockIn);
-    final requestClockOut =
-        AiActionRequestModel(actionRequestType: AiActionRequestType.clockOut);
-    final List<AiRequestModel> testToolResponses = [
-      requestShiftInfo,
-      requestClockOut
-    ];
 
     return Container(
       padding: const EdgeInsets.all(4), // Reduced padding
@@ -125,14 +128,14 @@ class TestAiWidget extends HookConsumerWidget {
           if (isVisible.value) ...[
             ElevatedButton(
               onPressed: () async {
-                try {
-                  final results = await ref
-                      .read(aiRequestExecutorProvider)
-                      .executeAiRequest(testToolResponses[0]);
-                  responseState.value = results.message;
-                } catch (e) {
-                  responseState.value = e.toString();
-                }
+                // try {
+                //   final results = await ref
+                //       .read(aiRequestExecutorProvider)
+                //       .executeAiRequest(testToolResponses[0]);
+                //   responseState.value = results.message;
+                // } catch (e) {
+                //   responseState.value = e.toString();
+                // }
               },
               child: const Text('Execute Ai Request'),
             ),

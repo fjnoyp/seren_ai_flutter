@@ -75,13 +75,18 @@ class DisplayAiResult extends ConsumerWidget {
     if (aiResult is AiChatMessageModel) {
       content = Text((aiResult as AiChatMessageModel).content);
     } else if (aiResult is AiRequestResultModel) {
-      if (aiResult is ShiftInfoResultModel) {
-        content = ShiftInfoResultWidget(result: aiResult as ShiftInfoResultModel);
-      } else if (aiResult is ShiftClockInOutResultModel) {
+
+      if (aiResult is ShiftClockInOutResultModel) {
         content = ShiftClockInOutResultWidget(result: aiResult as ShiftClockInOutResultModel);
-      } else {
+      } else if (aiResult is ShiftLogsResultModel) {
+        content = ShiftLogsResultWidget(result: aiResult as ShiftLogsResultModel);
+      } else if (aiResult is ShiftAssignmentsResultModel) {
+        content = ShiftAssignmentsResultWidget(result: aiResult as ShiftAssignmentsResultModel);
+      }
+      else {
         content = Text((aiResult as AiRequestResultModel).message);
       }
+
     }
 
     bool isToolCall = aiResult is! AiChatMessageModel; 

@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:seren_ai_flutter/services/ai_interaction/ai_request/ai_request_executor.dart';
 import 'package:seren_ai_flutter/services/ai_interaction/ai_request/models/ai_request_model.dart';
 import 'package:seren_ai_flutter/services/ai_interaction/langgraph/langgraph_service.dart';
+import 'package:seren_ai_flutter/services/ai_interaction/langgraph/models/lg_config_model.dart';
 import 'package:seren_ai_flutter/services/ai_interaction/last_ai_message_listener_provider.dart';
 import 'package:seren_ai_flutter/services/auth/cur_auth_state_provider.dart';
 import 'package:seren_ai_flutter/services/data/ai_chats/models/ai_chat_message_model.dart';
@@ -15,6 +16,8 @@ import 'package:seren_ai_flutter/services/data/orgs/providers/cur_org_dependency
 import 'package:seren_ai_flutter/services/text_to_speech/text_to_speech_notifier.dart';
 
 import 'package:logging/logging.dart';
+import 'package:intl/intl.dart';
+
 
 final log = Logger('AIChatService');
 
@@ -29,6 +32,9 @@ final aiChatServiceProvider = Provider<AIChatService>(AIChatService.new);
 TODO p1: fix bug where ai keeps speaking 
 
 */
+
+
+/// Intermediary with LangGraph API 
 class AIChatService {
   final Ref ref;
 
@@ -186,18 +192,21 @@ class AIChatService {
     // TODO p3: get org name for assistant name
     final name = '${curUser!.email} - $curOrgId';
 
+
+    // Get timezone offset string 
+    final timezoneOffsetMinutes = DateTime.now().timeZoneOffset.inMinutes;    
+    final language = Intl.getCurrentLocale();
+
     // Create new thread and assistant
     final (newLgThreadId, newLgAssistantId) =
         await langgraphService.createNewThread(
       name: name,
-      config: {
-        'org_id': orgId,
-        'user_id': userId,
-      },
-      metadata: {
-        'org_id': orgId,
-        'user_id': userId,
-      },
+      lgConfig: LgConfigSchemaModel(
+        timezoneOffsetMinutes: timezoneOffsetMinutes,
+        language: language,
+        orgId: orgId,
+        userId: userId,
+      ),
     );
 
     final newThread = AiChatThreadModel(

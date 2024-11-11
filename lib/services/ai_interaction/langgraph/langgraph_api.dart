@@ -2,16 +2,20 @@
 import 'package:dio/dio.dart';
 import 'package:seren_ai_flutter/services/ai_interaction/langgraph/models/lg_ai_base_message_model.dart';
 import 'package:seren_ai_flutter/services/ai_interaction/langgraph/models/lg_assistant_model.dart';
+import 'package:seren_ai_flutter/services/ai_interaction/langgraph/models/lg_config_model.dart';
 import 'package:seren_ai_flutter/services/ai_interaction/langgraph/models/lg_input_model.dart';
 import 'dart:convert';
 import 'dart:async';
 
 import 'package:seren_ai_flutter/services/ai_interaction/langgraph/models/lg_run_model.dart';
 import 'package:seren_ai_flutter/services/ai_interaction/langgraph/models/lg_run_stream_response_model.dart';
+import 'package:seren_ai_flutter/services/ai_interaction/langgraph/models/lg_thread_model.dart';
 import 'package:seren_ai_flutter/services/ai_interaction/langgraph/models/lg_thread_state_model.dart';
 
 // TODO p0: create assistant with metadata to be findable again ....
 
+
+/// Implementation of https://langchain-ai.github.io/langgraph/cloud/reference/api/api_ref.html
 class LanggraphApi {
   final Dio _dio = Dio();
   final String apiKey;
@@ -40,19 +44,23 @@ class LanggraphApi {
   Future<String> createAssistant({
     required String name,
     String graphId = "agent", // set from langgraph config
-    Map<String, dynamic>? config,
-    Map<String, dynamic>? metadata,
+    required LgConfigSchemaModel lgConfig,
     String ifExists = "raise",
   }) async {
+
+    final config = {            
+      'configurable': lgConfig.toJson(),
+    };
+    
     final response = await _dio.post(
       '$baseUrl/assistants',
       data: {
         'name': name,
         'graph_id': graphId,
-        'config': config ?? {},
-        'metadata': metadata ?? {},
+        'config': config,
+        'metadata': lgConfig.toJson(),
         'if_exists': ifExists,
-      },
+      },      
     );
     return response.data['assistant_id'];
   }
@@ -70,7 +78,7 @@ class LanggraphApi {
     required String threadId,
     required String assistantId,
     required String streamMode,
-    LgInputModel? input,
+    LgAgentStateModel? input,
     Duration timeout = const Duration(minutes: 5),
   }) async* {
     final requestData = {
@@ -235,6 +243,53 @@ curl --request POST \
           .toList();
     } else {
       throw Exception('Failed to search assistants: ${response.data}');
+    }
+  }
+
+  Future<List<LgThreadModel>> searchThreads({
+    Map<String, dynamic>? metadata,
+    Map<String, dynamic>? values,
+    String? status = "idle",
+    int limit = 10,
+    int offset = 0,
+  }) async {
+    final response = await _dio.post(
+      '$baseUrl/threads/search',
+      data: {
+        if (metadata != null) 'metadata': metadata,
+        if (values != null) 'values': values,
+        'status': status,
+        'limit': limit,
+        'offset': offset,
+      },
+    );
+
+    if (response.statusCode == 200) {
+      return (response.data as List)
+          .map((thread) => LgThreadModel.fromJson(thread as Map<String, dynamic>))
+          .toList();
+    } else {
+      throw Exception('Failed to search threads: ${response.data}');
+    }
+  }
+
+  Future<void> deleteAssistant(String assistantId) async {
+    final response = await _dio.delete(
+      '$baseUrl/assistants/$assistantId',
+    );
+    
+    if (response.statusCode != 204) {
+      throw Exception('Failed to delete assistant: ${response.data}');
+    }
+  }
+
+  Future<void> deleteThread(String threadId) async {
+    final response = await _dio.delete(
+      '$baseUrl/threads/$threadId',
+    );
+
+    if (response.statusCode != 204) {
+      throw Exception('Failed to delete thread: ${response.data}');
     }
   }
 }
