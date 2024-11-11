@@ -9,13 +9,13 @@ import 'dart:convert';
 part 'ai_chat_message_model.g.dart';
 
 @JsonSerializable()
-class AiChatMessageModel extends AiResult implements IHasId  {
+class AiChatMessageModel extends AiResult implements IHasId {
   @override
   final String id;
   @JsonKey(name: 'type')
   final AiChatMessageType type;
 
-  final String content;
+  final String _content;
   @JsonKey(name: 'parent_chat_thread_id')
   final String parentChatThreadId;
   @JsonKey(name: 'parent_lg_run_id')
@@ -27,35 +27,47 @@ class AiChatMessageModel extends AiResult implements IHasId  {
   AiChatMessageModel({
     String? id,
     required this.type,
-    required this.content,
+    required String content,
     required this.parentChatThreadId,
     this.parentLgRunId,
     //this.additionalKwargs,
-  }) : id = id ?? uuid.v4();
+  })  : id = id ?? uuid.v4(),
+        _content = content;
+
+  String get content => switch (_content[0]) {
+        '[' => jsonDecode(_content)[0]['text'] ?? _content,
+        '{' => jsonDecode(_content)['text'] ?? _content,
+        _ => _content,
+      };
 
   // Factory constructor for creating a AiChatMessage with default values
   factory AiChatMessageModel.defaultMessage() {
     return AiChatMessageModel(
-      type: AiChatMessageType.user, // Assuming default type as user      
+      type: AiChatMessageType.user, // Assuming default type as user
       content: 'New Message',
-      parentChatThreadId: '',  // This should be set to a valid chat thread ID in practice
+      parentChatThreadId:
+          '', // This should be set to a valid chat thread ID in practice
     );
   }
 
   bool isAiToolRequest() {
-    return type == AiChatMessageType.tool && 
-    content.contains('request_type');
+    return type == AiChatMessageType.tool && content.contains('request_type');
   }
 
   AiRequestModel? getAiRequest() {
     if (isAiToolRequest()) {
-      final Map<String, dynamic> decoded = json.decode(content) as Map<String, dynamic>;
-      return AiRequestModel.fromJson(decoded);
+      try {
+        final Map<String, dynamic> decoded =
+            json.decode(content) as Map<String, dynamic>;
+        return AiRequestModel.fromJson(decoded);
+      } catch (e) {
+        return null;
+      }
     }
     return null;
   }
 
-  // TODO isAiResult / getAiResults for the answer 
+  // TODO isAiResult / getAiResults for the answer
 
   AiChatMessageModel copyWith({
     String? id,
@@ -76,9 +88,13 @@ class AiChatMessageModel extends AiResult implements IHasId  {
   }
 
   static List<AiChatMessageModel> fromJsonList(List<dynamic> jsonList) {
-    return jsonList.map((json) => AiChatMessageModel.fromJson(json as Map<String, dynamic>)).toList();
+    return jsonList
+        .map(
+            (json) => AiChatMessageModel.fromJson(json as Map<String, dynamic>))
+        .toList();
   }
 
-  factory AiChatMessageModel.fromJson(Map<String, dynamic> json) => _$AiChatMessageModelFromJson(json);
+  factory AiChatMessageModel.fromJson(Map<String, dynamic> json) =>
+      _$AiChatMessageModelFromJson(json);
   Map<String, dynamic> toJson() => _$AiChatMessageModelToJson(this);
 }
