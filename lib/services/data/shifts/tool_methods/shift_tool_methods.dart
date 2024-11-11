@@ -2,8 +2,10 @@ import 'dart:async';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:seren_ai_flutter/services/ai_interaction/ai_request/models/ai_info_request_model.dart';
+import 'package:seren_ai_flutter/services/ai_interaction/ai_request/models/requests/ai_info_request_model.dart';
 import 'package:seren_ai_flutter/services/ai_interaction/ai_request/ai_request_executor.dart';
+import 'package:seren_ai_flutter/services/ai_interaction/ai_request/models/results/ai_request_result_model.dart';
+import 'package:seren_ai_flutter/services/ai_interaction/ai_request/models/results/error_request_result_model.dart';
 import 'package:seren_ai_flutter/services/auth/cur_auth_state_provider.dart';
 import 'package:seren_ai_flutter/services/data/shifts/models/shift_log_model.dart';
 import 'package:seren_ai_flutter/services/data/shifts/providers/cur_shift_state_provider.dart';
@@ -11,35 +13,13 @@ import 'package:seren_ai_flutter/services/data/shifts/providers/open_shift_log_p
 import 'package:seren_ai_flutter/services/data/shifts/providers/shift_logs_service_provider.dart';
 import 'package:seren_ai_flutter/services/data/shifts/repositories/shift_logs_repository.dart';
 import 'package:seren_ai_flutter/services/data/shifts/repositories/shift_time_ranges_repository.dart';
+import 'package:seren_ai_flutter/services/data/shifts/tool_methods/models/shift_assignments_result_model.dart';
+import 'package:seren_ai_flutter/services/data/shifts/tool_methods/models/shift_clock_in_out_result_model.dart';
+import 'package:seren_ai_flutter/services/data/shifts/tool_methods/models/shift_log_results_model.dart';
 
-class ShiftAssignmentsResultModel extends AiRequestResultModel {
-  final List<DateTimeRange> activeShiftRanges;
-  ShiftAssignmentsResultModel({
-    required this.activeShiftRanges,
-    required super.message,
-    required super.showOnly,
-  });
-}
 
-class ShiftLogsResultModel extends AiRequestResultModel {
-  final List<ShiftLogModel> shiftLogs;
-  ShiftLogsResultModel({
-    required this.shiftLogs,
-    required super.message,
-    required super.showOnly,
-  });
-}
 
-class ShiftClockInOutResultModel extends AiRequestResultModel {
-  final bool hasError;
-  final bool clockedIn;
-  ShiftClockInOutResultModel({
-    required this.clockedIn,
-    this.hasError = false,
-    required super.message,
-    required super.showOnly,
-  });
-}
+
 
 class ShiftToolMethods {
   ({String userId, String shiftId})? _getAuthAndShiftInfo(Ref ref) {
@@ -66,10 +46,7 @@ class ShiftToolMethods {
   }
 
   AiRequestResultModel handleNoAuthOrShiftInfo({AiInfoRequestModel? infoRequest}) {
-    return AiRequestResultModel(
-      message: 'Not authenticated or no active shift',
-      showOnly: infoRequest?.showOnly ?? true,
-    );
+    return ErrorRequestResultModel(resultForAi: 'No auth or shift info', showOnly: true);
   }
 
   // Future<AiRequestResultModel> getCurrentShiftInfo(
@@ -109,7 +86,7 @@ class ShiftToolMethods {
     // Get current local date
     final DateTime now = DateTime.now();
 
-    final List<DateTimeRange> timeRanges = [];
+    final Map<DateTime, List<DateTimeRange>> shiftAssignments = {};
 
     await Future.wait(dayOffsetsToGet.map((offset) async {
       final DateTime day = now.add(Duration(days: offset));
@@ -121,12 +98,14 @@ class ShiftToolMethods {
             day: dayUtc,
           );
 
-      timeRanges.addAll(timeRangesForDay);
+      shiftAssignments[day] = timeRangesForDay;
     }));
 
     return ShiftAssignmentsResultModel(
-      activeShiftRanges: timeRanges,
-      message: timeRanges.isEmpty ? 'No shift assignments in requested range.' : 'Shift assignments: ${timeRanges.map((range) => '${range.start.toLocal()} - ${range.end.toLocal()}').join('\n')}',
+      shiftAssignments: shiftAssignments,
+      resultForAi: shiftAssignments.isEmpty 
+          ? 'No shift assignments in requested range.' 
+          : 'Shift assignments: ${shiftAssignments.entries.map((entry) => '${entry.key.toLocal()} - ${entry.value.map((range) => '${range.start.toLocal()} - ${range.end.toLocal()}').join('\n')}').join('\n')}',
       showOnly: infoRequest.showOnly,
     );
   }
@@ -141,7 +120,7 @@ class ShiftToolMethods {
     // Get current local date
     final DateTime now = DateTime.now();
 
-    final List<ShiftLogModel> shiftLogs = [];
+    final Map<DateTime, List<ShiftLogModel>> shiftLogs = {};
 
     await Future.wait(dayOffsetsToGet.map((offset) async {
       final DateTime day = now.add(Duration(days: offset)); 
@@ -153,12 +132,13 @@ class ShiftToolMethods {
         day: dayUtc,
       );
 
-      shiftLogs.addAll(shiftLogsForDay);
+      shiftLogs[day] = shiftLogsForDay;
     }));
-
     return ShiftLogsResultModel(
       shiftLogs: shiftLogs,
-      message: shiftLogs.isEmpty ? 'No shift logs in requested range.' : 'Shift logs: ${shiftLogs.map((log) => '${log.clockInDatetime.toLocal()} - ${log.clockOutDatetime?.toLocal() ?? 'ONGOING'}').join('\n')}',
+      resultForAi: shiftLogs.isEmpty 
+          ? 'No shift logs in requested range.' 
+          : 'Shift logs: ${shiftLogs.entries.map((entry) => '${entry.key.toLocal()} - ${entry.value.map((log) => '${log.clockInDatetime.toLocal()} - ${log.clockOutDatetime?.toLocal() ?? 'ONGOING'}').join('\n')}').join('\n')}',
       showOnly: infoRequest.showOnly,
     );
   }
@@ -180,17 +160,15 @@ class ShiftToolMethods {
           .clockOut(userId: info.userId, shiftId: info.shiftId);
 
       if (result.error != null) {
-        return ShiftClockInOutResultModel(
-          clockedIn: false,
-          hasError: true,
-          message: result.error!,
+        return ErrorRequestResultModel(
+          resultForAi: 'Failed to clock out: ${result.error!}',
           showOnly: true,
         );
       }
 
       return ShiftClockInOutResultModel(
         clockedIn: false,
-        message: 'Successfully clocked out!',
+        resultForAi: 'Successfully clocked out!',
         showOnly: true,
       );
     } else {
@@ -200,17 +178,15 @@ class ShiftToolMethods {
           .clockIn(userId: info.userId, shiftId: info.shiftId);
 
       if (result.error != null) {
-        return ShiftClockInOutResultModel(
-          clockedIn: false,
-          hasError: true,
-          message: result.error!,
+        return ErrorRequestResultModel(
+          resultForAi: 'Failed to clock in: ${result.error!}',
           showOnly: true,
         );
       }
 
       return ShiftClockInOutResultModel(
         clockedIn: true,
-        message: 'Successfully clocked in!',
+        resultForAi: 'Successfully clocked in!',
         showOnly: true,
       );
     }

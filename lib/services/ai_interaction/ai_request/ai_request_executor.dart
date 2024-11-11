@@ -1,24 +1,14 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:seren_ai_flutter/services/ai_interaction/ai_request/models/results/ai_request_result_model.dart';
 import 'package:seren_ai_flutter/services/ai_interaction/last_ai_message_listener_provider.dart';
-import 'package:seren_ai_flutter/services/ai_interaction/ai_request/models/ai_action_request_model.dart';
-import 'package:seren_ai_flutter/services/ai_interaction/ai_request/models/ai_info_request_model.dart';
-import 'package:seren_ai_flutter/services/ai_interaction/ai_request/models/ai_request_model.dart';
-import 'package:seren_ai_flutter/services/ai_interaction/ai_request/models/ai_ui_action_request_model.dart';
-import 'package:seren_ai_flutter/services/data/shifts/shift_tool_methods.dart';
+import 'package:seren_ai_flutter/services/ai_interaction/ai_request/models/requests/ai_action_request_model.dart';
+import 'package:seren_ai_flutter/services/ai_interaction/ai_request/models/requests/ai_info_request_model.dart';
+import 'package:seren_ai_flutter/services/ai_interaction/ai_request/models/requests/ai_request_model.dart';
+import 'package:seren_ai_flutter/services/ai_interaction/ai_request/models/requests/ai_ui_action_request_model.dart';
+import 'package:seren_ai_flutter/services/data/shifts/tool_methods/shift_tool_methods.dart';
 
-/// Result of an AI Request execution. 
-/// 
-/// Only the message field is sent to ai, all other fields are for display purposes. 
-class AiRequestResultModel extends AiResult {
-  final String message;
-  final bool showOnly;
 
-  AiRequestResultModel({required this.message, required this.showOnly});
 
-  copyWith({required String message, required bool showOnly}) {
-    return AiRequestResultModel(message: message, showOnly: showOnly);
-  }
-}
 
 final aiRequestExecutorProvider =
     Provider<AiRequestExecutor>(AiRequestExecutor.new);
