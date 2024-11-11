@@ -1,8 +1,10 @@
+import 'dart:convert';
+
 import 'package:collection/collection.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:seren_ai_flutter/common/language_provider.dart';
 import 'package:seren_ai_flutter/services/ai_interaction/ai_request/ai_request_executor.dart';
-import 'package:seren_ai_flutter/services/ai_interaction/ai_request/models/ai_request_model.dart';
+import 'package:seren_ai_flutter/services/ai_interaction/ai_request/models/requests/ai_request_model.dart';
 import 'package:seren_ai_flutter/services/ai_interaction/langgraph/langgraph_service.dart';
 import 'package:seren_ai_flutter/services/ai_interaction/langgraph/models/lg_config_model.dart';
 import 'package:seren_ai_flutter/services/ai_interaction/last_ai_message_listener_provider.dart';
@@ -100,7 +102,7 @@ class AIChatService {
         .toList();
 
     // Display ai response
-    lastAiMessageListener.addLastAiMessage(aiChatMessages.first);
+    lastAiMessageListener.addAiChatMessage(aiChatMessages.first);
     speakAiMessage(aiChatMessages);
 
     // Save response to DB
@@ -144,20 +146,24 @@ class AIChatService {
     final result = await aiRequestExecutor.executeAiRequest(toolResponses[0]);
 
     // Display Result
-    final isCallAgain = result.showOnly ? '' : '<AI CALLED AGAIN>';
-    lastAiMessageListener.addLastToolResponseResult(result.copyWith(
-        message: '$isCallAgain${result.message}', showOnly: result.showOnly));
-    //speakAiMessage(aiChatMessages);
+    // final isCallAgain = result.showOnly ? '' : '<AI CALLED AGAIN>';
+    // lastAiMessageListener.addLastToolResponseResult(result.copyWith(
+    //     message: '$isCallAgain${result.resultForAi}', showOnly: result.showOnly));
+    // //speakAiMessage(aiChatMessages);
 
     // Save Result to DB
-    await aiChatMessagesService.saveMessage(AiChatMessageModel(
-        content: result.message,
+    final aiResultMessage = AiChatMessageModel(
+        content: jsonEncode(result.toJson()),
         type: AiChatMessageType.tool,
-        parentChatThreadId: aiChatThread.id));
+        parentChatThreadId: aiChatThread.id);
+
+    await aiChatMessagesService.saveMessage(aiResultMessage);
+
+    lastAiMessageListener.addAiChatMessage(aiResultMessage);
 
     // Update LangGraph's Memory with the result of the request
     await langGraphService.updateLastToolMessageWithResult(
-      resultString: result.message,
+      resultString: result.resultForAi,
       showOnly: result.showOnly,
       lgThreadId: aiChatThread.parentLgThreadId,
       lgAssistantId: aiChatThread.parentLgAssistantId,
