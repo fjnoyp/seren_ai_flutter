@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
-import 'package:seren_ai_flutter/app_routes.dart';
+import 'package:seren_ai_flutter/common/routes/app_routes.dart';
 import 'package:seren_ai_flutter/services/ai_interaction/widgets/user_input_display_widget.dart';
 import 'package:seren_ai_flutter/services/data/db_setup/app_config.dart';
 import 'drawer_view.dart';

@@ -5,7 +5,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:logging/logging.dart';
 import 'package:seren_ai_flutter/common/current_route_provider.dart';
 import 'package:seren_ai_flutter/common/language_provider.dart';
-import 'package:seren_ai_flutter/app_routes.dart';
+import 'package:seren_ai_flutter/common/routes/app_routes.dart';
 import 'package:seren_ai_flutter/services/auth/widgets/auth_guard.dart';
 import 'package:seren_ai_flutter/services/auth/widgets/sign_in_up_page.dart';
 import 'package:seren_ai_flutter/services/auth/widgets/terms_and_conditions_webview.dart';

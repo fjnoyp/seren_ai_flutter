@@ -1,7 +1,7 @@
 
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
-import 'package:seren_ai_flutter/app_routes.dart';
+import 'package:seren_ai_flutter/common/routes/app_routes.dart';
 import 'package:seren_ai_flutter/services/data/users/models/user_model.dart';
 import 'package:supabase_auth_ui/supabase_auth_ui.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
