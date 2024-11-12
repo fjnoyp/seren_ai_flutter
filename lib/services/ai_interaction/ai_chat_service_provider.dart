@@ -99,8 +99,11 @@ class AIChatService {
         .toList();
 
     // Display ai response
-    lastAiMessageListener.addAiChatMessage(aiChatMessages.first);
-    speakAiMessage(aiChatMessages);
+    // For Groq - a tool call does not provide a message 
+    if(aiChatMessages.isNotEmpty) {
+      lastAiMessageListener.addAiChatMessage(aiChatMessages.first);
+      speakAiMessage(aiChatMessages);
+    }
 
     // Save response to DB
     await aiChatMessagesService.saveMessages(aiChatMessages);
