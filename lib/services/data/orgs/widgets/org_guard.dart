@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:seren_ai_flutter/constants.dart';
+import 'package:seren_ai_flutter/common/routes/app_routes.dart';
 import 'package:seren_ai_flutter/services/data/orgs/models/org_model.dart';
 import 'package:seren_ai_flutter/services/data/orgs/providers/cur_org_dependency_provider.dart';
 import 'package:seren_ai_flutter/services/data/orgs/providers/cur_user_org_service_provider.dart';
@@ -25,7 +25,7 @@ class OrgGuard extends ConsumerWidget {
     if (curOrgId == null) {
       WidgetsBinding.instance.addPostFrameCallback((_) {
         Navigator.pushNamedAndRemoveUntil(
-            context, chooseOrgRoute, (route) => false);
+            context, AppRoute.chooseOrg.name, (route) => false);
       });
       return Container();
     }
