@@ -2,14 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
-import 'package:seren_ai_flutter/common/utils/string_extension.dart';
 import 'package:seren_ai_flutter/services/ai_interaction/ai_chat_service_provider.dart';
-import 'package:seren_ai_flutter/services/ai_interaction/ai_request/models/requests/ai_action_request_model.dart';
-import 'package:seren_ai_flutter/services/ai_interaction/ai_request/models/requests/ai_info_request_model.dart';
-import 'package:seren_ai_flutter/services/ai_interaction/ai_request/models/requests/ai_request_model.dart';
-import 'package:seren_ai_flutter/services/ai_interaction/ai_request/models/requests/ai_ui_action_request_model.dart';
 import 'package:seren_ai_flutter/services/data/ai_chats/models/ai_chat_thread_model.dart';
-import 'package:seren_ai_flutter/services/data/ai_chats/models/ai_chat_message_model.dart';
 import 'package:seren_ai_flutter/services/ai_interaction/widgets/testing/ai_debug_page.dart';
 import 'package:seren_ai_flutter/services/data/ai_chats/providers/cur_user_ai_chat_messages_provider.dart';
 import 'package:seren_ai_flutter/services/data/ai_chats/providers/cur_user_ai_chat_thread_provider.dart';
@@ -94,29 +88,6 @@ class ChatThreadCard extends HookWidget {
 
   const ChatThreadCard({super.key, required this.thread});
 
-  Widget _buildInfoRow(String label, String value) {
-    return Row(
-      children: [
-        Text('$label: ', style: const TextStyle(fontWeight: FontWeight.bold)),
-        Expanded(
-          child: SelectableText(
-            value,
-            maxLines: 1,
-            //overflow: TextOverflow.ellipsis,
-          ),
-        ),
-        IconButton(
-          visualDensity: VisualDensity.compact,
-          padding: EdgeInsets.zero,
-          icon: const Icon(Icons.copy, size: 15),
-          onPressed: () {
-            Clipboard.setData(ClipboardData(text: value));
-          },
-        ),
-      ],
-    );
-  }
-
   @override
   Widget build(BuildContext context) {
     final isExpanded = useState(false);
@@ -140,10 +111,10 @@ class ChatThreadCard extends HookWidget {
             mainAxisSize: MainAxisSize.min,
             children: [
               const Divider(),
-              _buildInfoRow('Thread ID', thread.id),
-              _buildInfoRow('Author', thread.authorUserId),
-              _buildInfoRow('Parent LG Thread ID', thread.parentLgThreadId),
-              _buildInfoRow(
+              _InfoRow('Thread ID', thread.id),
+              _InfoRow('Author', thread.authorUserId),
+              _InfoRow('Parent LG Thread ID', thread.parentLgThreadId),
+              _InfoRow(
                   'Parent LG Assistant ID', thread.parentLgAssistantId),
             ],
           ),
@@ -174,6 +145,37 @@ class ChatMessagesDisplay extends ConsumerWidget {
               itemBuilder: (context, index) =>
                   AiChatMessageViewCard(message: chatMessages[index]),
             ),
+    );
+  }
+}
+
+class _InfoRow extends StatelessWidget {
+  final String label;
+  final String value;
+
+  const _InfoRow(this.label, this.value);
+
+  @override
+  Widget build(BuildContext context) {
+    return Row(
+      children: [
+        Text('$label: ', style: const TextStyle(fontWeight: FontWeight.bold)),
+        Expanded(
+          child: SelectableText(
+            value,
+            maxLines: 1,
+            //overflow: TextOverflow.ellipsis,
+          ),
+        ),
+        IconButton(
+          visualDensity: VisualDensity.compact,
+          padding: EdgeInsets.zero,
+          icon: const Icon(Icons.copy, size: 15),
+          onPressed: () {
+            Clipboard.setData(ClipboardData(text: value));
+          },
+        ),
+      ],
     );
   }
 }

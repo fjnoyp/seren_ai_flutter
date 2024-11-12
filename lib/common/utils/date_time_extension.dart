@@ -1,29 +1,32 @@
+import 'package:flutter/widgets.dart';
+import 'package:intl/intl.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+
 extension DateTimeExtension on DateTime {
   DateTime dateOnlyUTC() {
-    return toUtc().copyWith(hour: 0, minute: 0, second: 0, millisecond: 0, microsecond: 0);
+    return toUtc().copyWith(
+        hour: 0, minute: 0, second: 0, millisecond: 0, microsecond: 0);
   }
 
-  String getReadableDayOnly() {
+  String getReadableDayOnly(BuildContext context) {
     final now = DateTime.now();
     final today = now.dateOnlyUTC();
     final targetDate = dateOnlyUTC();
-    
-    final dateStr = '${month.toString().padLeft(2)}/${day.toString().padLeft(2)}/${year.toString().substring(2)}';
-    
-    if (targetDate == today) {
-      return 'Today ($dateStr)';
-    } else if (targetDate == today.add(const Duration(days: 1))) {
-      return 'Tomorrow ($dateStr)';
-    } else if (targetDate == today.subtract(const Duration(days: 1))) {
-      return 'Yesterday ($dateStr)';
-    }
-    
-    const weekdays = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'];
-    final weekdayString = weekdays[weekday - 1];
-    return '$weekdayString ($dateStr)';
-  }
 
-  String getReadableTimeOnly() {
-    return '$hour:$minute';
+    final dateStr = DateFormat.yMd(AppLocalizations.of(context)!.localeName)
+        .format(targetDate);
+
+    if (targetDate == today) {
+      return AppLocalizations.of(context)!.today(dateStr);
+    } else if (targetDate == today.add(const Duration(days: 1))) {
+      return AppLocalizations.of(context)!.tomorrow(dateStr);
+    } else if (targetDate == today.subtract(const Duration(days: 1))) {
+      return AppLocalizations.of(context)!.yesterday(dateStr);
+    }
+
+    final weekdayString =
+        DateFormat.EEEE(AppLocalizations.of(context)!.localeName)
+            .format(targetDate);
+    return '$weekdayString ($dateStr)';
   }
 }

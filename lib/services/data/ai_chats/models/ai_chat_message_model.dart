@@ -19,13 +19,13 @@ enum AiChatMessageDisplayType {
 }
 
 @JsonSerializable()
-class AiChatMessageModel extends AiResult implements IHasId  {
+class AiChatMessageModel extends AiResult implements IHasId {
   @override
   final String id;
   @JsonKey(name: 'type')
   final AiChatMessageType type;
 
-  final String content;
+  final String _content;
   @JsonKey(name: 'parent_chat_thread_id')
   final String parentChatThreadId;
   @JsonKey(name: 'parent_lg_run_id')
@@ -37,20 +37,32 @@ class AiChatMessageModel extends AiResult implements IHasId  {
   AiChatMessageModel({
     String? id,
     required this.type,
-    required this.content,
+    required String content,
     required this.parentChatThreadId,
     this.parentLgRunId,
     //this.additionalKwargs,
-  }) : id = id ?? uuid.v4();
+  })  : id = id ?? uuid.v4(),
+        _content = content;
+
+  String get content => switch (_content[0]) {
+        '[' => jsonDecode(_content)[0]['text'] ?? _content,
+        '{' => jsonDecode(_content)['text'] ?? _content,
+        _ => _content,
+      };
 
   // Factory constructor for creating a AiChatMessage with default values
   factory AiChatMessageModel.defaultMessage() {
     return AiChatMessageModel(
-      type: AiChatMessageType.user, // Assuming default type as user      
+      type: AiChatMessageType.user, // Assuming default type as user
       content: 'New Message',
-      parentChatThreadId: '',  // This should be set to a valid chat thread ID in practice
+      parentChatThreadId:
+          '', // This should be set to a valid chat thread ID in practice
     );
   }
+  bool get isAiRequest =>
+      type == AiChatMessageType.tool && content.contains('request_type');
+  bool get isAiResult =>
+      type == AiChatMessageType.tool && content.contains('result_type');
 
   AiChatMessageDisplayType getDisplayType() {
     switch (type) {
@@ -58,19 +70,21 @@ class AiChatMessageModel extends AiResult implements IHasId  {
         return AiChatMessageDisplayType.user;
       case AiChatMessageType.ai:
         // If content is json list with tool_use, then it is a tool call
-        if (content.startsWith('[') && content.endsWith(']') && content.contains('tool_use')) {
+        if (content.startsWith('[') &&
+            content.endsWith(']') &&
+            content.contains('tool_use')) {
           return AiChatMessageDisplayType.aiWithToolCall;
         }
 
         return AiChatMessageDisplayType.ai;
       case AiChatMessageType.tool:
 
-        // If content contains "request_type" then it is a request 
+        // If content contains "request_type" then it is a request
         if (content.contains('request_type')) {
           return AiChatMessageDisplayType.toolAiRequest;
         }
 
-        // If content contains "result_type" then it is a result 
+        // If content contains "result_type" then it is a result
         if (content.contains('result_type')) {
           return AiChatMessageDisplayType.toolAiResult;
         }
@@ -79,31 +93,27 @@ class AiChatMessageModel extends AiResult implements IHasId  {
     }
   }
 
-  bool isAiRequest() {
-    return getDisplayType() == AiChatMessageDisplayType.toolAiRequest;
-  }
-
   AiRequestModel? getAiRequest() {
-    if (isAiRequest()) {
-      final Map<String, dynamic> decoded = json.decode(content) as Map<String, dynamic>;
-      return AiRequestModel.fromJson(decoded);
+    if (isAiRequest) {
+      try {
+        final Map<String, dynamic> decoded =
+            json.decode(content) as Map<String, dynamic>;
+        return AiRequestModel.fromJson(decoded);
+      } catch (e) {
+        throw ArgumentError('Invalid AiRequestModel from: $this');
+      }
     }
     return null;
-  }
-
-  bool isAiResult() {
-    return getDisplayType() == AiChatMessageDisplayType.toolAiResult;
   }
 
   AiRequestResultModel? getAiResult() {
-    if (isAiResult()) {
-      final Map<String, dynamic> decoded = json.decode(content) as Map<String, dynamic>;
-      return AiRequestResultModel.fromJson(decoded);
+    if (isAiResult) {
+      return AiRequestResultModel.fromJson(jsonDecode(content));
     }
     return null;
   }
 
-    String? getAiMessage() {
+  String? getAiMessage() {
     if (getDisplayType() == AiChatMessageDisplayType.aiWithToolCall) {
       try {
         final List<dynamic> decoded = json.decode(content) as List<dynamic>;
@@ -119,8 +129,7 @@ class AiChatMessageModel extends AiResult implements IHasId  {
         // return the raw content
         return content;
       }
-    }
-    else if (getDisplayType() == AiChatMessageDisplayType.ai) {
+    } else if (getDisplayType() == AiChatMessageDisplayType.ai) {
       return content;
     }
     return null;
@@ -145,9 +154,13 @@ class AiChatMessageModel extends AiResult implements IHasId  {
   }
 
   static List<AiChatMessageModel> fromJsonList(List<dynamic> jsonList) {
-    return jsonList.map((json) => AiChatMessageModel.fromJson(json as Map<String, dynamic>)).toList();
+    return jsonList
+        .map(
+            (json) => AiChatMessageModel.fromJson(json as Map<String, dynamic>))
+        .toList();
   }
 
-  factory AiChatMessageModel.fromJson(Map<String, dynamic> json) => _$AiChatMessageModelFromJson(json);
+  factory AiChatMessageModel.fromJson(Map<String, dynamic> json) =>
+      _$AiChatMessageModelFromJson(json);
   Map<String, dynamic> toJson() => _$AiChatMessageModelToJson(this);
 }

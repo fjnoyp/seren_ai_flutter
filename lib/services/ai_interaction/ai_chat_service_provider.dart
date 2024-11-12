@@ -24,7 +24,6 @@ import 'package:logging/logging.dart';
 import 'package:seren_ai_flutter/services/data/tasks/providers/cur_task_state_provider.dart';
 import 'package:seren_ai_flutter/services/text_to_speech/text_to_speech_notifier.dart';
 
-
 final log = Logger('AIChatService');
 
 final isAiRespondingProvider = StateProvider<bool>((ref) => false);
@@ -39,8 +38,7 @@ TODO p1: fix bug where ai keeps speaking
 
 */
 
-
-/// Intermediary with LangGraph API 
+/// Intermediary with LangGraph API
 class AIChatService {
   final Ref ref;
 
@@ -63,7 +61,7 @@ class AIChatService {
       // Get or create thread
       final aiChatThread = await _getOrCreateAiChatThread(curUser.id, curOrgId);
 
-      // TODO p0: get UI context and send it message 
+      // TODO p0: get UI context and send it message
       final uiContext = _getUIContext();
 
       // Save user message
@@ -73,7 +71,10 @@ class AIChatService {
           parentChatThreadId: aiChatThread.id));
 
       // Send message to Langgraph
-      await _runAi(aiChatThread: aiChatThread, userMessage: message, uiContext: uiContext);
+      await _runAi(
+          aiChatThread: aiChatThread,
+          userMessage: message,
+          uiContext: uiContext);
 
       isAiRespondingNotifier.state = false;
     } catch (e) {
@@ -89,7 +90,7 @@ class AIChatService {
     final appRoute = AppRoutes.fromString(curRoute);
 
     if (appRoute == null) {
-      return ''; 
+      return '';
       //print('AppRoute: ${appRoute.toString()}');
     }
 
@@ -97,13 +98,12 @@ class AIChatService {
     sb.writeln('CurPage: $curRoute\n');
 
     //final curUser = ref.read(curUserProvider).value;
-    //sb.writeln('CurUser: ${curUser?.email}\n');    
+    //sb.writeln('CurUser: ${curUser?.email}\n');
 
-    if(appRoute == AppRoutes.taskPage){
+    if (appRoute == AppRoutes.taskPage) {
       final curTask = ref.read(curTaskStateProvider).value;
       sb.writeln('CurTask: ${curTask?.toReadableMap()}');
-    }
-    else if(appRoute == AppRoutes.notePage){
+    } else if (appRoute == AppRoutes.notePage) {
       final curNote = ref.read(curNoteStateProvider).value;
       sb.writeln('CurNote: ${curNote?.toReadableMap()}');
     }
@@ -123,11 +123,11 @@ class AIChatService {
 
     // Call Langgraph API
     final lgBaseMessages = await langgraphService.runAi(
-        message: userMessage,
-        uiContext: uiContext,
-        lgThreadId: aiChatThread.parentLgThreadId,
-        lgAssistantId: aiChatThread.parentLgAssistantId,
-        );
+      message: userMessage,
+      uiContext: uiContext,
+      lgThreadId: aiChatThread.parentLgThreadId,
+      lgAssistantId: aiChatThread.parentLgAssistantId,
+    );
 
     // Convert lgBaseMessages as aiChatMessages
     final aiChatMessages = lgBaseMessages
@@ -139,8 +139,8 @@ class AIChatService {
         .toList();
 
     // Display ai response
-    // For Groq - a tool call does not provide a message 
-    if(aiChatMessages.isNotEmpty) {
+    // For Groq - a tool call does not provide a message
+    if (aiChatMessages.isNotEmpty) {
       lastAiMessageListener.addAiChatMessage(aiChatMessages.first);
       speakAiMessage(aiChatMessages);
     }
@@ -168,7 +168,7 @@ class AIChatService {
 
     // Read the chat response and identify ToolMessages
     List<AiRequestModel>? toolResponses = aiChatMessages
-        .where((msg) => msg.isAiRequest())
+        .where((msg) => msg.isAiRequest)
         .expand((msg) => [msg.getAiRequest()!])
         .toList() as List<AiRequestModel>?;
 
@@ -216,7 +216,8 @@ class AIChatService {
 
     // === Send Result to LangGraph for Followup ===
 
-    await _runAi(aiChatThread: aiChatThread, userMessage: null, uiContext: null);
+    await _runAi(
+        aiChatThread: aiChatThread, userMessage: null, uiContext: null);
   }
 
   Future<AiChatThreadModel> _getOrCreateAiChatThread(
@@ -239,10 +240,9 @@ class AIChatService {
     // TODO p3: get org name for assistant name
     final name = '${curUser!.email} - $curOrgId';
 
-
-    // Get timezone offset string 
-    final timezoneOffsetMinutes = DateTime.now().timeZoneOffset.inMinutes;    
-    final language = ref.read(languageSNP);     
+    // Get timezone offset string
+    final timezoneOffsetMinutes = DateTime.now().timeZoneOffset.inMinutes;
+    final language = ref.read(languageSNP);
 
     // Create new thread and assistant
     final (newLgThreadId, newLgAssistantId) =

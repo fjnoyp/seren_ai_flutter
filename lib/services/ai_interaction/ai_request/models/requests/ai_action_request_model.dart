@@ -14,7 +14,9 @@ enum AiActionRequestType {
 
   factory AiActionRequestType.fromString(String value) {
     return AiActionRequestType.values.firstWhere(
-      (type) => type.value == value,
+      (type) => value == 'clock_in' || value == 'clock_out'
+          ? type.value == 'toggle_clock_in_or_out'
+          : type.value == value,
       orElse: () => throw ArgumentError('Invalid AiActionRequestType: $value'),
     );
   }
