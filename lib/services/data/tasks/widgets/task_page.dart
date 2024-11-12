@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:logging/logging.dart';
-import 'package:seren_ai_flutter/constants.dart';
+import 'package:seren_ai_flutter/app_routes.dart';
 import 'package:seren_ai_flutter/services/auth/cur_auth_state_provider.dart';
 import 'package:seren_ai_flutter/services/data/common/widgets/editablePageModeEnum.dart';
 import 'package:seren_ai_flutter/services/data/projects/providers/cur_user_viewable_projects_provider.dart';
@@ -181,11 +181,11 @@ class TaskPage extends HookConsumerWidget {
 
 // TODO p3: figure out how to remove code duplication due to WidgetRef vs Ref
 Future<void> openBlankTaskPage(BuildContext context, Ref ref) async {
-  Navigator.popUntil(context, (route) => route.settings.name != taskPageRoute);
+  Navigator.popUntil(context, (route) => route.settings.name != AppRoute.taskPage.name);
 
   ref.read(curTaskServiceProvider).createTask();
 
-  await Navigator.pushNamed(context, taskPageRoute,
+  await Navigator.pushNamed(context, AppRoute.taskPage.name,
       arguments: {'mode': EditablePageMode.create});
 }
 
@@ -194,7 +194,7 @@ Future<void> openTaskPage(BuildContext context, WidgetRef ref,
     {required EditablePageMode mode,
     JoinedTaskModel? initialJoinedTask}) async {
   // Remove previous TaskPage to avoid duplicate task pages
-  Navigator.popUntil(context, (route) => route.settings.name != taskPageRoute);
+  Navigator.popUntil(context, (route) => route.settings.name != AppRoute.taskPage.name);
 
   // CREATE - wipe existing task state
   if (mode == EditablePageMode.create) {
@@ -217,6 +217,6 @@ Future<void> openTaskPage(BuildContext context, WidgetRef ref,
     _ => null,
   };
 
-  await Navigator.pushNamed(context, taskPageRoute,
+  await Navigator.pushNamed(context, AppRoute.taskPage.name,
       arguments: {'mode': mode, 'actions': actions});
 }

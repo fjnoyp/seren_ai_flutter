@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:intl/intl.dart';
 import 'package:seren_ai_flutter/common/utils/date_time_extension.dart';
-import 'package:seren_ai_flutter/constants.dart';
+import 'package:seren_ai_flutter/app_routes.dart';
 import 'package:seren_ai_flutter/services/data/common/widgets/async_value_handler_widget.dart';
 
 import 'package:seren_ai_flutter/services/data/shifts/providers/shift_time_ranges_providers.dart';
@@ -30,7 +30,7 @@ class ShiftCard extends ConsumerWidget {
             }
 
             return InkWell(
-              onTap: () => Navigator.of(context).pushNamed(shiftsRoute),
+              onTap: () => Navigator.of(context).pushNamed(AppRoute.shifts.name),
               child: _ShiftInnerCard(ranges),
             );
           },          

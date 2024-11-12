@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:seren_ai_flutter/constants.dart';
+import 'package:seren_ai_flutter/app_routes.dart';
 import 'package:seren_ai_flutter/services/auth/cur_auth_state_provider.dart';
 import 'package:seren_ai_flutter/services/data/common/widgets/async_value_handler_widget.dart';
 
@@ -27,7 +27,7 @@ class _NavigateToSignInUp extends StatelessWidget {
   Widget build(BuildContext context) {
     WidgetsBinding.instance.addPostFrameCallback((_) {
       Navigator.of(context)
-          .pushNamedAndRemoveUntil(signInUpRoute, (route) => false);
+          .pushNamedAndRemoveUntil(AppRoute.signInUp.name, (route) => false);
     });
     return const SizedBox.shrink();
   }

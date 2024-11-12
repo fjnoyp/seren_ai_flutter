@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
-import 'package:seren_ai_flutter/constants.dart';
+import 'package:seren_ai_flutter/app_routes.dart';
 import 'package:seren_ai_flutter/services/ai_interaction/widgets/user_input_display_widget.dart';
 import 'package:seren_ai_flutter/services/data/db_setup/app_config.dart';
 import 'drawer_view.dart';
@@ -35,7 +35,7 @@ class MainScaffold extends HookWidget {
       onPopInvokedWithResult: (didPop, result) {
         if (!didPop) {
           Navigator.of(context)
-              .pushNamedAndRemoveUntil(homeRoute, (route) => false);
+              .pushNamedAndRemoveUntil(AppRoute.home.name, (route) => false);
         }
       },
       child: Scaffold(
@@ -122,14 +122,14 @@ class MainScaffold extends HookWidget {
                           icon: const Icon(Icons.grid_view),
                           onPressed: () => Navigator.of(context)
                               .pushNamedAndRemoveUntil(
-                                  homeRoute, (route) => false),
+                                  AppRoute.home.name, (route) => false),
                         ),
                         const SizedBox.shrink(),
                         IconButton(
                           tooltip: AppLocalizations.of(context)!.chat,
                           icon: const Icon(Icons.chat_bubble_outline),
                           onPressed: () =>
-                              Navigator.of(context).pushNamed(aiChatsRoute),
+                              Navigator.of(context).pushNamed(AppRoute.aiChats.name),
                         ),
                       ],
                     ),

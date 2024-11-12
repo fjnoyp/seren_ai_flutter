@@ -5,7 +5,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:logging/logging.dart';
 import 'package:seren_ai_flutter/common/current_route_provider.dart';
 import 'package:seren_ai_flutter/common/language_provider.dart';
-import 'package:seren_ai_flutter/constants.dart';
+import 'package:seren_ai_flutter/app_routes.dart';
 import 'package:seren_ai_flutter/services/auth/widgets/auth_guard.dart';
 import 'package:seren_ai_flutter/services/auth/widgets/sign_in_up_page.dart';
 import 'package:seren_ai_flutter/services/auth/widgets/terms_and_conditions_webview.dart';
@@ -65,29 +65,29 @@ class AppState extends State<App> {
           theme: lightTheme,
           darkTheme: darkTheme,
           themeMode: themeMode,
-          initialRoute: homeRoute,
+          initialRoute: AppRoute.home.name,
           navigatorObservers: [
             CurrentRouteObserver(ref.read(currentRouteProvider.notifier))
           ],
           routes: {
-            signInUpRoute: (context) => Scaffold(
+            AppRoute.signInUp.name: (context) => Scaffold(
                 appBar: AppBar(
                     title: Text(AppLocalizations.of(context)!.signInUp),
                     centerTitle: true),
                 body: const SignInUpPage()),
-            homeRoute: (context) => _GuardScaffold(
+            AppRoute.home.name: (context) => _GuardScaffold(
                 AppLocalizations.of(context)!.home, const HomePage()),
-            chooseOrgRoute: (context) => _AuthGuardScaffold(
+            AppRoute.chooseOrg.name: (context) => _AuthGuardScaffold(
                 AppLocalizations.of(context)!.chooseOrganization,
                 const ChooseOrgPage()),
-            manageOrgUsersRoute: (context) => _GuardScaffold(
+            AppRoute.manageOrgUsers.name: (context) => _GuardScaffold(
                 AppLocalizations.of(context)!.orgAdminManageOrgUsers,
                 const ManageOrgUsersPage()),
-            projectsRoute: (context) => _GuardScaffold(
+            AppRoute.projects.name: (context) => _GuardScaffold(
                 AppLocalizations.of(context)!.projects, const ProjectsPage()),
-            tasksRoute: (context) => _GuardScaffold(
+            AppRoute.tasks.name: (context) => _GuardScaffold(
                 AppLocalizations.of(context)!.tasks, const TasksListPage()),
-            taskPageRoute: (context) {
+            AppRoute.taskPage.name: (context) {
               final args = ModalRoute.of(context)!.settings.arguments
                   as Map<String, dynamic>;
               final mode = args['mode'] as EditablePageMode;
@@ -98,17 +98,17 @@ class AppState extends State<App> {
               return _GuardScaffold(title, TaskPage(mode: mode),
                   actions: args['actions']);
             },
-            aiChatsRoute: (context) => _GuardScaffold(
+            AppRoute.aiChats.name: (context) => _GuardScaffold(
                 AppLocalizations.of(context)!.aiChatThreads,
                 const AIChatsPage()),
-            shiftsRoute: (context) => _GuardScaffold(
+            AppRoute.shifts.name: (context) => _GuardScaffold(
                 AppLocalizations.of(context)!.shifts, const ShiftsPage()),
-            testRoute: (context) => const _GuardScaffold('Test', TestPage()),
-            testSQLPageRoute: (context) => _GuardScaffold(
+            AppRoute.test.name: (context) => const _GuardScaffold('Test', TestPage()),
+            AppRoute.testSQLPage.name: (context) => _GuardScaffold(
                 AppLocalizations.of(context)!.testSQL, TestSQLPage()),
-            noteListRoute: (context) => _GuardScaffold(
+            AppRoute.noteList.name: (context) => _GuardScaffold(
                 AppLocalizations.of(context)!.notes, const NoteListPage()),
-            notePageRoute: (context) {
+            AppRoute.notePage.name: (context) {
               final args = ModalRoute.of(context)!.settings.arguments
                   as Map<String, dynamic>;
               final mode = args['mode'] as EditablePageMode;
@@ -119,7 +119,7 @@ class AppState extends State<App> {
               return _GuardScaffold(title, NotePage(mode: mode),
                   actions: args['actions']);
             },
-            termsAndConditionsRoute: (context) =>
+            AppRoute.termsAndConditions.name: (context) =>
                 const TermsAndConditionsWebview(),
           },
           // For dynamically generating routes based on settings param
