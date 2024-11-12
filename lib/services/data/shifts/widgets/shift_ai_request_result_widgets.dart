@@ -42,7 +42,7 @@ class ShiftClockInOutResultWidget extends ConsumerWidget {
     return Row(
       children: [
         Icon(
-          result.clockedIn ? Icons.login : Icons.logout,          
+          result.clockedIn ? Icons.login : Icons.logout,
         ),
         const SizedBox(width: 8),
         Expanded(

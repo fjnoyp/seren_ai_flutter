@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:seren_ai_flutter/common/utils/string_extension.dart';
@@ -12,6 +13,7 @@ import 'package:seren_ai_flutter/services/data/ai_chats/models/ai_chat_message_m
 import 'package:seren_ai_flutter/services/ai_interaction/widgets/testing/ai_debug_page.dart';
 import 'package:seren_ai_flutter/services/data/ai_chats/providers/cur_user_ai_chat_messages_provider.dart';
 import 'package:seren_ai_flutter/services/data/ai_chats/providers/cur_user_ai_chat_thread_provider.dart';
+import 'package:seren_ai_flutter/services/data/ai_chats/widgets/ai_chat_message_view_card.dart';
 import 'package:seren_ai_flutter/services/data/common/widgets/async_value_handler_widget.dart';
 
 class AIChatsPage extends HookConsumerWidget {
@@ -98,22 +100,28 @@ class ChatThreadCard extends HookWidget {
 
     return Card(
       child: ListTile(
-        title: const Text('Chat Thread'),
-        trailing: IconButton(
-          icon: Icon(isExpanded.value ? Icons.expand_less : Icons.expand_more),
-          onPressed: () => isExpanded.value = !isExpanded.value,
+        title: Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: [
+            const Text('Chat Thread'),
+            IconButton(
+              icon: Icon(isExpanded.value ? Icons.expand_less : Icons.expand_more),
+              onPressed: () => isExpanded.value = !isExpanded.value,
+            ),
+          ],
         ),
         subtitle: AnimatedCrossFade(
           firstChild: const SizedBox.shrink(),
           secondChild: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
+            mainAxisSize: MainAxisSize.min,
             children: [
               const Divider(),
-              SelectableText('Thread ID: ${thread.id}'),
-              SelectableText('Author: ${thread.authorUserId}'),
-              SelectableText('Parent LG Thread ID: ${thread.parentLgThreadId}'),
-              SelectableText(
-                  'Parent LG Assistant ID: ${thread.parentLgAssistantId}'),
+              _InfoRow('Thread ID', thread.id),
+              _InfoRow('Author', thread.authorUserId),
+              _InfoRow('Parent LG Thread ID', thread.parentLgThreadId),
+              _InfoRow(
+                  'Parent LG Assistant ID', thread.parentLgAssistantId),
             ],
           ),
           crossFadeState: isExpanded.value
@@ -141,7 +149,7 @@ class ChatMessagesDisplay extends ConsumerWidget {
               physics: const NeverScrollableScrollPhysics(),
               itemCount: chatMessages.length,
               itemBuilder: (context, index) =>
-                  MessageCard(message: chatMessages[index]),
+                  AiChatMessageViewCard(message: chatMessages[index]),
             ),
     );
   }
@@ -270,6 +278,38 @@ class DisplayToolResponse extends StatelessWidget {
               const SizedBox(height: 8), // Add space between responses
             ],
           ),
+        ),
+      ],
+    );
+  }
+}
+
+
+class _InfoRow extends StatelessWidget {
+  final String label;
+  final String value;
+
+  const _InfoRow(this.label, this.value);
+
+  @override
+  Widget build(BuildContext context) {
+    return Row(
+      children: [
+        Text('$label: ', style: const TextStyle(fontWeight: FontWeight.bold)),
+        Expanded(
+          child: SelectableText(
+            value,
+            maxLines: 1,
+            //overflow: TextOverflow.ellipsis,
+          ),
+        ),
+        IconButton(
+          visualDensity: VisualDensity.compact,
+          padding: EdgeInsets.zero,
+          icon: const Icon(Icons.copy, size: 15),
+          onPressed: () {
+            Clipboard.setData(ClipboardData(text: value));
+          },
         ),
       ],
     );
