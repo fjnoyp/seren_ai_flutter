@@ -30,7 +30,7 @@ class ShiftCard extends ConsumerWidget {
             }
 
             return InkWell(
-              onTap: () => Navigator.of(context).pushNamed(AppRoute.shifts.name),
+              onTap: () => Navigator.of(context).pushNamed(AppRoutes.shifts.name),
               child: _ShiftInnerCard(ranges),
             );
           },          
