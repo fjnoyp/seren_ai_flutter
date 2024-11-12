@@ -29,7 +29,7 @@ final sttOrchestratorProvider = Provider((ref) {
       */
     }
 
-    if (speechState.speechState == SpeechToTextStateEnum.startNotListening) {
+    if (speechState.speechState == SpeechToTextStateEnum.done) {
       final speechText = ref.read(speechToTextListenStateProvider);
 
       if (speechText.text.isEmpty) {
