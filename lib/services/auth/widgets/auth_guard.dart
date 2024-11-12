@@ -27,7 +27,7 @@ class _NavigateToSignInUp extends StatelessWidget {
   Widget build(BuildContext context) {
     WidgetsBinding.instance.addPostFrameCallback((_) {
       Navigator.of(context)
-          .pushNamedAndRemoveUntil(AppRoute.signInUp.name, (route) => false);
+          .pushNamedAndRemoveUntil(AppRoutes.signInUp.name, (route) => false);
     });
     return const SizedBox.shrink();
   }

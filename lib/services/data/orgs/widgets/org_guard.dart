@@ -25,7 +25,7 @@ class OrgGuard extends ConsumerWidget {
     if (curOrgId == null) {
       WidgetsBinding.instance.addPostFrameCallback((_) {
         Navigator.pushNamedAndRemoveUntil(
-            context, AppRoute.chooseOrg.name, (route) => false);
+            context, AppRoutes.chooseOrg.name, (route) => false);
       });
       return Container();
     }

@@ -65,29 +65,29 @@ class AppState extends State<App> {
           theme: lightTheme,
           darkTheme: darkTheme,
           themeMode: themeMode,
-          initialRoute: AppRoute.home.name,
+          initialRoute: AppRoutes.home.name,
           navigatorObservers: [
             CurrentRouteObserver(ref.read(currentRouteProvider.notifier))
           ],
           routes: {
-            AppRoute.signInUp.name: (context) => Scaffold(
+            AppRoutes.signInUp.name: (context) => Scaffold(
                 appBar: AppBar(
                     title: Text(AppLocalizations.of(context)!.signInUp),
                     centerTitle: true),
                 body: const SignInUpPage()),
-            AppRoute.home.name: (context) => _GuardScaffold(
+            AppRoutes.home.name: (context) => _GuardScaffold(
                 AppLocalizations.of(context)!.home, const HomePage()),
-            AppRoute.chooseOrg.name: (context) => _AuthGuardScaffold(
+            AppRoutes.chooseOrg.name: (context) => _AuthGuardScaffold(
                 AppLocalizations.of(context)!.chooseOrganization,
                 const ChooseOrgPage()),
-            AppRoute.manageOrgUsers.name: (context) => _GuardScaffold(
+            AppRoutes.manageOrgUsers.name: (context) => _GuardScaffold(
                 AppLocalizations.of(context)!.orgAdminManageOrgUsers,
                 const ManageOrgUsersPage()),
-            AppRoute.projects.name: (context) => _GuardScaffold(
+            AppRoutes.projects.name: (context) => _GuardScaffold(
                 AppLocalizations.of(context)!.projects, const ProjectsPage()),
-            AppRoute.tasks.name: (context) => _GuardScaffold(
+            AppRoutes.tasks.name: (context) => _GuardScaffold(
                 AppLocalizations.of(context)!.tasks, const TasksListPage()),
-            AppRoute.taskPage.name: (context) {
+            AppRoutes.taskPage.name: (context) {
               final args = ModalRoute.of(context)!.settings.arguments
                   as Map<String, dynamic>;
               final mode = args['mode'] as EditablePageMode;
@@ -98,17 +98,17 @@ class AppState extends State<App> {
               return _GuardScaffold(title, TaskPage(mode: mode),
                   actions: args['actions']);
             },
-            AppRoute.aiChats.name: (context) => _GuardScaffold(
+            AppRoutes.aiChats.name: (context) => _GuardScaffold(
                 AppLocalizations.of(context)!.aiChatThreads,
                 const AIChatsPage()),
-            AppRoute.shifts.name: (context) => _GuardScaffold(
+            AppRoutes.shifts.name: (context) => _GuardScaffold(
                 AppLocalizations.of(context)!.shifts, const ShiftsPage()),
-            AppRoute.test.name: (context) => const _GuardScaffold('Test', TestPage()),
-            AppRoute.testSQLPage.name: (context) => _GuardScaffold(
+            AppRoutes.test.name: (context) => const _GuardScaffold('Test', TestPage()),
+            AppRoutes.testSQLPage.name: (context) => _GuardScaffold(
                 AppLocalizations.of(context)!.testSQL, TestSQLPage()),
-            AppRoute.noteList.name: (context) => _GuardScaffold(
+            AppRoutes.noteList.name: (context) => _GuardScaffold(
                 AppLocalizations.of(context)!.notes, const NoteListPage()),
-            AppRoute.notePage.name: (context) {
+            AppRoutes.notePage.name: (context) {
               final args = ModalRoute.of(context)!.settings.arguments
                   as Map<String, dynamic>;
               final mode = args['mode'] as EditablePageMode;
@@ -119,7 +119,7 @@ class AppState extends State<App> {
               return _GuardScaffold(title, NotePage(mode: mode),
                   actions: args['actions']);
             },
-            AppRoute.termsAndConditions.name: (context) =>
+            AppRoutes.termsAndConditions.name: (context) =>
                 const TermsAndConditionsWebview(),
           },
           // For dynamically generating routes based on settings param
