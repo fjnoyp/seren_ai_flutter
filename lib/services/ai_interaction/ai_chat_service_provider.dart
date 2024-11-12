@@ -1,5 +1,6 @@
 import 'dart:convert';
 
+import 'package:collection/collection.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:seren_ai_flutter/common/language_provider.dart';
 import 'package:seren_ai_flutter/services/ai_interaction/ai_request/ai_request_executor.dart';
@@ -17,6 +18,7 @@ import 'package:seren_ai_flutter/services/data/ai_chats/repositories/ai_chat_thr
 import 'package:seren_ai_flutter/services/data/orgs/providers/cur_org_dependency_provider.dart';
 
 import 'package:logging/logging.dart';
+import 'package:seren_ai_flutter/services/text_to_speech/text_to_speech_notifier.dart';
 
 
 final log = Logger('AIChatService');
@@ -233,17 +235,17 @@ class AIChatService {
   }
 
   Future<void> speakAiMessage(List<AiChatMessageModel> result) async {
-    // final textToSpeech = ref.read(textToSpeechServiceProvider);
+    final textToSpeech = ref.read(textToSpeechServiceProvider);
 
-    // // TODO: consolidate duplicated code from stt_orchestrator_provider.dart
-    // final aiMessage = result.firstWhereOrNull((element) =>
-    //     element.type == AiChatMessageType.ai && element.content.isNotEmpty);
+    // TODO: consolidate duplicated code from stt_orchestrator_provider.dart
+    final aiMessage = result.firstWhereOrNull((element) =>
+        element.type == AiChatMessageType.ai && element.content.isNotEmpty);
 
-    // if (aiMessage == null) {
-    //   return;
-    // }
+    if (aiMessage == null) {
+      return;
+    }
 
-    // await textToSpeech.speak(aiMessage.content);
+    await textToSpeech.speak(aiMessage.content);
   }
 }
 
