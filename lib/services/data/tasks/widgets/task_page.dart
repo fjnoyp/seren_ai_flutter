@@ -181,11 +181,11 @@ class TaskPage extends HookConsumerWidget {
 
 // TODO p3: figure out how to remove code duplication due to WidgetRef vs Ref
 Future<void> openBlankTaskPage(BuildContext context, Ref ref) async {
-  Navigator.popUntil(context, (route) => route.settings.name != AppRoute.taskPage.name);
+  Navigator.popUntil(context, (route) => route.settings.name != AppRoutes.taskPage.name);
 
   ref.read(curTaskServiceProvider).createTask();
 
-  await Navigator.pushNamed(context, AppRoute.taskPage.name,
+  await Navigator.pushNamed(context, AppRoutes.taskPage.name,
       arguments: {'mode': EditablePageMode.create});
 }
 
@@ -194,7 +194,7 @@ Future<void> openTaskPage(BuildContext context, WidgetRef ref,
     {required EditablePageMode mode,
     JoinedTaskModel? initialJoinedTask}) async {
   // Remove previous TaskPage to avoid duplicate task pages
-  Navigator.popUntil(context, (route) => route.settings.name != AppRoute.taskPage.name);
+  Navigator.popUntil(context, (route) => route.settings.name != AppRoutes.taskPage.name);
 
   // CREATE - wipe existing task state
   if (mode == EditablePageMode.create) {
@@ -217,6 +217,6 @@ Future<void> openTaskPage(BuildContext context, WidgetRef ref,
     _ => null,
   };
 
-  await Navigator.pushNamed(context, AppRoute.taskPage.name,
+  await Navigator.pushNamed(context, AppRoutes.taskPage.name,
       arguments: {'mode': mode, 'actions': actions});
 }

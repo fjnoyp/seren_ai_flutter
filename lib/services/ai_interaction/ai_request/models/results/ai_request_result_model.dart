@@ -7,7 +7,7 @@ enum AiRequestResultType {
   shiftAssignments('shift_assignments'),
   shiftLogs('shift_logs'), 
   shiftClockInOut('shift_clock_in_out'),
-  error('error');
+  error('error');  
 
   final String value;
   const AiRequestResultType(this.value);
