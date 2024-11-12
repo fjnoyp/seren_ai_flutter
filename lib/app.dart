@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:logging/logging.dart';
+import 'package:seren_ai_flutter/common/current_route_provider.dart';
 import 'package:seren_ai_flutter/common/language_provider.dart';
 import 'package:seren_ai_flutter/constants.dart';
 import 'package:seren_ai_flutter/services/auth/widgets/auth_guard.dart';
@@ -65,6 +66,9 @@ class AppState extends State<App> {
           darkTheme: darkTheme,
           themeMode: themeMode,
           initialRoute: homeRoute,
+          navigatorObservers: [
+            CurrentRouteObserver(ref.read(currentRouteProvider.notifier))
+          ],
           routes: {
             signInUpRoute: (context) => Scaffold(
                 appBar: AppBar(
