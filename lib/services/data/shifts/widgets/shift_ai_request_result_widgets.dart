@@ -2,6 +2,8 @@
 
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:seren_ai_flutter/common/utils/date_time_extension.dart';
+import 'package:seren_ai_flutter/common/utils/date_time_range_extension.dart';
 import 'package:seren_ai_flutter/services/data/shifts/tool_methods/models/shift_assignments_result_model.dart';
 import 'package:seren_ai_flutter/services/data/shifts/tool_methods/models/shift_clock_in_out_result_model.dart';
 import 'package:seren_ai_flutter/services/data/shifts/tool_methods/models/shift_log_results_model.dart';
@@ -36,21 +38,16 @@ class ShiftClockInOutResultWidget extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final theme = Theme.of(context);
-    
     return Row(
       children: [
         Icon(
-          result.clockedIn ? Icons.login : Icons.logout,
-          color: theme.colorScheme.onPrimary,
+          result.clockedIn ? Icons.login : Icons.logout,          
         ),
         const SizedBox(width: 8),
         Expanded(
           child: Text(
             result.resultForAi,
-            style: theme.textTheme.bodyMedium?.copyWith(
-              color: theme.colorScheme.onPrimary,
-            ),
+            style: Theme.of(context).textTheme.titleMedium,
           ),
         ),
       ],
@@ -65,49 +62,61 @@ class ShiftLogsResultWidget extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final theme = Theme.of(context);
-    
+
     return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
+      crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
-        Text(result.resultForAi),
+        Text('Requested Shift Logs', style: theme.textTheme.titleMedium),
         const SizedBox(height: 8),
         ...result.shiftLogs.entries.map((entry) {
           final date = entry.key;
           final logs = entry.value;
-          
-          return Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Padding(
-                padding: const EdgeInsets.only(top: 8.0, bottom: 4.0),
-                child: Text(
-                  date.toLocal().toString().split(' ')[0],
-                  style: theme.textTheme.titleSmall,
-                ),
-              ),
-              ...logs.map((log) {
-                final endTime = log.clockOutDatetime?.toLocal().toString() ?? 'ONGOING';
-                return Padding(
-                  padding: const EdgeInsets.only(left: 16.0),
-                  child: Row(
-                    children: [
-                      Icon(
-                        log.clockOutDatetime == null ? Icons.timer : Icons.check_circle,
-                        size: 16,
-                        color: log.clockOutDatetime == null ? theme.colorScheme.primary : theme.colorScheme.onSurface,
-                      ),
-                      const SizedBox(width: 8),
-                      Expanded(
-                        child: Text(
-                          '${log.clockInDatetime.toLocal().toString()} - $endTime',
-                          style: theme.textTheme.bodyMedium,
-                        ),
-                      ),
-                    ],
+
+          return Card(
+            child: Padding(
+              padding: const EdgeInsets.all(8.0),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.stretch,
+                children: [
+                  Text(
+                    date.toLocal().getReadableDayOnly(),
+                    style: theme.textTheme.titleSmall,
                   ),
-                );
-              }),
-            ],
+                  if (logs.isNotEmpty)
+                    ...logs.map((log) {
+                      final isOngoing = log.clockOutDatetime == null;
+                      return Padding(
+                        padding: const EdgeInsets.only(left: 16.0),
+                        child: Row(
+                          children: [
+                            Icon(
+                              isOngoing ? Icons.timer : Icons.check_circle,
+                              size: 16,
+                              color: isOngoing
+                                  ? theme.colorScheme.primary
+                                  : theme.colorScheme.onSurface,
+                            ),
+                            const SizedBox(width: 8),
+                            Expanded(
+                              child: Text(
+                                isOngoing
+                                    ? '${log.clockInDatetime.toLocal().getReadableTimeOnly()} - ONGOING'
+                                    : '${log.clockInDatetime.toLocal().getReadableTimeOnly()} - ${log.clockOutDatetime!.toLocal().getReadableTimeOnly()}',
+                                style: theme.textTheme.bodyMedium,
+                              ),
+                            ),
+                          ],
+                        ),
+                      );
+                    }),
+                  if (logs.isEmpty)
+                    const Padding(
+                      padding: EdgeInsets.only(left: 16.0),
+                      child: Text('No Logs'),
+                    ),
+                ],
+              ),
+            ),
           );
         }),
       ],
@@ -122,48 +131,65 @@ class ShiftAssignmentsResultWidget extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final theme = Theme.of(context);
-    
+
     return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
+      crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
-        Text(result.resultForAi),
+        Text('Requested Shift Assignments', style: theme.textTheme.titleMedium),
         const SizedBox(height: 8),
         ...result.shiftAssignments.entries.map((entry) {
           final date = entry.key;
           final ranges = entry.value;
-          
-          return Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Padding(
-                padding: const EdgeInsets.only(top: 8.0, bottom: 4.0),
-                child: Text(
-                  date.toLocal().toString().split(' ')[0],
-                  style: theme.textTheme.titleSmall,
-                ),
-              ),
-              ...ranges.map((range) {
-                return Padding(
-                  padding: const EdgeInsets.only(left: 16.0),
-                  child: Row(
-                    children: [
-                      Icon(
-                        Icons.schedule,
-                        size: 16,
-                        color: theme.colorScheme.primary,
-                      ),
-                      const SizedBox(width: 8),
-                      Expanded(
-                        child: Text(
-                          '${range.start.toLocal().toString()} - ${range.end.toLocal().toString()}',
-                          style: theme.textTheme.bodyMedium,
+
+          return Padding(
+            padding: const EdgeInsets.all(0.0), // Added padding to the column
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.stretch,
+              children: [
+                Card(
+                  //margin: const EdgeInsets.symmetric(vertical: 4.0, horizontal: 16.0),
+                  child: Padding(
+                    padding: const EdgeInsets.all(8.0),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        // Date Display
+                        Text(
+                          date.toLocal().getReadableDayOnly(),
+                          style: theme.textTheme.titleSmall,
                         ),
-                      ),
-                    ],
+                        // Range(s) Display
+                        if (ranges.isNotEmpty)
+                          ...ranges.map((range) {
+                            return Padding(
+                              padding: const EdgeInsets.only(left: 16.0),
+                              child: Row(
+                                children: [
+                                  Icon(
+                                    Icons.schedule,
+                                    size: 16,
+                                    color: theme.colorScheme.primary,
+                                  ),
+                                  const SizedBox(width: 8),
+                                  Expanded(
+                                    child: Text(
+                                        range.toLocal().getReadableTimeOnly()),
+                                  ),
+                                ],
+                              ),
+                            );
+                          }),
+                        if (ranges.isEmpty)
+                          const Padding(
+                            padding: EdgeInsets.only(left: 16.0),
+                            child: Text('No Assignments'),
+                          ),
+                      ],
+                    ),
                   ),
-                );
-              }),
-            ],
+                ),
+              ],
+            ),
           );
         }),
       ],

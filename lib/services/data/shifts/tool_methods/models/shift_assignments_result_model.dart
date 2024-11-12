@@ -21,8 +21,8 @@ class ShiftAssignmentsResultModel extends AiRequestResultModel {
                         ))
                     .toList(),
               )),
-      resultForAi: json['resultForAi'],
-      showOnly: json['showOnly'],
+      resultForAi: json['result_for_ai'],
+      showOnly: json['show_only'],
     );
   }
 

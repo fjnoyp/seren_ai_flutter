@@ -18,18 +18,18 @@ enum AiUIActionRequestType {
 
 class AiUiActionRequestModel extends AiRequestModel {
   final AiUIActionRequestType uiActionType;
-  final Map<String, String>? args;
+  //final Map<String, String>? args;
 
   AiUiActionRequestModel({
-    required this.uiActionType,
-    this.args,
+    required this.uiActionType,   
+    super.args, 
   }) : super(AiRequestType.uiAction);
 
 
   static AiUiActionRequestModel fromJson(Map<String, dynamic> json) {
     return AiUiActionRequestModel(
-      uiActionType: AiUIActionRequestType.fromString(json['ui_action_request_type']),
-      args: json['args']?.cast<String, String>(),
+      args: json['args'],
+      uiActionType: AiUIActionRequestType.fromString(json['ui_action_request_type']),      
     );
   }
 }
