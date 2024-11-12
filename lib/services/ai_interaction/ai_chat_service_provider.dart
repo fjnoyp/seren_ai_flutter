@@ -125,7 +125,7 @@ class AIChatService {
 
     // Read the chat response and identify ToolMessages
     List<AiRequestModel>? toolResponses = aiChatMessages
-        .where((msg) => msg.isAiToolRequest())
+        .where((msg) => msg.isAiRequest())
         .expand((msg) => [msg.getAiRequest()!])
         .toList() as List<AiRequestModel>?;
 

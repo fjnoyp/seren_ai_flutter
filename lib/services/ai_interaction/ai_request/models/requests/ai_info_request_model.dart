@@ -18,13 +18,12 @@ enum AiInfoRequestType {
   }
 }
 abstract class AiInfoRequestModel extends AiRequestModel {
-  final AiInfoRequestType infoRequestType;
-  final Map<String, String>? args;
+  final AiInfoRequestType infoRequestType;  
   final bool showOnly;
 
   AiInfoRequestModel({
     required this.infoRequestType,
-    this.args,
+    super.args,
     this.showOnly = true,
   }) : super(AiRequestType.infoRequest);
 
@@ -51,12 +50,14 @@ class ShiftAssignmentsRequestModel extends AiInfoRequestModel {
   ShiftAssignmentsRequestModel({
     required this.dayOffsetsToGet,
     super.showOnly = true,
+    super.args,
   }) : super(infoRequestType: AiInfoRequestType.shiftAssignments);
 
   static ShiftAssignmentsRequestModel fromJson(Map<String, dynamic> json) {
     return ShiftAssignmentsRequestModel(
+      args: json['args'],
       dayOffsetsToGet: json['args']['day_offsets_to_get'].cast<int>(),
-      showOnly: json['show_only'] ?? true,
+      showOnly: json['show_only'] ?? true,      
     );
   }
 
@@ -70,12 +71,14 @@ class ShiftLogsRequestModel extends AiInfoRequestModel {
   ShiftLogsRequestModel({
     required this.dayOffsetsToGet,
     super.showOnly = true,
+    super.args,
   }) : super(infoRequestType: AiInfoRequestType.shiftLogs);
 
   static ShiftLogsRequestModel fromJson(Map<String, dynamic> json) {
     return ShiftLogsRequestModel(
+      args: json['args'],
       dayOffsetsToGet: json['args']['day_offsets_to_get'].cast<int>(),
-      showOnly: json['show_only'] ?? true,
+      showOnly: json['show_only'] ?? true,      
     );
   }
 }
