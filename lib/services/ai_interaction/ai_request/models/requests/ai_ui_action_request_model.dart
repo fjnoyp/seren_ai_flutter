@@ -1,3 +1,6 @@
+import 'dart:convert';
+
+import 'package:seren_ai_flutter/common/routes/app_routes.dart';
 import 'package:seren_ai_flutter/services/ai_interaction/ai_request/models/requests/ai_request_model.dart';
 
 /// Subtypes of UI Action Type
@@ -23,6 +26,11 @@ class AiUiActionRequestModel extends AiRequestModel {
     super.args,
   }) : super(AiRequestType.uiAction);
 
+  String get route => switch (uiActionType) {
+        // should AppRoutes have a `path` getter instead, toString() is a bit ambiguous
+        AiUIActionRequestType.shiftsPage => AppRoutes.shifts.toString(),
+      };
+
   factory AiUiActionRequestModel.fromJson(Map<String, dynamic> json) {
     return AiUiActionRequestModel(
       args: json['args'],
@@ -34,5 +42,9 @@ class AiUiActionRequestModel extends AiRequestModel {
   @override
   String toString() {
     return 'AiUiActionRequestModel(uiActionType: $uiActionType, args: $args)';
+  }
+
+  factory AiUiActionRequestModel.fromEncodedJson(String encodedJson) {
+    return AiUiActionRequestModel.fromJson(jsonDecode(encodedJson));
   }
 }

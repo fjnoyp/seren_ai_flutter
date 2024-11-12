@@ -10,9 +10,6 @@ import 'package:seren_ai_flutter/services/data/shifts/tool_methods/shift_tool_me
 import 'package:seren_ai_flutter/services/data/tasks/tool_methods/models/task_request_models.dart';
 import 'package:seren_ai_flutter/services/data/tasks/tool_methods/task_tool_methods.dart';
 
-
-
-
 final aiRequestExecutorProvider =
     Provider<AiRequestExecutor>(AiRequestExecutor.new);
 
@@ -23,29 +20,36 @@ class AiRequestExecutor {
   AiRequestExecutor(this.ref);
 
   Future<AiRequestResultModel> executeAiRequest(
-      AiRequestModel aiRequest) async {
-    final result = await getToolResponseResult(aiRequest);
+    AiRequestModel aiRequest, {
+    required bool navigate,
+  }) async {
+    final result = await getToolResponseResult(aiRequest, navigate: navigate);
     return result;
   }
 
   // Route ToolResponse to the correct method
   Future<AiRequestResultModel> getToolResponseResult(
-      AiRequestModel aiRequest) async {
-
-    AiRequestResultModel result; 
+    AiRequestModel aiRequest, {
+    required bool navigate,
+  }) async {
+    AiRequestResultModel result;
 
     // Iterate through identified tool responses
     switch (aiRequest.requestType) {
       case AiRequestType.uiAction:
-        result = await _handleUiActionRequest(aiRequest as AiUiActionRequestModel);
+        result =
+            await _handleUiActionRequest(aiRequest as AiUiActionRequestModel);
         break;
 
-        case AiRequestType.infoRequest:
+      case AiRequestType.infoRequest:
         result = await _handleInfoRequest(aiRequest as AiInfoRequestModel);
         break;
 
       case AiRequestType.actionRequest:
-        result = await _handleActionRequest(aiRequest as AiActionRequestModel);
+        result = await _handleActionRequest(
+          aiRequest as AiActionRequestModel,
+          navigate: navigate,
+        );
         break;
 
       default:
@@ -60,9 +64,12 @@ class AiRequestExecutor {
     switch (uiAction.uiActionType) {
       case AiUIActionRequestType.shiftsPage:
         // TODO p1: open shifts page
-        return ErrorRequestResultModel(resultForAi: 'Not implemented', showOnly: true);
+        return ErrorRequestResultModel(
+            resultForAi: 'Not implemented', showOnly: true);
       default:
-        return ErrorRequestResultModel(resultForAi: 'Unknown UI action: ${uiAction.toString()}', showOnly: true);
+        return ErrorRequestResultModel(
+            resultForAi: 'Unknown UI action: ${uiAction.toString()}',
+            showOnly: true);
     }
   }
 
@@ -82,30 +89,39 @@ class AiRequestExecutor {
             ref: ref, infoRequest: infoRequest as FindTasksRequestModel);
 
       default:
-        return ErrorRequestResultModel(resultForAi: 'Unknown info request: ${infoRequest.toString()}', showOnly: true);
+        return ErrorRequestResultModel(
+            resultForAi: 'Unknown info request: ${infoRequest.toString()}',
+            showOnly: true);
     }
   }
 
   Future<AiRequestResultModel> _handleActionRequest(
-      AiActionRequestModel actionRequest) async {
+    AiActionRequestModel actionRequest, {
+    required bool navigate,
+  }) async {
     switch (actionRequest.actionRequestType) {
       case AiActionRequestType.toggleClockInOrOut:
         return await shiftToolMethods.toggleClockInOut(ref: ref);
 
       case AiActionRequestType.createTask:
-        return await taskToolMethods.createTask(ref: ref, actionRequest: actionRequest as CreateTaskRequestModel);
+        return await taskToolMethods.createTask(
+            ref: ref,
+            actionRequest: actionRequest as CreateTaskRequestModel,
+            autoNavigate: navigate);
 
       case AiActionRequestType.updateTaskFields:
-        return await taskToolMethods.updateTaskFields(ref: ref, actionRequest: actionRequest as UpdateTaskFieldsRequestModel);
+        return await taskToolMethods.updateTaskFields(
+            ref: ref,
+            actionRequest: actionRequest as UpdateTaskFieldsRequestModel);
 
       case AiActionRequestType.deleteTask:
-        return await taskToolMethods.deleteTask(ref: ref, actionRequest: actionRequest as DeleteTaskRequestModel);
+        return await taskToolMethods.deleteTask(
+            ref: ref, actionRequest: actionRequest as DeleteTaskRequestModel);
 
       case AiActionRequestType.assignUserToTask:
-        return await taskToolMethods.assignUserToTask(ref: ref, actionRequest: actionRequest as AssignUserToTaskRequestModel);
-
-      default:
-        return ErrorRequestResultModel(resultForAi: 'Unknown action request: ${actionRequest.toString()}', showOnly: true);
+        return await taskToolMethods.assignUserToTask(
+            ref: ref,
+            actionRequest: actionRequest as AssignUserToTaskRequestModel);
     }
   }
 }

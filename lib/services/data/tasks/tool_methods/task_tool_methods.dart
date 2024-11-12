@@ -9,8 +9,6 @@ AiActionRequestType.deleteTask
 AiActionRequestType.assignUserToTask
 */
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:path/path.dart';
-import 'package:path/path.dart';
 import 'package:seren_ai_flutter/common/navigation_service_provider.dart';
 import 'package:seren_ai_flutter/common/routes/app_routes.dart';
 import 'package:seren_ai_flutter/services/ai_interaction/ai_request/models/results/ai_request_result_model.dart';
@@ -23,13 +21,9 @@ import 'package:seren_ai_flutter/services/data/tasks/models/joined_task_model.da
 import 'package:seren_ai_flutter/services/data/tasks/models/task_model.dart';
 import 'package:seren_ai_flutter/services/data/tasks/providers/cur_task_service_provider.dart';
 import 'package:seren_ai_flutter/services/data/tasks/repositories/joined_task_repository.dart';
-import 'package:seren_ai_flutter/services/data/tasks/repositories/tasks_repository.dart';
 import 'package:seren_ai_flutter/services/data/tasks/tool_methods/models/create_task_result_model.dart';
 import 'package:seren_ai_flutter/services/data/tasks/tool_methods/models/find_tasks_result_model.dart';
 import 'package:seren_ai_flutter/services/data/tasks/tool_methods/models/task_request_models.dart';
-import 'dart:math';
-
-import 'package:seren_ai_flutter/services/data/tasks/widgets/task_page.dart';
 
 class TaskToolMethods {
   // Threshold for string similarity (0.0 to 1.0)
@@ -159,60 +153,64 @@ class TaskToolMethods {
 
     return FindTasksResultModel(
       tasks: filteredTasks,
-      resultForAi: 'Found ${filteredTasks.length} matching tasks: ${filteredTasks.map((task) => task.toReadableMap()).toList()}',
+      resultForAi:
+          'Found ${filteredTasks.length} matching tasks: ${filteredTasks.map((task) => task.toReadableMap()).toList()}',
       showOnly: infoRequest.showOnly,
     );
   }
 
-Future<AiRequestResultModel> createTask(
-    {required Ref ref, required CreateTaskRequestModel actionRequest}) async {
-  final userId = _getUserId(ref);
-  if (userId == null) return _handleNoAuth();
+  Future<AiRequestResultModel> createTask({
+    required Ref ref,
+    required CreateTaskRequestModel actionRequest,
+    required bool autoNavigate,
+  }) async {
+    final userId = _getUserId(ref);
+    if (userId == null) return _handleNoAuth();
 
-  // Create a new task with fields from the request
-  final task = TaskModel(
-    id: DateTime.now().millisecondsSinceEpoch.toString(), // Temporary ID
-    name: actionRequest.taskName,
-    description: actionRequest.taskDescription,
-    dueDate: DateTime.parse(actionRequest.taskDueDate),
-    status: StatusEnum.open,
-    priority: PriorityEnum.values.firstWhere(
-      (p) => p.name.toLowerCase() == actionRequest.taskPriority.toLowerCase(),
-      orElse: () => PriorityEnum.normal,
-    ),
-    estimatedDurationMinutes: actionRequest.estimateDurationMinutes,
-    authorUserId: userId,
-    parentProjectId: '', // Will be set later in UI
-    createdAt: DateTime.now().toUtc(),
-    updatedAt: DateTime.now().toUtc(),
-  );
+    // Create a new task with fields from the request
+    final task = TaskModel(
+      id: DateTime.now().millisecondsSinceEpoch.toString(), // Temporary ID
+      name: actionRequest.taskName,
+      description: actionRequest.taskDescription,
+      dueDate: DateTime.parse(actionRequest.taskDueDate),
+      status: StatusEnum.open,
+      priority: PriorityEnum.values.firstWhere(
+        (p) => p.name.toLowerCase() == actionRequest.taskPriority.toLowerCase(),
+        orElse: () => PriorityEnum.normal,
+      ),
+      estimatedDurationMinutes: actionRequest.estimateDurationMinutes,
+      authorUserId: userId,
+      parentProjectId: '', // Will be set later in UI
+      createdAt: DateTime.now().toUtc(),
+      updatedAt: DateTime.now().toUtc(),
+    );
 
-  // Create a joined task model
-  final joinedTask = JoinedTaskModel(
-    task: task,
-    authorUser: ref.read(curUserProvider).value,
-    project: null, // Will be set in UI
-    assignees: [], // Will be set in UI
-    comments: [],
-  );
+    // Create a joined task model
+    final joinedTask = JoinedTaskModel(
+      task: task,
+      authorUser: ref.read(curUserProvider).value,
+      project: null, // Will be set in UI
+      assignees: [], // Will be set in UI
+      comments: [],
+    );
 
-  // Set the task in the current task service
-  final curTaskService = ref.read(curTaskServiceProvider);
-  curTaskService.loadTask(joinedTask);
+    // Set the task in the current task service
+    final curTaskService = ref.read(curTaskServiceProvider);
+    curTaskService.loadTask(joinedTask);
 
-  // Navigate to task page in create mode
-  final navigationService = ref.read(navigationServiceProvider);
-  navigationService.navigateTo(
-    AppRoutes.taskPage.name, 
-    arguments: {'mode': EditablePageMode.create}
-  );
+    if (autoNavigate) {
+      // Navigate to task page in create mode
+      final navigationService = ref.read(navigationServiceProvider);
+      navigationService.navigateTo(AppRoutes.taskPage.name,
+          arguments: {'mode': EditablePageMode.create});
+    }
 
-  return CreateTaskResultModel(
-    joinedTask: joinedTask,
-    resultForAi: 'Created new task "${task.name}" and opened edit page',
-    showOnly: true,
-  );
-}
+    return CreateTaskResultModel(
+      joinedTask: joinedTask,
+      resultForAi: 'Created new task "${task.name}" and opened edit page',
+      showOnly: true,
+    );
+  }
 
   Future<AiRequestResultModel> updateTaskFields(
       {required Ref ref,

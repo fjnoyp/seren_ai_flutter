@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 import 'package:seren_ai_flutter/services/ai_interaction/ai_request/models/results/error_request_result_model.dart';
 import 'package:seren_ai_flutter/services/ai_interaction/last_ai_message_listener_provider.dart';
 import 'package:seren_ai_flutter/services/data/shifts/tool_methods/models/shift_assignments_result_model.dart';
@@ -6,11 +8,11 @@ import 'package:seren_ai_flutter/services/data/shifts/tool_methods/models/shift_
 
 enum AiRequestResultType {
   shiftAssignments('shift_assignments'),
-  shiftLogs('shift_logs'), 
+  shiftLogs('shift_logs'),
   shiftClockInOut('shift_clock_in_out'),
   findTasks('find_tasks'),
   createTask('create_task'),
-  error('error');  
+  error('error');
   //unknown('unknown');
 
   final String value;
@@ -24,22 +26,23 @@ enum AiRequestResultType {
   }
 }
 
-
-/// Result of an AI Request execution. 
-/// 
-/// Only the message field is sent to ai, all other fields are for display purposes. 
+/// Result of an AI Request execution.
+///
+/// Only the message field is sent to ai, all other fields are for display purposes.
 abstract class AiRequestResultModel extends AiResult {
-
-  /// Result of the AI Request to be displayed to the user 
+  /// Result of the AI Request to be displayed to the user
   final String resultForAi;
 
   final bool showOnly;
 
-  final AiRequestResultType resultType; 
+  final AiRequestResultType resultType;
 
-  AiRequestResultModel({required this.resultForAi, required this.showOnly, required this.resultType});
+  AiRequestResultModel(
+      {required this.resultForAi,
+      required this.showOnly,
+      required this.resultType});
 
-Map<String, dynamic> toJson() {
+  Map<String, dynamic> toJson() {
     return {
       'result_type': resultType.value,
       'result_for_ai': resultForAi,
@@ -50,7 +53,7 @@ Map<String, dynamic> toJson() {
   // Static factory method for deserialization
   factory AiRequestResultModel.fromJson(Map<String, dynamic> json) {
     final resultType = AiRequestResultType.fromString(json['result_type']);
-    
+
     switch (resultType) {
       case AiRequestResultType.shiftAssignments:
         return ShiftAssignmentsResultModel.fromJson(json);
@@ -60,8 +63,12 @@ Map<String, dynamic> toJson() {
         return ShiftClockInOutResultModel.fromJson(json);
       default:
         return ErrorRequestResultModel.fromJson(json);
-        //throw Exception('Unknown type for AiRequestResultModel: $resultType');
+      //throw Exception('Unknown type for AiRequestResultModel: $resultType');
     }
   }
-}
 
+  static AiRequestResultModel fromEncodedJson(String json) {
+    final decodedJson = jsonDecode(json);
+    return AiRequestResultModel.fromJson(decodedJson);
+  }
+}

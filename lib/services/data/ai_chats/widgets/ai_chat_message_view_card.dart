@@ -92,8 +92,7 @@ class AiChatMessageViewCard extends HookWidget {
                     AiChatMessageDisplayType.ai =>
                       _buildAiMessageWidget(message.content),
                     AiChatMessageDisplayType.aiWithToolCall =>
-                      _buildAiMessageWidget(
-                          message.getAiMessage() ?? message.content),
+                      _buildAiMessageWidget(message.content),
                     AiChatMessageDisplayType.toolAiRequest =>
                       _buildAiRequestWidget(message.getAiRequest()!, context),
                     AiChatMessageDisplayType.toolAiResult =>

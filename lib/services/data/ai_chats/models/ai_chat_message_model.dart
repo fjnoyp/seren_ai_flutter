@@ -44,7 +44,7 @@ class AiChatMessageModel extends AiResult implements IHasId {
   })  : id = id ?? uuid.v4(),
         _content = content;
 
-  String get content => switch (_content[0]) {
+  String get content => switch (_content.isEmpty ? '' : _content[0]) {
         '[' => jsonDecode(_content)[0]['text'] ?? _content,
         '{' => jsonDecode(_content)['text'] ?? _content,
         _ => _content,
@@ -63,6 +63,9 @@ class AiChatMessageModel extends AiResult implements IHasId {
       type == AiChatMessageType.tool && content.contains('request_type');
   bool get isAiResult =>
       type == AiChatMessageType.tool && content.contains('result_type');
+  bool get isUiActionRequest =>
+      type == AiChatMessageType.tool &&
+      content.contains(AiRequestType.uiAction.value);
 
   AiChatMessageDisplayType getDisplayType() {
     switch (type) {
@@ -101,6 +104,18 @@ class AiChatMessageModel extends AiResult implements IHasId {
         return AiRequestModel.fromJson(decoded);
       } catch (e) {
         throw ArgumentError('Invalid AiRequestModel from: $this');
+      }
+    }
+    return null;
+  }
+
+  List<AiRequestModel>? getAiRequests() {
+    if (isAiRequest) {
+      try {
+        final List<dynamic> decoded = json.decode(content) as List<dynamic>;
+        return decoded.map((json) => AiRequestModel.fromJson(json)).toList();
+      } catch (e) {
+        return null;
       }
     }
     return null;

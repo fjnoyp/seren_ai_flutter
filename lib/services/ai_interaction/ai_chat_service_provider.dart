@@ -183,7 +183,11 @@ class AIChatService {
 
     // === Execute Request ===
 
-    final result = await aiRequestExecutor.executeAiRequest(toolResponses[0]);
+    final result = await aiRequestExecutor.executeAiRequest(
+      toolResponses[0],
+      navigate:
+          !ref.read(currentRouteProvider).contains(AppRoutes.aiChats.name),
+    );
 
     // Display Result
     // final isCallAgain = result.showOnly ? '' : '<AI CALLED AGAIN>';
