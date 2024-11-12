@@ -12,22 +12,22 @@ class ShiftLogsResultModel extends AiRequestResultModel {
 
   factory ShiftLogsResultModel.fromJson(Map<String, dynamic> json) {
     return ShiftLogsResultModel(
-      shiftLogs: (json['shiftLogs'] as Map<String, dynamic>)
+      shiftLogs: (json['shift_logs'] as Map<String, dynamic>)
           .map((key, value) => MapEntry(
                 DateTime.parse(key),
                 (value as List)
                     .map((log) => ShiftLogModel.fromJson(log))
                     .toList(),
               )),
-      resultForAi: json['resultForAi'],
-      showOnly: json['showOnly'],
+      resultForAi: json['result_for_ai'],
+      showOnly: json['show_only'],
     );
   }
 
   @override
   Map<String, dynamic> toJson() {
     return super.toJson()..addAll({
-      'shiftLogs': shiftLogs.map((key, value) => MapEntry(
+      'shift_logs': shiftLogs.map((key, value) => MapEntry(
         key.toIso8601String(),
         value.map((log) => log.toJson()).toList(),
       )),

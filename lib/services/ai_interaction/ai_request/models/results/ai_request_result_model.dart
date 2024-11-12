@@ -37,15 +37,15 @@ abstract class AiRequestResultModel extends AiResult {
 
 Map<String, dynamic> toJson() {
     return {
-      'resultType': resultType.name,
-      'resultForAi': resultForAi,
-      'showOnly': showOnly,
+      'result_type': resultType.value,
+      'result_for_ai': resultForAi,
+      'show_only': showOnly,
     };
   }
 
   // Static factory method for deserialization
   static AiRequestResultModel fromJson(Map<String, dynamic> json) {
-    final resultType = json['resultType'] as AiRequestResultType;
+    final resultType = AiRequestResultType.fromString(json['result_type']);
     
     switch (resultType) {
       case AiRequestResultType.shiftAssignments:
