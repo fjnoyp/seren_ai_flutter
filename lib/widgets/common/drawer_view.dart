@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:seren_ai_flutter/common/language_provider.dart';
-import 'package:seren_ai_flutter/constants.dart';
+import 'package:seren_ai_flutter/common/routes/app_routes.dart';
 import 'package:seren_ai_flutter/services/auth/cur_auth_state_provider.dart';
 import 'package:seren_ai_flutter/services/speech_to_text/speech_to_text_service_provider.dart';
 import 'package:seren_ai_flutter/services/text_to_speech/text_to_speech_notifier.dart';
@@ -141,55 +141,55 @@ class DrawerView extends HookWidget {
               context: context,
               icon: Icons.home,
               title: AppLocalizations.of(context)!.home,
-              onTap: () => Navigator.pushNamed(context, homeRoute),
+              onTap: () => Navigator.pushNamed(context, AppRoute.home.name),
             ),
             _buildListTile(
               context: context,
               icon: Icons.house,
               title: AppLocalizations.of(context)!.chooseOrganization,
-              onTap: () => Navigator.pushNamed(context, chooseOrgRoute),
+              onTap: () => Navigator.pushNamed(context, AppRoute.chooseOrg.name),
             ),
             _buildListTile(
               context: context,
               icon: Icons.people,
               title: AppLocalizations.of(context)!.orgAdminManageOrgUsers,
-              onTap: () => Navigator.pushNamed(context, manageOrgUsersRoute),
+              onTap: () => Navigator.pushNamed(context, AppRoute.manageOrgUsers.name),
             ),
             _buildListTile(
               context: context,
               icon: Icons.work,
               title: AppLocalizations.of(context)!.projects,
-              onTap: () => Navigator.pushNamed(context, projectsRoute),
+              onTap: () => Navigator.pushNamed(context, AppRoute.projects.name),
             ),
             _buildListTile(
               context: context,
               icon: Icons.task,
               title: AppLocalizations.of(context)!.tasks,
-              onTap: () => Navigator.pushNamed(context, tasksRoute),
+              onTap: () => Navigator.pushNamed(context, AppRoute.tasks.name),
             ),
             _buildListTile(
               context: context,
               icon: Icons.square,
               title: AppLocalizations.of(context)!.testSQL,
-              onTap: () => Navigator.pushNamed(context, testSQLPageRoute),
+              onTap: () => Navigator.pushNamed(context, AppRoute.testSQLPage.name),
             ),
             _buildListTile(
               context: context,
               icon: Icons.chat,
               title: AppLocalizations.of(context)!.aiChatThreads,
-              onTap: () => Navigator.pushNamed(context, aiChatsRoute),
+              onTap: () => Navigator.pushNamed(context, AppRoute.aiChats.name),
             ),
             _buildListTile(
               context: context,
               icon: Icons.punch_clock_outlined,
               title: AppLocalizations.of(context)!.shifts,
-              onTap: () => Navigator.pushNamed(context, shiftsRoute),
+              onTap: () => Navigator.pushNamed(context, AppRoute.shifts.name),
             ),
             _buildListTile(
               context: context,
               icon: Icons.note_outlined,
               title: AppLocalizations.of(context)!.notes,
-              onTap: () => Navigator.pushNamed(context, noteListRoute),
+              onTap: () => Navigator.pushNamed(context, AppRoute.noteList.name),
             ),
             _buildListTile(
               context: context,
