@@ -17,7 +17,7 @@ class SignInUpPage extends StatelessWidget {
         // TODO: maybe add seren logo here on top instead of the app bar
         child: SupaEmailAuth(
           onSignInComplete: (response) {
-            Navigator.of(context).pushReplacementNamed(AppRoute.home.name);
+            Navigator.of(context).pushReplacementNamed(AppRoutes.home.name);
           },
           onSignUpComplete: (response) async {
             if (response.user != null && response.user!.email != null) {
@@ -33,7 +33,7 @@ class SignInUpPage extends StatelessWidget {
                       ),
                   );
             }
-            Navigator.of(context).pushReplacementNamed(AppRoute.home.name);
+            Navigator.of(context).pushReplacementNamed(AppRoutes.home.name);
           },
           metadataFields: [
             MetaDataField(
@@ -60,7 +60,7 @@ class SignInUpPage extends StatelessWidget {
                   ),
                   recognizer: TapGestureRecognizer()
                     ..onTap = () {
-                      Navigator.pushNamed(context, AppRoute.termsAndConditions.name);
+                      Navigator.pushNamed(context, AppRoutes.termsAndConditions.name);
                     },
                 ),
               ],

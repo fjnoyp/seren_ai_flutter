@@ -87,7 +87,7 @@ class TaskHomeCard extends ConsumerWidget {
                       child: Card(
                         child: InkWell(
                           onTap: () {
-                            Navigator.pushNamed(context, AppRoute.tasks.name);
+                            Navigator.pushNamed(context, AppRoutes.tasks.name);
                           },
                           child: Container(
                             width: double.infinity,

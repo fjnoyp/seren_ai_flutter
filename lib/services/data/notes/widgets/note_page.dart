@@ -132,7 +132,7 @@ Future<void> openNotePage(BuildContext context, WidgetRef ref,
     {required EditablePageMode mode,
     String? parentProjectId,
     String? noteId}) async {
-  Navigator.popUntil(context, (route) => route.settings.name != AppRoute.notePage.name);
+  Navigator.popUntil(context, (route) => route.settings.name != AppRoutes.notePage.name);
 
   if (mode == EditablePageMode.create) {
     ref.read(curNoteServiceProvider).createNote(
@@ -157,6 +157,6 @@ Future<void> openNotePage(BuildContext context, WidgetRef ref,
     _ => null,
   };
 
-  await Navigator.pushNamed(context, AppRoute.notePage.name,
+  await Navigator.pushNamed(context, AppRoutes.notePage.name,
       arguments: {'mode': mode, 'actions': actions});
 }

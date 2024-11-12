@@ -35,7 +35,7 @@ class MainScaffold extends HookWidget {
       onPopInvokedWithResult: (didPop, result) {
         if (!didPop) {
           Navigator.of(context)
-              .pushNamedAndRemoveUntil(AppRoute.home.name, (route) => false);
+              .pushNamedAndRemoveUntil(AppRoutes.home.name, (route) => false);
         }
       },
       child: Scaffold(
@@ -122,14 +122,14 @@ class MainScaffold extends HookWidget {
                           icon: const Icon(Icons.grid_view),
                           onPressed: () => Navigator.of(context)
                               .pushNamedAndRemoveUntil(
-                                  AppRoute.home.name, (route) => false),
+                                  AppRoutes.home.name, (route) => false),
                         ),
                         const SizedBox.shrink(),
                         IconButton(
                           tooltip: AppLocalizations.of(context)!.chat,
                           icon: const Icon(Icons.chat_bubble_outline),
                           onPressed: () =>
-                              Navigator.of(context).pushNamed(AppRoute.aiChats.name),
+                              Navigator.of(context).pushNamed(AppRoutes.aiChats.name),
                         ),
                       ],
                     ),
