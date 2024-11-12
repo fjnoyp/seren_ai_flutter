@@ -41,6 +41,7 @@ class SpeechToTextService {
       _isInitialized = await _speechToText.initialize(
         onError: (error) => _errorListener(error),
         onStatus: (status) => _statusListener(status),
+        finalTimeout: const Duration(seconds: 0),
       );
     }
     return _isInitialized;
