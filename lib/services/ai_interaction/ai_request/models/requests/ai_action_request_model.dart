@@ -32,9 +32,9 @@ class AiActionRequestModel implements AiRequestModel {
 
   factory AiActionRequestModel.fromJson(Map<String, dynamic> json) {
     return AiActionRequestModel(
+      args: json['args'],
       actionRequestType:
           AiActionRequestType.fromString(json['action_request_type']),
-      args: json['args']?.cast<String, String>(),
     );
   }
 }

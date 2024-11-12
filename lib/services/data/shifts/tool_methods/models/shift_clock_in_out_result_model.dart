@@ -11,16 +11,16 @@ class ShiftClockInOutResultModel extends AiRequestResultModel {
 
   factory ShiftClockInOutResultModel.fromJson(Map<String, dynamic> json) {
     return ShiftClockInOutResultModel(
-      clockedIn: json['clockedIn'],
-      resultForAi: json['resultForAi'],
-      showOnly: json['showOnly'],
+      clockedIn: json['clocked_in'],
+      resultForAi: json['result_for_ai'],
+      showOnly: json['show_only'],
     );
   }
 
   @override
   Map<String, dynamic> toJson() {
     return super.toJson()..addAll({
-      'clockedIn': clockedIn,
+      'clocked_in': clockedIn,
     });
   }
 }

@@ -17,7 +17,7 @@ enum AiUIActionRequestType {
 
 class AiUiActionRequestModel implements AiRequestModel {
   final AiUIActionRequestType uiActionType;
-  final Map<String, String>? args;
+  final Map<String, dynamic>? args;
 
   AiUiActionRequestModel({
     required this.uiActionType,
@@ -29,9 +29,9 @@ class AiUiActionRequestModel implements AiRequestModel {
 
   factory AiUiActionRequestModel.fromJson(Map<String, dynamic> json) {
     return AiUiActionRequestModel(
+      args: json['args'],
       uiActionType:
-          AiUIActionRequestType.fromString(json['ui_action_request_type']),
-      args: json['args']?.cast<String, String>(),
+          AiUIActionRequestType.fromString(json['ui_action_request_type']),      
     );
   }
 }

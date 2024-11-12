@@ -8,6 +8,15 @@ import 'dart:convert';
 
 part 'ai_chat_message_model.g.dart';
 
+enum AiChatMessageDisplayType {
+  user,
+  ai,
+  // aiWithToolCall,
+  tool,
+  // toolAiRequest,
+  // toolAiResult,
+}
+
 @JsonSerializable()
 class AiChatMessageModel extends AiResult implements IHasId {
   @override
@@ -49,13 +58,42 @@ class AiChatMessageModel extends AiResult implements IHasId {
           '', // This should be set to a valid chat thread ID in practice
     );
   }
+  bool get isAiToolRequest => type == AiChatMessageType.tool && content.contains('request_type');
+  bool get isAiToolResult => type == AiChatMessageType.tool && content.contains('result_type');
 
-  bool isAiToolRequest() {
-    return type == AiChatMessageType.tool && content.contains('request_type');
-  }
+  // AiChatMessageDisplayType getDisplayType() {
+  //   switch (type) {
+  //     case AiChatMessageType.user:
+  //       return AiChatMessageDisplayType.user;
+  //     case AiChatMessageType.ai:
+  //       // If content is json list with tool_use, then it is a tool call
+  //       if (content.startsWith('[') && content.endsWith(']') && content.contains('tool_use')) {
+  //         return AiChatMessageDisplayType.aiWithToolCall;
+  //       }
+
+  //       return AiChatMessageDisplayType.ai;
+  //     case AiChatMessageType.tool:
+
+  //       // If content contains "request_type" then it is a request 
+  //       if (content.contains('request_type')) {
+  //         return AiChatMessageDisplayType.toolAiRequest;
+  //       }
+
+  //       // If content contains "result_type" then it is a result 
+  //       if (content.contains('result_type')) {
+  //         return AiChatMessageDisplayType.toolAiResult;
+  //       }
+
+  //       return AiChatMessageDisplayType.tool;
+  //   }
+  // }
+
+  // bool isAiRequest() {
+  //   return getDisplayType() == AiChatMessageDisplayType.toolAiRequest;
+  // }
 
   AiRequestModel? getAiRequest() {
-    if (isAiToolRequest()) {
+    if (isAiToolRequest) {
       try {
         final Map<String, dynamic> decoded =
             json.decode(content) as Map<String, dynamic>;
