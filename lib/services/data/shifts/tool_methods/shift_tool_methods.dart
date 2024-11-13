@@ -2,6 +2,8 @@ import 'dart:async';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:seren_ai_flutter/common/utils/date_time_extension.dart';
+import 'package:seren_ai_flutter/common/utils/date_time_range_extension.dart';
 import 'package:seren_ai_flutter/services/ai_interaction/ai_request/models/requests/ai_info_request_model.dart';
 import 'package:seren_ai_flutter/services/ai_interaction/ai_request/models/requests/ai_request_model.dart';
 import 'package:seren_ai_flutter/services/ai_interaction/ai_request/models/results/ai_request_result_model.dart';
@@ -26,7 +28,6 @@ AiInfoRequestType.shiftLogs
 AiActionRequestType.toggleClockInOrOut
 */
 class ShiftToolMethods {
-
   Future<AiRequestResultModel> getShiftAssignments(
       {required Ref ref,
       required ShiftAssignmentsRequestModel infoRequest}) async {
@@ -55,11 +56,20 @@ class ShiftToolMethods {
       shiftAssignments[day] = timeRangesForDay;
     }));
 
+    Duration totalDuration = Duration.zero;
+    for (final ranges in shiftAssignments.values) {
+      for (final range in ranges) {
+        totalDuration += range.duration;
+      }
+    }
+    final totalDurationStr = 'Total assigned hours: ${totalDuration.inHours}h ${totalDuration.inMinutes % 60}m';
+
     return ShiftAssignmentsResultModel(
       shiftAssignments: shiftAssignments,
+      totalShiftMinutes: totalDuration.inMinutes,
       resultForAi: shiftAssignments.isEmpty
           ? 'No shift assignments in requested range.'
-          : 'Shift assignments: ${shiftAssignments.entries.map((entry) => '${entry.key.toLocal()} - ${entry.value.map((range) => '${range.start.toLocal()} - ${range.end.toLocal()}').join('\n')}').join('\n')}',
+          : 'Shift assignments: ${shiftAssignments.entries.map((entry) => '${entry.key.toLocal().toSimpleDateString()} - ${entry.value.map((range) => range.getReadableTimeOnly()).join('\n')}').join('\n')}\n$totalDurationStr',
       showOnly: infoRequest.showOnly,
     );
   }
@@ -90,11 +100,34 @@ class ShiftToolMethods {
 
       shiftLogs[day] = shiftLogsForDay;
     }));
+    Duration? curShiftDuration;
+    Duration totalLogDuration = Duration.zero;
+    // If there is open shift log, calculate duration so far
+    for (final logs in shiftLogs.values) {
+      for (final log in logs) {
+        if (log.clockOutDatetime == null) {
+          curShiftDuration =
+              DateTime.now().toUtc().difference(log.clockInDatetime.toUtc());
+        } else {
+          totalLogDuration +=
+              log.clockOutDatetime!.difference(log.clockInDatetime);
+        }
+      }
+    }
+
+    final totalDurationStr =
+        'Total logged hours: ${totalLogDuration.inHours}h ${totalLogDuration.inMinutes % 60}m';
+    final curDurationStr = curShiftDuration != null
+        ? 'Current shift duration: ${curShiftDuration.inHours}h ${curShiftDuration.inMinutes % 60}m'
+        : '';
+
     return ShiftLogsResultModel(
       shiftLogs: shiftLogs,
+      curShiftMinutes: curShiftDuration?.inMinutes,
+      totalLogMinutes: totalLogDuration.inMinutes,
       resultForAi: shiftLogs.isEmpty
           ? 'No shift logs in requested range.'
-          : 'Shift logs: ${shiftLogs.entries.map((entry) => '${entry.key.toLocal()} - ${entry.value.map((log) => '${log.clockInDatetime.toLocal()} - ${log.clockOutDatetime?.toLocal() ?? 'ONGOING'}').join('\n')}').join('\n')}',
+          : 'Shift logs: ${shiftLogs.entries.map((entry) => '${entry.key.toLocal().toSimpleDateString()} - ${entry.value.map((log) => '${log.clockInDatetime.toLocal().toSimpleTimeString()} - ${log.clockOutDatetime?.toLocal().toSimpleTimeString() ?? 'ONGOING'}').join('\n')}').join('\n')}\n$totalDurationStr${curShiftDuration != null ? '\n$curDurationStr' : ''}',
       showOnly: infoRequest.showOnly,
     );
   }

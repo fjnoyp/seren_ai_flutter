@@ -22,6 +22,7 @@ void main() {
 
       final model = ShiftAssignmentsResultModel(
         shiftAssignments: shiftAssignments,
+        totalShiftMinutes: 100,
         resultForAi: 'Sample result for AI',
         showOnly: true,
       );

@@ -68,6 +68,18 @@ class ShiftLogsResultWidget extends ConsumerWidget {
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
         Text('Requested Shift Logs', style: theme.textTheme.titleMedium),
+        const SizedBox(height: 4),
+        Text(
+          'Total Hours: ${result.totalLogMinutes ~/ 60}h ${result.totalLogMinutes % 60}m',
+          style: theme.textTheme.bodyMedium,
+        ),
+        if (result.curShiftMinutes != null)
+          Text(
+            'Current Shift duration: ${result.curShiftMinutes! ~/ 60}h ${result.curShiftMinutes! % 60}m',
+            style: theme.textTheme.bodyMedium?.copyWith(
+              color: theme.colorScheme.primary,
+            ),
+          ),
         const SizedBox(height: 8),
         ...result.shiftLogs.entries.map((entry) {
           final date = entry.key;
@@ -137,6 +149,11 @@ class ShiftAssignmentsResultWidget extends ConsumerWidget {
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
         Text('Requested Shift Assignments', style: theme.textTheme.titleMedium),
+        const SizedBox(height: 4),
+        Text(
+          'Total assigned hours: ${result.totalShiftMinutes ~/ 60}h ${result.totalShiftMinutes % 60}m',
+          style: theme.textTheme.bodyMedium,
+        ),
         const SizedBox(height: 8),
         ...result.shiftAssignments.entries.map((entry) {
           final date = entry.key;
