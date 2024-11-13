@@ -1,6 +1,7 @@
 import 'package:seren_ai_flutter/services/ai_interaction/ai_request/models/requests/ai_request_model.dart';
 import 'package:seren_ai_flutter/services/data/shifts/tool_methods/models/shift_request_models.dart';
 import 'package:seren_ai_flutter/services/data/tasks/tool_methods/models/task_request_models.dart';
+import 'package:supabase_flutter/supabase_flutter.dart';
 
 /// Subtypes of Info Request Type 
 enum AiInfoRequestType {
@@ -11,7 +12,7 @@ enum AiInfoRequestType {
   final String value;
   const AiInfoRequestType(this.value);
 
-  static AiInfoRequestType fromString(String value) {
+  factory AiInfoRequestType.fromString(String value) {
     return AiInfoRequestType.values.firstWhere(
       (type) => type.value == value,
       orElse: () => throw ArgumentError('Invalid AiInfoRequestType: $value'),
@@ -28,7 +29,7 @@ enum AiInfoRequestType {
     this.showOnly = true,
   }) : super(AiRequestType.infoRequest);
 
-  static AiInfoRequestModel fromJson(Map<String, dynamic> json) {
+  factory AiInfoRequestModel.fromJson(Map<String, dynamic> json) {
 
     final infoRequestType = AiInfoRequestType.fromString(json['info_request_type']);
 
