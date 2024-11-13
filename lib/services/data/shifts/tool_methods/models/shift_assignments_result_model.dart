@@ -2,9 +2,11 @@ import 'package:flutter/material.dart';
 import 'package:seren_ai_flutter/services/ai_interaction/ai_request/models/results/ai_request_result_model.dart';
 class ShiftAssignmentsResultModel extends AiRequestResultModel {
   final Map<DateTime, List<DateTimeRange>> shiftAssignments;
+  final int totalShiftMinutes;
 
   ShiftAssignmentsResultModel({
     required this.shiftAssignments,
+    required this.totalShiftMinutes,
     required super.resultForAi,
     required super.showOnly,
   }) : super(resultType: AiRequestResultType.shiftAssignments);
@@ -21,6 +23,7 @@ class ShiftAssignmentsResultModel extends AiRequestResultModel {
                         ))
                     .toList(),
               )),
+      totalShiftMinutes: json['total_shift_minutes'] ?? 0, // Support old data format
       resultForAi: json['result_for_ai'],
       showOnly: json['show_only'],
     );
@@ -36,6 +39,7 @@ class ShiftAssignmentsResultModel extends AiRequestResultModel {
           'end': range.end.toIso8601String(),
         }).toList(),
       )),
-    });
+        'total_shift_minutes': totalShiftMinutes,
+      });
   }
 }

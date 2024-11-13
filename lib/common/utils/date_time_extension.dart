@@ -29,4 +29,12 @@ extension DateTimeExtension on DateTime {
             .format(targetDate);
     return '$weekdayString ($dateStr)';
   }
+
+  String toSimpleDateString() {
+    return toString().split(' ')[0];
+  }
+
+  String toSimpleTimeString() {
+    return '$hour:${minute.toString().padLeft(2, '0')}';
+  }
 }

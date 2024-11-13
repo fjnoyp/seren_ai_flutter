@@ -21,4 +21,5 @@ extension DateTimeRangeExtension on DateTimeRange {
 
     return '$startHour:$startMinute - $endHour:$endMinute';
   }
+
 }
