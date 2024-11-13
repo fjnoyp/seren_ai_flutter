@@ -33,8 +33,8 @@ class AIChatsPage extends HookConsumerWidget {
         if (isDebugMode.value)
           const AiDebugPage()
         else ...[
-          const ChatThreadDisplay(),
-          const Expanded(child: ChatMessagesDisplay()),
+          const AiChatThreadDisplay(),
+          const Expanded(child: AiChatMessagesDisplay()),
           TextField(
             controller: messageController,
             decoration: InputDecoration(

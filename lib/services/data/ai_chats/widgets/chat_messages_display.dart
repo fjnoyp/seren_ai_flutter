@@ -4,8 +4,8 @@ import 'package:seren_ai_flutter/services/data/ai_chats/providers/cur_user_ai_ch
 import 'package:seren_ai_flutter/services/data/ai_chats/widgets/messages/message_widget.dart';
 import 'package:seren_ai_flutter/services/data/common/widgets/async_value_handler_widget.dart';
 
-class ChatMessagesDisplay extends ConsumerWidget {
-  const ChatMessagesDisplay({super.key});
+class AiChatMessagesDisplay extends ConsumerWidget {
+  const AiChatMessagesDisplay({super.key});
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {

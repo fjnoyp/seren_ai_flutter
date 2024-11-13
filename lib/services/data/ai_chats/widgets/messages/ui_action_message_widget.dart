@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:seren_ai_flutter/common/navigation_service_provider.dart';
+import 'package:seren_ai_flutter/common/routes/app_routes.dart';
 import 'package:seren_ai_flutter/common/utils/string_extension.dart';
 import 'package:seren_ai_flutter/services/ai_interaction/ai_request/models/requests/ai_ui_action_request_model.dart';
 
@@ -19,7 +20,9 @@ class UiActionMessageWidget extends ConsumerWidget {
       ),
       child: InkWell(
         onTap: () => ref.read(navigationServiceProvider).navigateTo(
-              _uiActionRequestModel.route,
+              switch (_uiActionRequestModel.uiActionType) {
+                AiUIActionRequestType.shiftsPage => AppRoutes.shifts.toString(),
+              },
               arguments: _uiActionRequestModel.args,
             ),
         child: Padding(
