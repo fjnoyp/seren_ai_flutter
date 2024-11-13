@@ -21,16 +21,17 @@ class AiRequestExecutor {
 
   Future<AiRequestResultModel> executeAiRequest(
     AiRequestModel aiRequest, {
-    required bool navigate,
+    required bool allowNavigate,
   }) async {
-    final result = await getToolResponseResult(aiRequest, navigate: navigate);
+    final result =
+        await getToolResponseResult(aiRequest, allowNavigate: allowNavigate);
     return result;
   }
 
   // Route ToolResponse to the correct method
   Future<AiRequestResultModel> getToolResponseResult(
     AiRequestModel aiRequest, {
-    required bool navigate,
+    required bool allowNavigate,
   }) async {
     AiRequestResultModel result;
 
@@ -48,7 +49,7 @@ class AiRequestExecutor {
       case AiRequestType.actionRequest:
         result = await _handleActionRequest(
           aiRequest as AiActionRequestModel,
-          navigate: navigate,
+          allowNavigate: allowNavigate,
         );
         break;
 
@@ -97,7 +98,7 @@ class AiRequestExecutor {
 
   Future<AiRequestResultModel> _handleActionRequest(
     AiActionRequestModel actionRequest, {
-    required bool navigate,
+    required bool allowNavigate,
   }) async {
     switch (actionRequest.actionRequestType) {
       case AiActionRequestType.toggleClockInOrOut:
@@ -107,7 +108,7 @@ class AiRequestExecutor {
         return await taskToolMethods.createTask(
             ref: ref,
             actionRequest: actionRequest as CreateTaskRequestModel,
-            autoNavigate: navigate);
+            autoNavigate: allowNavigate);
 
       case AiActionRequestType.updateTaskFields:
         return await taskToolMethods.updateTaskFields(

@@ -185,7 +185,7 @@ class AIChatService {
 
     final result = await aiRequestExecutor.executeAiRequest(
       toolResponses[0],
-      navigate:
+      allowNavigate:
           !ref.read(currentRouteProvider).contains(AppRoutes.aiChats.name),
     );
 
