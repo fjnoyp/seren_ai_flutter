@@ -46,21 +46,18 @@ class JoinedTaskModel {
   }
 
   factory JoinedTaskModel.fromJson(Map<String, dynamic> json) {
-    final taskJson = jsonDecode(json['task']);
-    final authorUserJson = jsonDecode(json['author_user']);
-    final projectJson = jsonDecode(json['project']);
-    final decodedAssignees = jsonDecode(json['assignees']);
+    final task = TaskModel.fromJson(json['task']);
+    final authorUser = UserModel.fromJson(json['author_user']);
+    final project = ProjectModel.fromJson(json['project']);
+    final decodedAssignees = json['assignees'] as List<dynamic>;
     final assigneesJson = decodedAssignees.first == null
         ? []
         : decodedAssignees;
-    final decodedComments = jsonDecode(json['comments']);
+    final decodedComments = json['comments'] as List<dynamic>;
     final commentsJson = decodedComments.first == null
         ? []
         : decodedComments;
 
-    final task = TaskModel.fromJson(taskJson);
-    final authorUser = UserModel.fromJson(authorUserJson);
-    final project = ProjectModel.fromJson(projectJson);
     final assignees = <UserModel>[
       ...assigneesJson.map((e) => UserModel.fromJson(e))
     ];
