@@ -12,7 +12,7 @@ enum AiActionRequestType {
   final String value;
   const AiActionRequestType(this.value);
 
-  static AiActionRequestType fromString(String value) {
+  factory AiActionRequestType.fromString(String value) {
     return AiActionRequestType.values.firstWhere(
       (type) => type.value == value,
       orElse: () => throw ArgumentError('Invalid AiActionRequestType: $value'),
@@ -29,7 +29,7 @@ class AiActionRequestModel extends AiRequestModel {
     super.args,
   }) : super(AiRequestType.actionRequest);
 
-  static AiActionRequestModel fromJson(Map<String, dynamic> json) {
+  factory AiActionRequestModel.fromJson(Map<String, dynamic> json) {
     final actionRequestType =
         AiActionRequestType.fromString(json['action_request_type']);
 
