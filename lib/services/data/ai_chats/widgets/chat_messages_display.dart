@@ -17,10 +17,7 @@ class ChatMessagesDisplay extends ConsumerWidget {
             : ListView.builder(
                 itemCount: chatMessages.length,
                 itemBuilder: (context, index) =>
-                    // Uncomment below to compare ui changes
-
                     AiChatMessageWidget(message: chatMessages[index]),
-                // AiChatMessageViewCard(message: chatMessages[index]),
                 reverse: true,
               );
       },
