@@ -39,12 +39,12 @@ enum AiInfoRequestType {
         return ShiftLogsRequestModel.fromJson(json);
       case AiInfoRequestType.findTasks:
         return FindTasksRequestModel.fromJson(json);
-      default:
-        return AiInfoRequestModel(
-          infoRequestType: infoRequestType,
-          args: json['args'],
-          showOnly: json['show_only'] ?? true,
-        );
+      // default:
+      //   return AiInfoRequestModel(
+      //     infoRequestType: infoRequestType,
+      //     args: json['args'],
+      //     showOnly: json['show_only'] ?? true,
+      //   );
         //throw ArgumentError('Invalid AiInfoRequestType: ${json['info_request_type']}');
     }
   }

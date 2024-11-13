@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:logging/logging.dart';
+import 'package:seren_ai_flutter/common/navigation_service_provider.dart';
 import 'package:seren_ai_flutter/common/routes/app_routes.dart';
 import 'package:seren_ai_flutter/services/auth/cur_auth_state_provider.dart';
 import 'package:seren_ai_flutter/services/data/common/widgets/editablePageModeEnum.dart';
@@ -180,12 +181,14 @@ class TaskPage extends HookConsumerWidget {
 }
 
 // TODO p3: figure out how to remove code duplication due to WidgetRef vs Ref
-Future<void> openBlankTaskPage(BuildContext context, Ref ref) async {
-  Navigator.popUntil(context, (route) => route.settings.name != AppRoutes.taskPage.name);
+Future<void> openBlankTaskPage(Ref ref) async {
+  final navigationService = ref.read(navigationServiceProvider);
+
+  navigationService.popUntil((route) => route.settings.name != AppRoutes.taskPage.name);
 
   ref.read(curTaskServiceProvider).createTask();
 
-  await Navigator.pushNamed(context, AppRoutes.taskPage.name,
+  await navigationService.navigateTo(AppRoutes.taskPage.name,
       arguments: {'mode': EditablePageMode.create});
 }
 
