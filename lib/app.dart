@@ -67,7 +67,7 @@ class AppState extends State<App> {
           darkTheme: darkTheme,
           themeMode: themeMode,
           initialRoute: AppRoutes.home.name,
-          // Context-less navigation setup 
+          // Context-less navigation setup
           navigatorKey: ref.read(navigationServiceProvider).navigatorKey,
           // Watching current route setup
           navigatorObservers: [
@@ -104,10 +104,12 @@ class AppState extends State<App> {
             },
             AppRoutes.aiChats.name: (context) => _GuardScaffold(
                 AppLocalizations.of(context)!.aiChatThreads,
-                const AIChatsPage()),
+                const AIChatsPage(),
+                showBottomBar: false),
             AppRoutes.shifts.name: (context) => _GuardScaffold(
                 AppLocalizations.of(context)!.shifts, const ShiftsPage()),
-            AppRoutes.test.name: (context) => const _GuardScaffold('Test', TestPage()),
+            AppRoutes.test.name: (context) =>
+                const _GuardScaffold('Test', TestPage()),
             AppRoutes.testSQLPage.name: (context) => _GuardScaffold(
                 AppLocalizations.of(context)!.testSQL, TestSQLPage()),
             AppRoutes.noteList.name: (context) => _GuardScaffold(
@@ -209,17 +211,28 @@ class _AuthGuardScaffold extends StatelessWidget {
 }
 
 class _GuardScaffold extends StatelessWidget {
-  const _GuardScaffold(this.title, this.body, {this.actions});
+  const _GuardScaffold(
+    this.title,
+    this.body, {
+    this.actions,
+    this.showBottomBar = true,
+  });
 
   final String title;
   final Widget body;
   final List<Widget>? actions;
+  final bool showBottomBar;
 
   @override
   Widget build(BuildContext context) {
     return AuthGuard(
       child: OrgGuard(
-        child: MainScaffold(title: title, body: body, actions: actions),
+        child: MainScaffold(
+          title: title,
+          body: body,
+          actions: actions,
+          showBottomBar: showBottomBar,
+        ),
       ),
     );
   }

@@ -2,6 +2,7 @@
 
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:intl/intl.dart';
 import 'package:seren_ai_flutter/common/utils/date_time_extension.dart';
 import 'package:seren_ai_flutter/common/utils/date_time_range_extension.dart';
 import 'package:seren_ai_flutter/services/data/shifts/tool_methods/models/shift_assignments_result_model.dart';
@@ -41,7 +42,7 @@ class ShiftClockInOutResultWidget extends ConsumerWidget {
     return Row(
       children: [
         Icon(
-          result.clockedIn ? Icons.login : Icons.logout,          
+          result.clockedIn ? Icons.login : Icons.logout,
         ),
         const SizedBox(width: 8),
         Expanded(
@@ -79,7 +80,7 @@ class ShiftLogsResultWidget extends ConsumerWidget {
                 crossAxisAlignment: CrossAxisAlignment.stretch,
                 children: [
                   Text(
-                    date.toLocal().getReadableDayOnly(),
+                    date.toLocal().getReadableDayOnly(context),
                     style: theme.textTheme.titleSmall,
                   ),
                   if (logs.isNotEmpty)
@@ -100,8 +101,8 @@ class ShiftLogsResultWidget extends ConsumerWidget {
                             Expanded(
                               child: Text(
                                 isOngoing
-                                    ? '${log.clockInDatetime.toLocal().getReadableTimeOnly()} - ONGOING'
-                                    : '${log.clockInDatetime.toLocal().getReadableTimeOnly()} - ${log.clockOutDatetime!.toLocal().getReadableTimeOnly()}',
+                                    ? '${DateFormat.Hm().format(log.clockInDatetime.toLocal())} - ONGOING'
+                                    : '${DateFormat.Hm().format(log.clockInDatetime.toLocal())} - ${DateFormat.Hm().format(log.clockOutDatetime!.toLocal())}',
                                 style: theme.textTheme.bodyMedium,
                               ),
                             ),
@@ -155,7 +156,7 @@ class ShiftAssignmentsResultWidget extends ConsumerWidget {
                       children: [
                         // Date Display
                         Text(
-                          date.toLocal().getReadableDayOnly(),
+                          date.toLocal().getReadableDayOnly(context),
                           style: theme.textTheme.titleSmall,
                         ),
                         // Range(s) Display

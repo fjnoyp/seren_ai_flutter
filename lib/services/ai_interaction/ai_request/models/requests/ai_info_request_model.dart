@@ -1,9 +1,8 @@
 import 'package:seren_ai_flutter/services/ai_interaction/ai_request/models/requests/ai_request_model.dart';
 import 'package:seren_ai_flutter/services/data/shifts/tool_methods/models/shift_request_models.dart';
 import 'package:seren_ai_flutter/services/data/tasks/tool_methods/models/task_request_models.dart';
-import 'package:supabase_flutter/supabase_flutter.dart';
 
-/// Subtypes of Info Request Type 
+/// Subtypes of Info Request Type
 enum AiInfoRequestType {
   shiftAssignments('shift_assignments'),
   shiftLogs('shift_logs'),
@@ -19,10 +18,11 @@ enum AiInfoRequestType {
     );
   }
 }
- class AiInfoRequestModel extends AiRequestModel {
-  final AiInfoRequestType infoRequestType;  
+
+class AiInfoRequestModel extends AiRequestModel {
+  final AiInfoRequestType infoRequestType;
   final bool showOnly;
-  
+
   AiInfoRequestModel({
     required this.infoRequestType,
     super.args,
@@ -30,23 +30,16 @@ enum AiInfoRequestType {
   }) : super(AiRequestType.infoRequest);
 
   factory AiInfoRequestModel.fromJson(Map<String, dynamic> json) {
+    final infoRequestType =
+        AiInfoRequestType.fromString(json['info_request_type']);
 
-    final infoRequestType = AiInfoRequestType.fromString(json['info_request_type']);
-
-    switch(infoRequestType) {
+    switch (infoRequestType) {
       case AiInfoRequestType.shiftAssignments:
         return ShiftAssignmentsRequestModel.fromJson(json);
       case AiInfoRequestType.shiftLogs:
         return ShiftLogsRequestModel.fromJson(json);
       case AiInfoRequestType.findTasks:
         return FindTasksRequestModel.fromJson(json);
-      // default:
-      //   return AiInfoRequestModel(
-      //     infoRequestType: infoRequestType,
-      //     args: json['args'],
-      //     showOnly: json['show_only'] ?? true,
-      //   );
-        //throw ArgumentError('Invalid AiInfoRequestType: ${json['info_request_type']}');
     }
   }
 

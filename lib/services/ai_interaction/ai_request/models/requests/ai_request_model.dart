@@ -1,12 +1,10 @@
-
-
 import 'dart:convert';
 
 import 'package:seren_ai_flutter/services/ai_interaction/ai_request/models/requests/ai_action_request_model.dart';
 import 'package:seren_ai_flutter/services/ai_interaction/ai_request/models/requests/ai_info_request_model.dart';
 import 'package:seren_ai_flutter/services/ai_interaction/ai_request/models/requests/ai_ui_action_request_model.dart';
 
-/// Type of Request from AI 
+/// Type of Request from AI
 enum AiRequestType {
   uiAction('ui_action_request'),
   infoRequest('info_request'),
@@ -23,7 +21,6 @@ enum AiRequestType {
   }
 }
 
-
 /// Represent an Ai Request for an action, info, or ui action
 abstract class AiRequestModel {
   final AiRequestType requestType;
@@ -31,7 +28,7 @@ abstract class AiRequestModel {
 
   AiRequestModel(this.requestType, {this.args});
 
-  static AiRequestModel fromJson(Map<String, dynamic> json) {
+  factory AiRequestModel.fromJson(Map<String, dynamic> json) {
     final requestType = AiRequestType.fromString(json['request_type']);
 
     switch (requestType) {
@@ -51,17 +48,3 @@ abstract class AiRequestModel {
     return jsonList.map((json) => AiRequestModel.fromJson(json)).toList();
   }
 }
-
-
-// Unknown AI Request Model Type 
-// class UnknownAiRequestModel extends AiRequestModel {
-//   UnknownAiRequestModel({
-//     super.args,
-//   }) : super(AiRequestType.uiAction);
-
-//   static UnknownAiRequestModel fromJson(Map<String, dynamic> json) {
-//     return UnknownAiRequestModel(
-//       args: json['args'],
-//     );
-//   }
-// }

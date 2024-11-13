@@ -13,7 +13,6 @@ import 'package:seren_ai_flutter/services/text_to_speech/text_to_speech_service.
 final textFieldVisibilityProvider = StateProvider<bool>((ref) => false);
 
 /// Class to display user's voice input or manual text input
-///
 class UserInputDisplayWidget extends ConsumerWidget {
   const UserInputDisplayWidget(this.isAiAssistantExpanded, {super.key});
 
