@@ -9,21 +9,34 @@ AiActionRequestType.deleteTask
 AiActionRequestType.assignUserToTask
 */
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:path/path.dart';
+import 'package:path/path.dart';
+import 'package:seren_ai_flutter/common/navigation_service_provider.dart';
+import 'package:seren_ai_flutter/common/routes/app_routes.dart';
 import 'package:seren_ai_flutter/services/ai_interaction/ai_request/models/results/ai_request_result_model.dart';
 import 'package:seren_ai_flutter/services/ai_interaction/ai_request/models/results/error_request_result_model.dart';
 import 'package:seren_ai_flutter/services/auth/cur_auth_state_provider.dart';
+import 'package:seren_ai_flutter/services/data/common/status_enum.dart';
 import 'package:seren_ai_flutter/services/data/common/utils/string_similarity_extension.dart';
+import 'package:seren_ai_flutter/services/data/common/widgets/editablePageModeEnum.dart';
+import 'package:seren_ai_flutter/services/data/tasks/models/joined_task_model.dart';
+import 'package:seren_ai_flutter/services/data/tasks/models/task_model.dart';
+import 'package:seren_ai_flutter/services/data/tasks/providers/cur_task_service_provider.dart';
 import 'package:seren_ai_flutter/services/data/tasks/repositories/joined_task_repository.dart';
 import 'package:seren_ai_flutter/services/data/tasks/repositories/tasks_repository.dart';
+import 'package:seren_ai_flutter/services/data/tasks/tool_methods/models/create_task_result_model.dart';
 import 'package:seren_ai_flutter/services/data/tasks/tool_methods/models/find_tasks_result_model.dart';
 import 'package:seren_ai_flutter/services/data/tasks/tool_methods/models/task_request_models.dart';
 import 'dart:math';
+
+import 'package:seren_ai_flutter/services/data/tasks/widgets/task_page.dart';
 
 class TaskToolMethods {
   // Threshold for string similarity (0.0 to 1.0)
   static const double _similarityThreshold = 0.6;
   static const double _differenceThreshold = 0.8;
 
+  // TODO p2: switch to pagination + db based FTS + semantic search
   Future<AiRequestResultModel> findTasks(
       {required Ref ref, required FindTasksRequestModel infoRequest}) async {
     final userId = _getUserId(ref);
@@ -151,12 +164,55 @@ class TaskToolMethods {
     );
   }
 
-  Future<AiRequestResultModel> createTask(
-      {required Ref ref, required CreateTaskRequestModel actionRequest}) async {
-    return ErrorRequestResultModel(
-        resultForAi: 'Not implemented for request: ${actionRequest.toString()}',
-        showOnly: true);
-  }
+Future<AiRequestResultModel> createTask(
+    {required Ref ref, required CreateTaskRequestModel actionRequest}) async {
+  final userId = _getUserId(ref);
+  if (userId == null) return _handleNoAuth();
+
+  // Create a new task with fields from the request
+  final task = TaskModel(
+    id: DateTime.now().millisecondsSinceEpoch.toString(), // Temporary ID
+    name: actionRequest.taskName,
+    description: actionRequest.taskDescription,
+    dueDate: DateTime.parse(actionRequest.taskDueDate),
+    status: StatusEnum.open,
+    priority: PriorityEnum.values.firstWhere(
+      (p) => p.name.toLowerCase() == actionRequest.taskPriority.toLowerCase(),
+      orElse: () => PriorityEnum.normal,
+    ),
+    estimatedDurationMinutes: actionRequest.estimateDurationMinutes,
+    authorUserId: userId,
+    parentProjectId: '', // Will be set later in UI
+    createdAt: DateTime.now().toUtc(),
+    updatedAt: DateTime.now().toUtc(),
+  );
+
+  // Create a joined task model
+  final joinedTask = JoinedTaskModel(
+    task: task,
+    authorUser: ref.read(curUserProvider).value,
+    project: null, // Will be set in UI
+    assignees: [], // Will be set in UI
+    comments: [],
+  );
+
+  // Set the task in the current task service
+  final curTaskService = ref.read(curTaskServiceProvider);
+  curTaskService.loadTask(joinedTask);
+
+  // Navigate to task page in create mode
+  final navigationService = ref.read(navigationServiceProvider);
+  navigationService.navigateTo(
+    AppRoutes.taskPage.name, 
+    arguments: {'mode': EditablePageMode.create}
+  );
+
+  return CreateTaskResultModel(
+    joinedTask: joinedTask,
+    resultForAi: 'Created new task "${task.name}" and opened edit page',
+    showOnly: true,
+  );
+}
 
   Future<AiRequestResultModel> updateTaskFields(
       {required Ref ref,

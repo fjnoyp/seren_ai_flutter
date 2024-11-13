@@ -9,6 +9,7 @@ enum AiRequestResultType {
   shiftLogs('shift_logs'), 
   shiftClockInOut('shift_clock_in_out'),
   findTasks('find_tasks'),
+  createTask('create_task'),
   error('error');  
   //unknown('unknown');
 

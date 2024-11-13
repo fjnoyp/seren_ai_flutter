@@ -5,6 +5,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:logging/logging.dart';
 import 'package:seren_ai_flutter/common/current_route_provider.dart';
 import 'package:seren_ai_flutter/common/language_provider.dart';
+import 'package:seren_ai_flutter/common/navigation_service_provider.dart';
 import 'package:seren_ai_flutter/common/routes/app_routes.dart';
 import 'package:seren_ai_flutter/services/auth/widgets/auth_guard.dart';
 import 'package:seren_ai_flutter/services/auth/widgets/sign_in_up_page.dart';
@@ -66,6 +67,9 @@ class AppState extends State<App> {
           darkTheme: darkTheme,
           themeMode: themeMode,
           initialRoute: AppRoutes.home.name,
+          // Context-less navigation setup 
+          navigatorKey: ref.read(navigationServiceProvider).navigatorKey,
+          // Watching current route setup
           navigatorObservers: [
             CurrentRouteObserver(ref.read(currentRouteProvider.notifier))
           ],
