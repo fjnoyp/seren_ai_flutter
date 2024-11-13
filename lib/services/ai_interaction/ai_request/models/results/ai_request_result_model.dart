@@ -48,7 +48,7 @@ Map<String, dynamic> toJson() {
   }
 
   // Static factory method for deserialization
-  static AiRequestResultModel fromJson(Map<String, dynamic> json) {
+  factory AiRequestResultModel.fromJson(Map<String, dynamic> json) {
     final resultType = AiRequestResultType.fromString(json['result_type']);
     
     switch (resultType) {
