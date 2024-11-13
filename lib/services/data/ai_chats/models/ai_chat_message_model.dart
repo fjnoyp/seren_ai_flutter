@@ -126,8 +126,6 @@ class AiChatMessageModel extends AiResult implements IHasId  {
     return null;
   }
 
-  // TODO isAiResult / getAiResults for the answer 
-
   AiChatMessageModel copyWith({
     String? id,
     AiChatMessageType? type,

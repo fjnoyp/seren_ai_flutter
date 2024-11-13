@@ -51,3 +51,17 @@ abstract class AiRequestModel {
     return jsonList.map((json) => AiRequestModel.fromJson(json)).toList();
   }
 }
+
+
+// Unknown AI Request Model Type 
+// class UnknownAiRequestModel extends AiRequestModel {
+//   UnknownAiRequestModel({
+//     super.args,
+//   }) : super(AiRequestType.uiAction);
+
+//   static UnknownAiRequestModel fromJson(Map<String, dynamic> json) {
+//     return UnknownAiRequestModel(
+//       args: json['args'],
+//     );
+//   }
+// }

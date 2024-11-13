@@ -1,3 +1,4 @@
+import 'package:seren_ai_flutter/services/ai_interaction/ai_request/models/results/error_request_result_model.dart';
 import 'package:seren_ai_flutter/services/ai_interaction/last_ai_message_listener_provider.dart';
 import 'package:seren_ai_flutter/services/data/shifts/tool_methods/models/shift_assignments_result_model.dart';
 import 'package:seren_ai_flutter/services/data/shifts/tool_methods/models/shift_clock_in_out_result_model.dart';
@@ -7,7 +8,9 @@ enum AiRequestResultType {
   shiftAssignments('shift_assignments'),
   shiftLogs('shift_logs'), 
   shiftClockInOut('shift_clock_in_out'),
+  findTasks('find_tasks'),
   error('error');  
+  //unknown('unknown');
 
   final String value;
   const AiRequestResultType(this.value);
@@ -55,8 +58,9 @@ Map<String, dynamic> toJson() {
       case AiRequestResultType.shiftClockInOut:
         return ShiftClockInOutResultModel.fromJson(json);
       default:
-        throw Exception('Unknown type for AiRequestResultModel: $resultType');
+        return ErrorRequestResultModel.fromJson(json);
+        //throw Exception('Unknown type for AiRequestResultModel: $resultType');
     }
   }
-
 }
+
