@@ -26,7 +26,7 @@ import 'package:seren_ai_flutter/services/data/tasks/tool_methods/models/find_ta
 import 'package:seren_ai_flutter/services/data/tasks/tool_methods/tool_result_widgets.dart';
 
 class AiChatMessageViewCard extends HookWidget {
-  final AiChatMessageModel message;
+  final AiChatMessageModel message;  
 
   const AiChatMessageViewCard({super.key, required this.message});
 
@@ -35,6 +35,11 @@ class AiChatMessageViewCard extends HookWidget {
     final isDebugMode = useState(false);
     final displayType = message.getDisplayType();
     final theme = Theme.of(context);
+
+    // Exception case for empty messages
+    if (message.content.isEmpty) {
+      return const SizedBox.shrink();
+    }
 
     return Card(
       shape: RoundedRectangleBorder(

@@ -159,60 +159,65 @@ class TaskToolMethods {
 
     return FindTasksResultModel(
       tasks: filteredTasks,
-      resultForAi: 'Found ${filteredTasks.length} matching tasks: ${filteredTasks.map((task) => task.toReadableMap()).toList()}',
+      resultForAi:
+          'Found ${filteredTasks.length} matching tasks: ${filteredTasks.map((task) => task.toReadableMap()).toList()}',
       showOnly: infoRequest.showOnly,
     );
   }
 
-Future<AiRequestResultModel> createTask(
-    {required Ref ref, required CreateTaskRequestModel actionRequest}) async {
-  final userId = _getUserId(ref);
-  if (userId == null) return _handleNoAuth();
+  Future<AiRequestResultModel> createTask(
+      {required Ref ref,
+      required CreateTaskRequestModel actionRequest,
+      required bool allowToolUiActions}) async {
+    final userId = _getUserId(ref);
+    if (userId == null) return _handleNoAuth();
 
-  // Create a new task with fields from the request
-  final task = TaskModel(
-    id: DateTime.now().millisecondsSinceEpoch.toString(), // Temporary ID
-    name: actionRequest.taskName,
-    description: actionRequest.taskDescription,
-    dueDate: DateTime.parse(actionRequest.taskDueDate),
-    status: StatusEnum.open,
-    priority: PriorityEnum.values.firstWhere(
-      (p) => p.name.toLowerCase() == actionRequest.taskPriority.toLowerCase(),
-      orElse: () => PriorityEnum.normal,
-    ),
-    estimatedDurationMinutes: actionRequest.estimateDurationMinutes,
-    authorUserId: userId,
-    parentProjectId: '', // Will be set later in UI
-    createdAt: DateTime.now().toUtc(),
-    updatedAt: DateTime.now().toUtc(),
-  );
+    // Create a new task with fields from the request
+    final task = TaskModel(
+      id: DateTime.now().millisecondsSinceEpoch.toString(), // Temporary ID
+      name: actionRequest.taskName,
+      description: actionRequest.taskDescription,
+      dueDate: DateTime.parse(actionRequest.taskDueDate),
+      status: StatusEnum.open,
+      priority: PriorityEnum.values.firstWhere(
+        (p) => p.name.toLowerCase() == actionRequest.taskPriority.toLowerCase(),
+        orElse: () => PriorityEnum.normal,
+      ),
+      estimatedDurationMinutes: actionRequest.estimateDurationMinutes,
+      authorUserId: userId,
+      parentProjectId: '', // Will be set later in UI
+      createdAt: DateTime.now().toUtc(),
+      updatedAt: DateTime.now().toUtc(),
+    );
 
-  // Create a joined task model
-  final joinedTask = JoinedTaskModel(
-    task: task,
-    authorUser: ref.read(curUserProvider).value,
-    project: null, // Will be set in UI
-    assignees: [], // Will be set in UI
-    comments: [],
-  );
+    // Create a joined task model
+    final joinedTask = JoinedTaskModel(
+      task: task,
+      authorUser: ref.read(curUserProvider).value,
+      project: null, // Will be set in UI
+      assignees: [], // Will be set in UI
+      comments: [],
+    );
 
-  // Set the task in the current task service
-  final curTaskService = ref.read(curTaskServiceProvider);
-  curTaskService.loadTask(joinedTask);
+    // Set the task in the current task service
+    final curTaskService = ref.read(curTaskServiceProvider);
+    curTaskService.loadTask(joinedTask);
 
-  // Navigate to task page in create mode
-  final navigationService = ref.read(navigationServiceProvider);
-  navigationService.navigateTo(
-    AppRoutes.taskPage.name, 
-    arguments: {'mode': EditablePageMode.create}
-  );
+    // Navigate to task page in create mode
+    if (allowToolUiActions) {
+      final navigationService = ref.read(navigationServiceProvider);
+      navigationService.navigateTo(AppRoutes.taskPage.name,
+          arguments: {'mode': EditablePageMode.create});
+    }
 
-  return CreateTaskResultModel(
-    joinedTask: joinedTask,
-    resultForAi: 'Created new task "${task.name}" and opened edit page',
-    showOnly: true,
-  );
-}
+    return CreateTaskResultModel(
+      joinedTask: joinedTask,
+      resultForAi: allowToolUiActions 
+          ? 'Created new task "${task.name}" and opened edit page' 
+          : 'Created new task "${task.name}", but UI actions are not allowed',
+      showOnly: true,
+    );
+  }
 
   Future<AiRequestResultModel> updateTaskFields(
       {required Ref ref,

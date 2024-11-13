@@ -48,8 +48,9 @@ class AiResultsWidget extends HookConsumerWidget {
                     mainAxisSize: MainAxisSize.min,
                     crossAxisAlignment: CrossAxisAlignment.stretch,
                     children: [
-                      for (final result in lastAiResults)
-                        DisplayAiResult(aiResult: result),
+                      for (final aiChatMessage in lastAiResults)
+                        if (aiChatMessage.getDisplayType() != AiChatMessageDisplayType.toolAiRequest)
+                          DisplayAiResult(aiChatMessage: aiChatMessage),
                     ],
                   ),
                 ),
@@ -70,11 +71,11 @@ class AiResultsWidget extends HookConsumerWidget {
 }
 
 class DisplayAiResult extends ConsumerWidget {
-  final AiResult aiResult;
-  const DisplayAiResult({super.key, required this.aiResult});
+  final AiChatMessageModel aiChatMessage;
+  const DisplayAiResult({super.key, required this.aiChatMessage});
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    return AiChatMessageViewCard(message: aiResult as AiChatMessageModel);
+    return AiChatMessageViewCard(message: aiChatMessage);
   }
 }

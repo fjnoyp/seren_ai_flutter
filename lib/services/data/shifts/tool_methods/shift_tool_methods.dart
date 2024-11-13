@@ -3,6 +3,7 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:seren_ai_flutter/services/ai_interaction/ai_request/models/requests/ai_info_request_model.dart';
+import 'package:seren_ai_flutter/services/ai_interaction/ai_request/models/requests/ai_request_model.dart';
 import 'package:seren_ai_flutter/services/ai_interaction/ai_request/models/results/ai_request_result_model.dart';
 import 'package:seren_ai_flutter/services/ai_interaction/ai_request/models/results/error_request_result_model.dart';
 import 'package:seren_ai_flutter/services/auth/cur_auth_state_provider.dart';
@@ -25,6 +26,7 @@ AiInfoRequestType.shiftLogs
 AiActionRequestType.toggleClockInOrOut
 */
 class ShiftToolMethods {
+
   Future<AiRequestResultModel> getShiftAssignments(
       {required Ref ref,
       required ShiftAssignmentsRequestModel infoRequest}) async {
