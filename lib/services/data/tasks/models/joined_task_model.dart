@@ -77,6 +77,31 @@ class JoinedTaskModel {
     );
   }
 
+  Map<String, dynamic> toJson() {
+    return {
+      'task': task.toJson(),
+      'author_user': authorUser?.toJson(),
+      'project': project?.toJson(),
+      'assignees': assignees.map((e) => e.toJson()).toList(),
+      'comments': comments.map((e) => e.toJson()).toList(),
+    };
+  }
+
   bool get isValidTask =>
       task.name.isNotEmpty && task.parentProjectId.isNotEmpty;
+
+  Map<String, dynamic> toReadableMap() {
+    return {
+      'task': {
+        'name': task.name,
+        'description': task.description,
+        'status': task.status,
+        'priority': task.priority,
+        'due_date': task.dueDate?.toIso8601String(),
+      },
+      'author': authorUser?.email ?? 'Unknown',
+      'project': project?.name ?? 'No Project',
+      'assignees': assignees.map((user) => user.email).toList(),
+    };
+  }
 }

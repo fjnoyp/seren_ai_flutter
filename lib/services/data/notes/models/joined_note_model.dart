@@ -82,4 +82,12 @@ class JoinedNoteModel {
 
     return JoinedNoteModel(note: note, authorUser: authorUser, project: project);
   }
+
+  Map<String, dynamic> toReadableMap() {
+    return {
+      'note': note.toJson(),
+      'author': authorUser?.email ?? 'Unknown',
+      'project': project?.name ?? 'No Project',
+    };
+  }
 }

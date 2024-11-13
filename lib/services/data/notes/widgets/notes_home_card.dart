@@ -15,7 +15,7 @@ class NotesCard extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final curUser = ref.read(curUserProvider).value;
-    // TODO: maybe we should show personal notes here too
+    // TODO p3: maybe we should show personal notes here too
 
     return BaseHomeCard(
       title: AppLocalizations.of(context)!.notes,

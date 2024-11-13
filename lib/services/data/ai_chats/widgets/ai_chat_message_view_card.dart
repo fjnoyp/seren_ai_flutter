@@ -20,7 +20,9 @@ import 'package:seren_ai_flutter/services/data/common/widgets/async_value_handle
 import 'package:seren_ai_flutter/services/data/shifts/tool_methods/models/shift_assignments_result_model.dart';
 import 'package:seren_ai_flutter/services/data/shifts/tool_methods/models/shift_clock_in_out_result_model.dart';
 import 'package:seren_ai_flutter/services/data/shifts/tool_methods/models/shift_log_results_model.dart';
-import 'package:seren_ai_flutter/services/data/shifts/widgets/shift_ai_request_result_widgets.dart';
+import 'package:seren_ai_flutter/services/data/shifts/tool_methods/shift_result_widgets.dart';
+import 'package:seren_ai_flutter/services/data/tasks/tool_methods/models/find_tasks_result_model.dart';
+import 'package:seren_ai_flutter/services/data/tasks/tool_methods/tool_result_widgets.dart';
 
 class AiChatMessageViewCard extends HookWidget {
   final AiChatMessageModel message;
@@ -101,7 +103,7 @@ class AiChatMessageViewCard extends HookWidget {
                     AiChatMessageDisplayType.toolAiRequest =>
                       _buildAiRequestWidget(message.getAiRequest()!, context),
                     AiChatMessageDisplayType.toolAiResult =>
-                      _buildAiRequestResultWidget(message.getAiResult()!),
+                      _buildAiRequestResultWidget(message.getAiResult()!, context),
                     AiChatMessageDisplayType.tool => Text(message.content),
                   },
               ],
@@ -210,7 +212,7 @@ class AiChatMessageViewCard extends HookWidget {
     );
   }
 
-  Widget _buildAiRequestResultWidget(AiRequestResultModel result) {
+  Widget _buildAiRequestResultWidget(AiRequestResultModel result, BuildContext context) {
     Widget icon = const Icon(Icons.info,
         size: 24.0); // Small icon to indicate result type
     return Column(
@@ -224,7 +226,9 @@ class AiChatMessageViewCard extends HookWidget {
             ShiftLogsResultWidget(result: result as ShiftLogsResultModel),
           AiRequestResultType.shiftClockInOut => ShiftClockInOutResultWidget(
               result: result as ShiftClockInOutResultModel),
-          AiRequestResultType.error => Text(result.resultForAi),
+          AiRequestResultType.findTasks => FindTasksResultWidget(
+              result: result as FindTasksResultModel),
+          AiRequestResultType.error => Text(result.resultForAi)
         },
       ],
     );

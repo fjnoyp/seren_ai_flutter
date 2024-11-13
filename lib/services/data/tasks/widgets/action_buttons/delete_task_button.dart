@@ -10,7 +10,7 @@ class DeleteTaskButton extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     return IconButton(
       icon: const Icon(Icons.delete),
-      // TODO: show a confirmation dialog before deleting
+      // TODO p2: show a confirmation dialog before deleting
       onPressed: () async {
         final tasksDb = ref.watch(tasksDbProvider);
         tasksDb

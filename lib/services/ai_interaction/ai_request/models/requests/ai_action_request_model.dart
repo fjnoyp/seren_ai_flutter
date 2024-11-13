@@ -2,7 +2,11 @@ import 'package:seren_ai_flutter/services/ai_interaction/ai_request/models/reque
 
 /// Subtypes of Action Request Type 
 enum AiActionRequestType {
-  toggleClockInOrOut('toggle_clock_in_or_out');
+  toggleClockInOrOut('toggle_clock_in_or_out'),
+  createTask('create_task'),
+  updateTaskFields('update_task_fields'),
+  deleteTask('delete_task'),
+  assignUserToTask('assign_user_to_task');
   
   final String value;
   const AiActionRequestType(this.value);
@@ -29,6 +33,11 @@ class AiActionRequestModel extends AiRequestModel {
       args: json['args'],
       actionRequestType: AiActionRequestType.fromString(json['action_request_type']),      
     );
+  }
+
+  @override
+  String toString() {
+    return 'AiActionRequestModel(actionRequestType: $actionRequestType, args: $args)';
   }
 }
 

@@ -14,69 +14,22 @@ import 'package:seren_ai_flutter/services/data/shifts/repositories/shift_time_ra
 import 'package:seren_ai_flutter/services/data/shifts/tool_methods/models/shift_assignments_result_model.dart';
 import 'package:seren_ai_flutter/services/data/shifts/tool_methods/models/shift_clock_in_out_result_model.dart';
 import 'package:seren_ai_flutter/services/data/shifts/tool_methods/models/shift_log_results_model.dart';
+import 'package:seren_ai_flutter/services/data/shifts/tool_methods/models/shift_request_models.dart';
 
+/*
+Method executors for: 
 
+AiInfoRequestType.shiftAssignments
+AiInfoRequestType.shiftLogs
 
-
-
+AiActionRequestType.toggleClockInOrOut
+*/
 class ShiftToolMethods {
-  ({String userId, String shiftId})? _getAuthAndShiftInfo(Ref ref) {
-    final curAuthState = ref.read(curUserProvider);
-    final curShiftState = ref.watch(curShiftStateProvider);
-
-    if (curAuthState.value == null) {
-      return null;
-    }
-
-    return curShiftState.when(
-      loading: () => null,
-      error: (error, stackTrace) => null,
-      data: (joinedShift) {
-        if (joinedShift == null) {
-          return null;
-        }
-        return (
-          userId: curAuthState.value!.id,
-          shiftId: joinedShift.shift.id,
-        );
-      },
-    );
-  }
-
-  AiRequestResultModel handleNoAuthOrShiftInfo({AiInfoRequestModel? infoRequest}) {
-    return ErrorRequestResultModel(resultForAi: 'No auth or shift info', showOnly: true);
-  }
-
-  // Future<AiRequestResultModel> getCurrentShiftInfo(
-  //     {required Ref ref, required AiInfoRequestModel infoRequest}) async {
-  //   final info = _getAuthAndShiftInfo(ref);
-  //   if (info == null) return handleNoAuthOrShiftInfo(infoRequest: infoRequest);
-
-  //   final timeRanges =
-  //       await ref.read(shiftTimeRangesRepositoryProvider).getActiveRanges(
-  //             shiftId: info.shiftId,
-  //             userId: info.userId,
-  //             day: DateTime.now().toUtc(),
-  //           );
-
-  //   if (timeRanges.isEmpty) {
-  //     return ShiftInfoResultModel(
-  //       activeShiftRanges: timeRanges,
-  //       message: 'No Shifts Today',
-  //       showOnly: infoRequest.showOnly,
-  //     );
-  //   }
-
-  //   return ShiftInfoResultModel(
-  //     activeShiftRanges: timeRanges,
-  //     message: 'Current shift time ranges: ${timeRanges.map((range) => '${range.start.toLocal()} - ${range.end.toLocal()}').join('\n')}',
-  //     showOnly: infoRequest.showOnly,
-  //   );
-  // }
-
-  Future<AiRequestResultModel> getShiftAssignments({required Ref ref, required ShiftAssignmentsRequestModel infoRequest}) async {
+  Future<AiRequestResultModel> getShiftAssignments(
+      {required Ref ref,
+      required ShiftAssignmentsRequestModel infoRequest}) async {
     final info = _getAuthAndShiftInfo(ref);
-    if (info == null) return handleNoAuthOrShiftInfo();
+    if (info == null) return _handleNoAuthOrShiftInfo();
 
     // 0 = today, 1 = tomorrow, -1 = yesterday, etc.
     final List<int> dayOffsetsToGet = infoRequest.dayOffsetsToGet;
@@ -90,27 +43,29 @@ class ShiftToolMethods {
       final DateTime day = now.add(Duration(days: offset));
       final DateTime dayUtc = day.toUtc();
 
-      final timeRangesForDay = await ref.read(shiftTimeRangesRepositoryProvider).getActiveRanges(
-            shiftId: info.shiftId,
-            userId: info.userId,
-            day: dayUtc,
-          );
+      final timeRangesForDay =
+          await ref.read(shiftTimeRangesRepositoryProvider).getActiveRanges(
+                shiftId: info.shiftId,
+                userId: info.userId,
+                day: dayUtc,
+              );
 
       shiftAssignments[day] = timeRangesForDay;
     }));
 
     return ShiftAssignmentsResultModel(
       shiftAssignments: shiftAssignments,
-      resultForAi: shiftAssignments.isEmpty 
-          ? 'No shift assignments in requested range.' 
+      resultForAi: shiftAssignments.isEmpty
+          ? 'No shift assignments in requested range.'
           : 'Shift assignments: ${shiftAssignments.entries.map((entry) => '${entry.key.toLocal()} - ${entry.value.map((range) => '${range.start.toLocal()} - ${range.end.toLocal()}').join('\n')}').join('\n')}',
       showOnly: infoRequest.showOnly,
     );
   }
 
-  Future<AiRequestResultModel> getShiftLogs({required Ref ref, required ShiftLogsRequestModel infoRequest}) async {
+  Future<AiRequestResultModel> getShiftLogs(
+      {required Ref ref, required ShiftLogsRequestModel infoRequest}) async {
     final info = _getAuthAndShiftInfo(ref);
-    if (info == null) return handleNoAuthOrShiftInfo();
+    if (info == null) return _handleNoAuthOrShiftInfo();
 
     // 0 = today, 1 = tomorrow, -1 = yesterday, etc.
     final List<int> dayOffsetsToGet = infoRequest.dayOffsetsToGet;
@@ -121,21 +76,22 @@ class ShiftToolMethods {
     final Map<DateTime, List<ShiftLogModel>> shiftLogs = {};
 
     await Future.wait(dayOffsetsToGet.map((offset) async {
-      final DateTime day = now.add(Duration(days: offset)); 
-      final DateTime dayUtc = day.toUtc(); 
+      final DateTime day = now.add(Duration(days: offset));
+      final DateTime dayUtc = day.toUtc();
 
-      final shiftLogsForDay = await ref.read(shiftLogsRepositoryProvider).getUserShiftLogsForDay(
-        shiftId: info.shiftId,
-        userId: info.userId,
-        day: dayUtc,
-      );
+      final shiftLogsForDay =
+          await ref.read(shiftLogsRepositoryProvider).getUserShiftLogsForDay(
+                shiftId: info.shiftId,
+                userId: info.userId,
+                day: dayUtc,
+              );
 
       shiftLogs[day] = shiftLogsForDay;
     }));
     return ShiftLogsResultModel(
       shiftLogs: shiftLogs,
-      resultForAi: shiftLogs.isEmpty 
-          ? 'No shift logs in requested range.' 
+      resultForAi: shiftLogs.isEmpty
+          ? 'No shift logs in requested range.'
           : 'Shift logs: ${shiftLogs.entries.map((entry) => '${entry.key.toLocal()} - ${entry.value.map((log) => '${log.clockInDatetime.toLocal()} - ${log.clockOutDatetime?.toLocal() ?? 'ONGOING'}').join('\n')}').join('\n')}',
       showOnly: infoRequest.showOnly,
     );
@@ -143,13 +99,14 @@ class ShiftToolMethods {
 
   Future<AiRequestResultModel> toggleClockInOut({required Ref ref}) async {
     final info = _getAuthAndShiftInfo(ref);
-    if (info == null) return handleNoAuthOrShiftInfo();
+    if (info == null) return _handleNoAuthOrShiftInfo();
 
     // Check if there is an open shift log
-    final openShiftLog = await ref.read(shiftLogsRepositoryProvider).getCurrentOpenLog(
-      shiftId: info.shiftId,
-      userId: info.userId,
-    );
+    final openShiftLog =
+        await ref.read(shiftLogsRepositoryProvider).getCurrentOpenLog(
+              shiftId: info.shiftId,
+              userId: info.userId,
+            );
 
     if (openShiftLog != null) {
       // If there is an open shift log, clock out
@@ -188,5 +145,33 @@ class ShiftToolMethods {
         showOnly: true,
       );
     }
+  }
+
+  ({String userId, String shiftId})? _getAuthAndShiftInfo(Ref ref) {
+    final curAuthState = ref.read(curUserProvider);
+    final curShiftState = ref.watch(curShiftStateProvider);
+
+    if (curAuthState.value == null) {
+      return null;
+    }
+
+    return curShiftState.when(
+      loading: () => null,
+      error: (error, stackTrace) => null,
+      data: (joinedShift) {
+        if (joinedShift == null) {
+          return null;
+        }
+        return (
+          userId: curAuthState.value!.id,
+          shiftId: joinedShift.shift.id,
+        );
+      },
+    );
+  }
+
+  AiRequestResultModel _handleNoAuthOrShiftInfo() {
+    return ErrorRequestResultModel(
+        resultForAi: 'No auth or shift info', showOnly: true);
   }
 }

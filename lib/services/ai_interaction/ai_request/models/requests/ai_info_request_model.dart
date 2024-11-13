@@ -1,11 +1,12 @@
 import 'package:seren_ai_flutter/services/ai_interaction/ai_request/models/requests/ai_request_model.dart';
+import 'package:seren_ai_flutter/services/data/shifts/tool_methods/models/shift_request_models.dart';
+import 'package:seren_ai_flutter/services/data/tasks/tool_methods/models/task_request_models.dart';
 
 /// Subtypes of Info Request Type 
 enum AiInfoRequestType {
-  //shiftHistory('shift_history'),
-  //currentShift('current_shift');
   shiftAssignments('shift_assignments'),
-  shiftLogs('shift_logs');
+  shiftLogs('shift_logs'),
+  findTasks('find_tasks');
 
   final String value;
   const AiInfoRequestType(this.value);
@@ -17,10 +18,10 @@ enum AiInfoRequestType {
     );
   }
 }
-abstract class AiInfoRequestModel extends AiRequestModel {
+ class AiInfoRequestModel extends AiRequestModel {
   final AiInfoRequestType infoRequestType;  
   final bool showOnly;
-
+  
   AiInfoRequestModel({
     required this.infoRequestType,
     super.args,
@@ -36,49 +37,20 @@ abstract class AiInfoRequestModel extends AiRequestModel {
         return ShiftAssignmentsRequestModel.fromJson(json);
       case AiInfoRequestType.shiftLogs:
         return ShiftLogsRequestModel.fromJson(json);
+      case AiInfoRequestType.findTasks:
+        return FindTasksRequestModel.fromJson(json);
       default:
-        throw ArgumentError('Invalid AiInfoRequestType: ${json['info_request_type']}');
+        return AiInfoRequestModel(
+          infoRequestType: infoRequestType,
+          args: json['args'],
+          showOnly: json['show_only'] ?? true,
+        );
+        //throw ArgumentError('Invalid AiInfoRequestType: ${json['info_request_type']}');
     }
   }
-}
 
-
-class ShiftAssignmentsRequestModel extends AiInfoRequestModel {
-
-  final List<int> dayOffsetsToGet;
-
-  ShiftAssignmentsRequestModel({
-    required this.dayOffsetsToGet,
-    super.showOnly = true,
-    super.args,
-  }) : super(infoRequestType: AiInfoRequestType.shiftAssignments);
-
-  static ShiftAssignmentsRequestModel fromJson(Map<String, dynamic> json) {
-    return ShiftAssignmentsRequestModel(
-      args: json['args'],
-      dayOffsetsToGet: json['args']['day_offsets_to_get'].cast<int>(),
-      showOnly: json['show_only'] ?? true,      
-    );
-  }
-
-  
-}
-
-class ShiftLogsRequestModel extends AiInfoRequestModel {
-
-  final List<int> dayOffsetsToGet;
-
-  ShiftLogsRequestModel({
-    required this.dayOffsetsToGet,
-    super.showOnly = true,
-    super.args,
-  }) : super(infoRequestType: AiInfoRequestType.shiftLogs);
-
-  static ShiftLogsRequestModel fromJson(Map<String, dynamic> json) {
-    return ShiftLogsRequestModel(
-      args: json['args'],
-      dayOffsetsToGet: json['args']['day_offsets_to_get'].cast<int>(),
-      showOnly: json['show_only'] ?? true,      
-    );
+  @override
+  String toString() {
+    return 'AiInfoRequestModel(infoRequestType: $infoRequestType, showOnly: $showOnly, args: $args)';
   }
 }
