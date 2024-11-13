@@ -1,6 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:seren_ai_flutter/services/data/tasks/tool_methods/models/create_task_result_model.dart';
 import 'package:seren_ai_flutter/services/data/tasks/tool_methods/models/find_tasks_result_model.dart';
+
+// TODO p0: reuse task list item display if possible ... 
 
 class FindTasksResultWidget extends ConsumerWidget {
   final FindTasksResultModel result;
@@ -74,5 +77,15 @@ class FindTasksResultWidget extends ConsumerWidget {
         }),
       ],
     );
+  }
+}
+
+class CreateTaskResultWidget extends ConsumerWidget {
+  final CreateTaskResultModel result;
+  const CreateTaskResultWidget({super.key, required this.result});
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    return Text(result.resultForAi);
   }
 }

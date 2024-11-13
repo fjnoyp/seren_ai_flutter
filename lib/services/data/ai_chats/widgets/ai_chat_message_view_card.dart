@@ -21,6 +21,7 @@ import 'package:seren_ai_flutter/services/data/shifts/tool_methods/models/shift_
 import 'package:seren_ai_flutter/services/data/shifts/tool_methods/models/shift_clock_in_out_result_model.dart';
 import 'package:seren_ai_flutter/services/data/shifts/tool_methods/models/shift_log_results_model.dart';
 import 'package:seren_ai_flutter/services/data/shifts/tool_methods/shift_result_widgets.dart';
+import 'package:seren_ai_flutter/services/data/tasks/tool_methods/models/create_task_result_model.dart';
 import 'package:seren_ai_flutter/services/data/tasks/tool_methods/models/find_tasks_result_model.dart';
 import 'package:seren_ai_flutter/services/data/tasks/tool_methods/tool_result_widgets.dart';
 
@@ -228,6 +229,8 @@ class AiChatMessageViewCard extends HookWidget {
               result: result as ShiftClockInOutResultModel),
           AiRequestResultType.findTasks => FindTasksResultWidget(
               result: result as FindTasksResultModel),
+          AiRequestResultType.createTask => CreateTaskResultWidget(
+              result: result as CreateTaskResultModel),
           AiRequestResultType.error => Text(result.resultForAi)
         },
       ],
