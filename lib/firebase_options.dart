@@ -17,13 +17,19 @@ import 'package:flutter/foundation.dart'
 class DefaultFirebaseOptions {
   static FirebaseOptions get currentPlatform {
     if (kIsWeb) {
-      return web;
+      throw UnsupportedError(
+        'DefaultFirebaseOptions have not been configured for web - '
+        'you can reconfigure this by running the FlutterFire CLI again.',
+      );
     }
     switch (defaultTargetPlatform) {
       case TargetPlatform.android:
         return android;
       case TargetPlatform.iOS:
-        return ios;
+        throw UnsupportedError(
+          'DefaultFirebaseOptions have not been configured for ios - '
+          'you can reconfigure this by running the FlutterFire CLI again.',
+        );
       case TargetPlatform.macOS:
         throw UnsupportedError(
           'DefaultFirebaseOptions have not been configured for macos - '
@@ -53,24 +59,4 @@ class DefaultFirebaseOptions {
     projectId: 'seren-ai',
     storageBucket: 'seren-ai.firebasestorage.app',
   );
-
-  static const FirebaseOptions web = FirebaseOptions(
-    apiKey: 'AIzaSyBHZhXWbRlQN1d2ySgk1XLTyUDc0qToMr8',
-    appId: '1:888730365208:web:a43dd784069dd21009c26d',
-    messagingSenderId: '888730365208',
-    projectId: 'seren-ai',
-    authDomain: 'seren-ai.firebaseapp.com',
-    storageBucket: 'seren-ai.firebasestorage.app',
-    measurementId: 'G-5D5MPDTD3N',
-  );
-
-  static const FirebaseOptions ios = FirebaseOptions(
-    apiKey: 'AIzaSyC2sVLwh5rvXDwk8H6MeZp9AqhSCdJRlco',
-    appId: '1:888730365208:ios:bab4adc3c9e59f4309c26d',
-    messagingSenderId: '888730365208',
-    projectId: 'seren-ai',
-    storageBucket: 'seren-ai.firebasestorage.app',
-    iosBundleId: 'com.serentech.serenai-ios',
-  );
-
 }
