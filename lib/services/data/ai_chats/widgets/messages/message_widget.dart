@@ -4,7 +4,7 @@ import 'package:seren_ai_flutter/services/ai_interaction/ai_request/models/resul
 import 'package:seren_ai_flutter/services/data/ai_chats/models/ai_chat_message_model.dart';
 import 'package:seren_ai_flutter/services/data/ai_chats/models/ai_chat_message_type.dart';
 import 'package:seren_ai_flutter/services/data/ai_chats/widgets/messages/ai_tool_result_message_widget.dart';
-import 'package:seren_ai_flutter/services/data/ai_chats/widgets/messages/cur_user_chat_message_widget.dart';
+import 'package:seren_ai_flutter/services/data/ai_chats/widgets/messages/user_ai_chat_message_widget.dart';
 import 'package:seren_ai_flutter/services/data/ai_chats/widgets/messages/ui_action_message_widget.dart';
 
 class AiChatMessageWidget extends StatelessWidget {
@@ -20,7 +20,7 @@ class AiChatMessageWidget extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return switch (message.type) {
-      AiChatMessageType.user => CurUserChatMessageWidget(message: message),
+      AiChatMessageType.user => UserAiChatMessageWidget(message: message),
       AiChatMessageType.ai => AiChatMessageWidget(message: message),
       AiChatMessageType.tool => showToolMessages
           ? _ToolMessageWidget(message: message)

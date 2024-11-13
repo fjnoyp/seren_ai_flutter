@@ -3,8 +3,8 @@ import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:seren_ai_flutter/services/ai_interaction/ai_chat_service_provider.dart';
 import 'package:seren_ai_flutter/services/ai_interaction/widgets/testing/ai_debug_page.dart';
-import 'package:seren_ai_flutter/services/data/ai_chats/widgets/chat_thread_display.dart';
-import 'package:seren_ai_flutter/services/data/ai_chats/widgets/chat_messages_display.dart';
+import 'package:seren_ai_flutter/services/data/ai_chats/widgets/ai_chat_thread_display.dart';
+import 'package:seren_ai_flutter/services/data/ai_chats/widgets/ai_chat_messages_display.dart';
 
 class AIChatsPage extends HookConsumerWidget {
   const AIChatsPage({super.key});

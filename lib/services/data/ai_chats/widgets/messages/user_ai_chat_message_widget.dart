@@ -2,8 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:seren_ai_flutter/services/data/ai_chats/models/ai_chat_message_model.dart';
 import 'package:seren_ai_flutter/services/data/ai_chats/widgets/messages/collapsable_text.dart';
 
-class CurUserChatMessageWidget extends StatelessWidget {
-  const CurUserChatMessageWidget({
+class UserAiChatMessageWidget extends StatelessWidget {
+  const UserAiChatMessageWidget({
     super.key,
     required this.message,
   });
