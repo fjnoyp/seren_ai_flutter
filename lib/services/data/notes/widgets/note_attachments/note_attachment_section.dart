@@ -102,7 +102,7 @@ class _AttachmentPreviewButton extends StatelessWidget {
             context: context,
             builder: (context) => _AttachmentPreview(attachmentUrl),
           ),
-          // TODO: conditionally change the icon based on its file extension
+          // TODO p3: conditionally change the icon based on its file extension
           icon: const Icon(Icons.attach_file),
           label: Text(Uri.decodeFull(attachmentUrl).split('/').last),
         ),
@@ -170,7 +170,7 @@ class _AttachmentPreview extends ConsumerWidget {
                           child: CircularProgressIndicator(),
                         ),
             ),
-          // TODO: add other file extensions preview
+          // TODO p2: add other file extensions preview
           _ => Column(
               mainAxisSize: MainAxisSize.min,
               children: [

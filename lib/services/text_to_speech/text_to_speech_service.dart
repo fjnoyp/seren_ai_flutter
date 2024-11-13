@@ -16,8 +16,6 @@ class TextToSpeechService {
 
   set language(String language) => _language = language;
 
-  // TODO: I can't call this once, but must call it every time ... don't know why
-  // If it's called at start of app that's not enough ...
   Future<void> _init() async {
     flutterTts.awaitSpeakCompletion(true);
     await flutterTts.setLanguage(_language);
