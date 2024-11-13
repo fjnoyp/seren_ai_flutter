@@ -16,7 +16,7 @@ class AiChatMessageWidget extends StatelessWidget {
         ? const SizedBox.shrink()
         : Padding(
             padding: const EdgeInsets.all(24.0),
-            child: CollapsableText(message.content),
+            child: CollapsibleText(message.content),
           );
   }
 }

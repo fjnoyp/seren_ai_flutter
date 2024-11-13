@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 
-class CollapsableText extends HookWidget {
-  const CollapsableText(
+class CollapsibleText extends HookWidget {
+  const CollapsibleText(
     this.content, {
     super.key,
     this.alignment = AlignmentDirectional.centerStart,
