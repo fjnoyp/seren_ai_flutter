@@ -169,5 +169,10 @@
     "@_": {"description": "Duration Formatting"},
     "durationFormat": "{hours}:{minutes} horas",
     "durationHoursOnly": "{hours} {hours, plural, =1{hora} other{horas}}",
-    "zeroHours": "0 horas"
+    "zeroHours": "0 horas",
+
+    "@_": {"description": "Date Time Formatting"},
+    "today": "Hoje ({date})",
+    "tomorrow": "Amanhã ({date})",
+    "yesterday": "Ontem ({date})"
 }

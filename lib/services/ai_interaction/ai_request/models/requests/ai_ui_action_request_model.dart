@@ -1,6 +1,6 @@
 import 'package:seren_ai_flutter/services/ai_interaction/ai_request/models/requests/ai_request_model.dart';
 
-/// Subtypes of UI Action Type 
+/// Subtypes of UI Action Type
 enum AiUIActionRequestType {
   shiftsPage('shifts_page');
 
@@ -15,21 +15,20 @@ enum AiUIActionRequestType {
   }
 }
 
-
 class AiUiActionRequestModel extends AiRequestModel {
   final AiUIActionRequestType uiActionType;
   //final Map<String, String>? args;
 
   AiUiActionRequestModel({
-    required this.uiActionType,   
-    super.args, 
+    required this.uiActionType,
+    super.args,
   }) : super(AiRequestType.uiAction);
-
 
   factory AiUiActionRequestModel.fromJson(Map<String, dynamic> json) {
     return AiUiActionRequestModel(
       args: json['args'],
-      uiActionType: AiUIActionRequestType.fromString(json['ui_action_request_type']),      
+      uiActionType:
+          AiUIActionRequestType.fromString(json['ui_action_request_type']),
     );
   }
 
@@ -38,4 +37,3 @@ class AiUiActionRequestModel extends AiRequestModel {
     return 'AiUiActionRequestModel(uiActionType: $uiActionType, args: $args)';
   }
 }
-

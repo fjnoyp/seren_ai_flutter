@@ -11,14 +11,14 @@ import 'package:seren_ai_flutter/services/data/shifts/tool_methods/models/shift_
 import 'package:seren_ai_flutter/services/data/shifts/tool_methods/models/shift_log_results_model.dart';
 import 'package:seren_ai_flutter/services/data/shifts/tool_methods/shift_result_widgets.dart';
 
-/// Displays the last messages from the ai 
-/// Including ai request + ai results 
+/// Displays the last messages from the ai
+/// Including ai request + ai results
 class AiResultsWidget extends HookConsumerWidget {
   const AiResultsWidget({super.key});
 
   @override
-  Widget build(BuildContext context, WidgetRef ref) {    
-    final lastAiResults = ref.watch(lastAiMessageListenerProvider);    
+  Widget build(BuildContext context, WidgetRef ref) {
+    final lastAiResults = ref.watch(lastAiMessageListenerProvider);
     //final lastAiResults = aiRequestResults;
     final isVisible = useState(lastAiResults.isNotEmpty);
 
@@ -32,7 +32,7 @@ class AiResultsWidget extends HookConsumerWidget {
     }, [lastAiResults]);
 
     return Visibility(
-      visible: isVisible.value, 
+      visible: isVisible.value,
       child: Container(
         //color: Theme.of(context).colorScheme.secondaryContainer,
         margin: const EdgeInsets.symmetric(vertical: 5.0),
@@ -68,48 +68,13 @@ class AiResultsWidget extends HookConsumerWidget {
     );
   }
 }
+
 class DisplayAiResult extends ConsumerWidget {
   final AiResult aiResult;
   const DisplayAiResult({super.key, required this.aiResult});
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-
     return AiChatMessageViewCard(message: aiResult as AiChatMessageModel);
-    
-    Widget? content;
-    
-    if (aiResult is AiChatMessageModel) {
-      content = Text((aiResult as AiChatMessageModel).content);
-    } else if (aiResult is AiRequestResultModel) {
-
-      if( aiResult is ErrorRequestResultModel) {
-        content = Text((aiResult as ErrorRequestResultModel).resultForAi);
-      } else if (aiResult is ShiftClockInOutResultModel) {
-        content = ShiftClockInOutResultWidget(result: aiResult as ShiftClockInOutResultModel);
-      } else if (aiResult is ShiftLogsResultModel) {
-        content = ShiftLogsResultWidget(result: aiResult as ShiftLogsResultModel);
-      } else if (aiResult is ShiftAssignmentsResultModel) {        
-        content = ShiftAssignmentsResultWidget(result: aiResult as ShiftAssignmentsResultModel);
-      }
-      else {
-        content = Text((aiResult as AiRequestResultModel).resultForAi);
-      }
-
-    }
-
-    bool isToolCall = aiResult is! AiChatMessageModel; 
-
-    return content != null 
-        ? Card(            
-            color: isToolCall ? 
-            Theme.of(context).colorScheme.secondaryContainer : 
-            Theme.of(context).colorScheme.primaryContainer,
-            child: Padding(
-              padding: const EdgeInsets.all(8.0), // Added inner padding
-              child: content,
-            ),
-          )
-        : const SizedBox.shrink();
   }
 }
