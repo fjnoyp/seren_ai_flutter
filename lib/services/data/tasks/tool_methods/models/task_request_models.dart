@@ -14,7 +14,7 @@ class FindTasksRequestModel extends AiInfoRequestModel {
   final int? estimateDurationMinutes;
   final String? parentProjectName;
   final String? authorUserName;
-  final List<String>? assignedUserNames;
+  final List<String>? assignedUserNames;  
 
   FindTasksRequestModel({
     this.taskName,

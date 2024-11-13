@@ -23,7 +23,7 @@ import 'package:seren_ai_flutter/services/data/shifts/tool_methods/models/shift_
 import 'package:seren_ai_flutter/services/data/shifts/tool_methods/shift_result_widgets.dart';
 import 'package:seren_ai_flutter/services/data/tasks/tool_methods/models/create_task_result_model.dart';
 import 'package:seren_ai_flutter/services/data/tasks/tool_methods/models/find_tasks_result_model.dart';
-import 'package:seren_ai_flutter/services/data/tasks/tool_methods/tool_result_widgets.dart';
+import 'package:seren_ai_flutter/services/data/tasks/tool_methods/task_result_widgets.dart';
 
 class AiChatMessageViewCard extends HookWidget {
   final AiChatMessageModel message;  
