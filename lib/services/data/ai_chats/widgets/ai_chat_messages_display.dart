@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:seren_ai_flutter/services/data/ai_chats/providers/cur_user_ai_chat_messages_provider.dart';
-import 'package:seren_ai_flutter/services/data/ai_chats/widgets/messages/message_widget.dart';
+import 'package:seren_ai_flutter/services/data/ai_chats/widgets/messages/ai_chat_message_widget.dart';
 import 'package:seren_ai_flutter/services/data/common/widgets/async_value_handler_widget.dart';
 
 class AiChatMessagesDisplay extends ConsumerWidget {

@@ -3,7 +3,7 @@ import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:seren_ai_flutter/services/ai_interaction/last_ai_message_listener_provider.dart';
 import 'package:seren_ai_flutter/services/data/ai_chats/models/ai_chat_message_model.dart';
-import 'package:seren_ai_flutter/services/data/ai_chats/widgets/messages/message_widget.dart';
+import 'package:seren_ai_flutter/services/data/ai_chats/widgets/messages/ai_chat_message_widget.dart';
 
 /// Displays the last messages from the ai
 /// Including ai request + ai results
