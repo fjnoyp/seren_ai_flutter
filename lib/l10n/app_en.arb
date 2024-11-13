@@ -293,5 +293,25 @@
             }
         }
     },
-    "zeroHours": "0 hours"
+    "zeroHours": "0 hours",
+
+    "@_": {"description": "Date Time Formatting"},
+    "today": "Today ({date})",
+    "@today": {
+        "placeholders": {
+            "date": {"type": "String"}
+        }
+    },
+    "tomorrow": "Tomorrow ({date})",
+    "@tomorrow": {
+        "placeholders": {
+            "date": {"type": "String"}
+        }
+    },
+    "yesterday": "Yesterday ({date})",
+    "@yesterday": {
+        "placeholders": {
+            "date": {"type": "String"}
+        }
+    }
 }

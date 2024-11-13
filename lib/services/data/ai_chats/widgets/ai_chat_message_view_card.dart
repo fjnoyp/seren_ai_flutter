@@ -104,7 +104,8 @@ class AiChatMessageViewCard extends HookWidget {
                     AiChatMessageDisplayType.toolAiRequest =>
                       _buildAiRequestWidget(message.getAiRequest()!, context),
                     AiChatMessageDisplayType.toolAiResult =>
-                      _buildAiRequestResultWidget(message.getAiResult()!, context),
+                      _buildAiRequestResultWidget(
+                          message.getAiResult()!, context),
                     AiChatMessageDisplayType.tool => Text(message.content),
                   },
               ],
@@ -213,7 +214,8 @@ class AiChatMessageViewCard extends HookWidget {
     );
   }
 
-  Widget _buildAiRequestResultWidget(AiRequestResultModel result, BuildContext context) {
+  Widget _buildAiRequestResultWidget(
+      AiRequestResultModel result, BuildContext context) {
     Widget icon = const Icon(Icons.info,
         size: 24.0); // Small icon to indicate result type
     return Column(
@@ -227,10 +229,10 @@ class AiChatMessageViewCard extends HookWidget {
             ShiftLogsResultWidget(result: result as ShiftLogsResultModel),
           AiRequestResultType.shiftClockInOut => ShiftClockInOutResultWidget(
               result: result as ShiftClockInOutResultModel),
-          AiRequestResultType.findTasks => FindTasksResultWidget(
-              result: result as FindTasksResultModel),
-          AiRequestResultType.createTask => CreateTaskResultWidget(
-              result: result as CreateTaskResultModel),
+          AiRequestResultType.findTasks =>
+            FindTasksResultWidget(result: result as FindTasksResultModel),
+          AiRequestResultType.createTask =>
+            CreateTaskResultWidget(result: result as CreateTaskResultModel),
           AiRequestResultType.error => Text(result.resultForAi)
         },
       ],
