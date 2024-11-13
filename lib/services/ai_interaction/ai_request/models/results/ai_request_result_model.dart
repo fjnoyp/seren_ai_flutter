@@ -29,7 +29,7 @@ enum AiRequestResultType {
 /// Result of an AI Request execution.
 ///
 /// Only the message field is sent to ai, all other fields are for display purposes.
-abstract class AiRequestResultModel extends AiResult {
+abstract class AiRequestResultModel {
   /// Result of the AI Request to be displayed to the user
   final String resultForAi;
 

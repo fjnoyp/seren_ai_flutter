@@ -1,4 +1,6 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:seren_ai_flutter/common/current_route_provider.dart';
+import 'package:seren_ai_flutter/common/routes/app_routes.dart';
 import 'package:seren_ai_flutter/services/ai_interaction/ai_request/models/results/ai_request_result_model.dart';
 import 'package:seren_ai_flutter/services/ai_interaction/ai_request/models/requests/ai_action_request_model.dart';
 import 'package:seren_ai_flutter/services/ai_interaction/ai_request/models/requests/ai_info_request_model.dart';
@@ -20,32 +22,39 @@ class AiRequestExecutor {
   final Ref ref;
   final ShiftToolMethods shiftToolMethods = ShiftToolMethods();
   final TaskToolMethods taskToolMethods = TaskToolMethods();
+
   AiRequestExecutor(this.ref);
 
   Future<AiRequestResultModel> executeAiRequest(
       AiRequestModel aiRequest) async {
-    final result = await getToolResponseResult(aiRequest);
+
+    final allowToolUiActions = !ref.read(currentRouteProvider).contains(AppRoutes.aiChats.name);
+
+    final result = await _getToolResponseResult(allowToolUiActions, aiRequest);
     return result;
   }
 
   // Route ToolResponse to the correct method
-  Future<AiRequestResultModel> getToolResponseResult(
+  Future<AiRequestResultModel> _getToolResponseResult(
+      bool allowToolUiActions,
       AiRequestModel aiRequest) async {
 
     AiRequestResultModel result; 
 
+    
+
     // Iterate through identified tool responses
     switch (aiRequest.requestType) {
       case AiRequestType.uiAction:
-        result = await _handleUiActionRequest(aiRequest as AiUiActionRequestModel);
+        result = await _handleUiActionRequest(allowToolUiActions, aiRequest as AiUiActionRequestModel);
         break;
 
         case AiRequestType.infoRequest:
-        result = await _handleInfoRequest(aiRequest as AiInfoRequestModel);
+        result = await _handleInfoRequest(allowToolUiActions, aiRequest as AiInfoRequestModel);
         break;
 
       case AiRequestType.actionRequest:
-        result = await _handleActionRequest(aiRequest as AiActionRequestModel);
+        result = await _handleActionRequest(allowToolUiActions, aiRequest as AiActionRequestModel);
         break;
 
       default:
@@ -56,6 +65,7 @@ class AiRequestExecutor {
   }
 
   Future<AiRequestResultModel> _handleUiActionRequest(
+      bool allowToolUiActions,
       AiUiActionRequestModel uiAction) async {
     switch (uiAction.uiActionType) {
       case AiUIActionRequestType.shiftsPage:
@@ -67,6 +77,7 @@ class AiRequestExecutor {
   }
 
   Future<AiRequestResultModel> _handleInfoRequest(
+      bool allowToolUiActions,
       AiInfoRequestModel infoRequest) async {
     switch (infoRequest.infoRequestType) {
       case AiInfoRequestType.shiftAssignments:
@@ -79,7 +90,9 @@ class AiRequestExecutor {
 
       case AiInfoRequestType.findTasks:
         return await taskToolMethods.findTasks(
-            ref: ref, infoRequest: infoRequest as FindTasksRequestModel);
+            ref: ref, 
+            infoRequest: infoRequest as FindTasksRequestModel,            
+            );
 
       default:
         return ErrorRequestResultModel(resultForAi: 'Unknown info request: ${infoRequest.toString()}', showOnly: true);
@@ -87,13 +100,14 @@ class AiRequestExecutor {
   }
 
   Future<AiRequestResultModel> _handleActionRequest(
+      bool allowToolUiActions,
       AiActionRequestModel actionRequest) async {
     switch (actionRequest.actionRequestType) {
       case AiActionRequestType.toggleClockInOrOut:
         return await shiftToolMethods.toggleClockInOut(ref: ref);
 
       case AiActionRequestType.createTask:
-        return await taskToolMethods.createTask(ref: ref, actionRequest: actionRequest as CreateTaskRequestModel);
+        return await taskToolMethods.createTask(ref: ref, actionRequest: actionRequest as CreateTaskRequestModel, allowToolUiActions: allowToolUiActions);
 
       case AiActionRequestType.updateTaskFields:
         return await taskToolMethods.updateTaskFields(ref: ref, actionRequest: actionRequest as UpdateTaskFieldsRequestModel);

@@ -2,19 +2,15 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:seren_ai_flutter/services/data/ai_chats/models/ai_chat_message_model.dart';
 import 'dart:async';
 
-// Common type for all ai results to show 
-// ie: ai chat messages and tool responses
-class AiResult {} 
-
-final lastAiMessageListenerProvider = NotifierProvider<LastAiMessageListenerNotifier, List<AiResult>>(
+final lastAiMessageListenerProvider = NotifierProvider<LastAiMessageListenerNotifier, List<AiChatMessageModel>>(
   LastAiMessageListenerNotifier.new
 );
 
-class LastAiMessageListenerNotifier extends Notifier<List<AiResult>> {
+class LastAiMessageListenerNotifier extends Notifier<List<AiChatMessageModel>> {
   Timer? _timer;
 
   @override
-  List<AiResult> build() {
+  List<AiChatMessageModel> build() {
     // Listen to the curUserChatMessagesListenerProvider
     // ref.listen(curUserChatMessagesListenerProvider, (previous, next) {
     //   if (next != null && next.isNotEmpty) {

@@ -19,7 +19,7 @@ enum AiChatMessageDisplayType {
 }
 
 @JsonSerializable()
-class AiChatMessageModel extends AiResult implements IHasId {
+class AiChatMessageModel implements IHasId {
   @override
   final String id;
   @JsonKey(name: 'type')
@@ -107,6 +107,7 @@ class AiChatMessageModel extends AiResult implements IHasId {
   String? getAiMessage() {
     if (getDisplayType() == AiChatMessageDisplayType.aiWithToolCall) {
       try {
+        // Old Sonnet 3.5 Response Format (doesn't work for Groq, which doesn't have these fields in content at all)
         final List<dynamic> decoded = json.decode(content) as List<dynamic>;
         // Look for the first object with type "text" and return its text field
         for (final item in decoded) {

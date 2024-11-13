@@ -182,7 +182,6 @@ class AIChatService {
     }
 
     // === Execute Request ===
-
     final result = await aiRequestExecutor.executeAiRequest(toolResponses[0]);
 
     // Display Result
