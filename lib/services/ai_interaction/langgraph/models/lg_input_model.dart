@@ -3,12 +3,14 @@ import 'package:seren_ai_flutter/services/ai_interaction/langgraph/models/lg_ai_
 /// Input model for the Langgraph API
 class LgAgentStateModel {
   final List<LgInputMessageModel> messages;
+  final String? uiContext;
 
-  LgAgentStateModel({required this.messages});
+  LgAgentStateModel({required this.messages, this.uiContext});
 
   Map<String, dynamic> toJson() {
     return {
       'messages': messages.map((message) => message.toJson()).toList(),
+      if (uiContext != null) 'ui_context': uiContext,
     };
   }
 }

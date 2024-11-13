@@ -31,6 +31,7 @@ class TasksRepository extends BaseRepository<TaskModel> {
     );
   }
 
+  // TODO p2: introduce pagination once we have a lot of tasks 
   // Get viewable tasks for a user (tasks where they are assigned to the project or are the author)
   Future<List<TaskModel>> getUserViewableTasks({
     required String userId,
