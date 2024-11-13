@@ -25,13 +25,13 @@ class TaskCommentCard extends StatelessWidget {
                 CircleAvatar(
                   backgroundColor: theme.primaryColor,
                   radius: 12.0,
-                  // TODO: replace with authorPhotoUrl Image (.network?)
+                  // TODO p4: replace with authorPhotoUrl Image (.network?)
                   child: Text(comment.authorUser!.email[0].toUpperCase()),
                 ),
                 const SizedBox(width: 8),
                 Expanded(
                   child: Text(
-                    // TODO: replace with authorName
+                    // TODO p3: replace with authorName
                     comment.authorUser!.email,
                     overflow: TextOverflow.ellipsis,
                   ),

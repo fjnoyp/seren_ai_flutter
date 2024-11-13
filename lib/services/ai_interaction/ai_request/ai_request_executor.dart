@@ -4,7 +4,11 @@ import 'package:seren_ai_flutter/services/ai_interaction/ai_request/models/reque
 import 'package:seren_ai_flutter/services/ai_interaction/ai_request/models/requests/ai_info_request_model.dart';
 import 'package:seren_ai_flutter/services/ai_interaction/ai_request/models/requests/ai_request_model.dart';
 import 'package:seren_ai_flutter/services/ai_interaction/ai_request/models/requests/ai_ui_action_request_model.dart';
+import 'package:seren_ai_flutter/services/ai_interaction/ai_request/models/results/error_request_result_model.dart';
+import 'package:seren_ai_flutter/services/data/shifts/tool_methods/models/shift_request_models.dart';
 import 'package:seren_ai_flutter/services/data/shifts/tool_methods/shift_tool_methods.dart';
+import 'package:seren_ai_flutter/services/data/tasks/tool_methods/models/task_request_models.dart';
+import 'package:seren_ai_flutter/services/data/tasks/tool_methods/task_tool_methods.dart';
 
 
 
@@ -15,7 +19,7 @@ final aiRequestExecutorProvider =
 class AiRequestExecutor {
   final Ref ref;
   final ShiftToolMethods shiftToolMethods = ShiftToolMethods();
-
+  final TaskToolMethods taskToolMethods = TaskToolMethods();
   AiRequestExecutor(this.ref);
 
   Future<AiRequestResultModel> executeAiRequest(
@@ -56,9 +60,9 @@ class AiRequestExecutor {
     switch (uiAction.uiActionType) {
       case AiUIActionRequestType.shiftsPage:
         // TODO p1: open shifts page
-        throw Exception('Not implemented');
+        return ErrorRequestResultModel(resultForAi: 'Not implemented', showOnly: true);
       default:
-        throw Exception('Unknown UI action type: ${uiAction.uiActionType}');
+        return ErrorRequestResultModel(resultForAi: 'Unknown UI action: ${uiAction.toString()}', showOnly: true);
     }
   }
 
@@ -73,13 +77,12 @@ class AiRequestExecutor {
         return await shiftToolMethods.getShiftLogs(
             ref: ref, infoRequest: infoRequest as ShiftLogsRequestModel);
 
-      // case AiInfoRequestType.currentShift:
-      //   final shiftInfoResult = await shiftToolMethods.getCurrentShiftInfo(
-      //       ref: ref, infoRequest: infoRequest);
-      //   return shiftInfoResult;
+      case AiInfoRequestType.findTasks:
+        return await taskToolMethods.findTasks(
+            ref: ref, infoRequest: infoRequest as FindTasksRequestModel);
+
       default:
-        throw Exception(
-            'Unknown info request type: ${infoRequest.infoRequestType}');
+        return ErrorRequestResultModel(resultForAi: 'Unknown info request: ${infoRequest.toString()}', showOnly: true);
     }
   }
 
@@ -88,9 +91,21 @@ class AiRequestExecutor {
     switch (actionRequest.actionRequestType) {
       case AiActionRequestType.toggleClockInOrOut:
         return await shiftToolMethods.toggleClockInOut(ref: ref);
+
+      case AiActionRequestType.createTask:
+        return await taskToolMethods.createTask(ref: ref, actionRequest: actionRequest as CreateTaskRequestModel);
+
+      case AiActionRequestType.updateTaskFields:
+        return await taskToolMethods.updateTaskFields(ref: ref, actionRequest: actionRequest as UpdateTaskFieldsRequestModel);
+
+      case AiActionRequestType.deleteTask:
+        return await taskToolMethods.deleteTask(ref: ref, actionRequest: actionRequest as DeleteTaskRequestModel);
+
+      case AiActionRequestType.assignUserToTask:
+        return await taskToolMethods.assignUserToTask(ref: ref, actionRequest: actionRequest as AssignUserToTaskRequestModel);
+
       default:
-        throw Exception(
-            'Unknown action request type: ${actionRequest.actionRequestType}');
+        return ErrorRequestResultModel(resultForAi: 'Unknown action request: ${actionRequest.toString()}', showOnly: true);
     }
   }
 }

@@ -26,11 +26,16 @@ class AiUiActionRequestModel extends AiRequestModel {
   }) : super(AiRequestType.uiAction);
 
 
-  static AiUiActionRequestModel fromJson(Map<String, dynamic> json) {
+  static AiRequestModel fromJson(Map<String, dynamic> json) {
     return AiUiActionRequestModel(
       args: json['args'],
       uiActionType: AiUIActionRequestType.fromString(json['ui_action_request_type']),      
     );
+  }
+
+  @override
+  String toString() {
+    return 'AiUiActionRequestModel(uiActionType: $uiActionType, args: $args)';
   }
 }
 

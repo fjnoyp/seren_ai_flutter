@@ -151,7 +151,7 @@ class TaskPage extends HookConsumerWidget {
   }
 
   Future<dynamic> _takeActionOnEmptyProjectValue(BuildContext context) {
-    // TODO: refactor to avoid hard coded solution
+    // TODO p4: refactor to avoid hard coded solution
     return showModalBottomSheet(
       context: context,
       builder: (BuildContext context) => Consumer(
@@ -206,7 +206,7 @@ Future<void> openTaskPage(BuildContext context, WidgetRef ref,
     if (initialJoinedTask != null) {
       ref.read(curTaskServiceProvider).loadTask(initialJoinedTask);
 
-      // TODO: modify to have comments listened to in realtime
+      // TODO p3: modify to have comments listened to in realtime
       ref.read(curTaskServiceProvider).updateComments();
     }
   }

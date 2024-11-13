@@ -81,7 +81,7 @@ class _ClockInOutInnerCard extends ConsumerWidget {
                   ),
                 ],
               ),
-              // TODO: add elapsed time ?
+              // TODO p4: add elapsed time ?
               if (curLog != null)
                 Text(
                   AppLocalizations.of(context)!.clockedInAt(
