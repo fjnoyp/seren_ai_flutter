@@ -9,6 +9,8 @@ final aiChatMessagesRepositoryProvider = Provider<AiChatMessagesRepository>((ref
 });
 
 class AiChatMessagesRepository extends BaseRepository<AiChatMessageModel> {
+  static const int defaultPageSize = 20;
+
   const AiChatMessagesRepository(super.db);
 
   @override
@@ -21,22 +23,31 @@ class AiChatMessagesRepository extends BaseRepository<AiChatMessageModel> {
 
   Stream<List<AiChatMessageModel>> watchThreadMessages({
     required String threadId,
+    int limit = defaultPageSize,
+    int offset = 0,
   }) {
     return watch(
       AiChatQueries.getThreadMessages,
       {
         'thread_id': threadId,
+        'limit': limit,
+        'offset': offset,
       },
     );
   }
 
   Future<List<AiChatMessageModel>> getThreadMessages({
     required String threadId,
+    int limit = defaultPageSize,
+    int offset = 0,
   }) async {
     return get(
       AiChatQueries.getThreadMessages,
       {
         'thread_id': threadId,
-    });
+        'limit': limit,
+        'offset': offset,
+      },
+    );
   }
 }
