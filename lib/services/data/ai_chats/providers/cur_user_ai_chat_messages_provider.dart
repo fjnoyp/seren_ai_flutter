@@ -46,7 +46,7 @@ final curUserAiChatMessagesProvider = Provider.autoDispose<AsyncValue<({
   AiChatMessagesNotifier notifier
 })>>((ref) {
 
-  // load the curthread id first 
+  // Load the curUserAiChatThreadProvider first 
   final aiChatThread = ref.watch(curUserAiChatThreadProvider);
 
   if(aiChatThread.hasError) {
@@ -63,6 +63,7 @@ final curUserAiChatMessagesProvider = Provider.autoDispose<AsyncValue<({
 
   final thread = aiChatThread.value!;
 
+  // Load the aiChatMessagesProvider
   final aiChatMessages = ref.watch(_aiChatMessagesProvider(thread.id));
   final notifier = ref.watch(_aiChatMessagesProvider(thread.id).notifier);
 
@@ -74,7 +75,7 @@ final curUserAiChatMessagesProvider = Provider.autoDispose<AsyncValue<({
     return const AsyncValue.loading();
   }
 
-  // then load and return the provider 
+  // Then load and return the provider 
   return AsyncValue.data((state: aiChatMessages.value!, notifier: notifier));
 });
 
