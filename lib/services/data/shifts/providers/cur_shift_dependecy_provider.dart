@@ -5,7 +5,7 @@ import 'package:seren_ai_flutter/services/data/shifts/models/joined_shift_model.
 
 /// Helper Provider that provides the current auth id and shift for other providers
 class CurShiftDependencyProvider {
-  static AsyncValue<T> watch<T>({
+  static AsyncValue<T> get<T>({
     required Ref ref,
     required T Function(String userId, JoinedShiftModel shift) builder,
   }) {
