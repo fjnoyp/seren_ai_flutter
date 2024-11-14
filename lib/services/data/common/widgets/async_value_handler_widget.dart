@@ -17,7 +17,7 @@ class _DefaultError extends StatelessWidget {
   final StackTrace? stackTrace;
 
   @override
-  Widget build(BuildContext context) => Center(child: Text(error.toString()));
+  Widget build(BuildContext context) => Center(child: Text('$error ${stackTrace?.toString()}'));
 }
 
 /// Single value

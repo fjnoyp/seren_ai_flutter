@@ -10,6 +10,7 @@ class JoinedShiftModel {
     this.parentProject,
   });
 
+  // TODO p4: switch to proper json decode without prefixes (see joined task model loads)
   factory JoinedShiftModel.fromJson(Map<String, dynamic> json) {
     // Split the json into shift and project parts by checking prefixes
     final shiftJson = _extractPrefixedFields(json, 's_');
