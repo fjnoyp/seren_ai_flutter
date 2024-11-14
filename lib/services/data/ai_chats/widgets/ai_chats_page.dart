@@ -11,8 +11,10 @@ import 'package:seren_ai_flutter/services/ai_interaction/ai_request/models/reque
 import 'package:seren_ai_flutter/services/data/ai_chats/models/ai_chat_thread_model.dart';
 import 'package:seren_ai_flutter/services/data/ai_chats/models/ai_chat_message_model.dart';
 import 'package:seren_ai_flutter/services/ai_interaction/widgets/testing/ai_debug_page.dart';
+import 'package:seren_ai_flutter/services/data/ai_chats/providers/ai_chat_message_pagination_provider.dart';
 import 'package:seren_ai_flutter/services/data/ai_chats/providers/cur_user_ai_chat_messages_provider.dart';
 import 'package:seren_ai_flutter/services/data/ai_chats/providers/cur_user_ai_chat_thread_provider.dart';
+import 'package:seren_ai_flutter/services/data/ai_chats/repositories/ai_chat_messages_repository.dart';
 import 'package:seren_ai_flutter/services/data/ai_chats/widgets/ai_chat_message_view_card.dart';
 import 'package:seren_ai_flutter/services/data/common/widgets/async_value_handler_widget.dart';
 
@@ -24,27 +26,26 @@ class AIChatsPage extends HookConsumerWidget {
     final messageController = useTextEditingController();
     final isDebugMode = useState(false);
 
-    return SingleChildScrollView(
-      child: Column(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          Row(
-            mainAxisAlignment: MainAxisAlignment.end,
-            children: [
-              IconButton(
-                icon: Icon(
-                  isDebugMode.value ? Icons.list : Icons.bug_report,
-                  size: 20,
-                ),
-                onPressed: () {
-                  isDebugMode.value = !isDebugMode.value;
-                },
+    return Column(
+      children: [
+        Row(
+          mainAxisAlignment: MainAxisAlignment.end,
+          children: [
+            IconButton(
+              icon: Icon(
+                isDebugMode.value ? Icons.list : Icons.bug_report,
+                size: 20,
               ),
-            ],
-          ),
-          isDebugMode.value
-              ? const AiDebugPage()
-              : Column(
+              onPressed: () {
+                isDebugMode.value = !isDebugMode.value;
+              },
+            ),
+          ],
+        ),
+        isDebugMode.value
+            ? const AiDebugPage()
+            : Expanded(
+                child: Column(
                   children: [
                     TextField(
                       controller: messageController,
@@ -65,12 +66,13 @@ class AIChatsPage extends HookConsumerWidget {
                       ),
                     ),
                     const ChatThreadDisplay(),
-                    const ChatMessagesDisplay(),
-                    const SizedBox(height: 200),
+                    const Expanded(
+                      child: ChatMessagesDisplay(),
+                    ),
                   ],
                 ),
-        ],
-      ),
+              ),
+      ],
     );
   }
 }
@@ -157,23 +159,52 @@ class ChatThreadCard extends HookWidget {
   }
 }
 
-class ChatMessagesDisplay extends ConsumerWidget {
+class ChatMessagesDisplay extends HookConsumerWidget {
   const ChatMessagesDisplay({super.key});
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final chatMessages = ref.watch(curUserAiChatMessagesProvider);
-    return AsyncValueHandlerWidget(
-      value: chatMessages,
-      data: (chatMessages) => chatMessages.isEmpty
-          ? const Text('No messages available')
-          : ListView.builder(
-              shrinkWrap: true,
-              physics: const NeverScrollableScrollPhysics(),
-              itemCount: chatMessages.length,
-              itemBuilder: (context, index) =>
-                  AiChatMessageViewCard(message: chatMessages[index]),
-            ),
+    final scrollController = useScrollController();
+    final messagesProviderValue = ref.watch(curUserAiChatMessagesProvider);
+
+    useEffect(() {
+      void onScroll() {
+        final providerData = messagesProviderValue.valueOrNull;
+        if (providerData == null) return;
+
+        if (scrollController.position.pixels >= 
+            scrollController.position.maxScrollExtent * 0.8) {
+          providerData.notifier.loadMore();
+        }
+      }
+      
+      scrollController.addListener(onScroll);
+      return () => scrollController.removeListener(onScroll);
+    }, [scrollController, messagesProviderValue]);
+
+    
+    return messagesProviderValue.when(
+      loading: () => const Center(child: CircularProgressIndicator()),
+      error: (error, stack) => Center(child: Text('Error: $error')),
+      data: (providerData) {
+        final messages = providerData.state;
+        return messages.isEmpty
+            ? const Center(child: Text('No messages available'))
+            : ListView.builder(
+                controller: scrollController,
+                itemCount: messages.length + (providerData.notifier.hasMore ? 1 : 0),
+                itemBuilder: (context, index) {
+                  if (index == messages.length && providerData.notifier.hasMore) {
+                    return const Center(child: CircularProgressIndicator());
+                  }
+                  final message = messages[index];
+                  return KeyedSubtree(
+                    key: ValueKey(message.id),
+                    child: AiChatMessageViewCard(message: message),
+                  );
+                },
+              );
+      },
     );
   }
 }
