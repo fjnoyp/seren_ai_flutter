@@ -17,7 +17,7 @@ class CurUserShiftLogActions {
   CurUserShiftLogActions(this.ref);
 
   Future<void> clockIn() async {
-    return CurShiftDependencyProvider.watch<Future<void>>(
+    return CurShiftDependencyProvider.get<Future<void>>(
       ref: ref,
       builder: (userId, joinedShift) async {
         final service = ref.read(shiftLogServiceProvider);
@@ -27,7 +27,7 @@ class CurUserShiftLogActions {
   }
 
   Future<void> clockOut() async {
-    return CurShiftDependencyProvider.watch<Future<void>>(
+    return CurShiftDependencyProvider.get<Future<void>>(
       ref: ref,
       builder: (userId, joinedShift) async {
         final service = ref.read(shiftLogServiceProvider);
