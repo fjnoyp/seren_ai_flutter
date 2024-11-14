@@ -28,4 +28,5 @@ class CurAuthDependencyProvider {
       loading: () => const Stream.empty(),
     );
   }
+
 }
