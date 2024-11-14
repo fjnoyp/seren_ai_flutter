@@ -1,8 +1,12 @@
+import 'package:logging/logging.dart';
 import 'package:powersync/powersync.dart';
+
+final Logger log = Logger('base-repository');
 
 /// Base class for watching / getting data from the database
 /// Does not provide any mutation methods (see service classes for that)
 abstract class BaseRepository<T> {
+
   final PowerSyncDatabase db;
 
   const BaseRepository(this.db);
@@ -18,7 +22,17 @@ abstract class BaseRepository<T> {
           parameters: params.values.toList(),
           triggerOnTables: watchTables,
         )
-        .map((results) => results.map((row) => fromJson(row)).toList());
+        .map((results) {
+          try {
+            return results.map((row) => fromJson(row)).toList();
+          } catch (e, stackTrace) {
+            log.severe('Error in BaseRepository.watch for query: $query');
+            log.severe('Parameters: $params');
+            log.severe('Error: $e');
+            log.severe('StackTrace: $stackTrace');
+            rethrow; // Rethrow to maintain error propagation
+          }
+        });
   }
 
   Future<List<T>> get(String query, Map<String, dynamic> params) async {
@@ -33,7 +47,17 @@ abstract class BaseRepository<T> {
           parameters: params.values.toList(),
           triggerOnTables: watchTables,
         )
-        .map((results) => fromJson(results.first));
+        .map((results) {
+          try {
+            return fromJson(results.first);
+          } catch (e, stackTrace) {
+            log.severe('Error in BaseRepository.watchSingle for query: $query');
+            log.severe('Parameters: $params');
+            log.severe('Error: $e');
+            log.severe('StackTrace: $stackTrace');
+            rethrow;
+          }
+        });
   }
 
   Future<T> getSingle(String query, Map<String, dynamic> params) async {

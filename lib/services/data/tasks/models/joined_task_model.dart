@@ -56,7 +56,14 @@ class JoinedTaskModel {
       return value;
     }
 
-  // ISSUE - if json comes from db reads, it's a raw string, if it comes from ai chat message content, it's a map
+  /*
+  ISSUE with nested JSON object reads
+  1. json value can be raw string or Map<String, dynamic>
+  2. Calling jsonDecode on Map<String, dynamic> causes type error 
+  3. If jsonEncode was previusly called on json, the values can also be Maps, otherwise, if json comes directly db, the values are raw strings
+  
+  Always call tryJsonDecode on nested json objects to ensure compatibility with both raw strings and encoded maps
+  */
   factory JoinedTaskModel.fromJson(Map<String, dynamic> json) {
     final taskJson = tryJsonDecode(json['task']);
     final authorUserJson = tryJsonDecode(json['author_user']);
