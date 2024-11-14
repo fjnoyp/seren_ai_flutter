@@ -23,11 +23,32 @@ class OrgGuard extends ConsumerWidget {
     }
 
     if (curOrgId == null) {
-      WidgetsBinding.instance.addPostFrameCallback((_) {
-        Navigator.pushNamedAndRemoveUntil(
-            context, AppRoutes.chooseOrg.name, (route) => false);
-      });
-      return Container();
+      if (curUserOrgs.hasValue) {
+        if (curUserOrgs.value!.length == 1) {
+          // If user only has one org, set it as the desired org
+          ref
+              .read(curUserOrgServiceProvider)
+              .setDesiredOrgId(curUserOrgs.value!.first.id);
+        } else {
+          // We need to add retry logic if orgs list is empty because
+          // the orgs list isn't always being updated in time
+          WidgetsBinding.instance.addPostFrameCallback((_) async {
+            for (int i = 0; i < 3; i++) {
+              await Future.delayed(const Duration(milliseconds: 500));
+              if (!context.mounted) return; // Check if widget is still mounted
+              final orgs = await ref.refresh(curUserOrgsProvider.future);
+              if (orgs.isNotEmpty) {
+                return; // Exit if we got orgs
+              }
+            }
+            // If still no orgs after retries, proceed with navigation
+            Navigator.pushNamedAndRemoveUntil(
+                context, AppRoutes.chooseOrg.name, (route) => false);
+          });
+        }
+      }
+
+      return const Center(child: CircularProgressIndicator());
     }
 
     return child;
