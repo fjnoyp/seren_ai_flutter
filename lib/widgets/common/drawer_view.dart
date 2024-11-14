@@ -6,6 +6,7 @@ import 'package:seren_ai_flutter/common/routes/app_routes.dart';
 import 'package:seren_ai_flutter/services/auth/cur_auth_state_provider.dart';
 import 'package:seren_ai_flutter/services/speech_to_text/speech_to_text_service_provider.dart';
 import 'package:seren_ai_flutter/services/text_to_speech/text_to_speech_notifier.dart';
+import 'package:seren_ai_flutter/widgets/common/debug_mode_provider.dart';
 import 'package:seren_ai_flutter/widgets/common/theme_data.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
@@ -116,20 +117,52 @@ class DrawerView extends HookWidget {
                 return ListTile(
                   dense: true,
                   leading: const Icon(Icons.language),
-               
+                  title: Text(AppLocalizations.of(context)!.language,
+                      style: const TextStyle(fontWeight: FontWeight.bold)),
                   trailing: DropdownButton<String>(
                     value: language,
                     onChanged: (String? newLanguage) {
                       if (newLanguage != null) {
                         ref.read(languageSNP.notifier).setLanguage(newLanguage);
-                        ref.read(speechToTextServiceProvider).language = newLanguage;
-                        ref.read(textToSpeechServiceProvider).language = newLanguage;
+                        ref.read(speechToTextServiceProvider).language =
+                            newLanguage;
+                        ref.read(textToSpeechServiceProvider).language =
+                            newLanguage;
                       }
                     },
-                    items: const [
-
+                    // these items were removed by commit 588ced3
+                    items: [
+                      DropdownMenuItem(
+                        value: 'en_US',
+                        child: Text(AppLocalizations.of(context)!.english,
+                            style: theme.textTheme.bodySmall),
+                      ),
+                      DropdownMenuItem(
+                        value: 'pt_BR',
+                        child: Text(
+                            AppLocalizations.of(context)!.brazilianPortuguese,
+                            style: theme.textTheme.bodySmall),
+                      ),
+                      DropdownMenuItem(
+                        value: 'pt_PT',
+                        child: Text(
+                            AppLocalizations.of(context)!.europeanPortuguese,
+                            style: theme.textTheme.bodySmall),
+                      ),
                     ],
                   ),
+                );
+              },
+            ),
+            Consumer(
+              builder: (context, ref, child) {
+                final isDebugMode = ref.watch(isDebugModeSNP);
+                return SwitchListTile(
+                  title: Text(AppLocalizations.of(context)!.debugMode),
+                  value: isDebugMode,
+                  onChanged: (value) {
+                    ref.read(isDebugModeSNP.notifier).setIsDebugMode(value);
+                  },
                 );
               },
             ),
@@ -137,62 +170,57 @@ class DrawerView extends HookWidget {
               title: Text(AppLocalizations.of(context)!.about),
             ),
           ] else ...[
-            _buildListTile(
-              context: context,
+            _DrawerListTile(
               icon: Icons.home,
               title: AppLocalizations.of(context)!.home,
               onTap: () => Navigator.pushNamed(context, AppRoutes.home.name),
             ),
-            _buildListTile(
-              context: context,
-              icon: Icons.house,
-              title: AppLocalizations.of(context)!.chooseOrganization,
-              onTap: () => Navigator.pushNamed(context, AppRoutes.chooseOrg.name),
-            ),
-            _buildListTile(
-              context: context,
+            _DebugModeListTile(
+                      icon: Icons.house,
+                      title: AppLocalizations.of(context)!.chooseOrganization,
+                      onTap: () => Navigator.pushNamed(
+                          context, AppRoutes.chooseOrg.name),
+                    ),
+            _DebugModeListTile(
               icon: Icons.people,
               title: AppLocalizations.of(context)!.orgAdminManageOrgUsers,
-              onTap: () => Navigator.pushNamed(context, AppRoutes.manageOrgUsers.name),
+              onTap: () =>
+                  Navigator.pushNamed(context, AppRoutes.manageOrgUsers.name),
             ),
-            _buildListTile(
-              context: context,
+            _DrawerListTile(
               icon: Icons.work,
               title: AppLocalizations.of(context)!.projects,
-              onTap: () => Navigator.pushNamed(context, AppRoutes.projects.name),
+              onTap: () =>
+                  Navigator.pushNamed(context, AppRoutes.projects.name),
             ),
-            _buildListTile(
-              context: context,
+            _DrawerListTile(
               icon: Icons.task,
               title: AppLocalizations.of(context)!.tasks,
               onTap: () => Navigator.pushNamed(context, AppRoutes.tasks.name),
             ),
-            _buildListTile(
-              context: context,
+            _DebugModeListTile(
               icon: Icons.square,
               title: AppLocalizations.of(context)!.testSQL,
-              onTap: () => Navigator.pushNamed(context, AppRoutes.testSQLPage.name),
+              onTap: () =>
+                  Navigator.pushNamed(context, AppRoutes.testSQLPage.name),
             ),
-            _buildListTile(
-              context: context,
+            _DrawerListTile(
               icon: Icons.chat,
               title: AppLocalizations.of(context)!.aiChatThreads,
               onTap: () => Navigator.pushNamed(context, AppRoutes.aiChats.name),
             ),
-            _buildListTile(
-              context: context,
+            _DrawerListTile(
               icon: Icons.punch_clock_outlined,
               title: AppLocalizations.of(context)!.shifts,
               onTap: () => Navigator.pushNamed(context, AppRoutes.shifts.name),
             ),
-            _buildListTile(
-              context: context,
+            _DrawerListTile(
               icon: Icons.note_outlined,
               title: AppLocalizations.of(context)!.notes,
-              onTap: () => Navigator.pushNamed(context, AppRoutes.noteList.name),
+              onTap: () =>
+                  Navigator.pushNamed(context, AppRoutes.noteList.name),
             ),
-            _buildListTile(
-              context: context,
+            _DrawerListTile(
               icon: Icons.settings,
               title: AppLocalizations.of(context)!.settings,
               onTap: () => isSettingsView.value = true,
@@ -200,23 +228,6 @@ class DrawerView extends HookWidget {
           ],
         ],
       ),
-    );
-  }
-
-  Widget _buildListTile({
-    required BuildContext context,
-    required IconData icon,
-    required String title,
-    required VoidCallback onTap,
-  }) {
-    return ListTile(
-      dense: true,
-      leading: Icon(icon),
-      title: Text(
-        title,
-        style: const TextStyle(fontWeight: FontWeight.bold),
-      ),
-      onTap: onTap,
     );
   }
 }
@@ -230,4 +241,44 @@ class _BuildRow extends Row {
             Text(value),
           ],
         );
+}
+
+class _DrawerListTile extends ListTile {
+  _DrawerListTile({
+    required IconData icon,
+    required String title,
+    required VoidCallback onTap,
+  }) : super(
+          dense: true,
+          leading: Icon(icon),
+          title: Text(
+            title,
+            style: const TextStyle(fontWeight: FontWeight.bold),
+          ),
+          onTap: onTap,
+        );
+}
+
+class _DebugModeListTile extends ConsumerWidget {
+  const _DebugModeListTile({
+    required this.icon,
+    required this.title,
+    required this.onTap,
+  });
+
+  final IconData icon;
+  final String title;
+  final VoidCallback onTap;
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final isDebugMode = ref.watch(isDebugModeSNP);
+    return isDebugMode
+        ? _DrawerListTile(
+            icon: icon,
+            title: title,
+            onTap: onTap,
+          )
+        : const SizedBox.shrink();
+  }
 }

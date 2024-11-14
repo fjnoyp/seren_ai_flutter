@@ -9,6 +9,7 @@ import 'package:seren_ai_flutter/services/data/ai_chats/providers/cur_user_ai_ch
 import 'package:seren_ai_flutter/services/data/ai_chats/providers/cur_user_ai_chat_thread_provider.dart';
 import 'package:seren_ai_flutter/services/data/ai_chats/widgets/ai_chat_message_view_card.dart';
 import 'package:seren_ai_flutter/services/data/common/widgets/async_value_handler_widget.dart';
+import 'package:seren_ai_flutter/widgets/common/debug_mode_provider.dart';
 
 class AIChatsPage extends HookConsumerWidget {
   const AIChatsPage({super.key});
@@ -16,56 +17,38 @@ class AIChatsPage extends HookConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final messageController = useTextEditingController();
-    final isDebugMode = useState(false);
+    final isDebugMode = ref.watch(isDebugModeSNP);
 
-    return Column(
-      children: [
-        Row(
-          mainAxisAlignment: MainAxisAlignment.end,
-          children: [
-            IconButton(
-              icon: Icon(
-                isDebugMode.value ? Icons.list : Icons.bug_report,
-                size: 20,
-              ),
-              onPressed: () {
-                isDebugMode.value = !isDebugMode.value;
-              },
-            ),
-          ],
-        ),
-        isDebugMode.value
-            ? const AiDebugPage()
-            : Expanded(
-                child: Column(
-                  children: [
-                    TextField(
-                      controller: messageController,
-                      decoration: InputDecoration(
-                        labelText: 'Ask a question',
-                        suffixIcon: IconButton(
-                          icon: const Icon(Icons.send),
-                          onPressed: () {
-                            final message = messageController.text;
-                            if (message.isNotEmpty) {
-                              ref
-                                  .read(aiChatServiceProvider)
-                                  .sendMessageToAi(message);
-                              messageController.clear();
-                            }
-                          },
-                        ),
-                      ),
+    return isDebugMode
+        ? const AiDebugPage()
+        : Expanded(
+            child: Column(
+              children: [
+                TextField(
+                  controller: messageController,
+                  decoration: InputDecoration(
+                    labelText: 'Ask a question',
+                    suffixIcon: IconButton(
+                      icon: const Icon(Icons.send),
+                      onPressed: () {
+                        final message = messageController.text;
+                        if (message.isNotEmpty) {
+                          ref
+                              .read(aiChatServiceProvider)
+                              .sendMessageToAi(message);
+                          messageController.clear();
+                        }
+                      },
                     ),
-                    const ChatThreadDisplay(),
-                    const Expanded(
-                      child: ChatMessagesDisplay(),
-                    ),
-                  ],
+                  ),
                 ),
-              ),
-      ],
-    );
+                const ChatThreadDisplay(),
+                const Expanded(
+                  child: ChatMessagesDisplay(),
+                ),
+              ],
+            ),
+          );
   }
 }
 
@@ -122,7 +105,8 @@ class ChatThreadCard extends HookWidget {
           children: [
             const Text('Chat Thread'),
             IconButton(
-              icon: Icon(isExpanded.value ? Icons.expand_less : Icons.expand_more),
+              icon: Icon(
+                  isExpanded.value ? Icons.expand_less : Icons.expand_more),
               onPressed: () => isExpanded.value = !isExpanded.value,
             ),
           ],
@@ -164,17 +148,16 @@ class ChatMessagesDisplay extends HookConsumerWidget {
         final providerData = messagesProviderValue.valueOrNull;
         if (providerData == null) return;
 
-        if (scrollController.position.pixels >= 
+        if (scrollController.position.pixels >=
             scrollController.position.maxScrollExtent * 0.8) {
           providerData.notifier.loadMore();
         }
       }
-      
+
       scrollController.addListener(onScroll);
       return () => scrollController.removeListener(onScroll);
     }, [scrollController, messagesProviderValue]);
 
-    
     return messagesProviderValue.when(
       loading: () => const Center(child: CircularProgressIndicator()),
       error: (error, stack) => Center(child: Text('Error: $error')),
@@ -184,9 +167,11 @@ class ChatMessagesDisplay extends HookConsumerWidget {
             ? const Center(child: Text('No messages available'))
             : ListView.builder(
                 controller: scrollController,
-                itemCount: messages.length + (providerData.notifier.hasMore ? 1 : 0),
+                itemCount:
+                    messages.length + (providerData.notifier.hasMore ? 1 : 0),
                 itemBuilder: (context, index) {
-                  if (index == messages.length && providerData.notifier.hasMore) {
+                  if (index == messages.length &&
+                      providerData.notifier.hasMore) {
                     return const Center(child: CircularProgressIndicator());
                   }
                   final message = messages[index];
