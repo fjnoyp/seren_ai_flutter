@@ -27,6 +27,7 @@ import 'package:seren_ai_flutter/services/data/tasks/repositories/tasks_reposito
 import 'package:seren_ai_flutter/services/data/tasks/tool_methods/models/create_task_result_model.dart';
 import 'package:seren_ai_flutter/services/data/tasks/tool_methods/models/find_tasks_result_model.dart';
 import 'package:seren_ai_flutter/services/data/tasks/tool_methods/models/task_request_models.dart';
+import 'package:seren_ai_flutter/services/data/tasks/tool_methods/models/update_task_fields_result_model.dart';
 import 'dart:math';
 
 import 'package:seren_ai_flutter/services/data/tasks/widgets/task_page.dart';
@@ -173,21 +174,15 @@ class TaskToolMethods {
     if (userId == null) return _handleNoAuth();
 
     // Create a new task with fields from the request
-    final task = TaskModel(
-      id: DateTime.now().millisecondsSinceEpoch.toString(), // Temporary ID
+    final task = TaskModel(      
       name: actionRequest.taskName,
       description: actionRequest.taskDescription,
       dueDate: DateTime.parse(actionRequest.taskDueDate),
       status: StatusEnum.open,
-      priority: PriorityEnum.values.firstWhere(
-        (p) => p.name.toLowerCase() == actionRequest.taskPriority.toLowerCase(),
-        orElse: () => PriorityEnum.normal,
-      ),
+      priority: PriorityEnum.values.byName(actionRequest.taskPriority.toLowerCase()),
       estimatedDurationMinutes: actionRequest.estimateDurationMinutes,
       authorUserId: userId,
       parentProjectId: '', // Will be set later in UI
-      createdAt: DateTime.now().toUtc(),
-      updatedAt: DateTime.now().toUtc(),
     );
 
     // Create a joined task model
@@ -212,16 +207,80 @@ class TaskToolMethods {
 
     return CreateTaskResultModel(
       joinedTask: joinedTask,
-      resultForAi: allowToolUiActions 
-          ? 'Created new task "${task.name}" and opened edit page' 
+      resultForAi: allowToolUiActions
+          ? 'Created new task "${task.name}" and opened edit page'
           : 'Created new task "${task.name}", but UI actions are not allowed',
       showOnly: true,
     );
   }
 
+  // TODO p2: move this to a db method
+  Future<List<JoinedTaskModel>> _getJoinedTasksByName(
+      Ref ref, String searchTaskName) async {
+    final userId = _getUserId(ref);
+    if (userId == null) return [];
+
+    final joinedTasks = await ref
+        .read(joinedTasksRepositoryProvider)
+        .getUserViewableJoinedTasks(userId);
+
+    // Calculate similarity scores and sort
+    final tasksWithScores = joinedTasks.map((joinedTask) {
+      final similarity = joinedTask.task.name.similarity(searchTaskName);
+      return (joinedTask, similarity);
+    }).where((tuple) => tuple.$2 >= _similarityThreshold)
+      .toList()
+      ..sort((a, b) => b.$2.compareTo(a.$2));
+
+    // Return top 3 matches
+    return tasksWithScores.take(3).map((tuple) => tuple.$1).toList();
+  }
+
   Future<AiRequestResultModel> updateTaskFields(
       {required Ref ref,
-      required UpdateTaskFieldsRequestModel actionRequest}) async {
+      required UpdateTaskFieldsRequestModel actionRequest,
+      required bool allowToolUiActions}) async {
+      
+      final matchingTasks = await _getJoinedTasksByName(ref, actionRequest.taskName);
+
+    // TODO p2: determine task matching logic - may want to ask user for confirmation or add a good undo 
+    // For now - just update the first matching task
+    final joinedTask = matchingTasks.first;
+    final taskToModify = joinedTask.task;
+
+    final updatedTask = taskToModify.copyWith(
+      name: actionRequest.taskName,
+      description: actionRequest.taskDescription,
+      dueDate: actionRequest.taskDueDate != null ? DateTime.parse(actionRequest.taskDueDate!) : null,
+      status: actionRequest.taskStatus != null ? StatusEnum.values.byName(actionRequest.taskStatus!.toLowerCase()) : null,
+      priority: actionRequest.taskPriority != null ? PriorityEnum.values.byName(actionRequest.taskPriority!.toLowerCase()) : null,
+      estimatedDurationMinutes: actionRequest.estimateDurationMinutes,
+      updatedAt: DateTime.now().toUtc(),
+    );
+
+    // Show the new task fields and ask for confirmation 
+    
+    
+
+    final updatedJoinedTask = joinedTask.copyWith(task: updatedTask);
+
+    if (allowToolUiActions) {
+      ref.read(curTaskServiceProvider).loadTask(updatedJoinedTask);
+    }
+
+    return UpdateTaskFieldsResultModel(
+      joinedTask: updatedJoinedTask,
+      resultForAi: 'Updated task "${updatedTask.name}" and showed result in UI',
+      showOnly: true,
+    );
+
+
+
+    // 1) get the task name
+    // 2) make sure it's open and currently viewed
+    // 3) update the task fields
+    // 4) return the updated task fields (TBD)
+
     return ErrorRequestResultModel(
         resultForAi: 'Not implemented for request: ${actionRequest.toString()}',
         showOnly: true);

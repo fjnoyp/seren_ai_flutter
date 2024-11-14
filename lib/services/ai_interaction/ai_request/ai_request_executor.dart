@@ -110,7 +110,7 @@ class AiRequestExecutor {
         return await taskToolMethods.createTask(ref: ref, actionRequest: actionRequest as CreateTaskRequestModel, allowToolUiActions: allowToolUiActions);
 
       case AiActionRequestType.updateTaskFields:
-        return await taskToolMethods.updateTaskFields(ref: ref, actionRequest: actionRequest as UpdateTaskFieldsRequestModel);
+        return await taskToolMethods.updateTaskFields(ref: ref, actionRequest: actionRequest as UpdateTaskFieldsRequestModel, allowToolUiActions: allowToolUiActions);
 
       case AiActionRequestType.deleteTask:
         return await taskToolMethods.deleteTask(ref: ref, actionRequest: actionRequest as DeleteTaskRequestModel);
