@@ -5,7 +5,7 @@ import 'package:seren_ai_flutter/services/data/ai_chats/providers/cur_user_ai_ch
 /// Helper to create providers that depend on authenticated user
 class CurAiChatThreadDependencyProvider {
 
-  static AsyncValue<T> watch<T>({
+  static AsyncValue<T> get<T>({
     required Ref ref,
     required AsyncValue<T> Function(AiChatThreadModel aiChatThread) builder,
   }) {

@@ -3,7 +3,7 @@ import 'package:seren_ai_flutter/services/auth/cur_auth_state_provider.dart';
 
 /// Helper to create providers that depend on authenticated user
 class CurAuthDependencyProvider {
-  static AsyncValue<T> watch<T>({
+  static AsyncValue<T> get<T>({
     required Ref ref,
     required AsyncValue<T> Function(String userId) builder,
   }) {
@@ -30,3 +30,5 @@ class CurAuthDependencyProvider {
   }
 
 }
+
+

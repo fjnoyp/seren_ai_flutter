@@ -14,7 +14,7 @@ final curOrgIdProvider = Provider<String?>((ref) {
 
 /// Helper to create providers that depend on authenticated user
 class IsCurUserOrgAdminDependencyProvider {
-  static AsyncValue<T> watch<T>({
+  static AsyncValue<T> get<T>({
     required Ref ref,
     required AsyncValue<T> Function(bool isAdmin) builder,
   }) {
