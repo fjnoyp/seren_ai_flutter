@@ -28,6 +28,7 @@
     "brazilianPortuguese": "Português do Brasil",
     "europeanPortuguese": "Português de Portugal",
     "about": "Sobre",
+    "debugMode": "Modo Debug",
 
     "@_": {"description": "Authentication"},
     "signInUp": "Entrar/Registar",
