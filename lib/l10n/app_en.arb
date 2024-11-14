@@ -41,6 +41,7 @@
     "brazilianPortuguese": "Brazilian Portuguese",
     "europeanPortuguese": "European Portuguese",
     "about": "About",
+    "debugMode": "Debug Mode",
 
     "@_": {"description": "Authentication"},
     "signInUp": "Sign In/Up",
