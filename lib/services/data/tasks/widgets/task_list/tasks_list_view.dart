@@ -14,11 +14,13 @@ class TasksListView extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     return AsyncValueHandlerWidget(
       value: ref.watch(joinedCurUserViewableTasksProvider),
-      data: (_) {
+      data: (tasks) {
         // TODO p2: we can split providers instead ...
-        final filteredTasks = ref.watch(
-            joinedCurUserViewableTasksProvider.select((joinedTasks) =>
-                joinedTasks.value?.where(filter).toList() ?? []));
+        final filteredTasks = tasks?.where(filter).toList();
+
+        if (filteredTasks == null) {
+          return const Center(child: Text('No tasks found'));
+        }
 
         return ListView.builder(
           itemCount: filteredTasks.length,
