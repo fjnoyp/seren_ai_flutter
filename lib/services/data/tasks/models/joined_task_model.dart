@@ -45,19 +45,34 @@ class JoinedTaskModel {
     );
   }
 
+  static dynamic tryJsonDecode(dynamic value) {
+      if (value is String) {
+        try {
+          return jsonDecode(value);
+        } catch (e) {
+          return value;
+        }
+      }
+      return value;
+    }
+
+  // ISSUE - if json comes from db reads, it's a raw string, if it comes from ai chat message content, it's a map
   factory JoinedTaskModel.fromJson(Map<String, dynamic> json) {
-    final task = TaskModel.fromJson(json['task']);
-    final authorUser = UserModel.fromJson(json['author_user']);
-    final project = ProjectModel.fromJson(json['project']);
-    final decodedAssignees = json['assignees'] as List<dynamic>;
-    final assigneesJson = decodedAssignees.first == null
+    final taskJson = tryJsonDecode(json['task']);
+    final authorUserJson = tryJsonDecode(json['author_user']);
+    final projectJson = tryJsonDecode(json['project']);
+    final decodedAssignees = tryJsonDecode(json['assignees']);
+    final assigneesJson = decodedAssignees.isEmpty || decodedAssignees.first == null
         ? []
         : decodedAssignees;
-    final decodedComments = json['comments'] as List<dynamic>;
-    final commentsJson = decodedComments.first == null
+    final decodedComments = tryJsonDecode(json['comments']);
+    final commentsJson = decodedComments.isEmpty || decodedComments.first == null
         ? []
         : decodedComments;
 
+    final task = TaskModel.fromJson(taskJson);
+    final authorUser = authorUserJson != null ? UserModel.fromJson(authorUserJson) : null;
+    final project = projectJson != null ? ProjectModel.fromJson(projectJson) : null;
     final assignees = <UserModel>[
       ...assigneesJson.map((e) => UserModel.fromJson(e))
     ];
