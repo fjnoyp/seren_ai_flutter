@@ -7,9 +7,9 @@
   "client": [
     {
       "client_info": {
-        "mobilesdk_app_id": "1:888730365208:android:83325c231177b43b09c26d",
+        "mobilesdk_app_id": "1:888730365208:android:c9cf9621dc53df7709c26d",
         "android_client_info": {
-          "package_name": "com.example.seren_ai_flutter"
+          "package_name": "com.serentech.serenai_android"
         }
       },
       "oauth_client": [],
