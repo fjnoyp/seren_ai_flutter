@@ -1,4 +1,3 @@
-
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:seren_ai_flutter/common/routes/app_routes.dart';
@@ -23,8 +22,13 @@ class SignInUpPage extends StatelessWidget {
             if (response.user != null && response.user!.email != null) {
               final user = response.user!;
               await Supabase.instance.client.from('users').insert(
-                    UserModel(parentAuthUserId: user.id, email: user.email!)
-                        .toJson()
+                    UserModel(
+                      parentAuthUserId: user.id,
+                      email: user.email!,
+                      firstName:
+                          response.user?.userMetadata?['first_name'] ?? '',
+                      lastName: response.user?.userMetadata?['last_name'] ?? '',
+                    ).toJson()
                       ..addAll(
                         {
                           'created_at': DateTime.now().toIso8601String(),
@@ -38,8 +42,19 @@ class SignInUpPage extends StatelessWidget {
           metadataFields: [
             MetaDataField(
               prefixIcon: const Icon(Icons.person),
-              label: AppLocalizations.of(context)!.username,
-              key: 'username',
+              label: AppLocalizations.of(context)!.firstName,
+              key: 'first_name',
+              validator: (val) {
+                if (val == null || val.isEmpty) {
+                  return AppLocalizations.of(context)!.pleaseEnterSomething;
+                }
+                return null;
+              },
+            ),
+            MetaDataField(
+              prefixIcon: const Icon(Icons.person),
+              label: AppLocalizations.of(context)!.lastName,
+              key: 'last_name',
               validator: (val) {
                 if (val == null || val.isEmpty) {
                   return AppLocalizations.of(context)!.pleaseEnterSomething;
@@ -52,7 +67,8 @@ class SignInUpPage extends StatelessWidget {
               isRequired: true,
               checkboxPosition: ListTileControlAffinity.leading,
               richLabelSpans: [
-                TextSpan(text: AppLocalizations.of(context)!.iHaveReadAndAgreeToThe),
+                TextSpan(
+                    text: AppLocalizations.of(context)!.iHaveReadAndAgreeToThe),
                 TextSpan(
                   text: AppLocalizations.of(context)!.termsAndConditions,
                   style: TextStyle(
@@ -60,7 +76,8 @@ class SignInUpPage extends StatelessWidget {
                   ),
                   recognizer: TapGestureRecognizer()
                     ..onTap = () {
-                      Navigator.pushNamed(context, AppRoutes.termsAndConditions.name);
+                      Navigator.pushNamed(
+                          context, AppRoutes.termsAndConditions.name);
                     },
                 ),
               ],

@@ -31,14 +31,14 @@ class TaskCommentCard extends StatelessWidget {
                 const SizedBox(width: 8),
                 Expanded(
                   child: Text(
-                    // TODO p3: replace with authorName
-                    comment.authorUser!.email,
+                    comment.authorUser!.firstName,
                     overflow: TextOverflow.ellipsis,
                   ),
                 ),
                 Text(
-                  DateFormat.MMMMd(AppLocalizations.of(context)!.localeName).add_jm().format(
-                      comment.comment.updatedAt?.toLocal() ??
+                  DateFormat.MMMMd(AppLocalizations.of(context)!.localeName)
+                      .add_jm()
+                      .format(comment.comment.updatedAt?.toLocal() ??
                           comment.comment.createdAt!.toLocal()),
                 ),
               ],
