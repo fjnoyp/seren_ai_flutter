@@ -2,17 +2,33 @@ import 'package:json_annotation/json_annotation.dart';
 import 'package:seren_ai_flutter/services/data/common/i_has_id.dart';
 import 'package:seren_ai_flutter/services/data/common/status_enum.dart';
 import 'package:seren_ai_flutter/services/data/common/uuid.dart';
+import 'package:flutter/widgets.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 part 'task_model.g.dart';
 
-enum PriorityEnum { veryLow, low, normal, high, veryHigh }
+enum PriorityEnum {
+  veryLow,
+  low,
+  normal,
+  high,
+  veryHigh;
+
+  String toHumanReadable(BuildContext context) => switch (this) {
+        PriorityEnum.veryLow => AppLocalizations.of(context)!.veryLow,
+        PriorityEnum.low => AppLocalizations.of(context)!.low,
+        PriorityEnum.normal => AppLocalizations.of(context)!.normal,
+        PriorityEnum.high => AppLocalizations.of(context)!.high,
+        PriorityEnum.veryHigh => AppLocalizations.of(context)!.veryHigh,
+      };
+}
 
 @JsonSerializable()
-class TaskModel implements IHasId{
+class TaskModel implements IHasId {
   @override
   final String id;
   final String name;
-  final String? description;  
+  final String? description;
 
   @JsonKey(name: 'status')
   final StatusEnum? status;
@@ -52,7 +68,7 @@ class TaskModel implements IHasId{
 
   static dynamic _durationToJson(int? value) => value;
 
-  TaskModel({    
+  TaskModel({
     String? id,
     required this.name,
     required this.description,
@@ -77,8 +93,10 @@ class TaskModel implements IHasId{
       dueDate: null,
       createdAt: now,
       updatedAt: now,
-      authorUserId: '',  // This should be set to the current user's ID in practice
-      parentProjectId: '',  // This should be set to a valid project ID in practice
+      authorUserId:
+          '', // This should be set to the current user's ID in practice
+      parentProjectId:
+          '', // This should be set to a valid project ID in practice
       estimatedDurationMinutes: null,
     );
   }
@@ -107,10 +125,12 @@ class TaskModel implements IHasId{
       updatedAt: updatedAt ?? this.updatedAt,
       authorUserId: authorUserId ?? this.authorUserId,
       parentProjectId: parentProjectId ?? this.parentProjectId,
-      estimatedDurationMinutes: estimatedDurationMinutes ?? this.estimatedDurationMinutes,
+      estimatedDurationMinutes:
+          estimatedDurationMinutes ?? this.estimatedDurationMinutes,
     );
   }
 
-  factory TaskModel.fromJson(Map<String, dynamic> json) => _$TaskModelFromJson(json);
+  factory TaskModel.fromJson(Map<String, dynamic> json) =>
+      _$TaskModelFromJson(json);
   Map<String, dynamic> toJson() => _$TaskModelToJson(this);
 }

@@ -21,7 +21,12 @@ class HomePage extends StatelessWidget {
               child: Padding(
                 padding: const EdgeInsets.all(30.0),
                 child: Text(
-                  AppLocalizations.of(context)!.welcome('Letty'),
+                  // We decided to use a time greeting to avoid genre issues when using protuguese.
+                  // i.e. Welcome = Bem-vindo (male) / Bem-vinda (female)
+                  AppLocalizations.of(context)!.timeGreeting(
+                    _getTimePeriod(DateTime.now().hour),
+                    'Letty',
+                  ),
                   style: Theme.of(context).textTheme.headlineMedium,
                 ),
               ),
@@ -43,5 +48,11 @@ class HomePage extends StatelessWidget {
         ),
       ),
     );
+  }
+
+  String _getTimePeriod(int hour) {
+    if (hour >= 5 && hour < 12) return 'morning';
+    if (hour >= 12 && hour < 17) return 'afternoon';
+    return 'evening';
   }
 }

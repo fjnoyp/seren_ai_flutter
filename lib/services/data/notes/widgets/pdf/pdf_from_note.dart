@@ -53,18 +53,23 @@ class NoteToPdfConverter extends Document {
         style: const TextStyle(fontSize: 28.0),
       ),
       Text(
-        joinedNote.project?.name ?? AppLocalizations.of(ref.context)!.pdfPersonal,
+        joinedNote.project?.name ??
+            AppLocalizations.of(ref.context)!.pdfPersonal,
         style: const TextStyle(fontSize: 16.0),
       ),
       SizedBox(height: 16.0),
       Text(
         AppLocalizations.of(ref.context)!.pdfCreatedBy(
           joinedNote.authorUser?.email ?? '',
-          DateFormat.yMMMd(AppLocalizations.of(ref.context)!.localeName).format(joinedNote.note.createdAt!),
+          DateFormat.yMMMd(AppLocalizations.of(ref.context)!.localeName)
+              .format(joinedNote.note.createdAt!),
         ),
       ),
       SizedBox(height: 16.0),
-      Text(AppLocalizations.of(ref.context)!.pdfStatus(joinedNote.note.status?.toString().enumToHumanReadable ?? '')),
+      Text(
+        AppLocalizations.of(ref.context)!.pdfStatus(
+            joinedNote.note.status?.toHumanReadable(ref.context) ?? ''),
+      ),
     ];
   }
 
