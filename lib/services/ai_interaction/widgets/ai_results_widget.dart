@@ -48,7 +48,7 @@ class AiResultsWidget extends HookConsumerWidget {
                     mainAxisSize: MainAxisSize.min,
                     crossAxisAlignment: CrossAxisAlignment.stretch,
                     children: [
-                      for (final aiChatMessage in lastAiResults)
+                      for (final aiChatMessage in lastAiResults.reversed)
                         if (aiChatMessage.getDisplayType() != AiChatMessageDisplayType.toolAiRequest)
                           DisplayAiResult(aiChatMessage: aiChatMessage),
                     ],

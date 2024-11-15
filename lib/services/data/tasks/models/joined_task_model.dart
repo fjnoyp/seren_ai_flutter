@@ -45,6 +45,7 @@ class JoinedTaskModel {
     );
   }
 
+  // TODO p3: move to common utils - make sure to use for any nested json decoding 
   static dynamic tryJsonDecode(dynamic value) {
       if (value is String) {
         try {
@@ -61,6 +62,10 @@ class JoinedTaskModel {
   1. json value can be raw string or Map<String, dynamic>
   2. Calling jsonDecode on Map<String, dynamic> causes type error 
   3. If jsonEncode was previusly called on json, the values can also be Maps, otherwise, if json comes directly db, the values are raw strings
+
+  Related code paths: 
+  1. Calling jsonDecode from base_repository breaks the code ...
+  2. jsonDecode is already called from AiChatMessageModel - getAiRequest/Result 
   
   Always call tryJsonDecode on nested json objects to ensure compatibility with both raw strings and encoded maps
   */
