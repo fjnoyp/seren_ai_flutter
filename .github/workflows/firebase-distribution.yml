@@ -103,6 +103,6 @@ jobs:
             FILE_PATH="build/app/outputs/apk/release/app-release-aligned.apk"
             
             firebase appdistribution:distribute "$FILE_PATH" \
-            --app ${{ secrets.FIREBASE_ANDROID_APP_ID }} \
+            --app "1:888730365208:android:c9cf9621dc53df7709c26d" \
             --groups 'beta_testers' \
             --json
