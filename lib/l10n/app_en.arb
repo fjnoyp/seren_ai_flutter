@@ -1,8 +1,12 @@
 {
     "@_": {"description": "General/Common"},
-    "welcome": "Welcome,\n{userName}!",
-    "@welcome": {
+    "timeGreeting": "{period, select, morning{Good morning} afternoon{Good afternoon} evening{Good evening} other{Hello}},\n{userName}!",
+    "@timeGreeting": {
         "placeholders": {
+            "period": {
+                "type": "String",
+                "description": "Time period (morning/afternoon/evening)"
+            },
             "userName": {
                 "type": "String",
                 "example": "Letty"
@@ -62,6 +66,11 @@
     "aiAssistant": "AI Assistant",
     "aiChatThreads": "AI Chat Threads",
     "chat": "Chat",
+    "chatThread": "Chat Thread",
+    "threadId": "Thread ID",
+    "author": "Author",
+    "parentLgThreadId": "Parent LG Thread ID",
+    "parentLgAssistantId": "Parent LG Assistant ID",
     "noChatThreadAvailable": "No chat thread available",
     "noMessagesAvailable": "No messages available",
     "messageType": "Type: {messageType}",
@@ -76,6 +85,11 @@
     "collapse": "Collapse",
     "expand": "Expand",
     "saySomething": "Say something...",
+    "noArgumentsProvided": "No arguments provided",
+    "actionType": "Action Type",
+    "infoType": "Info Type",
+    "showOnly": "Show Only",
+    "uiActionType": "UI Action Type",
 
     "@_": {"description": "Organization"},
     "chooseOrganization": "Choose Organization",
@@ -182,6 +196,7 @@
     "shifts": "Shifts",
     "noShifts": "No shifts",
     "noShiftLogs": "No shift logs",
+    "noActiveShift": "No active shift",
     "noShiftsExclamation": "No shifts!",
     "clockIn": "Clock In", 
     "clockOut": "Clock Out",
@@ -207,7 +222,6 @@
         }
     },
     "todaysShift": "Today's Shift",
-    "noActiveShift": "No active shift",
     "timeRange": "{startTime} to {endTime}",
     "@timeRange": {
         "placeholders": {
@@ -215,6 +229,39 @@
             "endTime": {"type": "String"}
         }
     },
+    "loadingShiftState": "Loading shift state",
+    "errorFetchingShiftState": "Error fetching shift state: {error}",
+    "@errorFetchingShiftState": {
+        "placeholders": {
+            "error": {"type": "String"}
+        }
+    },
+    "requestedShiftLogs": "Requested Shift Logs",
+    "totalHours": "Total Hours: {hours}h {minutes}m",
+    "@totalHours": {
+        "placeholders": {
+            "hours": {"type": "String"},
+            "minutes": {"type": "String"}
+        }
+    },
+    "currentShiftDuration": "Current Shift duration: {hours}h {minutes}m",
+    "@currentShiftDuration": {
+        "placeholders": {
+            "hours": {"type": "String"},
+            "minutes": {"type": "String"}
+        }
+    },
+    "noLogs": "No Logs",
+    "requestedShiftAssignments": "Requested Shift Assignments",
+    "totalAssignedHours": "Total assigned hours: {hours}h {minutes}m",
+    "@totalAssignedHours": {
+        "placeholders": {
+            "hours": {"type": "String"},
+            "minutes": {"type": "String"}
+        }
+    },
+    "noActiveShiftRangesForToday": "No active shift ranges for today",
+    "noAssignments": "No Assignments",
 
     "@_": {"description": "Tasks"},
     "tasks": "Tasks",
@@ -236,16 +283,6 @@
         }
     },
     "chooseDueDate": "Choose a Due Date",
-    "veryHigh": "Very High",
-    "high": "High", 
-    "normal": "Normal",
-    "low": "Low",
-    "veryLow": "Very Low",
-    "open": "Open",
-    "inProgress": "In Progress",
-    "finished": "Finished",
-    "cancelled": "Cancelled", 
-    "archived": "Archived",
     "todaysTasks": "Today's Tasks",
     "noTasksDueToday": "No tasks due today",
     "seeAll": "See All",
@@ -254,6 +291,13 @@
     "tasksListFinished": "Finished",
     "createNewTask": "Create New Task",
     "chooseAssignees": "Choose Assignees",
+    "foundTasks": "Found Tasks",
+    "noTasksFound": "No tasks found",
+
+    "@_": {"description": "Test SQL Page"},
+    "testSQLPage": "Test SQL Page",
+    "enterSQLQuery": "Enter SQL query",
+    "executeSQL": "Execute SQL",
 
     "@_": {"description": "Speech Recognition"},
     "unknownState": "Unknown state: {state}",
@@ -314,5 +358,29 @@
         "placeholders": {
             "date": {"type": "String"}
         }
-    }
+    },
+
+    "@_": {"description": "Status Enum"},
+    "cancelled": "Cancelled",
+    "open": "Open",
+    "inProgress": "In Progress",
+    "finished": "Finished",
+    "archived": "Archived",
+    "selectStatus": "Select Status",
+
+    "@_": {"description": "AiChatMessageDisplayType Enum"},
+    "ai": "AI",
+    "user": "User",
+    "tool": "Tool",
+    "aiWithToolCall": "AI with Tool Call",
+    "toolAiRequest": "Tool AI Request",
+    "toolAiResult": "Tool AI Result",
+
+    "@_": {"description": "Priority Enum"},
+    "veryHigh": "Very High",
+    "high": "High", 
+    "normal": "Normal",
+    "low": "Low",
+    "veryLow": "Very Low",
+    "selectPriority": "Select Priority"
 }

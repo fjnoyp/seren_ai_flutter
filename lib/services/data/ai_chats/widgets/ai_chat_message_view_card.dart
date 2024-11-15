@@ -3,20 +3,13 @@ import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:flutter_svg/svg.dart';
-import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:seren_ai_flutter/common/utils/string_extension.dart';
-import 'package:seren_ai_flutter/services/ai_interaction/ai_chat_service_provider.dart';
 import 'package:seren_ai_flutter/services/ai_interaction/ai_request/models/requests/ai_action_request_model.dart';
 import 'package:seren_ai_flutter/services/ai_interaction/ai_request/models/requests/ai_info_request_model.dart';
 import 'package:seren_ai_flutter/services/ai_interaction/ai_request/models/requests/ai_request_model.dart';
 import 'package:seren_ai_flutter/services/ai_interaction/ai_request/models/requests/ai_ui_action_request_model.dart';
 import 'package:seren_ai_flutter/services/ai_interaction/ai_request/models/results/ai_request_result_model.dart';
-import 'package:seren_ai_flutter/services/data/ai_chats/models/ai_chat_thread_model.dart';
 import 'package:seren_ai_flutter/services/data/ai_chats/models/ai_chat_message_model.dart';
-import 'package:seren_ai_flutter/services/ai_interaction/widgets/testing/ai_debug_page.dart';
-import 'package:seren_ai_flutter/services/data/ai_chats/providers/cur_user_ai_chat_messages_provider.dart';
-import 'package:seren_ai_flutter/services/data/ai_chats/providers/cur_user_ai_chat_thread_provider.dart';
-import 'package:seren_ai_flutter/services/data/common/widgets/async_value_handler_widget.dart';
 import 'package:seren_ai_flutter/services/data/shifts/tool_methods/models/shift_assignments_result_model.dart';
 import 'package:seren_ai_flutter/services/data/shifts/tool_methods/models/shift_clock_in_out_result_model.dart';
 import 'package:seren_ai_flutter/services/data/shifts/tool_methods/models/shift_log_results_model.dart';
@@ -25,6 +18,7 @@ import 'package:seren_ai_flutter/services/data/tasks/tool_methods/models/create_
 import 'package:seren_ai_flutter/services/data/tasks/tool_methods/models/find_tasks_result_model.dart';
 import 'package:seren_ai_flutter/services/data/tasks/tool_methods/models/update_task_fields_result_model.dart';
 import 'package:seren_ai_flutter/services/data/tasks/tool_methods/task_result_widgets.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 class AiChatMessageViewCard extends HookWidget {
   final AiChatMessageModel message;  
@@ -62,7 +56,7 @@ class AiChatMessageViewCard extends HookWidget {
                     children: [
                       _buildKeyValueText(
                         key: 'Display Type',
-                        value: displayType.toString().enumToHumanReadable,
+                        value: displayType.toHumanReadable(context),
                         context: context,
                       ),
                       _buildKeyValueText(
@@ -165,24 +159,24 @@ class AiChatMessageViewCard extends HookWidget {
         // Show subtype based on request model type
         if (request is AiActionRequestModel) ...[
           _buildKeyValueText(
-            key: 'Action Type',
+            key: AppLocalizations.of(context)!.actionType,
             value: request.actionRequestType.value,
             context: context,
           ),
         ] else if (request is AiInfoRequestModel) ...[
           _buildKeyValueText(
-            key: 'Info Type',
+            key: AppLocalizations.of(context)!.infoType,
             value: request.infoRequestType.value,
             context: context,
           ),
           _buildKeyValueText(
-            key: 'Show Only',
+            key: AppLocalizations.of(context)!.showOnly,
             value: request.showOnly.toString(),
             context: context,
           )
         ] else if (request is AiUiActionRequestModel)
           _buildKeyValueText(
-            key: 'UI Action Type',
+            key: AppLocalizations.of(context)!.uiActionType,
             value: request.uiActionType.value,
             context: context,
           ),
@@ -195,7 +189,7 @@ class AiChatMessageViewCard extends HookWidget {
                 context: context,
               ))
         else
-          const Text('No arguments provided'),
+          Text(AppLocalizations.of(context)!.noArgumentsProvided),
       ],
     );
   }

@@ -8,6 +8,7 @@ import 'package:seren_ai_flutter/common/utils/date_time_range_extension.dart';
 import 'package:seren_ai_flutter/services/data/shifts/tool_methods/models/shift_assignments_result_model.dart';
 import 'package:seren_ai_flutter/services/data/shifts/tool_methods/models/shift_clock_in_out_result_model.dart';
 import 'package:seren_ai_flutter/services/data/shifts/tool_methods/models/shift_log_results_model.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 // class ShiftInfoResultWidget extends ConsumerWidget {
 //   final ShiftAssignmentsResultModel result;
@@ -67,15 +68,20 @@ class ShiftLogsResultWidget extends ConsumerWidget {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
-        Text('Requested Shift Logs', style: theme.textTheme.titleMedium),
+        Text(AppLocalizations.of(context)!.requestedShiftLogs,
+            style: theme.textTheme.titleMedium),
         const SizedBox(height: 4),
         Text(
-          'Total Hours: ${result.totalLogMinutes ~/ 60}h ${result.totalLogMinutes % 60}m',
+          AppLocalizations.of(context)!.totalHours(
+              (result.totalLogMinutes ~/ 60).toString(),
+              (result.totalLogMinutes % 60).toString()),
           style: theme.textTheme.bodyMedium,
         ),
         if (result.curShiftMinutes != null)
           Text(
-            'Current Shift duration: ${result.curShiftMinutes! ~/ 60}h ${result.curShiftMinutes! % 60}m',
+            AppLocalizations.of(context)!.currentShiftDuration(
+                (result.curShiftMinutes! ~/ 60).toString(),
+                (result.curShiftMinutes! % 60).toString()),
             style: theme.textTheme.bodyMedium?.copyWith(
               color: theme.colorScheme.primary,
             ),
@@ -123,9 +129,9 @@ class ShiftLogsResultWidget extends ConsumerWidget {
                       );
                     }),
                   if (logs.isEmpty)
-                    const Padding(
-                      padding: EdgeInsets.only(left: 16.0),
-                      child: Text('No Logs'),
+                    Padding(
+                      padding: const EdgeInsets.only(left: 16.0),
+                      child: Text(AppLocalizations.of(context)!.noLogs),
                     ),
                 ],
               ),
@@ -148,10 +154,13 @@ class ShiftAssignmentsResultWidget extends ConsumerWidget {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
-        Text('Requested Shift Assignments', style: theme.textTheme.titleMedium),
+        Text(AppLocalizations.of(context)!.requestedShiftAssignments,
+            style: theme.textTheme.titleMedium),
         const SizedBox(height: 4),
         Text(
-          'Total assigned hours: ${result.totalShiftMinutes ~/ 60}h ${result.totalShiftMinutes % 60}m',
+          AppLocalizations.of(context)!.totalAssignedHours(
+              (result.totalShiftMinutes ~/ 60).toString(),
+              (result.totalShiftMinutes % 60).toString()),
           style: theme.textTheme.bodyMedium,
         ),
         const SizedBox(height: 8),
@@ -198,9 +207,9 @@ class ShiftAssignmentsResultWidget extends ConsumerWidget {
                             );
                           }),
                         if (ranges.isEmpty)
-                          const Padding(
-                            padding: EdgeInsets.only(left: 16.0),
-                            child: Text('No Assignments'),
+                          Padding(
+                            padding: const EdgeInsets.only(left: 16.0),
+                            child: Text(AppLocalizations.of(context)!.noAssignments),
                           ),
                       ],
                     ),
