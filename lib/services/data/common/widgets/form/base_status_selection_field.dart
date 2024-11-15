@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
-import 'package:seren_ai_flutter/common/utils/string_extension.dart';
 import 'package:seren_ai_flutter/services/data/common/status_enum.dart';
 import 'package:seren_ai_flutter/services/data/common/widgets/form/selection_field.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 class BaseStatusSelectionField extends ConsumerWidget {
   final bool enabled;
@@ -24,7 +24,7 @@ class BaseStatusSelectionField extends ConsumerWidget {
       labelWidget: const Icon(Icons.flag),
       validator: (status) => null, // status == null ? 'Status is required' : null,
       valueToString: (status) =>
-          status?.toString().enumToHumanReadable ?? 'Select Status',
+          status?.toHumanReadable(context) ?? AppLocalizations.of(context)!.selectStatus,
       enabled: enabled,
       value: curTaskStatus,
       options: StatusEnum.values,

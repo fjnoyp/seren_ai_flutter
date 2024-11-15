@@ -26,7 +26,7 @@ class ShiftCard extends ConsumerWidget {
           data: (ranges) {
             
             if (ranges.isEmpty) {
-              return const Text('No active shift ranges for today');
+              return Text(AppLocalizations.of(context)!.noActiveShiftRangesForToday);
             }
 
             return InkWell(

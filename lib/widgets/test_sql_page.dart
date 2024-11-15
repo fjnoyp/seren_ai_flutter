@@ -3,6 +3,7 @@ import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:seren_ai_flutter/services/data/db_setup/db_provider.dart';
 import 'package:seren_ai_flutter/services/data/users/models/user_model.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 final testTasksProvider = NotifierProvider<TasksNotifier, List<UserModel>>(
   () {
@@ -44,7 +45,7 @@ class TestSQLPage extends HookConsumerWidget {
 
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Test SQL Page'),
+        title: Text(AppLocalizations.of(context)!.testSQLPage),
       ),
       body: Padding(
         padding: const EdgeInsets.all(16.0),
@@ -52,9 +53,9 @@ class TestSQLPage extends HookConsumerWidget {
           children: [
             TextField(
               controller: _sqlController,
-              decoration: const InputDecoration(
-                labelText: 'Enter SQL query',
-                border: OutlineInputBorder(),
+              decoration: InputDecoration(
+                labelText: AppLocalizations.of(context)!.enterSQLQuery,
+                border: const OutlineInputBorder(),
               ),
               maxLines: 3,
               minLines: 1,
@@ -67,7 +68,7 @@ class TestSQLPage extends HookConsumerWidget {
                 final items = results.map((row) => row.values).toList();                
                 sqlResult.value = items.toString();
               },
-              child: const Text('Execute SQL'),
+              child: Text(AppLocalizations.of(context)!.executeSQL),
             ),
             Text(sqlResult.value),
           ],
