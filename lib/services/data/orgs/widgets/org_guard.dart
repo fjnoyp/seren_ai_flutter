@@ -34,7 +34,7 @@ class OrgGuard extends ConsumerWidget {
           // the orgs list isn't always being updated in time
           WidgetsBinding.instance.addPostFrameCallback((_) async {
             for (int i = 0; i < 3; i++) {
-              await Future.delayed(const Duration(milliseconds: 500));
+              await Future.delayed(const Duration(seconds: 2));
               if (!context.mounted) return; // Check if widget is still mounted
               final orgs = await ref.refresh(curUserOrgsProvider.future);
               if (orgs.isNotEmpty) {

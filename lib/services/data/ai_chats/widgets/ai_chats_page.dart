@@ -10,6 +10,7 @@ import 'package:seren_ai_flutter/services/data/ai_chats/providers/cur_user_ai_ch
 import 'package:seren_ai_flutter/services/data/ai_chats/widgets/ai_chat_message_view_card.dart';
 import 'package:seren_ai_flutter/services/data/common/widgets/async_value_handler_widget.dart';
 import 'package:seren_ai_flutter/widgets/common/debug_mode_provider.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 class AIChatsPage extends HookConsumerWidget {
   const AIChatsPage({super.key});
@@ -60,7 +61,7 @@ class ChatThreadDisplay extends ConsumerWidget {
     return AsyncValueHandlerWidget(
       value: ref.watch(curUserAiChatThreadProvider),
       data: (chatThread) => chatThread == null
-          ? const Text('No chat thread available')
+          ? Text(AppLocalizations.of(context)!.noChatThreadAvailable)
           : ChatThreadCard(thread: chatThread),
     );
   }
@@ -103,7 +104,7 @@ class ChatThreadCard extends HookWidget {
         title: Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
-            const Text('Chat Thread'),
+            Text(AppLocalizations.of(context)!.chatThread),
             IconButton(
               icon: Icon(
                   isExpanded.value ? Icons.expand_less : Icons.expand_more),
@@ -118,11 +119,13 @@ class ChatThreadCard extends HookWidget {
             mainAxisSize: MainAxisSize.min,
             children: [
               const Divider(),
-              _buildInfoRow('Thread ID', thread.id),
-              _buildInfoRow('Author', thread.authorUserId),
-              _buildInfoRow('Parent LG Thread ID', thread.parentLgThreadId),
+              _buildInfoRow(AppLocalizations.of(context)!.threadId, thread.id),
               _buildInfoRow(
-                  'Parent LG Assistant ID', thread.parentLgAssistantId),
+                  AppLocalizations.of(context)!.author, thread.authorUserId),
+              _buildInfoRow(AppLocalizations.of(context)!.parentLgThreadId,
+                  thread.parentLgThreadId),
+              _buildInfoRow(AppLocalizations.of(context)!.parentLgAssistantId,
+                  thread.parentLgAssistantId),
             ],
           ),
           crossFadeState: isExpanded.value
