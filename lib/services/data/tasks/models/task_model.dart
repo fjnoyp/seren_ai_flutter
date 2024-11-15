@@ -35,8 +35,22 @@ class TaskModel implements IHasId{
   @JsonKey(name: 'parent_project_id')
   final String parentProjectId;
 
-  @JsonKey(name: 'estimated_duration_minutes')
+  @JsonKey(
+    name: 'estimated_duration_minutes',
+    fromJson: _durationFromJson,
+    toJson: _durationToJson
+  )
   final int? estimatedDurationMinutes;
+
+  static int? _durationFromJson(dynamic value) {
+    if (value == null) return null;
+    if (value is int) return value;
+    if (value is num) return value.toInt();
+    if (value is String) return int.tryParse(value);
+    return null;
+  }
+
+  static dynamic _durationToJson(int? value) => value;
 
   TaskModel({    
     String? id,
