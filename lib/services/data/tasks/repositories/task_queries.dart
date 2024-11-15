@@ -52,6 +52,8 @@ abstract class TaskQueries {
         json_object(
           'id', u.id,
           'email', u.email,
+          'first_name', u.first_name,
+          'last_name', u.last_name,
           'parent_auth_user_id', u.parent_auth_user_id,
           'default_project_id', u.default_project_id,
           'default_team_id', u.default_team_id,
@@ -75,6 +77,8 @@ abstract class TaskQueries {
           json_object(
             'id', au.id,
             'email', au.email,
+            'first_name', au.first_name,
+            'last_name', au.last_name,
             'parent_auth_user_id', au.parent_auth_user_id,
             'default_project_id', au.default_project_id,
             'default_team_id', au.default_team_id,
@@ -127,6 +131,8 @@ abstract class TaskQueries {
       CASE WHEN u.id IS NOT NULL THEN json_object(
         'id', u.id,
         'email', u.email,
+        'first_name', u.first_name,
+        'last_name', u.last_name,
         'parent_auth_user_id', u.parent_auth_user_id,
         'default_project_id', u.default_project_id,
         'default_team_id', u.default_team_id,
@@ -168,6 +174,8 @@ abstract class TaskQueries {
       json_object(
         'id', u.id,
         'email', u.email,
+        'first_name', u.first_name,
+        'last_name', u.last_name,
         'parent_auth_user_id', u.parent_auth_user_id,
         'default_project_id', u.default_project_id,
         'default_team_id', u.default_team_id,
@@ -209,6 +217,8 @@ abstract class TaskQueries {
       json_object(
         'id', u.id,
         'email', u.email,
+        'first_name', u.first_name,
+        'last_name', u.last_name,
         'parent_auth_user_id', u.parent_auth_user_id,
         'default_project_id', u.default_project_id,
         'default_team_id', u.default_team_id,
@@ -261,6 +271,8 @@ abstract class TaskQueries {
       CASE WHEN au.id IS NOT NULL THEN json_object(
         'id', au.id,
         'email', au.email,
+        'first_name', au.first_name,
+        'last_name', au.last_name,
         'parent_auth_user_id', au.parent_auth_user_id,
         'default_project_id', au.default_project_id,
         'default_team_id', au.default_team_id,
@@ -280,6 +292,8 @@ abstract class TaskQueries {
         CASE WHEN a.id IS NOT NULL THEN json_object(
           'id', a.id,
           'email', a.email,
+          'first_name', a.first_name,
+          'last_name', a.last_name,
           'parent_auth_user_id', a.parent_auth_user_id,
           'default_project_id', a.default_project_id,
           'default_team_id', a.default_team_id,
@@ -336,6 +350,8 @@ abstract class TaskQueries {
       CASE WHEN au.id IS NOT NULL THEN json_object(
         'id', au.id,
         'email', au.email,
+        'first_name', au.first_name,
+        'last_name', au.last_name,
         'parent_auth_user_id', au.parent_auth_user_id,
         'default_project_id', au.default_project_id,
         'default_team_id', au.default_team_id,
@@ -355,6 +371,8 @@ abstract class TaskQueries {
         CASE WHEN a.id IS NOT NULL THEN json_object(
           'id', a.id,
           'email', a.email,
+          'first_name', a.first_name,
+          'last_name', a.last_name,
           'parent_auth_user_id', a.parent_auth_user_id,
           'default_project_id', a.default_project_id,
           'default_team_id', a.default_team_id,
@@ -408,6 +426,8 @@ abstract class TaskQueries {
       CASE WHEN au.id IS NOT NULL THEN json_object(
         'id', au.id,
         'email', au.email,
+        'first_name', au.first_name,
+        'last_name', au.last_name,
         'parent_auth_user_id', au.parent_auth_user_id,
         'default_project_id', au.default_project_id,
         'default_team_id', au.default_team_id,
@@ -427,6 +447,8 @@ abstract class TaskQueries {
         CASE WHEN a.id IS NOT NULL THEN json_object(
           'id', a.id,
           'email', a.email,
+          'first_name', a.first_name,
+          'last_name', a.last_name,
           'parent_auth_user_id', a.parent_auth_user_id,
           'default_project_id', a.default_project_id,
           'default_team_id', a.default_team_id,
