@@ -16,6 +16,8 @@ const permissionSchemas = [
   Table(usersTable, [
     Column.text('parent_auth_user_id'),
     Column.text('email'),
+    Column.text('first_name'),
+    Column.text('last_name'),
     Column.text('default_project_id'),
     Column.text('default_team_id'),
   ]),
