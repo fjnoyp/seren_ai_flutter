@@ -10,8 +10,16 @@ class UserModel implements IHasId {
   final String id;
 
   @JsonKey(name: 'parent_auth_user_id')
-  final String parentAuthUserId; 
+  final String parentAuthUserId;
+
   final String email;
+
+  @JsonKey(name: 'first_name')
+  final String firstName;
+
+  @JsonKey(name: 'last_name')
+  final String lastName;
+
   @JsonKey(name: 'created_at')
   final DateTime? createdAt;
 
@@ -28,6 +36,8 @@ class UserModel implements IHasId {
     String? id,
     required this.parentAuthUserId,
     required this.email,
+    required this.firstName,
+    required this.lastName,
     this.createdAt,
     this.defaultProjectId,
     this.defaultTeamId,
@@ -41,19 +51,30 @@ class UserModel implements IHasId {
           runtimeType == other.runtimeType &&
           id == other.id &&
           email == other.email &&
+          firstName == other.firstName &&
+          lastName == other.lastName &&
           createdAt == other.createdAt &&
           updatedAt == other.updatedAt;
 
   @override
-  int get hashCode => id.hashCode ^ email.hashCode ^ createdAt.hashCode ^ updatedAt.hashCode;
+  int get hashCode =>
+      id.hashCode ^
+      email.hashCode ^
+      firstName.hashCode ^
+      lastName.hashCode ^
+      createdAt.hashCode ^
+      updatedAt.hashCode;
 
-  factory UserModel.fromJson(Map<String, dynamic> json) => _$UserModelFromJson(json);
+  factory UserModel.fromJson(Map<String, dynamic> json) =>
+      _$UserModelFromJson(json);
   Map<String, dynamic> toJson() => _$UserModelToJson(this);
 
   UserModel copyWith({
     String? id,
     String? parentAuthUserId,
     String? email,
+    String? firstName,
+    String? lastName,
     DateTime? createdAt,
     DateTime? updatedAt,
   }) {
@@ -61,6 +82,8 @@ class UserModel implements IHasId {
       id: id ?? this.id,
       parentAuthUserId: parentAuthUserId ?? this.parentAuthUserId,
       email: email ?? this.email,
+      firstName: firstName ?? this.firstName,
+      lastName: lastName ?? this.lastName,
       createdAt: createdAt ?? this.createdAt,
       updatedAt: updatedAt ?? this.updatedAt,
     );

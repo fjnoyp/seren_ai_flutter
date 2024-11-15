@@ -38,6 +38,8 @@ abstract class NoteQueries {
       CASE WHEN u.id IS NOT NULL THEN json_object(
         'id', u.id,
         'email', u.email,
+        'first_name', u.first_name,
+        'last_name', u.last_name,
         'parent_auth_user_id', u.parent_auth_user_id,
         'default_project_id', u.default_project_id,
         'default_team_id', u.default_team_id,
@@ -81,6 +83,8 @@ abstract class NoteQueries {
       CASE WHEN u.id IS NOT NULL THEN json_object(
         'id', u.id,
         'email', u.email,
+        'first_name', u.first_name,
+        'last_name', u.last_name,
         'parent_auth_user_id', u.parent_auth_user_id,
         'default_project_id', u.default_project_id,
         'default_team_id', u.default_team_id,
@@ -123,6 +127,8 @@ abstract class NoteQueries {
       CASE WHEN u.id IS NOT NULL THEN json_object(
         'id', u.id,
         'email', u.email,
+        'first_name', u.first_name,
+        'last_name', u.last_name,
         'parent_auth_user_id', u.parent_auth_user_id,
         'default_project_id', u.default_project_id,
         'default_team_id', u.default_team_id,
