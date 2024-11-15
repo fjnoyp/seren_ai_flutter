@@ -28,7 +28,7 @@ if (flutterVersionName == null) {
 }
 
 android {
-    namespace = "com.example.seren_ai_flutter"
+    namespace = "com.serentech.serenai_android"
     compileSdk = flutter.compileSdkVersion
     ndkVersion = flutter.ndkVersion
 
@@ -42,8 +42,7 @@ android {
     }
 
     defaultConfig {
-        // TODO: Specify your own unique Application ID (https://developer.android.com/studio/build/application-id.html).
-        applicationId = "com.example.seren_ai_flutter"
+        applicationId "com.serentech.serenai_android"
         // You can update the following values to match your application needs.
         // For more information, see: https://docs.flutter.dev/deployment/android#reviewing-the-gradle-build-configuration.
         minSdk = flutter.minSdkVersion

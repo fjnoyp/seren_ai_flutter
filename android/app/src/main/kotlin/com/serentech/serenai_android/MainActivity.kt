@@ -1,4 +1,4 @@
-package com.example.seren_ai_flutter
+package com.serentech.serenai_android
 
 import io.flutter.embedding.android.FlutterActivity
 

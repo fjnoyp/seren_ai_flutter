@@ -54,7 +54,7 @@ class DefaultFirebaseOptions {
 
   static const FirebaseOptions android = FirebaseOptions(
     apiKey: 'AIzaSyDJSdZyPukT6E-NF-L8MkZMCZL2SS-s7zU',
-    appId: '1:888730365208:android:83325c231177b43b09c26d',
+    appId: '1:888730365208:android:c9cf9621dc53df7709c26d',
     messagingSenderId: '888730365208',
     projectId: 'seren-ai',
     storageBucket: 'seren-ai.firebasestorage.app',
