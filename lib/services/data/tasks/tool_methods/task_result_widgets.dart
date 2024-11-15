@@ -4,6 +4,7 @@ import 'package:seren_ai_flutter/services/data/tasks/tool_methods/models/create_
 import 'package:seren_ai_flutter/services/data/tasks/tool_methods/models/find_tasks_result_model.dart';
 import 'package:seren_ai_flutter/services/data/tasks/tool_methods/models/update_task_fields_result_model.dart';
 import 'package:seren_ai_flutter/services/data/tasks/widgets/task_list/task_list_item_view.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 // TODO p0: reuse task list item display if possible ... 
 
@@ -18,12 +19,13 @@ class FindTasksResultWidget extends ConsumerWidget {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
-        Text('Found Tasks', style: theme.textTheme.titleMedium),
+        Text(AppLocalizations.of(context)!.foundTasks,
+            style: theme.textTheme.titleMedium),
         const SizedBox(height: 8),
         if (result.tasks.isEmpty)
-          const Padding(
-            padding: EdgeInsets.only(left: 16.0),
-            child: Text('No tasks found'),
+          Padding(
+            padding: const EdgeInsets.only(left: 16.0),
+            child: Text(AppLocalizations.of(context)!.noTasksFound),
           ),
         ...result.tasks.map((task) {
           return TaskListItemView(joinedTask: task);

@@ -1,9 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
-import 'package:seren_ai_flutter/common/utils/string_extension.dart';
 import 'package:seren_ai_flutter/services/data/common/widgets/form/selection_field.dart';
 import 'package:seren_ai_flutter/services/data/tasks/models/task_model.dart';
-
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 class BasePrioritySelectionField extends ConsumerWidget {
   final bool enabled;
   final ProviderListenable<PriorityEnum?> priorityProvider;
@@ -24,7 +23,7 @@ class BasePrioritySelectionField extends ConsumerWidget {
       labelWidget: const Icon(Icons.priority_high),
       validator: (priority) => null, // priority == null ? 'Priority is required' : null,
       valueToString: (priority) =>
-          priority?.toString().enumToHumanReadable ?? 'Select Priority',
+          priority?.toHumanReadable(context) ?? AppLocalizations.of(context)!.selectPriority,
       enabled: enabled,
       value: curTaskPriority,
       options: PriorityEnum.values,
