@@ -1,16 +1,18 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:seren_ai_flutter/services/auth/cur_auth_state_provider.dart';
 import 'package:seren_ai_flutter/services/data/orgs/cur_org_local_key.dart';
 import 'package:seren_ai_flutter/services/data/orgs/providers/is_cur_user_org_admin_listener_provider.dart';
-import 'package:seren_ai_flutter/services/shared_preferences_provider.dart';
+import 'package:seren_ai_flutter/common/shared_preferences_service_provider.dart';
 
 // As we're using shared preferences, the call is synchronous
 // and we need to refresh the provider when the value changes.
 // it's done at lib/services/data/orgs/providers/cur_user_org_service_provider.dart
 final curOrgIdProvider = Provider<String?>((ref) {
-  final prefs = ref.read(sharedPreferencesProvider);
+  ref.watch(curUserProvider);
+  
+  final prefs = ref.read(sharedPreferencesServiceProvider);
   return prefs.getString(orgIdKey);
 });
-
 
 /// Helper to create providers that depend on authenticated user
 class IsCurUserOrgAdminDependencyProvider {
