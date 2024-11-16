@@ -1,29 +1,31 @@
 import 'package:flex_color_scheme/flex_color_scheme.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-
-import 'package:shared_preferences/shared_preferences.dart';
+import 'package:seren_ai_flutter/common/shared_preferences_service_provider.dart';
+import 'package:seren_ai_flutter/services/auth/cur_auth_state_provider.dart';
 
 class ThemeSN extends StateNotifier<ThemeMode> {
-  ThemeSN() : super(ThemeMode.system) {
-    _loadTheme();
+  final Ref ref;
+
+  ThemeSN(this.ref) : super(ThemeMode.system) {
+    ref.listen(curUserProvider, (_, __) => _loadTheme());
   }
 
-  Future<void> _loadTheme() async {
-    final prefs = await SharedPreferences.getInstance();    
+  void _loadTheme() {
+    final prefs = ref.read(sharedPreferencesServiceProvider);
     final themeIndex = prefs.getInt('themeMode') ?? ThemeMode.system.index;
     state = ThemeMode.values[themeIndex];
   }
 
   Future<void> setTheme(ThemeMode mode) async {
     state = mode;
-    final prefs = await SharedPreferences.getInstance();
+    final prefs = ref.read(sharedPreferencesServiceProvider);
     await prefs.setInt('themeMode', mode.index);
   }
 }
 
 final themeSNP = StateNotifierProvider<ThemeSN, ThemeMode>((ref) {
-  return ThemeSN();
+  return ThemeSN(ref);
 });
 
 final lightTheme = FlexThemeData.light(
