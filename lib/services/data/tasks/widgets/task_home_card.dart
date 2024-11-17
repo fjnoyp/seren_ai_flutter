@@ -28,20 +28,13 @@ class TaskCardItem extends ConsumerWidget {
         await openTaskPage(context, ref,
             mode: EditablePageMode.readOnly, initialJoinedTask: joinedTask);
       },
-      child: Card(
-        color: Theme.of(context).colorScheme.primary,
+      child: BaseHomeInnerCard.outlined(
         child: Padding(
           padding: const EdgeInsets.all(8.0),
-          child: Row(
-            children: [
-              Text(
-                task.name,
-                style: Theme.of(context)
-                    .textTheme
-                    .labelSmall
-                    ?.copyWith(color: Theme.of(context).colorScheme.onPrimary),
-              ),
-            ],
+          child: Text(
+            task.name,
+            style: Theme.of(context).textTheme.labelSmall,
+            overflow: TextOverflow.ellipsis,
           ),
         ),
       ),
@@ -57,7 +50,6 @@ class TaskHomeCard extends ConsumerWidget {
     final watchedTasks = ref.watch(curUserViewableTasksProvider);
 
     return BaseHomeCard(
-      color: Theme.of(context).colorScheme.primaryContainer,
       title: AppLocalizations.of(context)!.todaysTasks,
       child: AsyncValueHandlerWidget(
         value: watchedTasks,
@@ -69,7 +61,7 @@ class TaskHomeCard extends ConsumerWidget {
                   task.status == StatusEnum.inProgress ||
                   task.status == StatusEnum.open)
               .toList();
-      
+
           return openTasks?.isEmpty ?? true
               ? Center(
                   child: Text(AppLocalizations.of(context)!.noTasksDueToday))
@@ -84,26 +76,15 @@ class TaskHomeCard extends ConsumerWidget {
                             child: TaskCardItem(task: task))),
                     Flexible(
                       fit: FlexFit.loose,
-                      child: Card(
+                      child: BaseHomeInnerCard.filled(
                         child: InkWell(
                           onTap: () {
                             Navigator.pushNamed(context, AppRoutes.tasks.name);
                           },
-                          child: Container(
-                            width: double.infinity,
-                            height: 30, // Set max height to 10
-                            decoration: BoxDecoration(
-                              border: Border.all(
-                                  color:
-                                      Theme.of(context).colorScheme.primary),
-                              borderRadius: BorderRadius.circular(
-                                  12), // Increased the border radius for more rounded edges
-                            ),
-                            child: Center(
-                              child: Text(
-                                AppLocalizations.of(context)!.seeAll,
-                                style: Theme.of(context).textTheme.bodySmall,
-                              ),
+                          child: Center(
+                            child: Text(
+                              AppLocalizations.of(context)!.seeAll,
+                              style: Theme.of(context).textTheme.bodySmall,
                             ),
                           ),
                         ),
