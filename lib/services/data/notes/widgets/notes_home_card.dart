@@ -19,7 +19,6 @@ class NotesCard extends ConsumerWidget {
 
     return BaseHomeCard(
       title: AppLocalizations.of(context)!.notes,
-      color: Theme.of(context).colorScheme.primaryContainer,
       child: Center(
         child: AsyncValueHandlerWidget(
           value:
@@ -50,8 +49,7 @@ class _NoteCardItem extends ConsumerWidget {
     return InkWell(
       onTap: () => openNotePage(context, ref,
           mode: EditablePageMode.readOnly, noteId: joinedNote.note.id),
-      child: Card(
-        color: Theme.of(context).colorScheme.primary,
+      child: BaseHomeInnerCard.outlined(
         child: Padding(
           padding: const EdgeInsets.all(8.0), // Added inner padding
           child: Column(
@@ -62,7 +60,7 @@ class _NoteCardItem extends ConsumerWidget {
                 style: Theme.of(context)
                     .textTheme
                     .titleSmall
-                    ?.copyWith(fontWeight: FontWeight.bold),
+                    ?.copyWith(fontWeight: FontWeight.w500),
               ),
               Text(
                 joinedNote.project?.name ??
