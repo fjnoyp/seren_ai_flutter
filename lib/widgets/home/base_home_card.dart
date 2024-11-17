@@ -2,39 +2,76 @@ import 'package:flutter/material.dart';
 
 class BaseHomeCard extends StatelessWidget {
   final Widget child;
-  final Color color;
+  // final Color color;
   final String title;
 
   const BaseHomeCard(
       {super.key,
       required this.child,
-      required this.color,
+      // required this.color,
       required this.title});
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      padding: const EdgeInsets.all(6),
-      decoration: BoxDecoration(
-        color: color,
-        borderRadius: BorderRadius.circular(4),
+    return Card.filled(
+      color: Theme.of(context).colorScheme.surfaceContainerHighest,
+      shape: OutlineInputBorder(
+        borderSide: BorderSide(
+          color: Theme.of(context).colorScheme.outlineVariant,
+        ),
       ),
       margin: const EdgeInsets.all(2),
-      child: Column(
-        children: [
-          Row(
-            children: [
-              Text(
-                title,
-                style: Theme.of(context).textTheme.titleMedium,                
-              ),
-            ],
-          ),
-          Expanded(
-            child: child,
-          ),
-        ],
+      child: Padding(
+        padding: const EdgeInsets.all(6),
+        child: Column(
+          children: [
+            Row(
+              children: [
+                Text(
+                  title,
+                  style: Theme.of(context).textTheme.titleMedium,
+                ),
+              ],
+            ),
+            Expanded(
+              child: child,
+            ),
+          ],
+        ),
       ),
     );
+  }
+}
+
+class BaseHomeInnerCard extends StatelessWidget {
+  final Widget child;
+  final bool outlined;
+
+  const BaseHomeInnerCard._({
+    required this.child,
+    required this.outlined,
+  });
+
+  factory BaseHomeInnerCard.outlined({required Widget child}) =>
+      BaseHomeInnerCard._(outlined: true, child: child);
+
+  factory BaseHomeInnerCard.filled({required Widget child}) =>
+      BaseHomeInnerCard._(outlined: false, child: child);
+
+  @override
+  Widget build(BuildContext context) {
+    return outlined
+        ? Card.outlined(
+            shape: OutlineInputBorder(
+              borderSide: BorderSide(
+                color: Theme.of(context).colorScheme.primary,
+              ),
+            ),
+            child: child,
+          )
+        : Card(
+            color: Theme.of(context).colorScheme.primaryContainer,
+            child: child,
+          );
   }
 }
