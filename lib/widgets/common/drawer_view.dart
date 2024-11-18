@@ -126,8 +126,9 @@ class DrawerView extends HookWidget {
                         ref.read(languageSNP.notifier).setLanguage(newLanguage);
                         ref.read(speechToTextServiceProvider).language =
                             newLanguage;
-                        ref.read(textToSpeechServiceProvider).language =
-                            newLanguage;
+                        ref
+                            .read(textToSpeechServiceProvider.notifier)
+                            .language = newLanguage;
                       }
                     },
                     // these items were removed by commit 588ced3
@@ -176,11 +177,11 @@ class DrawerView extends HookWidget {
               onTap: () => Navigator.pushNamed(context, AppRoutes.home.name),
             ),
             _DebugModeListTile(
-                      icon: Icons.house,
-                      title: AppLocalizations.of(context)!.chooseOrganization,
-                      onTap: () => Navigator.pushNamed(
-                          context, AppRoutes.chooseOrg.name),
-                    ),
+              icon: Icons.house,
+              title: AppLocalizations.of(context)!.chooseOrganization,
+              onTap: () =>
+                  Navigator.pushNamed(context, AppRoutes.chooseOrg.name),
+            ),
             _DebugModeListTile(
               icon: Icons.people,
               title: AppLocalizations.of(context)!.orgAdminManageOrgUsers,
