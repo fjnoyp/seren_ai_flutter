@@ -177,9 +177,9 @@ class TaskToolMethods {
     final task = TaskModel(      
       name: actionRequest.taskName,
       description: actionRequest.taskDescription,
-      dueDate: DateTime.parse(actionRequest.taskDueDate),
+      dueDate: actionRequest.taskDueDate != null ? DateTime.parse(actionRequest.taskDueDate!) : null,
       status: StatusEnum.open,
-      priority: PriorityEnum.values.byName(actionRequest.taskPriority.toLowerCase()),
+      priority: actionRequest.taskPriority != null ? PriorityEnum.values.byName(actionRequest.taskPriority!.toLowerCase()) : null,
       estimatedDurationMinutes: actionRequest.estimateDurationMinutes,
       authorUserId: userId,
       parentProjectId: '', // Will be set later in UI
