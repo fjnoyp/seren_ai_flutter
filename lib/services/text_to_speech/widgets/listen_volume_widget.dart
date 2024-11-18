@@ -20,9 +20,9 @@ class ListenVolumeWidget extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final ttsService = ref.watch(textToSpeechServiceProvider);
+    final ttsState = ref.watch(textToSpeechServiceProvider);
     final isPlaying =
-        ttsService.textToSpeechState == TextToSpeechStateEnum.speaking;
+        ttsState == TextToSpeechStateEnum.speaking;
 
     if (isPlaying) {
       ref.watch(animationTickProvider);

@@ -22,7 +22,8 @@ class UserInputDisplayWidget extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final isTextFieldVisible = ref.watch(textFieldVisibilityProvider);
-    final textToSpeechService = ref.watch(textToSpeechServiceProvider);
+    final textToSpeechService = ref.watch(textToSpeechServiceProvider.notifier);
+    final textToSpeechState = ref.watch(textToSpeechServiceProvider);
 
     // Get the height of the keyboard
     final keyboardHeight = MediaQuery.of(context).viewInsets.bottom;
@@ -56,7 +57,7 @@ class UserInputDisplayWidget extends ConsumerWidget {
                           },
                         ),
                   // TODO p4: maybe we should make this a persistent choice
-                  if (textToSpeechService.textToSpeechState ==
+                  if (textToSpeechState ==
                       TextToSpeechStateEnum.speaking)
                     IconButton(
                       onPressed: () => textToSpeechService.stop(),

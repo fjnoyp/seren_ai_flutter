@@ -66,7 +66,7 @@ class SpeechStateControlButtonWidget extends ConsumerWidget {
             ),
             icon: const Icon(Icons.mic),
             onPressed: () async {
-              await ref.watch(textToSpeechServiceProvider).stop();
+              await ref.watch(textToSpeechServiceProvider.notifier).stop();
               isPaused ? notifier.resumeListening() : notifier.startListening();
             },
           );

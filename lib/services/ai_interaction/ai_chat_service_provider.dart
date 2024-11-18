@@ -272,7 +272,7 @@ class AIChatService {
   }
 
   Future<void> speakAiMessage(List<AiChatMessageModel> result) async {
-    final textToSpeech = ref.read(textToSpeechServiceProvider);
+    final textToSpeech = ref.read(textToSpeechServiceProvider.notifier);
 
     final aiMessage = result.firstWhereOrNull((element) =>
         element.type == AiChatMessageType.ai && element.content.isNotEmpty);
