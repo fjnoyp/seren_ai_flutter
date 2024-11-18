@@ -1,17 +1,19 @@
 import 'dart:io';
 
 import 'package:flutter_tts/flutter_tts.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 enum TextToSpeechStateEnum { speaking, ready }
 
-class TextToSpeechService {
-  TextToSpeechService() {
+class TextToSpeechService extends Notifier<TextToSpeechStateEnum> {
+  @override
+  TextToSpeechStateEnum build() {
     _init();
+    return TextToSpeechStateEnum.ready;
   }
 
   final flutterTts = FlutterTts();
 
-  TextToSpeechStateEnum textToSpeechState = TextToSpeechStateEnum.ready;
   String _language = Platform.localeName;
 
   set language(String language) => _language = language;
@@ -40,15 +42,15 @@ class TextToSpeechService {
     flutterTts.setSpeechRate(.5);
     flutterTts.setPitch(.8);
 
-    textToSpeechState = TextToSpeechStateEnum.speaking;
+    state = TextToSpeechStateEnum.speaking;
     await flutterTts.speak(text);
 
-    textToSpeechState = TextToSpeechStateEnum.ready;
+    state = TextToSpeechStateEnum.ready;
   }
 
   Future<void> stop() async {
     await flutterTts.stop();
 
-    textToSpeechState = TextToSpeechStateEnum.ready;
+    state = TextToSpeechStateEnum.ready;
   }
 }
