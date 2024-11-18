@@ -1,13 +1,8 @@
-import 'dart:convert';
-
 import 'package:flutter/material.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:seren_ai_flutter/common/utils/string_extension.dart';
-import 'package:seren_ai_flutter/services/ai_interaction/ai_request/models/requests/ai_action_request_model.dart';
-import 'package:seren_ai_flutter/services/ai_interaction/ai_request/models/requests/ai_info_request_model.dart';
-import 'package:seren_ai_flutter/services/ai_interaction/ai_request/models/requests/ai_request_model.dart';
-import 'package:seren_ai_flutter/services/ai_interaction/ai_request/models/requests/ai_ui_action_request_model.dart';
 import 'package:seren_ai_flutter/services/ai_interaction/ai_request/models/results/ai_request_result_model.dart';
 import 'package:seren_ai_flutter/services/data/ai_chats/models/ai_chat_message_model.dart';
 import 'package:seren_ai_flutter/services/data/shifts/tool_methods/models/shift_assignments_result_model.dart';
@@ -18,16 +13,16 @@ import 'package:seren_ai_flutter/services/data/tasks/tool_methods/models/create_
 import 'package:seren_ai_flutter/services/data/tasks/tool_methods/models/find_tasks_result_model.dart';
 import 'package:seren_ai_flutter/services/data/tasks/tool_methods/models/update_task_fields_result_model.dart';
 import 'package:seren_ai_flutter/services/data/tasks/tool_methods/task_result_widgets.dart';
-import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+import 'package:seren_ai_flutter/widgets/common/debug_mode_provider.dart';
 
-class AiChatMessageViewCard extends HookWidget {
-  final AiChatMessageModel message;  
+class AiChatMessageViewCard extends ConsumerWidget {
+  final AiChatMessageModel message;
 
   const AiChatMessageViewCard({super.key, required this.message});
 
   @override
-  Widget build(BuildContext context) {
-    final isDebugMode = useState(false);
+  Widget build(BuildContext context, WidgetRef ref) {
+    final isDebugMode = ref.watch(isDebugModeSNP);
     final displayType = message.getDisplayType();
     final theme = Theme.of(context);
 
@@ -36,170 +31,89 @@ class AiChatMessageViewCard extends HookWidget {
       return const SizedBox.shrink();
     }
 
-    return Card(
-      shape: RoundedRectangleBorder(
-        side: BorderSide(width: 1, color: theme.dividerColor),
-        borderRadius: BorderRadius.circular(8),
-      ),
-      child: Stack(
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 12.0),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Padding(
-            padding: const EdgeInsets.all(12.0),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                // Main content starts with some top padding to avoid overlap with debug button
-                const SizedBox(height: 8),
-                if (isDebugMode.value)
-                  Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      _buildKeyValueText(
-                        key: 'Display Type',
-                        value: displayType.toHumanReadable(context),
-                        context: context,
-                      ),
-                      _buildKeyValueText(
-                        key: 'ID',
-                        value: message.id,
-                        context: context,
-                      ),
-                      _buildKeyValueText(
-                        key: 'Thread ID',
-                        value: message.parentChatThreadId,
-                        context: context,
-                      ),
-                      if (message.parentLgRunId != null)
-                        _buildKeyValueText(
-                          key: 'LG Run ID',
-                          value: message.parentLgRunId!,
-                          context: context,
-                        ),
-                      _buildKeyValueText(
-                        key: 'Content',
-                        value: message.content.tryFormatAsJson(),
-                        context: context,
-                        valueStyle:
-                            Theme.of(context).textTheme.bodyMedium?.copyWith(
-                                  fontFamily: 'monospace',
-                                ),
-                      ),
-                    ],
-                  ),
-
-                if (!isDebugMode.value)
-                  switch (displayType) {
-                    AiChatMessageDisplayType.user => Padding(
-                        padding: const EdgeInsets.only(left: 20.0),
-                        child: Align(
-                          alignment: Alignment.centerLeft,
-                          child: Text(message.content),
-                        ),
-                      ),
-                    AiChatMessageDisplayType.ai =>
-                      _buildAiMessageWidget(message.content),
-                    AiChatMessageDisplayType.aiWithToolCall =>
-                      _buildAiMessageWidget(
-                          message.getAiMessage() ?? message.content),
-                    AiChatMessageDisplayType.toolAiRequest =>
-                      _buildAiRequestWidget(message.getAiRequest()!, context),
-                    AiChatMessageDisplayType.toolAiResult =>
-                      _buildAiRequestResultWidget(
-                          message.getAiResult()!, context),
-                    AiChatMessageDisplayType.tool => Text(message.content),
-                  },
-              ],
-            ),
-          ),
-
-          // Debug Mode Toggle - Positioned in top right
-          Positioned(
-            top: 0,
-            right: 0,
-            child: IconButton(
-              padding: EdgeInsets.zero,
-              constraints: const BoxConstraints(),
-              iconSize: 15,
-              icon: Icon(
-                isDebugMode.value ? Icons.list : Icons.bug_report,
-                color: theme.colorScheme.primary,
+          // Main content starts with some top padding to avoid overlap with debug button
+          const SizedBox(height: 8),
+          if (isDebugMode)
+            Card(
+              shape: RoundedRectangleBorder(
+                side: BorderSide(width: 1, color: theme.dividerColor),
+                borderRadius: BorderRadius.circular(8),
               ),
-              onPressed: () => isDebugMode.value = !isDebugMode.value,
-            ),
-          ),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  _KeyValueText(
+                    key: 'Display Type',
+                    value: displayType.toHumanReadable(context),
+                    context: context,
+                  ),
+                  _KeyValueText(
+                    key: 'ID',
+                    value: message.id,
+                    context: context,
+                  ),
+                  _KeyValueText(
+                    key: 'Thread ID',
+                    value: message.parentChatThreadId,
+                    context: context,
+                  ),
+                  if (message.parentLgRunId != null)
+                    _KeyValueText(
+                      key: 'LG Run ID',
+                      value: message.parentLgRunId!,
+                      context: context,
+                    ),
+                  _KeyValueText(
+                    key: 'Content',
+                    value: message.content.tryFormatAsJson(),
+                    context: context,
+                    valueStyle:
+                        Theme.of(context).textTheme.bodyMedium?.copyWith(
+                              fontFamily: 'monospace',
+                            ),
+                  ),
+                ],
+              ),
+            )
+          else
+            switch (displayType) {
+              AiChatMessageDisplayType.user =>
+                _UserMessageWidget(message.content),
+              AiChatMessageDisplayType.ai => _AiMessageWidget(message.content),
+              AiChatMessageDisplayType.aiWithToolCall =>
+                _AiMessageWidget(message.getAiMessage() ?? message.content),
+              AiChatMessageDisplayType.toolAiRequest => const SizedBox.shrink(),
+              // _AiRequestWidget(message.getAiRequest()!),
+              AiChatMessageDisplayType.toolAiResult =>
+                _AiRequestResultWidget(message.getAiResult()!),
+              AiChatMessageDisplayType.tool => const SizedBox.shrink(),
+              // Text(message.content),
+            },
         ],
       ),
     );
   }
+}
 
-  Widget _buildAiMessageWidget(String message) {
-    return Column(
-      children: [
-        SizedBox(
-          width: 24.0, // Adjust width as needed
-          height: 24.0, // Adjust height as needed
-          child: SvgPicture.asset('assets/images/AI button.svg'),
-        ),
-        const SizedBox(height: 8.0), // Space between icon and text
-        Text(message),
-      ],
-    );
-  }
+class _KeyValueText extends StatelessWidget {
+  final String value;
+  final TextStyle? valueStyle;
+  final BuildContext context;
 
-  Widget _buildAiRequestWidget(AiRequestModel request, BuildContext context) {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        _buildKeyValueText(
-          key: 'Request Type',
-          value: request.requestType.value,
-          context: context,
-        ),
-
-        // Show subtype based on request model type
-        if (request is AiActionRequestModel) ...[
-          _buildKeyValueText(
-            key: AppLocalizations.of(context)!.actionType,
-            value: request.actionRequestType.value,
-            context: context,
-          ),
-        ] else if (request is AiInfoRequestModel) ...[
-          _buildKeyValueText(
-            key: AppLocalizations.of(context)!.infoType,
-            value: request.infoRequestType.value,
-            context: context,
-          ),
-          _buildKeyValueText(
-            key: AppLocalizations.of(context)!.showOnly,
-            value: request.showOnly.toString(),
-            context: context,
-          )
-        ] else if (request is AiUiActionRequestModel)
-          _buildKeyValueText(
-            key: AppLocalizations.of(context)!.uiActionType,
-            value: request.uiActionType.value,
-            context: context,
-          ),
-
-        // Display arguments if present
-        if (request.args != null && request.args!.isNotEmpty)
-          ...request.args!.entries.map((entry) => _buildKeyValueText(
-                key: entry.key,
-                value: jsonEncode(entry.value),
-                context: context,
-              ))
-        else
-          Text(AppLocalizations.of(context)!.noArgumentsProvided),
-      ],
-    );
-  }
-
-  Widget _buildKeyValueText({
+  _KeyValueText({
     required String key,
-    required String value,
-    TextStyle? valueStyle,
-    required BuildContext context,
-  }) {
+    required this.value,
+    this.valueStyle,
+    required this.context,
+  }) : super(key: Key(key));
+
+  @override
+  Widget build(BuildContext context) {
     return RichText(
       text: TextSpan(
         style: DefaultTextStyle.of(context).style,
@@ -213,31 +127,184 @@ class AiChatMessageViewCard extends HookWidget {
       ),
     );
   }
+}
 
-  Widget _buildAiRequestResultWidget(
-      AiRequestResultModel result, BuildContext context) {
-    Widget icon = const Icon(Icons.info,
-        size: 24.0); // Small icon to indicate result type
-    return Column(
+class _UserMessageWidget extends StatelessWidget {
+  final String message;
+
+  const _UserMessageWidget(this.message);
+
+  @override
+  Widget build(BuildContext context) {
+    return Align(
+      alignment: Alignment.centerRight,
+      child: Padding(
+        padding: const EdgeInsets.only(left: 80.0),
+        child: Card(
+          color: Theme.of(context).colorScheme.primaryContainer,
+          child: Padding(
+            padding: const EdgeInsets.all(16.0),
+            child: _CollapsibleText(
+              message,
+              alignment: AlignmentDirectional.centerEnd,
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+class _AiMessageWidget extends StatelessWidget {
+  final String message;
+
+  const _AiMessageWidget(this.message);
+
+  @override
+  Widget build(BuildContext context) {
+    return Row(
+      crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        icon,
-        const SizedBox(width: 6.0), // Space between icon and result widget
-        switch (result.resultType) {
-          AiRequestResultType.shiftAssignments => ShiftAssignmentsResultWidget(
-              result: result as ShiftAssignmentsResultModel),
-          AiRequestResultType.shiftLogs =>
-            ShiftLogsResultWidget(result: result as ShiftLogsResultModel),
-          AiRequestResultType.shiftClockInOut => ShiftClockInOutResultWidget(
-              result: result as ShiftClockInOutResultModel),
-          AiRequestResultType.findTasks =>
-            FindTasksResultWidget(result: result as FindTasksResultModel),
-          AiRequestResultType.createTask =>
-            CreateTaskResultWidget(result: result as CreateTaskResultModel),
-          AiRequestResultType.error => Text(result.resultForAi),
-          AiRequestResultType.updateTaskFields =>
-            UpdateTaskFieldsResultWidget(result: result as UpdateTaskFieldsResultModel),
-        },
+        Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 8.0, vertical: 24.0),
+          child: SizedBox(
+            width: 24.0, // Adjust width as needed
+            height: 24.0, // Adjust height as needed
+            child: SvgPicture.asset('assets/images/AI button.svg'),
+          ),
+        ),
+        Expanded(
+          child: Padding(
+            padding:
+                const EdgeInsets.only(bottom: 24, top: 24, right: 24, left: 12),
+            child: _CollapsibleText(message),
+          ),
+        ),
       ],
     );
+  }
+}
+
+// class _AiRequestWidget extends StatelessWidget {
+//   final AiRequestModel request;
+
+//   const _AiRequestWidget(this.request);
+
+//   @override
+//   Widget build(BuildContext context) {
+//     return Column(
+//       crossAxisAlignment: CrossAxisAlignment.start,
+//       children: [
+//         _KeyValueText(
+//           key: 'Request Type',
+//           value: request.requestType.value,
+//           context: context,
+//         ),
+
+//         // Show subtype based on request model type
+//         if (request case AiActionRequestModel actionRequest) ...[
+//           _KeyValueText(
+//             key: AppLocalizations.of(context)!.actionType,
+//             value: actionRequest.actionRequestType.value,
+//             context: context,
+//           ),
+//         ] else if (request case AiInfoRequestModel infoRequest) ...[
+//           _KeyValueText(
+//             key: AppLocalizations.of(context)!.infoType,
+//             value: infoRequest.infoRequestType.value,
+//             context: context,
+//           ),
+//           _KeyValueText(
+//             key: AppLocalizations.of(context)!.showOnly,
+//             value: infoRequest.showOnly.toString(),
+//             context: context,
+//           )
+//         ] else if (request case AiUiActionRequestModel uiActionRequest) ...[
+//           _KeyValueText(
+//             key: AppLocalizations.of(context)!.uiActionType,
+//             value: uiActionRequest.uiActionType.value,
+//             context: context,
+//           ),
+
+//           // Display arguments if present
+//           if (request.args != null && request.args!.isNotEmpty)
+//             ...request.args!.entries.map((entry) => _KeyValueText(
+//                   key: entry.key,
+//                   value: jsonEncode(entry.value),
+//                   context: context,
+//                 ))
+//           else
+//             Text(AppLocalizations.of(context)!.noArgumentsProvided),
+//         ],
+//       ],
+//     );
+//   }
+// }
+
+class _AiRequestResultWidget extends StatelessWidget {
+  final AiRequestResultModel result;
+
+  const _AiRequestResultWidget(this.result);
+
+  @override
+  Widget build(BuildContext context) {
+    // Widget icon = const Icon(Icons.info,
+    //     size: 24.0); // Small icon to indicate result type
+    return switch (result.resultType) {
+      AiRequestResultType.shiftAssignments => ShiftAssignmentsResultWidget(
+          result: result as ShiftAssignmentsResultModel),
+      AiRequestResultType.shiftLogs =>
+        ShiftLogsResultWidget(result: result as ShiftLogsResultModel),
+      AiRequestResultType.shiftClockInOut => ShiftClockInOutResultWidget(
+          result: result as ShiftClockInOutResultModel),
+      AiRequestResultType.findTasks =>
+        FindTasksResultWidget(result: result as FindTasksResultModel),
+      AiRequestResultType.createTask =>
+        CreateTaskResultWidget(result: result as CreateTaskResultModel),
+      AiRequestResultType.error => Text(result.resultForAi),
+      AiRequestResultType.updateTaskFields => UpdateTaskFieldsResultWidget(
+          result: result as UpdateTaskFieldsResultModel),
+    };
+  }
+}
+
+class _CollapsibleText extends HookWidget {
+  const _CollapsibleText(
+    this.content, {
+    this.alignment = AlignmentDirectional.centerStart,
+  });
+
+  final String content;
+  final AlignmentDirectional alignment;
+
+  @override
+  Widget build(BuildContext context) {
+    final isExpanded = useState(false);
+    return Flexible(
+        child: content.length > 200 && !isExpanded.value
+            ? Wrap(
+                children: [
+                  Text('${content.substring(0, 200)}...',
+                      textAlign: switch (alignment) {
+                        AlignmentDirectional.topStart ||
+                        AlignmentDirectional.centerStart ||
+                        AlignmentDirectional.bottomStart =>
+                          TextAlign.left,
+                        AlignmentDirectional.topEnd ||
+                        AlignmentDirectional.centerEnd ||
+                        AlignmentDirectional.bottomEnd =>
+                          TextAlign.right,
+                        _ => TextAlign.center,
+                      }),
+                  Align(
+                    alignment: alignment,
+                    child: TextButton(
+                      child: const Text('Show more'),
+                      onPressed: () => isExpanded.value = true,
+                    ),
+                  ),
+                ],
+              )
+            : Text(content));
   }
 }

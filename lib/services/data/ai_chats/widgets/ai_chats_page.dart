@@ -25,6 +25,10 @@ class AIChatsPage extends HookConsumerWidget {
         : Expanded(
             child: Column(
               children: [
+                const ChatThreadDisplay(),
+                const Expanded(
+                  child: ChatMessagesDisplay(),
+                ),
                 TextField(
                   controller: messageController,
                   decoration: InputDecoration(
@@ -42,10 +46,6 @@ class AIChatsPage extends HookConsumerWidget {
                       },
                     ),
                   ),
-                ),
-                const ChatThreadDisplay(),
-                const Expanded(
-                  child: ChatMessagesDisplay(),
                 ),
               ],
             ),
@@ -169,6 +169,7 @@ class ChatMessagesDisplay extends HookConsumerWidget {
         return messages.isEmpty
             ? const Center(child: Text('No messages available'))
             : ListView.builder(
+                reverse: true,
                 controller: scrollController,
                 itemCount:
                     messages.length + (providerData.notifier.hasMore ? 1 : 0),
