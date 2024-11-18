@@ -164,8 +164,29 @@ class ChatMessagesDisplay extends HookConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    final chatMessages = ref.watch(curUserAiChatMessagesProvider);
+    return AsyncValueHandlerWidget(
+      value: chatMessages,
+      data: (chatMessages) => chatMessages.isEmpty
+          ? const Text('No messages available')
+          : ListView.builder(
+              reverse: true,
+              shrinkWrap: true,
+              itemCount: chatMessages.length,
+              itemBuilder: (context, index) =>
+                  AiChatMessageViewCard(message: chatMessages[index]),
+            ),
+    );
+  }
+}
+
+class PaginatedChatMessagesDisplay extends HookConsumerWidget {
+  const PaginatedChatMessagesDisplay({super.key});
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
     final scrollController = useScrollController();
-    final messagesProviderValue = ref.watch(curUserAiChatMessagesProvider);
+    final messagesProviderValue = ref.watch(curUserPaginatedAiChatMessagesProvider);
 
     useEffect(() {
       void onScroll() {

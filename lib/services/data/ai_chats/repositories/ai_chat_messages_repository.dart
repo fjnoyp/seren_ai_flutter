@@ -9,7 +9,7 @@ final aiChatMessagesRepositoryProvider = Provider<AiChatMessagesRepository>((ref
 });
 
 class AiChatMessagesRepository extends BaseRepository<AiChatMessageModel> {
-  static const int defaultPageSize = 20;
+  static const int defaultPageSize = 40;
 
   const AiChatMessagesRepository(super.db);
 
