@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
-import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_svg/svg.dart';
+import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:seren_ai_flutter/common/utils/string_extension.dart';
 import 'package:seren_ai_flutter/services/ai_interaction/ai_request/models/results/ai_request_result_model.dart';
 import 'package:seren_ai_flutter/services/data/ai_chats/models/ai_chat_message_model.dart';
@@ -15,7 +15,7 @@ import 'package:seren_ai_flutter/services/data/tasks/tool_methods/models/update_
 import 'package:seren_ai_flutter/services/data/tasks/tool_methods/task_result_widgets.dart';
 import 'package:seren_ai_flutter/widgets/common/debug_mode_provider.dart';
 
-class AiChatMessageViewCard extends ConsumerWidget {
+class AiChatMessageViewCard extends HookConsumerWidget {
   final AiChatMessageModel message;
 
   const AiChatMessageViewCard({super.key, required this.message});
@@ -23,6 +23,7 @@ class AiChatMessageViewCard extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final isDebugMode = ref.watch(isDebugModeSNP);
+    final showRawJson = useState(false);
     final displayType = message.getDisplayType();
     final theme = Theme.of(context);
 
@@ -31,71 +32,93 @@ class AiChatMessageViewCard extends ConsumerWidget {
       return const SizedBox.shrink();
     }
 
+    final messageDisplay = switch (displayType) {
+      AiChatMessageDisplayType.user => _UserMessageWidget(message.content),
+      AiChatMessageDisplayType.ai => _AiMessageWidget(message.content),
+      AiChatMessageDisplayType.aiWithToolCall =>
+        _AiMessageWidget(message.getAiMessage() ?? message.content),
+      AiChatMessageDisplayType.toolAiRequest => const SizedBox.shrink(),
+      // _AiRequestWidget(message.getAiRequest()!),
+      AiChatMessageDisplayType.toolAiResult =>
+        _AiRequestResultWidget(message.getAiResult()!),
+      AiChatMessageDisplayType.tool => const SizedBox.shrink(),
+      // Text(message.content),
+    };
+
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 12.0),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          // Main content starts with some top padding to avoid overlap with debug button
-          const SizedBox(height: 8),
-          if (isDebugMode)
-            Card(
+      child: isDebugMode
+          ? Card(
               shape: RoundedRectangleBorder(
                 side: BorderSide(width: 1, color: theme.dividerColor),
                 borderRadius: BorderRadius.circular(8),
               ),
               child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  _KeyValueText(
-                    key: 'Display Type',
-                    value: displayType.toHumanReadable(context),
-                    context: context,
-                  ),
-                  _KeyValueText(
-                    key: 'ID',
-                    value: message.id,
-                    context: context,
-                  ),
-                  _KeyValueText(
-                    key: 'Thread ID',
-                    value: message.parentChatThreadId,
-                    context: context,
-                  ),
-                  if (message.parentLgRunId != null)
-                    _KeyValueText(
-                      key: 'LG Run ID',
-                      value: message.parentLgRunId!,
-                      context: context,
+                  // Debug Mode Toggle - Positioned in top right
+                  if (ref.watch(isDebugModeSNP))
+                    Align(
+                      alignment: Alignment.topRight,
+                      child: IconButton(
+                        padding: EdgeInsets.zero,
+                        constraints: const BoxConstraints(),
+                        iconSize: 15,
+                        icon: Icon(
+                          showRawJson.value ? Icons.list : Icons.bug_report,
+                          color: theme.colorScheme.primary,
+                        ),
+                        onPressed: () => showRawJson.value = !showRawJson.value,
+                      ),
                     ),
-                  _KeyValueText(
-                    key: 'Content',
-                    value: message.content.tryFormatAsJson(),
-                    context: context,
-                    valueStyle:
-                        Theme.of(context).textTheme.bodyMedium?.copyWith(
-                              fontFamily: 'monospace',
-                            ),
-                  ),
+                  showRawJson.value
+                      ? Padding(
+                          padding: const EdgeInsets.all(16.0),
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              _KeyValueText(
+                                key: 'Display Type',
+                                value: displayType.toHumanReadable(context),
+                                context: context,
+                              ),
+                              _KeyValueText(
+                                key: 'ID',
+                                value: message.id,
+                                context: context,
+                              ),
+                              _KeyValueText(
+                                key: 'Thread ID',
+                                value: message.parentChatThreadId,
+                                context: context,
+                              ),
+                              if (message.parentLgRunId != null)
+                                _KeyValueText(
+                                  key: 'LG Run ID',
+                                  value: message.parentLgRunId!,
+                                  context: context,
+                                ),
+                              _KeyValueText(
+                                key: 'Content',
+                                value: message.content.tryFormatAsJson(),
+                                context: context,
+                                valueStyle: Theme.of(context)
+                                    .textTheme
+                                    .bodyMedium
+                                    ?.copyWith(
+                                      fontFamily: 'monospace',
+                                    ),
+                              ),
+                            ],
+                          ),
+                        )
+                      : Padding(
+                          padding: const EdgeInsets.all(8.0),
+                          child: messageDisplay,
+                        ),
                 ],
               ),
             )
-          else
-            switch (displayType) {
-              AiChatMessageDisplayType.user =>
-                _UserMessageWidget(message.content),
-              AiChatMessageDisplayType.ai => _AiMessageWidget(message.content),
-              AiChatMessageDisplayType.aiWithToolCall =>
-                _AiMessageWidget(message.getAiMessage() ?? message.content),
-              AiChatMessageDisplayType.toolAiRequest => const SizedBox.shrink(),
-              // _AiRequestWidget(message.getAiRequest()!),
-              AiChatMessageDisplayType.toolAiResult =>
-                _AiRequestResultWidget(message.getAiResult()!),
-              AiChatMessageDisplayType.tool => const SizedBox.shrink(),
-              // Text(message.content),
-            },
-        ],
-      ),
+          : messageDisplay,
     );
   }
 }
@@ -136,18 +159,15 @@ class _UserMessageWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Align(
-      alignment: Alignment.centerRight,
-      child: Padding(
-        padding: const EdgeInsets.only(left: 80.0),
-        child: Card(
-          color: Theme.of(context).colorScheme.primaryContainer,
-          child: Padding(
-            padding: const EdgeInsets.all(16.0),
-            child: _CollapsibleText(
-              message,
-              alignment: AlignmentDirectional.centerEnd,
-            ),
+    return Padding(
+      padding: const EdgeInsets.only(left: 80.0),
+      child: Card(
+        color: Theme.of(context).colorScheme.primaryContainer,
+        child: Padding(
+          padding: const EdgeInsets.all(16.0),
+          child: _CollapsibleText(
+            message,
+            alignment: AlignmentDirectional.centerEnd,
           ),
         ),
       ),
@@ -248,23 +268,24 @@ class _AiRequestResultWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    // Widget icon = const Icon(Icons.info,
-    //     size: 24.0); // Small icon to indicate result type
-    return switch (result.resultType) {
-      AiRequestResultType.shiftAssignments => ShiftAssignmentsResultWidget(
-          result: result as ShiftAssignmentsResultModel),
-      AiRequestResultType.shiftLogs =>
-        ShiftLogsResultWidget(result: result as ShiftLogsResultModel),
-      AiRequestResultType.shiftClockInOut => ShiftClockInOutResultWidget(
-          result: result as ShiftClockInOutResultModel),
-      AiRequestResultType.findTasks =>
-        FindTasksResultWidget(result: result as FindTasksResultModel),
-      AiRequestResultType.createTask =>
-        CreateTaskResultWidget(result: result as CreateTaskResultModel),
-      AiRequestResultType.error => Text(result.resultForAi),
-      AiRequestResultType.updateTaskFields => UpdateTaskFieldsResultWidget(
-          result: result as UpdateTaskFieldsResultModel),
-    };
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 8.0, vertical: 12.0),
+      child: switch (result.resultType) {
+        AiRequestResultType.shiftAssignments => ShiftAssignmentsResultWidget(
+            result: result as ShiftAssignmentsResultModel),
+        AiRequestResultType.shiftLogs =>
+          ShiftLogsResultWidget(result: result as ShiftLogsResultModel),
+        AiRequestResultType.shiftClockInOut => ShiftClockInOutResultWidget(
+            result: result as ShiftClockInOutResultModel),
+        AiRequestResultType.findTasks =>
+          FindTasksResultWidget(result: result as FindTasksResultModel),
+        AiRequestResultType.createTask =>
+          CreateTaskResultWidget(result: result as CreateTaskResultModel),
+        AiRequestResultType.error => Text(result.resultForAi),
+        AiRequestResultType.updateTaskFields => UpdateTaskFieldsResultWidget(
+            result: result as UpdateTaskFieldsResultModel),
+      },
+    );
   }
 }
 
@@ -280,31 +301,30 @@ class _CollapsibleText extends HookWidget {
   @override
   Widget build(BuildContext context) {
     final isExpanded = useState(false);
-    return Flexible(
-        child: content.length > 200 && !isExpanded.value
-            ? Wrap(
-                children: [
-                  Text('${content.substring(0, 200)}...',
-                      textAlign: switch (alignment) {
-                        AlignmentDirectional.topStart ||
-                        AlignmentDirectional.centerStart ||
-                        AlignmentDirectional.bottomStart =>
-                          TextAlign.left,
-                        AlignmentDirectional.topEnd ||
-                        AlignmentDirectional.centerEnd ||
-                        AlignmentDirectional.bottomEnd =>
-                          TextAlign.right,
-                        _ => TextAlign.center,
-                      }),
-                  Align(
-                    alignment: alignment,
-                    child: TextButton(
-                      child: const Text('Show more'),
-                      onPressed: () => isExpanded.value = true,
-                    ),
-                  ),
-                ],
-              )
-            : Text(content));
+    return content.length > 200 && !isExpanded.value
+        ? Wrap(
+            children: [
+              Text('${content.substring(0, 200)}...',
+                  textAlign: switch (alignment) {
+                    AlignmentDirectional.topStart ||
+                    AlignmentDirectional.centerStart ||
+                    AlignmentDirectional.bottomStart =>
+                      TextAlign.left,
+                    AlignmentDirectional.topEnd ||
+                    AlignmentDirectional.centerEnd ||
+                    AlignmentDirectional.bottomEnd =>
+                      TextAlign.right,
+                    _ => TextAlign.center,
+                  }),
+              Align(
+                alignment: alignment,
+                child: TextButton(
+                  child: const Text('Show more'),
+                  onPressed: () => isExpanded.value = true,
+                ),
+              ),
+            ],
+          )
+        : Text(content);
   }
 }

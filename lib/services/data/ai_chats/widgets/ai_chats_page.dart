@@ -19,37 +19,58 @@ class AIChatsPage extends HookConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final messageController = useTextEditingController();
     final isDebugMode = ref.watch(isDebugModeSNP);
+    final showDebugTest = useState(false);
 
-    return isDebugMode
-        ? const AiDebugPage()
-        : Expanded(
-            child: Column(
-              children: [
-                const ChatThreadDisplay(),
-                const Expanded(
-                  child: ChatMessagesDisplay(),
+    return SafeArea(
+      child: Column(
+        children: [
+          if (isDebugMode)
+            Align(
+              alignment: Alignment.topRight,
+              child: IconButton(
+                icon: Icon(
+                  showDebugTest.value ? Icons.list : Icons.bug_report,
+                  size: 20,
                 ),
-                TextField(
-                  controller: messageController,
-                  decoration: InputDecoration(
-                    labelText: 'Ask a question',
-                    suffixIcon: IconButton(
-                      icon: const Icon(Icons.send),
-                      onPressed: () {
-                        final message = messageController.text;
-                        if (message.isNotEmpty) {
-                          ref
-                              .read(aiChatServiceProvider)
-                              .sendMessageToAi(message);
-                          messageController.clear();
-                        }
-                      },
-                    ),
-                  ),
-                ),
-              ],
+                onPressed: () {
+                  showDebugTest.value = !showDebugTest.value;
+                },
+              ),
             ),
-          );
+          Expanded(
+            child: showDebugTest.value
+                ? const AiDebugPage()
+                : Column(
+                    children: [
+                      const ChatThreadDisplay(),
+                      const Expanded(child: ChatMessagesDisplay()),
+                      Padding(
+                        padding: const EdgeInsets.all(12.0),
+                        child: TextField(
+                          controller: messageController,
+                          decoration: InputDecoration(
+                            labelText: 'Ask a question',
+                            suffixIcon: IconButton(
+                              icon: const Icon(Icons.send),
+                              onPressed: () {
+                                final message = messageController.text;
+                                if (message.isNotEmpty) {
+                                  ref
+                                      .read(aiChatServiceProvider)
+                                      .sendMessageToAi(message);
+                                  messageController.clear();
+                                }
+                              },
+                            ),
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+          ),
+        ],
+      ),
+    );
   }
 }
 
