@@ -1,4 +1,5 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:seren_ai_flutter/services/ai_interaction/ai_chat_service_provider.dart';
 import 'speech_to_text_service_provider.dart';
 
 
@@ -52,5 +53,21 @@ class SpeechToTextListenStateNotifier
   Future<void> cancelListening() async {
     state = state.copyWith(text: '');
     await _speechService.stop();
+  }
+
+  void resumeListening() {
+    final currentText = state.text;
+
+    _speechService.start(onResult: (text) {
+      state = state.copyWith(text: currentText + text);
+    }, onSoundLevel: (soundLevel) {
+      state = state.copyWith(soundLevel: soundLevel);
+    });
+  }
+
+  Future<void> sendText(WidgetRef ref) async {
+    await _speechService.stop();
+    await ref.read(aiChatServiceProvider).sendMessageToAi(state.text);
+    state = state.copyWith(text: '');
   }
 }
