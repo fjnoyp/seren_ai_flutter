@@ -53,17 +53,17 @@ class FindTasksRequestModel extends AiInfoRequestModel {
 
 class CreateTaskRequestModel extends AiActionRequestModel {
   final String taskName;
-  final String taskDescription;
-  final String taskDueDate;
-  final String taskPriority;
-  final int estimateDurationMinutes;
+  final String? taskDescription;
+  final String? taskDueDate;
+  final String? taskPriority;
+  final int? estimateDurationMinutes;
 
   CreateTaskRequestModel({
     required this.taskName,
-    required this.taskDescription,
-    required this.taskDueDate,
-    required this.taskPriority,
-    required this.estimateDurationMinutes,
+    this.taskDescription,
+    this.taskDueDate,
+    this.taskPriority,
+    this.estimateDurationMinutes,
     super.args,
   }) : super(actionRequestType: AiActionRequestType.createTask);
 
