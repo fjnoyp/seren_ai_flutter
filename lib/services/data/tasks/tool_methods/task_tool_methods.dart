@@ -8,9 +8,9 @@ AiActionRequestType.updateTaskFields
 AiActionRequestType.deleteTask
 AiActionRequestType.assignUserToTask
 */
+import 'dart:developer';
+
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:path/path.dart';
-import 'package:path/path.dart';
 import 'package:seren_ai_flutter/common/navigation_service_provider.dart';
 import 'package:seren_ai_flutter/common/routes/app_routes.dart';
 import 'package:seren_ai_flutter/services/ai_interaction/ai_request/models/results/ai_request_result_model.dart';
@@ -23,14 +23,12 @@ import 'package:seren_ai_flutter/services/data/tasks/models/joined_task_model.da
 import 'package:seren_ai_flutter/services/data/tasks/models/task_model.dart';
 import 'package:seren_ai_flutter/services/data/tasks/providers/cur_task_service_provider.dart';
 import 'package:seren_ai_flutter/services/data/tasks/repositories/joined_task_repository.dart';
-import 'package:seren_ai_flutter/services/data/tasks/repositories/tasks_repository.dart';
+import 'package:seren_ai_flutter/services/data/tasks/tasks_db_provider.dart';
 import 'package:seren_ai_flutter/services/data/tasks/tool_methods/models/create_task_result_model.dart';
 import 'package:seren_ai_flutter/services/data/tasks/tool_methods/models/find_tasks_result_model.dart';
 import 'package:seren_ai_flutter/services/data/tasks/tool_methods/models/task_request_models.dart';
 import 'package:seren_ai_flutter/services/data/tasks/tool_methods/models/update_task_fields_result_model.dart';
-import 'dart:math';
-
-import 'package:seren_ai_flutter/services/data/tasks/widgets/task_page.dart';
+import 'package:seren_ai_flutter/services/data/tasks/widgets/action_buttons/edit_task_button.dart';
 
 class TaskToolMethods {
   // Threshold for string similarity (0.0 to 1.0)
@@ -174,15 +172,21 @@ class TaskToolMethods {
     if (userId == null) return _handleNoAuth();
 
     // Create a new task with fields from the request
-    final task = TaskModel(      
+    final task = TaskModel(
       name: actionRequest.taskName,
       description: actionRequest.taskDescription,
-      dueDate: actionRequest.taskDueDate != null ? DateTime.parse(actionRequest.taskDueDate!) : null,
+      dueDate: actionRequest.taskDueDate != null
+          ? DateTime.parse(actionRequest.taskDueDate!)
+          : null,
       status: StatusEnum.open,
-      priority: actionRequest.taskPriority != null ? PriorityEnum.values.byName(actionRequest.taskPriority!.toLowerCase()) : null,
+      priority: actionRequest.taskPriority != null
+          ? PriorityEnum.values
+              .byName(actionRequest.taskPriority!.toLowerCase())
+          : null,
       estimatedDurationMinutes: actionRequest.estimateDurationMinutes,
       authorUserId: userId,
-      parentProjectId: '', // Will be set later in UI
+      // TODO: add `actionRequest.parentProjectId` instead of always using defaultProjectId
+      parentProjectId: ref.read(curUserProvider).value!.defaultProjectId ?? '',
     );
 
     // Create a joined task model
@@ -194,15 +198,27 @@ class TaskToolMethods {
       comments: [],
     );
 
-    // Set the task in the current task service
-    final curTaskService = ref.read(curTaskServiceProvider);
-    curTaskService.loadTask(joinedTask);
+    // Save the task in the current task service
+    await ref.read(tasksDbProvider).upsertItem(task);
 
-    // Navigate to task page in create mode
+    log('Created new task "${task.name}"');
+
+    // Navigate to task page in readOnly mode
     if (allowToolUiActions) {
+      final savedTask = await ref
+          .read(joinedTasksRepositoryProvider)
+          .getJoinedTaskById(task.id);
+      ref.read(curTaskServiceProvider).loadTask(savedTask!);
+
       final navigationService = ref.read(navigationServiceProvider);
-      navigationService.navigateTo(AppRoutes.taskPage.name,
-          arguments: {'mode': EditablePageMode.create});
+      navigationService.navigateTo(AppRoutes.taskPage.name, arguments: {
+        'mode': EditablePageMode.readOnly,
+        'actions': [const EditTaskButton()],
+      });
+
+      log('and opened task page');
+    } else {
+      log('but UI actions are not allowed');
     }
 
     return CreateTaskResultModel(
@@ -225,11 +241,13 @@ class TaskToolMethods {
         .getUserViewableJoinedTasks(userId);
 
     // Calculate similarity scores and sort
-    final tasksWithScores = joinedTasks.map((joinedTask) {
-      final similarity = joinedTask.task.name.similarity(searchTaskName);
-      return (joinedTask, similarity);
-    }).where((tuple) => tuple.$2 >= _similarityThreshold)
-      .toList()
+    final tasksWithScores = joinedTasks
+        .map((joinedTask) {
+          final similarity = joinedTask.task.name.similarity(searchTaskName);
+          return (joinedTask, similarity);
+        })
+        .where((tuple) => tuple.$2 >= _similarityThreshold)
+        .toList()
       ..sort((a, b) => b.$2.compareTo(a.$2));
 
     // Return top 3 matches
@@ -240,10 +258,10 @@ class TaskToolMethods {
       {required Ref ref,
       required UpdateTaskFieldsRequestModel actionRequest,
       required bool allowToolUiActions}) async {
-      
-      final matchingTasks = await _getJoinedTasksByName(ref, actionRequest.taskName);
+    final matchingTasks =
+        await _getJoinedTasksByName(ref, actionRequest.taskName);
 
-    // TODO p2: determine task matching logic - may want to ask user for confirmation or add a good undo 
+    // TODO p2: determine task matching logic - may want to ask user for confirmation or add a good undo
     // For now - just update the first matching task
     final joinedTask = matchingTasks.first;
     final taskToModify = joinedTask.task;
@@ -251,16 +269,21 @@ class TaskToolMethods {
     final updatedTask = taskToModify.copyWith(
       name: actionRequest.taskName,
       description: actionRequest.taskDescription,
-      dueDate: actionRequest.taskDueDate != null ? DateTime.parse(actionRequest.taskDueDate!) : null,
-      status: actionRequest.taskStatus != null ? StatusEnum.values.byName(actionRequest.taskStatus!.toLowerCase()) : null,
-      priority: actionRequest.taskPriority != null ? PriorityEnum.values.byName(actionRequest.taskPriority!.toLowerCase()) : null,
+      dueDate: actionRequest.taskDueDate != null
+          ? DateTime.parse(actionRequest.taskDueDate!)
+          : null,
+      status: actionRequest.taskStatus != null
+          ? StatusEnum.values.byName(actionRequest.taskStatus!.toLowerCase())
+          : null,
+      priority: actionRequest.taskPriority != null
+          ? PriorityEnum.values
+              .byName(actionRequest.taskPriority!.toLowerCase())
+          : null,
       estimatedDurationMinutes: actionRequest.estimateDurationMinutes,
       updatedAt: DateTime.now().toUtc(),
     );
 
-    // Show the new task fields and ask for confirmation 
-    
-    
+    // Show the new task fields and ask for confirmation
 
     final updatedJoinedTask = joinedTask.copyWith(task: updatedTask);
 
@@ -274,16 +297,14 @@ class TaskToolMethods {
       showOnly: true,
     );
 
-
-
     // 1) get the task name
     // 2) make sure it's open and currently viewed
     // 3) update the task fields
     // 4) return the updated task fields (TBD)
 
-    return ErrorRequestResultModel(
-        resultForAi: 'Not implemented for request: ${actionRequest.toString()}',
-        showOnly: true);
+    // return ErrorRequestResultModel(
+    //     resultForAi: 'Not implemented for request: ${actionRequest.toString()}',
+    //     showOnly: true);
   }
 
   Future<AiRequestResultModel> deleteTask(
