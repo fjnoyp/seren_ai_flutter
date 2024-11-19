@@ -1,12 +1,12 @@
 import 'package:seren_ai_flutter/services/ai_interaction/ai_request/models/requests/ai_info_request_model.dart';
 
-// Dart class representation of python shift_tool.py generated requests 
+// Dart class representation of python shift_tool.py generated requests
 
 class ShiftAssignmentsRequestModel extends AiInfoRequestModel {
-  final List<int> dayOffsetsToGet;
+  final List<String> daysToGet;
 
   ShiftAssignmentsRequestModel({
-    required this.dayOffsetsToGet,
+    required this.daysToGet,
     super.showOnly = true,
     super.args,
   }) : super(infoRequestType: AiInfoRequestType.shiftAssignments);
@@ -14,17 +14,18 @@ class ShiftAssignmentsRequestModel extends AiInfoRequestModel {
   static ShiftAssignmentsRequestModel fromJson(Map<String, dynamic> json) {
     return ShiftAssignmentsRequestModel(
       args: json['args'],
-      dayOffsetsToGet: json['args']['day_offsets_to_get'].cast<int>(),
+      daysToGet:
+          (json['args']['days_to_get'] as List<dynamic>?)?.cast<String>() ?? [],
       showOnly: json['show_only'] ?? true,
     );
   }
 }
 
 class ShiftLogsRequestModel extends AiInfoRequestModel {
-  final List<int> dayOffsetsToGet;
+  final List<String> daysToGet;
 
   ShiftLogsRequestModel({
-    required this.dayOffsetsToGet,
+    required this.daysToGet,
     super.showOnly = true,
     super.args,
   }) : super(infoRequestType: AiInfoRequestType.shiftLogs);
@@ -32,7 +33,8 @@ class ShiftLogsRequestModel extends AiInfoRequestModel {
   static ShiftLogsRequestModel fromJson(Map<String, dynamic> json) {
     return ShiftLogsRequestModel(
       args: json['args'],
-      dayOffsetsToGet: json['args']['day_offsets_to_get'].cast<int>(),
+      daysToGet:
+          (json['args']['days_to_get'] as List<dynamic>?)?.cast<String>() ?? [],
       showOnly: json['show_only'] ?? true,
     );
   }

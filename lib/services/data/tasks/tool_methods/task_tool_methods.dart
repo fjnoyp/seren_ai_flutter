@@ -13,9 +13,11 @@ import 'dart:developer';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:seren_ai_flutter/common/navigation_service_provider.dart';
 import 'package:seren_ai_flutter/common/routes/app_routes.dart';
+import 'package:seren_ai_flutter/common/utils/date_time_extension.dart';
 import 'package:seren_ai_flutter/services/ai_interaction/ai_request/models/results/ai_request_result_model.dart';
 import 'package:seren_ai_flutter/services/ai_interaction/ai_request/models/results/error_request_result_model.dart';
 import 'package:seren_ai_flutter/services/auth/cur_auth_state_provider.dart';
+import 'package:seren_ai_flutter/services/data/ai_chats/date_list_parser.dart';
 import 'package:seren_ai_flutter/services/data/common/status_enum.dart';
 import 'package:seren_ai_flutter/services/data/common/utils/string_similarity_extension.dart';
 import 'package:seren_ai_flutter/services/data/common/widgets/delete_confirmation_dialog.dart';
@@ -47,6 +49,15 @@ class TaskToolMethods {
     final joinedTasks = await ref
         .read(joinedTasksRepositoryProvider)
         .getUserViewableJoinedTasks(userId);
+
+    // Get a list of dates to allow for due date search
+    final List<DateTime> dueDatesToGet = infoRequest.dueDatesToGet != null
+        ? DateListParser.parseDateList(infoRequest.dueDatesToGet!)
+        : [];
+    final List<DateTime> createdDatesToGet =
+        infoRequest.createdDatesToGet != null
+            ? DateListParser.parseDateList(infoRequest.createdDatesToGet!)
+            : [];
 
     // Filter tasks based on search criteria
     final filteredTasks = joinedTasks.where((joinedTask) {
@@ -108,26 +119,28 @@ class TaskToolMethods {
         return false;
       }
 
-      // Due date search with radius
-      if (infoRequest.taskDueDate != null) {
-        final searchDate = DateTime.tryParse(infoRequest.taskDueDate!);
-        if (searchDate != null && task.dueDate != null) {
-          final difference = searchDate.difference(task.dueDate!).inDays.abs();
-          if (difference > (infoRequest.dateSearchRadiusDays ?? 0)) {
-            return false;
-          }
+      // Check overdue tasks
+      if (infoRequest.getOverdueTasksOnly != null &&
+          infoRequest.getOverdueTasksOnly!) {
+        if (task.dueDate == null ||
+            task.dueDate!.isAfter(DateTime.now().toUtc())) {
+          return false;
         }
       }
 
-      // Created date search with radius
-      if (infoRequest.taskCreatedDate != null && task.createdAt != null) {
-        final searchDate = DateTime.tryParse(infoRequest.taskCreatedDate!);
-        if (searchDate != null) {
-          final difference =
-              searchDate.difference(task.createdAt!).inDays.abs();
-          if (difference > (infoRequest.dateSearchRadiusDays ?? 0)) {
-            return false;
-          }
+      // Due date search
+      final dueDate = task.dueDate;
+      if (dueDatesToGet.isNotEmpty && dueDate != null) {
+        if (!dueDatesToGet.any((dateToGet) => dueDate.isSameDate(dateToGet))) {
+          return false;
+        }
+      }
+
+      // Created date search
+      final createdDate = task.createdAt;
+      if (createdDatesToGet.isNotEmpty && createdDate != null) {
+        if (!createdDatesToGet.any((dateToGet) => createdDate.isSameDate(dateToGet))) {
+          return false;
         }
       }
 

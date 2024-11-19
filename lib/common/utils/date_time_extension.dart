@@ -37,4 +37,8 @@ extension DateTimeExtension on DateTime {
   String toSimpleTimeString() {
     return '$hour:${minute.toString().padLeft(2, '0')}';
   }
+
+  bool isSameDate(DateTime other) {
+    return year == other.year && month == other.month && day == other.day;
+  }
 }
