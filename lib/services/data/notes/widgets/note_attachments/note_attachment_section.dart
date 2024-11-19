@@ -46,7 +46,9 @@ class _AddAttachmentButton extends ConsumerWidget {
             await _pickAndUploadFile(ref);
           } else {
             ScaffoldMessenger.of(context).showSnackBar(
-              SnackBar(content: Text(AppLocalizations.of(context)!.photosPermissionDenied)),
+              SnackBar(
+                  content: Text(
+                      AppLocalizations.of(context)!.photosPermissionDenied)),
             );
           }
         } else {
@@ -97,14 +99,19 @@ class _AttachmentPreviewButton extends StatelessWidget {
     return Row(
       mainAxisSize: MainAxisSize.min,
       children: [
-        OutlinedButton.icon(
-          onPressed: () => showDialog(
-            context: context,
-            builder: (context) => _AttachmentPreview(attachmentUrl),
+        Expanded(
+          child: OutlinedButton.icon(
+            onPressed: () => showDialog(
+              context: context,
+              builder: (context) => _AttachmentPreview(attachmentUrl),
+            ),
+            // TODO p3: conditionally change the icon based on its file extension
+            icon: const Icon(Icons.attach_file),
+            label: Text(
+              Uri.decodeFull(attachmentUrl).split('/').last,
+              overflow: TextOverflow.ellipsis,
+            ),
           ),
-          // TODO p3: conditionally change the icon based on its file extension
-          icon: const Icon(Icons.attach_file),
-          label: Text(Uri.decodeFull(attachmentUrl).split('/').last),
         ),
         if (enableDelete)
           IconButton(
@@ -127,9 +134,8 @@ class _DeleteAttachmentDialog extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     return AlertDialog(
-      content: Text(AppLocalizations.of(context)!.deleteAttachment(
-        Uri.decodeFull(attachmentUrl).split('/').last
-      )),
+      content: Text(AppLocalizations.of(context)!
+          .deleteAttachment(Uri.decodeFull(attachmentUrl).split('/').last)),
       actions: [
         TextButton(
           onPressed: () => Navigator.pop(context),

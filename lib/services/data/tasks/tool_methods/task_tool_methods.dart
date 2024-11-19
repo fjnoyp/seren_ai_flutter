@@ -345,8 +345,8 @@ class TaskToolMethods {
 
     return DeleteTaskResultModel(
       resultForAi: deleted == true
-          ? 'Deleted task "${joinedTask.task.name}"'
-          : 'Deletion cancelled by the user',
+          ? 'Successfully deleted task "${joinedTask.task.name}"'
+          : 'Task deletion cancelled by user for "${joinedTask.task.name}"',
       showOnly: true,
     );
   }
