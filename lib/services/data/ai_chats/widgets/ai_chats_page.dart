@@ -176,6 +176,8 @@ class ChatMessagesDisplay extends HookConsumerWidget {
               itemBuilder: (context, index) =>
                   AiChatMessageViewCard(message: chatMessages[index]),
             ),
+      error: (error, stack) => const Center(child: Text('No messages available')),
+      loading: () => const Center(child: CircularProgressIndicator()),
     );
   }
 }
@@ -186,7 +188,8 @@ class PaginatedChatMessagesDisplay extends HookConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final scrollController = useScrollController();
-    final messagesProviderValue = ref.watch(curUserPaginatedAiChatMessagesProvider);
+    final messagesProviderValue =
+        ref.watch(curUserPaginatedAiChatMessagesProvider);
 
     useEffect(() {
       void onScroll() {

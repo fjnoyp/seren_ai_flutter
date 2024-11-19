@@ -1,33 +1,33 @@
 import 'package:seren_ai_flutter/services/ai_interaction/ai_request/models/requests/ai_action_request_model.dart';
 import 'package:seren_ai_flutter/services/ai_interaction/ai_request/models/requests/ai_info_request_model.dart';
 
-// Dart class representation of python task_tool.py generated requests 
+// Dart class representation of python task_tool.py generated requests
 
 class FindTasksRequestModel extends AiInfoRequestModel {
   final String? taskName;
   final String? taskDescription;
-  final String? taskDueDate;
-  final String? taskCreatedDate;
-  final int? dateSearchRadiusDays;
+  final List<String>? dueDatesToGet;
+  final List<String>? createdDatesToGet;
   final String? taskStatus;
   final String? taskPriority;
   final int? estimateDurationMinutes;
   final String? parentProjectName;
   final String? authorUserName;
-  final List<String>? assignedUserNames;  
+  final List<String>? assignedUserNames;
+  final bool? getOverdueTasksOnly;
 
   FindTasksRequestModel({
     this.taskName,
     this.taskDescription,
-    this.taskDueDate,
-    this.taskCreatedDate,
-    this.dateSearchRadiusDays,
+    this.dueDatesToGet,
+    this.createdDatesToGet,
     this.taskStatus,
     this.taskPriority,
     this.estimateDurationMinutes,
     this.parentProjectName,
     this.authorUserName,
     this.assignedUserNames,
+    this.getOverdueTasksOnly,
     super.showOnly = true,
     super.args,
   }) : super(infoRequestType: AiInfoRequestType.findTasks);
@@ -37,15 +37,18 @@ class FindTasksRequestModel extends AiInfoRequestModel {
       args: json['args'],
       taskName: json['args']['task_name'],
       taskDescription: json['args']['task_description'],
-      taskDueDate: json['args']['task_due_date'],
-      taskCreatedDate: json['args']['task_created_date'],
-      dateSearchRadiusDays: json['args']['date_search_radius_days'],
+      dueDatesToGet: (json['args']['task_due_dates_to_get'] as List<dynamic>?)
+          ?.cast<String>(),
+      createdDatesToGet:
+          (json['args']['task_created_dates_to_get'] as List<dynamic>?)
+              ?.cast<String>(),
       taskStatus: json['args']['task_status'],
       taskPriority: json['args']['task_priority'],
       estimateDurationMinutes: json['args']['estimate_duration_minutes'],
       parentProjectName: json['args']['parent_project_name'],
       authorUserName: json['args']['author_user_name'],
       assignedUserNames: json['args']['assigned_user_names']?.cast<String>(),
+      getOverdueTasksOnly: json['args']['get_overdue_tasks_only'],
       showOnly: json['show_only'] ?? true,
     );
   }
