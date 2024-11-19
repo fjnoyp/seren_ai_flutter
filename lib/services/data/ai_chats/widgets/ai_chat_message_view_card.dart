@@ -10,6 +10,7 @@ import 'package:seren_ai_flutter/services/data/shifts/tool_methods/models/shift_
 import 'package:seren_ai_flutter/services/data/shifts/tool_methods/models/shift_log_results_model.dart';
 import 'package:seren_ai_flutter/services/data/shifts/tool_methods/shift_result_widgets.dart';
 import 'package:seren_ai_flutter/services/data/tasks/tool_methods/models/create_task_result_model.dart';
+import 'package:seren_ai_flutter/services/data/tasks/tool_methods/models/delete_task_result_model.dart';
 import 'package:seren_ai_flutter/services/data/tasks/tool_methods/models/find_tasks_result_model.dart';
 import 'package:seren_ai_flutter/services/data/tasks/tool_methods/models/update_task_fields_result_model.dart';
 import 'package:seren_ai_flutter/services/data/tasks/tool_methods/task_result_widgets.dart';
@@ -284,6 +285,8 @@ class _AiRequestResultWidget extends StatelessWidget {
         AiRequestResultType.error => Text(result.resultForAi),
         AiRequestResultType.updateTaskFields => UpdateTaskFieldsResultWidget(
             result: result as UpdateTaskFieldsResultModel),
+        AiRequestResultType.deleteTask =>
+          DeleteTaskResultWidget(result: result as DeleteTaskResultModel),
       },
     );
   }

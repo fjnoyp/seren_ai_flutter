@@ -18,13 +18,16 @@ import 'package:seren_ai_flutter/services/ai_interaction/ai_request/models/resul
 import 'package:seren_ai_flutter/services/auth/cur_auth_state_provider.dart';
 import 'package:seren_ai_flutter/services/data/common/status_enum.dart';
 import 'package:seren_ai_flutter/services/data/common/utils/string_similarity_extension.dart';
+import 'package:seren_ai_flutter/services/data/common/widgets/delete_confirmation_dialog.dart';
 import 'package:seren_ai_flutter/services/data/common/widgets/editablePageModeEnum.dart';
 import 'package:seren_ai_flutter/services/data/tasks/models/joined_task_model.dart';
 import 'package:seren_ai_flutter/services/data/tasks/models/task_model.dart';
 import 'package:seren_ai_flutter/services/data/tasks/providers/cur_task_service_provider.dart';
 import 'package:seren_ai_flutter/services/data/tasks/repositories/joined_task_repository.dart';
+import 'package:seren_ai_flutter/services/data/tasks/repositories/tasks_repository.dart';
 import 'package:seren_ai_flutter/services/data/tasks/tasks_db_provider.dart';
 import 'package:seren_ai_flutter/services/data/tasks/tool_methods/models/create_task_result_model.dart';
+import 'package:seren_ai_flutter/services/data/tasks/tool_methods/models/delete_task_result_model.dart';
 import 'package:seren_ai_flutter/services/data/tasks/tool_methods/models/find_tasks_result_model.dart';
 import 'package:seren_ai_flutter/services/data/tasks/tool_methods/models/task_request_models.dart';
 import 'package:seren_ai_flutter/services/data/tasks/tool_methods/models/update_task_fields_result_model.dart';
@@ -301,9 +304,51 @@ class TaskToolMethods {
 
   Future<AiRequestResultModel> deleteTask(
       {required Ref ref, required DeleteTaskRequestModel actionRequest}) async {
-    return ErrorRequestResultModel(
-        resultForAi: 'Not implemented for request: ${actionRequest.toString()}',
-        showOnly: true);
+    final userId = _getUserId(ref);
+    if (userId == null) return _handleNoAuth();
+
+    final joinedTasks = await ref
+        .read(tasksRepositoryProvider)
+        .getUserViewableTasks(userId: userId);
+
+    final filteredTasks = joinedTasks.where((task) =>
+        task.name.similarity(actionRequest.taskName) >= _similarityThreshold);
+
+    if (filteredTasks.isEmpty) {
+      return ErrorRequestResultModel(
+          resultForAi: 'Task not found', showOnly: true);
+    } else if (filteredTasks.length > 1) {
+      // TODO: handle this case
+      return ErrorRequestResultModel(
+        resultForAi:
+            'Multiple tasks found with name "${actionRequest.taskName}"',
+        showOnly: true,
+      );
+    }
+
+    // If the task is found, move on to deleting it
+    final joinedTask = await ref
+        .read(joinedTasksRepositoryProvider)
+        .getJoinedTaskById(filteredTasks.first.id);
+    final taskService = ref.read(curTaskServiceProvider);
+    taskService.loadTask(joinedTask!);
+
+    final navigationService = ref.read(navigationServiceProvider);
+    final deleted = await navigationService.showPopupDialog(
+      DeleteConfirmationDialog(
+        itemName: joinedTask.task.name,
+        onDelete: () async {
+          await ref.read(tasksDbProvider).deleteItem(joinedTask.task.id);
+        },
+      ),
+    );
+
+    return DeleteTaskResultModel(
+      resultForAi: deleted == true
+          ? 'Deleted task "${joinedTask.task.name}"'
+          : 'Deletion cancelled by the user',
+      showOnly: true,
+    );
   }
 
   Future<AiRequestResultModel> assignUserToTask(
