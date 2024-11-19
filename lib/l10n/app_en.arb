@@ -16,6 +16,15 @@
     "save": "Save",
     "cancel": "Cancel",
     "delete": "Delete",
+    "deleteConfirmationMessage": "Are you sure you want to delete \"{itemName}\"?",
+    "@deleteConfirmationMessage": {
+        "placeholders": {
+            "itemName": {
+                "type": "String",
+                "example": "this task"
+            }
+        }
+    },
     "edit": "Edit",
     "error": "Error: {error}",
     "@error": {
