@@ -4,11 +4,10 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:seren_ai_flutter/common/utils/date_time_extension.dart';
 import 'package:seren_ai_flutter/common/utils/date_time_range_extension.dart';
-import 'package:seren_ai_flutter/services/ai_interaction/ai_request/models/requests/ai_info_request_model.dart';
-import 'package:seren_ai_flutter/services/ai_interaction/ai_request/models/requests/ai_request_model.dart';
 import 'package:seren_ai_flutter/services/ai_interaction/ai_request/models/results/ai_request_result_model.dart';
 import 'package:seren_ai_flutter/services/ai_interaction/ai_request/models/results/error_request_result_model.dart';
 import 'package:seren_ai_flutter/services/auth/cur_auth_state_provider.dart';
+import 'package:seren_ai_flutter/services/data/ai_chats/date_list_parser.dart';
 import 'package:seren_ai_flutter/services/data/shifts/models/shift_log_model.dart';
 import 'package:seren_ai_flutter/services/data/shifts/providers/cur_shift_state_provider.dart';
 import 'package:seren_ai_flutter/services/data/shifts/providers/shift_logs_service_provider.dart';
@@ -34,25 +33,18 @@ class ShiftToolMethods {
     final info = _getAuthAndShiftInfo(ref);
     if (info == null) return _handleNoAuthOrShiftInfo();
 
-    // 0 = today, 1 = tomorrow, -1 = yesterday, etc.
-    final List<int> dayOffsetsToGet = infoRequest.dayOffsetsToGet;
-
-    // Get current local date
-    final DateTime now = DateTime.now();
+    final List<String> daysToGet = infoRequest.daysToGet;
+    final List<DateTime> parsedDays = DateListParser.parseDateList(daysToGet);
 
     final Map<DateTime, List<DateTimeRange>> shiftAssignments = {};
 
-    await Future.wait(dayOffsetsToGet.map((offset) async {
-      final DateTime day = now.add(Duration(days: offset));
-      final DateTime dayUtc = day.toUtc();
-
+    await Future.wait(parsedDays.map((day) async {
       final timeRangesForDay =
           await ref.read(shiftTimeRangesRepositoryProvider).getActiveRanges(
                 shiftId: info.shiftId,
                 userId: info.userId,
-                day: dayUtc,
+                day: day,
               );
-
       shiftAssignments[day] = timeRangesForDay;
     }));
 
@@ -62,7 +54,8 @@ class ShiftToolMethods {
         totalDuration += range.duration;
       }
     }
-    final totalDurationStr = 'Total assigned hours: ${totalDuration.inHours}h ${totalDuration.inMinutes % 60}m';
+    final totalDurationStr =
+        'Total assigned hours: ${totalDuration.inHours}h ${totalDuration.inMinutes % 60}m';
 
     return ShiftAssignmentsResultModel(
       shiftAssignments: shiftAssignments,
@@ -79,27 +72,21 @@ class ShiftToolMethods {
     final info = _getAuthAndShiftInfo(ref);
     if (info == null) return _handleNoAuthOrShiftInfo();
 
-    // 0 = today, 1 = tomorrow, -1 = yesterday, etc.
-    final List<int> dayOffsetsToGet = infoRequest.dayOffsetsToGet;
-
-    // Get current local date
-    final DateTime now = DateTime.now();
+    final List<String> daysToGet = infoRequest.daysToGet;
+    final List<DateTime> parsedDays = DateListParser.parseDateList(daysToGet);
 
     final Map<DateTime, List<ShiftLogModel>> shiftLogs = {};
 
-    await Future.wait(dayOffsetsToGet.map((offset) async {
-      final DateTime day = now.add(Duration(days: offset));
-      final DateTime dayUtc = day.toUtc();
-
+    await Future.wait(parsedDays.map((day) async {
       final shiftLogsForDay =
           await ref.read(shiftLogsRepositoryProvider).getUserShiftLogsForDay(
                 shiftId: info.shiftId,
                 userId: info.userId,
-                day: dayUtc,
+                day: day,
               );
-
       shiftLogs[day] = shiftLogsForDay;
     }));
+
     Duration? curShiftDuration;
     Duration totalLogDuration = Duration.zero;
     // If there is open shift log, calculate duration so far
