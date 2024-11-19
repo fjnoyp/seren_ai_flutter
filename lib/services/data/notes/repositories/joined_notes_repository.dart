@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:seren_ai_flutter/services/data/db_setup/db_provider.dart';
 import 'package:seren_ai_flutter/services/data/notes/models/joined_note_model.dart';
@@ -16,7 +18,13 @@ class JoinedNotesRepository extends BaseRepository<JoinedNoteModel> {
 
   @override
   JoinedNoteModel fromJson(Map<String, dynamic> json) {
-    return JoinedNoteModel.fromJson(json);
+    final decodedJson = json.map((key, value) =>
+        (key == 'note' || key == 'author_user' || key == 'project') &&
+                value != null
+            ? MapEntry(key, jsonDecode(value))
+            : MapEntry(key, value));
+
+    return JoinedNoteModel.fromJson(decodedJson);
   }
 
   Stream<List<JoinedNoteModel>> watchUserJoinedNotes({
