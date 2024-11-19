@@ -189,26 +189,18 @@ class TaskToolMethods {
       parentProjectId: ref.read(curUserProvider).value!.defaultProjectId ?? '',
     );
 
-    // Create a joined task model
-    final joinedTask = JoinedTaskModel(
-      task: task,
-      authorUser: ref.read(curUserProvider).value,
-      project: null, // Will be set in UI
-      assignees: [], // Will be set in UI
-      comments: [],
-    );
-
     // Save the task in the current task service
     await ref.read(tasksDbProvider).upsertItem(task);
 
     log('Created new task "${task.name}"');
 
+    final savedJoinedTask = await ref
+        .read(joinedTasksRepositoryProvider)
+        .getJoinedTaskById(task.id);
+
     // Navigate to task page in readOnly mode
     if (allowToolUiActions) {
-      final savedTask = await ref
-          .read(joinedTasksRepositoryProvider)
-          .getJoinedTaskById(task.id);
-      ref.read(curTaskServiceProvider).loadTask(savedTask!);
+      ref.read(curTaskServiceProvider).loadTask(savedJoinedTask!);
 
       final navigationService = ref.read(navigationServiceProvider);
       navigationService.navigateTo(AppRoutes.taskPage.name, arguments: {
@@ -222,9 +214,9 @@ class TaskToolMethods {
     }
 
     return CreateTaskResultModel(
-      joinedTask: joinedTask,
+      joinedTask: savedJoinedTask!,
       resultForAi: allowToolUiActions
-          ? 'Created new task "${task.name}" and opened edit page'
+          ? 'Created new task "${task.name}" and opened task page'
           : 'Created new task "${task.name}", but UI actions are not allowed',
       showOnly: true,
     );
