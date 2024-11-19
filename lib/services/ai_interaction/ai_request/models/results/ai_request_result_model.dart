@@ -5,6 +5,7 @@ import 'package:seren_ai_flutter/services/data/shifts/tool_methods/models/shift_
 import 'package:seren_ai_flutter/services/data/shifts/tool_methods/models/shift_clock_in_out_result_model.dart';
 import 'package:seren_ai_flutter/services/data/shifts/tool_methods/models/shift_log_results_model.dart';
 import 'package:seren_ai_flutter/services/data/tasks/tool_methods/models/create_task_result_model.dart';
+import 'package:seren_ai_flutter/services/data/tasks/tool_methods/models/delete_task_result_model.dart';
 import 'package:seren_ai_flutter/services/data/tasks/tool_methods/models/find_tasks_result_model.dart';
 import 'package:seren_ai_flutter/services/data/tasks/tool_methods/models/update_task_fields_result_model.dart';
 
@@ -14,6 +15,7 @@ enum AiRequestResultType {
   shiftClockInOut('shift_clock_in_out'),
   findTasks('find_tasks'),
   createTask('create_task'),
+  deleteTask('delete_task'),
   error('error'),
   updateTaskFields('update_task_fields');
   //unknown('unknown');
@@ -72,6 +74,8 @@ abstract class AiRequestResultModel {
         return UpdateTaskFieldsResultModel.fromJson(json);
       case AiRequestResultType.error:
         return ErrorRequestResultModel.fromJson(json);
+      case AiRequestResultType.deleteTask:
+        return DeleteTaskResultModel.fromJson(json);
       //throw Exception('Unknown type for AiRequestResultModel: $resultType');
     }
   }
