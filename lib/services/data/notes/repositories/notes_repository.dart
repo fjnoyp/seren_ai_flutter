@@ -28,7 +28,7 @@ class NotesRepository extends BaseRepository<NoteModel> {
           ? NoteQueries.getUserPersonalNotes
           : NoteQueries.getProjectNotes,
       {
-        projectId == null ? 'user_id' : 'project_id': projectId,
+        if (projectId == null) 'user_id': userId else 'project_id': projectId,
       },
     );
   }
@@ -37,12 +37,12 @@ class NotesRepository extends BaseRepository<NoteModel> {
     required String userId,
     String? projectId,
   }) async {
-    return get(
+    return await get(
       projectId == null
           ? NoteQueries.getUserPersonalNotes
           : NoteQueries.getProjectNotes,
       {
-        projectId == null ? 'user_id' : 'project_id': projectId,
+        if (projectId == null) 'user_id': userId else 'project_id': projectId,
       },
     );
   }
