@@ -4,6 +4,7 @@
     "save": "Salvar",
     "cancel": "Cancelar",
     "delete": "Excluir",
+    "deleteConfirmationMessage": "Tem certeza que deseja excluir \"{itemName}\"?",
     "edit": "Editar",
     "error": "Erro: {error}",
     "back": "Voltar",
