@@ -29,12 +29,15 @@ class TaskCardItem extends ConsumerWidget {
             mode: EditablePageMode.readOnly, initialJoinedTask: joinedTask);
       },
       child: BaseHomeInnerCard.outlined(
-        child: Padding(
-          padding: const EdgeInsets.all(8.0),
-          child: Text(
-            task.name,
-            style: Theme.of(context).textTheme.labelSmall,
-            overflow: TextOverflow.ellipsis,
+        child: SizedBox(
+          width: double.infinity,
+          child: Padding(
+            padding: const EdgeInsets.all(8.0),
+            child: Text(
+              task.name,
+              style: Theme.of(context).textTheme.labelSmall,
+              overflow: TextOverflow.ellipsis,
+            ),
           ),
         ),
       ),
