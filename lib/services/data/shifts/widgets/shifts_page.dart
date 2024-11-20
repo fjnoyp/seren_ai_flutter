@@ -118,11 +118,12 @@ class TestWidget extends ConsumerWidget {
       value: activeShiftRanges,
       data: (ranges) {
         if (ranges.isEmpty) {
-          return const Text('No active shift ranges');
+          return Text(AppLocalizations.of(context)!.noActiveShiftRanges);
         }
         return Column(
           children: ranges.map((range) {
-            return Text('Active Shift Range: ${range.start} - ${range.end}');
+            return Text(AppLocalizations.of(context)!.activeShiftRange(
+                range.start.toString(), range.end.toString()));
           }).toList(),
         );
       },
@@ -237,7 +238,7 @@ class _ShiftLogs extends ConsumerWidget {
       value: shiftLogsStream,
       data: (logs) {
         if (logs.isEmpty) {
-          return const Text('No shift logs');
+          return Text(AppLocalizations.of(context)!.noShiftLogs);
         }
 
         return ListView.builder(
@@ -278,20 +279,17 @@ class _ShiftLogs extends ConsumerWidget {
         PopupMenuItem(
           onTap: () => _showEditClockInOutTimeModals(
               context: context, log: log, isClockIn: true),
-          // TODO: localize
-          child: Text('Edit clock in time'),
+          child: Text(AppLocalizations.of(context)!.editClockInTime),
         ),
         if (log.clockOutDatetime != null)
           PopupMenuItem(
             onTap: () => _showEditClockInOutTimeModals(
                 context: context, log: log, isClockIn: false),
-            // TODO: localize
-            child: Text('Edit clock out time'),
+            child: Text(AppLocalizations.of(context)!.editClockOutTime),
           ),
         PopupMenuItem(
           onTap: () => _showDeleteLogModals(context, log),
-          // TODO: localize
-          child: Text('Delete log'),
+          child: Text(AppLocalizations.of(context)!.deleteLog),
         ),
       ],
     );
@@ -305,8 +303,8 @@ class _ShiftLogs extends ConsumerWidget {
       context: context,
       isScrollControlled: true,
       builder: (context) => TextBlockWritingModal(
-        label:
-            'Why do you want to edit this ${isClockIn ? 'clock in' : 'clock out'} time?',
+        label: AppLocalizations.of(context)!.editTimeReason(
+            isClockIn ? 'clock in' : 'clock out'),
         initialDescription: '',
         onDescriptionChanged: (ref, description) => showTimePicker(
           context: context,
@@ -343,7 +341,7 @@ Future<void> _showDeleteLogModals(BuildContext context, ShiftLogModel log) {
     context: context,
     isScrollControlled: true,
     builder: (context) => TextBlockWritingModal(
-      label: 'Why do you want to delete this log?',
+      label: AppLocalizations.of(context)!.deleteLogReason,
       initialDescription: '',
       onDescriptionChanged: (ref, description) => showDialog(
         context: context,
@@ -398,7 +396,7 @@ class _ShiftTimeRangesList extends ConsumerWidget {
       value: shiftTimeRangesStream,
       data: (timeRanges) {
         if (timeRanges.isEmpty) {
-          return const Text('No shifts!');
+          return Text(AppLocalizations.of(context)!.noShiftsExclamation);
         }
 
         return Column(
@@ -449,7 +447,7 @@ class _ClockInClockOut extends HookConsumerWidget {
           if (curLog == null) {
             return OutlinedButton(
               onPressed: () => curUserShiftLogActions.clockIn(),
-              child: const Text('Clock In'),
+              child: Text(AppLocalizations.of(context)!.clockIn),
             );
           } else if (curLog.clockOutDatetime == null) {
             return Column(
@@ -457,7 +455,7 @@ class _ClockInClockOut extends HookConsumerWidget {
               children: [
                 OutlinedButton(
                   onPressed: () => curUserShiftLogActions.clockOut(),
-                  child: const Text('Clock Out'),
+                  child: Text(AppLocalizations.of(context)!.clockOut),
                 ),
                 Text(AppLocalizations.of(context)!.elapsedTime(
                     elapsedTime.value.inHours.toString(),

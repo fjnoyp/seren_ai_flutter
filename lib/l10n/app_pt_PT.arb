@@ -156,6 +156,13 @@
     "noActiveShiftRangesForToday": "Sem intervalos de turno ativos para hoje",
     "noAssignments": "Sem Atribuições",
     "toolAiResult": "Resultado de Ferramenta IA",
+    "noActiveShiftRanges": "Sem intervalos de turno ativos",
+    "activeShiftRange": "Intervalo de Turno Ativo: {startTime} até {endTime}",
+    "editClockInTime": "Editar Hora de Entrada",
+    "editClockOutTime": "Editar Hora de Saída",
+    "deleteLog": "Excluir Registro",
+    "editTimeReason": "Por que você deseja editar esta {timeType}?",
+    "deleteLogReason": "Por que você deseja excluir este registro?",
 
     "@_": {"description": "Tasks"},
     "tasks": "Tarefas",
