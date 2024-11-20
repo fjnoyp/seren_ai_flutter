@@ -142,6 +142,9 @@ const shiftSchemas = [
     Column.text('clock_in_datetime'),
     Column.text('clock_out_datetime'),
     Column.integer('is_break'),
+    Column.text('modification_reason'),
+    Column.integer('is_deleted'),
+    Column.text('shift_log_parent_id'),
   ]),
   Table(shiftOverridesTable, [
     // Column.text('id'),

@@ -55,6 +55,7 @@ abstract class ShiftQueries {
     WHERE shift_id = @shift_id
       AND user_id = @user_id
       AND clock_out_datetime IS NULL
+      AND is_deleted = 0
   ''';
 
   /// Params:
@@ -65,6 +66,7 @@ abstract class ShiftQueries {
     SELECT * FROM shift_logs
     WHERE shift_id = @shift_id
       AND user_id = @user_id
+      AND is_deleted = 0
       AND (DATE(clock_in_datetime) = DATE(@day_start)
       OR DATE(clock_out_datetime) = DATE(@day_start))
   ''';
