@@ -67,6 +67,7 @@
     "infoType": "Tipo de Informação",
     "showOnly": "Mostrar Apenas",
     "uiActionType": "Tipo de Ação UI",
+    "askAQuestion": "Faça uma pergunta",
 
     "@_": {"description": "Organization"},
     "chooseOrganization": "Escolher Organização",
