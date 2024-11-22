@@ -255,9 +255,7 @@ class PaginatedChatMessagesDisplay extends HookConsumerWidget {
                     },
                     child: IconButton.filled(
                       icon: const Icon(Icons.arrow_downward),
-                      onPressed: () => scrollController.animateTo(0,
-                          duration: const Duration(milliseconds: 300),
-                          curve: Curves.easeInOut),
+                      onPressed: () => scrollController.jumpTo(0),
                     ),
                   ),
                 ],
