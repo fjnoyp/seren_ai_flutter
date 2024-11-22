@@ -64,8 +64,15 @@ class AiChatMessagesNotifier
   AiChatMessagesNotifier(this._repository, this.threadId)
       : super(const AsyncValue.loading()) {
     loadMessages();
-    _repository.watchThreadMessages(threadId: threadId).listen((messages) {
-      refresh();
+    _repository
+        .watchThreadMessages(threadId: threadId)
+        .skip(1)
+        .listen((newMessages) {
+      if (state case AsyncData(value: var currentMessages)) {
+        state = AsyncValue.data([...newMessages, ...currentMessages]);
+        hasNewMessages = true;
+        log('refreshed with new messages');
+      }
     });
   }
 
@@ -103,13 +110,6 @@ class AiChatMessagesNotifier
     _currentPage++;
     await loadMessages();
     log('loaded more messages');
-  }
-
-  Future<void> refresh() async {
-    _currentPage = 1;
-    await loadMessages();
-    hasNewMessages = true;
-    log('refreshed with new messages');
   }
 
   bool get hasMore => _hasMore;
