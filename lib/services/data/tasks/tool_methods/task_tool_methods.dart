@@ -221,6 +221,7 @@ class TaskToolMethods {
       navigationService.navigateTo(AppRoutes.taskPage.name, arguments: {
         'mode': EditablePageMode.readOnly,
         'actions': [const EditTaskButton()],
+        'title': task.name,
       });
 
       log('and opened task page');

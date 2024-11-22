@@ -11,7 +11,6 @@ import 'package:seren_ai_flutter/services/auth/widgets/auth_guard.dart';
 import 'package:seren_ai_flutter/services/auth/widgets/sign_in_up_page.dart';
 import 'package:seren_ai_flutter/services/auth/widgets/terms_and_conditions_webview.dart';
 import 'package:seren_ai_flutter/services/data/ai_chats/widgets/ai_chats_page.dart';
-import 'package:seren_ai_flutter/services/data/common/widgets/editablePageModeEnum.dart';
 import 'package:seren_ai_flutter/services/data/notes/widgets/notes_list_page.dart';
 import 'package:seren_ai_flutter/services/data/notes/widgets/note_page.dart';
 import 'package:seren_ai_flutter/services/data/orgs/widgets/choose_org_page.dart';
@@ -93,13 +92,12 @@ class AppState extends State<App> {
             AppRoutes.taskPage.name: (context) {
               final args = ModalRoute.of(context)!.settings.arguments
                   as Map<String, dynamic>;
-              final mode = args['mode'] as EditablePageMode;
-              final title = mode == EditablePageMode.create
-                  ? AppLocalizations.of(context)!.createTask
-                  : AppLocalizations.of(context)!.updateTask;
 
-              return _GuardScaffold(title, TaskPage(mode: mode),
-                  actions: args['actions']);
+              return _GuardScaffold(
+                args['title'],
+                TaskPage(mode: args['mode']),
+                actions: args['actions'],
+              );
             },
             AppRoutes.aiChats.name: (context) => _GuardScaffold(
                 AppLocalizations.of(context)!.aiChatThreads,
@@ -117,13 +115,12 @@ class AppState extends State<App> {
             AppRoutes.notePage.name: (context) {
               final args = ModalRoute.of(context)!.settings.arguments
                   as Map<String, dynamic>;
-              final mode = args['mode'] as EditablePageMode;
-              final title = mode == EditablePageMode.create
-                  ? AppLocalizations.of(context)!.createNote
-                  : AppLocalizations.of(context)!.updateNote;
 
-              return _GuardScaffold(title, NotePage(mode: mode),
-                  actions: args['actions']);
+              return _GuardScaffold(
+                args['title'],
+                NotePage(mode: args['mode']),
+                actions: args['actions'],
+              );
             },
             AppRoutes.termsAndConditions.name: (context) =>
                 const TermsAndConditionsWebview(),

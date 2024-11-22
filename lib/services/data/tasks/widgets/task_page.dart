@@ -157,8 +157,7 @@ class TaskPage extends HookConsumerWidget {
       context: context,
       builder: (BuildContext context) => Consumer(
         builder: (BuildContext context, WidgetRef ref, Widget? child) {
-          final selectableProjects =
-              ref.read(curUserViewableProjectsProvider);
+          final selectableProjects = ref.read(curUserViewableProjectsProvider);
           return ListView.builder(
             itemCount: selectableProjects.valueOrNull?.length ?? 0,
             itemBuilder: (BuildContext context, int index) {
@@ -184,12 +183,13 @@ class TaskPage extends HookConsumerWidget {
 Future<void> openBlankTaskPage(Ref ref) async {
   final navigationService = ref.read(navigationServiceProvider);
 
-  navigationService.popUntil((route) => route.settings.name != AppRoutes.taskPage.name);
+  navigationService
+      .popUntil((route) => route.settings.name != AppRoutes.taskPage.name);
 
   ref.read(curTaskServiceProvider).createTask();
 
   await navigationService.navigateTo(AppRoutes.taskPage.name,
-      arguments: {'mode': EditablePageMode.create});
+      arguments: {'mode': EditablePageMode.create, 'title': 'Create Task'});
 }
 
 // TODO p2: init state within the page itself ... we should only rely on arguments to init the page (to support deep linking)
@@ -197,7 +197,8 @@ Future<void> openTaskPage(BuildContext context, WidgetRef ref,
     {required EditablePageMode mode,
     JoinedTaskModel? initialJoinedTask}) async {
   // Remove previous TaskPage to avoid duplicate task pages
-  Navigator.popUntil(context, (route) => route.settings.name != AppRoutes.taskPage.name);
+  Navigator.popUntil(
+      context, (route) => route.settings.name != AppRoutes.taskPage.name);
 
   // CREATE - wipe existing task state
   if (mode == EditablePageMode.create) {
@@ -220,6 +221,15 @@ Future<void> openTaskPage(BuildContext context, WidgetRef ref,
     _ => null,
   };
 
+  final title = switch (mode) {
+    EditablePageMode.edit => AppLocalizations.of(context)!.updateTask,
+    EditablePageMode.create => AppLocalizations.of(context)!.createTask,
+    // if mode is readOnly, we assume initialJoinedTask is provided
+    // or at least the task state is loaded
+    EditablePageMode.readOnly => initialJoinedTask?.task.name ??
+        ref.read(curTaskStateProvider).value!.task.name,
+  };
+
   await Navigator.pushNamed(context, AppRoutes.taskPage.name,
-      arguments: {'mode': mode, 'actions': actions});
+      arguments: {'mode': mode, 'actions': actions, 'title': title});
 }
