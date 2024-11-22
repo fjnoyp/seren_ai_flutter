@@ -61,11 +61,15 @@ class _NoteCardItem extends ConsumerWidget {
                     .textTheme
                     .titleSmall
                     ?.copyWith(fontWeight: FontWeight.w500),
+                maxLines: 1,
+                overflow: TextOverflow.ellipsis,
               ),
               Text(
                 joinedNote.project?.name ??
                     AppLocalizations.of(context)!.personal,
                 style: Theme.of(context).textTheme.bodySmall,
+                maxLines: 1,
+                overflow: TextOverflow.ellipsis,
               ),
             ],
           ),

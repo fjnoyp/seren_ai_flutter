@@ -132,7 +132,8 @@ Future<void> openNotePage(BuildContext context, WidgetRef ref,
     {required EditablePageMode mode,
     String? parentProjectId,
     String? noteId}) async {
-  Navigator.popUntil(context, (route) => route.settings.name != AppRoutes.notePage.name);
+  Navigator.popUntil(
+      context, (route) => route.settings.name != AppRoutes.notePage.name);
 
   if (mode == EditablePageMode.create) {
     ref.read(curNoteServiceProvider).createNote(
@@ -141,9 +142,8 @@ Future<void> openNotePage(BuildContext context, WidgetRef ref,
   } else if (mode == EditablePageMode.edit ||
       mode == EditablePageMode.readOnly) {
     if (noteId != null) {
-      final note = await ref
-          .read(joinedNotesRepositoryProvider)
-          .getJoinedNote(noteId);
+      final note =
+          await ref.read(joinedNotesRepositoryProvider).getJoinedNote(noteId);
       ref.read(curNoteServiceProvider).loadNote(note);
     }
   }
@@ -157,6 +157,14 @@ Future<void> openNotePage(BuildContext context, WidgetRef ref,
     _ => null,
   };
 
+  final title = switch (mode) {
+    EditablePageMode.edit => AppLocalizations.of(context)!.updateNote,
+    EditablePageMode.create => AppLocalizations.of(context)!.createNote,
+    // if mode is readOnly, we assume task state is loaded
+    EditablePageMode.readOnly =>
+      ref.read(curNoteStateProvider).value!.note.name,
+  };
+
   await Navigator.pushNamed(context, AppRoutes.notePage.name,
-      arguments: {'mode': mode, 'actions': actions});
+      arguments: {'mode': mode, 'actions': actions, 'title': title});
 }
