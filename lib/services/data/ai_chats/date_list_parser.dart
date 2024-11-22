@@ -18,20 +18,14 @@ class DateListParser {
       }
     }
 
-    if (results.length == 2) {
-      final [startDate, endDate] = results;
-      results.addAll(
-          _expandDateRange(startDate, endDate));
-    }
-
     return results;
   }
 
-  static List<DateTime> _expandDateRange(DateTime startDate, DateTime endDate) {
-    final results = <DateTime>[];
-    for (var i = 0; i <= endDate.difference(startDate).inDays; i++) {
-      results.add(startDate.add(Duration(days: i)));
-    }
-    return results;
-  }
+  // static List<DateTime> _expandDateRange(DateTime startDate, DateTime endDate) {
+  //   final results = <DateTime>[];
+  //   for (var i = 0; i <= endDate.difference(startDate).inDays; i++) {
+  //     results.add(startDate.add(Duration(days: i)));
+  //   }
+  //   return results;
+  // }
 }
