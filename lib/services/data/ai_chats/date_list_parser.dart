@@ -1,4 +1,3 @@
-import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 
 class DateListParser {
@@ -11,7 +10,7 @@ class DateListParser {
 
     for (final dateStr in dateStrings) {
       try {
-        final date = _dateFormat.parse(dateStr);
+        final date = _dateFormat.parse(dateStr, true);
         results.add(date);
       } catch (e) {
         // Skip invalid dates
@@ -21,4 +20,12 @@ class DateListParser {
 
     return results;
   }
+
+  // static List<DateTime> _expandDateRange(DateTime startDate, DateTime endDate) {
+  //   final results = <DateTime>[];
+  //   for (var i = 0; i <= endDate.difference(startDate).inDays; i++) {
+  //     results.add(startDate.add(Duration(days: i)));
+  //   }
+  //   return results;
+  // }
 }

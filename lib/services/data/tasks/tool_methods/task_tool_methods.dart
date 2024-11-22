@@ -95,27 +95,21 @@ class TaskToolMethods {
         return false;
       }
 
-      // Keep exact matching for non-string fields
-      if (infoRequest.taskStatus != null &&
-          task.status != null &&
-          task.status!.name.toLowerCase() !=
-              infoRequest.taskStatus!.toLowerCase()) {
-        return false;
-      }
+      // --- Keep exact matching for non-string fields:
 
       // Status match
       if (infoRequest.taskStatus != null &&
-          task.status != null &&
-          task.status!.name.toLowerCase() !=
-              infoRequest.taskStatus!.toLowerCase()) {
+          (task.status == null ||
+              task.status!.name.toLowerCase() !=
+                  infoRequest.taskStatus!.toLowerCase())) {
         return false;
       }
 
       // Priority match
       if (infoRequest.taskPriority != null &&
-          task.priority != null &&
-          task.priority!.name.toLowerCase() !=
-              infoRequest.taskPriority!.toLowerCase()) {
+          (task.priority == null ||
+              task.priority!.name.toLowerCase() !=
+                  infoRequest.taskPriority!.toLowerCase())) {
         return false;
       }
 
@@ -129,25 +123,30 @@ class TaskToolMethods {
       }
 
       // Due date search
-      final dueDate = task.dueDate;
-      if (dueDatesToGet.isNotEmpty && dueDate != null) {
-        if (!dueDatesToGet.any((dateToGet) => dueDate.isSameDate(dateToGet))) {
+      if (dueDatesToGet.isNotEmpty) {
+        final dueDate = task.dueDate?.toLocal();
+
+        if (dueDate == null ||
+            !dueDatesToGet.any((dateToGet) => dueDate.isSameDate(dateToGet))) {
           return false;
         }
       }
 
       // Created date search
-      final createdDate = task.createdAt;
-      if (createdDatesToGet.isNotEmpty && createdDate != null) {
-        if (!createdDatesToGet.any((dateToGet) => createdDate.isSameDate(dateToGet))) {
+      if (createdDatesToGet.isNotEmpty) {
+        final createdDate = task.createdAt?.toLocal();
+
+        if (createdDate == null ||
+            !createdDatesToGet
+                .any((dateToGet) => createdDate.isSameDate(dateToGet))) {
           return false;
         }
       }
 
       // Duration estimate match
       if (infoRequest.estimateDurationMinutes != null &&
-          task.estimatedDurationMinutes != null &&
-          (task.estimatedDurationMinutes! <
+          (task.estimatedDurationMinutes == null ||
+              task.estimatedDurationMinutes! <
                   infoRequest.estimateDurationMinutes! * 0.5 ||
               task.estimatedDurationMinutes! >
                   infoRequest.estimateDurationMinutes! * 1.5)) {
