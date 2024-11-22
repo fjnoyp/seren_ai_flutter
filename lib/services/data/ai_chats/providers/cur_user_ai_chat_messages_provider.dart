@@ -1,3 +1,5 @@
+import 'dart:developer';
+
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:seren_ai_flutter/services/data/ai_chats/models/ai_chat_message_model.dart';
 import 'package:seren_ai_flutter/services/data/ai_chats/providers/cur_ai_chat_thread_dependency_provider.dart';
@@ -11,17 +13,19 @@ final curUserAiChatMessagesProvider =
     builder: (aiChatThread) {
       return ref
           .watch(aiChatMessagesRepositoryProvider)
-          .watchThreadMessages(threadId: aiChatThread.id ?? '');
-    },    
+          .watchThreadMessages(threadId: aiChatThread.id);
+    },
   );
 });
 
-final curUserPaginatedAiChatMessagesProvider = Provider.autoDispose<AsyncValue<({
-  List<AiChatMessageModel> state,
-  AiChatMessagesNotifier notifier
-})>>((ref) {
+final curUserPaginatedAiChatMessagesProvider = Provider.autoDispose<
+    AsyncValue<
+        ({
+          List<AiChatMessageModel> state,
+          AiChatMessagesNotifier notifier
+        })>>((ref) {
   final aiChatThread = ref.watch(curUserAiChatThreadProvider);
-  
+
   return aiChatThread.when(
     error: (error, stack) => AsyncValue.error(error, stack),
     loading: () => const AsyncValue.loading(),
@@ -32,7 +36,7 @@ final curUserPaginatedAiChatMessagesProvider = Provider.autoDispose<AsyncValue<(
 
       final aiChatMessages = ref.watch(_aiChatMessagesProvider(thread.id));
       final notifier = ref.watch(_aiChatMessagesProvider(thread.id).notifier);
-      
+
       return aiChatMessages.when(
         error: (error, stack) => AsyncValue.error(error, stack),
         loading: () => const AsyncValue.loading(),
@@ -45,27 +49,33 @@ final curUserPaginatedAiChatMessagesProvider = Provider.autoDispose<AsyncValue<(
   );
 });
 
-final _aiChatMessagesProvider = StateNotifierProvider.family
-    .autoDispose<AiChatMessagesNotifier, AsyncValue<List<AiChatMessageModel>>, String>((ref, threadId) {
+final _aiChatMessagesProvider = StateNotifierProvider.family.autoDispose<
+    AiChatMessagesNotifier,
+    AsyncValue<List<AiChatMessageModel>>,
+    String>((ref, threadId) {
   final repository = ref.watch(aiChatMessagesRepositoryProvider);
   return AiChatMessagesNotifier(repository, threadId);
 });
 
-class AiChatMessagesNotifier extends StateNotifier<AsyncValue<List<AiChatMessageModel>>> {
-  
+class AiChatMessagesNotifier
+    extends StateNotifier<AsyncValue<List<AiChatMessageModel>>> {
   final String threadId;
 
-  AiChatMessagesNotifier(this._repository, this.threadId) : super(const AsyncValue.loading()) {
+  AiChatMessagesNotifier(this._repository, this.threadId)
+      : super(const AsyncValue.loading()) {
     loadMessages();
+    _repository.watchThreadMessages(threadId: threadId).listen((messages) {
+      refresh();
+    });
   }
 
   final AiChatMessagesRepository _repository;
   final int pageSize = AiChatMessagesRepository.defaultPageSize;
   int _currentPage = 1;
   bool _hasMore = true;
+  bool hasNewMessages = false;
 
-  Future<void> loadMessages() async {    
-
+  Future<void> loadMessages() async {
     try {
       final messages = await _repository.getThreadMessages(
         threadId: threadId,
@@ -92,6 +102,14 @@ class AiChatMessagesNotifier extends StateNotifier<AsyncValue<List<AiChatMessage
     if (!_hasMore || state.isLoading) return;
     _currentPage++;
     await loadMessages();
+    log('loaded more messages');
+  }
+
+  Future<void> refresh() async {
+    _currentPage = 1;
+    await loadMessages();
+    hasNewMessages = true;
+    log('refreshed with new messages');
   }
 
   bool get hasMore => _hasMore;

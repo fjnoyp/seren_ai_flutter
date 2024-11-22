@@ -43,7 +43,7 @@ class AIChatsPage extends HookConsumerWidget {
                 : Column(
                     children: [
                       const ChatThreadDisplay(),
-                      const Expanded(child: ChatMessagesDisplay()),
+                      const Expanded(child: PaginatedChatMessagesDisplay()),
                       Padding(
                         padding: const EdgeInsets.all(12.0),
                         child: TextField(
@@ -176,7 +176,8 @@ class ChatMessagesDisplay extends HookConsumerWidget {
               itemBuilder: (context, index) =>
                   AiChatMessageViewCard(message: chatMessages[index]),
             ),
-      error: (error, stack) => const Center(child: Text('No messages available')),
+      error: (error, stack) =>
+          const Center(child: Text('No messages available')),
       loading: () => const Center(child: CircularProgressIndicator()),
     );
   }
@@ -200,6 +201,10 @@ class PaginatedChatMessagesDisplay extends HookConsumerWidget {
             scrollController.position.maxScrollExtent * 0.8) {
           providerData.notifier.loadMore();
         }
+
+        if (scrollController.position.pixels == 0) {
+          messagesProviderValue.valueOrNull?.notifier.hasNewMessages = false;
+        }
       }
 
       scrollController.addListener(onScroll);
@@ -213,22 +218,49 @@ class PaginatedChatMessagesDisplay extends HookConsumerWidget {
         final messages = providerData.state;
         return messages.isEmpty
             ? const Center(child: Text('No messages available'))
-            : ListView.builder(
-                reverse: true,
-                controller: scrollController,
-                itemCount:
-                    messages.length + (providerData.notifier.hasMore ? 1 : 0),
-                itemBuilder: (context, index) {
-                  if (index == messages.length &&
-                      providerData.notifier.hasMore) {
-                    return const Center(child: CircularProgressIndicator());
-                  }
-                  final message = messages[index];
-                  return KeyedSubtree(
-                    key: ValueKey(message.id),
-                    child: AiChatMessageViewCard(message: message),
-                  );
-                },
+            : Stack(
+                children: [
+                  ListView.builder(
+                    reverse: true,
+                    controller: scrollController,
+                    itemCount: messages.length +
+                        (providerData.notifier.hasMore ? 1 : 0),
+                    itemBuilder: (context, index) {
+                      if (index == messages.length &&
+                          providerData.notifier.hasMore) {
+                        return const Center(child: CircularProgressIndicator());
+                      }
+                      final message = messages[index];
+                      return KeyedSubtree(
+                        key: ValueKey(message.id),
+                        child: AiChatMessageViewCard(message: message),
+                      );
+                    },
+                  ),
+                  AnimatedBuilder(
+                    animation: scrollController,
+                    builder: (context, child) {
+                      return scrollController.hasClients &&
+                              scrollController.position.pixels > 100
+                          ? Positioned(
+                              bottom: 20,
+                              right: 20,
+                              child: messagesProviderValue.valueOrNull?.notifier
+                                          .hasNewMessages ??
+                                      false
+                                  ? Badge(smallSize: 12, child: child)
+                                  : child!,
+                            )
+                          : const SizedBox.shrink();
+                    },
+                    child: IconButton.filled(
+                      icon: const Icon(Icons.arrow_downward),
+                      onPressed: () => scrollController.animateTo(0,
+                          duration: const Duration(milliseconds: 300),
+                          curve: Curves.easeInOut),
+                    ),
+                  ),
+                ],
               );
       },
     );
