@@ -2,9 +2,8 @@ import 'package:seren_ai_flutter/services/data/common/base_table_db.dart';
 import 'package:seren_ai_flutter/services/data/shifts/models/shift_log_model.dart';
 import 'package:seren_ai_flutter/services/data/shifts/repositories/shift_logs_repository.dart';
 
-
 class ShiftLogService extends BaseTableDb<ShiftLogModel> {
-  final ShiftLogsRepository _repository;  
+  final ShiftLogsRepository _repository;
 
   ShiftLogService(this._repository)
       : super(
@@ -14,7 +13,8 @@ class ShiftLogService extends BaseTableDb<ShiftLogModel> {
           toJson: (item) => item.toJson(),
         );
 
-  Future<({String? error})> clockIn({required String userId, required String shiftId}) async {
+  Future<({String? error})> clockIn(
+      {required String userId, required String shiftId}) async {
     try {
       final curLog = await _repository.getCurrentOpenLog(
         shiftId: shiftId,
@@ -27,7 +27,7 @@ class ShiftLogService extends BaseTableDb<ShiftLogModel> {
       final newLog = ShiftLogModel(
         shiftId: shiftId,
         userId: userId,
-        clockInDatetime: DateTime.now().toUtc(),
+        clockInDatetime: DateTime.now(),
         isBreak: false,
       );
 
@@ -38,7 +38,8 @@ class ShiftLogService extends BaseTableDb<ShiftLogModel> {
     }
   }
 
-  Future<({String? error})> clockOut({required String userId, required String shiftId}) async {
+  Future<({String? error})> clockOut(
+      {required String userId, required String shiftId}) async {
     try {
       final curLog = await _repository.getCurrentOpenLog(
         shiftId: shiftId,
@@ -48,8 +49,52 @@ class ShiftLogService extends BaseTableDb<ShiftLogModel> {
         return (error: 'No shift log found');
       }
 
-      final clockOutTime = DateTime.now().toUtc();
+      final clockOutTime = DateTime.now();
       await updateItem(curLog.copyWith(clockOutDatetime: clockOutTime));
+      return (error: null);
+    } catch (e) {
+      return (error: e.toString());
+    }
+  }
+
+  Future<({String? error})> deleteLog({
+    required ShiftLogModel log,
+    required String modificationReason,
+  }) async {
+    try {
+      if (modificationReason.isEmpty) {
+        return (error: 'Deletion reason is required');
+      }
+      await updateItem(
+        log.copyWith(isDeleted: true, modificationReason: modificationReason),
+      );
+      return (error: null);
+    } catch (e) {
+      return (error: e.toString());
+    }
+  }
+
+  Future<({String? error})> editLog({
+    required ShiftLogModel log,
+    required String modificationReason,
+    DateTime? newClockInTime,
+    DateTime? newClockOutTime,
+  }) async {
+    if (modificationReason.isEmpty) {
+      return (error: 'Modification reason is required');
+    }
+    try {
+      final newLog = ShiftLogModel(
+        userId: log.userId,
+        shiftId: log.shiftId,
+        clockInDatetime: newClockInTime ?? log.clockInDatetime,
+        clockOutDatetime: newClockOutTime ?? log.clockOutDatetime,
+        isBreak: log.isBreak,
+        modificationReason: modificationReason,
+        shiftLogParentId: log.id,
+      );
+      await updateItem(log.copyWith(isDeleted: true));
+      await insertItem(newLog);
       return (error: null);
     } catch (e) {
       return (error: e.toString());

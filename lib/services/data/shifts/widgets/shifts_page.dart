@@ -3,8 +3,11 @@ import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:intl/intl.dart';
 import 'package:seren_ai_flutter/common/utils/duration_extension.dart';
+import 'package:seren_ai_flutter/services/data/common/widgets/delete_confirmation_dialog.dart';
+import 'package:seren_ai_flutter/services/data/common/widgets/form/base_text_block_edit_selection_field.dart';
 import 'package:seren_ai_flutter/services/data/shifts/models/joined_shift_model.dart';
 import 'package:seren_ai_flutter/services/data/common/widgets/async_value_handler_widget.dart';
+import 'package:seren_ai_flutter/services/data/shifts/models/shift_log_model.dart';
 import 'package:seren_ai_flutter/services/data/shifts/providers/open_shift_log_provider.dart';
 import 'package:seren_ai_flutter/services/data/shifts/providers/shift_logs_service_provider.dart';
 import 'package:seren_ai_flutter/services/data/shifts/providers/cur_shift_state_provider.dart';
@@ -115,11 +118,12 @@ class TestWidget extends ConsumerWidget {
       value: activeShiftRanges,
       data: (ranges) {
         if (ranges.isEmpty) {
-          return const Text('No active shift ranges');
+          return Text(AppLocalizations.of(context)!.noActiveShiftRanges);
         }
         return Column(
           children: ranges.map((range) {
-            return Text('Active Shift Range: ${range.start} - ${range.end}');
+            return Text(AppLocalizations.of(context)!.activeShiftRange(
+                range.start.toString(), range.end.toString()));
           }).toList(),
         );
       },
@@ -228,12 +232,13 @@ class _ShiftLogs extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final shiftLogsStream = ref.watch(curUserShiftLogsProvider((day: day)));
+    final now = DateTime.now().toUtc();
 
     return AsyncValueHandlerWidget(
       value: shiftLogsStream,
       data: (logs) {
         if (logs.isEmpty) {
-          return const Text('No shift logs');
+          return Text(AppLocalizations.of(context)!.noShiftLogs);
         }
 
         return ListView.builder(
@@ -244,14 +249,135 @@ class _ShiftLogs extends ConsumerWidget {
             final log = logs[index];
             return Padding(
               padding: const EdgeInsets.symmetric(vertical: 4.0),
-              child: Text(
-                '${listDateFormat.format(log.clockInDatetime.toLocal())} - ${log.clockOutDatetime != null ? listDateFormat.format(log.clockOutDatetime!.toLocal()) : AppLocalizations.of(context)!.ongoing}',
-                style: const TextStyle(fontSize: 12),
-              ),
+              child: now.difference(log.clockOutDatetime ?? log.clockInDatetime).inDays < 1
+                  ? GestureDetector(
+                      onLongPressStart: (details) {
+                        _showContextMenu(context, log, details.globalPosition);
+                      },
+                      child: _ShiftLogDisplay(log),
+                    )
+                  : _ShiftLogDisplay(log),
             );
           },
         );
       },
+    );
+  }
+
+  void _showContextMenu(
+      BuildContext context, ShiftLogModel log, Offset tapPosition) {
+    final size = MediaQuery.of(context).size;
+    showMenu(
+      context: context,
+      position: RelativeRect.fromLTRB(
+        tapPosition.dx,
+        tapPosition.dy,
+        size.width - tapPosition.dx,
+        size.height - tapPosition.dy,
+      ),
+      items: [
+        PopupMenuItem(
+          onTap: () => _showEditClockInOutTimeModals(
+              context: context, log: log, isClockIn: true),
+          child: Text(AppLocalizations.of(context)!.editClockInTime),
+        ),
+        if (log.clockOutDatetime != null)
+          PopupMenuItem(
+            onTap: () => _showEditClockInOutTimeModals(
+                context: context, log: log, isClockIn: false),
+            child: Text(AppLocalizations.of(context)!.editClockOutTime),
+          ),
+        PopupMenuItem(
+          onTap: () => _showDeleteLogModals(context, log),
+          child: Text(AppLocalizations.of(context)!.deleteLog),
+        ),
+      ],
+    );
+  }
+
+  Future<void> _showEditClockInOutTimeModals(
+      {required BuildContext context,
+      required ShiftLogModel log,
+      required bool isClockIn}) {
+    return showModalBottomSheet(
+      context: context,
+      isScrollControlled: true,
+      builder: (context) => TextBlockWritingModal(
+        label: AppLocalizations.of(context)!
+            .editTimeReason(isClockIn ? 'clock in' : 'clock out'),
+        initialDescription: '',
+        onDescriptionChanged: (ref, description) => showTimePicker(
+          context: context,
+          initialTime: TimeOfDay.fromDateTime(isClockIn
+              ? log.clockInDatetime.toLocal()
+              : log.clockOutDatetime!.toLocal()),
+        ).then((value) {
+          if (value != null) {
+            ref.read(shiftLogServiceProvider).editLog(
+                  log: log,
+                  newClockInTime: isClockIn
+                      ? log.clockInDatetime.toLocal().copyWith(
+                          hour: value.hour,
+                          minute: value.minute,
+                        )
+                      : null,
+                  newClockOutTime: !isClockIn
+                      ? log.clockOutDatetime?.toLocal().copyWith(
+                          hour: value.hour,
+                          minute: value.minute,
+                        )
+                      : null,
+                  modificationReason: description,
+                );
+          }
+        }),
+      ),
+    );
+  }
+
+  Future<void> _showDeleteLogModals(BuildContext context, ShiftLogModel log) {
+    return showModalBottomSheet(
+      context: context,
+      isScrollControlled: true,
+      builder: (context) => TextBlockWritingModal(
+        label: AppLocalizations.of(context)!.deleteLogReason,
+        initialDescription: '',
+        onDescriptionChanged: (ref, description) => showDialog(
+          context: context,
+          builder: (context) => DeleteConfirmationDialog(
+            itemName: log.toHumanReadable(context),
+            onDelete: () => ref
+                .read(shiftLogServiceProvider)
+                .deleteLog(log: log, modificationReason: description),
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+class _ShiftLogDisplay extends StatelessWidget {
+  const _ShiftLogDisplay(this.log);
+
+  final ShiftLogModel log;
+
+  @override
+  Widget build(BuildContext context) {
+    return Row(
+      children: [
+        Padding(
+          padding: const EdgeInsets.all(6),
+          child: Text(
+            log.toHumanReadable(context),
+            style: const TextStyle(fontSize: 12),
+          ),
+        ),
+        if (log.shiftLogParentId != null)
+          Tooltip(
+            message: log.modificationReason,
+            child: const Icon(Icons.flag_outlined),
+          ),
+      ],
     );
   }
 }
@@ -270,7 +396,7 @@ class _ShiftTimeRangesList extends ConsumerWidget {
       value: shiftTimeRangesStream,
       data: (timeRanges) {
         if (timeRanges.isEmpty) {
-          return const Text('No shifts!');
+          return Text(AppLocalizations.of(context)!.noShiftsExclamation);
         }
 
         return Column(
@@ -321,7 +447,7 @@ class _ClockInClockOut extends HookConsumerWidget {
           if (curLog == null) {
             return OutlinedButton(
               onPressed: () => curUserShiftLogActions.clockIn(),
-              child: const Text('Clock In'),
+              child: Text(AppLocalizations.of(context)!.clockIn),
             );
           } else if (curLog.clockOutDatetime == null) {
             return Column(
@@ -329,7 +455,7 @@ class _ClockInClockOut extends HookConsumerWidget {
               children: [
                 OutlinedButton(
                   onPressed: () => curUserShiftLogActions.clockOut(),
-                  child: const Text('Clock Out'),
+                  child: Text(AppLocalizations.of(context)!.clockOut),
                 ),
                 Text(AppLocalizations.of(context)!.elapsedTime(
                     elapsedTime.value.inHours.toString(),
