@@ -272,6 +272,24 @@
     },
     "noActiveShiftRangesForToday": "No active shift ranges for today",
     "noAssignments": "No Assignments",
+    "noActiveShiftRanges": "No active shift ranges",
+    "activeShiftRange": "Active Shift Range: {startTime} to {endTime}",
+    "@activeShiftRange": {
+        "placeholders": {
+            "startTime": {"type": "String"},
+            "endTime": {"type": "String"}
+        }
+    },
+    "editClockInTime": "Edit Clock In Time",
+    "editClockOutTime": "Edit Clock Out Time",
+    "deleteLog": "Delete Log",
+    "editTimeReason": "Why do you want to edit this {timeType} time?",
+    "@editTimeReason": {
+        "placeholders": {
+            "timeType": {"type": "String"}
+        }
+    },
+    "deleteLogReason": "Why do you want to delete this log?",
 
     "@_": {"description": "Tasks"},
     "tasks": "Tasks",
