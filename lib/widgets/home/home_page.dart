@@ -46,7 +46,7 @@ class HomePage extends ConsumerWidget {
               mainAxisSpacing: 8.0,
               children: const [
                 TaskHomeCard(),
-                NotesCard(),
+                NoteHomeCard(),
                 ShiftCard(),
                 ClockInOutHomeCard(),
               ],
