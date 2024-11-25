@@ -166,6 +166,8 @@
             }
         }
     },
+    "images": "Images",
+    "files": "Files",
     "actionRequired": "Action required",
     "noDescription": "No description",
     "pdfPersonal": "Personal",
