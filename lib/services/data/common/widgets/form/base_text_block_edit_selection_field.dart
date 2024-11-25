@@ -28,7 +28,8 @@ class BaseTextBlockEditSelectionField extends ConsumerWidget {
       // description == null || description.isEmpty
       //     ? AppLocalizations.of(context)!.textIsRequired
       //     : null,
-      valueToString: (description) => description ?? AppLocalizations.of(context)!.enterText,
+      valueToString: (description) =>
+          description ?? AppLocalizations.of(context)!.enterText,
       enabled: enabled,
       value: curDescription,
       onValueChanged: updateDescription,
@@ -51,12 +52,14 @@ class BaseTextBlockEditSelectionField extends ConsumerWidget {
 
 class TextBlockWritingModal extends HookWidget {
   final String initialDescription;
-  final void Function(WidgetRef, String) onDescriptionChanged;
+  final Function(WidgetRef, String) onDescriptionChanged;
+  final String? label;
 
   const TextBlockWritingModal({
     super.key,
     required this.initialDescription,
     required this.onDescriptionChanged,
+    this.label,
   });
 
   @override
@@ -73,6 +76,13 @@ class TextBlockWritingModal extends HookWidget {
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
+            if (label != null)
+              Text(
+                label!,
+                style: Theme.of(context).textTheme.bodyLarge,
+                textAlign: TextAlign.center,
+              ),
+            const SizedBox(height: 16),
             TextField(
               controller: descriptionController,
               maxLines: 5,
@@ -84,12 +94,13 @@ class TextBlockWritingModal extends HookWidget {
             const SizedBox(height: 16),
             Consumer(builder: (context, ref, child) {
               return ElevatedButton(
-                onPressed: () {
-                  onDescriptionChanged(ref, descriptionController.text);
+                onPressed: () async {
+                  // if we don't use await here, eventual confirmation dialogs don't show up
+                  await onDescriptionChanged(ref, descriptionController.text);
                   Navigator.pop(context);
                 },
                 child: Text(AppLocalizations.of(context)!.save),
-                );
+              );
             }),
           ],
         ),
