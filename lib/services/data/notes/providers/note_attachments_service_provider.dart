@@ -79,12 +79,27 @@ class NoteAttachmentsService extends Notifier<List<String>> {
   }
 
   Future<File> createOrGetLocalFile(String noteId, String fileUrl) async {
-    final path = await getDownloadsDirectory();
-    // Create the noteId directory if it doesn't exist
-    final noteDir = Directory('${path?.path}/$noteId');
-    await noteDir.create(recursive: true);
+    File file;
 
-    final file = File('${path?.path}/$noteId/${fileUrl.getFilePathName()}');
+    if (Platform.isIOS) {
+      // Replace getDownloadsDirectory with getApplicationDocumentsDirectory
+      final path = await getApplicationDocumentsDirectory();
+      // Create the noteId directory if it doesn't exist
+      final noteDir = Directory('${path.path}/$noteId');
+      await noteDir.create(recursive: true);
+
+      //final fileName = 
+
+      file = File('${path.path}/$noteId/${DateTime.now().millisecondsSinceEpoch}_${fileUrl.getFilePathName()}');
+    } else {
+      final path = await getDownloadsDirectory();
+      // Create the noteId directory if it doesn't exist
+      final noteDir = Directory('${path?.path}/$noteId');
+      await noteDir.create(recursive: true);
+
+      file = File('${path?.path}/$noteId/${fileUrl.getFilePathName()}');
+    }
+
     if (!(await _isFileVersionFetched(
         fileUrl: fileUrl, file: file, noteId: noteId))) {
       final fileBytes = await supabaseStorage
@@ -92,6 +107,7 @@ class NoteAttachmentsService extends Notifier<List<String>> {
           .download('$noteId/${fileUrl.getFilePathName()}');
       await file.writeAsBytes(fileBytes);
     }
+
     return file;
   }
 
