@@ -16,6 +16,11 @@ ShiftLogModel _$ShiftLogModelFromJson(Map<String, dynamic> json) =>
           ? null
           : DateTime.parse(json['clock_out_datetime'] as String),
       isBreak: ShiftLogModel._boolFromInt(json['is_break']),
+      modificationReason: json['modification_reason'] as String?,
+      isDeleted: json['is_deleted'] == null
+          ? false
+          : ShiftLogModel._boolFromInt(json['is_deleted']),
+      shiftLogParentId: json['shift_log_parent_id'] as String?,
       createdAt: json['created_at'] == null
           ? null
           : DateTime.parse(json['created_at'] as String),
@@ -32,6 +37,9 @@ Map<String, dynamic> _$ShiftLogModelToJson(ShiftLogModel instance) =>
       'clock_in_datetime': instance.clockInDatetime.toIso8601String(),
       'clock_out_datetime': instance.clockOutDatetime?.toIso8601String(),
       'is_break': instance.isBreak,
+      'modification_reason': instance.modificationReason,
+      'is_deleted': instance.isDeleted,
+      'shift_log_parent_id': instance.shiftLogParentId,
       'created_at': instance.createdAt?.toIso8601String(),
       'updated_at': instance.updatedAt?.toIso8601String(),
     };
