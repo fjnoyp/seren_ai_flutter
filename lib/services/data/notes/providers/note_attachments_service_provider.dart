@@ -5,6 +5,8 @@ import 'package:open_file/open_file.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:seren_ai_flutter/common/utils/string_extension.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
+import 'package:flutter_image_compress/flutter_image_compress.dart';
+
 
 final noteAttachmentsServiceProvider =
     NotifierProvider<NoteAttachmentsService, List<String>>(
@@ -46,12 +48,39 @@ class NoteAttachmentsService extends Notifier<List<String>> {
     required String noteId,
   }) async {
     for (var file in files) {
+      File fileToUpload = file;
+      String fileName = file.path.getFilePathName();
+
+      // Only compress if it's an image
+      if (file.path.toLowerCase().endsWith('.jpg') ||
+          file.path.toLowerCase().endsWith('.jpeg') ||
+          file.path.toLowerCase().endsWith('.png')) {
+        final tempDir = await getTemporaryDirectory();
+        final targetPath = '${tempDir.path}/${DateTime.now().millisecondsSinceEpoch}_compressed.jpg';
+        
+        final compressedXFile = await FlutterImageCompress.compressAndGetFile(
+          file.absolute.path,
+          targetPath,
+          quality: 65,
+          format: CompressFormat.jpeg,
+        );
+        
+        if (compressedXFile != null) {
+          fileToUpload = File(compressedXFile.path);
+          // Update filename to .jpg extension
+          if (!fileName.toLowerCase().endsWith('.jpg')) {
+            fileName = '${fileName.substring(0, fileName.lastIndexOf('.'))}.jpg';
+          }
+        }
+      }
+
       await supabaseStorage.from('note_attachments').upload(
-            '$noteId/${file.path.getFilePathName()}',
-            file,
-            fileOptions: const FileOptions(upsert: true),
-          );
+        '$noteId/$fileName',
+        fileToUpload,
+        fileOptions: const FileOptions(upsert: true),
+      );
     }
+
     fetchNoteAttachments(noteId: noteId);
   }
 
@@ -88,9 +117,10 @@ class NoteAttachmentsService extends Notifier<List<String>> {
       final noteDir = Directory('${path.path}/$noteId');
       await noteDir.create(recursive: true);
 
-      //final fileName = 
+      //final fileName =
 
-      file = File('${path.path}/$noteId/${DateTime.now().millisecondsSinceEpoch}_${fileUrl.getFilePathName()}');
+      file = File(
+          '${path.path}/$noteId/${DateTime.now().millisecondsSinceEpoch}_${fileUrl.getFilePathName()}');
     } else {
       final path = await getDownloadsDirectory();
       // Create the noteId directory if it doesn't exist
