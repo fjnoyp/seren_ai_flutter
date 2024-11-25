@@ -316,13 +316,13 @@ class _ShiftLogs extends ConsumerWidget {
             ref.read(shiftLogServiceProvider).editLog(
                   log: log,
                   newClockInTime: isClockIn
-                      ? log.clockInDatetime.copyWith(
+                      ? log.clockInDatetime.toLocal().copyWith(
                           hour: value.hour,
                           minute: value.minute,
                         )
                       : null,
                   newClockOutTime: !isClockIn
-                      ? log.clockOutDatetime?.copyWith(
+                      ? log.clockOutDatetime?.toLocal().copyWith(
                           hour: value.hour,
                           minute: value.minute,
                         )

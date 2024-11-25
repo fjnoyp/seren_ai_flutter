@@ -27,7 +27,7 @@ class ShiftLogService extends BaseTableDb<ShiftLogModel> {
       final newLog = ShiftLogModel(
         shiftId: shiftId,
         userId: userId,
-        clockInDatetime: DateTime.now().toUtc(),
+        clockInDatetime: DateTime.now(),
         isBreak: false,
       );
 
@@ -49,7 +49,7 @@ class ShiftLogService extends BaseTableDb<ShiftLogModel> {
         return (error: 'No shift log found');
       }
 
-      final clockOutTime = DateTime.now().toUtc();
+      final clockOutTime = DateTime.now();
       await updateItem(curLog.copyWith(clockOutDatetime: clockOutTime));
       return (error: null);
     } catch (e) {

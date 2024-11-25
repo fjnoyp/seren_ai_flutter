@@ -58,15 +58,19 @@ class ShiftLogModel implements IHasId {
     String? id,
     required this.userId,
     required this.shiftId,
-    required this.clockInDatetime,
-    this.clockOutDatetime,
+    required DateTime clockInDatetime,
+    DateTime? clockOutDatetime,
     required this.isBreak,
     this.modificationReason,
     this.isDeleted = false,
     this.shiftLogParentId,
-    this.createdAt,
-    this.updatedAt,
-  }) : id = id ?? uuid.v4();
+    DateTime? createdAt,
+    DateTime? updatedAt,
+  })  : id = id ?? uuid.v4(),
+        clockInDatetime = clockInDatetime.toUtc(),
+        clockOutDatetime = clockOutDatetime?.toUtc(),
+        createdAt = createdAt?.toUtc(),
+        updatedAt = updatedAt?.toUtc();
 
   ShiftLogModel copyWith({
     String? id,
