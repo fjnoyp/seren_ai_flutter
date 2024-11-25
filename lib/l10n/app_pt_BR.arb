@@ -63,6 +63,7 @@
     "saySomething": "Diga algo...",
     "noArgumentsProvided": "Nenhum argumento fornecido",
     "aiChatThreads": "Conversas IA",
+    "askAQuestion": "Faça uma pergunta",
 
     "@_": {"description": "Organization"},
     "chooseOrganization": "Escolher Organização",
