@@ -12,7 +12,6 @@ enum AppRoutes {
   shifts('/shifts'),
   noteList('/noteList'),
   notePage('/notePage'),
-  noteFolderPage('/noteFolderPage'),
   testSQLPage('/testSQLPage'),
   termsAndConditions('/termsAndConditions');
 
