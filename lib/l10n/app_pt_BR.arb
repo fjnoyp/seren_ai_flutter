@@ -105,6 +105,8 @@
     "thisProjectHasNoNotes": "Este projeto ainda não tem notas",
     "noNotes": "Sem notas",
     "saveNoteToProject": "Salvar nota em {projectName}?",
+    "images": "Imagens",
+    "files": "Arquivos",
     "actionRequired": "Ação necessária",
     "noDescription": "Sem descrição",
     "pdfPersonal": "Pessoal",
