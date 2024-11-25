@@ -303,8 +303,8 @@ class _ShiftLogs extends ConsumerWidget {
       context: context,
       isScrollControlled: true,
       builder: (context) => TextBlockWritingModal(
-        label: AppLocalizations.of(context)!.editTimeReason(
-            isClockIn ? 'clock in' : 'clock out'),
+        label: AppLocalizations.of(context)!
+            .editTimeReason(isClockIn ? 'clock in' : 'clock out'),
         initialDescription: '',
         onDescriptionChanged: (ref, description) => showTimePicker(
           context: context,
@@ -334,26 +334,26 @@ class _ShiftLogs extends ConsumerWidget {
       ),
     );
   }
-}
 
-Future<void> _showDeleteLogModals(BuildContext context, ShiftLogModel log) {
-  return showModalBottomSheet(
-    context: context,
-    isScrollControlled: true,
-    builder: (context) => TextBlockWritingModal(
-      label: AppLocalizations.of(context)!.deleteLogReason,
-      initialDescription: '',
-      onDescriptionChanged: (ref, description) => showDialog(
-        context: context,
-        builder: (context) => DeleteConfirmationDialog(
-          itemName: log.toHumanReadable(context),
-          onDelete: () => ref
-              .read(shiftLogServiceProvider)
-              .deleteLog(log: log, modificationReason: description),
+  Future<void> _showDeleteLogModals(BuildContext context, ShiftLogModel log) {
+    return showModalBottomSheet(
+      context: context,
+      isScrollControlled: true,
+      builder: (context) => TextBlockWritingModal(
+        label: AppLocalizations.of(context)!.deleteLogReason,
+        initialDescription: '',
+        onDescriptionChanged: (ref, description) => showDialog(
+          context: context,
+          builder: (context) => DeleteConfirmationDialog(
+            itemName: log.toHumanReadable(context),
+            onDelete: () => ref
+                .read(shiftLogServiceProvider)
+                .deleteLog(log: log, modificationReason: description),
+          ),
         ),
       ),
-    ),
-  );
+    );
+  }
 }
 
 class _ShiftLogDisplay extends StatelessWidget {
