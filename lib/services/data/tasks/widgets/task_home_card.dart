@@ -13,38 +13,6 @@ import 'package:seren_ai_flutter/services/data/tasks/widgets/task_page.dart';
 import 'package:seren_ai_flutter/widgets/home/base_home_card.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
-class TaskCardItem extends ConsumerWidget {
-  final TaskModel task;
-
-  const TaskCardItem({super.key, required this.task});
-
-  @override
-  Widget build(BuildContext context, WidgetRef ref) {
-    return GestureDetector(
-      onTap: () async {
-        final joinedTask = await ref
-            .read(joinedTasksRepositoryProvider)
-            .getJoinedTaskById(task.id);
-        await openTaskPage(context, ref,
-            mode: EditablePageMode.readOnly, initialJoinedTask: joinedTask);
-      },
-      child: BaseHomeInnerCard.outlined(
-        child: SizedBox(
-          width: double.infinity,
-          child: Padding(
-            padding: const EdgeInsets.all(8.0),
-            child: Text(
-              task.name,
-              style: Theme.of(context).textTheme.labelSmall,
-              overflow: TextOverflow.ellipsis,
-            ),
-          ),
-        ),
-      ),
-    );
-  }
-}
-
 class TaskHomeCard extends ConsumerWidget {
   const TaskHomeCard({super.key});
 
@@ -76,7 +44,7 @@ class TaskHomeCard extends ConsumerWidget {
                     ...openTasks!.getRange(0, min(2, openTasks.length)).map(
                         (task) => Flexible(
                             fit: FlexFit.loose,
-                            child: TaskCardItem(task: task))),
+                            child: _TaskCardItem(task: task))),
                     Flexible(
                       fit: FlexFit.loose,
                       child: BaseHomeInnerCard.filled(
@@ -96,6 +64,38 @@ class TaskHomeCard extends ConsumerWidget {
                   ],
                 );
         },
+      ),
+    );
+  }
+}
+
+class _TaskCardItem extends ConsumerWidget {
+  final TaskModel task;
+
+  const _TaskCardItem({super.key, required this.task});
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    return GestureDetector(
+      onTap: () async {
+        final joinedTask = await ref
+            .read(joinedTasksRepositoryProvider)
+            .getJoinedTaskById(task.id);
+        await openTaskPage(context, ref,
+            mode: EditablePageMode.readOnly, initialJoinedTask: joinedTask);
+      },
+      child: BaseHomeInnerCard.outlined(
+        child: SizedBox(
+          width: double.infinity,
+          child: Padding(
+            padding: const EdgeInsets.all(8.0),
+            child: Text(
+              task.name,
+              style: Theme.of(context).textTheme.labelSmall,
+              overflow: TextOverflow.ellipsis,
+            ),
+          ),
+        ),
       ),
     );
   }
