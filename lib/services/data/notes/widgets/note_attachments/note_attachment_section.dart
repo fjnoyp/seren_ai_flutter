@@ -88,10 +88,35 @@ class _AddAttachmentButton extends ConsumerWidget {
     
     if (result != null) {
       List<File> files = result.paths.map((path) => File(path!)).toList();
-      ref.read(noteAttachmentsServiceProvider.notifier).uploadAttachments(
-            files,
-            noteId: ref.read(curNoteServiceProvider).curNoteId,
-          );
+      
+      // Show a non-blocking loading snackbar
+      ScaffoldMessenger.of(ref.context).showSnackBar(
+        SnackBar(
+          content: Row(
+            children: [
+              const SizedBox(
+                width: 16,
+                height: 16,
+                child: CircularProgressIndicator(
+                  strokeWidth: 2,
+                  color: Colors.white,
+                ),
+              ),
+              const SizedBox(width: 12),
+              Text('${files.length} uploading'), // ${AppLocalizations.of(ref.context)!.filesUploading}'),
+            ],
+          ),
+          duration: const Duration(seconds: 3),
+        ),
+      );
+
+      // Upload files in a non-blocking way
+      (
+        ref.read(noteAttachmentsServiceProvider.notifier).uploadAttachments(
+          files,
+          noteId: ref.read(curNoteServiceProvider).curNoteId,
+        ),
+      );
     }
   }
 
