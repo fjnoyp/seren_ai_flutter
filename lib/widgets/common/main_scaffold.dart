@@ -1,13 +1,15 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
+import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:seren_ai_flutter/common/routes/app_routes.dart';
 import 'package:seren_ai_flutter/services/ai_interaction/widgets/user_input_display_widget.dart';
 import 'package:seren_ai_flutter/services/data/db_setup/app_config.dart';
+import 'package:seren_ai_flutter/widgets/common/is_show_save_dialog_on_pop_provider.dart';
 import 'drawer_view.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
-class MainScaffold extends HookWidget {
+class MainScaffold extends HookConsumerWidget {
   final String title;
   final Widget body;
   final FloatingActionButton? floatingActionButton;
@@ -24,7 +26,7 @@ class MainScaffold extends HookWidget {
   });
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
     // final enableAiBar = true;
     final isAiAssistantExpanded = useState(false);
 
@@ -32,7 +34,7 @@ class MainScaffold extends HookWidget {
 
     return PopScope(
       canPop: Navigator.of(context).canPop(),
-      onPopInvokedWithResult: (didPop, result) {
+      onPopInvokedWithResult: (didPop, result) async {
         if (!didPop) {
           Navigator.of(context)
               .pushNamedAndRemoveUntil(AppRoutes.home.name, (route) => false);
@@ -59,7 +61,40 @@ class MainScaffold extends HookWidget {
                     IconButton(
                       icon:
                           Icon(Icons.arrow_back, color: theme.iconTheme.color),
-                      onPressed: () => Navigator.of(context).pop(),
+                      onPressed: () async {
+                        final canSave = ref.read(isShowSaveDialogOnPopProvider);
+
+                        if (!canSave) {
+                          Navigator.of(context).pop(true);
+                        } 
+                        // If can save - show dialog to confirm save
+                        else {
+                          final shouldSave = await showDialog<bool>(
+                            context: context,
+                            builder: (context) => AlertDialog(
+                              title: const Text('Save Changes'),
+                              content: const Text(
+                                  'Quit without saving?'),
+                              actions: [
+                                TextButton(
+                                  onPressed: () =>
+                                      Navigator.of(context).pop(false),
+                                  child: const Text('No'),
+                                ),
+                                TextButton(
+                                  onPressed: () =>
+                                      Navigator.of(context).pop(true),
+                                  child: const Text('Yes'),
+                                ),
+                              ],
+                            ),
+                          );   
+                          if (shouldSave ?? false) {
+                            ref.read(isShowSaveDialogOnPopProvider.notifier).reset();
+                            Navigator.of(context).pop();
+                          }
+                        }
+                      },
                       tooltip: AppLocalizations.of(context)!.back,
                     ),
                 ],
@@ -78,10 +113,11 @@ class MainScaffold extends HookWidget {
             ),
           ),
           actions: [
-            if (!AppConfig.isProdMode) 
+            if (!AppConfig.isProdMode)
               const Text(
                 'Dev',
-                style: TextStyle(color: Colors.red, fontWeight: FontWeight.bold),
+                style:
+                    TextStyle(color: Colors.red, fontWeight: FontWeight.bold),
               ),
             ...actions ?? [],
           ],
@@ -128,8 +164,8 @@ class MainScaffold extends HookWidget {
                         IconButton(
                           tooltip: AppLocalizations.of(context)!.chat,
                           icon: const Icon(Icons.chat_bubble_outline),
-                          onPressed: () =>
-                              Navigator.of(context).pushNamed(AppRoutes.aiChats.name),
+                          onPressed: () => Navigator.of(context)
+                              .pushNamed(AppRoutes.aiChats.name),
                         ),
                       ],
                     ),
