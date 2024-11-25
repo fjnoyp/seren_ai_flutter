@@ -8,9 +8,10 @@ import 'package:seren_ai_flutter/services/data/notes/models/joined_note_model.da
 import 'package:seren_ai_flutter/services/data/notes/providers/notes_provider.dart';
 import 'package:seren_ai_flutter/services/data/notes/widgets/note_page.dart';
 import 'package:seren_ai_flutter/widgets/home/base_home_card.dart';
+import 'package:seren_ai_flutter/common/routes/app_routes.dart';
 
-class NotesCard extends ConsumerWidget {
-  const NotesCard({super.key});
+class NoteHomeCard extends ConsumerWidget {
+  const NoteHomeCard({super.key});
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -29,8 +30,25 @@ class NotesCard extends ConsumerWidget {
                   mainAxisSize: MainAxisSize.min,
                   children: [
                     ...notes.take(2).map(
-                          (note) => _NoteCardItem(note),
+                          (note) => _NoteCardItem(joinedNote: note),
                         ),
+                    Flexible(
+                      fit: FlexFit.loose,
+                      child: BaseHomeInnerCard.filled(
+                      child: InkWell(
+                          onTap: () {
+                            Navigator.pushNamed(
+                                context, AppRoutes.noteList.name);
+                          },
+                          child: Center(
+                          child: Text(
+                            AppLocalizations.of(context)!.seeAll,
+                            style: Theme.of(context).textTheme.bodySmall,
+                          ),
+                        ),
+                      ),
+                      ),
+                    ),
                   ],
                 ),
         ),
@@ -42,36 +60,23 @@ class NotesCard extends ConsumerWidget {
 class _NoteCardItem extends ConsumerWidget {
   final JoinedNoteModel joinedNote;
 
-  const _NoteCardItem(this.joinedNote);
+  const _NoteCardItem({super.key, required this.joinedNote});
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    return InkWell(
+    return GestureDetector(
       onTap: () => openNotePage(context, ref,
           mode: EditablePageMode.readOnly, noteId: joinedNote.note.id),
       child: BaseHomeInnerCard.outlined(
-        child: Padding(
-          padding: const EdgeInsets.all(8.0), // Added inner padding
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.stretch,
-            children: [
-              Text(
-                joinedNote.note.name,
-                style: Theme.of(context)
-                    .textTheme
-                    .titleSmall
-                    ?.copyWith(fontWeight: FontWeight.w500),
-                maxLines: 1,
-                overflow: TextOverflow.ellipsis,
-              ),
-              Text(
-                joinedNote.project?.name ??
-                    AppLocalizations.of(context)!.personal,
-                style: Theme.of(context).textTheme.bodySmall,
-                maxLines: 1,
-                overflow: TextOverflow.ellipsis,
-              ),
-            ],
+        child: SizedBox(
+          width: double.infinity,
+          child: Padding(
+            padding: const EdgeInsets.all(8.0),
+            child: Text(
+              joinedNote.note.name,
+              style: Theme.of(context).textTheme.labelSmall,
+              overflow: TextOverflow.ellipsis,
+            ),
           ),
         ),
       ),
