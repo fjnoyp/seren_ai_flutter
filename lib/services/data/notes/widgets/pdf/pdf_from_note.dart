@@ -1,6 +1,8 @@
+import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:intl/intl.dart';
 import 'package:pdf/pdf.dart';
+import 'package:pdf/widgets.dart' as pw;
 import 'package:pdf/widgets.dart';
 import 'package:seren_ai_flutter/common/utils/string_extension.dart';
 import 'package:seren_ai_flutter/services/data/notes/models/joined_note_model.dart';
@@ -11,7 +13,12 @@ import 'package:seren_ai_flutter/services/data/notes/providers/note_attachments_
 class NoteToPdfConverter extends Document {
   final WidgetRef ref;
 
-  NoteToPdfConverter(this.ref);
+  NoteToPdfConverter(this.ref) : super(theme: ThemeData.withFont(
+    base: Font.courier(),
+    italic: Font.courierOblique(), 
+    bold: Font.courierBold(),
+    boldItalic: Font.courierBoldOblique(),
+  ));
 
   final pageFormat = PdfPageFormat.a4;
 
