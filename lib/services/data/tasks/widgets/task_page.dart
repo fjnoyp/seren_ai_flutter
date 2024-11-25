@@ -14,6 +14,7 @@ import 'package:seren_ai_flutter/services/data/tasks/widgets/action_buttons/edit
 import 'package:seren_ai_flutter/services/data/tasks/widgets/form/task_selection_fields.dart';
 import 'package:seren_ai_flutter/services/data/tasks/widgets/task_comments/task_comment_section.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+import 'package:seren_ai_flutter/widgets/common/is_show_save_dialog_on_pop_provider.dart';
 
 /* === Thoughts on ai generation of create task === 
 1) Tasks must be assigned to specific users / projects 
@@ -229,6 +230,11 @@ Future<void> openTaskPage(BuildContext context, WidgetRef ref,
     EditablePageMode.readOnly => initialJoinedTask?.task.name ??
         ref.read(curTaskStateProvider).value!.task.name,
   };
+
+
+  if (mode == EditablePageMode.edit) {
+    ref.read(isShowSaveDialogOnPopProvider.notifier).setCanSave(true);
+  }
 
   await Navigator.pushNamed(context, AppRoutes.taskPage.name,
       arguments: {'mode': mode, 'actions': actions, 'title': title});
