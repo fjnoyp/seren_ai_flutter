@@ -186,41 +186,56 @@ class _AttachmentPreview extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    return GestureDetector(
-      onTap: () => Navigator.pop(context),
-      child: SizedBox(
-        width: MediaQuery.of(context).size.width * 0.8,
-        child: Center(
-          child: switch (attachmentUrl.split('.').last) {
-            'png' || 'jpg' || 'jpeg' => Image.network(
-                attachmentUrl,
-                loadingBuilder: (context, child, loadingProgress) =>
-                    loadingProgress == null
-                        ? child
-                        : const Center(
-                            child: CircularProgressIndicator(),
+    // Create an ImageProvider that we can evict from cache
+    final imageProvider = NetworkImage(attachmentUrl);
+    
+    return PopScope( // Using PopScope instead of GestureDetector for better cleanup
+      onPopInvokedWithResult: (didPop, result) {
+        // Clear the image from cache when closing
+        imageProvider.evict().then((_) {
+          // Force a garbage collection sweep (optional, use carefully)
+          // ImageCache().clear();
+          // PaintingBinding.instance.imageCache.clear();
+        });
+      },
+      child: GestureDetector(
+        onTap: () => Navigator.pop(context),
+        child: SizedBox(
+          width: MediaQuery.of(context).size.width * 0.8,
+          child: Center(
+            child: switch (attachmentUrl.split('.').last) {
+              'png' || 'jpg' || 'jpeg' => Image(
+                  image: imageProvider,
+                  loadingBuilder: (context, child, loadingProgress) =>
+                      loadingProgress == null
+                          ? child
+                          : const Center(
+                              child: CircularProgressIndicator(),
+                            ),
+                  // Add error builder to handle failed loads
+                  errorBuilder: (context, error, stackTrace) => 
+                      const Icon(Icons.error),
+                ),
+              _ => Column(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    Text(
+                      AppLocalizations.of(context)!.notAbleToPreview,
+                      textAlign: TextAlign.center,
+                    ),
+                    TextButton(
+                      onPressed: () => ref
+                          .read(noteAttachmentsServiceProvider.notifier)
+                          .openAttachmentLocally(
+                            fileUrl: attachmentUrl,
+                            noteId: ref.read(curNoteServiceProvider).curNoteId,
                           ),
-              ),
-            // TODO p2: add other file extensions preview
-            _ => Column(
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  Text(
-                    AppLocalizations.of(context)!.notAbleToPreview,
-                    textAlign: TextAlign.center,
-                  ),
-                  TextButton(
-                    onPressed: () => ref
-                        .read(noteAttachmentsServiceProvider.notifier)
-                        .openAttachmentLocally(
-                          fileUrl: attachmentUrl,
-                          noteId: ref.read(curNoteServiceProvider).curNoteId,
-                        ),
-                    child: Text(AppLocalizations.of(context)!.openFile),
-                  ),
-                ],
-              ),
-          },
+                      child: Text(AppLocalizations.of(context)!.openFile),
+                    ),
+                  ],
+                ),
+            },
+          ),
         ),
       ),
     );

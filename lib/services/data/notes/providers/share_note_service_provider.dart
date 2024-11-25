@@ -23,18 +23,41 @@ class ShareNoteService {
       : _state = widgetRef.watch(curNoteStateProvider);
 
   Future<void> shareNote() async {
-    final pdf = NoteToPdfConverter(widgetRef);
-    // We need to call buildPdf here because the function is async (due to images loading)
-    await pdf.buildPdf();
+    File? tempFile;
+    try {
+      final pdf = NoteToPdfConverter(widgetRef);
+      await pdf.buildPdf();
 
-    final output = await getTemporaryDirectory();
-    final name = _state.value!.note.name;
-    final path = '${output.path}/$name.pdf';
+      final output = await getTemporaryDirectory();
+      final name = _state.value!.note.name;
+      final path = '${output.path}/${DateTime.now().millisecondsSinceEpoch}_$name.pdf';
 
-    final file = File(path);
-    await file.writeAsBytes(await pdf.save());
-
-    await Share.shareXFiles([XFile(path)]);
-    file.delete();
+      tempFile = File(path);
+      final bytes = await pdf.save();
+      await tempFile.writeAsBytes(bytes, flush: true);
+      
+      // Wait for the share operation to complete
+      final result = await Share.shareXFiles(
+        [XFile(path)],
+        subject: name,
+      );
+      
+      // Only proceed with deletion after sharing is complete
+      if (await tempFile.exists()) {
+        await tempFile.delete();
+      }
+      
+    } catch (e) {
+      print('PDF generation/sharing error: $e');
+      // Ensure cleanup happens even if there's an error
+      if (tempFile != null && await tempFile.exists()) {
+        try {
+          await tempFile.delete();
+        } catch (e) {
+          print('Error cleaning up temporary file: $e');
+        }
+      }
+      rethrow;
+    }
   }
 }
