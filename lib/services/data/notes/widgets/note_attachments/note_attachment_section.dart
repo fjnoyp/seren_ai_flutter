@@ -39,11 +39,31 @@ class _AddAttachmentButton extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     return ElevatedButton.icon(
       onPressed: () async {
-        // Android and iOS have different permission handling
-        // ie. Android permission is automatically requested at this point
         if (Platform.isIOS) {
           if (await _getPermission()) {
-            await _pickAndUploadFile(ref);
+            final fileType = await showModalBottomSheet<FileType>(
+              context: context,
+              builder: (context) => Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  ListTile(
+                    leading: const Icon(Icons.image),
+                    title: Text(AppLocalizations.of(context)!.images),
+                    onTap: () => Navigator.pop(context, FileType.image),
+                  ),
+                  ListTile(
+                    leading: const Icon(Icons.attach_file),
+                    title: Text(AppLocalizations.of(context)!.files),
+                    onTap: () => Navigator.pop(context, FileType.any),
+                  ),
+                  const SizedBox(height: 25),
+                ],
+              ),
+            );
+            
+            if (fileType != null) {
+              await _pickAndUploadFile(ref, fileType);
+            }
           } else {
             ScaffoldMessenger.of(context).showSnackBar(
               SnackBar(
@@ -52,7 +72,7 @@ class _AddAttachmentButton extends ConsumerWidget {
             );
           }
         } else {
-          await _pickAndUploadFile(ref);
+          await _pickAndUploadFile(ref, FileType.media);
         }
       },
       icon: const Icon(Icons.add),
@@ -60,9 +80,12 @@ class _AddAttachmentButton extends ConsumerWidget {
     );
   }
 
-  Future<void> _pickAndUploadFile(WidgetRef ref) async {
-    final result = await FilePicker.platform.pickFiles(allowMultiple: true);
-
+  Future<void> _pickAndUploadFile(WidgetRef ref, FileType type) async {
+    final result = await FilePicker.platform.pickFiles(
+      type: type,
+      allowMultiple: true,
+    );
+    
     if (result != null) {
       List<File> files = result.paths.map((path) => File(path!)).toList();
       ref.read(noteAttachmentsServiceProvider.notifier).uploadAttachments(
@@ -163,39 +186,42 @@ class _AttachmentPreview extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    return SizedBox(
-      width: MediaQuery.of(context).size.width * 0.8,
-      child: Center(
-        child: switch (attachmentUrl.split('.').last) {
-          'png' || 'jpg' || 'jpeg' => Image.network(
-              attachmentUrl,
-              loadingBuilder: (context, child, loadingProgress) =>
-                  loadingProgress == null
-                      ? child
-                      : const Center(
-                          child: CircularProgressIndicator(),
+    return GestureDetector(
+      onTap: () => Navigator.pop(context),
+      child: SizedBox(
+        width: MediaQuery.of(context).size.width * 0.8,
+        child: Center(
+          child: switch (attachmentUrl.split('.').last) {
+            'png' || 'jpg' || 'jpeg' => Image.network(
+                attachmentUrl,
+                loadingBuilder: (context, child, loadingProgress) =>
+                    loadingProgress == null
+                        ? child
+                        : const Center(
+                            child: CircularProgressIndicator(),
+                          ),
+              ),
+            // TODO p2: add other file extensions preview
+            _ => Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Text(
+                    AppLocalizations.of(context)!.notAbleToPreview,
+                    textAlign: TextAlign.center,
+                  ),
+                  TextButton(
+                    onPressed: () => ref
+                        .read(noteAttachmentsServiceProvider.notifier)
+                        .openAttachmentLocally(
+                          fileUrl: attachmentUrl,
+                          noteId: ref.read(curNoteServiceProvider).curNoteId,
                         ),
-            ),
-          // TODO p2: add other file extensions preview
-          _ => Column(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                Text(
-                  AppLocalizations.of(context)!.notAbleToPreview,
-                  textAlign: TextAlign.center,
-                ),
-                TextButton(
-                  onPressed: () => ref
-                      .read(noteAttachmentsServiceProvider.notifier)
-                      .openAttachmentLocally(
-                        fileUrl: attachmentUrl,
-                        noteId: ref.read(curNoteServiceProvider).curNoteId,
-                      ),
-                  child: Text(AppLocalizations.of(context)!.openFile),
-                ),
-              ],
-            ),
-        },
+                    child: Text(AppLocalizations.of(context)!.openFile),
+                  ),
+                ],
+              ),
+          },
+        ),
       ),
     );
   }
