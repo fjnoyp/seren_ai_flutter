@@ -43,13 +43,13 @@ class AIChatsPage extends HookConsumerWidget {
                 : Column(
                     children: [
                       const ChatThreadDisplay(),
-                      const Expanded(child: ChatMessagesDisplay()),
                       Padding(
                         padding: const EdgeInsets.all(12.0),
                         child: TextField(
                           controller: messageController,
                           decoration: InputDecoration(
-                            labelText: 'Ask a question',
+                            labelText:
+                                AppLocalizations.of(context)!.askAQuestion,
                             suffixIcon: IconButton(
                               icon: const Icon(Icons.send),
                               onPressed: () {
@@ -79,11 +79,18 @@ class ChatThreadDisplay extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    return AsyncValueHandlerWidget(
-      value: ref.watch(curUserAiChatThreadProvider),
-      data: (chatThread) => chatThread == null
-          ? Text(AppLocalizations.of(context)!.noChatThreadAvailable)
-          : ChatThreadCard(thread: chatThread),
+    return Expanded(
+      child: AsyncValueHandlerWidget(
+        value: ref.watch(curUserAiChatThreadProvider),
+        data: (chatThread) => chatThread == null
+            ? Center(
+                child:
+                    Text(AppLocalizations.of(context)!.noChatThreadAvailable))
+            : Column(children: [
+                ChatThreadCard(thread: chatThread),
+                const Expanded(child: PaginatedChatMessagesDisplay()),
+              ]),
+      ),
     );
   }
 }
@@ -168,7 +175,7 @@ class ChatMessagesDisplay extends HookConsumerWidget {
     return AsyncValueHandlerWidget(
       value: chatMessages,
       data: (chatMessages) => chatMessages.isEmpty
-          ? const Text('No messages available')
+          ? Text(AppLocalizations.of(context)!.noMessagesAvailable)
           : ListView.builder(
               reverse: true,
               shrinkWrap: true,
@@ -176,7 +183,8 @@ class ChatMessagesDisplay extends HookConsumerWidget {
               itemBuilder: (context, index) =>
                   AiChatMessageViewCard(message: chatMessages[index]),
             ),
-      error: (error, stack) => const Center(child: Text('No messages available')),
+      error: (error, stack) => Center(
+          child: Text(AppLocalizations.of(context)!.noMessagesAvailable)),
       loading: () => const Center(child: CircularProgressIndicator()),
     );
   }
@@ -200,6 +208,10 @@ class PaginatedChatMessagesDisplay extends HookConsumerWidget {
             scrollController.position.maxScrollExtent * 0.8) {
           providerData.notifier.loadMore();
         }
+
+        if (scrollController.position.pixels == 0) {
+          messagesProviderValue.valueOrNull?.notifier.hasNewMessages = false;
+        }
       }
 
       scrollController.addListener(onScroll);
@@ -208,27 +220,53 @@ class PaginatedChatMessagesDisplay extends HookConsumerWidget {
 
     return messagesProviderValue.when(
       loading: () => const Center(child: CircularProgressIndicator()),
-      error: (error, stack) => Center(child: Text('Error: $error')),
+      error: (error, stack) => Center(
+          child: Text(AppLocalizations.of(context)!.error(error.toString()))),
       data: (providerData) {
         final messages = providerData.state;
         return messages.isEmpty
-            ? const Center(child: Text('No messages available'))
-            : ListView.builder(
-                reverse: true,
-                controller: scrollController,
-                itemCount:
-                    messages.length + (providerData.notifier.hasMore ? 1 : 0),
-                itemBuilder: (context, index) {
-                  if (index == messages.length &&
-                      providerData.notifier.hasMore) {
-                    return const Center(child: CircularProgressIndicator());
-                  }
-                  final message = messages[index];
-                  return KeyedSubtree(
-                    key: ValueKey(message.id),
-                    child: AiChatMessageViewCard(message: message),
-                  );
-                },
+            ? Text(AppLocalizations.of(context)!.noMessagesAvailable)
+            : Stack(
+                children: [
+                  ListView.builder(
+                    reverse: true,
+                    controller: scrollController,
+                    itemCount: messages.length +
+                        (providerData.notifier.hasMore ? 1 : 0),
+                    itemBuilder: (context, index) {
+                      if (index == messages.length &&
+                          providerData.notifier.hasMore) {
+                        return const Center(child: CircularProgressIndicator());
+                      }
+                      final message = messages[index];
+                      return KeyedSubtree(
+                        key: ValueKey(message.id),
+                        child: AiChatMessageViewCard(message: message),
+                      );
+                    },
+                  ),
+                  AnimatedBuilder(
+                    animation: scrollController,
+                    builder: (context, child) {
+                      return scrollController.hasClients &&
+                              scrollController.position.pixels > 100
+                          ? Positioned(
+                              bottom: 20,
+                              right: 20,
+                              child: messagesProviderValue.valueOrNull?.notifier
+                                          .hasNewMessages ??
+                                      false
+                                  ? Badge(smallSize: 12, child: child)
+                                  : child!,
+                            )
+                          : const SizedBox.shrink();
+                    },
+                    child: IconButton.filled(
+                      icon: const Icon(Icons.arrow_downward),
+                      onPressed: () => scrollController.jumpTo(0),
+                    ),
+                  ),
+                ],
               );
       },
     );
