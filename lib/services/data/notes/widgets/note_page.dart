@@ -15,6 +15,7 @@ import 'package:seren_ai_flutter/services/data/notes/widgets/edit_note_button.da
 import 'package:seren_ai_flutter/services/data/notes/widgets/form/note_selection_fields.dart';
 import 'package:seren_ai_flutter/services/data/notes/widgets/pdf/share_note_button.dart';
 import 'package:seren_ai_flutter/services/data/notes/widgets/note_attachments/note_attachment_section.dart';
+import 'package:seren_ai_flutter/widgets/common/is_show_save_dialog_on_pop_provider.dart';
 
 final log = Logger('NotePage');
 
@@ -164,6 +165,10 @@ Future<void> openNotePage(BuildContext context, WidgetRef ref,
     EditablePageMode.readOnly =>
       ref.read(curNoteStateProvider).value!.note.name,
   };
+
+  if (mode == EditablePageMode.edit) {
+    ref.read(isShowSaveDialogOnPopProvider.notifier).setCanSave(true);
+  }
 
   await Navigator.pushNamed(context, AppRoutes.notePage.name,
       arguments: {'mode': mode, 'actions': actions, 'title': title});
