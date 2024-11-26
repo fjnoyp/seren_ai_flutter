@@ -48,7 +48,7 @@ class ShiftClockInOutResultWidget extends ConsumerWidget {
         const SizedBox(width: 8),
         Expanded(
           child: Text(
-            result.resultForAi,
+            result.clockedIn ? AppLocalizations.of(context)!.successClockIn : AppLocalizations.of(context)!.successClockOut,
             style: Theme.of(context).textTheme.titleMedium,
           ),
         ),

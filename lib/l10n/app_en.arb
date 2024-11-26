@@ -25,6 +25,10 @@
             }
         }
     },
+    "areYouSure": "Are you sure?",
+    "quitWithoutSaving": "Quit without saving?",
+    "yes": "Yes",
+    "no": "No",
     "edit": "Edit",
     "error": "Error: {error}",
     "@error": {
@@ -213,6 +217,8 @@
     "noShiftsExclamation": "No shifts!",
     "clockIn": "Clock In", 
     "clockOut": "Clock Out",
+    "successClockIn": "Successfully clocked in!",
+    "successClockOut": "Successfully clocked out!",
     "shiftCompleted": "Shift completed",
     "shiftLogs": "Shift Logs",
     "noProjectAddress": "No project address",
