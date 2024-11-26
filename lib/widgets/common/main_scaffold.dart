@@ -72,19 +72,19 @@ class MainScaffold extends HookConsumerWidget {
                           final shouldSave = await showDialog<bool>(
                             context: context,
                             builder: (context) => AlertDialog(
-                              title: const Text('Save Changes'),
-                              content: const Text(
-                                  'Quit without saving?'),
+                              title: Text(AppLocalizations.of(context)!.areYouSure),
+                              content: Text(
+                                  AppLocalizations.of(context)!.quitWithoutSaving),
                               actions: [
                                 TextButton(
                                   onPressed: () =>
                                       Navigator.of(context).pop(false),
-                                  child: const Text('No'),
+                                  child: Text(AppLocalizations.of(context)!.no),
                                 ),
                                 TextButton(
                                   onPressed: () =>
                                       Navigator.of(context).pop(true),
-                                  child: const Text('Yes'),
+                                  child: Text(AppLocalizations.of(context)!.yes),
                                 ),
                               ],
                             ),
