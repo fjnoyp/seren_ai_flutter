@@ -18,7 +18,7 @@ final curUserAiChatMessagesProvider =
   );
 });
 
-final curUserPaginatedAiChatMessagesProvider = Provider.autoDispose<
+final curUserPaginatedAiChatMessagesProvider = Provider<
     AsyncValue<
         ({
           List<AiChatMessageModel> state,
