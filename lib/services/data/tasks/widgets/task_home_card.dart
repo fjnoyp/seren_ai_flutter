@@ -2,6 +2,7 @@ import 'dart:math';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:seren_ai_flutter/common/navigation_service_provider.dart';
 import 'package:seren_ai_flutter/common/routes/app_routes.dart';
 import 'package:seren_ai_flutter/services/data/common/status_enum.dart';
 import 'package:seren_ai_flutter/services/data/common/widgets/async_value_handler_widget.dart';
@@ -50,7 +51,7 @@ class TaskHomeCard extends ConsumerWidget {
                       child: BaseHomeInnerCard.filled(
                         child: InkWell(
                           onTap: () {
-                            Navigator.pushNamed(context, AppRoutes.tasks.name);
+                            ref.read(navigationServiceProvider).navigateTo(AppRoutes.tasks.name);
                           },
                           child: Center(
                             child: Text(
@@ -72,7 +73,7 @@ class TaskHomeCard extends ConsumerWidget {
 class _TaskCardItem extends ConsumerWidget {
   final TaskModel task;
 
-  const _TaskCardItem({super.key, required this.task});
+  const _TaskCardItem({required this.task});
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {

@@ -3,6 +3,7 @@ import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:intl/intl.dart';
 import 'package:logging/logging.dart';
+import 'package:seren_ai_flutter/common/navigation_service_provider.dart';
 import 'package:seren_ai_flutter/common/routes/app_routes.dart';
 import 'package:seren_ai_flutter/services/data/common/widgets/async_value_handler_widget.dart';
 import 'package:seren_ai_flutter/services/data/common/widgets/editable_page_mode_enum.dart';
@@ -15,7 +16,7 @@ import 'package:seren_ai_flutter/services/data/notes/widgets/edit_note_button.da
 import 'package:seren_ai_flutter/services/data/notes/widgets/form/note_selection_fields.dart';
 import 'package:seren_ai_flutter/services/data/notes/widgets/pdf/share_note_button.dart';
 import 'package:seren_ai_flutter/services/data/notes/widgets/note_attachments/note_attachment_section.dart';
-import 'package:seren_ai_flutter/widgets/common/is_show_save_dialog_on_pop_provider.dart';
+import 'package:seren_ai_flutter/common/is_show_save_dialog_on_pop_provider.dart';
 
 final log = Logger('NotePage');
 
@@ -111,7 +112,10 @@ class NotePage extends HookConsumerWidget {
 
                         // TODO p4: handle error cases
                         if (context.mounted) {
-                          Navigator.pop(context, true);
+                          ref
+                              .read(isShowSaveDialogOnPopProvider.notifier)
+                              .reset();
+                          ref.read(navigationServiceProvider).pop(true);
                         }
                       },
                       style: ElevatedButton.styleFrom(
@@ -139,8 +143,9 @@ Future<void> openNotePage(BuildContext context, WidgetRef ref,
     {required EditablePageMode mode,
     String? parentProjectId,
     String? noteId}) async {
-  Navigator.popUntil(
-      context, (route) => route.settings.name != AppRoutes.notePage.name);
+  ref
+      .read(navigationServiceProvider)
+      .popUntil((route) => route.settings.name != AppRoutes.notePage.name);
 
   if (mode == EditablePageMode.create) {
     ref.read(curNoteServiceProvider).createNote(
@@ -172,10 +177,10 @@ Future<void> openNotePage(BuildContext context, WidgetRef ref,
       ref.read(curNoteStateProvider).value!.note.name,
   };
 
-  if (mode == EditablePageMode.edit) {
+  if (mode == EditablePageMode.edit || mode == EditablePageMode.create) {
     ref.read(isShowSaveDialogOnPopProvider.notifier).setCanSave(true);
   }
 
-  await Navigator.pushNamed(context, AppRoutes.notePage.name,
+  await ref.read(navigationServiceProvider).navigateTo(AppRoutes.notePage.name,
       arguments: {'mode': mode, 'actions': actions, 'title': title});
 }

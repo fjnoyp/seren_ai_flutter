@@ -16,7 +16,7 @@ import 'package:seren_ai_flutter/services/data/tasks/widgets/action_buttons/edit
 import 'package:seren_ai_flutter/services/data/tasks/widgets/form/task_selection_fields.dart';
 import 'package:seren_ai_flutter/services/data/tasks/widgets/task_comments/task_comment_section.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
-import 'package:seren_ai_flutter/widgets/common/is_show_save_dialog_on_pop_provider.dart';
+import 'package:seren_ai_flutter/common/is_show_save_dialog_on_pop_provider.dart';
 
 /* === Thoughts on ai generation of create task === 
 1) Tasks must be assigned to specific users / projects 
@@ -146,7 +146,8 @@ class TaskPage extends HookConsumerWidget {
       await ref.read(curTaskServiceProvider).saveTask();
 
       if (context.mounted) {
-        Navigator.pop(context);
+        ref.read(isShowSaveDialogOnPopProvider.notifier).reset();
+        ref.read(navigationServiceProvider).pop();
       }
     } else {
       // takes action to solve each validation error
@@ -175,7 +176,7 @@ class TaskPage extends HookConsumerWidget {
                 title: Text(project?.name ?? ''),
                 onTap: () {
                   ref.read(curTaskServiceProvider).updateParentProject(project);
-                  Navigator.pop(context, project);
+                  ref.read(navigationServiceProvider).pop(project);
                 },
               );
             },
@@ -197,6 +198,8 @@ Future<void> openBlankTaskPage(Ref ref) async {
 
   ref.read(curTaskServiceProvider).createTask();
 
+  ref.read(isShowSaveDialogOnPopProvider.notifier).setCanSave(true);
+
   await navigationService.navigateTo(AppRoutes.taskPage.name,
       arguments: {'mode': EditablePageMode.create, 'title': 'Create Task'});
 }
@@ -215,8 +218,9 @@ Future<void> openTaskPage(
   StatusEnum? initialStatus,
 }) async {
   // Remove previous TaskPage to avoid duplicate task pages
-  Navigator.popUntil(
-      context, (route) => route.settings.name != AppRoutes.taskPage.name);
+  ref
+      .read(navigationServiceProvider)
+      .popUntil((route) => route.settings.name != AppRoutes.taskPage.name);
 
   // CREATE - wipe existing task state
   if (mode == EditablePageMode.create) {
@@ -249,10 +253,10 @@ Future<void> openTaskPage(
         ref.read(curTaskStateProvider).value!.task.name,
   };
 
-  if (mode == EditablePageMode.edit) {
+  if (mode == EditablePageMode.edit || mode == EditablePageMode.create) {
     ref.read(isShowSaveDialogOnPopProvider.notifier).setCanSave(true);
   }
 
-  await Navigator.pushNamed(context, AppRoutes.taskPage.name,
+  await ref.read(navigationServiceProvider).navigateTo(AppRoutes.taskPage.name,
       arguments: {'mode': mode, 'actions': actions, 'title': title});
 }
