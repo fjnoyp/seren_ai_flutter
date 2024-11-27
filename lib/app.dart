@@ -220,12 +220,13 @@ class AppState extends State<App> {
     // Example: Navigate to a specific screen based on the link
     if (uri.path.startsWith('/test')) {
       final param = uri.queryParameters['param'];
-      Navigator.pushNamed(context, '/test', arguments: param);
+      ref.read(navigationServiceProvider).navigateTo(
+          '/test', arguments: param);
     } else if (uri.path.startsWith('/test2')) {
       final param1 = uri.queryParameters['param1'];
       final param2 = uri.queryParameters['param2'];
-      Navigator.pushNamed(context, '/test2',
-          arguments: {'param1': param1, 'param2': param2});
+      ref.read(navigationServiceProvider).navigateTo(
+          '/test2', arguments: {'param1': param1, 'param2': param2});
     } else {
       print('Unknown deep link: $uri');
     }
