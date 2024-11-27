@@ -27,7 +27,7 @@ class ProjectDetailsPage extends HookConsumerWidget {
               backgroundColor: Theme.of(context).colorScheme.secondary,
               foregroundColor: Theme.of(context).colorScheme.onSecondary,
             ),
-            child: const Text('Update Project'),
+            child: const Text('Save Project'),
           ),
         ),
         const SizedBox(height: 32),
