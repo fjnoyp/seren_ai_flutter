@@ -30,22 +30,27 @@ class OrgGuard extends ConsumerWidget {
               .read(curUserOrgServiceProvider)
               .setDesiredOrgId(curUserOrgs.value!.first.id);
         } else {
-          // We need to add retry logic if orgs list is empty because
-          // the orgs list isn't always being updated in time
-          WidgetsBinding.instance.addPostFrameCallback((_) async {
-            for (int i = 0; i < 3; i++) {
-              await Future.delayed(const Duration(seconds: 2));
-              if (!context.mounted) return; // Check if widget is still mounted
-              final orgs = await ref.refresh(curUserOrgsProvider.future);
-              if (orgs.isNotEmpty) {
-                return; // Exit if we got orgs
-              }
-            }
-            // If still no orgs after retries, proceed with navigation
-            Navigator.pushNamedAndRemoveUntil(
-                context, AppRoutes.chooseOrg.name, (route) => false);
-          });
+          // If user has multiple orgs, navigate to chooseOrg page
+          WidgetsBinding.instance.addPostFrameCallback((_) =>
+              Navigator.pushNamedAndRemoveUntil(
+                  context, AppRoutes.chooseOrg.name, (route) => false));
         }
+      } else {
+        // We need to add retry logic if orgs list is empty because
+        // the orgs list isn't always being updated in time
+        WidgetsBinding.instance.addPostFrameCallback((_) async {
+          for (int i = 0; i < 3; i++) {
+            await Future.delayed(const Duration(seconds: 2));
+            if (!context.mounted) return; // Check if widget is still mounted
+            final orgs = await ref.refresh(curUserOrgsProvider.future);
+            if (orgs.isNotEmpty) {
+              return; // Exit if we got orgs
+            }
+          }
+          // If still no orgs after retries, proceed with navigation
+          Navigator.pushNamedAndRemoveUntil(
+              context, AppRoutes.chooseOrg.name, (route) => false);
+        });
       }
 
       return const Center(child: CircularProgressIndicator());
