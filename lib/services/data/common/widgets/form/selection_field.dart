@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
+import 'package:seren_ai_flutter/common/navigation_service_provider.dart';
 import 'package:seren_ai_flutter/services/data/common/widgets/form/color_animation.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
@@ -89,7 +90,7 @@ class ModalSelectionField<T> extends SelectionField<T> {
                         title: Text(valueToString(option)),
                         onTap: () {
                           onValueChanged?.call(ref, option);
-                          Navigator.pop(context, option);
+                          ref.read(navigationServiceProvider).pop(option);
                         },
                       );
                     },

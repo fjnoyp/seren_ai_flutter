@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:seren_ai_flutter/common/navigation_service_provider.dart';
 import 'package:seren_ai_flutter/common/routes/app_routes.dart';
 import 'package:seren_ai_flutter/services/auth/cur_auth_state_provider.dart';
 import 'package:seren_ai_flutter/services/data/common/widgets/async_value_handler_widget.dart';
@@ -20,14 +21,14 @@ class AuthGuard extends ConsumerWidget {
   }
 }
 
-class _NavigateToSignInUp extends StatelessWidget {
+class _NavigateToSignInUp extends ConsumerWidget {
   const _NavigateToSignInUp();
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
     WidgetsBinding.instance.addPostFrameCallback((_) {
-      Navigator.of(context)
-          .pushNamedAndRemoveUntil(AppRoutes.signInUp.name, (route) => false);
+      ref.read(navigationServiceProvider)
+          .navigateToAndRemoveUntil(AppRoutes.signInUp.name, (route) => false);
     });
     return const SizedBox.shrink();
   }

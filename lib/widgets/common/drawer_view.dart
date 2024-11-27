@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
-import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:seren_ai_flutter/common/language_provider.dart';
+import 'package:seren_ai_flutter/common/navigation_service_provider.dart';
 import 'package:seren_ai_flutter/common/routes/app_routes.dart';
 import 'package:seren_ai_flutter/common/universal_platform/universal_platform.dart';
 import 'package:seren_ai_flutter/services/auth/cur_auth_state_provider.dart';
@@ -17,11 +18,11 @@ import 'package:seren_ai_flutter/widgets/common/debug_mode_provider.dart';
 import 'package:seren_ai_flutter/widgets/common/theme_data.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
-class DrawerView extends HookWidget {
+class DrawerView extends HookConsumerWidget {
   const DrawerView({super.key});
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
     final isSettingsView = useState(false);
     final theme = Theme.of(context);
 
@@ -182,13 +183,13 @@ class DrawerView extends HookWidget {
             _DrawerListTile(
               icon: Icons.home,
               title: AppLocalizations.of(context)!.home,
-              onTap: () => Navigator.pushNamed(context, AppRoutes.home.name),
+              onTap: () => ref.read(navigationServiceProvider).navigateTo(AppRoutes.home.name),
             ),
             _DebugModeListTile(
               icon: Icons.house,
               title: AppLocalizations.of(context)!.chooseOrganization,
               onTap: () =>
-                  Navigator.pushNamed(context, AppRoutes.chooseOrg.name),
+                  ref.read(navigationServiceProvider).navigateTo(AppRoutes.chooseOrg.name),
             ),
             _AdminOnlyListTile(
               icon: Icons.business,
@@ -219,34 +220,39 @@ class DrawerView extends HookWidget {
                     icon: Icons.work,
                     title: AppLocalizations.of(context)!.projects,
                     onTap: () =>
-                        Navigator.pushNamed(context, AppRoutes.projects.name),
+                        ref
+                        .read(navigationServiceProvider)
+                        .navigateTo(AppRoutes.projects.name),
                   ),
             _DrawerListTile(
               icon: Icons.task,
               title: AppLocalizations.of(context)!.tasks,
-              onTap: () => Navigator.pushNamed(context, AppRoutes.tasks.name),
+              onTap: () =>
+                  ref.read(navigationServiceProvider).navigateTo(AppRoutes.tasks.name),
             ),
             _DebugModeListTile(
               icon: Icons.square,
               title: AppLocalizations.of(context)!.testSQL,
               onTap: () =>
-                  Navigator.pushNamed(context, AppRoutes.testSQLPage.name),
+                  ref.read(navigationServiceProvider).navigateTo(AppRoutes.testSQLPage.name),
             ),
             _DrawerListTile(
               icon: Icons.chat,
               title: AppLocalizations.of(context)!.aiChatThreads,
-              onTap: () => Navigator.pushNamed(context, AppRoutes.aiChats.name),
+              onTap: () =>
+                  ref.read(navigationServiceProvider).navigateTo(AppRoutes.aiChats.name),
             ),
             _DrawerListTile(
               icon: Icons.punch_clock_outlined,
               title: AppLocalizations.of(context)!.shifts,
-              onTap: () => Navigator.pushNamed(context, AppRoutes.shifts.name),
+              onTap: () =>
+                  ref.read(navigationServiceProvider).navigateTo(AppRoutes.shifts.name),
             ),
             _DrawerListTile(
               icon: Icons.note_outlined,
               title: AppLocalizations.of(context)!.notes,
               onTap: () =>
-                  Navigator.pushNamed(context, AppRoutes.noteList.name),
+                  ref.read(navigationServiceProvider).navigateTo(AppRoutes.noteList.name),
             ),
             _DrawerListTile(
               icon: Icons.settings,

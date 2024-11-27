@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
+import 'package:seren_ai_flutter/common/navigation_service_provider.dart';
 import 'package:seren_ai_flutter/common/routes/app_routes.dart';
 import 'package:seren_ai_flutter/services/ai_interaction/ai_chat_service_provider.dart';
 
@@ -69,7 +70,7 @@ class UserInputDisplayWidget extends ConsumerWidget {
                   IconButton(
                     onPressed: () {
                       isAiAssistantExpanded.value = false;
-                      Navigator.of(context).pushNamed(AppRoutes.aiChats.name);
+                      ref.read(navigationServiceProvider).navigateTo(AppRoutes.aiChats.name);
                     },
                     icon: const Icon(Icons.open_in_new),
                   ),
