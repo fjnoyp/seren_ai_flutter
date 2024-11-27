@@ -1,8 +1,6 @@
-import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:intl/intl.dart';
 import 'package:pdf/pdf.dart';
-import 'package:pdf/widgets.dart' as pw;
 import 'package:pdf/widgets.dart';
 import 'package:seren_ai_flutter/common/utils/string_extension.dart';
 import 'package:seren_ai_flutter/services/data/notes/models/joined_note_model.dart';
@@ -67,7 +65,7 @@ class NoteToPdfConverter extends Document {
       SizedBox(height: 16.0),
       Text(
         AppLocalizations.of(ref.context)!.pdfCreatedBy(
-          joinedNote.authorUser?.email ?? '',
+          '${joinedNote.authorUser?.firstName} ${joinedNote.authorUser?.lastName}',
           DateFormat.yMMMd(AppLocalizations.of(ref.context)!.localeName)
               .format(joinedNote.note.createdAt!),
         ),
