@@ -6,6 +6,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:permission_handler/permission_handler.dart';
+import 'package:seren_ai_flutter/common/navigation_service_provider.dart';
 import 'package:seren_ai_flutter/common/universal_platform/universal_platform.dart';
 import 'package:seren_ai_flutter/common/utils/string_extension.dart';
 import 'package:seren_ai_flutter/services/data/notes/providers/cur_note_service_provider.dart';
@@ -52,12 +53,12 @@ class _AddAttachmentButton extends ConsumerWidget {
                   ListTile(
                     leading: const Icon(Icons.image),
                     title: Text(AppLocalizations.of(context)!.images),
-                    onTap: () => Navigator.pop(context, FileType.image),
+                    onTap: () => ref.read(navigationServiceProvider).pop(FileType.image),
                   ),
                   ListTile(
                     leading: const Icon(Icons.attach_file),
                     title: Text(AppLocalizations.of(context)!.files),
-                    onTap: () => Navigator.pop(context, FileType.any),
+                    onTap: () => ref.read(navigationServiceProvider).pop(FileType.any),
                   ),
                   const SizedBox(height: 25),
                 ],
@@ -220,7 +221,7 @@ class _DeleteAttachmentDialog extends ConsumerWidget {
           .deleteAttachment(Uri.decodeFull(attachmentUrl).split('/').last)),
       actions: [
         TextButton(
-          onPressed: () => Navigator.pop(context),
+          onPressed: () => ref.read(navigationServiceProvider).pop(),
           child: Text(AppLocalizations.of(context)!.cancel),
         ),
         ElevatedButton(
@@ -229,7 +230,7 @@ class _DeleteAttachmentDialog extends ConsumerWidget {
                   fileUrl: attachmentUrl,
                   noteId: ref.read(curNoteServiceProvider).curNoteId,
                 );
-            Navigator.pop(context);
+            ref.read(navigationServiceProvider).pop();
           },
           child: Text(AppLocalizations.of(context)!.delete),
         ),
@@ -259,7 +260,7 @@ class _AttachmentPreview extends ConsumerWidget {
         });
       },
       child: GestureDetector(
-        onTap: () => Navigator.pop(context),
+        onTap: () => ref.read(navigationServiceProvider).pop(),
         child: SizedBox(
           width: MediaQuery.of(context).size.width * 0.8,
           child: Center(
