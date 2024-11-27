@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:seren_ai_flutter/common/navigation_service_provider.dart';
 import 'package:seren_ai_flutter/common/routes/app_routes.dart';
 import 'package:seren_ai_flutter/services/data/common/widgets/async_value_handler_widget.dart';
+import 'package:seren_ai_flutter/services/data/common/widgets/create_item_bottom_button.dart';
 import 'package:seren_ai_flutter/services/data/projects/models/project_model.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:seren_ai_flutter/services/data/projects/providers/cur_project_state_provider.dart';
@@ -14,17 +15,34 @@ class ProjectsPage extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    return AsyncValueHandlerWidget(
-      value: ref.watch(curUserViewableProjectsProvider),
-      data: (projects) => projects.isEmpty
-          ? Center(child: Text(AppLocalizations.of(context)!.noProjectsFound))
-          : ListView.builder(
-              itemCount: projects.length,
-              itemBuilder: (context, index) {
-                final project = projects[index];
-                return ProjectListTile(project: project);
-              },
-            ),
+    return Column(
+      children: [
+        Expanded(
+          child: AsyncValueHandlerWidget(
+            value: ref.watch(curUserViewableProjectsProvider),
+            data: (projects) => projects.isEmpty
+                ? Center(
+                    child: Text(AppLocalizations.of(context)!.noProjectsFound))
+                : ListView.builder(
+                    itemCount: projects.length,
+                    itemBuilder: (context, index) {
+                      final project = projects[index];
+                      return ProjectListTile(project: project);
+                    },
+                  ),
+          ),
+        ),
+        if (ref.read(isDebugModeSNP))
+          CreateItemBottomButton(
+            onPressed: () {
+              ref.read(curProjectStateProvider.notifier).setToNewProject();
+              ref
+                  .read(navigationServiceProvider)
+                  .navigateTo(AppRoutes.projectDetails.name);
+            },
+            buttonText: 'Create Project',
+          ),
+      ],
     );
   }
 }
@@ -47,7 +65,9 @@ class ProjectListTile extends ConsumerWidget {
         // TODO p3: Navigate to project details page
         if (ref.read(isDebugModeSNP)) {
           ref.read(curProjectStateProvider.notifier).setProject(project);
-          ref.read(navigationServiceProvider).navigateTo(AppRoutes.projectDetails.name);
+          ref
+              .read(navigationServiceProvider)
+              .navigateTo(AppRoutes.projectDetails.name);
         }
       },
     );
