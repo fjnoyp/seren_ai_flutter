@@ -120,7 +120,7 @@ class AssigneesSelectionModal extends HookConsumerWidget {
                     final isSelected =
                         currentlySelectedUsers.value.contains(user);
                     return ListTile(
-                      title: Text(user.email),
+                      title: Text('${user.firstName} ${user.lastName}'),
                       leading: Checkbox(
                         value: isSelected,
                         onChanged: (bool? value) {
