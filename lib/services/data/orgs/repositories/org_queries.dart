@@ -19,6 +19,7 @@ abstract class OrgQueries {
   static const joinedUserOrgRolesQueryByUser = '''
     SELECT 
       json_object(
+        'id', uor.id,
         'user_id', uor.user_id,
         'org_id', uor.org_id,
         'org_role', uor.org_role,
@@ -62,6 +63,7 @@ abstract class OrgQueries {
   static const joinedUserOrgRolesQueryByOrg = '''
     SELECT 
       json_object(
+        'id', uor.id,
         'user_id', uor.user_id,
         'org_id', uor.org_id,
         'org_role', uor.org_role,
