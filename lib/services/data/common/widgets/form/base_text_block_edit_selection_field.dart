@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
+import 'package:seren_ai_flutter/common/navigation_service_provider.dart';
 import 'package:seren_ai_flutter/services/data/common/widgets/form/selection_field.dart';
 
 class BaseTextBlockEditSelectionField extends ConsumerWidget {
@@ -101,7 +102,7 @@ class TextBlockWritingModal extends HookWidget {
                 onPressed: () async {
                   // if we don't use await here, eventual confirmation dialogs don't show up
                   await onDescriptionChanged(ref, descriptionController.text);
-                  Navigator.pop(context);
+                  ref.read(navigationServiceProvider).pop();
                 },
                 child: Text(AppLocalizations.of(context)!.save),
               );

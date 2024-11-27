@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:seren_ai_flutter/common/navigation_service_provider.dart';
 import 'package:seren_ai_flutter/common/routes/app_routes.dart';
 import 'package:seren_ai_flutter/services/data/orgs/models/org_model.dart';
 import 'package:seren_ai_flutter/services/data/orgs/providers/cur_org_dependency_provider.dart';
@@ -35,9 +36,10 @@ class OrgGuard extends ConsumerWidget {
           return const Center(child: CircularProgressIndicator());
         } else if (curUserOrgs.value!.length > 1) {
           // If user has multiple orgs, navigate to chooseOrg page
-          WidgetsBinding.instance.addPostFrameCallback((_) =>
-              Navigator.pushNamedAndRemoveUntil(
-                  context, AppRoutes.chooseOrg.name, (route) => false));
+          WidgetsBinding.instance.addPostFrameCallback((_) => ref
+              .read(navigationServiceProvider)
+              .navigateToAndRemoveUntil(
+                  AppRoutes.chooseOrg.name, (route) => false));
           return const Center(child: CircularProgressIndicator());
         }
       }
@@ -54,8 +56,8 @@ class OrgGuard extends ConsumerWidget {
         }
         // If still no orgs after retries, proceed with navigation
         if (context.mounted) {
-          Navigator.pushNamedAndRemoveUntil(
-              context, AppRoutes.chooseOrg.name, (route) => false);
+          ref.read(navigationServiceProvider).navigateToAndRemoveUntil(
+              AppRoutes.chooseOrg.name, (route) => false);
         }
       });
 

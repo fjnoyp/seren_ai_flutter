@@ -2,13 +2,13 @@ import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
+import 'package:seren_ai_flutter/common/navigation_service_provider.dart';
 import 'package:seren_ai_flutter/common/routes/app_routes.dart';
 import 'package:seren_ai_flutter/common/universal_platform/universal_platform.dart';
 import 'package:seren_ai_flutter/services/ai_interaction/widgets/user_input_display_widget.dart';
 import 'package:seren_ai_flutter/services/data/db_setup/app_config.dart';
 import 'package:seren_ai_flutter/services/data/users/models/invite_model.dart';
 import 'package:seren_ai_flutter/services/data/users/providers/cur_user_invites_service_provider.dart';
-import 'package:seren_ai_flutter/widgets/common/is_show_save_dialog_on_pop_provider.dart';
 import 'drawer_view.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
@@ -50,11 +50,15 @@ class MainScaffold extends HookConsumerWidget {
     });
 
     return PopScope(
-      canPop: Navigator.of(context).canPop(),
-      onPopInvokedWithResult: (didPop, result) async {
-        if (!didPop) {
-          Navigator.of(context)
-              .pushNamedAndRemoveUntil(AppRoutes.home.name, (route) => false);
+      canPop: false,
+      onPopInvokedWithResult: (_, result) async {
+        final canPop = ref.read(navigationServiceProvider).canPop;
+        if (!canPop) {
+          ref
+              .read(navigationServiceProvider)
+              .navigateToAndRemoveUntil(AppRoutes.home.name, (route) => false);
+        } else {
+          await ref.read(navigationServiceProvider).pop(result);
         }
       },
       child: isWebVersion
@@ -75,21 +79,21 @@ class MainScaffold extends HookConsumerWidget {
                             title: Padding(
                               padding: const EdgeInsets.all(8.0),
                               child: Text(
-                              title,
-                              style: theme.appBarTheme.titleTextStyle,
-                            ),
-                          ),
-                          actions: [
-                            if (!AppConfig.isProdMode)
-                              const Text(
-                                'Dev',
-                                style: TextStyle(
-                                    color: Colors.red,
-                                    fontWeight: FontWeight.bold),
+                                title,
+                                style: theme.appBarTheme.titleTextStyle,
                               ),
-                            ...actions ?? [],
-                          ],
-                        ),
+                            ),
+                            actions: [
+                              if (!AppConfig.isProdMode)
+                                const Text(
+                                  'Dev',
+                                  style: TextStyle(
+                                      color: Colors.red,
+                                      fontWeight: FontWeight.bold),
+                                ),
+                              ...actions ?? [],
+                            ],
+                          ),
                         Expanded(
                           child: Row(
                             children: [
@@ -139,58 +143,20 @@ class MainScaffold extends HookConsumerWidget {
                           tooltip: AppLocalizations.of(context)!.menu,
                         ),
                         // TODO p2: back button is in a weird location. we should only conditionally show back button
-                        if (Navigator.of(context).canPop())
+                        if (ref.read(navigationServiceProvider).canPop)
                           IconButton(
                             icon: Icon(Icons.arrow_back,
                                 color: theme.iconTheme.color),
-                            onPressed: () async {
-                              final canSave =
-                                  ref.read(isShowSaveDialogOnPopProvider);
-
-                              if (!canSave) {
-                                Navigator.of(context).pop(true);
-                              }
-                              // If can save - show dialog to confirm save
-                              else {
-                                final shouldSave = await showDialog<bool>(
-                                  context: context,
-                                  builder: (context) => AlertDialog(
-                                    title: Text(AppLocalizations.of(context)!
-                                        .areYouSure),
-                                    content: Text(AppLocalizations.of(context)!
-                                        .quitWithoutSaving),
-                                    actions: [
-                                      TextButton(
-                                        onPressed: () =>
-                                            Navigator.of(context).pop(false),
-                                        child: Text(
-                                            AppLocalizations.of(context)!.no),
-                                      ),
-                                      TextButton(
-                                        onPressed: () =>
-                                            Navigator.of(context).pop(true),
-                                        child: Text(
-                                            AppLocalizations.of(context)!.yes),
-                                      ),
-                                    ],
-                                  ),
-                                );
-                                if (shouldSave ?? false) {
-                                  ref
-                                      .read(isShowSaveDialogOnPopProvider
-                                          .notifier)
-                                      .reset();
-                                  Navigator.of(context).pop();
-                                }
-                              }
-                            },
+                            onPressed:
+                                () => // moved logic to navigation service
+                                    ref.read(navigationServiceProvider).pop(),
                             tooltip: AppLocalizations.of(context)!.back,
                           ),
                       ],
                     );
                   },
                 ),
-                leadingWidth: Navigator.of(context).canPop()
+                leadingWidth: ref.read(navigationServiceProvider).canPop
                     ? 96
                     : 48, // Adjust width based on whether back button is shown
 
@@ -234,54 +200,56 @@ class MainScaffold extends HookConsumerWidget {
         ) : null,
         */
 
-        bottomNavigationBar: showAiAssistant
-            ? isAiAssistantExpanded.value
-                ? UserInputDisplayWidget(isAiAssistantExpanded)
-                : BottomAppBar(
-                    notchMargin: 0,
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceAround,
-                      children: [
-                        IconButton(
-                          tooltip: AppLocalizations.of(context)!.home,
-                          icon: const Icon(Icons.grid_view),
-                          onPressed: () => Navigator.of(context)
-                              .pushNamedAndRemoveUntil(
-                                  AppRoutes.home.name, (route) => false),
-                        ),
-                        const SizedBox.shrink(),
-                        IconButton(
-                          tooltip: AppLocalizations.of(context)!.chat,
-                          icon: const Icon(Icons.chat_bubble_outline),
-                          onPressed: () => Navigator.of(context)
-                              .pushNamed(AppRoutes.aiChats.name),
-                        ),
-                      ],
-                    ),
-                  )
-            : null,
-        floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
-        floatingActionButton: showAiAssistant
-            ? isAiAssistantExpanded.value
-                ? null
-                : Tooltip(
-                    message: AppLocalizations.of(context)!.aiAssistant,
-                    child: GestureDetector(
-                      onTap: () => isAiAssistantExpanded.value = true,
-                      child: Hero(
-                          tag: 'ai-button',
-                          child: SizedBox(
-                              height: 56.0,
-                              child: SvgPicture.asset(
-                                  'assets/images/AI button.svg'))),
-                    ),
-                  )
-            : null,
-      ),
+              bottomNavigationBar: showAiAssistant
+                  ? isAiAssistantExpanded.value
+                      ? UserInputDisplayWidget(isAiAssistantExpanded)
+                      : BottomAppBar(
+                          notchMargin: 0,
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceAround,
+                            children: [
+                              IconButton(
+                                tooltip: AppLocalizations.of(context)!.home,
+                                icon: const Icon(Icons.grid_view),
+                                onPressed: () => ref
+                                    .read(navigationServiceProvider)
+                                    .navigateToAndRemoveUntil(
+                                        AppRoutes.home.name, (route) => false),
+                              ),
+                              const SizedBox.shrink(),
+                              IconButton(
+                                tooltip: AppLocalizations.of(context)!.chat,
+                                icon: const Icon(Icons.chat_bubble_outline),
+                                onPressed: () => ref
+                                    .read(navigationServiceProvider)
+                                    .navigateTo(AppRoutes.aiChats.name),
+                              ),
+                            ],
+                          ),
+                        )
+                  : null,
+              floatingActionButtonLocation:
+                  FloatingActionButtonLocation.centerDocked,
+              floatingActionButton: showAiAssistant
+                  ? isAiAssistantExpanded.value
+                      ? null
+                      : Tooltip(
+                          message: AppLocalizations.of(context)!.aiAssistant,
+                          child: GestureDetector(
+                            onTap: () => isAiAssistantExpanded.value = true,
+                            child: Hero(
+                                tag: 'ai-button',
+                                child: SizedBox(
+                                    height: 56.0,
+                                    child: SvgPicture.asset(
+                                        'assets/images/AI button.svg'))),
+                          ),
+                        )
+                  : null,
+            ),
     );
   }
 
-  
   Future<dynamic> _showInviteDialog(
       BuildContext context, WidgetRef ref, InviteModel invite) {
     final curUserInvitesService =

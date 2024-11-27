@@ -1,6 +1,7 @@
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:seren_ai_flutter/common/navigation_service_provider.dart';
 import 'package:seren_ai_flutter/common/routes/app_routes.dart';
 import 'package:seren_ai_flutter/services/auth/cur_auth_state_provider.dart';
 import 'package:supabase_auth_ui/supabase_auth_ui.dart';
@@ -17,7 +18,7 @@ class SignInUpPage extends ConsumerWidget {
         // TODO p5: maybe add seren logo here on top instead of the app bar
         child: SupaEmailAuth(
           onSignInComplete: (response) {
-            Navigator.of(context).pushReplacementNamed(AppRoutes.home.name);
+            ref.read(navigationServiceProvider).navigateToWithReplacement(AppRoutes.home.name);
           },
           onSignUpComplete: (response) async {
             if (response.user != null && response.user!.email != null) {
@@ -33,7 +34,9 @@ class SignInUpPage extends ConsumerWidget {
 
               await ref.read(curUserProvider.notifier).updateUser(user);
 
-              Navigator.of(context).pushReplacementNamed(AppRoutes.home.name);
+              ref
+                  .read(navigationServiceProvider)
+                  .navigateToWithReplacement(AppRoutes.home.name);
             }
           },
           metadataFields: [
@@ -73,8 +76,7 @@ class SignInUpPage extends ConsumerWidget {
                   ),
                   recognizer: TapGestureRecognizer()
                     ..onTap = () {
-                      Navigator.pushNamed(
-                          context, AppRoutes.termsAndConditions.name);
+                      ref.read(navigationServiceProvider).navigateTo(AppRoutes.termsAndConditions.name);
                     },
                 ),
               ],
