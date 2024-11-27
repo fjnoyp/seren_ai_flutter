@@ -69,7 +69,10 @@ class AiChatMessagesNotifier
         .skip(1)
         .listen((newMessages) {
       if (state case AsyncData(value: var currentMessages)) {
-        state = AsyncValue.data([...newMessages, ...currentMessages]);
+        if (newMessages.first.id == currentMessages.first.id) {
+          return;
+        }
+        state = AsyncValue.data([newMessages.first, ...currentMessages]);
         hasNewMessages = true;
         log('refreshed with new messages');
       }
