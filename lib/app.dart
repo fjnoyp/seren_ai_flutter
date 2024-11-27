@@ -16,6 +16,7 @@ import 'package:seren_ai_flutter/services/data/notes/widgets/note_page.dart';
 import 'package:seren_ai_flutter/services/data/orgs/widgets/choose_org_page.dart';
 import 'package:seren_ai_flutter/services/data/orgs/widgets/manage_org_users_page.dart';
 import 'package:seren_ai_flutter/services/data/orgs/widgets/org_guard.dart';
+import 'package:seren_ai_flutter/services/data/projects/widgets/project_details_page.dart';
 import 'package:seren_ai_flutter/services/data/projects/widgets/projects_page.dart';
 import 'package:seren_ai_flutter/services/data/shifts/providers/cur_shift_state_provider.dart';
 import 'package:seren_ai_flutter/services/data/shifts/widgets/shifts_page.dart';
@@ -87,6 +88,10 @@ class AppState extends State<App> {
                 const ManageOrgUsersPage()),
             AppRoutes.projects.name: (context) => _GuardScaffold(
                 AppLocalizations.of(context)!.projects, const ProjectsPage()),
+            AppRoutes.projectDetails.name: (context) => _GuardScaffold(
+              'Project Details',
+                // AppLocalizations.of(context)!.projectDetails,
+                 const ProjectDetailsPage(),),
             AppRoutes.tasks.name: (context) => _GuardScaffold(
                 AppLocalizations.of(context)!.tasks, const TasksListPage()),
             AppRoutes.taskPage.name: (context) {
