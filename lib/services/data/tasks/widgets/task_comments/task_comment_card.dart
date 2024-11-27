@@ -26,7 +26,7 @@ class TaskCommentCard extends StatelessWidget {
                   backgroundColor: theme.primaryColor,
                   radius: 12.0,
                   // TODO p4: replace with authorPhotoUrl Image (.network?)
-                  child: Text(comment.authorUser!.email[0].toUpperCase()),
+                  child: Text(comment.authorUser!.firstName[0].toUpperCase()),
                 ),
                 const SizedBox(width: 8),
                 Expanded(
