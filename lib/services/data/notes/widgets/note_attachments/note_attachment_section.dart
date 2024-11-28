@@ -83,7 +83,7 @@ class _AddAttachmentButton extends ConsumerWidget {
 
   Future<void> _pickAndUploadFile(WidgetRef ref, FileType type) async {
     // Define limits
-    const int maxFileSizeBytes = 5242880; // 5MB
+    const int maxFileSizeBytes = 10485760; // 10MB
     const int maxFileCount = 5;
 
     final result = await FilePicker.platform.pickFiles(
