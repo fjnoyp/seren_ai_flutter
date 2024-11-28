@@ -6,7 +6,10 @@ abstract class TaskQueries {
     SELECT DISTINCT t.*
     FROM tasks t
     LEFT JOIN user_project_assignments pua ON t.parent_project_id = pua.project_id
+    LEFT JOIN team_project_assignments tpa ON t.parent_project_id = tpa.project_id
+    LEFT JOIN user_team_assignments uta ON tpa.team_id = uta.team_id
     WHERE pua.user_id = :user_id
+    OR uta.user_id = :user_id
     OR t.author_user_id = :author_user_id;
     ''';
 
@@ -321,7 +324,11 @@ abstract class TaskQueries {
     LEFT JOIN users a ON tua.user_id = a.id
     LEFT JOIN task_comments tc ON t.id = tc.parent_task_id
     LEFT JOIN user_project_assignments upa ON t.parent_project_id = upa.project_id
-    WHERE upa.user_id = :user_id OR t.author_user_id = :user_id
+    LEFT JOIN team_project_assignments tpa ON t.parent_project_id = tpa.project_id
+    LEFT JOIN user_team_assignments uta ON tpa.team_id = uta.team_id
+    WHERE upa.user_id = :user_id 
+    OR uta.user_id = :user_id 
+    OR t.author_user_id = :user_id
     GROUP BY t.id;
   ''';
 
@@ -399,7 +406,8 @@ abstract class TaskQueries {
     LEFT JOIN task_user_assignments tua ON t.id = tua.task_id
     LEFT JOIN users a ON tua.user_id = a.id
     LEFT JOIN task_comments tc ON t.id = tc.parent_task_id
-    WHERE tua.user_id = :user_id OR t.author_user_id = :user_id
+    WHERE tua.user_id = :user_id 
+    OR t.author_user_id = :user_id
     GROUP BY t.id;
   ''';
 

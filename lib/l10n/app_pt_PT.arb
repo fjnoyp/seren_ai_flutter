@@ -132,6 +132,9 @@
     "deleteAttachment": "Eliminar {fileName}?",
     "notAbleToPreview": "Não é possível pré-visualizar este ficheiro.\nPode tentar abri-lo localmente.",
     "openFile": "Abrir ficheiro",
+    "tooManyFiles": "Você pode carregar apenas até {maxFileCount} ficheiros",
+    "fileTooLarge": "O ficheiro {fileName} é muito grande",
+    "filesUploading": "{filesCount, plural, =1{1 ficheiro carregando} other{{filesCount} ficheiros carregando}}",
 
     "@_": {"description": "Shifts"},
     "shifts": "Turnos",
