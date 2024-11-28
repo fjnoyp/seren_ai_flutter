@@ -208,6 +208,24 @@
     },
     "notAbleToPreview": "Not able to preview this file.\n You can try opening it locally.",
     "openFile": "Open file",
+    "tooManyFiles": "You can only upload up to {maxFileCount} files",
+    "@tooManyFiles": {
+        "placeholders": {
+            "maxFileCount": {"type": "int"}
+        }
+    },
+    "fileTooLarge": "The file {fileName} is too large",
+    "@fileTooLarge": {
+        "placeholders": {
+            "fileName": {"type": "String"}
+        }
+    },
+    "filesUploading": "{filesCount, plural, =1{1 file uploading} other{{filesCount} files uploading}}",
+    "@filesUploading": {
+        "placeholders": {
+            "filesCount": {"type": "int"}
+        }
+    },
 
     "@_": {"description": "Shifts"},
     "shifts": "Shifts",
