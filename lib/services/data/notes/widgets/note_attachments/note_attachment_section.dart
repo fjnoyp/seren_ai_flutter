@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:permission_handler/permission_handler.dart';
+import 'package:seren_ai_flutter/common/utils/string_extension.dart';
 import 'package:seren_ai_flutter/services/data/notes/providers/cur_note_service_provider.dart';
 import 'package:seren_ai_flutter/services/data/notes/providers/note_attachments_service_provider.dart';
 
@@ -60,7 +61,7 @@ class _AddAttachmentButton extends ConsumerWidget {
                 ],
               ),
             );
-            
+
             if (fileType != null) {
               await _pickAndUploadFile(ref, fileType);
             }
@@ -81,14 +82,44 @@ class _AddAttachmentButton extends ConsumerWidget {
   }
 
   Future<void> _pickAndUploadFile(WidgetRef ref, FileType type) async {
+    // Define limits
+    const int maxFileSizeBytes = 5242880; // 5MB
+    const int maxFileCount = 5;
+
     final result = await FilePicker.platform.pickFiles(
       type: type,
       allowMultiple: true,
     );
-    
+
     if (result != null) {
-      List<File> files = result.paths.map((path) => File(path!)).toList();
-      
+      if (result.files.length > maxFileCount) {
+        ScaffoldMessenger.of(ref.context).showSnackBar(
+          SnackBar(
+            content: Text(
+                AppLocalizations.of(ref.context)!.tooManyFiles(maxFileCount)),
+            backgroundColor: Theme.of(ref.context).colorScheme.error,
+          ),
+        );
+      }
+
+      // Filter valid files directly
+      final validFiles = result.files.where((file) {
+        if (file.size > maxFileSizeBytes) {
+          ScaffoldMessenger.of(ref.context).showSnackBar(
+            SnackBar(
+              content: Text(AppLocalizations.of(ref.context)!
+                  .fileTooLarge(file.path!.getFilePathName())),
+              backgroundColor: Theme.of(ref.context).colorScheme.error,
+            ),
+          );
+          return false;
+        }
+        return true;
+      }).take(maxFileCount);
+
+      // Create File objects directly from valid PlatformFile objects
+      List<File> files = validFiles.map((file) => File(file.path!)).toList();
+
       // Show a non-blocking loading snackbar
       ScaffoldMessenger.of(ref.context).showSnackBar(
         SnackBar(
@@ -103,7 +134,8 @@ class _AddAttachmentButton extends ConsumerWidget {
                 ),
               ),
               const SizedBox(width: 12),
-              Text('${files.length} uploading'), // ${AppLocalizations.of(ref.context)!.filesUploading}'),
+              Text(AppLocalizations.of(ref.context)!
+                  .filesUploading(files.length)),
             ],
           ),
           duration: const Duration(seconds: 3),
@@ -113,9 +145,9 @@ class _AddAttachmentButton extends ConsumerWidget {
       // Upload files in a non-blocking way
       (
         ref.read(noteAttachmentsServiceProvider.notifier).uploadAttachments(
-          files,
-          noteId: ref.read(curNoteServiceProvider).curNoteId,
-        ),
+              files,
+              noteId: ref.read(curNoteServiceProvider).curNoteId,
+            ),
       );
     }
   }
@@ -213,8 +245,9 @@ class _AttachmentPreview extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     // Create an ImageProvider that we can evict from cache
     final imageProvider = NetworkImage(attachmentUrl);
-    
-    return PopScope( // Using PopScope instead of GestureDetector for better cleanup
+
+    return PopScope(
+      // Using PopScope instead of GestureDetector for better cleanup
       onPopInvokedWithResult: (didPop, result) {
         // Clear the image from cache when closing
         imageProvider.evict().then((_) {
@@ -238,7 +271,7 @@ class _AttachmentPreview extends ConsumerWidget {
                               child: CircularProgressIndicator(),
                             ),
                   // Add error builder to handle failed loads
-                  errorBuilder: (context, error, stackTrace) => 
+                  errorBuilder: (context, error, stackTrace) =>
                       const Icon(Icons.error),
                 ),
               _ => Column(
