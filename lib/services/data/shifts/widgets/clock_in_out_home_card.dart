@@ -44,7 +44,7 @@ class _ClockInOutInnerCard extends ConsumerWidget {
     final curUserShiftLogActions = ref.read(curUserShiftLogActionsProvider);
 
     return AsyncValueHandlerWidget<ShiftLogModel?>(
-      value:  ref.watch(curUserOpenShiftLogProvider),
+      value: ref.watch(curUserOpenShiftLogProvider),
       data: (curLog) => BaseHomeInnerCard.filled(
         child: InkWell(
           onTap: () {
@@ -72,8 +72,8 @@ class _ClockInOutInnerCard extends ConsumerWidget {
                   const SizedBox(height: 8),
                   // TODO p4: add elapsed time ?
                   Text(
-                    AppLocalizations.of(context)!.clockedInAt(
-                        DateFormat.Hm().format(curLog.clockInDatetime)),
+                    AppLocalizations.of(context)!.clockedInAt(DateFormat.Hm()
+                        .format(curLog.clockInDatetime.toLocal())),
                     textAlign: TextAlign.center,
                   ),
                 ]
