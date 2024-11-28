@@ -20,10 +20,14 @@ abstract class UserQueries {
   /// Params:
   /// - project_id: String
   /// Used to fetch all users that are assigned to a specific project
+  /// either directly or through a team assignment
   static const String usersInProjectQuery = '''
     SELECT DISTINCT u.*
     FROM users u
-    JOIN user_project_assignments upa ON u.id = upa.user_id
+    LEFT JOIN user_project_assignments upa ON u.id = upa.user_id
+    LEFT JOIN user_team_assignments uta ON u.id = uta.user_id
+    LEFT JOIN team_project_assignments tpa ON uta.team_id = tpa.team_id
     WHERE upa.project_id = :project_id
+    OR tpa.project_id = :project_id
   ''';
 }
