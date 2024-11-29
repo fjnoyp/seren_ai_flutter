@@ -18,7 +18,7 @@ env:
   JAVA_VERSION: '17'
   FLUTTER_BUILD_MODE: release
   FLUTTER_VERSION_NAME: 1.0.0
-  FLUTTER_VERSION_CODE: 11
+  FLUTTER_VERSION_CODE: ${{ github.run_number }}
 
 jobs:
   build:
@@ -26,6 +26,21 @@ jobs:
     steps:
       - name: Checkout code
         uses: actions/checkout@v2
+        with:
+          fetch-depth: 0
+
+      - name: Generate Release Notes
+        id: release_notes
+        run: |
+          VERSION_INFO="Version ${{ env.FLUTTER_VERSION_NAME }} (${{ github.run_number }})"
+          COMMIT_LOG=$(git log $(git describe --tags --abbrev=0 2>/dev/null || git rev-list --max-parents=0 HEAD)..HEAD --pretty=format:"- %s" | sed 's/[\"]/\\&/g')
+          NOTES="$VERSION_INFO
+
+          Recent changes:
+          $COMMIT_LOG"
+          echo "notes<<EOF" >> $GITHUB_OUTPUT
+          echo "$NOTES" >> $GITHUB_OUTPUT
+          echo "EOF" >> $GITHUB_OUTPUT
 
       - name: Set up Java 17
         uses: actions/setup-java@v2
@@ -47,13 +62,17 @@ jobs:
           cat << 'EOF' >> android/app/build.gradle
 
           android {
-            buildTypes {
-                release {
-                    signingConfig null
-                    minifyEnabled true
-                    proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
-                }
-            }
+              defaultConfig {
+                  versionCode System.getenv('FLUTTER_VERSION_CODE').toInteger()
+                  versionName System.getenv('FLUTTER_VERSION_NAME')
+              }
+              buildTypes {
+                  release {
+                      signingConfig null
+                      minifyEnabled true
+                      proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+                  }
+              }
           }
           EOF
 
@@ -104,5 +123,6 @@ jobs:
             
             firebase appdistribution:distribute "$FILE_PATH" \
             --app "1:888730365208:android:c9cf9621dc53df7709c26d" \
+            --release-notes "${{ steps.release_notes.outputs.notes }}" \
             --groups 'beta_testers' \
             --json
