@@ -47,8 +47,8 @@ android {
         // For more information, see: https://docs.flutter.dev/deployment/android#reviewing-the-gradle-build-configuration.
         minSdk = flutter.minSdkVersion
         targetSdk = flutter.targetSdkVersion
-        versionCode = flutterVersionCode.toInteger()
-        versionName = flutterVersionName
+        versionCode project.hasProperty('FLUTTER_VERSION_CODE') ? project.FLUTTER_VERSION_CODE.toInteger() : 1
+        versionName project.hasProperty('FLUTTER_VERSION_NAME') ? project.FLUTTER_VERSION_NAME : "1.0"
     }
 
     def keystoreProperties = new Properties()
