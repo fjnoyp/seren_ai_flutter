@@ -11,16 +11,16 @@ class CurUserNotifier extends Notifier<AsyncValue<UserModel?>> {
   @override
   AsyncValue<UserModel?> build() {
     final authUser = Supabase.instance.client.auth.currentUser;
-    _updateUser(authUser);
+    updateUser(authUser);
 
     Supabase.instance.client.auth.onAuthStateChange.listen((data) {
-      _updateUser(data.session?.user);
+      updateUser(data.session?.user);
     });
 
     return const AsyncValue.loading();
   }
 
-  Future<void> _updateUser(User? user) async {
+  Future<void> updateUser(User? user) async {
     if (user?.id == null) {
       state = const AsyncValue.data(null);
       return;

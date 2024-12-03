@@ -12,30 +12,29 @@ final sharedPreferencesServiceProvider = Provider<SharedPreferencesService>(
 
 class SharedPreferencesService {
   final Ref ref;
+  final SharedPreferences _prefs;
 
-  late SharedPreferences _prefs;
-  String _curUserId = '';
+  SharedPreferencesService(this.ref) : _prefs = ref.read(sharedPreferencesProvider);
 
-  SharedPreferencesService(this.ref) {
-    _prefs = ref.read(sharedPreferencesProvider);
-    _curUserId = ref.watch(curUserProvider).value?.id ?? '';
+  String _getCurUserId() {
+    return ref.read(curUserProvider).value?.id ?? '';
   }
 
   Future<void> setString(String key, String value) async =>
-      await _prefs.setString('${_curUserId}_$key', value);
+      await _prefs.setString('${_getCurUserId()}_$key', value);
 
-  String? getString(String key) => _prefs.getString('${_curUserId}_$key');
+  String? getString(String key) => _prefs.getString('${_getCurUserId()}_$key');
 
   Future<void> setBool(String key, bool value) async =>
-      await _prefs.setBool('${_curUserId}_$key', value);
+      await _prefs.setBool('${_getCurUserId()}_$key', value);
 
-  bool? getBool(String key) => _prefs.getBool('${_curUserId}_$key');
+  bool? getBool(String key) => _prefs.getBool('${_getCurUserId()}_$key');
 
   Future<void> setInt(String key, int value) async =>
-      await _prefs.setInt('${_curUserId}_$key', value);
+      await _prefs.setInt('${_getCurUserId()}_$key', value);
 
-  int? getInt(String key) => _prefs.getInt('${_curUserId}_$key');
+  int? getInt(String key) => _prefs.getInt('${_getCurUserId()}_$key');
 
   Future<void> remove(String key) async =>
-      await _prefs.remove('${_curUserId}_$key');
+      await _prefs.remove('${_getCurUserId()}_$key');
 }
