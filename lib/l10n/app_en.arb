@@ -46,6 +46,7 @@
     "enterText": "Enter Text",
     "enterTextHere": "Enter text here...",
     "testSQL": "Test SQL",
+    "other": "Other",
 
     "@_": {"description": "Settings"},
     "settings": "Settings",
@@ -348,6 +349,15 @@
     "chooseAssignees": "Choose Assignees",
     "foundTasks": "Found Tasks",
     "noTasksFound": "No tasks found",
+    "noReminderSet": "No reminder set",
+    "minutes": "{hours, plural, =0{} =1{1 hour } other{{hours} hours }}{minutes, plural, =0{} =1{1 minute} other{{minutes} minutes}}",
+    "@minutes": {
+        "placeholders": {
+            "hours": {"type": "int"},
+            "minutes": {"type": "int"}
+        }
+    },
+    "noReminder": "No reminder",
 
     "@_": {"description": "Test SQL Page"},
     "testSQLPage": "Test SQL Page",

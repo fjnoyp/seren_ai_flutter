@@ -85,6 +85,11 @@ const tasksSchemas = [
     Column.text('task_id'),
     Column.text('user_id'),
   ]),
+  Table('task_reminders', [
+    Column.text('task_id'),
+    Column.integer('reminder_offset_minutes'),
+    Column.integer('is_completed'),
+  ]),
 ];
 const aiChatThreadsTable = 'ai_chat_threads';
 const aiChatMessagesTable = 'ai_chat_messages';

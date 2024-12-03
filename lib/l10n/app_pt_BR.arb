@@ -21,6 +21,7 @@
     "enterText": "Inserir Texto",
     "enterTextHere": "Insira o texto aqui...",
     "testSQL": "Testar SQL",
+    "other": "Outro",
 
     "@_": {"description": "Settings"},
     "settings": "Configurações",
@@ -195,6 +196,9 @@
     "chooseAssignees": "Escolher Responsáveis",
     "foundTasks": "Tarefas Encontradas",
     "noTasksFound": "Nenhuma tarefa encontrada",
+    "noReminderSet": "Sem lembrete configurado",
+    "minutes": "{hours, plural, =0{} =1{1 hora e } other{{hours} horas e }}{minutes, plural, =0{} =1{1 minuto} other{{minutes} minutos}}",
+    "noReminder": "Sem lembrete",
 
     "@_": {"description": "Speech Recognition"},
     "unknownState": "Estado desconhecido: {state}",

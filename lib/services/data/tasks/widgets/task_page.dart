@@ -83,6 +83,8 @@ class TaskPage extends HookConsumerWidget {
                   const Divider(),
                   TaskDueDateSelectionField(enabled: isEnabled),
                   const Divider(),
+                  TaskReminderSelectionField(enabled: isEnabled),
+                  const Divider(),
                   TaskAssigneesSelectionField(enabled: isEnabled),
                   const Divider(),
                   TaskDescriptionSelectionField(enabled: isEnabled),

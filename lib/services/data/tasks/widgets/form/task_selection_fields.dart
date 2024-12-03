@@ -1,4 +1,5 @@
 import 'package:seren_ai_flutter/services/data/common/widgets/form/base_assignees_selection_field.dart';
+import 'package:seren_ai_flutter/services/data/common/widgets/form/base_reminder_selection_field.dart';
 import 'package:seren_ai_flutter/services/data/common/widgets/form/base_text_block_edit_selection_field.dart';
 import 'package:seren_ai_flutter/services/data/common/widgets/form/base_due_date_selection_field.dart';
 import 'package:seren_ai_flutter/services/data/common/widgets/form/base_priority_selection_field.dart';
@@ -67,6 +68,18 @@ class TaskDueDateSelectionField extends BaseDueDateSelectionField {
               curTaskStateProvider.select((state) => state.value?.task.dueDate),
           updateDueDate: (ref, pickedDateTime) =>
               ref.read(curTaskServiceProvider).updateDueDate(pickedDateTime),
+        );
+}
+
+class TaskReminderSelectionField extends BaseReminderSelectionField {
+  TaskReminderSelectionField({
+    super.key,
+    required super.enabled,
+  }) : super(
+          reminderProvider: curTaskStateProvider
+              .select((state) => state.value?.reminder?.reminderOffsetMinutes),
+          updateReminder: (ref, reminder) =>
+              ref.read(curTaskServiceProvider).setReminder(reminder),
         );
 }
 

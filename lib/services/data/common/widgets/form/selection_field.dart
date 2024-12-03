@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:seren_ai_flutter/services/data/common/widgets/form/color_animation.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 class AnimatedModalSelectionField<T> extends HookConsumerWidget {
   const AnimatedModalSelectionField({
@@ -77,11 +78,11 @@ class ModalSelectionField<T> extends SelectionField<T> {
               builder: (BuildContext context) => Consumer(
                 builder: (BuildContext context, WidgetRef ref, Widget? child) {
                   return ListView.builder(
-                    itemCount: isValueRequired ? options.length : options.length + 1,
+                    itemCount:
+                        isValueRequired ? options.length : options.length + 1,
                     itemBuilder: (BuildContext context, int index) {
-                      final T? option = index == options.length
-                          ? null
-                          : options[index];
+                      final T? option =
+                          index == options.length ? null : options[index];
                       return ListTile(
                         title: Text(valueToString(option)),
                         onTap: () {
@@ -245,5 +246,101 @@ class SelectionField<T> extends HookConsumerWidget {
         );
       },
     );
+  }
+}
+
+class AnimatedModalReminderTimeSelectionField extends HookConsumerWidget {
+  const AnimatedModalReminderTimeSelectionField({
+    super.key,
+    required this.labelWidget,
+    required this.validator,
+    required this.enabled,
+    required this.value,
+    required this.quickOptions,
+    this.onValueChanged,
+  });
+
+  final Widget labelWidget;
+  final String? Function(int?) validator;
+  final bool enabled;
+  final int? value;
+  final List<int> quickOptions;
+  final void Function(WidgetRef, int?)? onValueChanged;
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final colorAnimation = useAiActionColorAnimation(
+      context,
+      ref,
+      duration: const Duration(seconds: 1),
+      triggerValue: value,
+    );
+
+    return AnimatedBuilder(
+      animation: colorAnimation.colorTween,
+      builder: (context, child) {
+        return DefaultTextStyle(
+          style: TextStyle(color: colorAnimation.colorTween.value),
+          child: IconTheme(
+            data: IconThemeData(color: colorAnimation.colorTween.value),
+            child: SelectionField<int>(
+              labelWidget: labelWidget,
+              validator: validator,
+              valueToString: (value) =>
+                  value == null ? AppLocalizations.of(context)!.noReminderSet : AppLocalizations.of(context)!.minutes(value ~/ 60, value % 60),
+              enabled: enabled,
+              value: value,
+              onValueChanged: onValueChanged,
+              defaultColor: colorAnimation.colorTween.value,
+              showSelectionModal: (BuildContext context) async {
+                return showModalBottomSheet(
+                  context: context,
+                  builder: (BuildContext context) => Consumer(
+                    builder:
+                        (BuildContext context, WidgetRef ref, Widget? child) {
+                      final List<({int? minutes, String label})> options = [
+                        (minutes: null, label: AppLocalizations.of(context)!.noReminder),
+                        ...quickOptions
+                            .map((e) => (minutes: e, label: AppLocalizations.of(context)!.minutes(e ~/ 60, e % 60))),
+                        (minutes: null, label: AppLocalizations.of(context)!.other),
+                      ];
+                      return ListView.builder(
+                        itemCount: options.length,
+                        itemBuilder: (BuildContext context, int index) {
+                          final option = options[index];
+
+                          return ListTile(
+                            title: Text(option.label),
+                            onTap: () async {
+                              index == options.length - 1
+                                  ? await _showChooseDurationDialog(context)
+                                      .then((value) =>
+                                          onValueChanged?.call(ref, value))
+                                  : onValueChanged?.call(ref, option.minutes);
+                              Navigator.pop(context, option.minutes);
+                            },
+                          );
+                        },
+                      );
+                    },
+                  ),
+                );
+              },
+            ),
+          ),
+        );
+      },
+    );
+  }
+
+  Future<int?> _showChooseDurationDialog(BuildContext context) async {
+    final result = await showTimePicker(
+      context: context,
+      initialTime: const TimeOfDay(hour: 0, minute: 30),
+      barrierDismissible: false,
+      initialEntryMode: TimePickerEntryMode.inputOnly,
+    );
+
+    return result == null ? null : result.hour * 60 + result.minute;
   }
 }

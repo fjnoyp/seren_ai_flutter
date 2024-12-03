@@ -476,13 +476,22 @@ abstract class TaskQueries {
           'created_at', tc.created_at,
           'updated_at', tc.updated_at
         ) END
-      ) as comments
+      ) as comments,
+      CASE WHEN tr.id IS NOT NULL THEN json_object(
+        'id', tr.id,
+        'task_id', tr.task_id,
+        'reminder_offset_minutes', tr.reminder_offset_minutes,
+        'is_completed', tr.is_completed,
+        'created_at', tr.created_at,
+        'updated_at', tr.updated_at
+      ) END as reminder
     FROM tasks t
     LEFT JOIN users au ON t.author_user_id = au.id
     LEFT JOIN projects p ON t.parent_project_id = p.id
     LEFT JOIN task_user_assignments tua ON t.id = tua.task_id
     LEFT JOIN users a ON tua.user_id = a.id
     LEFT JOIN task_comments tc ON t.id = tc.parent_task_id
+    LEFT JOIN task_reminders tr ON t.id = tr.task_id
     WHERE t.id = :task_id
     GROUP BY t.id;
   ''';
