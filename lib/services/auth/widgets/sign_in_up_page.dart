@@ -1,15 +1,16 @@
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:seren_ai_flutter/common/routes/app_routes.dart';
-import 'package:seren_ai_flutter/services/data/users/models/user_model.dart';
+import 'package:seren_ai_flutter/services/auth/cur_auth_state_provider.dart';
 import 'package:supabase_auth_ui/supabase_auth_ui.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
-class SignInUpPage extends StatelessWidget {
+class SignInUpPage extends ConsumerWidget {
   const SignInUpPage({super.key});
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
     return Padding(
       padding: const EdgeInsets.all(24.0),
       child: SingleChildScrollView(
@@ -21,23 +22,19 @@ class SignInUpPage extends StatelessWidget {
           onSignUpComplete: (response) async {
             if (response.user != null && response.user!.email != null) {
               final user = response.user!;
-              await Supabase.instance.client.from('users').insert(
-                    UserModel(
-                      parentAuthUserId: user.id,
-                      email: user.email!,
-                      firstName:
-                          response.user?.userMetadata?['first_name'] ?? '',
-                      lastName: response.user?.userMetadata?['last_name'] ?? '',
-                    ).toJson()
-                      ..addAll(
-                        {
-                          'created_at': DateTime.now().toIso8601String(),
-                          'updated_at': DateTime.now().toIso8601String()
-                        },
-                      ),
-                  );
+
+              await Supabase.instance.client
+                  .rpc('create_initial_setup_for_user', params: {
+                'auth_user_id': user.id,
+                'email': user.email!,
+                'first_name': user.userMetadata?['first_name']?.trim() ?? '',
+                'last_name': user.userMetadata?['last_name']?.trim() ?? '',
+              });
+
+              await ref.read(curUserProvider.notifier).updateUser(user);
+
+              Navigator.of(context).pushReplacementNamed(AppRoutes.home.name);
             }
-            Navigator.of(context).pushReplacementNamed(AppRoutes.home.name);
           },
           metadataFields: [
             MetaDataField(

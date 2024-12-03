@@ -77,6 +77,8 @@ class UserModel implements IHasId {
     String? lastName,
     DateTime? createdAt,
     DateTime? updatedAt,
+    String? defaultProjectId,
+    String? defaultTeamId,
   }) {
     return UserModel(
       id: id ?? this.id,
@@ -86,6 +88,8 @@ class UserModel implements IHasId {
       lastName: lastName ?? this.lastName,
       createdAt: createdAt ?? this.createdAt,
       updatedAt: updatedAt ?? this.updatedAt,
+      defaultProjectId: defaultProjectId ?? this.defaultProjectId,
+      defaultTeamId: defaultTeamId ?? this.defaultTeamId,
     );
   }
 }
