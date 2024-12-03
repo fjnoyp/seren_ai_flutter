@@ -34,5 +34,10 @@
 </head>
 <body>
   <script src="flutter_bootstrap.js" async></script>
+  <script>
+    window.addEventListener('error', function(e) {
+      console.error('Window Error:', e.error);
+    });
+  </script>
 </body>
 </html>
