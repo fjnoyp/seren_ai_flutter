@@ -18,7 +18,7 @@ void main() async {
   final db = await PowerSyncDatabaseFactory.openDatabase();
   final prefs = await SharedPreferences.getInstance();
   
-  if (!Platform.isIOS) {
+  if (!kIsWeb && !Platform.isIOS) {
     // Initialize Firebase for Crashlytics
     await Firebase.initializeApp();
     // Pass all uncaught "fatal" errors from the framework to Crashlytics
