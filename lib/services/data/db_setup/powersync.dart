@@ -1,8 +1,8 @@
 // This file performs setup of the PowerSync database
 import 'package:logging/logging.dart';
 import 'package:path/path.dart';
-import 'package:path_provider/path_provider.dart';
 import 'package:powersync/powersync.dart';
+import 'package:seren_ai_flutter/common/path_provider/path_provider.dart';
 //import 'package:powersync_flutter_demo/migrations/fts_setup.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
@@ -148,8 +148,9 @@ class PowerSyncDatabaseFactory {
   }
 
   static Future<String> _getDatabasePath() async {
-    final dir = await getApplicationSupportDirectory();
-    return join(dir.path, 'powersync-demo.db');
+    //final dir = await getApplicationSupportDirectory();
+    final path = await PathProvider.getPathProviderFactory().getApplicationSupportPath();
+    return join(path, 'powersync-demo.db');
   }
 
   static Future<PowerSyncDatabase> openDatabase() async {
