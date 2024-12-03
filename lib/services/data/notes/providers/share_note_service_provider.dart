@@ -1,7 +1,7 @@
 import 'dart:io';
 
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:path_provider/path_provider.dart';
+import 'package:seren_ai_flutter/common/path_provider/path_provider.dart';
 import 'package:seren_ai_flutter/services/data/notes/models/joined_note_model.dart';
 import 'package:seren_ai_flutter/services/data/notes/providers/cur_note_state_provider.dart';
 import 'package:seren_ai_flutter/services/data/notes/widgets/pdf/pdf_from_note.dart';
@@ -28,9 +28,10 @@ class ShareNoteService {
       final pdf = NoteToPdfConverter(widgetRef);
       await pdf.buildPdf();
 
-      final output = await getTemporaryDirectory();
+      final pathProvider = PathProvider.getPathProviderFactory();
+      final tempPath = await pathProvider.getTemporaryPath();
       final name = _state.value!.note.name;
-      final path = '${output.path}/${DateTime.now().millisecondsSinceEpoch}_$name.pdf';
+      final path = '$tempPath/${DateTime.now().millisecondsSinceEpoch}_$name.pdf';
 
       tempFile = File(path);
       final bytes = await pdf.save();
