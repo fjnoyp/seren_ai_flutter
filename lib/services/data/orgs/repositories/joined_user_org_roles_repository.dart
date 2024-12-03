@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:seren_ai_flutter/services/data/common/base_repository.dart';
 import 'package:seren_ai_flutter/services/data/db_setup/db_provider.dart';
@@ -14,11 +16,16 @@ class JoinedUserOrgRolesRepository
   const JoinedUserOrgRolesRepository(super.db);
 
   @override
-  Set<String> get watchTables => {'user_org_roles'};
+  Set<String> get watchTables => {'user_org_roles', 'users', 'orgs'};
 
   @override
   JoinedUserOrgRoleModel fromJson(Map<String, dynamic> json) {
-    return JoinedUserOrgRoleModel.fromJson(json);
+    final decodedJson = json.map((key, value) =>
+        (key == 'org_role' || key == 'user' || key == 'org') && value != null
+            ? MapEntry(key, jsonDecode(value))
+            : MapEntry(key, value));
+
+    return JoinedUserOrgRoleModel.fromJson(decodedJson);
   }
 
   Stream<List<JoinedUserOrgRoleModel>> watchJoinedUserOrgRolesByUser(

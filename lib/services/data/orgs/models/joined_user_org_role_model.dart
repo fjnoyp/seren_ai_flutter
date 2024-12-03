@@ -1,5 +1,3 @@
-import 'dart:convert';
-
 import 'package:seren_ai_flutter/services/data/orgs/models/user_org_role_model.dart';
 import 'package:seren_ai_flutter/services/data/users/models/user_model.dart';
 import 'package:seren_ai_flutter/services/data/orgs/models/org_model.dart';
@@ -16,13 +14,9 @@ class JoinedUserOrgRoleModel {
   });
 
   factory JoinedUserOrgRoleModel.fromJson(Map<String, dynamic> json) {
-    final orgRoleJson = jsonDecode(json['org_role']);
-    final userJson = jsonDecode(json['user']);
-    final orgJson = jsonDecode(json['org']);
-
-    final orgRole = UserOrgRoleModel.fromJson(orgRoleJson);
-    final user = UserModel.fromJson(userJson);
-    final org = OrgModel.fromJson(orgJson);
+    final orgRole = UserOrgRoleModel.fromJson(json['org_role']);
+    final user = UserModel.fromJson(json['user']);
+    final org = OrgModel.fromJson(json['org']);
 
     return JoinedUserOrgRoleModel(orgRole: orgRole, user: user, org: org);
   }
