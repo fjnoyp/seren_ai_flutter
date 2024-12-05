@@ -55,11 +55,12 @@ class AppState extends State<App> {
         ref.read(sttOrchestratorProvider);
         ref.read(curShiftStateProvider);
 
-        //final firstUserValue = ref.read(curAuthUserProvider);
-
         final themeMode = ref.watch(themeSNP);
-
-        final [languageCode, countryCode] = ref.watch(languageSNP).split('_');
+        
+        final languageString = ref.watch(languageSNP);
+        final parts = languageString.split('_');
+        final languageCode = parts.isNotEmpty ? parts[0] : 'en';
+        final countryCode = parts.length > 1 ? parts[1] : null;
 
         return MaterialApp(
           theme: lightTheme,
