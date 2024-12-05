@@ -13,6 +13,7 @@ import 'package:seren_ai_flutter/common/shared_preferences_service_provider.dart
 import 'package:seren_ai_flutter/common/universal_platform/universal_platform.dart';
 import 'package:seren_ai_flutter/services/data/db_setup/powersync.dart';
 import 'package:seren_ai_flutter/services/data/db_setup/db_provider.dart';
+import 'package:seren_ai_flutter/services/notifications/notification_service.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 void main() async {
@@ -34,11 +35,16 @@ void main() async {
     };
   }
 
+  // Initialize Notification Service
+  final notificationService = NotificationService();
+  await notificationService.initialize();
+
   runApp(
     ProviderScope(
       overrides: [
         dbProvider.overrideWithValue(db),
         sharedPreferencesProvider.overrideWithValue(prefs),
+        notificationServiceProvider.overrideWithValue(notificationService),
       ],
       child: const App(),
     ),

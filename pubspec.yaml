@@ -81,6 +81,8 @@ dependencies:
   dio: ^5.7.0
   flutter_image_compress: ^2.3.0
   cross_file: ^0.3.4+2
+  flutter_local_notifications: ^18.0.1
+  timezone: ^0.10.0
 
 dev_dependencies:
   flutter_test:
