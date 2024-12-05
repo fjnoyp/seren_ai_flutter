@@ -112,10 +112,12 @@ class NoteToPdfConverter extends Document {
         (e) async => switch (e.split('.').last) {
           'png' || 'jpg' || 'jpeg' => imageAttachments.add(
               MemoryImage(
-                (await ref
-                        .read(noteAttachmentsServiceProvider.notifier)
-                        .createOrGetLocalFile(joinedNote.note.id, e))
-                    .readAsBytesSync(),
+                await ref
+                    .read(noteAttachmentsServiceProvider.notifier)
+                    .getAttachmentBytes(
+                      fileUrl: e,
+                      noteId: joinedNote.note.id,
+                    ),
               ),
             ),
           _ => fileAttachments.add(
@@ -124,8 +126,9 @@ class NoteToPdfConverter extends Document {
                 child: Text(
                   e.getFilePathName(),
                   style: const TextStyle(
-                      color: PdfColors.blue,
-                      decoration: TextDecoration.underline),
+                    color: PdfColors.blue,
+                    decoration: TextDecoration.underline,
+                  ),
                 ),
               ),
             ),

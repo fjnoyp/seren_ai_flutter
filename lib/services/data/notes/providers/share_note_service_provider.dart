@@ -1,7 +1,5 @@
-import 'dart:io';
-
+//import 'dart:io';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:seren_ai_flutter/common/path_provider/path_provider.dart';
 import 'package:seren_ai_flutter/services/data/notes/models/joined_note_model.dart';
 import 'package:seren_ai_flutter/services/data/notes/providers/cur_note_state_provider.dart';
 import 'package:seren_ai_flutter/services/data/notes/widgets/pdf/pdf_from_note.dart';
@@ -23,41 +21,24 @@ class ShareNoteService {
       : _state = widgetRef.watch(curNoteStateProvider);
 
   Future<void> shareNote() async {
-    File? tempFile;
     try {
       final pdf = NoteToPdfConverter(widgetRef);
       await pdf.buildPdf();
-
-      final pathProvider = PathProvider.getPathProviderFactory();
-      final tempPath = await pathProvider.getTemporaryPath();
-      final name = _state.value!.note.name;
-      final path = '$tempPath/${DateTime.now().millisecondsSinceEpoch}_$name.pdf';
-
-      tempFile = File(path);
       final bytes = await pdf.save();
-      await tempFile.writeAsBytes(bytes, flush: true);
       
-      // Wait for the share operation to complete
-      final result = await Share.shareXFiles(
-        [XFile(path)],
-        subject: name,
+      final name = _state.value!.note.name;
+      final xFile = XFile.fromData(
+        bytes,
+        name: '$name.pdf',
+        mimeType: 'application/pdf',
       );
       
-      // Only proceed with deletion after sharing is complete
-      if (await tempFile.exists()) {
-        await tempFile.delete();
-      }
-      
+      await Share.shareXFiles(
+        [xFile],
+        subject: name,
+      );
     } catch (e) {
       print('PDF generation/sharing error: $e');
-      // Ensure cleanup happens even if there's an error
-      if (tempFile != null && await tempFile.exists()) {
-        try {
-          await tempFile.delete();
-        } catch (e) {
-          print('Error cleaning up temporary file: $e');
-        }
-      }
       rethrow;
     }
   }
