@@ -20,7 +20,13 @@ class LanguageSN extends StateNotifier<String> {
   void _loadLanguage() {
     final prefs = ref.read(sharedPreferencesServiceProvider);
     final language = prefs.getString('language') ?? UniversalPlatform.instance().localeName;
-    state = language;
+
+    // Parse between web and mobile formats
+    final normalizedLanguage = language.replaceAll('-', '_')
+        .split('_')
+        .map((part) => part.toUpperCase())
+        .join('_');
+    state = normalizedLanguage;
   }
 
   Future<void> setLanguage(String language) async {
