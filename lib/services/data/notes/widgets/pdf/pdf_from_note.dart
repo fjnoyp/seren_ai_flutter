@@ -11,12 +11,14 @@ import 'package:seren_ai_flutter/services/data/notes/providers/note_attachments_
 class NoteToPdfConverter extends Document {
   final WidgetRef ref;
 
-  NoteToPdfConverter(this.ref) : super(theme: ThemeData.withFont(
-    base: Font.courier(),
-    italic: Font.courierOblique(), 
-    bold: Font.courierBold(),
-    boldItalic: Font.courierBoldOblique(),
-  ));
+  NoteToPdfConverter(this.ref)
+      : super(
+            theme: ThemeData.withFont(
+          base: Font.courier(),
+          italic: Font.courierOblique(),
+          bold: Font.courierBold(),
+          boldItalic: Font.courierBoldOblique(),
+        ));
 
   final pageFormat = PdfPageFormat.a4;
 
@@ -25,27 +27,43 @@ class NoteToPdfConverter extends Document {
 
     final attachmentWidgets = await _attachmentWidgets(joinedNote!);
 
+    final description = joinedNote.note.description;
+
+    // split the description into chunks of 100 characters
+    final descriptionChunks = <String>[];
+    if (description != null) {
+      for (var i = 0; i < description.length; i += 100) {
+        descriptionChunks.add(description.substring(
+            i, i + 100 > description.length ? description.length : i + 100));
+      }
+    }
+
     addPage(
-      Page(
+      MultiPage(
         pageFormat: pageFormat,
         build: (Context context) {
-          return Column(
-            children: [
-              ..._headerWidgets(joinedNote),
-              SizedBox(height: 12.0),
-              Divider(),
-              SizedBox(height: 12.0),
-              Align(
-                alignment: Alignment.topLeft,
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: _bodyWidgets(joinedNote),
+          return [
+            Column(
+              children: [
+                ..._headerWidgets(joinedNote),
+                SizedBox(height: 12.0),
+                Divider(),
+                SizedBox(height: 12.0),
+                Align(
+                  alignment: Alignment.topLeft,
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: _bodyWidgets(joinedNote),
+                  ),
                 ),
-              ),
-              SizedBox(height: 16.0),
-              ...attachmentWidgets,
-            ],
-          );
+                SizedBox(height: 16.0),
+                ...attachmentWidgets,
+              ],
+            ),
+            Wrap(
+              children: descriptionChunks.map((chunk) => Text(chunk)).toList(),
+            ),
+          ];
         },
       ),
     );
@@ -84,7 +102,7 @@ class NoteToPdfConverter extends Document {
         AppLocalizations.of(ref.context)!.pdfDescription,
         style: TextStyle(fontStyle: FontStyle.italic),
       ),
-      Text(joinedNote.note.description ?? ''),
+      //Text(joinedNote.note.description ?? ''),
       SizedBox(height: 16.0),
       Text(
         AppLocalizations.of(ref.context)!.pdfAddress,

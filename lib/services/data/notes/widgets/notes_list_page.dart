@@ -94,13 +94,14 @@ class _NoteListByProjectId extends ConsumerWidget {
     return AsyncValueHandlerWidget(
       value: ref.watch(curUserNotesProvider(projectId)),
       data: (notes) => notes.isEmpty
-          ? Center(child: Text(AppLocalizations.of(context)!.thisProjectHasNoNotes))
+          ? Center(
+              child: Text(AppLocalizations.of(context)!.thisProjectHasNoNotes))
           : Center(
-          child: ListView.builder(
-          itemCount: notes.length,
-            itemBuilder: (context, index) => _NoteItem(notes[index]),
-          ),
-        ),
+              child: ListView.builder(
+                itemCount: notes.length,
+                itemBuilder: (context, index) => _NoteItem(notes[index]),
+              ),
+            ),
     );
   }
 }
@@ -117,6 +118,7 @@ class _NoteItem extends ConsumerWidget {
       subtitle: Text(
         note.description ?? '',
         overflow: TextOverflow.ellipsis,
+        maxLines: 3,
       ),
       trailing: Text(
         note.createdAt != null
