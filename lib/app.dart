@@ -9,7 +9,7 @@ import 'package:seren_ai_flutter/common/navigation_service_provider.dart';
 import 'package:seren_ai_flutter/common/routes/app_routes.dart';
 import 'package:seren_ai_flutter/services/auth/widgets/auth_guard.dart';
 import 'package:seren_ai_flutter/services/auth/widgets/sign_in_up_page.dart';
-import 'package:seren_ai_flutter/services/auth/widgets/terms_and_conditions_webview.dart';
+import 'package:seren_ai_flutter/services/auth/widgets/terms_and_conditions/terms_and_conditions_webview.dart';
 import 'package:seren_ai_flutter/services/data/ai_chats/widgets/ai_chats_page.dart';
 import 'package:seren_ai_flutter/services/data/notes/widgets/notes_list_page.dart';
 import 'package:seren_ai_flutter/services/data/notes/widgets/note_page.dart';
