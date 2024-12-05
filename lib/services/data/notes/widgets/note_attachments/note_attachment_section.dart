@@ -1,10 +1,12 @@
-import 'dart:io';
+//import 'dart:io';
 
+import 'package:cross_file/cross_file.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:permission_handler/permission_handler.dart';
+import 'package:seren_ai_flutter/common/universal_platform/universal_platform.dart';
 import 'package:seren_ai_flutter/common/utils/string_extension.dart';
 import 'package:seren_ai_flutter/services/data/notes/providers/cur_note_service_provider.dart';
 import 'package:seren_ai_flutter/services/data/notes/providers/note_attachments_service_provider.dart';
@@ -40,7 +42,7 @@ class _AddAttachmentButton extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     return ElevatedButton.icon(
       onPressed: () async {
-        if (Platform.isIOS) {
+        if (UniversalPlatform.instance().isIOS) {
           if (await _getPermission()) {
             final fileType = await showModalBottomSheet<FileType>(
               context: context,
@@ -118,7 +120,7 @@ class _AddAttachmentButton extends ConsumerWidget {
       }).take(maxFileCount);
 
       // Create File objects directly from valid PlatformFile objects
-      List<File> files = validFiles.map((file) => File(file.path!)).toList();
+      List<XFile> files = validFiles.map((file) => XFile(file.path!)).toList();
 
       // Show a non-blocking loading snackbar
       ScaffoldMessenger.of(ref.context).showSnackBar(
