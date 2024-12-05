@@ -1,10 +1,12 @@
 import 'dart:async';
-import 'dart:io';
+//import 'dart:io';
 
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:speech_to_text/speech_recognition_error.dart';
 import 'package:speech_to_text/speech_recognition_result.dart';
 import 'package:speech_to_text/speech_to_text.dart';
+
+import 'package:seren_ai_flutter/common/universal_platform/universal_platform.dart';
 
 /// Provides a singleton instance of the speech to text service.
 final speechToTextServiceProvider = Provider<SpeechToTextService>((ref) {
@@ -31,7 +33,7 @@ class SpeechToTextService {
       onSpeechToTextStateListener;
   Function(String status)? onErrorListener;
 
-  String _language = Platform.localeName;
+  String _language = UniversalPlatform.instance().localeName;
 
   set language(String language) => _language = language;
 

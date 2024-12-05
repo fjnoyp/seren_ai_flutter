@@ -1,8 +1,8 @@
-import 'dart:io';
+//import 'dart:io';
 
 import 'package:flutter_tts/flutter_tts.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-
+import 'package:seren_ai_flutter/common/universal_platform/universal_platform.dart';
 enum TextToSpeechStateEnum { speaking, ready }
 
 class TextToSpeechService extends Notifier<TextToSpeechStateEnum> {
@@ -14,7 +14,7 @@ class TextToSpeechService extends Notifier<TextToSpeechStateEnum> {
 
   final flutterTts = FlutterTts();
 
-  String _language = Platform.localeName;
+  String _language = UniversalPlatform.instance().localeName;
 
   set language(String language) => _language = language;
 
