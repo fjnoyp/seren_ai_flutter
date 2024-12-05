@@ -51,7 +51,7 @@ class BaseDueDateSelectionField extends ConsumerWidget {
     if (pickedDate != null) {
       final TimeOfDay? pickedTime = await showTimePicker(
         context: context,
-        initialTime: TimeOfDay.fromDateTime(initialDate),
+        initialTime: TimeOfDay.fromDateTime(initialDate.toLocal()),
       );
 
       if (pickedTime != null) {
