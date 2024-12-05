@@ -1,7 +1,10 @@
 //import 'dart:io';
 
 import 'package:firebase_core/firebase_core.dart';
-import 'package:firebase_crashlytics/firebase_crashlytics.dart';
+
+import 'package:firebase_crashlytics/firebase_crashlytics.dart' if (dart.library.html) 'package:seren_ai_flutter/common/firebase_crashlytics/firebase_crashlytics_web_stub.dart';
+
+
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
