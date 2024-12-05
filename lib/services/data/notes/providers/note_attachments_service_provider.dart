@@ -1,5 +1,8 @@
-import 'dart:io';
+//import 'dart:io';
 
+import 'dart:typed_data';
+
+import 'package:flutter/foundation.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:open_file/open_file.dart';
 import 'package:seren_ai_flutter/common/path_provider/path_provider.dart';
@@ -45,39 +48,34 @@ class NoteAttachmentsService extends Notifier<List<String>> {
   }
 
   Future<void> uploadAttachments(
-    List<File> files, {
+    List<XFile> files, {
     required String noteId,
   }) async {
     for (var file in files) {
-      File fileToUpload = file;
+      XFile fileToUpload = file;
       String fileName = file.path.getFilePathName();
 
       // Only compress if it's an image
       if (file.path.toLowerCase().endsWith('.jpg') ||
           file.path.toLowerCase().endsWith('.jpeg') ||
           file.path.toLowerCase().endsWith('.png')) {
-        final tempDirPath = await pathProvider.getTemporaryPath();
-        final targetPath = '${tempDirPath}/${DateTime.now().millisecondsSinceEpoch}_compressed.jpg';
-        
-        final compressedXFile = await FlutterImageCompress.compressAndGetFile(
-          file.absolute.path,
-          targetPath,
+        final bytes = await file.readAsBytes();
+        final compressedBytes = await FlutterImageCompress.compressWithList(
+          bytes,
           quality: 65,
-          format: CompressFormat.jpeg,
         );
         
-        if (compressedXFile != null) {
-          fileToUpload = File(compressedXFile.path);
-          // Update filename to .jpg extension
-          if (!fileName.toLowerCase().endsWith('.jpg')) {
-            fileName = '${fileName.substring(0, fileName.lastIndexOf('.'))}.jpg';
-          }
+        fileToUpload = XFile.fromData(compressedBytes);
+        
+        // Update filename to .jpg extension if needed
+        if (!fileName.toLowerCase().endsWith('.jpg')) {
+          fileName = '${fileName.substring(0, fileName.lastIndexOf('.'))}.jpg';
         }
       }
 
-      await supabaseStorage.from('note_attachments').upload(
+      await supabaseStorage.from('note_attachments').uploadBinary(
         '$noteId/$fileName',
-        fileToUpload,
+        await fileToUpload.readAsBytes(),
         fileOptions: const FileOptions(upsert: true),
       );
     }
@@ -98,67 +96,37 @@ class NoteAttachmentsService extends Notifier<List<String>> {
     }
   }
 
+  Future<Uint8List> getAttachmentBytes({
+    required String fileUrl,
+    required String noteId,
+  }) async {
+    return await supabaseStorage
+        .from('note_attachments')
+        .download('$noteId/${fileUrl.getFilePathName()}');
+  }
+
   Future<bool> openAttachmentLocally({
     required String fileUrl,
     required String noteId,
   }) async {
-    final file = await createOrGetLocalFile(noteId, fileUrl);
+    if (kIsWeb) {
+      // TODO
+      throw UnimplementedError('Open Attachment not implemented for web');
+      // // For web, open in new tab or trigger download
+      // final url = supabaseStorage
+      //     .from('note_attachments')
+      //     .getPublicUrl('$noteId/${fileUrl.getFilePathName()}');
+      // window.open(url, '_blank');
+      // return true;
+    }
 
-    await OpenFile.open(file.path);
+    // For native platforms, create temporary file and open
+    final bytes = await getAttachmentBytes(fileUrl: fileUrl, noteId: noteId);
+    //final tempDir = await pathProvider.getTemporaryPath();
+    final tempFile = XFile.fromData(bytes, name: fileUrl.getFilePathName());
+    
+    await OpenFile.open(tempFile.path);
     return true;
-  }
-
-  Future<File> createOrGetLocalFile(String noteId, String fileUrl) async {
-    File file;
-
-    if (Platform.isIOS) {
-      // Replace getDownloadsDirectory with getApplicationDocumentsDirectory
-      final path = await pathProvider.getApplicationDocumentsPath();
-      // Create the noteId directory if it doesn't exist
-      final noteDir = Directory('$path/$noteId');
-      await noteDir.create(recursive: true);
-
-      //final fileName =
-
-      file = File(
-          '$path/$noteId/${DateTime.now().millisecondsSinceEpoch}_${fileUrl.getFilePathName()}');
-    } else {
-      final path = await pathProvider.getDownloadsPath();
-      // Create the noteId directory if it doesn't exist
-      final noteDir = Directory('${path}/$noteId');
-      await noteDir.create(recursive: true);
-
-      file = File('$path/$noteId/${fileUrl.getFilePathName()}');
-    }
-
-    if (!(await _isFileVersionFetched(
-        fileUrl: fileUrl, file: file, noteId: noteId))) {
-      final fileBytes = await supabaseStorage
-          .from('note_attachments')
-          .download('$noteId/${fileUrl.getFilePathName()}');
-      await file.writeAsBytes(fileBytes);
-    }
-
-    return file;
-  }
-
-  Future<bool> _isFileVersionFetched({
-    required String fileUrl,
-    required File file,
-    required String noteId,
-  }) async {
-    if (file.existsSync()) {
-      final lastModified = await file.lastModified();
-
-      final files =
-          await supabaseStorage.from('note_attachments').list(path: noteId);
-      final onlineFile =
-          files.firstWhere((f) => f.name == fileUrl.getFilePathName());
-      final onlineLastModified = DateTime.parse(onlineFile.updatedAt!);
-
-      return lastModified.isAfter(onlineLastModified);
-    }
-    return false;
   }
 
   Future<void> deleteAttachment({

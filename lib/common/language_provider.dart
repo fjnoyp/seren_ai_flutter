@@ -1,23 +1,25 @@
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:seren_ai_flutter/common/shared_preferences_service_provider.dart';
-import 'dart:io';
+///import 'dart:io';
 
 import 'package:seren_ai_flutter/services/auth/cur_auth_state_provider.dart';
+
+import 'package:seren_ai_flutter/common/universal_platform/universal_platform.dart';
 
 final languageSNP = StateNotifierProvider<LanguageSN, String>((ref) {
   return LanguageSN(ref);
 });
 
 class LanguageSN extends StateNotifier<String> {
-  final Ref ref;
+  final Ref ref;  
 
-  LanguageSN(this.ref) : super(Platform.localeName) {
+  LanguageSN(this.ref) : super(UniversalPlatform.instance().localeName) {
     ref.listen(curUserProvider, (_, __) => _loadLanguage());
   }
 
   void _loadLanguage() {
     final prefs = ref.read(sharedPreferencesServiceProvider);
-    final language = prefs.getString('language') ?? Platform.localeName;
+    final language = prefs.getString('language') ?? UniversalPlatform.instance().localeName;
     state = language;
   }
 
