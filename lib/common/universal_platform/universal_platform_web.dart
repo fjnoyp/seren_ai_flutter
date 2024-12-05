@@ -6,8 +6,7 @@ class UniversalPlatformWeb extends UniversalPlatform {
   String get localeName {
     // Get browser's language preference
     final browserLocale = html.window.navigator.language;
-    // Return first part of locale (e.g., 'en' from 'en-US')
-    return browserLocale.split('-')[0];
+    return browserLocale;
   }
 
   @override

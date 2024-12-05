@@ -113,7 +113,8 @@ class DrawerView extends HookWidget {
             ),
             Consumer(
               builder: (context, ref, child) {
-                final language = ref.watch(languageSNP);
+                final language = ref.watch(languageSNP).toUpperCase();
+                  
                 return ListTile(
                   dense: true,
                   leading: const Icon(Icons.language),
@@ -134,18 +135,18 @@ class DrawerView extends HookWidget {
                     // these items were removed by commit 588ced3
                     items: [
                       DropdownMenuItem(
-                        value: 'en_US',
+                        value: 'EN_US',
                         child: Text(AppLocalizations.of(context)!.english,
                             style: theme.textTheme.bodySmall),
                       ),
                       DropdownMenuItem(
-                        value: 'pt_BR',
+                        value: 'PT_BR',
                         child: Text(
                             AppLocalizations.of(context)!.brazilianPortuguese,
                             style: theme.textTheme.bodySmall),
                       ),
                       DropdownMenuItem(
-                        value: 'pt_PT',
+                        value: 'PT_PT',
                         child: Text(
                             AppLocalizations.of(context)!.europeanPortuguese,
                             style: theme.textTheme.bodySmall),
