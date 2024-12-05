@@ -126,7 +126,6 @@ class CurTaskService {
               ? TaskReminderModel(
                   taskId: _state.value!.task.id,
                   reminderOffsetMinutes: reminderOffsetMinutes,
-                  isCompleted: false,
                 )
               : null,
         ),

@@ -1,3 +1,4 @@
+import 'package:flutter/material.dart';
 import 'package:seren_ai_flutter/services/data/common/widgets/form/base_assignees_selection_field.dart';
 import 'package:seren_ai_flutter/services/data/common/widgets/form/base_reminder_selection_field.dart';
 import 'package:seren_ai_flutter/services/data/common/widgets/form/base_text_block_edit_selection_field.dart';
@@ -71,8 +72,9 @@ class TaskDueDateSelectionField extends BaseDueDateSelectionField {
         );
 }
 
-class TaskReminderSelectionField extends BaseReminderSelectionField {
-  TaskReminderSelectionField({
+class ReminderMinuteOffestFromDueDateSelectionField
+    extends BaseMinuteSelectionField {
+  ReminderMinuteOffestFromDueDateSelectionField({
     super.key,
     required super.enabled,
   }) : super(
@@ -80,6 +82,10 @@ class TaskReminderSelectionField extends BaseReminderSelectionField {
               .select((state) => state.value?.reminder?.reminderOffsetMinutes),
           updateReminder: (ref, reminder) =>
               ref.read(curTaskServiceProvider).setReminder(reminder),
+          labelWidgetBuilder: (ref) =>
+              ref.watch(curTaskStateProvider).value?.reminder == null
+                  ? const Icon(Icons.notifications_off)
+                  : const Icon(Icons.notifications),
         );
 }
 

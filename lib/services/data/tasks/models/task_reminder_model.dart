@@ -15,19 +15,10 @@ class TaskReminderModel implements IHasId {
   @JsonKey(name: 'reminder_offset_minutes')
   final int reminderOffsetMinutes;
 
-  @JsonKey(
-    name: 'is_completed',
-    fromJson: _boolFromInt,
-  )
-  final bool isCompleted;
-
-  static bool _boolFromInt(value) => (value as num).toInt() == 1;
-
   TaskReminderModel({
     String? id,
     required this.taskId,
     required this.reminderOffsetMinutes,
-    required this.isCompleted,
   }) : id = id ?? uuid.v4();
 
   factory TaskReminderModel.fromJson(Map<String, dynamic> json) =>

@@ -481,7 +481,6 @@ abstract class TaskQueries {
         'id', tr.id,
         'task_id', tr.task_id,
         'reminder_offset_minutes', tr.reminder_offset_minutes,
-        'is_completed', tr.is_completed,
         'created_at', tr.created_at,
         'updated_at', tr.updated_at
       ) END as reminder
@@ -494,5 +493,26 @@ abstract class TaskQueries {
     LEFT JOIN task_reminders tr ON t.id = tr.task_id
     WHERE t.id = :task_id
     GROUP BY t.id;
+  ''';
+
+  /// Params:
+  /// - user_id: String
+  /// - author_user_id: String
+  /// Used to fetch notifications of viewable tasks for a user (tasks where they are assigned to the project or are the author)
+  static const String userViewableTasksNotificationsQuery = '''
+    SELECT 
+      ROW_NUMBER() OVER () as id,
+      t.name as task_name,
+      tr.reminder_offset_minutes as reminder_offset_minutes,
+      datetime(t.due_date, '-' || tr.reminder_offset_minutes || ' minutes') as scheduled_date
+    FROM task_reminders tr
+    JOIN tasks t ON tr.task_id = t.id
+    LEFT JOIN user_project_assignments pua ON t.parent_project_id = pua.project_id
+    LEFT JOIN team_project_assignments tpa ON t.parent_project_id = tpa.project_id
+    LEFT JOIN user_team_assignments uta ON tpa.team_id = uta.team_id
+    WHERE pua.user_id = :user_id
+    OR uta.user_id = :user_id
+    OR t.author_user_id = :author_user_id
+    GROUP BY tr.id;
   ''';
 }

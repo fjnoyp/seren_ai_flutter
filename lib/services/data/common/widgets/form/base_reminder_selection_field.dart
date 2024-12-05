@@ -2,16 +2,18 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:seren_ai_flutter/services/data/common/widgets/form/selection_field.dart';
 
-class BaseReminderSelectionField extends ConsumerWidget {
+class BaseMinuteSelectionField extends ConsumerWidget {
   final bool enabled;
   final ProviderListenable<int?> reminderProvider;
   final Function(WidgetRef, int?) updateReminder;
+  final Widget Function(WidgetRef) labelWidgetBuilder;
 
-  const BaseReminderSelectionField({
+  const BaseMinuteSelectionField({
     super.key,
     required this.enabled,
     required this.reminderProvider,
     required this.updateReminder,
+    required this.labelWidgetBuilder,
   });
 
   @override
@@ -19,9 +21,7 @@ class BaseReminderSelectionField extends ConsumerWidget {
     final curTaskReminder = ref.watch(reminderProvider);
 
     return AnimatedModalReminderTimeSelectionField(
-      labelWidget: curTaskReminder == null
-          ? const Icon(Icons.notifications_off)
-          : const Icon(Icons.notifications),
+      labelWidget: labelWidgetBuilder(ref),
       validator: (reminder) => null,
       enabled: enabled,
       value: curTaskReminder,

@@ -83,7 +83,8 @@ class TaskPage extends HookConsumerWidget {
                   const Divider(),
                   TaskDueDateSelectionField(enabled: isEnabled),
                   const Divider(),
-                  TaskReminderSelectionField(enabled: isEnabled),
+                  ReminderMinuteOffestFromDueDateSelectionField(
+                      enabled: isEnabled),
                   const Divider(),
                   TaskAssigneesSelectionField(enabled: isEnabled),
                   const Divider(),
@@ -232,7 +233,6 @@ Future<void> openTaskPage(BuildContext context, WidgetRef ref,
     EditablePageMode.readOnly => initialJoinedTask?.task.name ??
         ref.read(curTaskStateProvider).value!.task.name,
   };
-
 
   if (mode == EditablePageMode.edit) {
     ref.read(isShowSaveDialogOnPopProvider.notifier).setCanSave(true);

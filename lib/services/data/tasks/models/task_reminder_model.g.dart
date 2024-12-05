@@ -11,7 +11,6 @@ TaskReminderModel _$TaskReminderModelFromJson(Map<String, dynamic> json) =>
       id: json['id'] as String?,
       taskId: json['task_id'] as String,
       reminderOffsetMinutes: (json['reminder_offset_minutes'] as num).toInt(),
-      isCompleted: TaskReminderModel._boolFromInt(json['is_completed']),
     );
 
 Map<String, dynamic> _$TaskReminderModelToJson(TaskReminderModel instance) =>
@@ -19,5 +18,4 @@ Map<String, dynamic> _$TaskReminderModelToJson(TaskReminderModel instance) =>
       'id': instance.id,
       'task_id': instance.taskId,
       'reminder_offset_minutes': instance.reminderOffsetMinutes,
-      'is_completed': instance.isCompleted,
     };

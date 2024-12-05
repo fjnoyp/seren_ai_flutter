@@ -20,6 +20,7 @@ import 'package:seren_ai_flutter/services/data/projects/widgets/project_details_
 import 'package:seren_ai_flutter/services/data/projects/widgets/projects_page.dart';
 import 'package:seren_ai_flutter/services/data/shifts/providers/cur_shift_state_provider.dart';
 import 'package:seren_ai_flutter/services/data/shifts/widgets/shifts_page.dart';
+import 'package:seren_ai_flutter/services/data/tasks/repositories/task_notifications_repository.dart';
 import 'package:seren_ai_flutter/services/data/tasks/widgets/task_page.dart';
 import 'package:seren_ai_flutter/services/ai_interaction/stt_orchestrator_provider.dart.dart';
 import 'package:seren_ai_flutter/widgets/home/home_page.dart';
@@ -54,6 +55,7 @@ class AppState extends State<App> {
         // === Permanent Providers ===
         ref.read(sttOrchestratorProvider);
         ref.read(curShiftStateProvider);
+        ref.read(taskNotificationsServiceProvider);
 
         final themeMode = ref.watch(themeSNP);
         
@@ -90,9 +92,10 @@ class AppState extends State<App> {
             AppRoutes.projects.name: (context) => _GuardScaffold(
                 AppLocalizations.of(context)!.projects, const ProjectsPage()),
             AppRoutes.projectDetails.name: (context) => _GuardScaffold(
-              'Project Details',
-                // AppLocalizations.of(context)!.projectDetails,
-                 const ProjectDetailsPage(),),
+                  'Project Details',
+                  // AppLocalizations.of(context)!.projectDetails,
+                  const ProjectDetailsPage(),
+                ),
             AppRoutes.tasks.name: (context) => _GuardScaffold(
                 AppLocalizations.of(context)!.tasks, const TasksListPage()),
             AppRoutes.taskPage.name: (context) {
