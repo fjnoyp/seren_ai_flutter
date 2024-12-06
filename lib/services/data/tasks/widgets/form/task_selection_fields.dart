@@ -72,9 +72,9 @@ class TaskDueDateSelectionField extends BaseDueDateSelectionField {
         );
 }
 
-class ReminderMinuteOffestFromDueDateSelectionField
+class ReminderMinuteOffsetFromDueDateSelectionField
     extends BaseMinuteSelectionField {
-  ReminderMinuteOffestFromDueDateSelectionField({
+  ReminderMinuteOffsetFromDueDateSelectionField({
     super.key,
     required super.enabled,
   }) : super(
@@ -82,11 +82,14 @@ class ReminderMinuteOffestFromDueDateSelectionField
               .select((state) => state.value?.task.reminderOffsetMinutes),
           updateReminder: (ref, reminder) =>
               ref.read(curTaskServiceProvider).setReminder(reminder),
-          labelWidgetBuilder: (ref) =>
-              ref.watch(curTaskStateProvider).value?.task.reminderOffsetMinutes ==
-                      null
-                  ? const Icon(Icons.notifications_off)
-                  : const Icon(Icons.notifications),
+          labelWidgetBuilder: (ref) => ref
+                      .watch(curTaskStateProvider)
+                      .value
+                      ?.task
+                      .reminderOffsetMinutes ==
+                  null
+              ? const Icon(Icons.notifications_off)
+              : const Icon(Icons.notifications),
         );
 }
 
