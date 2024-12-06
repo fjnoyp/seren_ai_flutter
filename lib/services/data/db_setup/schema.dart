@@ -57,7 +57,6 @@ const permissionSchemas = [
 const tasksTable = 'tasks';
 const taskCommentsTable = 'task_comments';
 const taskUserAssignmentsTable = 'task_user_assignments';
-const taskRemindersTable = 'task_reminders';
 
 const tasksSchemas = [
   Table(tasksTable, [
@@ -71,6 +70,7 @@ const tasksSchemas = [
     Column.text('author_user_id'),
     Column.text('parent_project_id'),
     Column.text('estimated_duration_minutes'),
+    Column.integer('reminder_offset_minutes'),
   ]),
   Table(taskCommentsTable, [
     // Column.text('id'),
@@ -85,10 +85,6 @@ const tasksSchemas = [
     // Column.text('id'),
     Column.text('task_id'),
     Column.text('user_id'),
-  ]),
-  Table(taskRemindersTable, [
-    Column.text('task_id'),
-    Column.integer('reminder_offset_minutes'),
   ]),
 ];
 

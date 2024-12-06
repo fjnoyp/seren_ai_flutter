@@ -249,8 +249,8 @@ class SelectionField<T> extends HookConsumerWidget {
   }
 }
 
-class AnimatedModalReminderTimeSelectionField extends HookConsumerWidget {
-  const AnimatedModalReminderTimeSelectionField({
+class AnimatedModalMinuteSelectionField extends HookConsumerWidget {
+  const AnimatedModalMinuteSelectionField({
     super.key,
     required this.labelWidget,
     required this.validator,
@@ -286,8 +286,10 @@ class AnimatedModalReminderTimeSelectionField extends HookConsumerWidget {
             child: SelectionField<int>(
               labelWidget: labelWidget,
               validator: validator,
-              valueToString: (value) =>
-                  value == null ? AppLocalizations.of(context)!.noReminderSet : AppLocalizations.of(context)!.minutes(value ~/ 60, value % 60),
+              valueToString: (value) => value == null
+                  ? AppLocalizations.of(context)!.noReminderSet
+                  : AppLocalizations.of(context)!
+                      .minutes(value ~/ 60, value % 60),
               enabled: enabled,
               value: value,
               onValueChanged: onValueChanged,
@@ -299,10 +301,19 @@ class AnimatedModalReminderTimeSelectionField extends HookConsumerWidget {
                     builder:
                         (BuildContext context, WidgetRef ref, Widget? child) {
                       final List<({int? minutes, String label})> options = [
-                        (minutes: null, label: AppLocalizations.of(context)!.noReminder),
-                        ...quickOptions
-                            .map((e) => (minutes: e, label: AppLocalizations.of(context)!.minutes(e ~/ 60, e % 60))),
-                        (minutes: null, label: AppLocalizations.of(context)!.other),
+                        (
+                          minutes: null,
+                          label: AppLocalizations.of(context)!.noReminder
+                        ),
+                        ...quickOptions.map((e) => (
+                              minutes: e,
+                              label: AppLocalizations.of(context)!
+                                  .minutes(e ~/ 60, e % 60)
+                            )),
+                        (
+                          minutes: null,
+                          label: AppLocalizations.of(context)!.other
+                        ),
                       ];
                       return ListView.builder(
                         itemCount: options.length,

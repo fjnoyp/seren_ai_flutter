@@ -20,7 +20,7 @@ import 'package:seren_ai_flutter/services/data/projects/widgets/project_details_
 import 'package:seren_ai_flutter/services/data/projects/widgets/projects_page.dart';
 import 'package:seren_ai_flutter/services/data/shifts/providers/cur_shift_state_provider.dart';
 import 'package:seren_ai_flutter/services/data/shifts/widgets/shifts_page.dart';
-import 'package:seren_ai_flutter/services/data/tasks/repositories/task_notifications_repository.dart';
+import 'package:seren_ai_flutter/services/data/tasks/providers/task_schedule_notifications_service.dart';
 import 'package:seren_ai_flutter/services/data/tasks/widgets/task_page.dart';
 import 'package:seren_ai_flutter/services/ai_interaction/stt_orchestrator_provider.dart.dart';
 import 'package:seren_ai_flutter/widgets/home/home_page.dart';
@@ -55,10 +55,10 @@ class AppState extends State<App> {
         // === Permanent Providers ===
         ref.read(sttOrchestratorProvider);
         ref.read(curShiftStateProvider);
-        ref.read(taskNotificationsServiceProvider);
+        ref.read(taskScheduleNotificationsServiceProvider);
 
         final themeMode = ref.watch(themeSNP);
-        
+
         final languageString = ref.watch(languageSNP);
         final parts = languageString.split('_');
         final languageCode = parts.isNotEmpty ? parts[0] : 'en';

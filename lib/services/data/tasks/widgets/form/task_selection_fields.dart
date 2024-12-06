@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:seren_ai_flutter/services/data/common/widgets/form/base_assignees_selection_field.dart';
-import 'package:seren_ai_flutter/services/data/common/widgets/form/base_reminder_selection_field.dart';
+import 'package:seren_ai_flutter/services/data/common/widgets/form/base_minute_selection_field.dart';
 import 'package:seren_ai_flutter/services/data/common/widgets/form/base_text_block_edit_selection_field.dart';
 import 'package:seren_ai_flutter/services/data/common/widgets/form/base_due_date_selection_field.dart';
 import 'package:seren_ai_flutter/services/data/common/widgets/form/base_priority_selection_field.dart';
@@ -79,11 +79,12 @@ class ReminderMinuteOffestFromDueDateSelectionField
     required super.enabled,
   }) : super(
           reminderProvider: curTaskStateProvider
-              .select((state) => state.value?.reminder?.reminderOffsetMinutes),
+              .select((state) => state.value?.task.reminderOffsetMinutes),
           updateReminder: (ref, reminder) =>
               ref.read(curTaskServiceProvider).setReminder(reminder),
           labelWidgetBuilder: (ref) =>
-              ref.watch(curTaskStateProvider).value?.reminder == null
+              ref.watch(curTaskStateProvider).value?.task.reminderOffsetMinutes ==
+                      null
                   ? const Icon(Icons.notifications_off)
                   : const Icon(Icons.notifications),
         );

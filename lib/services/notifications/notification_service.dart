@@ -2,7 +2,6 @@ import 'dart:developer';
 import 'dart:io' show Platform;
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:seren_ai_flutter/services/notifications/models/notification_model.dart';
 import 'notification_handlers.dart';
 import 'package:timezone/timezone.dart' as tz;
 import 'package:timezone/data/latest.dart' as tz;
@@ -82,18 +81,23 @@ class NotificationService {
     }
   }
 
-  Future<void> scheduleNotification(NotificationModel notification) async {
+  Future<void> scheduleNotification({
+    required int id,
+    required String title,
+    required String body,
+    required DateTime scheduledDate,
+  }) async {
     await _notificationsPlugin.zonedSchedule(
-      notification.id,
-      notification.title,
-      notification.body,
-      tz.TZDateTime.from(notification.scheduledDate, tz.local),
+      id,
+      title,
+      body,
+      tz.TZDateTime.from(scheduledDate, tz.local),
       _platformDetails,
       androidScheduleMode: AndroidScheduleMode.exactAllowWhileIdle,
       uiLocalNotificationDateInterpretation:
           UILocalNotificationDateInterpretation.absoluteTime,
     );
-    log('Scheduled notification with id ${notification.id} to notify at ${notification.scheduledDate}');
+    log('Scheduled notification with id $id to notify at $scheduledDate');
   }
 
   // Cancel a specific notification by ID

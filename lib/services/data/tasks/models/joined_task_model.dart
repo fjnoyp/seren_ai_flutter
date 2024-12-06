@@ -1,7 +1,6 @@
 import 'package:seren_ai_flutter/services/data/projects/models/project_model.dart';
 import 'package:seren_ai_flutter/services/data/tasks/models/task_comments_model.dart';
 import 'package:seren_ai_flutter/services/data/tasks/models/task_model.dart';
-import 'package:seren_ai_flutter/services/data/tasks/models/task_reminder_model.dart';
 import 'package:seren_ai_flutter/services/data/users/models/user_model.dart';
 
 class JoinedTaskModel {
@@ -10,7 +9,6 @@ class JoinedTaskModel {
   final ProjectModel? project;
   final List<UserModel> assignees;
   final List<TaskCommentsModel> comments;
-  final TaskReminderModel? reminder;
 
   JoinedTaskModel({
     required this.task,
@@ -18,7 +16,6 @@ class JoinedTaskModel {
     required this.project,
     required this.assignees,
     required this.comments,
-    required this.reminder,
   });
 
   static JoinedTaskModel empty() {
@@ -28,7 +25,6 @@ class JoinedTaskModel {
       project: null,
       assignees: [],
       comments: [],
-      reminder: null,
     );
   }
 
@@ -38,8 +34,6 @@ class JoinedTaskModel {
     ProjectModel? project,
     List<UserModel>? assignees,
     List<TaskCommentsModel>? comments,
-    TaskReminderModel? reminder,
-    bool removeReminder = false,
   }) {
     return JoinedTaskModel(
       task: task ?? this.task,
@@ -47,7 +41,6 @@ class JoinedTaskModel {
       project: project ?? this.project,
       assignees: assignees ?? this.assignees,
       comments: comments ?? this.comments,
-      reminder: removeReminder ? null : reminder ?? this.reminder,
     );
   }
 
@@ -68,9 +61,6 @@ class JoinedTaskModel {
           .where((e) => e != null)
           .map((e) => TaskCommentsModel.fromJson(e))
     ];
-    final reminder = json['reminder'] != null
-        ? TaskReminderModel.fromJson(json['reminder'])
-        : null;
 
     return JoinedTaskModel(
       task: task,
@@ -78,7 +68,6 @@ class JoinedTaskModel {
       project: project,
       assignees: assignees,
       comments: comments,
-      reminder: reminder,
     );
   }
 
@@ -89,7 +78,6 @@ class JoinedTaskModel {
       'project': project?.toJson(),
       'assignees': assignees.map((e) => e.toJson()).toList(),
       'comments': comments.map((e) => e.toJson()).toList(),
-      'reminder': reminder?.toJson(),
     };
   }
 
@@ -108,7 +96,6 @@ class JoinedTaskModel {
       'author': authorUser?.email ?? 'Unknown',
       'project': project?.name ?? 'No Project',
       'assignees': assignees.map((user) => user.email).toList(),
-      'reminder': reminder?.toJson(),
     };
   }
 }

@@ -48,6 +48,7 @@ abstract class TaskQueries {
         'author_user_id', t.author_user_id,
         'parent_project_id', t.parent_project_id,
         'estimated_duration_minutes', t.estimated_duration_minutes,
+        'reminder_offset_minutes', t.reminder_offset_minutes,
         'created_at', t.created_at,
         'updated_at', t.updated_at
       ) as task,
@@ -154,6 +155,7 @@ abstract class TaskQueries {
         'author_user_id', t.author_user_id,
         'parent_project_id', t.parent_project_id,
         'estimated_duration_minutes', t.estimated_duration_minutes,
+        'reminder_offset_minutes', t.reminder_offset_minutes,
         'created_at', t.created_at,
         'updated_at', t.updated_at
       ) END as parent_task
@@ -197,6 +199,7 @@ abstract class TaskQueries {
         'author_user_id', t.author_user_id,
         'parent_project_id', t.parent_project_id,
         'estimated_duration_minutes', t.estimated_duration_minutes,
+        'reminder_offset_minutes', t.reminder_offset_minutes,
         'created_at', t.created_at,
         'updated_at', t.updated_at
       ) ELSE NULL END as task
@@ -240,6 +243,7 @@ abstract class TaskQueries {
           'author_user_id', t.author_user_id,
           'parent_project_id', t.parent_project_id,
           'estimated_duration_minutes', t.estimated_duration_minutes,
+          'reminder_offset_minutes', t.reminder_offset_minutes,
           'created_at', t.created_at,
           'updated_at', t.updated_at
         ) ELSE NULL END as task
@@ -268,6 +272,7 @@ abstract class TaskQueries {
         'author_user_id', t.author_user_id,
         'parent_project_id', t.parent_project_id,
         'estimated_duration_minutes', t.estimated_duration_minutes,
+        'reminder_offset_minutes', t.reminder_offset_minutes,
         'created_at', t.created_at,
         'updated_at', t.updated_at
       ) as task,
@@ -351,6 +356,7 @@ abstract class TaskQueries {
         'author_user_id', t.author_user_id,
         'parent_project_id', t.parent_project_id,
         'estimated_duration_minutes', t.estimated_duration_minutes,
+        'reminder_offset_minutes', t.reminder_offset_minutes,
         'created_at', t.created_at,
         'updated_at', t.updated_at
       ) as task,
@@ -428,6 +434,7 @@ abstract class TaskQueries {
         'author_user_id', t.author_user_id,
         'parent_project_id', t.parent_project_id,
         'estimated_duration_minutes', t.estimated_duration_minutes,
+        'reminder_offset_minutes', t.reminder_offset_minutes,
         'created_at', t.created_at,
         'updated_at', t.updated_at
       ) as task,
@@ -476,43 +483,14 @@ abstract class TaskQueries {
           'created_at', tc.created_at,
           'updated_at', tc.updated_at
         ) END
-      ) as comments,
-      CASE WHEN tr.id IS NOT NULL THEN json_object(
-        'id', tr.id,
-        'task_id', tr.task_id,
-        'reminder_offset_minutes', tr.reminder_offset_minutes,
-        'created_at', tr.created_at,
-        'updated_at', tr.updated_at
-      ) END as reminder
+      ) as comments
     FROM tasks t
     LEFT JOIN users au ON t.author_user_id = au.id
     LEFT JOIN projects p ON t.parent_project_id = p.id
     LEFT JOIN task_user_assignments tua ON t.id = tua.task_id
     LEFT JOIN users a ON tua.user_id = a.id
     LEFT JOIN task_comments tc ON t.id = tc.parent_task_id
-    LEFT JOIN task_reminders tr ON t.id = tr.task_id
     WHERE t.id = :task_id
     GROUP BY t.id;
-  ''';
-
-  /// Params:
-  /// - user_id: String
-  /// - author_user_id: String
-  /// Used to fetch notifications of viewable tasks for a user (tasks where they are assigned to the project or are the author)
-  static const String userViewableTasksNotificationsQuery = '''
-    SELECT 
-      ROW_NUMBER() OVER () as id,
-      t.name as task_name,
-      tr.reminder_offset_minutes as reminder_offset_minutes,
-      datetime(t.due_date, '-' || tr.reminder_offset_minutes || ' minutes') as scheduled_date
-    FROM task_reminders tr
-    JOIN tasks t ON tr.task_id = t.id
-    LEFT JOIN user_project_assignments pua ON t.parent_project_id = pua.project_id
-    LEFT JOIN team_project_assignments tpa ON t.parent_project_id = tpa.project_id
-    LEFT JOIN user_team_assignments uta ON tpa.team_id = uta.team_id
-    WHERE pua.user_id = :user_id
-    OR uta.user_id = :user_id
-    OR t.author_user_id = :author_user_id
-    GROUP BY tr.id;
   ''';
 }

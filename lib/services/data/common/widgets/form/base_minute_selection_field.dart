@@ -20,7 +20,7 @@ class BaseMinuteSelectionField extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final curTaskReminder = ref.watch(reminderProvider);
 
-    return AnimatedModalReminderTimeSelectionField(
+    return AnimatedModalMinuteSelectionField(
       labelWidget: labelWidgetBuilder(ref),
       validator: (reminder) => null,
       enabled: enabled,

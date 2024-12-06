@@ -24,8 +24,7 @@ class JoinedTasksRepository extends BaseRepository<JoinedTaskModel> {
               'author_user',
               'project',
               'assignees',
-              'comments',
-              'reminder'
+              'comments'
             ].contains(key) &&
             value != null
         ? MapEntry(key, jsonDecode(value))

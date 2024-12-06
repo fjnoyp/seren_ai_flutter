@@ -5,17 +5,13 @@ import 'package:seren_ai_flutter/services/data/projects/models/project_model.dar
 import 'package:seren_ai_flutter/services/data/tasks/models/joined_task_model.dart';
 import 'package:seren_ai_flutter/services/data/tasks/models/task_comments_model.dart';
 import 'package:seren_ai_flutter/services/data/tasks/models/task_model.dart';
-import 'package:seren_ai_flutter/services/data/tasks/models/task_reminder_model.dart';
 import 'package:seren_ai_flutter/services/data/tasks/models/task_user_assignments_model.dart';
 import 'package:seren_ai_flutter/services/data/tasks/providers/cur_task_state_provider.dart';
 import 'package:seren_ai_flutter/services/data/tasks/providers/joined_task_comments_provider.dart';
-import 'package:seren_ai_flutter/services/data/tasks/repositories/joined_task_repository.dart';
 import 'package:seren_ai_flutter/services/data/tasks/task_comments_db_provider.dart';
-import 'package:seren_ai_flutter/services/data/tasks/task_reminders_db_provider.dart';
 import 'package:seren_ai_flutter/services/data/tasks/task_user_assignments_db_provider.dart';
 import 'package:seren_ai_flutter/services/data/tasks/tasks_db_provider.dart';
 import 'package:seren_ai_flutter/services/data/users/models/user_model.dart';
-import 'package:supabase_flutter/supabase_flutter.dart';
 
 final curTaskServiceProvider = Provider<CurTaskService>((ref) {
   return CurTaskService(ref);
@@ -121,13 +117,10 @@ class CurTaskService {
     if (_state.value != null) {
       _notifier.setNewTask(
         _state.value!.copyWith(
-          removeReminder: reminderOffsetMinutes == null,
-          reminder: reminderOffsetMinutes != null
-              ? TaskReminderModel(
-                  taskId: _state.value!.task.id,
-                  reminderOffsetMinutes: reminderOffsetMinutes,
-                )
-              : null,
+          task: _state.value!.task.copyWith(
+            removeReminder: reminderOffsetMinutes == null,
+            reminderOffsetMinutes: reminderOffsetMinutes,
+          ),
         ),
       );
     }
@@ -153,23 +146,6 @@ class CurTaskService {
     for (var assignment in previousAssignments) {
       if (!taskUserAssignments.any((e) => e.userId == assignment.userId)) {
         await taskUserAssignmentsDbProvider.deleteItem(assignment.id);
-      }
-    }
-
-    final taskReminder = _state.value!.reminder;
-    if (taskReminder != null) {
-      await Supabase.instance.client.rpc('set_task_reminder', params: {
-        'p_task_id': _state.value!.task.id,
-        'p_reminder_offset_minutes': taskReminder.reminderOffsetMinutes
-      });
-    } else {
-      final existingReminder = await ref
-          .read(joinedTasksRepositoryProvider)
-          .getJoinedTaskById(_state.value!.task.id);
-      if (existingReminder != null) {
-        await ref
-            .read(taskRemindersDbProvider)
-            .deleteItem(existingReminder.reminder!.id);
       }
     }
 
