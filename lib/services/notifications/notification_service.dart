@@ -10,6 +10,10 @@ final notificationServiceProvider = Provider<NotificationService>((ref) {
   throw UnimplementedError('NotificationService not overridden');
 });
 
+// TODO: Currently we cancel and reschedule all notifications because we can't maintain
+// a stable mapping between tasks and their notifications.
+// This is because notification IDs are changing based on array position at the update time,
+// because it changes when notifications are added/dismissed.
 class NotificationService {
   final _notificationsPlugin = FlutterLocalNotificationsPlugin();
 
