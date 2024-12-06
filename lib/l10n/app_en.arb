@@ -358,6 +358,14 @@
         }
     },
     "noReminder": "No reminder",
+    "taskReminder": "Task Reminder",
+    "taskReminderBody": "Task {taskName} is due in {reminderOffsetMinutes} minutes",
+    "@taskReminderBody": {
+        "placeholders": {
+            "taskName": {"type": "String"},
+            "reminderOffsetMinutes": {"type": "int"}
+        }
+    },
 
     "@_": {"description": "Test SQL Page"},
     "testSQLPage": "Test SQL Page",
