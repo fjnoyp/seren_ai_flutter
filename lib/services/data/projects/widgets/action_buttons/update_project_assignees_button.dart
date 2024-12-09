@@ -12,21 +12,30 @@ class UpdateProjectAssigneesButton extends ConsumerWidget {
     return IconButton(
       icon: const Icon(Icons.person_add),
       onPressed: () {
-        final projectService = ref.read(curProjectServiceProvider);
-        final projectAssignees = ref.read(curProjectStateProvider).assignees;
-
         showModalBottomSheet(
           context: context,
           isScrollControlled: true,
           builder: (BuildContext context) {
-            return AssigneesFromCurOrgSelectionModal(
-              initialSelectedUsers: projectAssignees,
-              onAssigneesChanged: (_, assignees) async =>
-                  await projectService.updateAssignees(assignees),
-            );
+            return const UpdateProjectAssigneesModal();
           },
         );
       },
+    );
+  }
+}
+
+class UpdateProjectAssigneesModal extends ConsumerWidget {
+  const UpdateProjectAssigneesModal({super.key});
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final projectService = ref.read(curProjectServiceProvider);
+    final projectAssignees = ref.read(curProjectStateProvider).assignees;
+
+    return AssigneesFromCurOrgSelectionModal(
+      initialSelectedUsers: projectAssignees,
+      onAssigneesChanged: (_, assignees) async =>
+          await projectService.updateAssignees(assignees),
     );
   }
 }

@@ -5,6 +5,7 @@ import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:seren_ai_flutter/services/data/common/widgets/async_value_handler_widget.dart';
 import 'package:seren_ai_flutter/services/data/common/widgets/form/selection_field.dart';
 import 'package:seren_ai_flutter/services/data/projects/models/project_model.dart';
+import 'package:seren_ai_flutter/services/data/projects/widgets/action_buttons/update_project_assignees_button.dart';
 import 'package:seren_ai_flutter/services/data/users/models/user_model.dart';
 import 'package:seren_ai_flutter/services/data/users/providers/users_in_project_provider.dart';
 
@@ -103,9 +104,12 @@ class AssigneesSelectionModal extends HookConsumerWidget {
                 ],
               ),
               ElevatedButton(
-                onPressed: () {
-                  // Add logic to add more users to the current project
-                },
+                onPressed: () => showModalBottomSheet(
+                  context: context,
+                  builder: (BuildContext context) {
+                    return const UpdateProjectAssigneesModal();
+                  },
+                ),
                 child: Text(
                     AppLocalizations.of(context)!.addUsersTo(curProject.name)),
               ),

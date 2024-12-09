@@ -28,6 +28,7 @@ class AssigneesFromCurOrgSelectionModal extends HookConsumerWidget {
         ),
         child: Container(
           padding: const EdgeInsets.all(16),
+          height: MediaQuery.of(context).size.height * 0.9,
           child: Column(
             mainAxisSize: MainAxisSize.min,
             children: [
@@ -40,10 +41,7 @@ class AssigneesFromCurOrgSelectionModal extends HookConsumerWidget {
                   Text(AppLocalizations.of(context)!.canBeAssigned),
                 ],
               ),
-              ConstrainedBox(
-                constraints: BoxConstraints(
-                  maxHeight: MediaQuery.of(context).size.height * 0.7,
-                ),
+              Expanded(
                 child: ListView.builder(
                   itemCount: joinedCurOrgRoles.length,
                   itemBuilder: (context, index) {
