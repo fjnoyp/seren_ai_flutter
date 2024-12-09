@@ -21,6 +21,7 @@
     "enterText": "Inserir Texto",
     "enterTextHere": "Insira o texto aqui...",
     "testSQL": "Testar SQL",
+    "assignees": "Responsáveis",
 
     "@_": {"description": "Settings"},
     "settings": "Definições",
@@ -94,6 +95,8 @@
     "onlyUsersIn": "Apenas utilizadores em ",
     "canBeAssigned": " podem ser atribuídos",
     "addUsersTo": "Adicionar Utilizadores a {projectName}",
+    "updateProject": "Atualizar Projeto",
+    "createProject": "Criar Projeto",
 
     "@_": {"description": "Teams"},
     "team": "Equipa",

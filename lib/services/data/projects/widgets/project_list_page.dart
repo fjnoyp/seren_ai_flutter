@@ -1,20 +1,20 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:seren_ai_flutter/common/navigation_service_provider.dart';
-import 'package:seren_ai_flutter/common/routes/app_routes.dart';
 import 'package:seren_ai_flutter/services/data/common/widgets/async_value_handler_widget.dart';
 import 'package:seren_ai_flutter/services/data/common/widgets/create_item_bottom_button.dart';
+import 'package:seren_ai_flutter/services/data/orgs/providers/cur_user_org_role_provider.dart';
 import 'package:seren_ai_flutter/services/data/projects/models/project_model.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
-import 'package:seren_ai_flutter/services/data/projects/providers/cur_project_state_provider.dart';
 import 'package:seren_ai_flutter/services/data/projects/providers/cur_user_viewable_projects_provider.dart';
-import 'package:seren_ai_flutter/widgets/common/debug_mode_provider.dart';
+import 'package:seren_ai_flutter/services/data/projects/widgets/project_page.dart';
 
-class ProjectsPage extends ConsumerWidget {
-  const ProjectsPage({super.key});
+class ProjectListPage extends ConsumerWidget {
+  const ProjectListPage({super.key});
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    final curUserRole = ref.read(curUserOrgRoleProvider).value;
+
     return Column(
       children: [
         Expanded(
@@ -32,15 +32,10 @@ class ProjectsPage extends ConsumerWidget {
                   ),
           ),
         ),
-        if (ref.read(isDebugModeSNP))
+        if (curUserRole == 'admin' || curUserRole == 'editor')
           CreateItemBottomButton(
-            onPressed: () {
-              ref.read(curProjectStateProvider.notifier).setToNewProject();
-              ref
-                  .read(navigationServiceProvider)
-                  .navigateTo(AppRoutes.projectDetails.name);
-            },
-            buttonText: 'Create Project',
+            onPressed: () => openCreateProjectPage(ref, context),
+            buttonText: AppLocalizations.of(context)!.createProject,
           ),
       ],
     );
@@ -61,15 +56,7 @@ class ProjectListTile extends ConsumerWidget {
           maxLines: 2,
           overflow: TextOverflow.ellipsis),
       trailing: const Icon(Icons.chevron_right),
-      onTap: () {
-        // TODO p3: Navigate to project details page
-        if (ref.read(isDebugModeSNP)) {
-          ref.read(curProjectStateProvider.notifier).setProject(project);
-          ref
-              .read(navigationServiceProvider)
-              .navigateTo(AppRoutes.projectDetails.name);
-        }
-      },
+      onTap: () => openProjectPage(ref, context, project: project),
     );
   }
 }

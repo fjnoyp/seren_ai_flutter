@@ -46,6 +46,7 @@
     "enterText": "Enter Text",
     "enterTextHere": "Enter text here...",
     "testSQL": "Test SQL",
+    "assignees": "Assignees",
 
     "@_": {"description": "Settings"},
     "settings": "Settings",
@@ -143,6 +144,8 @@
             }
         }
     },
+    "updateProject": "Update Project",
+    "createProject": "Create Project",
 
     "@_": {"description": "Teams"},
     "team": "Team",

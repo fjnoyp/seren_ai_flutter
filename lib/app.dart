@@ -11,13 +11,14 @@ import 'package:seren_ai_flutter/services/auth/widgets/auth_guard.dart';
 import 'package:seren_ai_flutter/services/auth/widgets/sign_in_up_page.dart';
 import 'package:seren_ai_flutter/services/auth/widgets/terms_and_conditions/terms_and_conditions_webview.dart';
 import 'package:seren_ai_flutter/services/data/ai_chats/widgets/ai_chats_page.dart';
+import 'package:seren_ai_flutter/services/data/common/widgets/editablePageModeEnum.dart';
 import 'package:seren_ai_flutter/services/data/notes/widgets/notes_list_page.dart';
 import 'package:seren_ai_flutter/services/data/notes/widgets/note_page.dart';
 import 'package:seren_ai_flutter/services/data/orgs/widgets/choose_org_page.dart';
 import 'package:seren_ai_flutter/services/data/orgs/widgets/manage_org_users_page.dart';
 import 'package:seren_ai_flutter/services/data/orgs/widgets/org_guard.dart';
-import 'package:seren_ai_flutter/services/data/projects/widgets/project_details_page.dart';
-import 'package:seren_ai_flutter/services/data/projects/widgets/projects_page.dart';
+import 'package:seren_ai_flutter/services/data/projects/widgets/project_page.dart';
+import 'package:seren_ai_flutter/services/data/projects/widgets/project_list_page.dart';
 import 'package:seren_ai_flutter/services/data/shifts/providers/cur_shift_state_provider.dart';
 import 'package:seren_ai_flutter/services/data/shifts/widgets/shifts_page.dart';
 import 'package:seren_ai_flutter/services/data/tasks/widgets/task_page.dart';
@@ -56,7 +57,7 @@ class AppState extends State<App> {
         ref.read(curShiftStateProvider);
 
         final themeMode = ref.watch(themeSNP);
-        
+
         final languageString = ref.watch(languageSNP);
         final parts = languageString.split('_');
         final languageCode = parts.isNotEmpty ? parts[0] : 'en';
@@ -88,11 +89,17 @@ class AppState extends State<App> {
                 AppLocalizations.of(context)!.orgAdminManageOrgUsers,
                 const ManageOrgUsersPage()),
             AppRoutes.projects.name: (context) => _GuardScaffold(
-                AppLocalizations.of(context)!.projects, const ProjectsPage()),
-            AppRoutes.projectDetails.name: (context) => _GuardScaffold(
-              'Project Details',
-                // AppLocalizations.of(context)!.projectDetails,
-                 const ProjectDetailsPage(),),
+                AppLocalizations.of(context)!.projects,
+                const ProjectListPage()),
+            AppRoutes.projectDetails.name: (context) {
+              final args = ModalRoute.of(context)!.settings.arguments
+                  as Map<String, dynamic>;
+              return _GuardScaffold(
+                args['title'],
+                ProjectPage(mode: args['mode'] ?? EditablePageMode.readOnly),
+                actions: args['actions'],
+              );
+            },
             AppRoutes.tasks.name: (context) => _GuardScaffold(
                 AppLocalizations.of(context)!.tasks, const TasksListPage()),
             AppRoutes.taskPage.name: (context) {
