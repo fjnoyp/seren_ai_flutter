@@ -84,6 +84,7 @@
     "noUsersInOrg": "Nenhum utilizador encontrado nesta organização.",
     "manageOrgUsers": "Gerir Utilizadores da Org",
     "admins": "Admins",
+    "removeUser": "Remover Utilizador",
 
     "@_": {"description": "Projects"},
     "project": "Projeto",

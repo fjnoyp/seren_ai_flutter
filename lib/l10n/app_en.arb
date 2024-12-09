@@ -117,6 +117,7 @@
     "noUsersInOrg": "No users found in this organization.",
     "manageOrgUsers": "Manage Org Users",
     "admins": "Admins",
+    "removeUser": "Remove User",
 
     "@_": {"description": "Projects"},
     "project": "Project",

@@ -94,7 +94,7 @@ class _ChangeUserRoleDialog extends HookConsumerWidget {
                       Navigator.of(context).pop();
                     }));
           },
-          child: Text('Remove user'),
+          child: Text(AppLocalizations.of(context)!.removeUser),
         ),
         FilledButton(
           onPressed: () {
@@ -102,7 +102,7 @@ class _ChangeUserRoleDialog extends HookConsumerWidget {
                 currentUserRole.orgRole.copyWith(orgRole: state.value));
             Navigator.of(context).pop();
           },
-          child: Text('Save'),
+          child: Text(AppLocalizations.of(context)!.save),
         ),
       ],
     );
