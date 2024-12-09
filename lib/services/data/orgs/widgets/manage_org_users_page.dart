@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:seren_ai_flutter/services/data/orgs/models/joined_user_org_role_model.dart';
 import 'package:seren_ai_flutter/services/data/orgs/providers/cur_org_dependency_provider.dart';
 import 'package:seren_ai_flutter/services/data/orgs/providers/cur_user_org_roles_provider.dart';
 import 'package:seren_ai_flutter/services/data/orgs/user_org_roles_db_provider.dart';
-import 'package:seren_ai_flutter/widgets/common/debug_mode_provider.dart';
 
 class ManageOrgUsersPage extends ConsumerWidget {
   const ManageOrgUsersPage({super.key});
@@ -25,63 +25,75 @@ class ManageOrgUsersPage extends ConsumerWidget {
         : ListView.builder(
             itemCount: joinedOrgRoles.valueOrNull!.length,
             itemBuilder: (context, index) {
-              final joinedRole = joinedOrgRoles.valueOrNull![index];
               return ListTile(
                 onTap: () {
-                  if (ref.read(isDebugModeSNP)) {
-                    // TODO: improve UI instead of using context menu
-                    _showContextMenu(context, ref, joinedRole, Offset.zero);
-                  }
+                  showDialog(
+                    context: context,
+                    builder: (context) => _ChangeUserRoleDialog(
+                        currentUserRole: joinedOrgRoles.valueOrNull![index]),
+                  );
                 },
                 title: Text(
-                    '${joinedRole.user?.firstName} ${joinedRole.user?.lastName}'),
-                subtitle: Text(joinedRole.orgRole.orgRole),
-                /*
-                  trailing: IconButton(
-                    icon: const Icon(Icons.delete),
-                    onPressed: () {
-                      // Implement user removal logic here
-                    },
-                  ),
-                  */
+                    '${joinedOrgRoles.valueOrNull![index].user?.firstName} ${joinedOrgRoles.valueOrNull![index].user?.lastName}'),
+                subtitle:
+                    Text(joinedOrgRoles.valueOrNull![index].orgRole.orgRole),
               );
             },
           );
   }
+}
 
-  void _showContextMenu(
-    BuildContext context,
-    WidgetRef ref,
-    JoinedUserOrgRoleModel joinedRole,
-    Offset tapPosition,
-  ) {
-    final size = MediaQuery.of(context).size;
-    showMenu(
-      context: context,
-      position: RelativeRect.fromLTRB(
-        tapPosition.dx,
-        tapPosition.dy,
-        size.width - tapPosition.dx,
-        size.height - tapPosition.dy,
+class _ChangeUserRoleDialog extends HookConsumerWidget {
+  const _ChangeUserRoleDialog({required this.currentUserRole});
+
+  final JoinedUserOrgRoleModel currentUserRole;
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final state = useState(currentUserRole.orgRole.orgRole);
+    final roles = ['admin', 'editor', 'member'];
+
+    return AlertDialog(
+      title: Column(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Text(
+              '${currentUserRole.user?.firstName} ${currentUserRole.user?.lastName}'),
+          Text(
+              '${currentUserRole.orgRole.orgRole} of ${currentUserRole.org!.name}',
+              style: Theme.of(context).textTheme.bodyMedium),
+        ],
       ),
-      items: [
-        PopupMenuItem(
-          onTap: () => ref
-              .read(userOrgRolesDbProvider)
-              .upsertItem(joinedRole.orgRole.copyWith(orgRole: 'admin')),
-          child: const Text('Make Admin'),
+      content: ListView.builder(
+        shrinkWrap: true,
+        itemCount: roles.length,
+        itemBuilder: (context, index) {
+          return RadioListTile<String>(
+            value: roles[index],
+            groupValue: state.value,
+            onChanged: (value) => state.value = value ?? 'member',
+            title: Text(roles[index]),
+          );
+        },
+      ),
+      actions: [
+        TextButton(
+          style: TextButton.styleFrom(foregroundColor: Colors.red),
+          onPressed: () {
+            ref
+                .read(userOrgRolesDbProvider)
+                .deleteItem(currentUserRole.orgRole.id);
+            Navigator.of(context).pop();
+          },
+          child: Text('Remove user'),
         ),
-        PopupMenuItem(
-          onTap: () => ref
-              .read(userOrgRolesDbProvider)
-              .upsertItem(joinedRole.orgRole.copyWith(orgRole: 'editor')),
-          child: const Text('Make Editor'),
-        ),
-        PopupMenuItem(
-          onTap: () => ref
-              .read(userOrgRolesDbProvider)
-              .upsertItem(joinedRole.orgRole.copyWith(orgRole: 'member')),
-          child: const Text('Make Member'),
+        FilledButton(
+          onPressed: () {
+            ref.read(userOrgRolesDbProvider).upsertItem(
+                currentUserRole.orgRole.copyWith(orgRole: state.value));
+            Navigator.of(context).pop();
+          },
+          child: Text('Save'),
         ),
       ],
     );

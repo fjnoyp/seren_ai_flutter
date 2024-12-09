@@ -75,13 +75,15 @@
     "askAQuestion": "Faça uma pergunta",
 
     "@_": {"description": "Organization"},
+    "organization": "Organização",
     "chooseOrganization": "Escolher Organização",
     "waitingForOrgRoles": "A aguardar o carregamento das funções da organização...",
     "noOrganizations": "Nenhuma organização disponível",
     "errorCannotLoadOrg": "Erro ao carregar a organização",
     "noOrgSelected": "Erro - Nenhuma organização selecionada. Envolva com OrgGuard",
     "noUsersInOrg": "Nenhum utilizador encontrado nesta organização.",
-    "orgAdminManageOrgUsers": "Admin Org - Gerir Utilizadores da Org",
+    "manageOrgUsers": "Gerir Utilizadores da Org",
+    "admins": "Admins",
 
     "@_": {"description": "Projects"},
     "project": "Projeto",

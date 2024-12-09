@@ -4,6 +4,8 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:seren_ai_flutter/common/language_provider.dart';
 import 'package:seren_ai_flutter/common/routes/app_routes.dart';
 import 'package:seren_ai_flutter/services/auth/cur_auth_state_provider.dart';
+import 'package:seren_ai_flutter/services/data/orgs/providers/cur_user_org_roles_provider.dart';
+import 'package:seren_ai_flutter/services/data/orgs/widgets/cur_org_page.dart';
 import 'package:seren_ai_flutter/services/speech_to_text/speech_to_text_service_provider.dart';
 import 'package:seren_ai_flutter/services/text_to_speech/text_to_speech_notifier.dart';
 import 'package:seren_ai_flutter/widgets/common/debug_mode_provider.dart';
@@ -183,11 +185,10 @@ class DrawerView extends HookWidget {
               onTap: () =>
                   Navigator.pushNamed(context, AppRoutes.chooseOrg.name),
             ),
-            _DebugModeListTile(
-              icon: Icons.people,
-              title: AppLocalizations.of(context)!.orgAdminManageOrgUsers,
-              onTap: () =>
-                  Navigator.pushNamed(context, AppRoutes.manageOrgUsers.name),
+            _AdminOnlyListTile(
+              icon: Icons.business,
+              title: AppLocalizations.of(context)!.organization,
+              onTap: () => openOrgPage(context),
             ),
             _DrawerListTile(
               icon: Icons.work,
@@ -276,6 +277,30 @@ class _DebugModeListTile extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final isDebugMode = ref.watch(isDebugModeSNP);
     return isDebugMode
+        ? _DrawerListTile(
+            icon: icon,
+            title: title,
+            onTap: onTap,
+          )
+        : const SizedBox.shrink();
+  }
+}
+
+class _AdminOnlyListTile extends ConsumerWidget {
+  const _AdminOnlyListTile({
+    required this.icon,
+    required this.title,
+    required this.onTap,
+  });
+
+  final IconData icon;
+  final String title;
+  final VoidCallback onTap;
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final isAdmin = ref.watch(curUserOrgRoleProvider).valueOrNull == 'admin';
+    return isAdmin
         ? _DrawerListTile(
             icon: icon,
             title: title,

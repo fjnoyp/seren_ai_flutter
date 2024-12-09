@@ -108,13 +108,15 @@
     "askAQuestion": "Ask a question",
 
     "@_": {"description": "Organization"},
+    "organization": "Organization",
     "chooseOrganization": "Choose Organization",
     "waitingForOrgRoles": "Waiting for orgRoles to load...",
     "noOrganizations": "No organizations available",
     "errorCannotLoadOrg": "Error cannot load organization",
     "noOrgSelected": "Error - No org selected. Wrap with OrgGuard",
     "noUsersInOrg": "No users found in this organization.",
-    "orgAdminManageOrgUsers": "Org Admin - Manage Org Users",
+    "manageOrgUsers": "Manage Org Users",
+    "admins": "Admins",
 
     "@_": {"description": "Projects"},
     "project": "Project",
