@@ -118,6 +118,16 @@
     "manageOrgUsers": "Manage Org Users",
     "admins": "Admins",
     "removeUser": "Remove User",
+    "admin": "Admin",
+    "editor": "Editor",
+    "member": "Member",
+    "userRoleOfOrg": "{userRole} of {orgName}",
+    "@userRoleOfOrg": {
+        "placeholders": {
+            "userRole": {"type": "String"},
+            "orgName": {"type": "String"}
+        }
+    },
 
     "@_": {"description": "Projects"},
     "project": "Project",

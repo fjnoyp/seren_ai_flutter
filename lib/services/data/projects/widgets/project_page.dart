@@ -3,6 +3,7 @@ import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:seren_ai_flutter/common/navigation_service_provider.dart';
 import 'package:seren_ai_flutter/common/routes/app_routes.dart';
 import 'package:seren_ai_flutter/services/data/common/widgets/editablePageModeEnum.dart';
+import 'package:seren_ai_flutter/services/data/orgs/models/user_org_role_model.dart';
 import 'package:seren_ai_flutter/services/data/orgs/providers/cur_user_org_roles_provider.dart';
 import 'package:seren_ai_flutter/services/data/projects/models/project_model.dart';
 import 'package:seren_ai_flutter/services/data/projects/providers/cur_project_service_provider.dart';
@@ -120,7 +121,8 @@ Future<void> openProjectPage(
 
   final curUserOrgRole = ref.read(curUserOrgRoleProvider).value;
 
-  final actions = (curUserOrgRole == 'admin' || curUserOrgRole == 'editor')
+  final actions = (curUserOrgRole == OrgRole.admin ||
+          curUserOrgRole == OrgRole.editor)
       ? switch (mode) {
           EditablePageMode.edit => [const DeleteProjectButton()],
           EditablePageMode.readOnly => [

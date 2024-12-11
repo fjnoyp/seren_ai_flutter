@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:seren_ai_flutter/services/data/common/widgets/async_value_handler_widget.dart';
 import 'package:seren_ai_flutter/services/data/common/widgets/create_item_bottom_button.dart';
+import 'package:seren_ai_flutter/services/data/orgs/models/user_org_role_model.dart';
 import 'package:seren_ai_flutter/services/data/orgs/providers/cur_user_org_roles_provider.dart';
 import 'package:seren_ai_flutter/services/data/projects/models/project_model.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
@@ -32,7 +33,7 @@ class ProjectListPage extends ConsumerWidget {
                   ),
           ),
         ),
-        if (curUserRole == 'admin' || curUserRole == 'editor')
+        if (curUserRole == OrgRole.admin || curUserRole == OrgRole.editor)
           CreateItemBottomButton(
             onPressed: () => openCreateProjectPage(ref, context),
             buttonText: AppLocalizations.of(context)!.createProject,

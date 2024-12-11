@@ -85,6 +85,10 @@
     "manageOrgUsers": "Gerenciar Usuários da Org",
     "admins": "Admins",
     "removeUser": "Remover Usuário",
+    "admin": "Admin",
+    "editor": "Editor",
+    "member": "Membro",
+    "userRoleOfOrg": "{userRole} de {orgName}",
 
     "@_": {"description": "Projects"},
     "project": "Projeto",

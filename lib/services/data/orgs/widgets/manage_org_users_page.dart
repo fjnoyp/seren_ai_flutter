@@ -4,6 +4,7 @@ import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:seren_ai_flutter/services/data/common/widgets/delete_confirmation_dialog.dart';
 import 'package:seren_ai_flutter/services/data/orgs/models/joined_user_org_role_model.dart';
+import 'package:seren_ai_flutter/services/data/orgs/models/user_org_role_model.dart';
 import 'package:seren_ai_flutter/services/data/orgs/providers/cur_org_dependency_provider.dart';
 import 'package:seren_ai_flutter/services/data/orgs/providers/cur_user_org_roles_provider.dart';
 import 'package:seren_ai_flutter/services/data/orgs/user_org_roles_db_provider.dart';
@@ -36,8 +37,9 @@ class ManageOrgUsersPage extends ConsumerWidget {
                 },
                 title: Text(
                     '${joinedOrgRoles.valueOrNull![index].user?.firstName} ${joinedOrgRoles.valueOrNull![index].user?.lastName}'),
-                subtitle:
-                    Text(joinedOrgRoles.valueOrNull![index].orgRole.orgRole),
+                subtitle: Text(joinedOrgRoles
+                    .valueOrNull![index].orgRole.orgRole
+                    .toHumanReadable(context)),
               );
             },
           );
@@ -52,7 +54,6 @@ class _ChangeUserRoleDialog extends HookConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final state = useState(currentUserRole.orgRole.orgRole);
-    final roles = ['admin', 'editor', 'member'];
 
     return AlertDialog(
       title: Column(
@@ -61,19 +62,21 @@ class _ChangeUserRoleDialog extends HookConsumerWidget {
           Text(
               '${currentUserRole.user?.firstName} ${currentUserRole.user?.lastName}'),
           Text(
-              '${currentUserRole.orgRole.orgRole} of ${currentUserRole.org!.name}',
+              AppLocalizations.of(context)!.userRoleOfOrg(
+                  currentUserRole.orgRole.orgRole.toHumanReadable(context),
+                  currentUserRole.org!.name),
               style: Theme.of(context).textTheme.bodyMedium),
         ],
       ),
       content: ListView.builder(
         shrinkWrap: true,
-        itemCount: roles.length,
+        itemCount: OrgRole.values.length,
         itemBuilder: (context, index) {
-          return RadioListTile<String>(
-            value: roles[index],
+          return RadioListTile<OrgRole>(
+            value: OrgRole.values[index],
             groupValue: state.value,
-            onChanged: (value) => state.value = value ?? 'member',
-            title: Text(roles[index]),
+            onChanged: (value) => state.value = value ?? OrgRole.member,
+            title: Text(OrgRole.values[index].toHumanReadable(context)),
           );
         },
       ),

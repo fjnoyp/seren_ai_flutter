@@ -4,6 +4,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:seren_ai_flutter/common/language_provider.dart';
 import 'package:seren_ai_flutter/common/routes/app_routes.dart';
 import 'package:seren_ai_flutter/services/auth/cur_auth_state_provider.dart';
+import 'package:seren_ai_flutter/services/data/orgs/models/user_org_role_model.dart';
 import 'package:seren_ai_flutter/services/data/orgs/providers/cur_user_org_roles_provider.dart';
 import 'package:seren_ai_flutter/services/data/orgs/widgets/cur_org_page.dart';
 import 'package:seren_ai_flutter/services/speech_to_text/speech_to_text_service_provider.dart';
@@ -116,7 +117,7 @@ class DrawerView extends HookWidget {
             Consumer(
               builder: (context, ref, child) {
                 final language = ref.watch(languageSNP).toUpperCase();
-                  
+
                 return ListTile(
                   dense: true,
                   leading: const Icon(Icons.language),
@@ -299,7 +300,8 @@ class _AdminOnlyListTile extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final isAdmin = ref.watch(curUserOrgRoleProvider).valueOrNull == 'admin';
+    final isAdmin =
+        ref.watch(curUserOrgRoleProvider).valueOrNull == OrgRole.admin;
     return isAdmin
         ? _DrawerListTile(
             icon: icon,
