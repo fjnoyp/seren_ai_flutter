@@ -22,6 +22,7 @@
     "enterTextHere": "Insira o texto aqui...",
     "testSQL": "Testar SQL",
     "assignees": "Responsáveis",
+    "search": "Pesquisar...",
 
     "@_": {"description": "Settings"},
     "settings": "Configurações",

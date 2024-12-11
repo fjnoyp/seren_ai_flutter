@@ -47,6 +47,7 @@
     "enterTextHere": "Enter text here...",
     "testSQL": "Test SQL",
     "assignees": "Assignees",
+    "search": "Search...",
 
     "@_": {"description": "Settings"},
     "settings": "Settings",
