@@ -25,6 +25,7 @@ TaskModel _$TaskModelFromJson(Map<String, dynamic> json) => TaskModel(
       parentProjectId: json['parent_project_id'] as String,
       estimatedDurationMinutes:
           TaskModel._durationFromJson(json['estimated_duration_minutes']),
+      reminderOffsetMinutes: (json['reminder_offset_minutes'] as num?)?.toInt(),
     );
 
 Map<String, dynamic> _$TaskModelToJson(TaskModel instance) => <String, dynamic>{
@@ -40,6 +41,7 @@ Map<String, dynamic> _$TaskModelToJson(TaskModel instance) => <String, dynamic>{
       'parent_project_id': instance.parentProjectId,
       'estimated_duration_minutes':
           TaskModel._durationToJson(instance.estimatedDurationMinutes),
+      'reminder_offset_minutes': instance.reminderOffsetMinutes,
     };
 
 const _$StatusEnumEnumMap = {

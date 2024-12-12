@@ -70,6 +70,7 @@ const tasksSchemas = [
     Column.text('author_user_id'),
     Column.text('parent_project_id'),
     Column.text('estimated_duration_minutes'),
+    Column.integer('reminder_offset_minutes'),
   ]),
   Table(taskCommentsTable, [
     // Column.text('id'),
@@ -86,6 +87,7 @@ const tasksSchemas = [
     Column.text('user_id'),
   ]),
 ];
+
 const aiChatThreadsTable = 'ai_chat_threads';
 const aiChatMessagesTable = 'ai_chat_messages';
 
