@@ -49,7 +49,9 @@ class NoteDescriptionSelectionField extends BaseTextBlockEditSelectionField {
   NoteDescriptionSelectionField({
     super.key,
     required super.enabled,
+    required BuildContext context,
   }) : super(
+          hintText: AppLocalizations.of(context)!.description,
           descriptionProvider: curNoteStateProvider
               .select((state) => state.value?.note.description ?? ''),
           updateDescription: (ref, description) =>
@@ -75,7 +77,9 @@ class NoteAddressSelectionField extends BaseTextBlockEditSelectionField {
   NoteAddressSelectionField({
     super.key,
     required super.enabled,
+    required BuildContext context,
   }) : super(
+          hintText: AppLocalizations.of(context)!.address,
           descriptionProvider: curNoteStateProvider
               .select((state) => state.value?.note.address ?? ''),
           updateDescription: (ref, address) =>
@@ -90,6 +94,7 @@ class NoteActionRequiredSelectionField extends BaseTextBlockEditSelectionField {
     required BuildContext context,
     required super.enabled,
   }) : super(
+          hintText: '',
           descriptionProvider: curNoteStateProvider
               .select((state) => state.value?.note.actionRequired ?? ''),
           updateDescription: (ref, actionRequired) => ref

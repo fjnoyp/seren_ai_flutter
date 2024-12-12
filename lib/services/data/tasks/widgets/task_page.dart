@@ -88,7 +88,10 @@ class TaskPage extends HookConsumerWidget {
                   const Divider(),
                   TaskAssigneesSelectionField(enabled: isEnabled),
                   const Divider(),
-                  TaskDescriptionSelectionField(enabled: isEnabled),
+                  TaskDescriptionSelectionField(
+                    enabled: isEnabled,
+                    context: context,
+                  ),
                 ],
               ),
             ),

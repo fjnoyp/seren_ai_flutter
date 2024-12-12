@@ -78,9 +78,15 @@ class NotePage extends HookConsumerWidget {
                         NoteDateSelectionField(),
                         const Divider(),
                       ],
-                      NoteDescriptionSelectionField(enabled: isEnabled),
+                      NoteDescriptionSelectionField(
+                        enabled: isEnabled,
+                        context: context,
+                      ),
                       const Divider(),
-                      NoteAddressSelectionField(enabled: isEnabled),
+                      NoteAddressSelectionField(
+                        enabled: isEnabled,
+                        context: context,
+                      ),
                       const Divider(),
                       NoteActionRequiredSelectionField(
                         enabled: isEnabled,
