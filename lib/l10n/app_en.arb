@@ -337,6 +337,12 @@
         }
     },
     "deleteLogReason": "Why do you want to delete this log?",
+    "ongoingShift": "{time} - ONGOING",
+    "@ongoingShift": {
+        "placeholders": {
+            "time": {"type": "String"}
+        }
+    },
 
     "@_": {"description": "Tasks"},
     "tasks": "Tasks",
