@@ -48,6 +48,7 @@
     "testSQL": "Test SQL",
     "assignees": "Assignees",
     "search": "Search...",
+    "other": "Other",
 
     "@_": {"description": "Settings"},
     "settings": "Settings",
@@ -365,6 +366,23 @@
     "chooseAssignees": "Choose Assignees",
     "foundTasks": "Found Tasks",
     "noTasksFound": "No tasks found",
+    "noReminderSet": "No reminder set",
+    "minutes": "{hours, plural, =0{} =1{1 hour } other{{hours} hours }}{minutes, plural, =0{} =1{1 minute} other{{minutes} minutes}}",
+    "@minutes": {
+        "placeholders": {
+            "hours": {"type": "int"},
+            "minutes": {"type": "int"}
+        }
+    },
+    "noReminder": "No reminder",
+    "taskReminder": "Task Reminder",
+    "taskReminderBody": "Task {taskName} is due in {reminderOffsetMinutes} minutes",
+    "@taskReminderBody": {
+        "placeholders": {
+            "taskName": {"type": "String"},
+            "reminderOffsetMinutes": {"type": "int"}
+        }
+    },
 
     "@_": {"description": "Test SQL Page"},
     "testSQLPage": "Test SQL Page",

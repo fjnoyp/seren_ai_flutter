@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:seren_ai_flutter/services/data/common/base_repository.dart';
 import 'package:seren_ai_flutter/services/data/db_setup/db_provider.dart';
@@ -17,7 +19,18 @@ class JoinedTasksRepository extends BaseRepository<JoinedTaskModel> {
 
   @override
   JoinedTaskModel fromJson(Map<String, dynamic> json) {
-    return JoinedTaskModel.fromJson(json);
+    final decodedJson = json.map((key, value) => [
+              'task',
+              'author_user',
+              'project',
+              'assignees',
+              'comments'
+            ].contains(key) &&
+            value != null
+        ? MapEntry(key, jsonDecode(value))
+        : MapEntry(key, value));
+
+    return JoinedTaskModel.fromJson(decodedJson);
   }
 
   Stream<List<JoinedTaskModel>> watchUserViewableJoinedTasks(String userId) {

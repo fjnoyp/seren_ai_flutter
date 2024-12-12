@@ -23,6 +23,7 @@ import 'package:seren_ai_flutter/services/data/projects/widgets/project_page.dar
 import 'package:seren_ai_flutter/services/data/projects/widgets/project_list_page.dart';
 import 'package:seren_ai_flutter/services/data/shifts/providers/cur_shift_state_provider.dart';
 import 'package:seren_ai_flutter/services/data/shifts/widgets/shifts_page.dart';
+import 'package:seren_ai_flutter/services/data/tasks/providers/task_schedule_notifications_service.dart';
 import 'package:seren_ai_flutter/services/data/tasks/widgets/task_page.dart';
 import 'package:seren_ai_flutter/services/ai_interaction/stt_orchestrator_provider.dart.dart';
 import 'package:seren_ai_flutter/widgets/common/debug_mode_provider.dart';
@@ -58,6 +59,7 @@ class AppState extends State<App> {
         // === Permanent Providers ===
         ref.read(sttOrchestratorProvider);
         ref.read(curShiftStateProvider);
+        ref.read(taskScheduleNotificationsServiceProvider);
 
         final themeMode = ref.watch(themeSNP);
 

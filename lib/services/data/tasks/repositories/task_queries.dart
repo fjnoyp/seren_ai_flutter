@@ -48,6 +48,7 @@ abstract class TaskQueries {
         'author_user_id', t.author_user_id,
         'parent_project_id', t.parent_project_id,
         'estimated_duration_minutes', t.estimated_duration_minutes,
+        'reminder_offset_minutes', t.reminder_offset_minutes,
         'created_at', t.created_at,
         'updated_at', t.updated_at
       ) as task,
@@ -154,6 +155,7 @@ abstract class TaskQueries {
         'author_user_id', t.author_user_id,
         'parent_project_id', t.parent_project_id,
         'estimated_duration_minutes', t.estimated_duration_minutes,
+        'reminder_offset_minutes', t.reminder_offset_minutes,
         'created_at', t.created_at,
         'updated_at', t.updated_at
       ) END as parent_task
@@ -197,6 +199,7 @@ abstract class TaskQueries {
         'author_user_id', t.author_user_id,
         'parent_project_id', t.parent_project_id,
         'estimated_duration_minutes', t.estimated_duration_minutes,
+        'reminder_offset_minutes', t.reminder_offset_minutes,
         'created_at', t.created_at,
         'updated_at', t.updated_at
       ) ELSE NULL END as task
@@ -240,6 +243,7 @@ abstract class TaskQueries {
           'author_user_id', t.author_user_id,
           'parent_project_id', t.parent_project_id,
           'estimated_duration_minutes', t.estimated_duration_minutes,
+          'reminder_offset_minutes', t.reminder_offset_minutes,
           'created_at', t.created_at,
           'updated_at', t.updated_at
         ) ELSE NULL END as task
@@ -268,6 +272,7 @@ abstract class TaskQueries {
         'author_user_id', t.author_user_id,
         'parent_project_id', t.parent_project_id,
         'estimated_duration_minutes', t.estimated_duration_minutes,
+        'reminder_offset_minutes', t.reminder_offset_minutes,
         'created_at', t.created_at,
         'updated_at', t.updated_at
       ) as task,
@@ -351,6 +356,7 @@ abstract class TaskQueries {
         'author_user_id', t.author_user_id,
         'parent_project_id', t.parent_project_id,
         'estimated_duration_minutes', t.estimated_duration_minutes,
+        'reminder_offset_minutes', t.reminder_offset_minutes,
         'created_at', t.created_at,
         'updated_at', t.updated_at
       ) as task,
@@ -428,6 +434,7 @@ abstract class TaskQueries {
         'author_user_id', t.author_user_id,
         'parent_project_id', t.parent_project_id,
         'estimated_duration_minutes', t.estimated_duration_minutes,
+        'reminder_offset_minutes', t.reminder_offset_minutes,
         'created_at', t.created_at,
         'updated_at', t.updated_at
       ) as task,
