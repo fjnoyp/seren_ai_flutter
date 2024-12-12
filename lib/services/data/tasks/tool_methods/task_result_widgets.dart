@@ -1,13 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:seren_ai_flutter/common/current_route_provider.dart';
+import 'package:seren_ai_flutter/common/routes/app_routes.dart';
 import 'package:seren_ai_flutter/services/data/tasks/tool_methods/models/create_task_result_model.dart';
 import 'package:seren_ai_flutter/services/data/tasks/tool_methods/models/delete_task_result_model.dart';
 import 'package:seren_ai_flutter/services/data/tasks/tool_methods/models/find_tasks_result_model.dart';
 import 'package:seren_ai_flutter/services/data/tasks/tool_methods/models/update_task_fields_result_model.dart';
 import 'package:seren_ai_flutter/services/data/tasks/widgets/task_list/task_list_item_view.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
-
-// TODO p0: reuse task list item display if possible ...
 
 class FindTasksResultWidget extends ConsumerWidget {
   final FindTasksResultModel result;
@@ -42,7 +42,17 @@ class CreateTaskResultWidget extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    return Text(result.resultForAi);
+    return ref.read(currentRouteProvider).contains(AppRoutes.aiChats.name)
+        ? Text(AppLocalizations.of(context)!
+            .createdNewTaskAndOpenedTaskPage(result.joinedTask.task.name))
+        : Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Text(AppLocalizations.of(context)!
+                  .createdNewTask(result.joinedTask.task.name)),
+              TaskListItemView(joinedTask: result.joinedTask),
+            ],
+          );
   }
 }
 
@@ -52,7 +62,17 @@ class UpdateTaskFieldsResultWidget extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    return Text(result.resultForAi);
+    return ref.read(currentRouteProvider).contains(AppRoutes.aiChats.name)
+        ? Text(AppLocalizations.of(context)!
+            .updatedTaskAndShowedResultInUI(result.joinedTask.task.name))
+        : Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Text(AppLocalizations.of(context)!
+                  .updatedTask(result.joinedTask.task.name)),
+              TaskListItemView(joinedTask: result.joinedTask),
+            ],
+          );
   }
 }
 
@@ -69,7 +89,13 @@ class DeleteTaskResultWidget extends ConsumerWidget {
         const SizedBox(width: 8),
         Expanded(
           child: Text(
-            result.resultForAi,
+            switch (result.isDeleted) {
+              true => AppLocalizations.of(context)!
+                  .deletedTask(result.taskName ?? ''),
+              false => AppLocalizations.of(context)!
+                  .taskDeletionCancelledByUser(result.taskName ?? ''),
+              _ => result.resultForAi,
+            },
             style: Theme.of(context).textTheme.titleMedium,
           ),
         ),

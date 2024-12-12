@@ -385,6 +385,42 @@
             "reminderOffsetMinutes": {"type": "int"}
         }
     },
+    "createdNewTask": "Created new task \"{taskName}\"",
+    "@createdNewTask": {
+        "placeholders": {
+            "taskName": {"type": "String"}
+        }
+    },
+    "createdNewTaskAndOpenedTaskPage": "Created new task \"{taskName}\" and opened task page",
+    "@createdNewTaskAndOpenedTaskPage": {
+        "placeholders": {
+            "taskName": {"type": "String"}
+        }
+    },
+    "updatedTask": "Updated task \"{taskName}\":",
+    "@updatedTask": {
+        "placeholders": {
+            "taskName": {"type": "String"}
+        }
+    },
+    "updatedTaskAndShowedResultInUI": "Updated task \"{taskName}\" and showed result in UI",
+    "@updatedTaskAndShowedResultInUI": {
+        "placeholders": {
+            "taskName": {"type": "String"}
+        }
+    },
+    "deletedTask": "Successfully deleted task \"{taskName}\"",
+    "@deletedTask": {
+        "placeholders": {
+            "taskName": {"type": "String"}
+        }
+    },
+    "taskDeletionCancelledByUser": "Task deletion cancelled by user for \"{taskName}\"",
+    "@taskDeletionCancelledByUser": {
+        "placeholders": {
+            "taskName": {"type": "String"}
+        }
+    },
 
     "@_": {"description": "Test SQL Page"},
     "testSQLPage": "Test SQL Page",
