@@ -19,7 +19,7 @@ class ProjectModel implements IHasId {
   final DateTime? createdAt;
 
   @JsonKey(name: 'updated_at')
-  final DateTime? updatedAt;  
+  final DateTime? updatedAt;
 
   ProjectModel({
     String? id,
@@ -31,7 +31,26 @@ class ProjectModel implements IHasId {
     this.updatedAt,
   }) : id = id ?? uuid.v4();
 
-  factory ProjectModel.fromJson(Map<String, dynamic> json) => _$ProjectModelFromJson(json);
+  factory ProjectModel.empty() => ProjectModel(
+        name: '',
+        parentOrgId: '',
+      );
+
+  ProjectModel copyWith({
+    String? name,
+    String? description,
+    String? address,
+  }) =>
+      ProjectModel(
+        name: name ?? this.name,
+        description: description ?? this.description,
+        address: address ?? this.address,
+        parentOrgId: parentOrgId,
+        createdAt: createdAt,
+        updatedAt: DateTime.now(),
+      );
+
+  factory ProjectModel.fromJson(Map<String, dynamic> json) =>
+      _$ProjectModelFromJson(json);
   Map<String, dynamic> toJson() => _$ProjectModelToJson(this);
 }
-

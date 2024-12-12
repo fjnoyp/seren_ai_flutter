@@ -22,10 +22,10 @@ class ChooseOrgPage extends ConsumerWidget {
           : ListView.builder(
               itemCount: orgRoles.length,
               itemBuilder: (context, index) {
-                final orgRole = orgRoles[index];
+                final joinedOrgRole = orgRoles[index];
 
-                final orgModel = orgRole.org;
-                final orgRoleModel = orgRole.orgRole;
+                final orgModel = joinedOrgRole.org;
+                final orgRoleModel = joinedOrgRole.orgRole;
 
                 if (orgModel == null) {
                   return Text(AppLocalizations.of(context)!.errorCannotLoadOrg);
@@ -46,7 +46,9 @@ class ChooseOrgPage extends ConsumerWidget {
                   child: ListTile(
                     contentPadding: const EdgeInsets.all(16.0),
                     title: Center(child: Text(orgModel.name)),
-                    subtitle: Center(child: Text(orgRoleModel.orgRole)),
+                    subtitle: Center(
+                      child: Text(orgRoleModel.orgRole.toHumanReadable(context)),
+                    ),
                     onTap: () {
                       ref
                           .read(curUserOrgServiceProvider)

@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
-import 'package:seren_ai_flutter/services/data/common/widgets/editablePageModeEnum.dart';
+import 'package:seren_ai_flutter/services/data/common/widgets/editable_page_mode_enum.dart';
 import 'package:seren_ai_flutter/services/data/tasks/models/joined_task_model.dart';
 import 'package:seren_ai_flutter/services/data/tasks/models/task_model.dart';
 import 'package:intl/intl.dart';
