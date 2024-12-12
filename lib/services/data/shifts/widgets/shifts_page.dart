@@ -14,6 +14,7 @@ import 'package:seren_ai_flutter/services/data/shifts/providers/cur_shift_state_
 import 'package:seren_ai_flutter/services/data/shifts/providers/shift_logs_provider.dart';
 import 'package:seren_ai_flutter/services/data/shifts/providers/shift_time_ranges_providers.dart';
 import 'package:seren_ai_flutter/services/data/shifts/widgets/debug_shifts_full_day_view.dart';
+import 'package:seren_ai_flutter/widgets/common/debug_mode_provider.dart';
 import 'package:table_calendar/table_calendar.dart';
 
 import 'dart:async';
@@ -152,17 +153,20 @@ class _DayShiftsWidget extends HookConsumerWidget {
           child: Column(
             mainAxisSize: MainAxisSize.min,
             children: [
-              Row(mainAxisAlignment: MainAxisAlignment.end, children: [
-                IconButton(
-                  icon: Icon(
-                    isDebugMode.value ? Icons.list : Icons.bug_report,
-                    size: 20,
-                  ),
-                  onPressed: () {
-                    isDebugMode.value = !isDebugMode.value;
-                  },
-                ),
-              ]),
+              ref.watch(isDebugModeSNP)
+                  ? Align(
+                      alignment: Alignment.topRight,
+                      child: IconButton(
+                        icon: Icon(
+                          isDebugMode.value ? Icons.list : Icons.bug_report,
+                          size: 20,
+                        ),
+                        onPressed: () {
+                          isDebugMode.value = !isDebugMode.value;
+                        },
+                      ),
+                    )
+                  : const SizedBox(height: 20),
               isDebugMode.value
                   ? debugShiftsFullDayView(shiftId, day)
                   : Column(
@@ -249,7 +253,11 @@ class _ShiftLogs extends ConsumerWidget {
             final log = logs[index];
             return Padding(
               padding: const EdgeInsets.symmetric(vertical: 4.0),
-              child: now.difference(log.clockOutDatetime ?? log.clockInDatetime).inDays < 1
+              child: now
+                          .difference(
+                              log.clockOutDatetime ?? log.clockInDatetime)
+                          .inDays <
+                      1
                   ? GestureDetector(
                       onLongPressStart: (details) {
                         _showContextMenu(context, log, details.globalPosition);
@@ -317,15 +325,15 @@ class _ShiftLogs extends ConsumerWidget {
                   log: log,
                   newClockInTime: isClockIn
                       ? log.clockInDatetime.toLocal().copyWith(
-                          hour: value.hour,
-                          minute: value.minute,
-                        )
+                            hour: value.hour,
+                            minute: value.minute,
+                          )
                       : null,
                   newClockOutTime: !isClockIn
                       ? log.clockOutDatetime?.toLocal().copyWith(
-                          hour: value.hour,
-                          minute: value.minute,
-                        )
+                            hour: value.hour,
+                            minute: value.minute,
+                          )
                       : null,
                   modificationReason: description,
                 );
