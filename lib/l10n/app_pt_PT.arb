@@ -221,6 +221,12 @@
             "reminderOffsetMinutes": {"type": "int"}
         }
     },
+    "createdNewTask": "Criada nova tarefa \"{taskName}\"",
+    "createdNewTaskAndOpenedTaskPage": "Criada nova tarefa \"{taskName}\" e aberta página da tarefa",
+    "updatedTask": "Atualizada tarefa \"{taskName}\":",
+    "updatedTaskAndShowedResultInUI": "Atualizada tarefa \"{taskName}\" e mostrada resultado na UI",
+    "deletedTask": "Tarefa excluída com sucesso: \"{taskName}\"",
+    "taskDeletionCancelledByUser": "Exclusão de tarefa cancelada pelo usuário para \"{taskName}\"",
 
     "@_": {"description": "Speech Recognition"},
     "unknownState": "Estado desconhecido: {state}",
