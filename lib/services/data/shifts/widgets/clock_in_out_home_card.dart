@@ -60,21 +60,33 @@ class _ClockInOutInnerCard extends ConsumerWidget {
               children: [
                 Row(
                   mainAxisAlignment: MainAxisAlignment.center,
+                  mainAxisSize: MainAxisSize.min,
                   children: [
                     const Icon(Icons.access_time),
                     const SizedBox(width: 8),
-                    Text(curLog == null
-                        ? AppLocalizations.of(context)!.startShift
-                        : AppLocalizations.of(context)!.endShift),
+                    Flexible(
+                      child: FittedBox(
+                        fit: BoxFit.scaleDown,
+                        child: Text(curLog == null
+                            ? AppLocalizations.of(context)!.startShift
+                            : AppLocalizations.of(context)!.endShift),
+                      ),
+                    ),
                   ],
                 ),
                 if (curLog != null) ...[
                   const SizedBox(height: 8),
                   // TODO p4: add elapsed time ?
-                  Text(
-                    AppLocalizations.of(context)!.clockedInAt(DateFormat.Hm()
-                        .format(curLog.clockInDatetime.toLocal())),
-                    textAlign: TextAlign.center,
+                  Flexible(
+                    child: FittedBox(
+                      fit: BoxFit.scaleDown,
+                      child: Text(
+                        AppLocalizations.of(context)!.clockedInAt(
+                            DateFormat.Hm()
+                                .format(curLog.clockInDatetime.toLocal())),
+                        textAlign: TextAlign.center,
+                      ),
+                    ),
                   ),
                 ]
               ],

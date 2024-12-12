@@ -165,7 +165,7 @@
     "clockInOut": "Entrada/saída",
     "startShift": "Bater Ponto",
     "endShift": "Bater Ponto",
-    "clockedInAt": "Entrada registrada às {time}",
+    "clockedInAt": "Entrada às {time}",
     "todaysShift": "Turno de Hoje",
     "noActiveShift": "Sem turno ativo",
     "timeRange": "{startTime} até {endTime}",
