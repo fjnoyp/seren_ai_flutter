@@ -2,7 +2,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:seren_ai_flutter/services/data/common/status_enum.dart';
 import 'package:seren_ai_flutter/services/data/notes/models/note_model.dart';
 import 'package:seren_ai_flutter/services/data/projects/models/project_model.dart';
-import 'package:seren_ai_flutter/services/data/projects/projects_read_provider.dart';
+import 'package:seren_ai_flutter/services/data/projects/repositories/projects_repository.dart';
 import 'package:seren_ai_flutter/services/data/users/models/user_model.dart';
 import 'package:seren_ai_flutter/services/data/users/repositories/users_repository.dart';
 
@@ -62,7 +62,7 @@ class JoinedNoteModel {
 
     final projectId = noteModel.parentProjectId;
     final project = projectId != null
-        ? await ref.read(projectsReadProvider).getItem(id: projectId)
+        ? await ref.read(projectsRepositoryProvider).getProjectById(projectId: projectId)
         : null;
 
     return JoinedNoteModel(

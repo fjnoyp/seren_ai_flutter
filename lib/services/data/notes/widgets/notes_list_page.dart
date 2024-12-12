@@ -6,7 +6,7 @@ import 'package:intl/intl.dart';
 import 'package:seren_ai_flutter/services/auth/cur_auth_state_provider.dart';
 import 'package:seren_ai_flutter/services/data/common/widgets/async_value_handler_widget.dart';
 import 'package:seren_ai_flutter/services/data/common/widgets/create_item_bottom_button.dart';
-import 'package:seren_ai_flutter/services/data/common/widgets/editablePageModeEnum.dart';
+import 'package:seren_ai_flutter/services/data/common/widgets/editable_page_mode_enum.dart';
 import 'package:seren_ai_flutter/services/data/notes/models/note_model.dart';
 import 'package:seren_ai_flutter/services/data/notes/providers/notes_provider.dart';
 import 'package:seren_ai_flutter/services/data/notes/widgets/note_page.dart';
