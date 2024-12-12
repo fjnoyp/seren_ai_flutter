@@ -41,6 +41,7 @@ class BaseDueDateSelectionField extends ConsumerWidget {
     BuildContext context, {
     required DateTime initialDate,
   }) async {
+    FocusManager.instance.primaryFocus?.unfocus();
     final DateTime? pickedDate = await showDatePicker(
       context: context,
       initialDate: initialDate,
@@ -49,10 +50,12 @@ class BaseDueDateSelectionField extends ConsumerWidget {
     );
 
     if (pickedDate != null) {
+      FocusManager.instance.primaryFocus?.unfocus();
       final TimeOfDay? pickedTime = await showTimePicker(
         context: context,
         initialTime: TimeOfDay.fromDateTime(initialDate.toLocal()),
       );
+      FocusManager.instance.primaryFocus?.unfocus();
 
       if (pickedTime != null) {
         return DateTime(
@@ -78,7 +81,7 @@ class BaseDueDateSelectionField extends ConsumerWidget {
 
   String? _validator(DateTime? date) {
     return null;
-  
+
     // return date == null ? 'Due date is required' : null;
   }
 }
