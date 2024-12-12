@@ -11,7 +11,7 @@ UserOrgRoleModel _$UserOrgRoleModelFromJson(Map<String, dynamic> json) =>
       id: json['id'] as String?,
       userId: json['user_id'] as String,
       orgId: json['org_id'] as String,
-      orgRole: json['org_role'] as String,
+      orgRole: $enumDecode(_$OrgRoleEnumMap, json['org_role']),
       createdAt: json['created_at'] == null
           ? null
           : DateTime.parse(json['created_at'] as String),
@@ -25,7 +25,13 @@ Map<String, dynamic> _$UserOrgRoleModelToJson(UserOrgRoleModel instance) =>
       'id': instance.id,
       'user_id': instance.userId,
       'org_id': instance.orgId,
-      'org_role': instance.orgRole,
+      'org_role': _$OrgRoleEnumMap[instance.orgRole]!,
       'created_at': instance.createdAt?.toIso8601String(),
       'updated_at': instance.updatedAt?.toIso8601String(),
     };
+
+const _$OrgRoleEnumMap = {
+  OrgRole.admin: 'admin',
+  OrgRole.editor: 'editor',
+  OrgRole.member: 'member',
+};

@@ -46,6 +46,8 @@
     "enterText": "Enter Text",
     "enterTextHere": "Enter text here...",
     "testSQL": "Test SQL",
+    "assignees": "Assignees",
+    "search": "Search...",
     "other": "Other",
 
     "@_": {"description": "Settings"},
@@ -108,13 +110,26 @@
     "askAQuestion": "Ask a question",
 
     "@_": {"description": "Organization"},
+    "organization": "Organization",
     "chooseOrganization": "Choose Organization",
     "waitingForOrgRoles": "Waiting for orgRoles to load...",
     "noOrganizations": "No organizations available",
     "errorCannotLoadOrg": "Error cannot load organization",
     "noOrgSelected": "Error - No org selected. Wrap with OrgGuard",
     "noUsersInOrg": "No users found in this organization.",
-    "orgAdminManageOrgUsers": "Org Admin - Manage Org Users",
+    "manageOrgUsers": "Manage Org Users",
+    "admins": "Admins",
+    "removeUser": "Remove User",
+    "admin": "Admin",
+    "editor": "Editor",
+    "member": "Member",
+    "userRoleOfOrg": "{userRole} of {orgName}",
+    "@userRoleOfOrg": {
+        "placeholders": {
+            "userRole": {"type": "String"},
+            "orgName": {"type": "String"}
+        }
+    },
 
     "@_": {"description": "Projects"},
     "project": "Project",
@@ -144,6 +159,8 @@
             }
         }
     },
+    "updateProject": "Update Project",
+    "createProject": "Create Project",
 
     "@_": {"description": "Teams"},
     "team": "Team",

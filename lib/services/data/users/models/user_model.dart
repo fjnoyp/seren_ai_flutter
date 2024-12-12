@@ -44,26 +44,18 @@ class UserModel implements IHasId {
     this.updatedAt,
   }) : id = id ?? uuid.v4();
 
+  // Override equality operator and hashCode to compare UserModel instances by ID only.
+  // This ensures that two UserModel objects with the same ID are considered equal,
+  // even if other fields like email, firstName, lastName, createdAt, or updatedAt differ.
+  // This is important for operations like list.contains() to work correctly when checking
+  // for the presence of a user in a list based solely on their unique identifier.
   @override
   bool operator ==(Object other) =>
       identical(this, other) ||
-      other is UserModel &&
-          runtimeType == other.runtimeType &&
-          id == other.id &&
-          email == other.email &&
-          firstName == other.firstName &&
-          lastName == other.lastName &&
-          createdAt == other.createdAt &&
-          updatedAt == other.updatedAt;
+      other is UserModel && runtimeType == other.runtimeType && id == other.id;
 
   @override
-  int get hashCode =>
-      id.hashCode ^
-      email.hashCode ^
-      firstName.hashCode ^
-      lastName.hashCode ^
-      createdAt.hashCode ^
-      updatedAt.hashCode;
+  int get hashCode => id.hashCode;
 
   factory UserModel.fromJson(Map<String, dynamic> json) =>
       _$UserModelFromJson(json);
