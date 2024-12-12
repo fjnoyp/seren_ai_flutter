@@ -33,7 +33,11 @@ jobs:
         id: release_notes
         run: |
           VERSION_INFO="Version ${{ env.FLUTTER_VERSION_NAME }} (${{ github.run_number }})"
-          COMMIT_LOG=$(git log $(git describe --tags --abbrev=0 2>/dev/null || git rev-list --max-parents=0 HEAD)..HEAD --pretty=format:"- %s" | sed 's/[\"]/\\&/g')
+          LAST_TAG=$(git describe --tags --abbrev=0 2>/dev/null || git rev-list --max-parents=0 HEAD)
+          COMMIT_LOG=$(git log ${LAST_TAG}..HEAD --pretty=format:"- %s" | sed 's/[\"]/\\&/g')
+          if [ -z "$COMMIT_LOG" ]; then
+            COMMIT_LOG="- No changes since last version"
+          fi
           NOTES="$VERSION_INFO
 
           Recent changes:
