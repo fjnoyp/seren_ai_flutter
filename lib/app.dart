@@ -10,6 +10,7 @@ import 'package:seren_ai_flutter/common/routes/app_routes.dart';
 import 'package:seren_ai_flutter/services/auth/widgets/auth_guard.dart';
 import 'package:seren_ai_flutter/services/auth/widgets/sign_in_up_page.dart';
 import 'package:seren_ai_flutter/services/auth/widgets/terms_and_conditions/terms_and_conditions_webview.dart';
+import 'package:seren_ai_flutter/services/charts/widgets/charts_page.dart';
 import 'package:seren_ai_flutter/services/data/ai_chats/widgets/ai_chats_page.dart';
 import 'package:seren_ai_flutter/services/data/notes/widgets/notes_list_page.dart';
 import 'package:seren_ai_flutter/services/data/notes/widgets/note_page.dart';
@@ -130,6 +131,8 @@ class AppState extends State<App> {
             },
             AppRoutes.termsAndConditions.name: (context) =>
                 const TermsAndConditionsWebview(),
+            AppRoutes.charts.name: (context) => _GuardScaffold(
+                'Charts', const ChartsPage()),
           },
           // For dynamically generating routes based on settings param
           onGenerateRoute: (settings) {

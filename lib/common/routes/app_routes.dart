@@ -14,7 +14,8 @@ enum AppRoutes {
   noteList('/noteList'),
   notePage('/notePage'),
   testSQLPage('/testSQLPage'),
-  termsAndConditions('/termsAndConditions');
+  termsAndConditions('/termsAndConditions'),
+  charts('/charts');
 
   final String _path;
   const AppRoutes(this._path);

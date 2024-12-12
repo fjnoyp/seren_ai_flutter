@@ -223,6 +223,11 @@ class DrawerView extends HookWidget {
                   Navigator.pushNamed(context, AppRoutes.noteList.name),
             ),
             _DrawerListTile(
+              icon: Icons.bar_chart,
+              title: 'Charts', //AppLocalizations.of(context)!.charts,
+              onTap: () => Navigator.pushNamed(context, AppRoutes.charts.name),
+            ),
+            _DrawerListTile(
               icon: Icons.settings,
               title: AppLocalizations.of(context)!.settings,
               onTap: () => isSettingsView.value = true,
