@@ -119,7 +119,7 @@ class ShiftLogsResultWidget extends ConsumerWidget {
                             Expanded(
                               child: Text(
                                 isOngoing
-                                    ? '${DateFormat.Hm().format(log.clockInDatetime.toLocal())} - ONGOING'
+                                    ? AppLocalizations.of(context)!.ongoingShift(DateFormat.Hm().format(log.clockInDatetime.toLocal()))
                                     : '${DateFormat.Hm().format(log.clockInDatetime.toLocal())} - ${DateFormat.Hm().format(log.clockOutDatetime!.toLocal())}',
                                 style: theme.textTheme.bodyMedium,
                               ),
