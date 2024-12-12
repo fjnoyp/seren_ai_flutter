@@ -73,7 +73,9 @@ class ModalSelectionField<T> extends SelectionField<T> {
     bool isValueRequired = false,
   }) : super(
           showSelectionModal: (BuildContext context) async {
-            return showModalBottomSheet(
+            FocusManager.instance.primaryFocus?.unfocus();
+
+            final result = await showModalBottomSheet<T>(
               context: context,
               builder: (BuildContext context) => Consumer(
                 builder: (BuildContext context, WidgetRef ref, Widget? child) {
@@ -95,6 +97,9 @@ class ModalSelectionField<T> extends SelectionField<T> {
                 },
               ),
             );
+
+            FocusManager.instance.primaryFocus?.unfocus();
+            return result;
           },
         );
 }

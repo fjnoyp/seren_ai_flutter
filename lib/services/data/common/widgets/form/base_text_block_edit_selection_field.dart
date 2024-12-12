@@ -36,6 +36,7 @@ class BaseTextBlockEditSelectionField extends ConsumerWidget {
       value: curDescription?.isEmpty ?? true ? hintText : curDescription,
       onValueChanged: updateDescription,
       showSelectionModal: (BuildContext context) async {
+        FocusManager.instance.primaryFocus?.unfocus();
         showModalBottomSheet<String>(
           context: context,
           isScrollControlled: true,
@@ -46,6 +47,7 @@ class BaseTextBlockEditSelectionField extends ConsumerWidget {
             );
           },
         );
+        FocusManager.instance.primaryFocus?.unfocus();
         return null;
       },
     );
