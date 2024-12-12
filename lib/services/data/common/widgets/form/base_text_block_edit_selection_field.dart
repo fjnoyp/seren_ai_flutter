@@ -9,6 +9,7 @@ class BaseTextBlockEditSelectionField extends ConsumerWidget {
   final ProviderListenable<String?> descriptionProvider;
   final Function(WidgetRef, String?) updateDescription;
   final Widget? labelWidget;
+  final String? hintText;
 
   const BaseTextBlockEditSelectionField({
     super.key,
@@ -16,6 +17,7 @@ class BaseTextBlockEditSelectionField extends ConsumerWidget {
     required this.descriptionProvider,
     required this.updateDescription,
     this.labelWidget,
+    this.hintText,
   });
 
   @override
@@ -31,7 +33,7 @@ class BaseTextBlockEditSelectionField extends ConsumerWidget {
       valueToString: (description) =>
           description ?? AppLocalizations.of(context)!.enterText,
       enabled: enabled,
-      value: curDescription,
+      value: curDescription?.isEmpty ?? true ? hintText : curDescription,
       onValueChanged: updateDescription,
       showSelectionModal: (BuildContext context) async {
         showModalBottomSheet<String>(

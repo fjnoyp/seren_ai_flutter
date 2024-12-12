@@ -48,6 +48,8 @@
     "testSQL": "Test SQL",
     "assignees": "Assignees",
     "search": "Search...",
+    "description": "Description",
+    "address": "Address",
     "other": "Other",
 
     "@_": {"description": "Settings"},
