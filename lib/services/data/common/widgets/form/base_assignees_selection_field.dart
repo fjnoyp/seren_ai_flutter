@@ -44,7 +44,8 @@ class BaseAssigneesSelectionField extends HookConsumerWidget {
       value: curAssignees,
       onValueChanged: updateAssignees,
       showSelectionModal: (BuildContext context) async {
-        showModalBottomSheet<List<UserModel>>(
+        FocusManager.instance.primaryFocus?.unfocus();
+        await showModalBottomSheet<List<UserModel>>(
           context: context,
           isScrollControlled: true,
           builder: (BuildContext context) {
@@ -56,6 +57,7 @@ class BaseAssigneesSelectionField extends HookConsumerWidget {
             );
           },
         );
+        FocusManager.instance.primaryFocus?.unfocus();
         return null;
       },
     );
