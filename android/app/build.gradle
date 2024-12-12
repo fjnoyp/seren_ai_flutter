@@ -33,6 +33,7 @@ android {
     ndkVersion = flutter.ndkVersion
 
     compileOptions {
+        coreLibraryDesugaringEnabled true
         sourceCompatibility JavaVersion.VERSION_17
         targetCompatibility JavaVersion.VERSION_17
     }
@@ -49,6 +50,7 @@ android {
         targetSdk = flutter.targetSdkVersion
         versionCode project.hasProperty('FLUTTER_VERSION_CODE') ? project.FLUTTER_VERSION_CODE.toInteger() : 1
         versionName project.hasProperty('FLUTTER_VERSION_NAME') ? project.FLUTTER_VERSION_NAME : "1.0"
+        multiDexEnabled true
     }
 
     def keystoreProperties = new Properties()
@@ -87,4 +89,7 @@ dependencies {
     // When using the BoM, you don't specify versions in Firebase library dependencies
     implementation("com.google.firebase:firebase-crashlytics")
     implementation("com.google.firebase:firebase-analytics")
+
+    // Add this line for Java 8+ API desugaring support
+    coreLibraryDesugaring 'com.android.tools:desugar_jdk_libs:2.0.3'
 }
