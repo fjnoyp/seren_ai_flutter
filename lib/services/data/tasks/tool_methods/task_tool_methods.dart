@@ -360,6 +360,8 @@ class TaskToolMethods {
       resultForAi: deleted == true
           ? 'Successfully deleted task "${joinedTask.task.name}"'
           : 'Task deletion cancelled by user for "${joinedTask.task.name}"',
+      isDeleted: deleted,
+      taskName: joinedTask.task.name,
       showOnly: true,
     );
   }
