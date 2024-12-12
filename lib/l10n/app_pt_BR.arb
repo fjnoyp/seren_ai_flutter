@@ -23,6 +23,8 @@
     "testSQL": "Testar SQL",
     "assignees": "Responsáveis",
     "search": "Pesquisar...",
+    "description": "Descrição",
+    "address": "Endereço",
     "other": "Outro",
 
     "@_": {"description": "Settings"},
