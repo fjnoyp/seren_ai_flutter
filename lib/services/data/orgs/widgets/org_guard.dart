@@ -15,8 +15,9 @@ class OrgGuard extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final curOrgId = ref.watch(curOrgIdProvider);
-
     final curUserOrgs = ref.watch(curUserOrgsProvider);
+
+    // Check if user no longer belongs to current org
     if (curUserOrgs.hasValue &&
         _userNoLongerBelongsTo(curOrgId, curUserOrgs: curUserOrgs.value!)) {
       ref.read(curUserOrgServiceProvider).clearDesiredOrgId();
@@ -26,32 +27,37 @@ class OrgGuard extends ConsumerWidget {
       if (curUserOrgs.hasValue) {
         if (curUserOrgs.value!.length == 1) {
           // If user only has one org, set it as the desired org
-          ref
-              .read(curUserOrgServiceProvider)
-              .setDesiredOrgId(curUserOrgs.value!.first.id);
-        } else {
+          WidgetsBinding.instance.addPostFrameCallback((_) {
+            ref
+                .read(curUserOrgServiceProvider)
+                .setDesiredOrgId(curUserOrgs.value!.first.id);
+          });
+          return const Center(child: CircularProgressIndicator());
+        } else if (curUserOrgs.value!.length > 1) {
           // If user has multiple orgs, navigate to chooseOrg page
           WidgetsBinding.instance.addPostFrameCallback((_) =>
               Navigator.pushNamedAndRemoveUntil(
                   context, AppRoutes.chooseOrg.name, (route) => false));
+          return const Center(child: CircularProgressIndicator());
         }
-      } else {
-        // We need to add retry logic if orgs list is empty because
-        // the orgs list isn't always being updated in time
-        WidgetsBinding.instance.addPostFrameCallback((_) async {
-          for (int i = 0; i < 3; i++) {
-            await Future.delayed(const Duration(seconds: 2));
-            if (!context.mounted) return; // Check if widget is still mounted
-            final orgs = await ref.refresh(curUserOrgsProvider.future);
-            if (orgs.isNotEmpty) {
-              return; // Exit if we got orgs
-            }
+      }
+
+      // Handle empty orgs case with retry logic
+      WidgetsBinding.instance.addPostFrameCallback((_) async {
+        for (int i = 0; i < 3; i++) {
+          await Future.delayed(const Duration(seconds: 2));
+          if (!context.mounted) return;
+          final orgs = await ref.refresh(curUserOrgsProvider.future);
+          if (orgs.isNotEmpty) {
+            return;
           }
-          // If still no orgs after retries, proceed with navigation
+        }
+        // If still no orgs after retries, proceed with navigation
+        if (context.mounted) {
           Navigator.pushNamedAndRemoveUntil(
               context, AppRoutes.chooseOrg.name, (route) => false);
-        });
-      }
+        }
+      });
 
       return const Center(child: CircularProgressIndicator());
     }
