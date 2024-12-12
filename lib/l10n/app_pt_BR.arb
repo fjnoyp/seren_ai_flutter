@@ -188,6 +188,7 @@
     "deleteLog": "Excluir Registro",
     "editTimeReason": "Por que você deseja editar esta {timeType}?",
     "deleteLogReason": "Por que você deseja excluir este registro?",
+    "ongoingShift": "{time} - EM ANDAMENTO",
 
     "@_": {"description": "Tasks"},
     "tasks": "Tarefas",
