@@ -10,6 +10,7 @@ import 'package:seren_ai_flutter/services/data/common/widgets/form/base_task_nam
 import 'package:seren_ai_flutter/services/data/projects/providers/cur_user_viewable_projects_provider.dart';
 import 'package:seren_ai_flutter/services/data/tasks/providers/cur_task_service_provider.dart';
 import 'package:seren_ai_flutter/services/data/tasks/providers/cur_task_state_provider.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 class TaskProjectSelectionField extends BaseProjectSelectionField {
   TaskProjectSelectionField({
@@ -97,7 +98,9 @@ class TaskDescriptionSelectionField extends BaseTextBlockEditSelectionField {
   TaskDescriptionSelectionField({
     super.key,
     required super.enabled,
+    required BuildContext context,
   }) : super(
+          hintText: AppLocalizations.of(context)!.description,
           descriptionProvider: curTaskStateProvider
               .select((state) => state.value?.task.description ?? ''),
           updateDescription: (ref, description) =>
