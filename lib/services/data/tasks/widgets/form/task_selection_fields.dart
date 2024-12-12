@@ -1,4 +1,6 @@
+import 'package:flutter/material.dart';
 import 'package:seren_ai_flutter/services/data/common/widgets/form/base_assignees_selection_field.dart';
+import 'package:seren_ai_flutter/services/data/common/widgets/form/base_minute_selection_field.dart';
 import 'package:seren_ai_flutter/services/data/common/widgets/form/base_text_block_edit_selection_field.dart';
 import 'package:seren_ai_flutter/services/data/common/widgets/form/base_due_date_selection_field.dart';
 import 'package:seren_ai_flutter/services/data/common/widgets/form/base_priority_selection_field.dart';
@@ -67,6 +69,27 @@ class TaskDueDateSelectionField extends BaseDueDateSelectionField {
               curTaskStateProvider.select((state) => state.value?.task.dueDate),
           updateDueDate: (ref, pickedDateTime) =>
               ref.read(curTaskServiceProvider).updateDueDate(pickedDateTime),
+        );
+}
+
+class ReminderMinuteOffsetFromDueDateSelectionField
+    extends BaseMinuteSelectionField {
+  ReminderMinuteOffsetFromDueDateSelectionField({
+    super.key,
+    required super.enabled,
+  }) : super(
+          reminderProvider: curTaskStateProvider
+              .select((state) => state.value?.task.reminderOffsetMinutes),
+          updateReminder: (ref, reminder) =>
+              ref.read(curTaskServiceProvider).setReminder(reminder),
+          labelWidgetBuilder: (ref) => ref
+                      .watch(curTaskStateProvider)
+                      .value
+                      ?.task
+                      .reminderOffsetMinutes ==
+                  null
+              ? const Icon(Icons.notifications_off)
+              : const Icon(Icons.notifications),
         );
 }
 

@@ -52,11 +52,13 @@ class TaskModel implements IHasId {
   final String parentProjectId;
 
   @JsonKey(
-    name: 'estimated_duration_minutes',
-    fromJson: _durationFromJson,
-    toJson: _durationToJson
-  )
+      name: 'estimated_duration_minutes',
+      fromJson: _durationFromJson,
+      toJson: _durationToJson)
   final int? estimatedDurationMinutes;
+
+  @JsonKey(name: 'reminder_offset_minutes')
+  final int? reminderOffsetMinutes;
 
   static int? _durationFromJson(dynamic value) {
     if (value == null) return null;
@@ -80,7 +82,9 @@ class TaskModel implements IHasId {
     required this.authorUserId,
     required this.parentProjectId,
     this.estimatedDurationMinutes,
-  }) : id = id ?? uuid.v4();
+    this.reminderOffsetMinutes,
+  })  : id = id ?? uuid.v4(),
+        assert(dueDate != null || reminderOffsetMinutes == null);
 
   // Factory constructor for creating a TaskModel with default values
   factory TaskModel.defaultTask() {
@@ -98,6 +102,7 @@ class TaskModel implements IHasId {
       parentProjectId:
           '', // This should be set to a valid project ID in practice
       estimatedDurationMinutes: null,
+      reminderOffsetMinutes: 0,
     );
   }
 
@@ -113,6 +118,8 @@ class TaskModel implements IHasId {
     String? authorUserId,
     String? parentProjectId,
     int? estimatedDurationMinutes,
+    int? reminderOffsetMinutes,
+    bool removeReminder = false,
   }) {
     return TaskModel(
       id: id ?? this.id,
@@ -127,6 +134,9 @@ class TaskModel implements IHasId {
       parentProjectId: parentProjectId ?? this.parentProjectId,
       estimatedDurationMinutes:
           estimatedDurationMinutes ?? this.estimatedDurationMinutes,
+      reminderOffsetMinutes: removeReminder
+          ? null
+          : reminderOffsetMinutes ?? this.reminderOffsetMinutes,
     );
   }
 

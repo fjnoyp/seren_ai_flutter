@@ -113,6 +113,19 @@ class CurTaskService {
     }
   }
 
+  Future<void> setReminder(int? reminderOffsetMinutes) async {
+    if (_state.value != null) {
+      _notifier.setNewTask(
+        _state.value!.copyWith(
+          task: _state.value!.task.copyWith(
+            removeReminder: reminderOffsetMinutes == null,
+            reminderOffsetMinutes: reminderOffsetMinutes,
+          ),
+        ),
+      );
+    }
+  }
+
   Future<void> saveTask() async {
     // TODO p4: optimize by running all futures in parallel
     await ref.read(tasksDbProvider).upsertItem(_state.value!.task);
