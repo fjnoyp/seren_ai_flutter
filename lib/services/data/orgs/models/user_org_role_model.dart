@@ -1,8 +1,22 @@
+import 'package:flutter/widgets.dart';
 import 'package:json_annotation/json_annotation.dart';
 import 'package:seren_ai_flutter/services/data/common/i_has_id.dart';
 import 'package:seren_ai_flutter/services/data/common/uuid.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 part 'user_org_role_model.g.dart';
+
+enum OrgRole {
+  admin,
+  editor,
+  member;
+
+  String toHumanReadable(BuildContext context) => switch (this) {
+        OrgRole.admin => AppLocalizations.of(context)!.admin,
+        OrgRole.editor => AppLocalizations.of(context)!.editor,
+        OrgRole.member => AppLocalizations.of(context)!.member,
+      };
+}
 
 @JsonSerializable()
 class UserOrgRoleModel implements IHasId {
@@ -15,9 +29,8 @@ class UserOrgRoleModel implements IHasId {
   @JsonKey(name: 'org_id')
   final String orgId;
 
-  // TODO p3: switch to enum
   @JsonKey(name: 'org_role')
-  final String orgRole;
+  final OrgRole orgRole;
 
   @JsonKey(name: 'created_at')
   final DateTime? createdAt;
@@ -41,7 +54,7 @@ class UserOrgRoleModel implements IHasId {
     String? id,
     String? userId,
     String? orgId,
-    String? orgRole,
+    OrgRole? orgRole,
     DateTime? createdAt,
     DateTime? updatedAt,
   }) {
