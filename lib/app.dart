@@ -14,7 +14,6 @@ import 'package:seren_ai_flutter/services/data/ai_chats/widgets/ai_chats_page.da
 import 'package:seren_ai_flutter/services/data/common/widgets/editable_page_mode_enum.dart';
 import 'package:seren_ai_flutter/services/data/notes/widgets/notes_list_page.dart';
 import 'package:seren_ai_flutter/services/data/notes/widgets/note_page.dart';
-import 'package:seren_ai_flutter/services/data/orgs/widgets/action_buttons/invite_user_to_org_button.dart';
 import 'package:seren_ai_flutter/services/data/orgs/widgets/choose_org_page.dart';
 import 'package:seren_ai_flutter/services/data/orgs/widgets/cur_org_page.dart';
 import 'package:seren_ai_flutter/services/data/orgs/widgets/manage_org_users_page.dart';
@@ -26,7 +25,6 @@ import 'package:seren_ai_flutter/services/data/shifts/widgets/shifts_page.dart';
 import 'package:seren_ai_flutter/services/data/tasks/providers/task_schedule_notifications_service.dart';
 import 'package:seren_ai_flutter/services/data/tasks/widgets/task_page.dart';
 import 'package:seren_ai_flutter/services/ai_interaction/stt_orchestrator_provider.dart.dart';
-import 'package:seren_ai_flutter/widgets/common/debug_mode_provider.dart';
 import 'package:seren_ai_flutter/widgets/home/home_page.dart';
 import 'package:seren_ai_flutter/widgets/common/main_scaffold.dart';
 import 'package:seren_ai_flutter/services/data/tasks/widgets/task_list/tasks_list_page.dart';
@@ -99,14 +97,15 @@ class AppState extends State<App> {
                 actions: args?['actions'],
               );
             },
-            AppRoutes.manageOrgUsers.name: (context) => _GuardScaffold(
-                  AppLocalizations.of(context)!.manageOrgUsers,
-                  const ManageOrgUsersPage(),
-                  // TODO: after implementing invite user flow, remove this debug condition
-                  actions: [
-                    if (ref.read(isDebugModeSNP)) const InviteUserToOrgButton()
-                  ],
-                ),
+            AppRoutes.manageOrgUsers.name: (context) {
+              final args = ModalRoute.of(context)!.settings.arguments
+                  as Map<String, dynamic>;
+              return _GuardScaffold(
+                AppLocalizations.of(context)!.manageOrgUsers,
+                const ManageOrgUsersPage(),
+                actions: args['actions'],
+              );
+            },
             AppRoutes.projects.name: (context) => _GuardScaffold(
                 AppLocalizations.of(context)!.projects,
                 const ProjectListPage()),
