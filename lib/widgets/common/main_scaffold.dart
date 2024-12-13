@@ -5,6 +5,8 @@ import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:seren_ai_flutter/common/routes/app_routes.dart';
 import 'package:seren_ai_flutter/services/ai_interaction/widgets/user_input_display_widget.dart';
 import 'package:seren_ai_flutter/services/data/db_setup/app_config.dart';
+import 'package:seren_ai_flutter/services/data/users/models/joined_invite_model.dart';
+import 'package:seren_ai_flutter/services/data/users/providers/cur_user_invites_service_provider.dart';
 import 'package:seren_ai_flutter/widgets/common/is_show_save_dialog_on_pop_provider.dart';
 import 'drawer_view.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
@@ -31,6 +33,13 @@ class MainScaffold extends HookConsumerWidget {
     final isAiAssistantExpanded = useState(false);
 
     final theme = Theme.of(context);
+
+    final curUserPendingInvites = ref.watch(curUserInvitesServiceProvider);
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      for (final invite in curUserPendingInvites) {
+        _showInviteDialog(context, ref, invite);
+      }
+    });
 
     return PopScope(
       canPop: Navigator.of(context).canPop(),
@@ -66,15 +75,16 @@ class MainScaffold extends HookConsumerWidget {
 
                         if (!canSave) {
                           Navigator.of(context).pop(true);
-                        } 
+                        }
                         // If can save - show dialog to confirm save
                         else {
                           final shouldSave = await showDialog<bool>(
                             context: context,
                             builder: (context) => AlertDialog(
-                              title: Text(AppLocalizations.of(context)!.areYouSure),
-                              content: Text(
-                                  AppLocalizations.of(context)!.quitWithoutSaving),
+                              title: Text(
+                                  AppLocalizations.of(context)!.areYouSure),
+                              content: Text(AppLocalizations.of(context)!
+                                  .quitWithoutSaving),
                               actions: [
                                 TextButton(
                                   onPressed: () =>
@@ -84,13 +94,16 @@ class MainScaffold extends HookConsumerWidget {
                                 TextButton(
                                   onPressed: () =>
                                       Navigator.of(context).pop(true),
-                                  child: Text(AppLocalizations.of(context)!.yes),
+                                  child:
+                                      Text(AppLocalizations.of(context)!.yes),
                                 ),
                               ],
                             ),
-                          );   
+                          );
                           if (shouldSave ?? false) {
-                            ref.read(isShowSaveDialogOnPopProvider.notifier).reset();
+                            ref
+                                .read(isShowSaveDialogOnPopProvider.notifier)
+                                .reset();
                             Navigator.of(context).pop();
                           }
                         }
@@ -190,5 +203,35 @@ class MainScaffold extends HookConsumerWidget {
             : null,
       ),
     );
+  }
+
+  Future<dynamic> _showInviteDialog(BuildContext context, WidgetRef ref, JoinedInviteModel invite) {
+    final curUserInvitesService =
+        ref.read(curUserInvitesServiceProvider.notifier);
+    return showDialog(
+        context: context,
+        barrierDismissible: false,
+        builder: (context) => AlertDialog(
+          title: Text('Pending invite'),
+          content: Text(
+              '${invite.authorUser.firstName} invited you to join ${invite.org.name} as a ${invite.invite.orgRole.toHumanReadable(context)}'),
+          actions: [
+            TextButton(
+              onPressed: () {
+                curUserInvitesService.declineInvite(invite);
+                Navigator.of(context).pop();
+              },
+              child: Text('Decline'),
+            ),
+            FilledButton(
+              onPressed: () {
+                curUserInvitesService.acceptInvite(invite);
+                Navigator.of(context).pop();
+              },
+              child: Text('Accept'),
+            ),
+          ],
+        ),
+      );
   }
 }
