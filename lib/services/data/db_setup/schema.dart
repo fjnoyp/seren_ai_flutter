@@ -56,8 +56,10 @@ const permissionSchemas = [
   Table(invitesTable, [
     Column.text('email'),
     Column.text('org_id'),
+    Column.text('org_name'),
     Column.text('org_role'),
     Column.text('author_user_id'),
+    Column.text('author_user_name'),
     Column.text('status'),
   ]),
 ];

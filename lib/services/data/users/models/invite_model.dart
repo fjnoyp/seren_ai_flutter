@@ -21,11 +21,17 @@ class InviteModel implements IHasId {
   @JsonKey(name: 'org_id')
   final String orgId;
 
+  @JsonKey(name: 'org_name')
+  final String orgName;
+
   @JsonKey(name: 'org_role')
   final OrgRole orgRole;
 
   @JsonKey(name: 'author_user_id')
   final String authorUserId;
+
+  @JsonKey(name: 'author_user_name')
+  final String authorUserName;
 
   final InviteStatus status;
 
@@ -39,8 +45,10 @@ class InviteModel implements IHasId {
     String? id,
     required this.email,
     required this.orgId,
+    required this.orgName,
     required this.orgRole,
     required this.authorUserId,
+    required this.authorUserName,
     this.status = InviteStatus.pending,
     this.createdAt,
     this.updatedAt,
@@ -64,8 +72,10 @@ class InviteModel implements IHasId {
     String? id,
     String? email,
     String? orgId,
+    String? orgName,
     OrgRole? orgRole,
     String? authorUserId,
+    String? authorUserName,
     InviteStatus? status,
     DateTime? createdAt,
     DateTime? updatedAt,
@@ -74,8 +84,10 @@ class InviteModel implements IHasId {
       id: id ?? this.id,
       email: email ?? this.email,
       orgId: orgId ?? this.orgId,
+      orgName: orgName ?? this.orgName,
       orgRole: orgRole ?? this.orgRole,
       authorUserId: authorUserId ?? this.authorUserId,
+      authorUserName: authorUserName ?? this.authorUserName,
       status: status ?? this.status,
       createdAt: createdAt ?? this.createdAt,
       updatedAt: updatedAt ?? this.updatedAt,

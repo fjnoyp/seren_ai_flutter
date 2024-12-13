@@ -94,6 +94,16 @@
     "member": "Membro",
     "userRoleOfOrg": "{userRole} de {orgName}",
 
+    "@_": {"description": "Invite User"},
+    "inviteUser": "Convidar Usuário",
+    "inviteUserToOrg": "Convidar usuário para Org",
+    "inviteAs": "Convidar como ",
+    "invite": "Convidar",
+    "pendingInvite": "Convite pendente",
+    "pendingInviteBody": "{authorUserName} convidou você para participar de {orgName} como {inviteOrgRole}",
+    "decline": "Recusar",
+    "accept": "Aceitar",
+
     "@_": {"description": "Projects"},
     "project": "Projeto",
     "projects": "Projetos",

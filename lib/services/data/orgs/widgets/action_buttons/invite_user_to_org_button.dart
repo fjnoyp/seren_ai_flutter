@@ -3,6 +3,7 @@ import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:seren_ai_flutter/services/data/orgs/models/user_org_role_model.dart';
 import 'package:seren_ai_flutter/services/data/orgs/providers/cur_org_service_provider.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 class InviteUserToOrgButton extends ConsumerWidget {
   const InviteUserToOrgButton({super.key});
@@ -30,7 +31,7 @@ class _InviteUserByEmailDialog extends HookConsumerWidget {
     final orgRole = useState(OrgRole.member);
 
     return AlertDialog(
-      title: const Text('Invite user to Org'),
+      title: Text(AppLocalizations.of(context)!.inviteUserToOrg),
       content: Column(
         mainAxisSize: MainAxisSize.min,
         children: [
@@ -44,7 +45,7 @@ class _InviteUserByEmailDialog extends HookConsumerWidget {
           Row(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              const Text('Invite as '),
+              Text(AppLocalizations.of(context)!.inviteAs),
               DropdownButton<OrgRole>(
                 value: orgRole.value,
                 onChanged: (OrgRole? newOrgRole) {
@@ -77,7 +78,7 @@ class _InviteUserByEmailDialog extends HookConsumerWidget {
               .read(curOrgServiceProvider.notifier)
               .inviteUser(emailController.text, orgRole.value)
               .then((_) => Navigator.pop(context)),
-          child: const Text('Invite'),
+          child: Text(AppLocalizations.of(context)!.invite),
         ),
       ],
     );

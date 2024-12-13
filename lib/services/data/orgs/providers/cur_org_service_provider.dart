@@ -1,4 +1,7 @@
+import 'dart:developer';
+
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:seren_ai_flutter/services/auth/cur_auth_state_provider.dart';
 import 'package:seren_ai_flutter/services/data/orgs/models/org_model.dart';
 import 'package:seren_ai_flutter/services/data/orgs/models/user_org_role_model.dart';
 import 'package:seren_ai_flutter/services/data/orgs/orgs_db_provider.dart';
@@ -38,11 +41,13 @@ class CurOrgStateNotifier extends Notifier<OrgModel> {
       await ref.read(orgsDbProvider).upsertItem(state);
 
   Future<void> inviteUser(String email, OrgRole role) async {
-    await Supabase.instance.client.rpc('invite_user', params: {
+    final user = ref.read(curUserProvider).value;
+    final response = await Supabase.instance.client.rpc('invite_user', params: {
       'p_email': email,
       'p_org_id': state.id,
       'p_role': role.name,
-      'p_author_user_id': Supabase.instance.client.auth.currentUser!.id,
+      'p_author_user_id': user!.id,
     });
+    log('inviteUser called:\n\temail: $email\n\trole: $role\n\torgId: ${state.id}\nWith response:\n$response');
   }
 }

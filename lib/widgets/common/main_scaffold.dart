@@ -5,7 +5,7 @@ import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:seren_ai_flutter/common/routes/app_routes.dart';
 import 'package:seren_ai_flutter/services/ai_interaction/widgets/user_input_display_widget.dart';
 import 'package:seren_ai_flutter/services/data/db_setup/app_config.dart';
-import 'package:seren_ai_flutter/services/data/users/models/joined_invite_model.dart';
+import 'package:seren_ai_flutter/services/data/users/models/invite_model.dart';
 import 'package:seren_ai_flutter/services/data/users/providers/cur_user_invites_service_provider.dart';
 import 'package:seren_ai_flutter/widgets/common/is_show_save_dialog_on_pop_provider.dart';
 import 'drawer_view.dart';
@@ -205,33 +205,36 @@ class MainScaffold extends HookConsumerWidget {
     );
   }
 
-  Future<dynamic> _showInviteDialog(BuildContext context, WidgetRef ref, JoinedInviteModel invite) {
+  Future<dynamic> _showInviteDialog(
+      BuildContext context, WidgetRef ref, InviteModel invite) {
     final curUserInvitesService =
         ref.read(curUserInvitesServiceProvider.notifier);
     return showDialog(
-        context: context,
-        barrierDismissible: false,
-        builder: (context) => AlertDialog(
-          title: Text('Pending invite'),
-          content: Text(
-              '${invite.authorUser.firstName} invited you to join ${invite.org.name} as a ${invite.invite.orgRole.toHumanReadable(context)}'),
-          actions: [
-            TextButton(
-              onPressed: () {
-                curUserInvitesService.declineInvite(invite);
-                Navigator.of(context).pop();
-              },
-              child: Text('Decline'),
-            ),
-            FilledButton(
-              onPressed: () {
-                curUserInvitesService.acceptInvite(invite);
-                Navigator.of(context).pop();
-              },
-              child: Text('Accept'),
-            ),
-          ],
-        ),
-      );
+      context: context,
+      barrierDismissible: false,
+      builder: (context) => AlertDialog(
+        title: Text(AppLocalizations.of(context)!.pendingInvite),
+        content: Text(AppLocalizations.of(context)!.pendingInviteBody(
+            invite.authorUserName,
+            invite.orgName,
+            invite.orgRole.toHumanReadable(context))),
+        actions: [
+          TextButton(
+            onPressed: () {
+              curUserInvitesService.declineInvite(invite);
+              Navigator.of(context).pop();
+            },
+            child: Text(AppLocalizations.of(context)!.decline),
+          ),
+          FilledButton(
+            onPressed: () {
+              curUserInvitesService.acceptInvite(invite);
+              Navigator.of(context).pop();
+            },
+            child: Text(AppLocalizations.of(context)!.accept),
+          ),
+        ],
+      ),
+    );
   }
 }

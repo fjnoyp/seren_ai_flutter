@@ -32,36 +32,12 @@ abstract class UserQueries {
   ''';
 
   /// Params:
-  /// - user_id: String
+  /// - user_email: String
   static const String pendingInvitesByEmailQuery = '''
-    SELECT 
-      json_object(
-        'id', i.id,
-        'email', i.email,
-        'org_id', i.org_id,
-        'org_role', i.org_role,
-        'author_user_id', i.author_user_id,
-        'status', i.status,
-        'created_at', i.created_at,
-        'updated_at', i.updated_at
-      ) as invite,
-      CASE WHEN o.id IS NOT NULL THEN json_object(
-        'id', o.id,
-        'name', o.name,
-        'address', o.address
-      ) END as organization,
-      CASE WHEN u.id IS NOT NULL THEN json_object(
-        'id', u.id,
-        'email', u.email,
-        'first_name', u.first_name,
-        'last_name', u.last_name
-      ) END as author_user
-    FROM invites i
-    LEFT JOIN orgs o ON i.org_id = o.id
-    LEFT JOIN users u ON i.author_user_id = u.id
-    LEFT JOIN users target_user ON target_user.id = :user_id
-    WHERE i.email = target_user.email
-    AND i.status = 'pending'
-    GROUP BY i.id;
+    SELECT *
+    FROM invites
+    WHERE email = :user_email
+    AND status = 'pending'
+    ORDER BY created_at DESC;
   ''';
 }
