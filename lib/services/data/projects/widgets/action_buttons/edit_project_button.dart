@@ -1,3 +1,4 @@
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:seren_ai_flutter/services/data/common/widgets/editable_page_mode_enum.dart';
@@ -11,8 +12,10 @@ class EditProjectButton extends ConsumerWidget {
     return IconButton(
       icon: const Icon(Icons.edit),
       onPressed: () {
-        // remove self from stack
-        Navigator.pop(context);
+        if (!kIsWeb) {
+          // remove self from stack
+          Navigator.pop(context);
+        }
         openProjectPage(ref, context, mode: EditablePageMode.edit);
       },
     );

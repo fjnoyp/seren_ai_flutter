@@ -1,3 +1,4 @@
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:seren_ai_flutter/common/navigation_service_provider.dart';
@@ -121,22 +122,32 @@ Future<void> openProjectPage(
 
   final curUserOrgRole = ref.read(curUserOrgRoleProvider).value;
 
-  final actions = (curUserOrgRole == OrgRole.admin ||
-          curUserOrgRole == OrgRole.editor)
-      ? switch (mode) {
-          EditablePageMode.edit => [const DeleteProjectButton()],
-          EditablePageMode.readOnly => [
-              const UpdateProjectAssigneesButton(),
-              const EditProjectButton()
-            ],
-          _ => null,
-        }
-      : null;
+  final actions =
+      (curUserOrgRole == OrgRole.admin || curUserOrgRole == OrgRole.editor)
+          ? switch (mode) {
+              EditablePageMode.edit => [const DeleteProjectButton()],
+              EditablePageMode.readOnly => [
+                  const UpdateProjectAssigneesButton(),
+                  const EditProjectButton()
+                ],
+              _ => null,
+            }
+          : null;
 
-  ref.read(navigationServiceProvider).navigateTo(
-    AppRoutes.projectDetails.name,
-    arguments: {'title': title, 'mode': mode, 'actions': actions},
-  );
+  if (kIsWeb && mode != EditablePageMode.readOnly) {
+    showDialog(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: Text(title),
+        content: ProjectPage(mode: mode),
+      ),
+    );
+  } else {
+    ref.read(navigationServiceProvider).navigateTo(
+      AppRoutes.projectDetails.name,
+      arguments: {'title': title, 'mode': mode, 'actions': actions},
+    );
+  }
 }
 
 Future<void> openCreateProjectPage(WidgetRef ref, BuildContext context) async {
