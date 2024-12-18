@@ -102,7 +102,7 @@ class TaskModel implements IHasId {
       parentProjectId:
           '', // This should be set to a valid project ID in practice
       estimatedDurationMinutes: null,
-      reminderOffsetMinutes: 0,
+      reminderOffsetMinutes: null,
     );
   }
 

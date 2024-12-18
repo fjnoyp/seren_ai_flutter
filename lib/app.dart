@@ -1,4 +1,5 @@
 import 'package:app_links/app_links.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -59,7 +60,9 @@ class AppState extends State<App> {
         // === Permanent Providers ===
         ref.read(sttOrchestratorProvider);
         ref.read(curShiftStateProvider);
-        ref.read(taskScheduleNotificationsServiceProvider);
+        if (!kIsWeb) {
+          ref.read(taskScheduleNotificationsServiceProvider);
+        }
 
         final themeMode = ref.watch(themeSNP);
 
