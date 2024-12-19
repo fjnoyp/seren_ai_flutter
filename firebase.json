@@ -1,21 +1,32 @@
 {
-    "flutter": {
-        "platforms": {
-            "android": {
-                "default": {
-                    "projectId": "seren-ai",
-                    "appId": "1:888730365208:android:c9cf9621dc53df7709c26d",
-                    "fileOutput": "android/app/google-services.json"
-                }
-            },
-            "dart": {
-                "lib/firebase_options.dart": {
-                    "projectId": "seren-ai",
-                    "configurations": {
-                        "android": "1:888730365208:android:c9cf9621dc53df7709c26d"
-                    }
-                }
-            }
+  "flutter": {
+    "platforms": {
+      "android": {
+        "default": {
+          "projectId": "seren-ai",
+          "appId": "1:888730365208:android:c9cf9621dc53df7709c26d",
+          "fileOutput": "android/app/google-services.json"
         }
+      },
+      "dart": {
+        "lib/firebase_options.dart": {
+          "projectId": "seren-ai",
+          "configurations": {
+            "android": "1:888730365208:android:c9cf9621dc53df7709c26d"
+          }
+        }
+      }
     }
+  },
+  "hosting": {
+    "source": ".",
+    "ignore": [
+      "firebase.json",
+      "**/.*",
+      "**/node_modules/**"
+    ],
+    "frameworksBackend": {
+      "region": "us-central1"
+    }
+  }
 }
