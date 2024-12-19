@@ -4,7 +4,9 @@ import 'package:logging/logging.dart';
 import 'package:seren_ai_flutter/common/navigation_service_provider.dart';
 import 'package:seren_ai_flutter/common/routes/app_routes.dart';
 import 'package:seren_ai_flutter/services/auth/cur_auth_state_provider.dart';
+import 'package:seren_ai_flutter/services/data/common/status_enum.dart';
 import 'package:seren_ai_flutter/services/data/common/widgets/editable_page_mode_enum.dart';
+import 'package:seren_ai_flutter/services/data/projects/models/project_model.dart';
 import 'package:seren_ai_flutter/services/data/projects/providers/cur_user_viewable_projects_provider.dart';
 import 'package:seren_ai_flutter/services/data/tasks/providers/cur_task_service_provider.dart';
 import 'package:seren_ai_flutter/services/data/tasks/providers/cur_task_state_provider.dart';
@@ -200,16 +202,26 @@ Future<void> openBlankTaskPage(Ref ref) async {
 }
 
 // TODO p2: init state within the page itself ... we should only rely on arguments to init the page (to support deep linking)
-Future<void> openTaskPage(BuildContext context, WidgetRef ref,
-    {required EditablePageMode mode,
-    JoinedTaskModel? initialJoinedTask}) async {
+/// `initialProject` and `initialStatus` fields are only used for create mode. 
+/// They are used to set the parent project and status of the new task
+///
+/// **If you use them with edit mode, they will be ignored**
+Future<void> openTaskPage(
+  BuildContext context,
+  WidgetRef ref, {
+  required EditablePageMode mode,
+  JoinedTaskModel? initialJoinedTask,
+  ProjectModel? initialProject,
+  StatusEnum? initialStatus,
+}) async {
   // Remove previous TaskPage to avoid duplicate task pages
   Navigator.popUntil(
       context, (route) => route.settings.name != AppRoutes.taskPage.name);
 
   // CREATE - wipe existing task state
   if (mode == EditablePageMode.create) {
-    ref.read(curTaskServiceProvider).createTask();
+    ref.read(curTaskServiceProvider).createTask(
+        project: initialProject, status: initialStatus);
   }
   // EDIT/READ - optionally load provided initial task
   else if (mode == EditablePageMode.edit || mode == EditablePageMode.readOnly) {

@@ -188,7 +188,8 @@ class WebProjectTasksSection extends HookConsumerWidget {
                 icon: const Icon(Icons.add),
                 label: Text(AppLocalizations.of(context)!.createNewTask),
                 onPressed: () async => await openTaskPage(context, ref,
-                    mode: EditablePageMode.create),
+                    mode: EditablePageMode.create,
+                    initialProject: ref.read(curProjectStateProvider).project),
               ),
             ],
           ),
@@ -269,7 +270,10 @@ class _ProjectTasksBoardView extends ConsumerWidget {
                           ),
                           onPressed: () async => await openTaskPage(
                               context, ref,
-                              mode: EditablePageMode.create),
+                              mode: EditablePageMode.create,
+                              initialProject:
+                                  ref.read(curProjectStateProvider).project,
+                              initialStatus: status),
                           child: Text(
                             AppLocalizations.of(context)!.createNewTask,
                           ),
@@ -339,7 +343,10 @@ class _ProjectTasksListView extends ConsumerWidget {
                   ListTile(
                     dense: true,
                     onTap: () => openTaskPage(context, ref,
-                        mode: EditablePageMode.create),
+                        mode: EditablePageMode.create,
+                        initialProject:
+                            ref.read(curProjectStateProvider).project,
+                        initialStatus: status),
                     leading: const SizedBox.shrink(),
                     title: Text(
                       AppLocalizations.of(context)!.createNewTask,
