@@ -21,6 +21,14 @@ enum PriorityEnum {
         PriorityEnum.high => AppLocalizations.of(context)!.high,
         PriorityEnum.veryHigh => AppLocalizations.of(context)!.veryHigh,
       };
+
+  int toInt() => switch (this) {
+        PriorityEnum.veryLow => 4,
+        PriorityEnum.low => 3,
+        PriorityEnum.normal => 2,
+        PriorityEnum.high => 1,
+        PriorityEnum.veryHigh => 0,
+      };
 }
 
 @JsonSerializable()

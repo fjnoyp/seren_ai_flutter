@@ -51,28 +51,28 @@ class MainScaffold extends HookConsumerWidget {
                     flex: 4,
                     child: Column(
                       children: [
-                        AppBar(
-                          backgroundColor: theme.appBarTheme.backgroundColor,
-                          automaticallyImplyLeading: false,
-                          elevation: 0,
-                          title: Padding(
-                            padding: const EdgeInsets.all(8.0),
-                            child: Text(
-                              title,
-                              style: theme.appBarTheme.titleTextStyle,
-                            ),
-                          ),
-                          actions: [
-                            if (!AppConfig.isProdMode)
-                              const Text(
-                                'Dev',
-                                style: TextStyle(
-                                    color: Colors.red,
-                                    fontWeight: FontWeight.bold),
-                              ),
-                            ...actions ?? [],
-                          ],
-                        ),
+                        // AppBar(
+                        //   backgroundColor: theme.appBarTheme.backgroundColor,
+                        //   automaticallyImplyLeading: false,
+                        //   elevation: 0,
+                        //   title: Padding(
+                        //     padding: const EdgeInsets.all(8.0),
+                        //     child: Text(
+                        //       title,
+                        //       style: theme.appBarTheme.titleTextStyle,
+                        //     ),
+                        //   ),
+                        //   actions: [
+                        //     if (!AppConfig.isProdMode)
+                        //       const Text(
+                        //         'Dev',
+                        //         style: TextStyle(
+                        //             color: Colors.red,
+                        //             fontWeight: FontWeight.bold),
+                        //       ),
+                        //     ...actions ?? [],
+                        //   ],
+                        // ),
                         Expanded(
                           child: Row(
                             children: [

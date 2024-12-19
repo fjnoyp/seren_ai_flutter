@@ -22,6 +22,7 @@ import 'package:seren_ai_flutter/services/data/orgs/widgets/manage_org_users_pag
 import 'package:seren_ai_flutter/services/data/orgs/widgets/org_guard.dart';
 import 'package:seren_ai_flutter/services/data/projects/widgets/project_page.dart';
 import 'package:seren_ai_flutter/services/data/projects/widgets/project_list_page.dart';
+import 'package:seren_ai_flutter/services/data/projects/widgets/web/web_project_page.dart';
 import 'package:seren_ai_flutter/services/data/shifts/providers/cur_shift_state_provider.dart';
 import 'package:seren_ai_flutter/services/data/shifts/widgets/shifts_page.dart';
 import 'package:seren_ai_flutter/services/data/tasks/providers/task_schedule_notifications_service.dart';
@@ -119,6 +120,7 @@ class AppState extends State<App> {
               return _GuardScaffold(
                 args['title'],
                 ProjectPage(mode: args['mode'] ?? EditablePageMode.readOnly),
+                webBody: const WebProjectPage(),
                 actions: args['actions'],
               );
             },
@@ -246,12 +248,14 @@ class _GuardScaffold extends StatelessWidget {
   const _GuardScaffold(
     this.title,
     this.body, {
+    this.webBody,
     this.actions,
     this.showBottomBar = true,
   });
 
   final String title;
   final Widget body;
+  final Widget? webBody;
   final List<Widget>? actions;
   final bool showBottomBar;
 
@@ -261,9 +265,9 @@ class _GuardScaffold extends StatelessWidget {
       child: OrgGuard(
         child: MainScaffold(
           title: title,
-          body: body,
+          body: kIsWeb ? webBody ?? body : body,
           actions: actions,
-          showBottomBar: showBottomBar,
+          showAiAssistant: showBottomBar,
         ),
       ),
     );

@@ -1,3 +1,4 @@
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:seren_ai_flutter/services/data/common/widgets/editable_page_mode_enum.dart';
@@ -56,11 +57,12 @@ class TaskListItemView extends ConsumerWidget {
                     ),
                   ),
                   // PROJECT NAME
-                  Text(
-                    '${project?.name}',
-                    style: theme.textTheme.labelSmall?.copyWith(
-                        color: theme.colorScheme.onSurface.withOpacity(0.7)),
-                  ),
+                  if (!kIsWeb)
+                    Text(
+                      '${project?.name}',
+                      style: theme.textTheme.labelSmall?.copyWith(
+                          color: theme.colorScheme.onSurface.withOpacity(0.7)),
+                    ),
                 ],
               ),
               if (updatedAt != null)
@@ -93,7 +95,7 @@ class TaskListItemView extends ConsumerWidget {
                               size: 16, color: dueDateColor),
                           const SizedBox(width: 4),
                           Text(
-                            AppLocalizations.of(context)!.dueDate(task
+                            AppLocalizations.of(context)!.dueDateWithDate(task
                                         .dueDate !=
                                     null
                                 ? DateFormat.MMMd(AppLocalizations.of(context)!
@@ -125,6 +127,50 @@ class TaskListItemView extends ConsumerWidget {
             ],
           ),
         ),
+      ),
+    );
+  }
+}
+
+class TaskListTileItemView extends ConsumerWidget {
+  const TaskListTileItemView(this.joinedTask, {super.key});
+
+  final JoinedTaskModel joinedTask;
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final dueDateColor = getDueDateColor(joinedTask.task.dueDate);
+
+    return ListTile(
+      dense: true,
+      onTap: () => openTaskPage(context, ref,
+          mode: EditablePageMode.readOnly, initialJoinedTask: joinedTask),
+      leading: const SizedBox.shrink(),
+      title: Text(joinedTask.task.name),
+      trailing: Row(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          ...joinedTask.assignees.map((e) => CircleAvatar(
+                radius: 8,
+                child: Text(
+                  e.firstName.substring(0, 1),
+                  style: Theme.of(context).textTheme.labelSmall,
+                ),
+              )),
+          if (joinedTask.task.priority != null) ...[
+            const SizedBox(width: 8),
+            TaskPriorityView(priority: joinedTask.task.priority!),
+          ],
+          if (joinedTask.task.dueDate != null) ...[
+            const SizedBox(width: 8),
+            Icon(Icons.calendar_today, size: 16, color: dueDateColor),
+            const SizedBox(width: 4),
+            Text(
+              DateFormat.MMMd().format(joinedTask.task.dueDate!.toLocal()),
+              style: TextStyle(color: dueDateColor),
+            ),
+          ],
+        ],
       ),
     );
   }

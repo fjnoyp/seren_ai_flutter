@@ -45,22 +45,7 @@ class ProjectPage extends HookConsumerWidget {
               style: Theme.of(context).textTheme.labelMedium,
             ),
             const SizedBox(height: 4),
-            ListView.builder(
-              shrinkWrap: true,
-              itemCount: joinedProject.assignees.length,
-              itemBuilder: (context, index) {
-                return ListTile(
-                  dense: true,
-                  leading: CircleAvatar(
-                    // TODO p5: use avatar url instead
-                    child: Text(
-                        '${joinedProject.assignees[index].firstName[0]}${joinedProject.assignees[index].lastName[0]}'),
-                  ),
-                  title: Text(
-                      '${joinedProject.assignees[index].firstName} ${joinedProject.assignees[index].lastName}'),
-                );
-              },
-            )
+            const ProjectAssigneesList()
           ] else ...[
             ProjectNameField(),
             const SizedBox(height: 8),
@@ -69,9 +54,9 @@ class ProjectPage extends HookConsumerWidget {
               padding: const EdgeInsets.only(left: 16),
               child: Column(
                 children: [
-                  ProjectDescriptionSelectionField(),
+                  ProjectDescriptionSelectionField(context),
                   const Divider(),
-                  ProjectAddressField(),
+                  ProjectAddressField(context),
                 ],
               ),
             ),
@@ -80,15 +65,10 @@ class ProjectPage extends HookConsumerWidget {
               padding: const EdgeInsets.only(top: 24, bottom: 32),
               child: SizedBox(
                 width: double.infinity,
-                child: ElevatedButton(
+                child: FilledButton.tonal(
                   onPressed: () async {
                     ref.read(curProjectServiceProvider).saveProject();
                   },
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: Theme.of(context).colorScheme.secondary,
-                    foregroundColor:
-                        Theme.of(context).colorScheme.onSecondary,
-                  ),
                   child: Text(AppLocalizations.of(context)!.save),
                 ),
               ),
@@ -96,6 +76,31 @@ class ProjectPage extends HookConsumerWidget {
           ]
         ],
       ),
+    );
+  }
+}
+
+class ProjectAssigneesList extends ConsumerWidget {
+  const ProjectAssigneesList({super.key});
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final joinedProject = ref.watch(curProjectStateProvider);
+    return ListView.builder(
+      shrinkWrap: true,
+      itemCount: joinedProject.assignees.length,
+      itemBuilder: (context, index) {
+        return ListTile(
+          dense: true,
+          leading: CircleAvatar(
+            // TODO p5: use avatar url instead
+            child: Text(
+                '${joinedProject.assignees[index].firstName[0]}${joinedProject.assignees[index].lastName[0]}'),
+          ),
+          title: Text(
+              '${joinedProject.assignees[index].firstName} ${joinedProject.assignees[index].lastName}'),
+        );
+      },
     );
   }
 }
@@ -115,7 +120,7 @@ Future<void> openProjectPage(
   }
 
   final title = switch (mode) {
-    EditablePageMode.readOnly => project!.name,
+    EditablePageMode.readOnly => AppLocalizations.of(context)!.project,
     EditablePageMode.edit => AppLocalizations.of(context)!.updateProject,
     EditablePageMode.create => AppLocalizations.of(context)!.createProject,
   };
