@@ -122,6 +122,7 @@ class AppState extends State<App> {
                 ProjectPage(mode: args['mode'] ?? EditablePageMode.readOnly),
                 webBody: const WebProjectPage(),
                 actions: args['actions'],
+                showAppBar: !kIsWeb,
               );
             },
             AppRoutes.tasks.name: (context) => _GuardScaffold(
@@ -251,6 +252,7 @@ class _GuardScaffold extends StatelessWidget {
     this.webBody,
     this.actions,
     this.showBottomBar = true,
+    this.showAppBar = true,
   });
 
   final String title;
@@ -258,6 +260,7 @@ class _GuardScaffold extends StatelessWidget {
   final Widget? webBody;
   final List<Widget>? actions;
   final bool showBottomBar;
+  final bool showAppBar;
 
   @override
   Widget build(BuildContext context) {
@@ -268,6 +271,7 @@ class _GuardScaffold extends StatelessWidget {
           body: kIsWeb ? webBody ?? body : body,
           actions: actions,
           showAiAssistant: showBottomBar,
+          showAppBar: showAppBar,
         ),
       ),
     );

@@ -22,7 +22,6 @@ class ProjectPage extends HookConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final joinedProject = ref.watch(curProjectStateProvider);
 
     return Padding(
       padding: const EdgeInsets.all(16.0),
@@ -30,21 +29,8 @@ class ProjectPage extends HookConsumerWidget {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           if (mode == EditablePageMode.readOnly) ...[
-            Text(
-              joinedProject.project.name,
-              style: Theme.of(context).textTheme.headlineMedium,
-            ),
-            if (joinedProject.project.address != null)
-              Text(joinedProject.project.address!),
+            const ProjectInfoHeader(),
             const SizedBox(height: 16),
-            if (joinedProject.project.description != null)
-              Text(joinedProject.project.description!),
-            const SizedBox(height: 16),
-            Text(
-              AppLocalizations.of(context)!.assignees,
-              style: Theme.of(context).textTheme.labelMedium,
-            ),
-            const SizedBox(height: 4),
             const ProjectAssigneesList()
           ] else ...[
             ProjectNameField(),
@@ -80,27 +66,62 @@ class ProjectPage extends HookConsumerWidget {
   }
 }
 
+class ProjectInfoHeader extends ConsumerWidget {
+  const ProjectInfoHeader({super.key});
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final joinedProject = ref.watch(curProjectStateProvider);
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      mainAxisSize: MainAxisSize.min,
+      children: [
+        Text(
+          joinedProject.project.name,
+          style: Theme.of(context).textTheme.headlineMedium,
+        ),
+        if (joinedProject.project.address != null)
+          Text(joinedProject.project.address!),
+        const SizedBox(height: 16, width: double.infinity),
+        if (joinedProject.project.description != null)
+          Text(joinedProject.project.description!),
+      ],
+    );
+  }
+}
+
 class ProjectAssigneesList extends ConsumerWidget {
   const ProjectAssigneesList({super.key});
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final joinedProject = ref.watch(curProjectStateProvider);
-    return ListView.builder(
-      shrinkWrap: true,
-      itemCount: joinedProject.assignees.length,
-      itemBuilder: (context, index) {
-        return ListTile(
-          dense: true,
-          leading: CircleAvatar(
-            // TODO p5: use avatar url instead
-            child: Text(
-                '${joinedProject.assignees[index].firstName[0]}${joinedProject.assignees[index].lastName[0]}'),
-          ),
-          title: Text(
-              '${joinedProject.assignees[index].firstName} ${joinedProject.assignees[index].lastName}'),
-        );
-      },
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      mainAxisSize: MainAxisSize.min,
+      children: [
+        Text(
+          AppLocalizations.of(context)!.assignees,
+          style: Theme.of(context).textTheme.labelMedium,
+        ),
+        const SizedBox(height: 4),
+        ListView.builder(
+          shrinkWrap: true,
+          itemCount: joinedProject.assignees.length,
+          itemBuilder: (context, index) {
+            return ListTile(
+              dense: true,
+              leading: CircleAvatar(
+                // TODO p5: use avatar url instead
+                child: Text(
+                    '${joinedProject.assignees[index].firstName[0]}${joinedProject.assignees[index].lastName[0]}'),
+              ),
+              title: Text(
+                  '${joinedProject.assignees[index].firstName} ${joinedProject.assignees[index].lastName}'),
+            );
+          },
+        ),
+      ],
     );
   }
 }

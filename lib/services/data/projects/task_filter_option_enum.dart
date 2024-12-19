@@ -31,7 +31,7 @@ enum TaskFilterOption {
     switch (this) {
       case TaskFilterOption.assignees:
         return ref
-                .read(usersInProjectProvider(
+                .watch(usersInProjectProvider(
                     ref.watch(curProjectStateProvider).project.id))
                 .value
                 ?.map((e) => (

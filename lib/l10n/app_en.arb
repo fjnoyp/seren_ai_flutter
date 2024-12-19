@@ -177,6 +177,9 @@
     "thisWeek": "This Week",
     "thisMonth": "This Month",
     "customDateRange": "Custom Date Range",
+    "deleteProjectTooltip": "Delete Project",
+    "updateProjectAssigneesTooltip": "Update Project Assignees",
+    "editProjectTooltip": "Edit Project",
 
     "@_": {"description": "Teams"},
     "team": "Team",

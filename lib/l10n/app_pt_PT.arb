@@ -122,6 +122,9 @@
     "thisWeek": "Esta semana",
     "thisMonth": "Este mês",
     "customDateRange": "Data personalizada",
+    "deleteProjectTooltip": "Excluir Projeto",
+    "updateProjectAssigneesTooltip": "Atualizar Responsáveis do Projeto",
+    "editProjectTooltip": "Editar Projeto",
 
     "@_": {"description": "Teams"},
     "team": "Equipa",

@@ -17,6 +17,12 @@ class MainScaffold extends HookConsumerWidget {
   final bool showAiAssistant;
   final List<Widget>? actions;
 
+  // This is a temporary solution to hide the app bar on the project page.
+  // The future goal is not to show the app bar on any web pages at all,
+  // but this is a quick fix to make the project page look better for now.
+  // TODO p2: remove this once we adjust the web layout on all pages
+  final bool showAppBar;
+
   const MainScaffold({
     super.key,
     required this.title,
@@ -24,6 +30,7 @@ class MainScaffold extends HookConsumerWidget {
     this.floatingActionButton,
     this.showAiAssistant = true,
     this.actions,
+    this.showAppBar = true,
   });
 
   @override
@@ -51,28 +58,29 @@ class MainScaffold extends HookConsumerWidget {
                     flex: 4,
                     child: Column(
                       children: [
-                        // AppBar(
-                        //   backgroundColor: theme.appBarTheme.backgroundColor,
-                        //   automaticallyImplyLeading: false,
-                        //   elevation: 0,
-                        //   title: Padding(
-                        //     padding: const EdgeInsets.all(8.0),
-                        //     child: Text(
-                        //       title,
-                        //       style: theme.appBarTheme.titleTextStyle,
-                        //     ),
-                        //   ),
-                        //   actions: [
-                        //     if (!AppConfig.isProdMode)
-                        //       const Text(
-                        //         'Dev',
-                        //         style: TextStyle(
-                        //             color: Colors.red,
-                        //             fontWeight: FontWeight.bold),
-                        //       ),
-                        //     ...actions ?? [],
-                        //   ],
-                        // ),
+                        if (showAppBar)
+                          AppBar(
+                            backgroundColor: theme.appBarTheme.backgroundColor,
+                            automaticallyImplyLeading: false,
+                            elevation: 0,
+                            title: Padding(
+                              padding: const EdgeInsets.all(8.0),
+                              child: Text(
+                              title,
+                              style: theme.appBarTheme.titleTextStyle,
+                            ),
+                          ),
+                          actions: [
+                            if (!AppConfig.isProdMode)
+                              const Text(
+                                'Dev',
+                                style: TextStyle(
+                                    color: Colors.red,
+                                    fontWeight: FontWeight.bold),
+                              ),
+                            ...actions ?? [],
+                          ],
+                        ),
                         Expanded(
                           child: Row(
                             children: [
