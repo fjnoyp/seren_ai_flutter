@@ -47,3 +47,9 @@ Why is the current openTaskPage code bad?
 
 - The entire page state is being initiated in a method outside of the Router
 
+# Web Deployment 
+
+firebase login 
+firebase experiments:enable webframeworks 
+firebase init hosting 
+firebase deploy 
