@@ -8,6 +8,7 @@ import 'package:seren_ai_flutter/common/current_route_provider.dart';
 import 'package:seren_ai_flutter/common/language_provider.dart';
 import 'package:seren_ai_flutter/common/navigation_service_provider.dart';
 import 'package:seren_ai_flutter/common/routes/app_routes.dart';
+import 'package:seren_ai_flutter/common/universal_platform/universal_platform.dart';
 import 'package:seren_ai_flutter/services/auth/widgets/auth_guard.dart';
 import 'package:seren_ai_flutter/services/auth/widgets/sign_in_up_page.dart';
 import 'package:seren_ai_flutter/services/auth/widgets/terms_and_conditions/terms_and_conditions_webview.dart';
@@ -122,7 +123,7 @@ class AppState extends State<App> {
                 ProjectPage(mode: args['mode'] ?? EditablePageMode.readOnly),
                 webBody: const WebProjectPage(),
                 actions: args['actions'],
-                showAppBar: !kIsWeb,
+                showAppBar: !isWebVersion,
               );
             },
             AppRoutes.tasks.name: (context) => _GuardScaffold(
@@ -268,7 +269,7 @@ class _GuardScaffold extends StatelessWidget {
       child: OrgGuard(
         child: MainScaffold(
           title: title,
-          body: kIsWeb ? webBody ?? body : body,
+          body: isWebVersion ? webBody ?? body : body,
           actions: actions,
           showAiAssistant: showBottomBar,
           showAppBar: showAppBar,

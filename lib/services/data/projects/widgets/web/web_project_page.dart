@@ -57,6 +57,7 @@ class WebProjectPage extends HookConsumerWidget {
                       ),
                       IconButton(
                         onPressed: () => isProjectInfoView.value = true,
+                        color: Theme.of(context).colorScheme.tertiary,
                         icon: const Icon(Icons.settings),
                       ),
                     ],

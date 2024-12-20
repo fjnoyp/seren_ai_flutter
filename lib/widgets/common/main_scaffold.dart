@@ -1,9 +1,9 @@
-import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:seren_ai_flutter/common/routes/app_routes.dart';
+import 'package:seren_ai_flutter/common/universal_platform/universal_platform.dart';
 import 'package:seren_ai_flutter/services/ai_interaction/widgets/user_input_display_widget.dart';
 import 'package:seren_ai_flutter/services/data/db_setup/app_config.dart';
 import 'package:seren_ai_flutter/widgets/common/is_show_save_dialog_on_pop_provider.dart';
@@ -48,7 +48,7 @@ class MainScaffold extends HookConsumerWidget {
               .pushNamedAndRemoveUntil(AppRoutes.home.name, (route) => false);
         }
       },
-      child: kIsWeb
+      child: isWebVersion
           ? Scaffold(
               backgroundColor: theme.scaffoldBackgroundColor,
               body: Row(

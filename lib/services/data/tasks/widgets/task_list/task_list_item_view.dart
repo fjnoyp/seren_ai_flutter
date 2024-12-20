@@ -1,6 +1,6 @@
-import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
+import 'package:seren_ai_flutter/common/universal_platform/universal_platform.dart';
 import 'package:seren_ai_flutter/services/data/common/widgets/editable_page_mode_enum.dart';
 import 'package:seren_ai_flutter/services/data/tasks/models/joined_task_model.dart';
 import 'package:seren_ai_flutter/services/data/tasks/models/task_model.dart';
@@ -57,7 +57,7 @@ class TaskListItemView extends ConsumerWidget {
                     ),
                   ),
                   // PROJECT NAME
-                  if (!kIsWeb)
+                  if (!isWebVersion)
                     Text(
                       '${project?.name}',
                       style: theme.textTheme.labelSmall?.copyWith(
