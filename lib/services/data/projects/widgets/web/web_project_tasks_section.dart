@@ -14,7 +14,6 @@ import 'package:seren_ai_flutter/services/data/tasks/providers/cur_user_viewable
 import 'package:seren_ai_flutter/services/data/tasks/widgets/task_list/task_list_item_view.dart';
 import 'package:seren_ai_flutter/services/data/tasks/widgets/task_list/tasks_list_view.dart';
 import 'package:seren_ai_flutter/services/data/tasks/widgets/task_page.dart';
-import 'package:seren_ai_flutter/widgets/home/base_home_card.dart';
 
 class WebProjectTasksSection extends HookConsumerWidget {
   const WebProjectTasksSection({super.key});
@@ -23,14 +22,25 @@ class WebProjectTasksSection extends HookConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final viewMode = useState('board');
     final sortBy = useState<TaskSortOption?>(null);
-    final filterBy = useState<
-        ({
-          String value,
-          String name,
-          bool Function(JoinedTaskModel) filter,
-        })?>(null);
+    final filterBy = TaskFilterOption.values
+        .map((filter) => useState<
+            ({
+              String value,
+              String name,
+              bool Function(JoinedTaskModel) filter,
+            })?>(null))
+        .toList();
 
-    var colorScheme = Theme.of(context).colorScheme;
+    bool filterCondition(JoinedTaskModel task) {
+      bool result = true;
+      for (var filter in filterBy) {
+        if (filter.value?.filter != null) {
+          result = result && filter.value!.filter(task);
+        }
+      }
+      return result;
+    }
+
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -38,123 +48,115 @@ class WebProjectTasksSection extends HookConsumerWidget {
           padding: const EdgeInsets.all(8),
           child: Row(
             children: [
-              MenuAnchor(
-                builder: (context, controller, child) {
-                  return OutlinedButton.icon(
-                    icon: const Icon(Icons.filter_list_outlined),
-                    label: filterBy.value != null
-                        ? Text(filterBy.value!.name)
-                        : Text(AppLocalizations.of(context)!.filterBy),
-                    style: OutlinedButton.styleFrom(
-                      foregroundColor:
-                          filterBy.value != null ? null : colorScheme.onSurface,
-                      side: BorderSide(
-                        color: filterBy.value != null
-                            ? colorScheme.primary
-                            : colorScheme.outline,
-                      ),
-                    ),
-                    onPressed: () {
-                      controller.isOpen
-                          ? controller.close()
-                          : controller.open();
-                    },
-                  );
-                },
-                menuChildren: TaskFilterOption.values
-                    .map(
-                      (option) => SubmenuButton(
-                        menuChildren: option
-                            .getSubOptions(context, ref)
-                            .map(
-                              (subOption) => MenuItemButton(
-                                child: Text(subOption.name),
-                                onPressed: () {
-                                  if (subOption.value == 'customDateRange') {
-                                    showDateRangePicker(
-                                            context: context,
-                                            firstDate: DateTime(2000),
-                                            lastDate: DateTime(2100))
-                                        .then(
-                                      (value) {
-                                        if (value != null) {
-                                          filterBy.value = (
-                                            value:
-                                                '${option.name}_${subOption.value}',
-                                            name:
-                                                '${option.getDisplayName(context)}: ${DateFormat.MMMd().format(value.start)} - ${DateFormat.Md().format(value.end)}',
-                                            filter: (task) =>
-                                                subOption.filter?.call(task) ??
-                                                option.filterFunction(
-                                                    task, value)
-                                          );
-                                        }
-                                      },
-                                    );
-                                  } else {
-                                    filterBy.value = (
-                                      value:
-                                          '${option.name}_${subOption.value}',
-                                      name:
-                                          '${option.getDisplayName(context)}: ${subOption.name}',
-                                      filter: (task) =>
-                                          subOption.filter?.call(task) ??
-                                          option.filterFunction(task, null)
-                                    );
-                                  }
-                                },
+              Expanded(
+                child: Wrap(
+                  spacing: 8,
+                  runSpacing: 4,
+                  children: [
+                    ...TaskFilterOption.values.map(
+                      (filter) {
+                        final index = TaskFilterOption.values.indexOf(filter);
+                        return MenuAnchor(
+                          builder: (context, controller, child) {
+                            return FilterChip(
+                              selected: filterBy[index].value != null,
+                              avatar: const Icon(Icons.filter_list_outlined),
+                              label: filterBy[index].value != null
+                                  ? Text(filterBy[index].value!.name)
+                                  : Text(filter.getDisplayName(context)),
+                              onDeleted: filterBy[index].value != null
+                                  ? () => filterBy[index].value = null
+                                  : null,
+                              shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(32),
                               ),
-                            )
-                            .toList(),
-                        child: Text(option.name),
-                      ),
-                    )
-                    .toList(),
-              ),
-              if (filterBy.value != null)
-                IconButton(
-                  icon: const Icon(Icons.clear),
-                  onPressed: () => filterBy.value = null,
-                ),
-              const SizedBox(width: 8),
-              MenuAnchor(
-                builder: (context, controller, child) {
-                  return OutlinedButton.icon(
-                    icon: const Icon(Icons.import_export_outlined),
-                    label: sortBy.value != null
-                        ? Text(sortBy.value!.name)
-                        : Text(AppLocalizations.of(context)!.sortBy),
-                    style: OutlinedButton.styleFrom(
-                      foregroundColor:
-                          sortBy.value != null ? null : colorScheme.onSurface,
-                      side: BorderSide(
-                        color: sortBy.value != null
-                            ? colorScheme.primary
-                            : colorScheme.outline,
-                      ),
+                              showCheckmark: false,
+                              onSelected: (selected) {
+                                controller.isOpen
+                                    ? controller.close()
+                                    : controller.open();
+                              },
+                            );
+                          },
+                          menuChildren: filter
+                              .getSubOptions(context, ref)
+                              .map(
+                                (option) => MenuItemButton(
+                                  child: Text(option.name),
+                                  onPressed: () {
+                                    if (option.value == 'customDateRange') {
+                                      showDateRangePicker(
+                                              context: context,
+                                              firstDate: DateTime(2000),
+                                              lastDate: DateTime(2100))
+                                          .then(
+                                        (value) {
+                                          if (value != null) {
+                                            filterBy[index].value = (
+                                              value:
+                                                  '${filter.name}_${option.value}',
+                                              name:
+                                                  '${filter.getDisplayName(context)}: ${DateFormat.MMMd().format(value.start)} - ${DateFormat.Md().format(value.end)}',
+                                              filter: (task) =>
+                                                  option.filter?.call(task) ??
+                                                  filter.filterFunction(
+                                                      task, value)
+                                            );
+                                          }
+                                        },
+                                      );
+                                    } else {
+                                      filterBy[index].value = (
+                                        value: '${filter.name}_${option.value}',
+                                        name:
+                                            '${filter.getDisplayName(context)}: ${option.name}',
+                                        filter: (task) =>
+                                            option.filter?.call(task) ??
+                                            filter.filterFunction(task, null)
+                                      );
+                                    }
+                                  },
+                                ),
+                              )
+                              .toList(),
+                          child: Text(filter.name),
+                        );
+                      },
                     ),
-                    onPressed: () {
-                      controller.isOpen
-                          ? controller.close()
-                          : controller.open();
-                    },
-                  );
-                },
-                menuChildren: TaskSortOption.values
-                    .map(
-                      (option) => MenuItemButton(
-                        child: Text(option.name),
-                        onPressed: () => sortBy.value = option,
-                      ),
-                    )
-                    .toList(),
-              ),
-              if (sortBy.value != null)
-                IconButton(
-                  icon: const Icon(Icons.clear),
-                  onPressed: () => sortBy.value = null,
+                    MenuAnchor(
+                      builder: (context, controller, child) {
+                        return FilterChip(
+                          selected: sortBy.value != null,
+                          avatar: const Icon(Icons.import_export_outlined),
+                          label: sortBy.value != null
+                              ? Text(sortBy.value!.name)
+                              : Text(AppLocalizations.of(context)!.sortBy),
+                          onSelected: (_) {
+                            controller.isOpen
+                                ? controller.close()
+                                : controller.open();
+                          },
+                          onDeleted: sortBy.value != null
+                              ? () => sortBy.value = null
+                              : null,
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(32),
+                          ),
+                          showCheckmark: false,
+                        );
+                      },
+                      menuChildren: TaskSortOption.values
+                          .map(
+                            (option) => MenuItemButton(
+                              child: Text(option.name),
+                              onPressed: () => sortBy.value = option,
+                            ),
+                          )
+                          .toList(),
+                    ),
+                  ],
                 ),
-              const Expanded(child: SizedBox.shrink()),
+              ),
               SegmentedButton(
                 segments: const [
                   ButtonSegment(
@@ -169,20 +171,6 @@ class WebProjectTasksSection extends HookConsumerWidget {
                 selected: {viewMode.value},
                 onSelectionChanged: (value) => viewMode.value = value.first,
               ),
-              // Switch(
-              //   value: isListView.value,
-              //   onChanged: (value) => isListView.value = value,
-              //   thumbIcon: WidgetStatePropertyAll(
-              //     Icon(
-              //       isListView.value ? Icons.view_headline : Icons.view_week,
-              //       color: colorScheme.surface,
-              //     ),
-              //   ),
-              //   trackColor:
-              //       WidgetStatePropertyAll(colorScheme.surfaceContainerHighest),
-              //   trackOutlineColor: WidgetStatePropertyAll(colorScheme.outline),
-              //   thumbColor: WidgetStatePropertyAll(colorScheme.secondary),
-              // ),
               const SizedBox(width: 8),
               FilledButton.tonalIcon(
                 icon: const Icon(Icons.add),
@@ -198,11 +186,11 @@ class WebProjectTasksSection extends HookConsumerWidget {
           child: AnimatedCrossFade(
             firstChild: _ProjectTasksListView(
               sort: sortBy.value?.comparator,
-              filterCondition: filterBy.value?.filter,
+              filterCondition: filterCondition,
             ),
             secondChild: _ProjectTasksBoardView(
               sort: sortBy.value?.comparator,
-              filterCondition: filterBy.value?.filter,
+              filterCondition: filterCondition,
             ),
             crossFadeState: viewMode.value == 'list'
                 ? CrossFadeState.showFirst
@@ -223,69 +211,66 @@ class _ProjectTasksBoardView extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    return SingleChildScrollView(
-      scrollDirection: Axis.horizontal,
-      child: Row(
-        children: StatusEnum.values
-            .map(
-              (status) => SizedBox(
-                width: MediaQuery.of(context).size.width * 0.25,
-                child: BaseHomeInnerCard.outlined(
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Padding(
-                        padding: const EdgeInsets.all(20),
+    return Row(
+      children: StatusEnum.values
+          .where((status) =>
+              status != StatusEnum.cancelled && status != StatusEnum.archived)
+          .map(
+            (status) => Expanded(
+              child: Card(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Padding(
+                      padding: const EdgeInsets.all(20),
+                      child: Text(
+                        status.toHumanReadable(context),
+                        style: Theme.of(context).textTheme.titleSmall,
+                      ),
+                    ),
+                    const Divider(height: 1),
+                    Expanded(
+                      child: Padding(
+                        padding: const EdgeInsets.symmetric(horizontal: 16),
+                        child: TasksListView(
+                          filter: (joinedTask) =>
+                              joinedTask.task.parentProjectId ==
+                                  ref
+                                      .watch(curProjectStateProvider)
+                                      .project
+                                      .id &&
+                              joinedTask.task.status == status &&
+                              (filterCondition == null ||
+                                  filterCondition!(joinedTask)),
+                          sort: sort,
+                        ),
+                      ),
+                    ),
+                    const Divider(height: 1),
+                    SizedBox(
+                      width: double.infinity,
+                      child: TextButton(
+                        style: TextButton.styleFrom(
+                          padding: const EdgeInsets.all(20),
+                          alignment: Alignment.centerLeft,
+                          overlayColor: Colors.transparent,
+                        ),
+                        onPressed: () async => await openTaskPage(context, ref,
+                            mode: EditablePageMode.create,
+                            initialProject:
+                                ref.read(curProjectStateProvider).project,
+                            initialStatus: status),
                         child: Text(
-                          status.toHumanReadable(context),
-                          style: Theme.of(context).textTheme.titleSmall,
+                          AppLocalizations.of(context)!.createNewTask,
                         ),
                       ),
-                      const Divider(height: 1),
-                      Expanded(
-                        child: Padding(
-                          padding: const EdgeInsets.symmetric(horizontal: 16),
-                          child: TasksListView(
-                            filter: (joinedTask) =>
-                                joinedTask.task.parentProjectId ==
-                                    ref
-                                        .watch(curProjectStateProvider)
-                                        .project
-                                        .id &&
-                                joinedTask.task.status == status &&
-                                (filterCondition == null ||
-                                    filterCondition!(joinedTask)),
-                            sort: sort,
-                          ),
-                        ),
-                      ),
-                      const Divider(height: 1),
-                      SizedBox(
-                        width: double.infinity,
-                        child: TextButton(
-                          style: TextButton.styleFrom(
-                            padding: const EdgeInsets.all(20),
-                            alignment: Alignment.centerLeft,
-                            overlayColor: Colors.transparent,
-                          ),
-                          onPressed: () async => await openTaskPage(
-                              context, ref,
-                              mode: EditablePageMode.create,
-                              initialProject:
-                                  ref.read(curProjectStateProvider).project,
-                              initialStatus: status),
-                          child: Text(
-                            AppLocalizations.of(context)!.createNewTask,
-                          ),
-                        ),
-                      ),
-                    ],
-                  ),
+                    ),
+                  ],
                 ),
               ),
-            )
-            .toList(),
-      ),
+            ),
+          )
+          .toList(),
     );
   }
 }
@@ -302,59 +287,61 @@ class _ProjectTasksListView extends ConsumerWidget {
       child: Column(
         children: StatusEnum.values
             .map(
-              (status) => ExpansionTile(
-                initiallyExpanded: true,
-                title: Text(status.toHumanReadable(context)),
-                expandedAlignment: Alignment.centerLeft,
-                shape: const Border(),
-                childrenPadding: const EdgeInsets.only(bottom: 24),
-                children: [
-                  AsyncValueHandlerWidget(
-                    value: ref.watch(joinedCurUserViewableTasksProvider),
-                    data: (tasks) {
-                      final filteredTasks = tasks
-                              ?.where((task) =>
-                                  task.task.parentProjectId ==
-                                      ref
-                                          .watch(curProjectStateProvider)
-                                          .project
-                                          .id &&
-                                  task.task.status == status &&
-                                  (filterCondition == null ||
-                                      filterCondition!(task)))
-                              .toList() ??
-                          [];
+              (status) => Card(
+                child: ExpansionTile(
+                  initiallyExpanded: true,
+                  title: Text(status.toHumanReadable(context)),
+                  expandedAlignment: Alignment.centerLeft,
+                  shape: const Border(),
+                  childrenPadding: const EdgeInsets.only(bottom: 24),
+                  children: [
+                    AsyncValueHandlerWidget(
+                      value: ref.watch(joinedCurUserViewableTasksProvider),
+                      data: (tasks) {
+                        final filteredTasks = tasks
+                                ?.where((task) =>
+                                    task.task.parentProjectId ==
+                                        ref
+                                            .watch(curProjectStateProvider)
+                                            .project
+                                            .id &&
+                                    task.task.status == status &&
+                                    (filterCondition == null ||
+                                        filterCondition!(task)))
+                                .toList() ??
+                            [];
 
-                      if (sort != null) {
-                        filteredTasks.sort(sort);
-                      }
+                        if (sort != null) {
+                          filteredTasks.sort(sort);
+                        }
 
-                      return ListView.separated(
-                        shrinkWrap: true,
-                        physics: const NeverScrollableScrollPhysics(),
-                        itemCount: filteredTasks.length,
-                        itemBuilder: (context, index) =>
-                            TaskListTileItemView(filteredTasks[index]),
-                        separatorBuilder: (context, index) =>
-                            const Divider(height: 1),
-                      );
-                    },
-                  ),
-                  ListTile(
-                    dense: true,
-                    onTap: () => openTaskPage(context, ref,
-                        mode: EditablePageMode.create,
-                        initialProject:
-                            ref.read(curProjectStateProvider).project,
-                        initialStatus: status),
-                    leading: const SizedBox.shrink(),
-                    title: Text(
-                      AppLocalizations.of(context)!.createNewTask,
-                      style: TextStyle(
-                          color: Theme.of(context).colorScheme.outline),
+                        return ListView.separated(
+                          shrinkWrap: true,
+                          physics: const NeverScrollableScrollPhysics(),
+                          itemCount: filteredTasks.length,
+                          itemBuilder: (context, index) =>
+                              TaskListTileItemView(filteredTasks[index]),
+                          separatorBuilder: (context, index) =>
+                              const Divider(height: 1),
+                        );
+                      },
                     ),
-                  ),
-                ],
+                    ListTile(
+                      dense: true,
+                      onTap: () => openTaskPage(context, ref,
+                          mode: EditablePageMode.create,
+                          initialProject:
+                              ref.read(curProjectStateProvider).project,
+                          initialStatus: status),
+                      leading: const SizedBox.shrink(),
+                      title: Text(
+                        AppLocalizations.of(context)!.createNewTask,
+                        style: TextStyle(
+                            color: Theme.of(context).colorScheme.outline),
+                      ),
+                    ),
+                  ],
+                ),
               ),
             )
             .toList(),
