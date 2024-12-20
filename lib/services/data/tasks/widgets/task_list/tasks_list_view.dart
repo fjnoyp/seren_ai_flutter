@@ -6,9 +6,10 @@ import 'package:seren_ai_flutter/services/data/tasks/providers/cur_user_viewable
 import 'package:seren_ai_flutter/services/data/tasks/widgets/task_list/task_list_item_view.dart';
 
 class TasksListView extends ConsumerWidget {
-  const TasksListView({super.key, required this.filter});
+  const TasksListView({super.key, required this.filter, this.sort});
 
   final bool Function(JoinedTaskModel) filter;
+  final Comparator<JoinedTaskModel>? sort;
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -20,6 +21,10 @@ class TasksListView extends ConsumerWidget {
 
         if (filteredTasks == null) {
           return const Center(child: Text('No tasks found'));
+        }
+
+        if (sort != null) {
+          filteredTasks.sort(sort);
         }
 
         return ListView.builder(
