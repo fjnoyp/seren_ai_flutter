@@ -23,7 +23,7 @@ class NoteListPage extends HookConsumerWidget {
     return Column(
       children: [
         _SelectProjectWidget(curProjectId),
-        Expanded(child: _NoteListByProjectId(curProjectId.value)),
+        Expanded(child: NoteListByProjectId(curProjectId.value)),
         CreateItemBottomButton(
           onPressed: () {
             openNotePage(
@@ -84,8 +84,8 @@ class _SelectProjectWidget extends ConsumerWidget {
   }
 }
 
-class _NoteListByProjectId extends ConsumerWidget {
-  const _NoteListByProjectId(this.projectId);
+class NoteListByProjectId extends ConsumerWidget {
+  const NoteListByProjectId(this.projectId, {super.key});
 
   final String? projectId;
 
