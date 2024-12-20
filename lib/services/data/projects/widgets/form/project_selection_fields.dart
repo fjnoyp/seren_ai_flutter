@@ -3,6 +3,7 @@ import 'package:seren_ai_flutter/services/data/common/widgets/form/base_task_nam
 import 'package:seren_ai_flutter/services/data/common/widgets/form/base_text_block_edit_selection_field.dart';
 import 'package:seren_ai_flutter/services/data/projects/providers/cur_project_service_provider.dart';
 import 'package:seren_ai_flutter/services/data/projects/providers/cur_project_state_provider.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 class ProjectNameField extends BaseNameField {
   ProjectNameField({
@@ -17,12 +18,13 @@ class ProjectNameField extends BaseNameField {
 }
 
 class ProjectDescriptionSelectionField extends BaseTextBlockEditSelectionField {
-  ProjectDescriptionSelectionField({super.key})
+  ProjectDescriptionSelectionField(BuildContext context, {super.key})
       : super(
           enabled: true,
           labelWidget: const Icon(Icons.description),
-          descriptionProvider: curProjectStateProvider
-              .select((joinedProject) => joinedProject.project.description ?? ''),
+          hintText: AppLocalizations.of(context)!.enterProjectDescription,
+          descriptionProvider: curProjectStateProvider.select(
+              (joinedProject) => joinedProject.project.description ?? ''),
           updateDescription: (ref, description) => ref
               .read(curProjectServiceProvider)
               .updateDescription(description),
@@ -30,14 +32,14 @@ class ProjectDescriptionSelectionField extends BaseTextBlockEditSelectionField {
 }
 
 class ProjectAddressField extends BaseTextBlockEditSelectionField {
-  ProjectAddressField({super.key}) : super(
+  ProjectAddressField(BuildContext context, {super.key})
+      : super(
           enabled: true,
           labelWidget: const Icon(Icons.location_on),
-          descriptionProvider: curProjectStateProvider.select(
-              (joinedProject) => joinedProject.project.address ?? ''),
-          updateDescription: (ref, address) => ref
-              .read(curProjectServiceProvider)
-              .updateAddress(address),
+          hintText: AppLocalizations.of(context)!.enterProjectAddress,
+          descriptionProvider: curProjectStateProvider
+              .select((joinedProject) => joinedProject.project.address ?? ''),
+          updateDescription: (ref, address) =>
+              ref.read(curProjectServiceProvider).updateAddress(address),
         );
 }
-

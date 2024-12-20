@@ -163,6 +163,23 @@
     },
     "updateProject": "Update Project",
     "createProject": "Create Project",
+    "enterProjectDescription": "Enter project description",
+    "enterProjectAddress": "Enter project address",
+    "sortBy": "Sort by",
+    "priority": "Priority",
+    "dueDate": "Due date",
+    "createdAt": "Created at",
+    "board": "Board",
+    "list": "List",
+    "filterBy": "Filter by",
+    "overdue": "Overdue",
+    "today": "Today",
+    "thisWeek": "This Week",
+    "thisMonth": "This Month",
+    "customDateRange": "Custom Date Range",
+    "deleteProjectTooltip": "Delete Project",
+    "updateProjectAssigneesTooltip": "Update Project Assignees",
+    "editProjectTooltip": "Edit Project",
 
     "@_": {"description": "Teams"},
     "team": "Team",
@@ -357,8 +374,8 @@
             "date": {"type": "String"}
         }
     },
-    "dueDate": "Due: {date}",
-    "@dueDate": {
+    "dueDateWithDate": "Due: {date}",
+    "@dueDateWithDate": {
         "placeholders": {
             "date": {"type": "String"}
         }
@@ -475,20 +492,20 @@
     "zeroHours": "0 hours",
 
     "@_": {"description": "Date Time Formatting"},
-    "today": "Today ({date})",
-    "@today": {
+    "todayDate": "Today ({date})",
+    "@todayDate": {
         "placeholders": {
             "date": {"type": "String"}
         }
     },
-    "tomorrow": "Tomorrow ({date})",
-    "@tomorrow": {
+    "tomorrowDate": "Tomorrow ({date})",
+    "@tomorrowDate": {
         "placeholders": {
             "date": {"type": "String"}
         }
     },
-    "yesterday": "Yesterday ({date})",
-    "@yesterday": {
+    "yesterdayDate": "Yesterday ({date})",
+    "@yesterdayDate": {
         "placeholders": {
             "date": {"type": "String"}
         }

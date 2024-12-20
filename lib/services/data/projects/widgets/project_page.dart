@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:seren_ai_flutter/common/navigation_service_provider.dart';
 import 'package:seren_ai_flutter/common/routes/app_routes.dart';
+import 'package:seren_ai_flutter/common/universal_platform/universal_platform.dart';
 import 'package:seren_ai_flutter/services/data/common/widgets/editable_page_mode_enum.dart';
 import 'package:seren_ai_flutter/services/data/orgs/models/user_org_role_model.dart';
 import 'package:seren_ai_flutter/services/data/orgs/providers/cur_user_org_roles_provider.dart';
@@ -21,7 +22,6 @@ class ProjectPage extends HookConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final joinedProject = ref.watch(curProjectStateProvider);
 
     return Padding(
       padding: const EdgeInsets.all(16.0),
@@ -29,37 +29,9 @@ class ProjectPage extends HookConsumerWidget {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           if (mode == EditablePageMode.readOnly) ...[
-            Text(
-              joinedProject.project.name,
-              style: Theme.of(context).textTheme.headlineMedium,
-            ),
-            if (joinedProject.project.address != null)
-              Text(joinedProject.project.address!),
+            const ProjectInfoHeader(),
             const SizedBox(height: 16),
-            if (joinedProject.project.description != null)
-              Text(joinedProject.project.description!),
-            const SizedBox(height: 16),
-            Text(
-              AppLocalizations.of(context)!.assignees,
-              style: Theme.of(context).textTheme.labelMedium,
-            ),
-            const SizedBox(height: 4),
-            ListView.builder(
-              shrinkWrap: true,
-              itemCount: joinedProject.assignees.length,
-              itemBuilder: (context, index) {
-                return ListTile(
-                  dense: true,
-                  leading: CircleAvatar(
-                    // TODO p5: use avatar url instead
-                    child: Text(
-                        '${joinedProject.assignees[index].firstName[0]}${joinedProject.assignees[index].lastName[0]}'),
-                  ),
-                  title: Text(
-                      '${joinedProject.assignees[index].firstName} ${joinedProject.assignees[index].lastName}'),
-                );
-              },
-            )
+            const ProjectAssigneesList()
           ] else ...[
             ProjectNameField(),
             const SizedBox(height: 8),
@@ -68,9 +40,9 @@ class ProjectPage extends HookConsumerWidget {
               padding: const EdgeInsets.only(left: 16),
               child: Column(
                 children: [
-                  ProjectDescriptionSelectionField(),
+                  ProjectDescriptionSelectionField(context),
                   const Divider(),
-                  ProjectAddressField(),
+                  ProjectAddressField(context),
                 ],
               ),
             ),
@@ -79,15 +51,10 @@ class ProjectPage extends HookConsumerWidget {
               padding: const EdgeInsets.only(top: 24, bottom: 32),
               child: SizedBox(
                 width: double.infinity,
-                child: ElevatedButton(
+                child: FilledButton.tonal(
                   onPressed: () async {
                     ref.read(curProjectServiceProvider).saveProject();
                   },
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: Theme.of(context).colorScheme.secondary,
-                    foregroundColor:
-                        Theme.of(context).colorScheme.onSecondary,
-                  ),
                   child: Text(AppLocalizations.of(context)!.save),
                 ),
               ),
@@ -95,6 +62,66 @@ class ProjectPage extends HookConsumerWidget {
           ]
         ],
       ),
+    );
+  }
+}
+
+class ProjectInfoHeader extends ConsumerWidget {
+  const ProjectInfoHeader({super.key});
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final joinedProject = ref.watch(curProjectStateProvider);
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      mainAxisSize: MainAxisSize.min,
+      children: [
+        Text(
+          joinedProject.project.name,
+          style: Theme.of(context).textTheme.headlineMedium,
+        ),
+        if (joinedProject.project.address != null)
+          Text(joinedProject.project.address!),
+        const SizedBox(height: 16, width: double.infinity),
+        if (joinedProject.project.description != null)
+          Text(joinedProject.project.description!),
+      ],
+    );
+  }
+}
+
+class ProjectAssigneesList extends ConsumerWidget {
+  const ProjectAssigneesList({super.key});
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final joinedProject = ref.watch(curProjectStateProvider);
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      mainAxisSize: MainAxisSize.min,
+      children: [
+        Text(
+          AppLocalizations.of(context)!.assignees,
+          style: Theme.of(context).textTheme.labelMedium,
+        ),
+        const SizedBox(height: 4),
+        ListView.builder(
+          shrinkWrap: true,
+          itemCount: joinedProject.assignees.length,
+          itemBuilder: (context, index) {
+            return ListTile(
+              dense: true,
+              leading: CircleAvatar(
+                // TODO p5: use avatar url instead
+                child: Text(
+                    '${joinedProject.assignees[index].firstName[0]}${joinedProject.assignees[index].lastName[0]}'),
+              ),
+              title: Text(
+                  '${joinedProject.assignees[index].firstName} ${joinedProject.assignees[index].lastName}'),
+            );
+          },
+        ),
+      ],
     );
   }
 }
@@ -114,29 +141,39 @@ Future<void> openProjectPage(
   }
 
   final title = switch (mode) {
-    EditablePageMode.readOnly => project!.name,
+    EditablePageMode.readOnly => AppLocalizations.of(context)!.project,
     EditablePageMode.edit => AppLocalizations.of(context)!.updateProject,
     EditablePageMode.create => AppLocalizations.of(context)!.createProject,
   };
 
   final curUserOrgRole = ref.read(curUserOrgRoleProvider).value;
 
-  final actions = (curUserOrgRole == OrgRole.admin ||
-          curUserOrgRole == OrgRole.editor)
-      ? switch (mode) {
-          EditablePageMode.edit => [const DeleteProjectButton()],
-          EditablePageMode.readOnly => [
-              const UpdateProjectAssigneesButton(),
-              const EditProjectButton()
-            ],
-          _ => null,
-        }
-      : null;
+  final actions =
+      (curUserOrgRole == OrgRole.admin || curUserOrgRole == OrgRole.editor)
+          ? switch (mode) {
+              EditablePageMode.edit => [const DeleteProjectButton()],
+              EditablePageMode.readOnly => [
+                  const UpdateProjectAssigneesButton(),
+                  const EditProjectButton()
+                ],
+              _ => null,
+            }
+          : null;
 
-  ref.read(navigationServiceProvider).navigateTo(
-    AppRoutes.projectDetails.name,
-    arguments: {'title': title, 'mode': mode, 'actions': actions},
-  );
+  if (isWebVersion && mode != EditablePageMode.readOnly) {
+    showDialog(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: Text(title),
+        content: ProjectPage(mode: mode),
+      ),
+    );
+  } else {
+    ref.read(navigationServiceProvider).navigateTo(
+      AppRoutes.projectDetails.name,
+      arguments: {'title': title, 'mode': mode, 'actions': actions},
+    );
+  }
 }
 
 Future<void> openCreateProjectPage(WidgetRef ref, BuildContext context) async {
