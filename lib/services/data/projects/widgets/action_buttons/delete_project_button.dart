@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:seren_ai_flutter/services/data/common/widgets/delete_confirmation_dialog.dart';
 import 'package:seren_ai_flutter/services/data/projects/projects_db_provider.dart';
 import 'package:seren_ai_flutter/services/data/projects/providers/cur_project_state_provider.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 class DeleteProjectButton extends ConsumerWidget {
   const DeleteProjectButton({super.key});
@@ -10,6 +11,7 @@ class DeleteProjectButton extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     return IconButton(
+      tooltip: AppLocalizations.of(context)!.deleteProjectTooltip,
       icon: const Icon(Icons.delete),
       onPressed: () async {
         final itemName = ref.read(curProjectStateProvider).project.name;

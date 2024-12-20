@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:seren_ai_flutter/services/data/projects/providers/cur_project_service_provider.dart';
 import 'package:seren_ai_flutter/services/data/projects/providers/cur_project_state_provider.dart';
 import 'package:seren_ai_flutter/services/data/projects/widgets/form/assignees_from_cur_org_selection_modal.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 class UpdateProjectAssigneesButton extends ConsumerWidget {
   const UpdateProjectAssigneesButton({super.key});
@@ -10,6 +11,7 @@ class UpdateProjectAssigneesButton extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     return IconButton(
+      tooltip: AppLocalizations.of(context)!.updateProjectAssigneesTooltip,
       icon: const Icon(Icons.person_add),
       onPressed: () {
         showModalBottomSheet(

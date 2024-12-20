@@ -1,5 +1,7 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:seren_ai_flutter/services/auth/cur_auth_state_provider.dart';
+import 'package:seren_ai_flutter/services/data/common/status_enum.dart';
+import 'package:seren_ai_flutter/services/data/projects/models/project_model.dart';
 import 'package:seren_ai_flutter/services/data/projects/repositories/projects_repository.dart';
 import 'package:seren_ai_flutter/services/data/tasks/models/joined_task_model.dart';
 import 'package:seren_ai_flutter/services/data/tasks/models/task_model.dart';
@@ -19,7 +21,7 @@ class CurTaskStateNotifier extends Notifier<AsyncValue<JoinedTaskModel?>> {
     state = AsyncValue.data(joinedTask);
   }
 
-  Future<void> setToNewTask() async {
+  Future<void> setToNewTask({ProjectModel? project, StatusEnum? status}) async {
     state = const AsyncValue.loading();
     try {
       if (ref.read(curUserProvider).value case final curUser?) {
@@ -31,9 +33,10 @@ class CurTaskStateNotifier extends Notifier<AsyncValue<JoinedTaskModel?>> {
           authorUser: curUser,
           task: TaskModel.defaultTask().copyWith(
             authorUserId: curUser.id,
-            parentProjectId: defaultProject?.id,
+            parentProjectId: project?.id ?? defaultProject?.id,
+            status: status,
           ),
-          project: defaultProject,
+          project: project ?? defaultProject,
         );
 
         state = AsyncValue.data(newTask);
