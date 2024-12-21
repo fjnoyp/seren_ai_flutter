@@ -48,20 +48,6 @@ class JoinedTasksRepository extends BaseRepository<JoinedTaskModel> {
     );
   }
 
-  Stream<List<JoinedTaskModel>> watchUserAssignedJoinedTasks(String userId) {
-    return watch(
-      TaskQueries.userAssignedJoinedTasksQuery,
-      {'user_id': userId},
-    );
-  }
-
-  Future<List<JoinedTaskModel>> getUserAssignedJoinedTasks(
-      String userId) async {
-    return get(
-      TaskQueries.userAssignedJoinedTasksQuery,
-      {'user_id': userId},
-    );
-  }
 
   Future<JoinedTaskModel?> getJoinedTaskById(String taskId) async {
     final results = await get(
