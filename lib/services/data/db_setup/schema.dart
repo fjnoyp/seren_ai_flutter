@@ -8,6 +8,7 @@ const userOrgRolesTable = 'user_org_roles';
 const userTeamAssignmentsTable = 'user_team_assignments';
 const userProjectAssignmentsTable = 'user_project_assignments';
 const teamProjectAssignmentsTable = 'team_project_assignments';
+const invitesTable = 'invites';
 // TODO p5: generate from model classes ...
 // Generate Schema classes that create the Table schemas
 // And provide field getters for constructing queries
@@ -51,6 +52,15 @@ const permissionSchemas = [
   Table(teamProjectAssignmentsTable, [
     Column.text('team_id'),
     Column.text('project_id'),
+  ]),
+  Table(invitesTable, [
+    Column.text('email'),
+    Column.text('org_id'),
+    Column.text('org_name'),
+    Column.text('org_role'),
+    Column.text('author_user_id'),
+    Column.text('author_user_name'),
+    Column.text('status'),
   ]),
 ];
 
