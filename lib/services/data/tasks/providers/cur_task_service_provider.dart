@@ -26,8 +26,8 @@ class CurTaskService {
       : _state = ref.watch(curTaskStateProvider),
         _notifier = ref.watch(curTaskStateProvider.notifier);
 
-  void createTask() {
-    _notifier.setToNewTask();
+  void createTask({ProjectModel? project, StatusEnum? status}) {
+    _notifier.setToNewTask(project: project, status: status);
   }
 
   void loadTask(JoinedTaskModel joinedTask) {

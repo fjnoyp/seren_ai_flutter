@@ -1,0 +1,9 @@
+targets:
+  $default:
+    builders:
+      build_web_compilers|entrypoint:
+        options:
+          dart2js_args:
+            - -O4  # Maximum optimization
+            - --fast-startup
+            - --minify

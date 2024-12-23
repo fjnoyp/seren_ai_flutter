@@ -3,10 +3,14 @@ import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:seren_ai_flutter/common/language_provider.dart';
 import 'package:seren_ai_flutter/common/routes/app_routes.dart';
+import 'package:seren_ai_flutter/common/universal_platform/universal_platform.dart';
 import 'package:seren_ai_flutter/services/auth/cur_auth_state_provider.dart';
 import 'package:seren_ai_flutter/services/data/orgs/models/user_org_role_model.dart';
 import 'package:seren_ai_flutter/services/data/orgs/providers/cur_user_org_roles_provider.dart';
 import 'package:seren_ai_flutter/services/data/orgs/widgets/cur_org_page.dart';
+import 'package:seren_ai_flutter/services/data/projects/models/project_model.dart';
+import 'package:seren_ai_flutter/services/data/projects/providers/cur_user_viewable_projects_provider.dart';
+import 'package:seren_ai_flutter/services/data/projects/widgets/project_page.dart';
 import 'package:seren_ai_flutter/services/speech_to_text/speech_to_text_service_provider.dart';
 import 'package:seren_ai_flutter/services/text_to_speech/text_to_speech_notifier.dart';
 import 'package:seren_ai_flutter/widgets/common/debug_mode_provider.dart';
@@ -191,12 +195,32 @@ class DrawerView extends HookWidget {
               title: AppLocalizations.of(context)!.organization,
               onTap: () => openOrgPage(context),
             ),
-            _DrawerListTile(
-              icon: Icons.work,
-              title: AppLocalizations.of(context)!.projects,
-              onTap: () =>
-                  Navigator.pushNamed(context, AppRoutes.projects.name),
-            ),
+            isWebVersion
+                ? Consumer(
+                    builder: (context, ref, child) {
+                      final projects = ref
+                              .watch(curUserViewableProjectsProvider)
+                              .valueOrNull ??
+                          <ProjectModel>[];
+
+                      return _ExpandableListTile(
+                        icon: Icons.work,
+                        title: AppLocalizations.of(context)!.projects,
+                        options: projects,
+                        optionToString: (project) => project.name,
+                        onTapOption: (project) =>
+                            openProjectPage(ref, context, project: project),
+                        onTapAddButton: () =>
+                            openCreateProjectPage(ref, context),
+                      );
+                    },
+                  )
+                : _DrawerListTile(
+                    icon: Icons.work,
+                    title: AppLocalizations.of(context)!.projects,
+                    onTap: () =>
+                        Navigator.pushNamed(context, AppRoutes.projects.name),
+                  ),
             _DrawerListTile(
               icon: Icons.task,
               title: AppLocalizations.of(context)!.tasks,
@@ -310,4 +334,37 @@ class _AdminOnlyListTile extends ConsumerWidget {
           )
         : const SizedBox.shrink();
   }
+}
+
+class _ExpandableListTile<T extends Object> extends ExpansionTile {
+  _ExpandableListTile({
+    required IconData icon,
+    required String title,
+    required List<T> options,
+    required String Function(T option) optionToString,
+    required void Function(T option) onTapOption,
+    VoidCallback? onTapAddButton,
+  }) : super(
+          dense: true,
+          leading: Icon(icon),
+          initiallyExpanded: true,
+          title: Text(
+            title,
+            style: const TextStyle(fontWeight: FontWeight.bold),
+          ),
+          children: options
+              .map((option) => ListTile(
+                    dense: true,
+                    leading: const SizedBox.shrink(),
+                    title: Text(optionToString(option)),
+                    onTap: () => onTapOption(option),
+                  ))
+              .toList(),
+          trailing: onTapAddButton != null
+              ? IconButton(
+                  icon: const Icon(Icons.add),
+                  onPressed: onTapAddButton,
+                )
+              : null,
+        );
 }

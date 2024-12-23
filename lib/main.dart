@@ -2,8 +2,8 @@
 
 import 'package:firebase_core/firebase_core.dart';
 
-import 'package:firebase_crashlytics/firebase_crashlytics.dart' if (dart.library.html) 'package:seren_ai_flutter/common/firebase_crashlytics/firebase_crashlytics_web_stub.dart';
-
+import 'package:firebase_crashlytics/firebase_crashlytics.dart'
+    if (dart.library.html) 'package:seren_ai_flutter/common/firebase_crashlytics/firebase_crashlytics_web_stub.dart';
 
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
@@ -22,7 +22,7 @@ void main() async {
   // Initialization of Async Components
   final db = await PowerSyncDatabaseFactory.openDatabase();
   final prefs = await SharedPreferences.getInstance();
-  
+
   if (!kIsWeb && !UniversalPlatform.instance().isIOS) {
     // Initialize Firebase for Crashlytics
     await Firebase.initializeApp();
@@ -35,9 +35,11 @@ void main() async {
     };
   }
 
-  // Initialize Notification Service
   final notificationService = NotificationService();
-  await notificationService.initialize();
+  if (!kIsWeb) {
+    // Initialize Notification Service
+    await notificationService.initialize();
+  }
 
   runApp(
     ProviderScope(

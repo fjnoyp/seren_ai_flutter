@@ -1,4 +1,5 @@
 import 'package:app_links/app_links.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -7,6 +8,7 @@ import 'package:seren_ai_flutter/common/current_route_provider.dart';
 import 'package:seren_ai_flutter/common/language_provider.dart';
 import 'package:seren_ai_flutter/common/navigation_service_provider.dart';
 import 'package:seren_ai_flutter/common/routes/app_routes.dart';
+import 'package:seren_ai_flutter/common/universal_platform/universal_platform.dart';
 import 'package:seren_ai_flutter/services/auth/widgets/auth_guard.dart';
 import 'package:seren_ai_flutter/services/auth/widgets/sign_in_up_page.dart';
 import 'package:seren_ai_flutter/services/auth/widgets/terms_and_conditions/terms_and_conditions_webview.dart';
@@ -20,6 +22,7 @@ import 'package:seren_ai_flutter/services/data/orgs/widgets/manage_org_users_pag
 import 'package:seren_ai_flutter/services/data/orgs/widgets/org_guard.dart';
 import 'package:seren_ai_flutter/services/data/projects/widgets/project_page.dart';
 import 'package:seren_ai_flutter/services/data/projects/widgets/project_list_page.dart';
+import 'package:seren_ai_flutter/services/data/projects/widgets/web/web_project_page.dart';
 import 'package:seren_ai_flutter/services/data/shifts/providers/cur_shift_state_provider.dart';
 import 'package:seren_ai_flutter/services/data/shifts/widgets/shifts_page.dart';
 import 'package:seren_ai_flutter/services/data/tasks/providers/task_schedule_notifications_service.dart';
@@ -57,7 +60,9 @@ class AppState extends State<App> {
         // === Permanent Providers ===
         ref.read(sttOrchestratorProvider);
         ref.read(curShiftStateProvider);
-        ref.read(taskScheduleNotificationsServiceProvider);
+        if (!kIsWeb) {
+          ref.read(taskScheduleNotificationsServiceProvider);
+        }
 
         final themeMode = ref.watch(themeSNP);
 
@@ -115,7 +120,9 @@ class AppState extends State<App> {
               return _GuardScaffold(
                 args['title'],
                 ProjectPage(mode: args['mode'] ?? EditablePageMode.readOnly),
+                webBody: const WebProjectPage(),
                 actions: args['actions'],
+                showAppBar: !isWebVersion,
               );
             },
             AppRoutes.tasks.name: (context) => _GuardScaffold(
@@ -242,14 +249,18 @@ class _GuardScaffold extends StatelessWidget {
   const _GuardScaffold(
     this.title,
     this.body, {
+    this.webBody,
     this.actions,
     this.showBottomBar = true,
+    this.showAppBar = true,
   });
 
   final String title;
   final Widget body;
+  final Widget? webBody;
   final List<Widget>? actions;
   final bool showBottomBar;
+  final bool showAppBar;
 
   @override
   Widget build(BuildContext context) {
@@ -257,9 +268,10 @@ class _GuardScaffold extends StatelessWidget {
       child: OrgGuard(
         child: MainScaffold(
           title: title,
-          body: body,
+          body: isWebVersion ? webBody ?? body : body,
           actions: actions,
-          showBottomBar: showBottomBar,
+          showAiAssistant: showBottomBar,
+          showAppBar: showAppBar,
         ),
       ),
     );
