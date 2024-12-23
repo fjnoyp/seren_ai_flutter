@@ -8,6 +8,7 @@ import 'package:seren_ai_flutter/services/data/orgs/providers/cur_user_org_roles
 import 'package:seren_ai_flutter/services/data/orgs/widgets/action_buttons/edit_org_button.dart';
 import 'package:seren_ai_flutter/services/data/orgs/widgets/form/org_selection_fields.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+import 'package:seren_ai_flutter/services/data/orgs/widgets/manage_org_users_page.dart';
 
 class CurOrgPage extends ConsumerWidget {
   final EditablePageMode mode;
@@ -16,7 +17,7 @@ class CurOrgPage extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final curOrg = ref.watch(curOrgProvider);
+    final curOrg = ref.watch(curOrgServiceProvider);
 
     final admins = ref
             .watch(joinedCurOrgRolesProvider)
@@ -64,9 +65,7 @@ class CurOrgPage extends ConsumerWidget {
             Align(
               alignment: Alignment.center,
               child: OutlinedButton(
-                onPressed: () {
-                  Navigator.pushNamed(context, AppRoutes.manageOrgUsers.name);
-                },
+                onPressed: () => openManageOrgUsersPage(context, ref),
                 child: Text(AppLocalizations.of(context)!.manageOrgUsers),
               ),
             ),
@@ -86,7 +85,7 @@ class CurOrgPage extends ConsumerWidget {
                 width: double.infinity,
                 child: ElevatedButton(
                   onPressed: () async {
-                    ref.read(curOrgProvider.notifier).saveOrg();
+                    ref.read(curOrgServiceProvider.notifier).saveOrg();
                     Navigator.pop(context);
                     openOrgPage(context);
                   },

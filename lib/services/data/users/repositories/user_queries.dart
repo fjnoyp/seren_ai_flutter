@@ -30,4 +30,14 @@ abstract class UserQueries {
     WHERE upa.project_id = :project_id
     OR tpa.project_id = :project_id
   ''';
+
+  /// Params:
+  /// - user_email: String
+  static const String pendingInvitesByEmailQuery = '''
+    SELECT *
+    FROM invites
+    WHERE email = :user_email
+    AND status = 'pending'
+    ORDER BY created_at DESC;
+  ''';
 }

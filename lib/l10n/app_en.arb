@@ -133,6 +133,23 @@
         }
     },
 
+    "@_": {"description": "Invite User"},
+    "inviteUser": "Invite User",
+    "inviteUserToOrg": "Invite user to Org",
+    "inviteAs": "Invite as ",
+    "invite": "Invite",
+    "pendingInvite": "Pending invite",
+    "pendingInviteBody": "{authorUserName} invited you to join {orgName} as a {inviteOrgRole}",
+    "@pendingInviteBody": {
+        "placeholders": {
+            "authorUserName": {"type": "String"},
+            "orgName": {"type": "String"},
+            "inviteOrgRole": {"type": "String"}
+        }
+    },
+    "decline": "Decline",
+    "accept": "Accept",
+
     "@_": {"description": "Projects"},
     "project": "Project",
     "projects": "Projects",
