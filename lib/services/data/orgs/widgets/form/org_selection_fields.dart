@@ -8,9 +8,9 @@ class OrgNameField extends BaseNameField {
     super.key,
   }) : super(
           enabled: true,
-          nameProvider: curOrgProvider.select((org) => org.name),
+          nameProvider: curOrgServiceProvider.select((org) => org.name),
           updateName: (ref, name) =>
-              ref.read(curOrgProvider.notifier).updateOrgName(name),
+              ref.read(curOrgServiceProvider.notifier).updateOrgName(name),
         );
 }
 
@@ -20,8 +20,8 @@ class OrgAddressField extends BaseTextBlockEditSelectionField {
           enabled: true,
           labelWidget: const Icon(Icons.location_on),
           descriptionProvider:
-              curOrgProvider.select((org) => org.address ?? ''),
+              curOrgServiceProvider.select((org) => org.address ?? ''),
           updateDescription: (ref, address) =>
-              ref.read(curOrgProvider.notifier).updateAddress(address),
+              ref.read(curOrgServiceProvider.notifier).updateAddress(address),
         );
 }
