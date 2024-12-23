@@ -6,6 +6,8 @@ import 'package:seren_ai_flutter/common/routes/app_routes.dart';
 import 'package:seren_ai_flutter/common/universal_platform/universal_platform.dart';
 import 'package:seren_ai_flutter/services/ai_interaction/widgets/user_input_display_widget.dart';
 import 'package:seren_ai_flutter/services/data/db_setup/app_config.dart';
+import 'package:seren_ai_flutter/services/data/users/models/invite_model.dart';
+import 'package:seren_ai_flutter/services/data/users/providers/cur_user_invites_service_provider.dart';
 import 'package:seren_ai_flutter/widgets/common/is_show_save_dialog_on_pop_provider.dart';
 import 'drawer_view.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
@@ -39,6 +41,13 @@ class MainScaffold extends HookConsumerWidget {
     final isAiAssistantExpanded = useState(false);
 
     final theme = Theme.of(context);
+
+    final curUserPendingInvites = ref.watch(curUserInvitesServiceProvider);
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      for (final invite in curUserPendingInvites) {
+        _showInviteDialog(context, ref, invite);
+      }
+    });
 
     return PopScope(
       canPop: Navigator.of(context).canPop(),
@@ -225,51 +234,84 @@ class MainScaffold extends HookConsumerWidget {
         ) : null,
         */
 
-              bottomNavigationBar: showAiAssistant
-                  ? isAiAssistantExpanded.value
-                      ? UserInputDisplayWidget(isAiAssistantExpanded)
-                      : BottomAppBar(
-                          notchMargin: 0,
-                          child: Row(
-                            mainAxisAlignment: MainAxisAlignment.spaceAround,
-                            children: [
-                              IconButton(
-                                tooltip: AppLocalizations.of(context)!.home,
-                                icon: const Icon(Icons.grid_view),
-                                onPressed: () => Navigator.of(context)
-                                    .pushNamedAndRemoveUntil(
-                                        AppRoutes.home.name, (route) => false),
-                              ),
-                              const SizedBox.shrink(),
-                              IconButton(
-                                tooltip: AppLocalizations.of(context)!.chat,
-                                icon: const Icon(Icons.chat_bubble_outline),
-                                onPressed: () => Navigator.of(context)
-                                    .pushNamed(AppRoutes.aiChats.name),
-                              ),
-                            ],
-                          ),
-                        )
-                  : null,
-              floatingActionButtonLocation:
-                  FloatingActionButtonLocation.centerDocked,
-              floatingActionButton: showAiAssistant
-                  ? isAiAssistantExpanded.value
-                      ? null
-                      : Tooltip(
-                          message: AppLocalizations.of(context)!.aiAssistant,
-                          child: GestureDetector(
-                            onTap: () => isAiAssistantExpanded.value = true,
-                            child: Hero(
-                                tag: 'ai-button',
-                                child: SizedBox(
-                                    height: 56.0,
-                                    child: SvgPicture.asset(
-                                        'assets/images/AI button.svg'))),
-                          ),
-                        )
-                  : null,
-            ),
+        bottomNavigationBar: showAiAssistant
+            ? isAiAssistantExpanded.value
+                ? UserInputDisplayWidget(isAiAssistantExpanded)
+                : BottomAppBar(
+                    notchMargin: 0,
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceAround,
+                      children: [
+                        IconButton(
+                          tooltip: AppLocalizations.of(context)!.home,
+                          icon: const Icon(Icons.grid_view),
+                          onPressed: () => Navigator.of(context)
+                              .pushNamedAndRemoveUntil(
+                                  AppRoutes.home.name, (route) => false),
+                        ),
+                        const SizedBox.shrink(),
+                        IconButton(
+                          tooltip: AppLocalizations.of(context)!.chat,
+                          icon: const Icon(Icons.chat_bubble_outline),
+                          onPressed: () => Navigator.of(context)
+                              .pushNamed(AppRoutes.aiChats.name),
+                        ),
+                      ],
+                    ),
+                  )
+            : null,
+        floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
+        floatingActionButton: showAiAssistant
+            ? isAiAssistantExpanded.value
+                ? null
+                : Tooltip(
+                    message: AppLocalizations.of(context)!.aiAssistant,
+                    child: GestureDetector(
+                      onTap: () => isAiAssistantExpanded.value = true,
+                      child: Hero(
+                          tag: 'ai-button',
+                          child: SizedBox(
+                              height: 56.0,
+                              child: SvgPicture.asset(
+                                  'assets/images/AI button.svg'))),
+                    ),
+                  )
+            : null,
+      ),
+    );
+  }
+
+  
+  Future<dynamic> _showInviteDialog(
+      BuildContext context, WidgetRef ref, InviteModel invite) {
+    final curUserInvitesService =
+        ref.read(curUserInvitesServiceProvider.notifier);
+    return showDialog(
+      context: context,
+      barrierDismissible: false,
+      builder: (context) => AlertDialog(
+        title: Text(AppLocalizations.of(context)!.pendingInvite),
+        content: Text(AppLocalizations.of(context)!.pendingInviteBody(
+            invite.authorUserName,
+            invite.orgName,
+            invite.orgRole.toHumanReadable(context))),
+        actions: [
+          TextButton(
+            onPressed: () {
+              curUserInvitesService.declineInvite(invite);
+              Navigator.of(context).pop();
+            },
+            child: Text(AppLocalizations.of(context)!.decline),
+          ),
+          FilledButton(
+            onPressed: () {
+              curUserInvitesService.acceptInvite(invite);
+              Navigator.of(context).pop();
+            },
+            child: Text(AppLocalizations.of(context)!.accept),
+          ),
+        ],
+      ),
     );
   }
 }
