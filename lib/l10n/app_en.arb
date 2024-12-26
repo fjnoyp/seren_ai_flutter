@@ -52,6 +52,14 @@
     "address": "Address",
     "other": "Other",
 
+    "@_": {"description": "Users"},
+    "users": "Users",
+    "name": "Name",
+    "email": "Email",
+    "role": "Role",
+    "creationDate": "Creation date",
+    "lastUpdated": "Last updated",
+
     "@_": {"description": "Settings"},
     "settings": "Settings",
     "colorScheme": "Color Scheme",
@@ -385,8 +393,8 @@
     "deleteTask": "Delete Task",
     "comments": "Comments",
     "addComment": "Add Comment",
-    "lastUpdated": "Last updated: {date}",
-    "@lastUpdated": {
+    "lastUpdatedDate": "Last updated: {date}",
+    "@lastUpdatedDate": {
         "placeholders": {
             "date": {"type": "String"}
         }
