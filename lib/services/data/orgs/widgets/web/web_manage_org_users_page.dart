@@ -34,7 +34,8 @@ class WebManageOrgUsersPage extends HookConsumerWidget {
                 onPressed: () => Navigator.pop(context),
                 icon: const Icon(Icons.arrow_back),
               ),
-              Text('Users', style: Theme.of(context).textTheme.headlineSmall),
+              Text(AppLocalizations.of(context)!.users,
+                  style: Theme.of(context).textTheme.headlineSmall),
             ],
           ),
           const SizedBox(height: 20),
@@ -57,7 +58,7 @@ class WebManageOrgUsersPage extends HookConsumerWidget {
                     builder: (context) => const InviteUserByEmailDialog(),
                   ),
                   icon: const Icon(Icons.person_add),
-                  label: const Text('Invite user'),
+                  label: Text(AppLocalizations.of(context)!.inviteUser),
                 ),
             ],
           ),
@@ -106,13 +107,25 @@ class _UsersTable extends ConsumerWidget {
                     style: Theme.of(context).textTheme.titleSmall!.copyWith(
                           fontWeight: FontWeight.bold,
                         ),
-                    child: const Row(
+                    child: Row(
                       children: [
-                        Expanded(child: Text('Name')),
-                        Expanded(child: Text('Email')),
-                        Expanded(child: Text('Role')),
-                        Expanded(child: Text('Creation date')),
-                        Expanded(child: Text('Last updated'))
+                        Expanded(
+                          child: Text(AppLocalizations.of(context)!.name),
+                        ),
+                        Expanded(
+                          child: Text(AppLocalizations.of(context)!.email),
+                        ),
+                        Expanded(
+                          child: Text(AppLocalizations.of(context)!.role),
+                        ),
+                        Expanded(
+                          child:
+                              Text(AppLocalizations.of(context)!.creationDate),
+                        ),
+                        Expanded(
+                          child:
+                              Text(AppLocalizations.of(context)!.lastUpdated),
+                        )
                       ],
                     ),
                   ),

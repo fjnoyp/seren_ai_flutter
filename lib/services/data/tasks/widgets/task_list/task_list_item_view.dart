@@ -67,7 +67,7 @@ class TaskListItemView extends ConsumerWidget {
               ),
               if (updatedAt != null)
                 Text(
-                  AppLocalizations.of(context)!.lastUpdated(
+                  AppLocalizations.of(context)!.lastUpdatedDate(
                       DateFormat.yMd(AppLocalizations.of(context)!.localeName)
                           .add_Hm()
                           .format(updatedAt.toLocal())),
