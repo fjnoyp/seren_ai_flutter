@@ -20,6 +20,7 @@ import 'package:seren_ai_flutter/services/data/orgs/widgets/choose_org_page.dart
 import 'package:seren_ai_flutter/services/data/orgs/widgets/cur_org_page.dart';
 import 'package:seren_ai_flutter/services/data/orgs/widgets/manage_org_users_page.dart';
 import 'package:seren_ai_flutter/services/data/orgs/widgets/org_guard.dart';
+import 'package:seren_ai_flutter/services/data/orgs/widgets/web/web_manage_org_users_page.dart';
 import 'package:seren_ai_flutter/services/data/projects/widgets/project_page.dart';
 import 'package:seren_ai_flutter/services/data/projects/widgets/project_list_page.dart';
 import 'package:seren_ai_flutter/services/data/projects/widgets/web/web_project_page.dart';
@@ -109,6 +110,8 @@ class AppState extends State<App> {
                 AppLocalizations.of(context)!.manageOrgUsers,
                 const ManageOrgUsersPage(),
                 actions: args['actions'],
+                webBody: const WebManageOrgUsersPage(),
+                showAppBar: !isWebVersion,
               );
             },
             AppRoutes.projects.name: (context) => _GuardScaffold(
