@@ -14,6 +14,7 @@ import 'package:seren_ai_flutter/services/data/projects/widgets/action_buttons/e
 import 'package:seren_ai_flutter/services/data/projects/widgets/action_buttons/update_project_assignees_button.dart';
 import 'package:seren_ai_flutter/services/data/projects/widgets/form/project_selection_fields.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+import 'package:seren_ai_flutter/services/data/users/widgets/user_avatar.dart';
 
 class ProjectPage extends HookConsumerWidget {
   final EditablePageMode mode;
@@ -111,11 +112,7 @@ class ProjectAssigneesList extends ConsumerWidget {
           itemBuilder: (context, index) {
             return ListTile(
               dense: true,
-              leading: CircleAvatar(
-                // TODO p5: use avatar url instead
-                child: Text(
-                    '${joinedProject.assignees[index].firstName[0]}${joinedProject.assignees[index].lastName[0]}'),
-              ),
+              leading: UserAvatar(joinedProject.assignees[index]),
               title: Text(
                   '${joinedProject.assignees[index].firstName} ${joinedProject.assignees[index].lastName}'),
             );
