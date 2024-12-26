@@ -7,7 +7,9 @@ import 'package:seren_ai_flutter/common/routes/app_routes.dart';
 import 'package:seren_ai_flutter/common/universal_platform/universal_platform.dart';
 import 'package:seren_ai_flutter/services/auth/cur_auth_state_provider.dart';
 import 'package:seren_ai_flutter/services/data/orgs/models/user_org_role_model.dart';
+import 'package:seren_ai_flutter/services/data/orgs/providers/cur_org_dependency_provider.dart';
 import 'package:seren_ai_flutter/services/data/orgs/providers/cur_user_org_roles_provider.dart';
+import 'package:seren_ai_flutter/services/data/orgs/providers/cur_user_orgs_provider.dart';
 import 'package:seren_ai_flutter/services/data/orgs/widgets/cur_org_page.dart';
 import 'package:seren_ai_flutter/services/data/projects/models/project_model.dart';
 import 'package:seren_ai_flutter/services/data/projects/providers/cur_user_viewable_projects_provider.dart';
@@ -26,9 +28,22 @@ class DrawerView extends HookConsumerWidget {
     final isSettingsView = useState(false);
     final theme = Theme.of(context);
 
+    final user = ref.watch(curUserProvider).value;
+    final themeMode = ref.watch(themeSNP);
+    final language = ref.watch(languageSNP).toUpperCase();
+    final isDebugMode = ref.watch(isDebugModeSNP);
+
+    final curOrgId = ref.watch(curOrgIdProvider);
+    final curOrg = curOrgId != null
+        ? ref
+            .watch(curUserOrgsProvider)
+            .valueOrNull
+            ?.firstWhere((org) => org.id == curOrgId)
+        : null;
+
     return Drawer(
-      child: ListView(
-        children: <Widget>[
+      child: Column(
+        children: [
           DrawerHeader(
             child: isSettingsView.value
                 ? Row(
@@ -41,225 +56,279 @@ class DrawerView extends HookConsumerWidget {
                           style: const TextStyle(fontSize: 24)),
                     ],
                   )
-                : Text(AppLocalizations.of(context)!.menu,
-                    style: const TextStyle(fontSize: 24)),
+                : Row(
+                    children: [
+                      if (curOrg != null) ...[
+                        Container(
+                          width: 48,
+                          height: 48,
+                          decoration: BoxDecoration(
+                            color: theme.colorScheme.surface,
+                            border:
+                                Border.all(color: theme.colorScheme.primary),
+                            borderRadius: BorderRadius.circular(8),
+                          ),
+                          // TODO: use org logo image here
+                          child: Center(
+                            child: Text(curOrg.name.substring(0, 1)),
+                          ),
+                        ),
+                        const SizedBox(width: 12),
+                      ],
+                      Flexible(
+                        child: Text(
+                            curOrg?.name ?? AppLocalizations.of(context)!.menu,
+                            style: const TextStyle(fontSize: 24)),
+                      ),
+                    ],
+                  ),
           ),
-          if (isSettingsView.value) ...[
-            ListTile(
-              title: Text(AppLocalizations.of(context)!.account),
-            ),
-            Consumer(
-              builder: (context, ref, child) {
-                final user = ref.watch(curUserProvider).value;
-
-                if (user == null) {
-                  return Center(
-                      child: Text(AppLocalizations.of(context)!.noAuthUser));
-                }
-
-                return Column(children: [
-                  ListTile(
-                    dense: true,
-                    leading: const Icon(Icons.email),
-                    title: _BuildRow(
-                        AppLocalizations.of(context)!.email, user.email),
-                  ),
-                  ListTile(
-                    dense: true,
-                    leading: const Icon(Icons.star),
-                    title: _BuildRow(AppLocalizations.of(context)!.subscription,
-                        AppLocalizations.of(context)!.premium),
-                  ),
-                  ListTile(
-                    dense: true,
-                    leading: const Icon(Icons.logout),
-                    title: Text(AppLocalizations.of(context)!.signOut,
-                        style: const TextStyle(fontWeight: FontWeight.bold)),
-                    onTap: () => ref.read(curUserProvider.notifier).signOut(),
-                  ),
-                ]);
-              },
-            ),
-            ListTile(
-              title: Text(AppLocalizations.of(context)!.app),
-            ),
-            Consumer(
-              builder: (context, ref, child) {
-                final themeMode = ref.watch(themeSNP);
-                return ListTile(
-                  dense: true,
-                  leading: const Icon(Icons.color_lens),
-                  title: Text(AppLocalizations.of(context)!.colorScheme,
-                      style: const TextStyle(fontWeight: FontWeight.bold)),
-                  trailing: DropdownButton<ThemeMode>(
-                    value: themeMode,
-                    onChanged: (ThemeMode? newThemeMode) {
-                      if (newThemeMode != null) {
-                        ref.read(themeSNP.notifier).setTheme(newThemeMode);
-                      }
-                    },
-                    items: [
-                      DropdownMenuItem(
-                        value: ThemeMode.system,
-                        child: Text(AppLocalizations.of(context)!.system,
-                            style: theme.textTheme.bodySmall),
+          Expanded(
+            child: ListView(
+              children: isSettingsView.value
+                  ? [
+                      ListTile(
+                        title: Text(AppLocalizations.of(context)!.account),
                       ),
-                      DropdownMenuItem(
-                        value: ThemeMode.light,
-                        child: Text(AppLocalizations.of(context)!.light,
-                            style: theme.textTheme.bodySmall),
+                      user == null
+                          ? Center(
+                              child: Text(
+                                  AppLocalizations.of(context)!.noAuthUser))
+                          : Column(
+                              children: [
+                                ListTile(
+                                  dense: true,
+                                  leading: const Icon(Icons.email),
+                                  title: _BuildRow(
+                                      AppLocalizations.of(context)!.email,
+                                      user.email),
+                                ),
+                                ListTile(
+                                  dense: true,
+                                  leading: const Icon(Icons.star),
+                                  title: _BuildRow(
+                                      AppLocalizations.of(context)!
+                                          .subscription,
+                                      AppLocalizations.of(context)!.premium),
+                                ),
+                                ListTile(
+                                  dense: true,
+                                  leading: const Icon(Icons.logout),
+                                  title: Text(
+                                      AppLocalizations.of(context)!.signOut,
+                                      style: const TextStyle(
+                                          fontWeight: FontWeight.bold)),
+                                  onTap: () => ref
+                                      .read(curUserProvider.notifier)
+                                      .signOut(),
+                                ),
+                              ],
+                            ),
+                      ListTile(
+                        title: Text(AppLocalizations.of(context)!.app),
                       ),
-                      DropdownMenuItem(
-                        value: ThemeMode.dark,
-                        child: Text(AppLocalizations.of(context)!.dark,
-                            style: theme.textTheme.bodySmall),
+                      ListTile(
+                        dense: true,
+                        leading: const Icon(Icons.color_lens),
+                        title: Text(AppLocalizations.of(context)!.colorScheme,
+                            style:
+                                const TextStyle(fontWeight: FontWeight.bold)),
+                        trailing: DropdownButton<ThemeMode>(
+                          value: themeMode,
+                          onChanged: (ThemeMode? newThemeMode) {
+                            if (newThemeMode != null) {
+                              ref
+                                  .read(themeSNP.notifier)
+                                  .setTheme(newThemeMode);
+                            }
+                          },
+                          items: [
+                            DropdownMenuItem(
+                              value: ThemeMode.system,
+                              child: Text(AppLocalizations.of(context)!.system,
+                                  style: theme.textTheme.bodySmall),
+                            ),
+                            DropdownMenuItem(
+                              value: ThemeMode.light,
+                              child: Text(AppLocalizations.of(context)!.light,
+                                  style: theme.textTheme.bodySmall),
+                            ),
+                            DropdownMenuItem(
+                              value: ThemeMode.dark,
+                              child: Text(AppLocalizations.of(context)!.dark,
+                                  style: theme.textTheme.bodySmall),
+                            ),
+                          ],
+                        ),
+                      ),
+                      ListTile(
+                        dense: true,
+                        leading: const Icon(Icons.language),
+                        title: Text(AppLocalizations.of(context)!.language,
+                            style:
+                                const TextStyle(fontWeight: FontWeight.bold)),
+                        trailing: DropdownButton<String>(
+                          value: language,
+                          onChanged: (String? newLanguage) {
+                            if (newLanguage != null) {
+                              ref
+                                  .read(languageSNP.notifier)
+                                  .setLanguage(newLanguage);
+                              ref.read(speechToTextServiceProvider).language =
+                                  newLanguage;
+                              ref
+                                  .read(textToSpeechServiceProvider.notifier)
+                                  .language = newLanguage;
+                            }
+                          },
+                          items: [
+                            DropdownMenuItem(
+                              value: 'EN_US',
+                              child: Text(AppLocalizations.of(context)!.english,
+                                  style: theme.textTheme.bodySmall),
+                            ),
+                            DropdownMenuItem(
+                              value: 'PT_BR',
+                              child: Text(
+                                  AppLocalizations.of(context)!
+                                      .brazilianPortuguese,
+                                  style: theme.textTheme.bodySmall),
+                            ),
+                            DropdownMenuItem(
+                              value: 'PT_PT',
+                              child: Text(
+                                  AppLocalizations.of(context)!
+                                      .europeanPortuguese,
+                                  style: theme.textTheme.bodySmall),
+                            ),
+                          ],
+                        ),
+                      ),
+                      SwitchListTile(
+                        title: Text(AppLocalizations.of(context)!.debugMode),
+                        value: isDebugMode,
+                        onChanged: (value) {
+                          ref
+                              .read(isDebugModeSNP.notifier)
+                              .setIsDebugMode(value);
+                        },
+                      ),
+                      ListTile(
+                        title: Text(AppLocalizations.of(context)!.about),
+                      ),
+                    ]
+                  : [
+                      _DrawerListTile(
+                        icon: Icons.home,
+                        title: AppLocalizations.of(context)!.home,
+                        onTap: () =>
+                            ref
+                            .read(navigationServiceProvider)
+                            .navigateTo(AppRoutes.home.name),
+                      ),
+                      _DebugModeListTile(
+                        icon: Icons.house,
+                        title: AppLocalizations.of(context)!.chooseOrganization,
+                        onTap: () => ref
+                            .read(navigationServiceProvider)
+                            .navigateTo(AppRoutes.chooseOrg.name),
+                      ),
+                      _AdminOnlyListTile(
+                        icon: Icons.business,
+                        title: AppLocalizations.of(context)!.organization,
+                        onTap: () => openOrgPage(context),
+                      ),
+                      isWebVersion
+                          ? Consumer(
+                              builder: (context, ref, child) {
+                                final projects = ref
+                                        .watch(curUserViewableProjectsProvider)
+                                        .valueOrNull ??
+                                    <ProjectModel>[];
+
+                                return _ExpandableListTile(
+                                  icon: Icons.work,
+                                  title: AppLocalizations.of(context)!.projects,
+                                  options: projects,
+                                  optionToString: (project) => project.name,
+                                  onTapOption: (project) => openProjectPage(
+                                      ref, context,
+                                      project: project),
+                                  onTapAddButton: () =>
+                                      openCreateProjectPage(ref, context),
+                                );
+                              },
+                            )
+                          : _DrawerListTile(
+                              icon: Icons.work,
+                              title: AppLocalizations.of(context)!.projects,
+                              onTap: () => ref
+                                  .read(navigationServiceProvider)
+                                  .navigateTo(AppRoutes.projects.name),
+                            ),
+                      if (!isWebVersion || isDebugMode)
+                        _DrawerListTile(
+                          icon: Icons.task,
+                          title: AppLocalizations.of(context)!.tasks,
+                          onTap: () => ref
+                              .read(navigationServiceProvider)
+                              .navigateTo(AppRoutes.tasks.name),
+                        ),
+                      _DebugModeListTile(
+                        icon: Icons.square,
+                        title: AppLocalizations.of(context)!.testSQL,
+                        onTap: () => ref
+                            .read(navigationServiceProvider)
+                            .navigateTo(AppRoutes.testSQLPage.name),
+                      ),
+                      _DrawerListTile(
+                        icon: Icons.chat,
+                        title: AppLocalizations.of(context)!.aiChatThreads,
+                        onTap: () => ref
+                            .read(navigationServiceProvider)
+                            .navigateTo(AppRoutes.aiChats.name),
+                      ),
+                      _DrawerListTile(
+                        icon: Icons.punch_clock_outlined,
+                        title: AppLocalizations.of(context)!.shifts,
+                        onTap: () =>
+                            ref
+                            .read(navigationServiceProvider)
+                            .navigateTo(AppRoutes.shifts.name),
+                      ),
+                      if (!isWebVersion || isDebugMode)
+                        _DrawerListTile(
+                          icon: Icons.note_outlined,
+                          title: AppLocalizations.of(context)!.notes,
+                          onTap: () => ref
+                              .read(navigationServiceProvider)
+                              .navigateTo(AppRoutes.noteList.name),
+                        ),
+                      _DrawerListTile(
+                        icon: Icons.settings,
+                        title: AppLocalizations.of(context)!.settings,
+                        onTap: () => isSettingsView.value = true,
                       ),
                     ],
-                  ),
-                );
-              },
             ),
-            Consumer(
-              builder: (context, ref, child) {
-                final language = ref.watch(languageSNP).toUpperCase();
-
-                return ListTile(
-                  dense: true,
-                  leading: const Icon(Icons.language),
-                  title: Text(AppLocalizations.of(context)!.language,
-                      style: const TextStyle(fontWeight: FontWeight.bold)),
-                  trailing: DropdownButton<String>(
-                    value: language,
-                    onChanged: (String? newLanguage) {
-                      if (newLanguage != null) {
-                        ref.read(languageSNP.notifier).setLanguage(newLanguage);
-                        ref.read(speechToTextServiceProvider).language =
-                            newLanguage;
-                        ref
-                            .read(textToSpeechServiceProvider.notifier)
-                            .language = newLanguage;
-                      }
-                    },
-                    // these items were removed by commit 588ced3
-                    items: [
-                      DropdownMenuItem(
-                        value: 'EN_US',
-                        child: Text(AppLocalizations.of(context)!.english,
-                            style: theme.textTheme.bodySmall),
-                      ),
-                      DropdownMenuItem(
-                        value: 'PT_BR',
-                        child: Text(
-                            AppLocalizations.of(context)!.brazilianPortuguese,
-                            style: theme.textTheme.bodySmall),
-                      ),
-                      DropdownMenuItem(
-                        value: 'PT_PT',
-                        child: Text(
-                            AppLocalizations.of(context)!.europeanPortuguese,
-                            style: theme.textTheme.bodySmall),
-                      ),
-                    ],
-                  ),
-                );
-              },
-            ),
-            Consumer(
-              builder: (context, ref, child) {
-                final isDebugMode = ref.watch(isDebugModeSNP);
-                return SwitchListTile(
-                  title: Text(AppLocalizations.of(context)!.debugMode),
-                  value: isDebugMode,
-                  onChanged: (value) {
-                    ref.read(isDebugModeSNP.notifier).setIsDebugMode(value);
-                  },
-                );
-              },
-            ),
+          ),
+          const Divider(),
+          if (user != null)
             ListTile(
-              title: Text(AppLocalizations.of(context)!.about),
-            ),
-          ] else ...[
-            _DrawerListTile(
-              icon: Icons.home,
-              title: AppLocalizations.of(context)!.home,
-              onTap: () => ref.read(navigationServiceProvider).navigateTo(AppRoutes.home.name),
-            ),
-            _DebugModeListTile(
-              icon: Icons.house,
-              title: AppLocalizations.of(context)!.chooseOrganization,
-              onTap: () =>
-                  ref.read(navigationServiceProvider).navigateTo(AppRoutes.chooseOrg.name),
-            ),
-            _AdminOnlyListTile(
-              icon: Icons.business,
-              title: AppLocalizations.of(context)!.organization,
-              onTap: () => openOrgPage(context),
-            ),
-            isWebVersion
-                ? Consumer(
-                    builder: (context, ref, child) {
-                      final projects = ref
-                              .watch(curUserViewableProjectsProvider)
-                              .valueOrNull ??
-                          <ProjectModel>[];
-
-                      return _ExpandableListTile(
-                        icon: Icons.work,
-                        title: AppLocalizations.of(context)!.projects,
-                        options: projects,
-                        optionToString: (project) => project.name,
-                        onTapOption: (project) =>
-                            openProjectPage(ref, context, project: project),
-                        onTapAddButton: () =>
-                            openCreateProjectPage(ref, context),
-                      );
-                    },
-                  )
-                : _DrawerListTile(
-                    icon: Icons.work,
-                    title: AppLocalizations.of(context)!.projects,
-                    onTap: () =>
-                        ref
-                        .read(navigationServiceProvider)
-                        .navigateTo(AppRoutes.projects.name),
-                  ),
-            _DrawerListTile(
-              icon: Icons.task,
-              title: AppLocalizations.of(context)!.tasks,
-              onTap: () =>
-                  ref.read(navigationServiceProvider).navigateTo(AppRoutes.tasks.name),
-            ),
-            _DebugModeListTile(
-              icon: Icons.square,
-              title: AppLocalizations.of(context)!.testSQL,
-              onTap: () =>
-                  ref.read(navigationServiceProvider).navigateTo(AppRoutes.testSQLPage.name),
-            ),
-            _DrawerListTile(
-              icon: Icons.chat,
-              title: AppLocalizations.of(context)!.aiChatThreads,
-              onTap: () =>
-                  ref.read(navigationServiceProvider).navigateTo(AppRoutes.aiChats.name),
-            ),
-            _DrawerListTile(
-              icon: Icons.punch_clock_outlined,
-              title: AppLocalizations.of(context)!.shifts,
-              onTap: () =>
-                  ref.read(navigationServiceProvider).navigateTo(AppRoutes.shifts.name),
-            ),
-            _DrawerListTile(
-              icon: Icons.note_outlined,
-              title: AppLocalizations.of(context)!.notes,
-              onTap: () =>
-                  ref.read(navigationServiceProvider).navigateTo(AppRoutes.noteList.name),
-            ),
-            _DrawerListTile(
-              icon: Icons.settings,
-              title: AppLocalizations.of(context)!.settings,
-              onTap: () => isSettingsView.value = true,
-            ),
-          ],
+              leading: CircleAvatar(
+                radius: 16,
+                child: Text(
+                    '${user.firstName.substring(0, 1)}${user.lastName.substring(0, 1)}'),
+              ),
+              title: Text('${user.firstName} ${user.lastName}'),
+              trailing: Tooltip(
+                message: AppLocalizations.of(context)!.signOut,
+                child: IconButton(
+                  icon: const Icon(Icons.logout),
+                  onPressed: () => ref.read(curUserProvider.notifier).signOut(),
+                ),
+              ),
+            )
         ],
       ),
     );
