@@ -33,7 +33,7 @@ class ManageOrgUsersPage extends ConsumerWidget {
                 onTap: () {
                   showDialog(
                     context: context,
-                    builder: (context) => _ChangeUserRoleDialog(
+                    builder: (context) => ChangeUserRoleDialog(
                         currentUserRole: joinedOrgRoles.valueOrNull![index]),
                   );
                 },
@@ -48,8 +48,8 @@ class ManageOrgUsersPage extends ConsumerWidget {
   }
 }
 
-class _ChangeUserRoleDialog extends HookConsumerWidget {
-  const _ChangeUserRoleDialog({required this.currentUserRole});
+class ChangeUserRoleDialog extends HookConsumerWidget {
+  const ChangeUserRoleDialog({super.key, required this.currentUserRole});
 
   final JoinedUserOrgRoleModel currentUserRole;
 
