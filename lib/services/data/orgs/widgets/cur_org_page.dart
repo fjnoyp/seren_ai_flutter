@@ -9,6 +9,7 @@ import 'package:seren_ai_flutter/services/data/orgs/widgets/action_buttons/edit_
 import 'package:seren_ai_flutter/services/data/orgs/widgets/form/org_selection_fields.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:seren_ai_flutter/services/data/orgs/widgets/manage_org_users_page.dart';
+import 'package:seren_ai_flutter/services/data/users/widgets/user_avatar.dart';
 
 class CurOrgPage extends ConsumerWidget {
   final EditablePageMode mode;
@@ -51,11 +52,7 @@ class CurOrgPage extends ConsumerWidget {
               itemBuilder: (context, index) {
                 return ListTile(
                   dense: true,
-                  leading: CircleAvatar(
-                    // TODO p5: use avatar url instead
-                    child: Text(
-                        '${admins[index].user!.firstName[0]}${admins[index].user!.lastName[0]}'),
-                  ),
+                  leading: UserAvatar(admins[index].user!),
                   title: Text(
                       '${admins[index].user!.firstName} ${admins[index].user!.lastName}'),
                 );
