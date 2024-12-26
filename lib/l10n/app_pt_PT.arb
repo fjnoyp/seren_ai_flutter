@@ -27,6 +27,14 @@
     "address": "Endereço",
     "other": "Outro",
 
+    "@_": {"description": "Users"},
+    "users": "Usuários",
+    "name": "Nome",
+    "email": "Email",
+    "role": "Função",
+    "creationDate": "Data de criação",
+    "lastUpdated": "Última atualização",
+
     "@_": {"description": "Settings"},
     "settings": "Definições",
     "colorScheme": "Esquema de Cores",
@@ -225,7 +233,7 @@
     "deleteTask": "Eliminar Tarefa",
     "comments": "Comentários",
     "addComment": "Adicionar Comentário",
-    "lastUpdated": "Última atualização: {date}",
+    "lastUpdatedDate": "Última atualização: {date}",
     "dueDateWithDate": "Prazo: {date}",
     "chooseDueDate": "Escolher uma Data de Vencimento",
     "todaysTasks": "Tarefas de Hoje",
