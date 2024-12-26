@@ -22,11 +22,11 @@ class ProjectPage extends HookConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-
     return Padding(
       padding: const EdgeInsets.all(16.0),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
+        mainAxisSize: MainAxisSize.min,
         children: [
           if (mode == EditablePageMode.readOnly) ...[
             const ProjectInfoHeader(),
@@ -164,7 +164,13 @@ Future<void> openProjectPage(
     showDialog(
       context: context,
       builder: (context) => AlertDialog(
-        title: Text(title),
+        title: Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: [
+            Text(title),
+            if (mode == EditablePageMode.edit) const DeleteProjectButton()
+          ],
+        ),
         content: ProjectPage(mode: mode),
       ),
     );
