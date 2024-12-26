@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:seren_ai_flutter/services/data/tasks/models/joined_task_comments_model.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+import 'package:seren_ai_flutter/services/data/users/widgets/user_avatar.dart';
 
 class TaskCommentCard extends StatelessWidget {
   const TaskCommentCard(
@@ -13,7 +14,6 @@ class TaskCommentCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final theme = Theme.of(context);
     return Card(
       child: Padding(
         padding: const EdgeInsets.all(8.0),
@@ -22,12 +22,7 @@ class TaskCommentCard extends StatelessWidget {
           children: [
             Row(
               children: [
-                CircleAvatar(
-                  backgroundColor: theme.primaryColor,
-                  radius: 12.0,
-                  // TODO p4: replace with authorPhotoUrl Image (.network?)
-                  child: Text(comment.authorUser!.firstName[0].toUpperCase()),
-                ),
+                UserAvatar(comment.authorUser!, radius: 12),
                 const SizedBox(width: 8),
                 Expanded(
                   child: Text(

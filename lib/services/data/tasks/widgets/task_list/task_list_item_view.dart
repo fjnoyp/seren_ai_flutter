@@ -9,6 +9,7 @@ import 'package:seren_ai_flutter/services/data/tasks/widgets/task_list/task_prio
 import 'package:seren_ai_flutter/services/data/tasks/widgets/task_page.dart';
 import 'package:seren_ai_flutter/services/data/tasks/widgets/ui_constants.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+import 'package:seren_ai_flutter/services/data/users/widgets/user_avatar.dart';
 
 class TaskListItemView extends ConsumerWidget {
   final JoinedTaskModel joinedTask;
@@ -150,13 +151,7 @@ class TaskListTileItemView extends ConsumerWidget {
       trailing: Row(
         mainAxisSize: MainAxisSize.min,
         children: [
-          ...joinedTask.assignees.map((e) => CircleAvatar(
-                radius: 8,
-                child: Text(
-                  e.firstName.substring(0, 1),
-                  style: Theme.of(context).textTheme.labelSmall,
-                ),
-              )),
+          ...joinedTask.assignees.map((e) => UserAvatar(e, radius: 8)),
           if (joinedTask.task.priority != null) ...[
             const SizedBox(width: 8),
             TaskPriorityView(priority: joinedTask.task.priority!),
