@@ -11,9 +11,11 @@ import 'package:seren_ai_flutter/services/data/orgs/providers/cur_org_dependency
 import 'package:seren_ai_flutter/services/data/orgs/providers/cur_user_org_roles_provider.dart';
 import 'package:seren_ai_flutter/services/data/orgs/providers/cur_user_orgs_provider.dart';
 import 'package:seren_ai_flutter/services/data/orgs/widgets/cur_org_page.dart';
+import 'package:seren_ai_flutter/services/data/orgs/widgets/org_avatar_image.dart';
 import 'package:seren_ai_flutter/services/data/projects/models/project_model.dart';
 import 'package:seren_ai_flutter/services/data/projects/providers/cur_user_viewable_projects_provider.dart';
 import 'package:seren_ai_flutter/services/data/projects/widgets/project_page.dart';
+import 'package:seren_ai_flutter/services/data/users/widgets/user_avatar.dart';
 import 'package:seren_ai_flutter/services/speech_to_text/speech_to_text_service_provider.dart';
 import 'package:seren_ai_flutter/services/text_to_speech/text_to_speech_notifier.dart';
 import 'package:seren_ai_flutter/widgets/common/debug_mode_provider.dart';
@@ -59,20 +61,7 @@ class DrawerView extends HookConsumerWidget {
                 : Row(
                     children: [
                       if (curOrg != null) ...[
-                        Container(
-                          width: 48,
-                          height: 48,
-                          decoration: BoxDecoration(
-                            color: theme.colorScheme.surface,
-                            border:
-                                Border.all(color: theme.colorScheme.primary),
-                            borderRadius: BorderRadius.circular(8),
-                          ),
-                          // TODO: use org logo image here
-                          child: Center(
-                            child: Text(curOrg.name.substring(0, 1)),
-                          ),
-                        ),
+                        OrgAvatarImage(org: curOrg),
                         const SizedBox(width: 12),
                       ],
                       Flexible(
@@ -315,11 +304,7 @@ class DrawerView extends HookConsumerWidget {
           const Divider(),
           if (user != null)
             ListTile(
-              leading: CircleAvatar(
-                radius: 16,
-                child: Text(
-                    '${user.firstName.substring(0, 1)}${user.lastName.substring(0, 1)}'),
-              ),
+              leading: UserAvatar(user, radius: 16),
               title: Text('${user.firstName} ${user.lastName}'),
               trailing: Tooltip(
                 message: AppLocalizations.of(context)!.signOut,
