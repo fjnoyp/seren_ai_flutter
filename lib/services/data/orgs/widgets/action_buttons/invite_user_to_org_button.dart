@@ -15,15 +15,15 @@ class InviteUserToOrgButton extends ConsumerWidget {
       onPressed: () {
         showDialog(
           context: context,
-          builder: (context) => const _InviteUserByEmailDialog(),
+          builder: (context) => const InviteUserByEmailDialog(),
         );
       },
     );
   }
 }
 
-class _InviteUserByEmailDialog extends HookConsumerWidget {
-  const _InviteUserByEmailDialog();
+class InviteUserByEmailDialog extends HookConsumerWidget {
+  const InviteUserByEmailDialog({super.key});
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
