@@ -6,12 +6,12 @@ import 'package:seren_ai_flutter/services/data/common/widgets/form/color_animati
 class BaseNameField extends HookConsumerWidget {
   const BaseNameField({
     super.key,
-    required this.enabled,
+    required this.isEditable,
     required this.nameProvider,
     required this.updateName,
   });
 
-  final bool enabled;
+  final bool isEditable;
   final ProviderListenable<String> nameProvider;
   final Function(WidgetRef, String) updateName;
 
@@ -44,30 +44,32 @@ class BaseNameField extends HookConsumerWidget {
     });
     */
 
-    return AnimatedBuilder(
-      animation: colorAnimation.colorTween,
-      builder: (context, child) {
-        nameController.text = curName;
-        return TextField(
-          focusNode: focusNode,
-          controller: nameController,
-          enabled: enabled,
-          textInputAction: TextInputAction.done,
-          onEditingComplete: () {
-            updateName(ref, nameController.text);
-            FocusScope.of(context).unfocus(); // Hide the keyboard
-          },
-          onTapOutside: (event) {
-            updateName(ref, nameController.text);
-            FocusScope.of(context).unfocus(); // Hide the keyboard
-          },
-          decoration: InputDecoration(
-            hintText: 'Enter name',
-            errorText: curName.isEmpty ? 'Name is required' : null,
-          ),
-          style: TextStyle(color: colorAnimation.colorTween.value),
-        );
-      },
-    );
+    return isEditable
+        ? AnimatedBuilder(
+            animation: colorAnimation.colorTween,
+            builder: (context, child) {
+              nameController.text = curName;
+              return TextField(
+                focusNode: focusNode,
+                controller: nameController,
+                enabled: isEditable,
+                textInputAction: TextInputAction.done,
+                onEditingComplete: () {
+                  updateName(ref, nameController.text);
+                  FocusScope.of(context).unfocus(); // Hide the keyboard
+                },
+                onTapOutside: (event) {
+                  updateName(ref, nameController.text);
+                  FocusScope.of(context).unfocus(); // Hide the keyboard
+                },
+                decoration: InputDecoration(
+                  hintText: 'Enter name',
+                  errorText: curName.isEmpty ? 'Name is required' : null,
+                ),
+                style: TextStyle(color: colorAnimation.colorTween.value),
+              );
+            },
+          )
+        : Text(curName, style: Theme.of(context).textTheme.headlineMedium);
   }
 }

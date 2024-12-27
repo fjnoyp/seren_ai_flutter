@@ -15,7 +15,7 @@ import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 class TaskProjectSelectionField extends BaseProjectSelectionField {
   TaskProjectSelectionField({
     super.key,
-    required super.enabled,
+    required super.isEditable,
   }) : super(
           projectProvider:
               curTaskStateProvider.select((state) => state.value?.project),
@@ -52,7 +52,7 @@ class TaskPrioritySelectionField extends BasePrioritySelectionField {
 class TaskNameField extends BaseNameField {
   TaskNameField({
     super.key,
-    required super.enabled,
+    required super.isEditable,
   }) : super(
           nameProvider: curTaskStateProvider
               .select((state) => state.value?.task.name ?? ''),
@@ -97,7 +97,7 @@ class ReminderMinuteOffsetFromDueDateSelectionField
 class TaskDescriptionSelectionField extends BaseTextBlockEditSelectionField {
   TaskDescriptionSelectionField({
     super.key,
-    required super.enabled,
+    required super.isEditable,
     required BuildContext context,
   }) : super(
           hintText: AppLocalizations.of(context)!.description,

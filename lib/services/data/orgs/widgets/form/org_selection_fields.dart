@@ -7,7 +7,7 @@ class OrgNameField extends BaseNameField {
   OrgNameField({
     super.key,
   }) : super(
-          enabled: true,
+          isEditable: true,
           nameProvider: curOrgServiceProvider.select((org) => org.name),
           updateName: (ref, name) =>
               ref.read(curOrgServiceProvider.notifier).updateOrgName(name),
@@ -17,7 +17,7 @@ class OrgNameField extends BaseNameField {
 class OrgAddressField extends BaseTextBlockEditSelectionField {
   OrgAddressField({super.key})
       : super(
-          enabled: true,
+          isEditable: true,
           labelWidget: const Icon(Icons.location_on),
           descriptionProvider:
               curOrgServiceProvider.select((org) => org.address ?? ''),

@@ -283,69 +283,66 @@ class _ProjectTasksListView extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    return SingleChildScrollView(
-      child: Column(
-        children: StatusEnum.values
-            .map(
-              (status) => Card(
-                child: ExpansionTile(
-                  initiallyExpanded: true,
-                  title: Text(status.toHumanReadable(context)),
-                  expandedAlignment: Alignment.centerLeft,
-                  shape: const Border(),
-                  childrenPadding: const EdgeInsets.only(bottom: 24),
-                  children: [
-                    AsyncValueHandlerWidget(
-                      value: ref.watch(joinedCurUserViewableTasksProvider),
-                      data: (tasks) {
-                        final filteredTasks = tasks
-                                ?.where((task) =>
-                                    task.task.parentProjectId ==
-                                        ref
-                                            .watch(curProjectStateProvider)
-                                            .project
-                                            .id &&
-                                    task.task.status == status &&
-                                    (filterCondition == null ||
-                                        filterCondition!(task)))
-                                .toList() ??
-                            [];
+    return AsyncValueHandlerWidget(
+      value: ref.watch(joinedCurUserViewableTasksProvider),
+      data: (tasks) {
+        return SingleChildScrollView(
+          child: Column(
+            children: StatusEnum.values.map(
+              (status) {
+                final filteredTasks = tasks
+                        ?.where((task) =>
+                            task.task.parentProjectId ==
+                                ref.watch(curProjectStateProvider).project.id &&
+                            task.task.status == status &&
+                            (filterCondition == null || filterCondition!(task)))
+                        .toList() ??
+                    [];
 
-                        if (sort != null) {
-                          filteredTasks.sort(sort);
-                        }
+                if (sort != null) {
+                  filteredTasks.sort(sort);
+                }
 
-                        return ListView.separated(
-                          shrinkWrap: true,
-                          physics: const NeverScrollableScrollPhysics(),
-                          itemCount: filteredTasks.length,
-                          itemBuilder: (context, index) =>
-                              TaskListTileItemView(filteredTasks[index]),
-                          separatorBuilder: (context, index) =>
-                              const Divider(height: 1),
-                        );
-                      },
-                    ),
-                    ListTile(
-                      dense: true,
-                      onTap: () => openTaskPage(context, ref,
-                          mode: EditablePageMode.create,
-                          initialProject:
-                              ref.read(curProjectStateProvider).project,
-                          initialStatus: status),
-                      leading: const SizedBox.shrink(),
-                      title: Text(
-                        AppLocalizations.of(context)!.createNewTask,
-                        style: TextStyle(
-                            color: Theme.of(context).colorScheme.outline),
+                return Card(
+                  child: ExpansionTile(
+                    initiallyExpanded: filteredTasks.isNotEmpty,
+                    title: Text(status.toHumanReadable(context)),
+                    expandedAlignment: Alignment.centerLeft,
+                    shape: const Border(),
+                    childrenPadding: const EdgeInsets.only(bottom: 24),
+                    children: [
+                      ListView.separated(
+                        shrinkWrap: true,
+                        physics: const NeverScrollableScrollPhysics(),
+                        itemCount: filteredTasks.length,
+                        itemBuilder: (context, index) =>
+                            TaskListTileItemView(filteredTasks[index]),
+                        separatorBuilder: (context, index) =>
+                            const Divider(height: 1),
                       ),
-                    ),
-                  ],
-                ),
-              ),
-            )
-            .toList(),
-      ),
+                      const Divider(height: 1),
+                      ListTile(
+                        dense: true,
+                        onTap: () => openTaskPage(context, ref,
+                            mode: EditablePageMode.create,
+                            initialProject:
+                                ref.read(curProjectStateProvider).project,
+                            initialStatus: status),
+                        leading: const SizedBox.shrink(),
+                        title: Text(
+                          AppLocalizations.of(context)!.createNewTask,
+                          style: TextStyle(
+                              color: Theme.of(context).colorScheme.outline),
+                        ),
+                      ),
+                    ],
+                  ),
+                );
+              },
+            ).toList(),
+          ),
+        );
+      },
     );
   }
 }

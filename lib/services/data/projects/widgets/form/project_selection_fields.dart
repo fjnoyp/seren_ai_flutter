@@ -9,7 +9,7 @@ class ProjectNameField extends BaseNameField {
   ProjectNameField({
     super.key,
   }) : super(
-          enabled: true,
+          isEditable: true,
           nameProvider: curProjectStateProvider
               .select((joinedProject) => joinedProject.project.name),
           updateName: (ref, name) =>
@@ -20,7 +20,7 @@ class ProjectNameField extends BaseNameField {
 class ProjectDescriptionSelectionField extends BaseTextBlockEditSelectionField {
   ProjectDescriptionSelectionField(BuildContext context, {super.key})
       : super(
-          enabled: true,
+          isEditable: true,
           labelWidget: const Icon(Icons.description),
           hintText: AppLocalizations.of(context)!.enterProjectDescription,
           descriptionProvider: curProjectStateProvider.select(
@@ -34,7 +34,7 @@ class ProjectDescriptionSelectionField extends BaseTextBlockEditSelectionField {
 class ProjectAddressField extends BaseTextBlockEditSelectionField {
   ProjectAddressField(BuildContext context, {super.key})
       : super(
-          enabled: true,
+          isEditable: true,
           labelWidget: const Icon(Icons.location_on),
           hintText: AppLocalizations.of(context)!.enterProjectAddress,
           descriptionProvider: curProjectStateProvider

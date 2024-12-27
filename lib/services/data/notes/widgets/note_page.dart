@@ -55,7 +55,7 @@ class NotePage extends HookConsumerWidget {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 isEnabled
-                    ? NoteNameField(enabled: true)
+                    ? NoteNameField(isEditable: true)
                     : Text(
                         joinedNote!.note.name,
                         style: Theme.of(context).textTheme.headlineMedium,
@@ -73,24 +73,24 @@ class NotePage extends HookConsumerWidget {
                   padding: const EdgeInsets.only(left: 15),
                   child: Column(
                     children: [
-                      NoteProjectSelectionField(enabled: isEnabled),
+                      NoteProjectSelectionField(isEditable: isEnabled),
                       const Divider(),
                       if (isEnabled) ...[
                         NoteDateSelectionField(),
                         const Divider(),
                       ],
                       NoteDescriptionSelectionField(
-                        enabled: isEnabled,
+                        isEditable: isEnabled,
                         context: context,
                       ),
                       const Divider(),
                       NoteAddressSelectionField(
-                        enabled: isEnabled,
+                        isEditable: isEnabled,
                         context: context,
                       ),
                       const Divider(),
                       NoteActionRequiredSelectionField(
-                        enabled: isEnabled,
+                        isEditable: isEnabled,
                         context: context,
                       ),
                       const Divider(),
