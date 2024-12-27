@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:logging/logging.dart';
+import 'package:seren_ai_flutter/common/is_show_save_dialog_on_pop_provider.dart';
 import 'package:seren_ai_flutter/common/navigation_service_provider.dart';
 import 'package:seren_ai_flutter/common/routes/app_routes.dart';
 import 'package:seren_ai_flutter/services/auth/cur_auth_state_provider.dart';
@@ -8,6 +9,7 @@ import 'package:seren_ai_flutter/services/data/common/status_enum.dart';
 import 'package:seren_ai_flutter/services/data/common/widgets/editable_page_mode_enum.dart';
 import 'package:seren_ai_flutter/services/data/projects/models/project_model.dart';
 import 'package:seren_ai_flutter/services/data/projects/providers/cur_user_viewable_projects_provider.dart';
+import 'package:seren_ai_flutter/services/data/tasks/models/task_model.dart';
 import 'package:seren_ai_flutter/services/data/tasks/providers/cur_task_service_provider.dart';
 import 'package:seren_ai_flutter/services/data/tasks/providers/cur_task_state_provider.dart';
 import 'package:seren_ai_flutter/services/data/tasks/models/joined_task_model.dart';
@@ -16,7 +18,8 @@ import 'package:seren_ai_flutter/services/data/tasks/widgets/action_buttons/edit
 import 'package:seren_ai_flutter/services/data/tasks/widgets/form/task_selection_fields.dart';
 import 'package:seren_ai_flutter/services/data/tasks/widgets/task_comments/task_comment_section.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
-import 'package:seren_ai_flutter/common/is_show_save_dialog_on_pop_provider.dart';
+import 'package:seren_ai_flutter/services/data/tasks/widgets/task_list/task_priority_view.dart';
+import 'package:seren_ai_flutter/services/data/tasks/widgets/task_list/task_status_view.dart';
 
 /* === Thoughts on ai generation of create task === 
 1) Tasks must be assigned to specific users / projects 
@@ -65,12 +68,28 @@ class TaskPage extends HookConsumerWidget {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            TaskProjectSelectionField(enabled: isEnabled),
+            TaskProjectSelectionField(isEditable: isEnabled),
 
-            // Title Input
-            TaskNameField(enabled: isEnabled),
+            Row(
+              children: [
+                // Title Input
+                Expanded(child: TaskNameField(isEditable: isEnabled)),
+                if (mode == EditablePageMode.readOnly)
+                  Column(
+                    mainAxisSize: MainAxisSize.min,
+                    crossAxisAlignment: CrossAxisAlignment.end,
+                    children: [
+                      TaskPriorityView(
+                          priority:
+                              curTask?.task.priority ?? PriorityEnum.normal),
+                      const SizedBox(height: 4),
+                      TaskStatusView(
+                          status: curTask?.task.status ?? StatusEnum.open),
+                    ],
+                  )
+              ],
+            ),
             const SizedBox(height: 8),
-            const Divider(),
 
             // ======================
             // ====== SUBITEMS ======
@@ -79,21 +98,23 @@ class TaskPage extends HookConsumerWidget {
               padding: const EdgeInsets.only(left: 15),
               child: Column(
                 children: [
-                  TaskPrioritySelectionField(enabled: isEnabled),
+                  TaskDescriptionSelectionField(
+                    isEditable: isEnabled,
+                    context: context,
+                  ),
                   const Divider(),
-                  TaskStatusSelectionField(enabled: isEnabled),
-                  const Divider(),
+                  if (isEnabled) ...[
+                    TaskPrioritySelectionField(enabled: isEnabled),
+                    const Divider(),
+                    TaskStatusSelectionField(enabled: isEnabled),
+                    const Divider(),
+                  ],
                   TaskDueDateSelectionField(enabled: isEnabled),
                   const Divider(),
                   ReminderMinuteOffsetFromDueDateSelectionField(
                       enabled: isEnabled),
                   const Divider(),
                   TaskAssigneesSelectionField(enabled: isEnabled),
-                  const Divider(),
-                  TaskDescriptionSelectionField(
-                    enabled: isEnabled,
-                    context: context,
-                  ),
                 ],
               ),
             ),
