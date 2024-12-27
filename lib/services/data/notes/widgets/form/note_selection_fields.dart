@@ -12,7 +12,7 @@ import 'package:seren_ai_flutter/services/data/projects/providers/cur_user_viewa
 class NoteNameField extends BaseNameField {
   NoteNameField({
     super.key,
-    required super.enabled,
+    required super.isEditable,
   }) : super(
           nameProvider: curNoteStateProvider
               .select((state) => state.value?.note.name ?? ''),
@@ -48,7 +48,7 @@ class NoteDateSelectionField extends BaseDueDateSelectionField {
 class NoteDescriptionSelectionField extends BaseTextBlockEditSelectionField {
   NoteDescriptionSelectionField({
     super.key,
-    required super.enabled,
+    required super.isEditable,
     required BuildContext context,
   }) : super(
           hintText: AppLocalizations.of(context)!.description,
@@ -62,7 +62,7 @@ class NoteDescriptionSelectionField extends BaseTextBlockEditSelectionField {
 class NoteProjectSelectionField extends BaseProjectSelectionField {
   NoteProjectSelectionField({
     super.key,
-    required super.enabled,
+    required super.isEditable,
   }) : super(
           projectProvider:
               curNoteStateProvider.select((state) => state.value?.project),
@@ -76,7 +76,7 @@ class NoteProjectSelectionField extends BaseProjectSelectionField {
 class NoteAddressSelectionField extends BaseTextBlockEditSelectionField {
   NoteAddressSelectionField({
     super.key,
-    required super.enabled,
+    required super.isEditable,
     required BuildContext context,
   }) : super(
           hintText: AppLocalizations.of(context)!.address,
@@ -92,7 +92,7 @@ class NoteActionRequiredSelectionField extends BaseTextBlockEditSelectionField {
   NoteActionRequiredSelectionField({
     super.key,
     required BuildContext context,
-    required super.enabled,
+    required super.isEditable,
   }) : super(
           hintText: '',
           descriptionProvider: curNoteStateProvider

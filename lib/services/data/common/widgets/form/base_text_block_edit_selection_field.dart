@@ -6,7 +6,7 @@ import 'package:seren_ai_flutter/common/navigation_service_provider.dart';
 import 'package:seren_ai_flutter/services/data/common/widgets/form/selection_field.dart';
 
 class BaseTextBlockEditSelectionField extends ConsumerWidget {
-  final bool enabled;
+  final bool isEditable;
   final ProviderListenable<String?> descriptionProvider;
   final Function(WidgetRef, String?) updateDescription;
   final Widget? labelWidget;
@@ -14,7 +14,7 @@ class BaseTextBlockEditSelectionField extends ConsumerWidget {
 
   const BaseTextBlockEditSelectionField({
     super.key,
-    required this.enabled,
+    required this.isEditable,
     required this.descriptionProvider,
     required this.updateDescription,
     this.labelWidget,
@@ -25,33 +25,35 @@ class BaseTextBlockEditSelectionField extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final curDescription = ref.watch(descriptionProvider);
 
-    return AnimatedSelectionField<String>(
-      labelWidget: labelWidget ?? const Icon(Icons.description),
-      validator: (description) => null,
-      // description == null || description.isEmpty
-      //     ? AppLocalizations.of(context)!.textIsRequired
-      //     : null,
-      valueToString: (description) =>
-          description ?? AppLocalizations.of(context)!.enterText,
-      enabled: enabled,
-      value: curDescription?.isEmpty ?? true ? hintText : curDescription,
-      onValueChanged: updateDescription,
-      showSelectionModal: (BuildContext context) async {
-        FocusManager.instance.primaryFocus?.unfocus();
-        showModalBottomSheet<String>(
-          context: context,
-          isScrollControlled: true,
-          builder: (BuildContext context) {
-            return TextBlockWritingModal(
-              initialDescription: curDescription ?? '',
-              onDescriptionChanged: updateDescription,
-            );
-          },
-        );
-        FocusManager.instance.primaryFocus?.unfocus();
-        return null;
-      },
-    );
+    return isEditable || (curDescription != null && curDescription.isNotEmpty)
+        ? AnimatedSelectionField<String>(
+            labelWidget: labelWidget ?? const Icon(Icons.description),
+            validator: (description) => null,
+            // description == null || description.isEmpty
+            //     ? AppLocalizations.of(context)!.textIsRequired
+            //     : null,
+            valueToString: (description) =>
+                description ?? AppLocalizations.of(context)!.enterText,
+            enabled: isEditable,
+            value: curDescription?.isEmpty ?? true ? hintText : curDescription,
+            onValueChanged: updateDescription,
+            showSelectionModal: (BuildContext context) async {
+              FocusManager.instance.primaryFocus?.unfocus();
+              showModalBottomSheet<String>(
+                context: context,
+                isScrollControlled: true,
+                builder: (BuildContext context) {
+                  return TextBlockWritingModal(
+                    initialDescription: curDescription ?? '',
+                    onDescriptionChanged: updateDescription,
+                  );
+                },
+              );
+              FocusManager.instance.primaryFocus?.unfocus();
+              return null;
+            },
+          )
+        : const SizedBox.shrink();
   }
 }
 
