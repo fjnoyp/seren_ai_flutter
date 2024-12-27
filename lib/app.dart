@@ -32,6 +32,8 @@ import 'package:seren_ai_flutter/services/ai_interaction/stt_orchestrator_provid
 import 'package:seren_ai_flutter/widgets/home/home_page.dart';
 import 'package:seren_ai_flutter/widgets/common/main_scaffold.dart';
 import 'package:seren_ai_flutter/services/data/tasks/widgets/task_list/tasks_list_page.dart';
+import 'package:seren_ai_flutter/widgets/settings/settings_page.dart';
+import 'package:seren_ai_flutter/widgets/settings/web/web_settings_page.dart';
 import 'package:seren_ai_flutter/widgets/test_sql_page.dart';
 import 'package:seren_ai_flutter/widgets/common/theme_data.dart';
 
@@ -165,6 +167,13 @@ class AppState extends State<App> {
             },
             AppRoutes.termsAndConditions.name: (context) =>
                 const TermsAndConditionsWebview(),
+            AppRoutes.settings.name: (context) => _GuardScaffold(
+                  AppLocalizations.of(context)!.settings,
+                  const SettingsPage(),
+                  webBody: const WebSettingsPage(),
+                  showAppBar: false,
+                  showBottomBar: false,
+                ),
           },
           // For dynamically generating routes based on settings param
           onGenerateRoute: (settings) {
