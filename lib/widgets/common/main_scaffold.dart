@@ -4,7 +4,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:seren_ai_flutter/common/navigation_service_provider.dart';
 import 'package:seren_ai_flutter/common/routes/app_routes.dart';
 import 'package:seren_ai_flutter/common/universal_platform/universal_platform.dart';
-import 'package:seren_ai_flutter/services/ai_interaction/ai_modal_visibility_provider.dart';
+import 'package:seren_ai_flutter/services/ai_interaction/is_ai_modal_visible_provider.dart';
 import 'package:seren_ai_flutter/services/ai_interaction/widgets/user_input_display_widget.dart';
 import 'package:seren_ai_flutter/services/ai_interaction/widgets/web_ai_assistant_modal.dart';
 import 'package:seren_ai_flutter/services/data/db_setup/app_config.dart';
@@ -39,7 +39,7 @@ class MainScaffold extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     // final enableAiBar = true;
-    final isAiAssistantExpanded = ref.watch(aiModalVisibilityProvider);
+    final isAiAssistantExpanded = ref.watch(isAiModalVisibleProvider);
 
     final theme = Theme.of(context);
 
@@ -110,7 +110,7 @@ class MainScaffold extends ConsumerWidget {
                                 ],
                               ),
                               if (showAiAssistant && isAiAssistantExpanded)
-                                const WebAIAssistantModal(),
+                                const WebAiAssistantModal(),
                             ],
                           ),
                         ),
@@ -275,7 +275,7 @@ class _AIAssistantButton extends ConsumerWidget {
     return Tooltip(
       message: AppLocalizations.of(context)!.aiAssistant,
       child: GestureDetector(
-        onTap: () => ref.read(aiModalVisibilityProvider.notifier).state = true,
+        onTap: () => ref.read(isAiModalVisibleProvider.notifier).state = true,
         child: Hero(
             tag: 'ai-button',
             child: SizedBox(

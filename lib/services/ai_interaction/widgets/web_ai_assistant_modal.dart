@@ -2,12 +2,12 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:seren_ai_flutter/common/navigation_service_provider.dart';
 import 'package:seren_ai_flutter/common/routes/app_routes.dart';
-import 'package:seren_ai_flutter/services/ai_interaction/ai_modal_visibility_provider.dart';
+import 'package:seren_ai_flutter/services/ai_interaction/is_ai_modal_visible_provider.dart';
 import 'package:seren_ai_flutter/services/data/ai_chats/widgets/ai_chats_page.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
-class WebAIAssistantModal extends ConsumerWidget {
-  const WebAIAssistantModal({super.key});
+class WebAiAssistantModal extends ConsumerWidget {
+  const WebAiAssistantModal({super.key});
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -29,8 +29,7 @@ class WebAIAssistantModal extends ConsumerWidget {
                   const Expanded(child: SizedBox.shrink()),
                   IconButton(
                     onPressed: () {
-                      ref.read(aiModalVisibilityProvider.notifier).state =
-                          false;
+                      ref.read(isAiModalVisibleProvider.notifier).state = false;
                       ref
                           .read(navigationServiceProvider)
                           .navigateTo(AppRoutes.aiChats.name);
@@ -43,7 +42,7 @@ class WebAIAssistantModal extends ConsumerWidget {
                   ),
                   IconButton(
                     onPressed: () => ref
-                        .read(aiModalVisibilityProvider.notifier)
+                        .read(isAiModalVisibleProvider.notifier)
                         .state = false,
                     style: IconButton.styleFrom(
                       padding: EdgeInsets.zero,

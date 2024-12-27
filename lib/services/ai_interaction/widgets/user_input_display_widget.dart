@@ -4,7 +4,7 @@ import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:seren_ai_flutter/common/navigation_service_provider.dart';
 import 'package:seren_ai_flutter/common/routes/app_routes.dart';
 import 'package:seren_ai_flutter/services/ai_interaction/ai_chat_service_provider.dart';
-import 'package:seren_ai_flutter/services/ai_interaction/ai_modal_visibility_provider.dart';
+import 'package:seren_ai_flutter/services/ai_interaction/is_ai_modal_visible_provider.dart';
 
 import 'package:seren_ai_flutter/services/ai_interaction/widgets/ai_results_widget.dart';
 import 'package:seren_ai_flutter/services/speech_to_text/widgets/speech_state_control_button_widget.dart';
@@ -68,13 +68,13 @@ class UserInputDisplayWidget extends ConsumerWidget {
 
                   IconButton(
                     onPressed: () {
-                      ref.read(aiModalVisibilityProvider.notifier).state = false;
+                      ref.read(isAiModalVisibleProvider.notifier).state = false;
                       ref.read(navigationServiceProvider).navigateTo(AppRoutes.aiChats.name);
                     },
                     icon: const Icon(Icons.open_in_new),
                   ),
                   IconButton(
-                    onPressed: () => ref.read(aiModalVisibilityProvider.notifier).state = false,
+                    onPressed: () => ref.read(isAiModalVisibleProvider.notifier).state = false,
                     icon: const Icon(Icons.close),
                   ),
                 ],
