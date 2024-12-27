@@ -17,7 +17,6 @@ class AIChatsPage extends HookConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final messageController = useTextEditingController();
     final isDebugMode = ref.watch(isDebugModeSNP);
     final showDebugTest = useState(false);
 
@@ -40,35 +39,48 @@ class AIChatsPage extends HookConsumerWidget {
           Expanded(
             child: showDebugTest.value
                 ? const AiDebugPage()
-                : Column(
+                : const Column(
                     children: [
-                      const ChatThreadDisplay(),
+                      ChatThreadDisplay(),
                       Padding(
-                        padding: const EdgeInsets.all(12.0),
-                        child: TextField(
-                          controller: messageController,
-                          decoration: InputDecoration(
-                            labelText:
-                                AppLocalizations.of(context)!.askAQuestion,
-                            suffixIcon: IconButton(
-                              icon: const Icon(Icons.send),
-                              onPressed: () {
-                                final message = messageController.text;
-                                if (message.isNotEmpty) {
-                                  ref
-                                      .read(aiChatServiceProvider)
-                                      .sendMessageToAi(message);
-                                  messageController.clear();
-                                }
-                              },
-                            ),
-                          ),
-                        ),
+                        padding: EdgeInsets.all(12.0),
+                        child: AIChatTextField(),
                       ),
                     ],
                   ),
           ),
         ],
+      ),
+    );
+  }
+}
+
+class AIChatTextField extends HookConsumerWidget {
+  const AIChatTextField({super.key});
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final messageController = useTextEditingController();
+
+    return TextField(
+      controller: messageController,
+      onSubmitted: (value) {
+        if (value.isEmpty) return;
+        ref.read(aiChatServiceProvider).sendMessageToAi(value);
+        messageController.clear();
+      },
+      decoration: InputDecoration(
+        labelText: AppLocalizations.of(context)!.askAQuestion,
+        suffixIcon: IconButton(
+          icon: const Icon(Icons.send),
+          onPressed: () {
+            final message = messageController.text;
+            if (message.isNotEmpty) {
+              ref.read(aiChatServiceProvider).sendMessageToAi(message);
+              messageController.clear();
+            }
+          },
+        ),
       ),
     );
   }
