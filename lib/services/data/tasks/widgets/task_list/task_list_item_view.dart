@@ -22,8 +22,6 @@ class TaskListItemView extends ConsumerWidget {
     final task = joinedTask.task;
     final project = joinedTask.project;
 
-    final updatedAt = task.updatedAt;
-
     final dueDateColor = getDueDateColor(task.dueDate);
 
     return GestureDetector(
@@ -66,29 +64,29 @@ class TaskListItemView extends ConsumerWidget {
                     ),
                 ],
               ),
-              if (updatedAt != null)
-                Text(
-                  AppLocalizations.of(context)!.lastUpdatedDate(
-                      DateFormat.yMd(AppLocalizations.of(context)!.localeName)
-                          .add_Hm()
-                          .format(updatedAt.toLocal())),
-                  style: theme.textTheme.labelSmall?.copyWith(
-                      color: theme.colorScheme.onSurface.withOpacity(0.7)),
-                ),
               Padding(
                 padding: const EdgeInsets.only(left: 8),
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     const SizedBox(height: 2),
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        TaskPriorityView(
-                            priority: task.priority ?? PriorityEnum.normal),
-                      ],
-                    ),
-                    const SizedBox(height: 5),
+                    if (joinedTask.assignees.isNotEmpty)
+                      Row(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          ...joinedTask.assignees.map((e) => CircleAvatar(
+                                radius: 8,
+                                child: Text(
+                                  e.firstName.substring(0, 1),
+                                  style: Theme.of(context).textTheme.labelSmall,
+                                ),
+                              )),
+                        ],
+                      ),
+                    const SizedBox(height: 4),
+                    TaskPriorityView(
+                        priority: task.priority ?? PriorityEnum.normal),
+                    const SizedBox(height: 4),
                     if (task.dueDate != null)
                       Row(
                         children: [
