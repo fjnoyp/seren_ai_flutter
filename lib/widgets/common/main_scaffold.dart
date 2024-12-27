@@ -1,18 +1,19 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
-import 'package:flutter_hooks/flutter_hooks.dart';
-import 'package:hooks_riverpod/hooks_riverpod.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:seren_ai_flutter/common/navigation_service_provider.dart';
 import 'package:seren_ai_flutter/common/routes/app_routes.dart';
 import 'package:seren_ai_flutter/common/universal_platform/universal_platform.dart';
+import 'package:seren_ai_flutter/services/ai_interaction/ai_modal_visibility_provider.dart';
 import 'package:seren_ai_flutter/services/ai_interaction/widgets/user_input_display_widget.dart';
+import 'package:seren_ai_flutter/services/ai_interaction/widgets/web_ai_assistant_modal.dart';
 import 'package:seren_ai_flutter/services/data/db_setup/app_config.dart';
 import 'package:seren_ai_flutter/services/data/users/models/invite_model.dart';
 import 'package:seren_ai_flutter/services/data/users/providers/cur_user_invites_service_provider.dart';
 import 'drawer_view.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
-class MainScaffold extends HookConsumerWidget {
+class MainScaffold extends ConsumerWidget {
   final String title;
   final Widget body;
   final FloatingActionButton? floatingActionButton;
@@ -38,7 +39,7 @@ class MainScaffold extends HookConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     // final enableAiBar = true;
-    final isAiAssistantExpanded = useState(false);
+    final isAiAssistantExpanded = ref.watch(aiModalVisibilityProvider);
 
     final theme = Theme.of(context);
 
@@ -95,28 +96,21 @@ class MainScaffold extends HookConsumerWidget {
                             ],
                           ),
                         Expanded(
-                          child: Row(
+                          child: Stack(
+                            alignment: Alignment.centerRight,
                             children: [
-                              Expanded(child: body),
-                              if (showAiAssistant &&
-                                  !isAiAssistantExpanded.value) ...[
-                                Tooltip(
-                                  message:
-                                      AppLocalizations.of(context)!.aiAssistant,
-                                  child: GestureDetector(
-                                    onTap: () =>
-                                        isAiAssistantExpanded.value = true,
-                                    child: Hero(
-                                        tag: 'ai-button',
-                                        child: SizedBox(
-                                            height: 56.0,
-                                            width: 56.0,
-                                            child: SvgPicture.asset(
-                                                'assets/images/AI button.svg'))),
-                                  ),
-                                ),
-                                const SizedBox(width: 16),
-                              ],
+                              Row(
+                                children: [
+                                  Expanded(child: body),
+                                  if (showAiAssistant &&
+                                      !isAiAssistantExpanded) ...[
+                                    const _AIAssistantButton(),
+                                    const SizedBox(width: 16),
+                                  ],
+                                ],
+                              ),
+                              if (showAiAssistant && isAiAssistantExpanded)
+                                const WebAIAssistantModal(),
                             ],
                           ),
                         ),
@@ -201,8 +195,8 @@ class MainScaffold extends HookConsumerWidget {
         */
 
               bottomNavigationBar: showAiAssistant
-                  ? isAiAssistantExpanded.value
-                      ? UserInputDisplayWidget(isAiAssistantExpanded)
+                  ? isAiAssistantExpanded
+                      ? const UserInputDisplayWidget()
                       : BottomAppBar(
                           notchMargin: 0,
                           child: Row(
@@ -231,20 +225,9 @@ class MainScaffold extends HookConsumerWidget {
               floatingActionButtonLocation:
                   FloatingActionButtonLocation.centerDocked,
               floatingActionButton: showAiAssistant
-                  ? isAiAssistantExpanded.value
+                  ? isAiAssistantExpanded
                       ? null
-                      : Tooltip(
-                          message: AppLocalizations.of(context)!.aiAssistant,
-                          child: GestureDetector(
-                            onTap: () => isAiAssistantExpanded.value = true,
-                            child: Hero(
-                                tag: 'ai-button',
-                                child: SizedBox(
-                                    height: 56.0,
-                                    child: SvgPicture.asset(
-                                        'assets/images/AI button.svg'))),
-                          ),
-                        )
+                      : const _AIAssistantButton()
                   : null,
             ),
     );
@@ -279,6 +262,26 @@ class MainScaffold extends HookConsumerWidget {
             child: Text(AppLocalizations.of(context)!.accept),
           ),
         ],
+      ),
+    );
+  }
+}
+
+class _AIAssistantButton extends ConsumerWidget {
+  const _AIAssistantButton();
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    return Tooltip(
+      message: AppLocalizations.of(context)!.aiAssistant,
+      child: GestureDetector(
+        onTap: () => ref.read(aiModalVisibilityProvider.notifier).state = true,
+        child: Hero(
+            tag: 'ai-button',
+            child: SizedBox(
+                height: 56.0,
+                width: 56.0,
+                child: SvgPicture.asset('assets/images/AI button.svg'))),
       ),
     );
   }

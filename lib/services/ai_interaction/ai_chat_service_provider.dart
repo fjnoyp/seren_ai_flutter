@@ -5,6 +5,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:seren_ai_flutter/common/current_route_provider.dart';
 import 'package:seren_ai_flutter/common/language_provider.dart';
 import 'package:seren_ai_flutter/common/routes/app_routes.dart';
+import 'package:seren_ai_flutter/common/universal_platform/universal_platform.dart';
 import 'package:seren_ai_flutter/services/ai_interaction/ai_request/ai_request_executor.dart';
 import 'package:seren_ai_flutter/services/ai_interaction/ai_request/models/requests/ai_request_model.dart';
 import 'package:seren_ai_flutter/services/ai_interaction/langgraph/langgraph_service.dart';
@@ -142,7 +143,7 @@ class AIChatService {
     // For Groq - a tool call does not provide a message
     if (aiChatMessages.isNotEmpty) {
       lastAiMessageListener.addAiChatMessage(aiChatMessages.first);
-      speakAiMessage(aiChatMessages);
+      if (!isWebVersion) speakAiMessage(aiChatMessages);
     }
 
     // Save response to DB
