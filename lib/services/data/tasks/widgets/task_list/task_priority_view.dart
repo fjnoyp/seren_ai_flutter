@@ -18,6 +18,7 @@ class TaskPriorityView extends StatelessWidget {
       ),
       padding: const EdgeInsets.all(2), // Added padding
       child: Row(
+        mainAxisSize: MainAxisSize.min,
         children: [
           Icon(Icons.priority_high, color: color, size: 16),
           Text(priority.toString().split('.').last,

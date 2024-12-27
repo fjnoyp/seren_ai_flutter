@@ -5,7 +5,7 @@ import 'package:seren_ai_flutter/services/data/common/widgets/form/selection_fie
 import 'package:seren_ai_flutter/services/data/projects/models/project_model.dart';
 
 class BaseProjectSelectionField extends ConsumerWidget {
-  final bool enabled;
+  final bool isEditable;
   final ProviderListenable<ProjectModel?> projectProvider;
   final AutoDisposeStreamProvider<List<ProjectModel>?> selectableProjectsProvider;
   final Function(WidgetRef, ProjectModel?) updateProject;
@@ -13,7 +13,7 @@ class BaseProjectSelectionField extends ConsumerWidget {
 
   const BaseProjectSelectionField({
     super.key,
-    required this.enabled,
+    required this.isEditable,
     required this.projectProvider,
     required this.selectableProjectsProvider,
     required this.updateProject,
@@ -25,7 +25,7 @@ class BaseProjectSelectionField extends ConsumerWidget {
     final curItemProject = ref.watch(projectProvider);
     final selectableProjects = ref.watch(selectableProjectsProvider);
 
-    return AnimatedModalSelectionField<ProjectModel>(
+    return isEditable ? AnimatedModalSelectionField<ProjectModel>(
       labelWidget: SizedBox(
         width: 60,
         child: Text(
@@ -43,7 +43,7 @@ class BaseProjectSelectionField extends ConsumerWidget {
           (isProjectRequired 
               ? AppLocalizations.of(context)!.selectAProject 
               : AppLocalizations.of(context)!.personal),
-      enabled: enabled,
+      enabled: isEditable,
       value: curItemProject,
       options: selectableProjects.when(
         data: (data) => data ?? [],
@@ -54,6 +54,6 @@ class BaseProjectSelectionField extends ConsumerWidget {
         updateProject(ref, project);
       },
       isValueRequired: isProjectRequired,
-    );
+    ) : Text(curItemProject?.name ?? '');
   }
 }
