@@ -1,13 +1,13 @@
 // GENERATED CODE - DO NOT MODIFY BY HAND
 
-part of 'task_comments_model.dart';
+part of 'task_comment_model.dart';
 
 // **************************************************************************
 // JsonSerializableGenerator
 // **************************************************************************
 
-TaskCommentsModel _$TaskCommentsModelFromJson(Map<String, dynamic> json) =>
-    TaskCommentsModel(
+TaskCommentModel _$TaskCommentModelFromJson(Map<String, dynamic> json) =>
+    TaskCommentModel(
       id: json['id'] as String?,
       authorUserId: json['author_user_id'] as String,
       parentTaskId: json['parent_task_id'] as String,
@@ -26,7 +26,7 @@ TaskCommentsModel _$TaskCommentsModelFromJson(Map<String, dynamic> json) =>
           : DateTime.parse(json['end_datetime'] as String),
     );
 
-Map<String, dynamic> _$TaskCommentsModelToJson(TaskCommentsModel instance) =>
+Map<String, dynamic> _$TaskCommentModelToJson(TaskCommentModel instance) =>
     <String, dynamic>{
       'id': instance.id,
       'author_user_id': instance.authorUserId,

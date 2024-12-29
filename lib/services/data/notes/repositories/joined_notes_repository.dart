@@ -14,7 +14,7 @@ class JoinedNotesRepository extends BaseRepository<JoinedNoteModel> {
   const JoinedNotesRepository(super.db);
 
   @override
-  Set<String> get watchTables => {'notes', 'projects', 'users'};
+  Set<String> get REMOVEwatchTables => {'notes', 'projects', 'users'};
 
   @override
   JoinedNoteModel fromJson(Map<String, dynamic> json) {

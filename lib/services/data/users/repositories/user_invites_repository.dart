@@ -12,7 +12,7 @@ class UserInvitesRepository extends BaseRepository<InviteModel> {
   const UserInvitesRepository(super.db);
 
   @override
-  Set<String> get watchTables => {'invites', 'orgs', 'users'};
+  Set<String> get REMOVEwatchTables => {'invites', 'orgs', 'users'};
 
   @override
   InviteModel fromJson(Map<String, dynamic> json) {

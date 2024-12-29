@@ -4,7 +4,8 @@ import 'package:seren_ai_flutter/services/data/shifts/models/shift_override_mode
 import 'package:seren_ai_flutter/services/data/common/base_repository.dart';
 import 'package:seren_ai_flutter/services/data/shifts/repositories/shift_queries.dart';
 
-final shiftOverridesRepositoryProvider = Provider<ShiftOverridesRepository>((ref) {
+final shiftOverridesRepositoryProvider =
+    Provider<ShiftOverridesRepository>((ref) {
   return ShiftOverridesRepository(ref.watch(dbProvider));
 });
 
@@ -12,7 +13,7 @@ class ShiftOverridesRepository extends BaseRepository<ShiftOverrideModel> {
   const ShiftOverridesRepository(super.db);
 
   @override
-  Set<String> get watchTables => {'shift_overrides'};
+  Set<String> get REMOVEwatchTables => {'shift_overrides'};
 
   @override
   ShiftOverrideModel fromJson(Map<String, dynamic> json) {

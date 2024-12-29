@@ -14,7 +14,7 @@ class UserProjectAssignmentsRepository
   const UserProjectAssignmentsRepository(super.db);
 
   @override
-  Set<String> get watchTables => {'user_project_assignments'};
+  Set<String> get REMOVEwatchTables => {'user_project_assignments'};
 
   @override
   UserProjectAssignmentModel fromJson(Map<String, dynamic> json) {

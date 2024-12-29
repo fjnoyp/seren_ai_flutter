@@ -4,7 +4,8 @@ import 'package:seren_ai_flutter/services/data/shifts/models/shift_timeframe_mod
 import 'package:seren_ai_flutter/services/data/common/base_repository.dart';
 import 'package:seren_ai_flutter/services/data/shifts/repositories/shift_queries.dart';
 
-final shiftTimeframesRepositoryProvider = Provider<ShiftTimeframesRepository>((ref) {
+final shiftTimeframesRepositoryProvider =
+    Provider<ShiftTimeframesRepository>((ref) {
   return ShiftTimeframesRepository(ref.watch(dbProvider));
 });
 
@@ -12,7 +13,7 @@ class ShiftTimeframesRepository extends BaseRepository<ShiftTimeframeModel> {
   const ShiftTimeframesRepository(super.db);
 
   @override
-  Set<String> get watchTables => {'shift_timeframes'};
+  Set<String> get REMOVEwatchTables => {'shift_timeframes'};
 
   @override
   ShiftTimeframeModel fromJson(Map<String, dynamic> json) {
@@ -25,7 +26,8 @@ class ShiftTimeframesRepository extends BaseRepository<ShiftTimeframeModel> {
     });
   }
 
-  Future<List<ShiftTimeframeModel>> getTimeframesForShift(String shiftId) async {
+  Future<List<ShiftTimeframeModel>> getTimeframesForShift(
+      String shiftId) async {
     return get(ShiftQueries.getShiftTimeframes, {
       'shift_id': shiftId,
     });
