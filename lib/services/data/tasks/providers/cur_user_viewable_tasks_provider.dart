@@ -17,6 +17,7 @@ final curUserViewableTasksProvider =
   },
 );
 
+// TODO p2: might need date ranges or other filters to prevent loading in all tasks each time 
 final joinedCurUserViewableTasksProvider =
     StreamProvider.autoDispose<List<JoinedTaskModel>?>(
   (ref) {

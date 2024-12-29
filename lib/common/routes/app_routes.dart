@@ -10,6 +10,7 @@ enum AppRoutes {
   test('/test'),
   tasks('/tasks'),
   taskPage('/taskPage'),
+  taskGantt('/taskGantt'),
   aiChats('/aiChats'),
   shifts('/shifts'),
   noteList('/noteList'),

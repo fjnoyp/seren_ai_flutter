@@ -27,6 +27,7 @@ import 'package:seren_ai_flutter/services/data/projects/widgets/web/web_project_
 import 'package:seren_ai_flutter/services/data/shifts/providers/cur_shift_state_provider.dart';
 import 'package:seren_ai_flutter/services/data/shifts/widgets/shifts_page.dart';
 import 'package:seren_ai_flutter/services/data/tasks/providers/task_schedule_notifications_service.dart';
+import 'package:seren_ai_flutter/services/data/tasks/widgets/gantt/gantt_task_page.dart';
 import 'package:seren_ai_flutter/services/data/tasks/widgets/task_page.dart';
 import 'package:seren_ai_flutter/services/ai_interaction/stt_orchestrator_provider.dart.dart';
 import 'package:seren_ai_flutter/widgets/home/home_page.dart';
@@ -169,6 +170,7 @@ class AppState extends State<App> {
             },
             AppRoutes.termsAndConditions.name: (context) =>
                 const TermsAndConditionsWebview(),
+            AppRoutes.taskGantt.name: (context) => const TaskGanttPage(),
             AppRoutes.settings.name: (context) => _GuardScaffold(
                   AppLocalizations.of(context)!.settings,
                   const SettingsPage(),

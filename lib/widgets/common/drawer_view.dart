@@ -1,3 +1,4 @@
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:seren_ai_flutter/common/navigation_service_provider.dart';
@@ -38,115 +39,120 @@ class DrawerView extends ConsumerWidget {
         children: [
           DrawerHeader(
             child: Row(
-                    children: [
-                      if (curOrg != null) ...[
-                        OrgAvatarImage(org: curOrg),
-                        const SizedBox(width: 12),
-                      ],
-                      Flexible(
-                        child: Text(
-                            curOrg?.name ?? AppLocalizations.of(context)!.menu,
-                            style: const TextStyle(fontSize: 24)),
-                      ),
-                    ],
-                  ),
+              children: [
+                if (curOrg != null) ...[
+                  OrgAvatarImage(org: curOrg),
+                  const SizedBox(width: 12),
+                ],
+                Flexible(
+                  child: Text(
+                      curOrg?.name ?? AppLocalizations.of(context)!.menu,
+                      style: const TextStyle(fontSize: 24)),
+                ),
+              ],
+            ),
           ),
           Expanded(
             child: ListView(
               children: [
-                      _DrawerListTile(
-                        icon: Icons.home,
-                        title: AppLocalizations.of(context)!.home,
-                        onTap: () =>
-                            ref
-                            .read(navigationServiceProvider)
-                            .navigateTo(AppRoutes.home.name),
-                      ),
-                      _DebugModeListTile(
-                        icon: Icons.house,
-                        title: AppLocalizations.of(context)!.chooseOrganization,
-                        onTap: () => ref
-                            .read(navigationServiceProvider)
-                            .navigateTo(AppRoutes.chooseOrg.name),
-                      ),
-                      _AdminOnlyListTile(
-                        icon: Icons.business,
-                        title: AppLocalizations.of(context)!.organization,
-                        onTap: () => openOrgPage(context),
-                      ),
-                      isWebVersion
-                          ? Consumer(
-                              builder: (context, ref, child) {
-                                final projects = ref
-                                        .watch(curUserViewableProjectsProvider)
-                                        .valueOrNull ??
-                                    <ProjectModel>[];
+                _DrawerListTile(
+                  icon: Icons.home,
+                  title: AppLocalizations.of(context)!.home,
+                  onTap: () => ref
+                      .read(navigationServiceProvider)
+                      .navigateTo(AppRoutes.home.name),
+                ),
+                _DebugModeListTile(
+                  icon: Icons.house,
+                  title: AppLocalizations.of(context)!.chooseOrganization,
+                  onTap: () => ref
+                      .read(navigationServiceProvider)
+                      .navigateTo(AppRoutes.chooseOrg.name),
+                ),
+                _AdminOnlyListTile(
+                  icon: Icons.business,
+                  title: AppLocalizations.of(context)!.organization,
+                  onTap: () => openOrgPage(context),
+                ),
+                isWebVersion
+                    ? Consumer(
+                        builder: (context, ref, child) {
+                          final projects = ref
+                                  .watch(curUserViewableProjectsProvider)
+                                  .valueOrNull ??
+                              <ProjectModel>[];
 
-                                return _ExpandableListTile(
-                                  icon: Icons.work,
-                                  title: AppLocalizations.of(context)!.projects,
-                                  options: projects,
-                                  optionToString: (project) => project.name,
-                                  onTapOption: (project) => openProjectPage(
-                                      ref, context,
-                                      project: project),
-                                  onTapAddButton: () =>
-                                      openCreateProjectPage(ref, context),
-                                );
-                              },
-                            )
-                          : _DrawerListTile(
-                              icon: Icons.work,
-                              title: AppLocalizations.of(context)!.projects,
-                              onTap: () => ref
-                                  .read(navigationServiceProvider)
-                                  .navigateTo(AppRoutes.projects.name),
-                            ),
-                      if (!isWebVersion || isDebugMode)
-                        _DrawerListTile(
-                          icon: Icons.task,
-                          title: AppLocalizations.of(context)!.tasks,
-                          onTap: () => ref
-                              .read(navigationServiceProvider)
-                              .navigateTo(AppRoutes.tasks.name),
-                        ),
-                      _DebugModeListTile(
-                        icon: Icons.square,
-                        title: AppLocalizations.of(context)!.testSQL,
+                          return _ExpandableListTile(
+                            icon: Icons.work,
+                            title: AppLocalizations.of(context)!.projects,
+                            options: projects,
+                            optionToString: (project) => project.name,
+                            onTapOption: (project) =>
+                                openProjectPage(ref, context, project: project),
+                            onTapAddButton: () =>
+                                openCreateProjectPage(ref, context),
+                          );
+                        },
+                      )
+                    : _DrawerListTile(
+                        icon: Icons.work,
+                        title: AppLocalizations.of(context)!.projects,
                         onTap: () => ref
                             .read(navigationServiceProvider)
-                            .navigateTo(AppRoutes.testSQLPage.name),
+                            .navigateTo(AppRoutes.projects.name),
                       ),
-                      if (!isWebVersion)
-                        _DrawerListTile(
-                          icon: Icons.chat,
-                          title: AppLocalizations.of(context)!.aiChatThreads,
-                          onTap: () => ref
-                            .read(navigationServiceProvider)
-                            .navigateTo(AppRoutes.aiChats.name),
-                      ),
-                      _DrawerListTile(
-                        icon: Icons.punch_clock_outlined,
-                        title: AppLocalizations.of(context)!.shifts,
-                        onTap: () =>
-                            ref
-                            .read(navigationServiceProvider)
-                            .navigateTo(AppRoutes.shifts.name),
-                      ),
-                      if (!isWebVersion || isDebugMode)
-                        _DrawerListTile(
-                          icon: Icons.note_outlined,
-                          title: AppLocalizations.of(context)!.notes,
-                          onTap: () => ref
-                              .read(navigationServiceProvider)
-                              .navigateTo(AppRoutes.noteList.name),
-                        ),
-                      _DrawerListTile(
-                        icon: Icons.settings,
-                        title: AppLocalizations.of(context)!.settings,
-                        onTap: () => ref.read(navigationServiceProvider).navigateTo(AppRoutes.settings.name),
-                      ),
-                    ],
+                if (!isWebVersion || isDebugMode)
+                  _DrawerListTile(
+                    icon: Icons.task,
+                    title: AppLocalizations.of(context)!.tasks,
+                    onTap: () => ref
+                        .read(navigationServiceProvider)
+                        .navigateTo(AppRoutes.tasks.name),
+                  ),
+                _DebugModeListTile(
+                  icon: Icons.square,
+                  title: AppLocalizations.of(context)!.testSQL,
+                  onTap: () => ref
+                      .read(navigationServiceProvider)
+                      .navigateTo(AppRoutes.testSQLPage.name),
+                ),
+                if (!isWebVersion)
+                  _DrawerListTile(
+                    icon: Icons.chat,
+                    title: AppLocalizations.of(context)!.aiChatThreads,
+                    onTap: () => ref
+                        .read(navigationServiceProvider)
+                        .navigateTo(AppRoutes.aiChats.name),
+                  ),
+                _DrawerListTile(
+                  icon: Icons.punch_clock_outlined,
+                  title: AppLocalizations.of(context)!.shifts,
+                  onTap: () => ref
+                      .read(navigationServiceProvider)
+                      .navigateTo(AppRoutes.shifts.name),
+                ),
+                _DrawerListTile(
+                  icon: Icons.table_chart_outlined,
+                  title: 'Gantt Chart',
+                  onTap: () =>
+                      Navigator.pushNamed(context, AppRoutes.taskGantt.name),
+                ),
+                if (!isWebVersion || isDebugMode)
+                  _DrawerListTile(
+                    icon: Icons.note_outlined,
+                    title: AppLocalizations.of(context)!.notes,
+                    onTap: () => ref
+                        .read(navigationServiceProvider)
+                        .navigateTo(AppRoutes.noteList.name),
+                  ),
+                _DrawerListTile(
+                  icon: Icons.settings,
+                  title: AppLocalizations.of(context)!.settings,
+                  onTap: () => ref
+                      .read(navigationServiceProvider)
+                      .navigateTo(AppRoutes.settings.name),
+                ),
+              ],
             ),
           ),
           const Divider(),
