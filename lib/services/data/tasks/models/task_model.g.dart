@@ -26,6 +26,11 @@ TaskModel _$TaskModelFromJson(Map<String, dynamic> json) => TaskModel(
       estimatedDurationMinutes:
           TaskModel._durationFromJson(json['estimated_duration_minutes']),
       reminderOffsetMinutes: (json['reminder_offset_minutes'] as num?)?.toInt(),
+      startDateTime: json['start_date_time'] == null
+          ? null
+          : DateTime.parse(json['start_date_time'] as String),
+      parentTaskId: json['parent_task_id'] as String?,
+      blockedByTaskId: json['blocked_by_task_id'] as String?,
     );
 
 Map<String, dynamic> _$TaskModelToJson(TaskModel instance) => <String, dynamic>{
@@ -42,6 +47,9 @@ Map<String, dynamic> _$TaskModelToJson(TaskModel instance) => <String, dynamic>{
       'estimated_duration_minutes':
           TaskModel._durationToJson(instance.estimatedDurationMinutes),
       'reminder_offset_minutes': instance.reminderOffsetMinutes,
+      'start_date_time': instance.startDateTime?.toIso8601String(),
+      'parent_task_id': instance.parentTaskId,
+      'blocked_by_task_id': instance.blockedByTaskId,
     };
 
 const _$StatusEnumEnumMap = {

@@ -91,6 +91,8 @@ PODS:
     - Mantle
     - SDWebImage
     - SDWebImageWebPCoder
+  - flutter_local_notifications (0.0.1):
+    - Flutter
   - flutter_tts (0.0.1):
     - Flutter
   - google_sign_in_ios (0.0.1):
@@ -208,6 +210,7 @@ DEPENDENCIES:
   - firebase_crashlytics (from `.symlinks/plugins/firebase_crashlytics/ios`)
   - Flutter (from `Flutter`)
   - flutter_image_compress_common (from `.symlinks/plugins/flutter_image_compress_common/ios`)
+  - flutter_local_notifications (from `.symlinks/plugins/flutter_local_notifications/ios`)
   - flutter_tts (from `.symlinks/plugins/flutter_tts/ios`)
   - google_sign_in_ios (from `.symlinks/plugins/google_sign_in_ios/darwin`)
   - open_file_ios (from `.symlinks/plugins/open_file_ios/ios`)
@@ -265,6 +268,8 @@ EXTERNAL SOURCES:
     :path: Flutter
   flutter_image_compress_common:
     :path: ".symlinks/plugins/flutter_image_compress_common/ios"
+  flutter_local_notifications:
+    :path: ".symlinks/plugins/flutter_local_notifications/ios"
   flutter_tts:
     :path: ".symlinks/plugins/flutter_tts/ios"
   google_sign_in_ios:
@@ -310,6 +315,7 @@ SPEC CHECKSUMS:
   FirebaseSessions: 655ff17f3cc1a635cbdc2d69b953878001f9e25b
   Flutter: e0871f40cf51350855a761d2e70bf5af5b9b5de7
   flutter_image_compress_common: ec1d45c362c9d30a3f6a0426c297f47c52007e3e
+  flutter_local_notifications: df98d66e515e1ca797af436137b4459b160ad8c9
   flutter_tts: 0f492aab6accf87059b72354fcb4ba934304771d
   google_sign_in_ios: 07375bfbf2620bc93a602c0e27160d6afc6ead38
   GoogleDataTransport: aae35b7ea0c09004c3797d53c8c41f66f219d6a7
