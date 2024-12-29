@@ -22,8 +22,8 @@ void main() async {
   WidgetsFlutterBinding.ensureInitialized();
 
   // Initialization of Async Components
-  final db = await PowerSyncDatabaseFactory.openDatabase();
   final prefs = await SharedPreferences.getInstance();
+  final db = await PowerSyncDatabaseFactory.openDatabase();
 
   if (!kIsWeb && !UniversalPlatform.instance().isIOS) {
     // Initialize Firebase for Crashlytics

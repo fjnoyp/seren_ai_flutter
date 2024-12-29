@@ -226,7 +226,7 @@ Future<void> openBlankTaskPage(Ref ref) async {
 }
 
 // TODO p2: init state within the page itself ... we should only rely on arguments to init the page (to support deep linking)
-/// `initialProject` and `initialStatus` fields are only used for create mode. 
+/// `initialProject` and `initialStatus` fields are only used for create mode.
 /// They are used to set the parent project and status of the new task
 ///
 /// **If you use them with edit mode, they will be ignored**
@@ -245,17 +245,15 @@ Future<void> openTaskPage(
 
   // CREATE - wipe existing task state
   if (mode == EditablePageMode.create) {
-    ref.read(curTaskServiceProvider).createTask(
-        project: initialProject, status: initialStatus);
+    ref
+        .read(curTaskServiceProvider)
+        .createTask(project: initialProject, status: initialStatus);
   }
   // EDIT/READ - optionally load provided initial task
   else if (mode == EditablePageMode.edit || mode == EditablePageMode.readOnly) {
     // initialJoinedTask can be null if we are opening an existing task page for edit
     if (initialJoinedTask != null) {
       ref.read(curTaskServiceProvider).loadTask(initialJoinedTask);
-
-      // TODO p3: modify to have comments listened to in realtime
-      ref.read(curTaskServiceProvider).updateComments();
     }
   }
 
