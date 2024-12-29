@@ -16,7 +16,7 @@ class JoinedUserOrgRolesRepository
   const JoinedUserOrgRolesRepository(super.db);
 
   @override
-  Set<String> get watchTables => {'user_org_roles', 'users', 'orgs'};
+  Set<String> get REMOVEwatchTables => {'user_org_roles', 'users', 'orgs'};
 
   @override
   JoinedUserOrgRoleModel fromJson(Map<String, dynamic> json) {

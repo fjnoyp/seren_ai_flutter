@@ -2,10 +2,10 @@ import 'package:json_annotation/json_annotation.dart';
 import 'package:seren_ai_flutter/services/data/common/i_has_id.dart';
 import 'package:seren_ai_flutter/services/data/common/uuid.dart';
 
-part 'task_user_assignments_model.g.dart';
+part 'task_user_assignment_model.g.dart';
 
 @JsonSerializable()
-class TaskUserAssignmentsModel implements IHasId {
+class TaskUserAssignmentModel implements IHasId {
   @override
   final String id;
 
@@ -21,7 +21,7 @@ class TaskUserAssignmentsModel implements IHasId {
   @JsonKey(name: 'updated_at')
   final DateTime? updatedAt;
 
-  TaskUserAssignmentsModel({
+  TaskUserAssignmentModel({
     String? id,
     required this.taskId,
     required this.userId,
@@ -29,17 +29,18 @@ class TaskUserAssignmentsModel implements IHasId {
     this.updatedAt,
   }) : id = id ?? uuid.v4();
 
-  factory TaskUserAssignmentsModel.fromJson(Map<String, dynamic> json) => _$TaskUserAssignmentsModelFromJson(json);
-  Map<String, dynamic> toJson() => _$TaskUserAssignmentsModelToJson(this);
+  factory TaskUserAssignmentModel.fromJson(Map<String, dynamic> json) =>
+      _$TaskUserAssignmentModelFromJson(json);
+  Map<String, dynamic> toJson() => _$TaskUserAssignmentModelToJson(this);
 
-  TaskUserAssignmentsModel copyWith({
+  TaskUserAssignmentModel copyWith({
     String? id,
     String? taskId,
     String? userId,
     DateTime? createdAt,
     DateTime? updatedAt,
   }) {
-    return TaskUserAssignmentsModel(
+    return TaskUserAssignmentModel(
       id: id ?? this.id,
       taskId: taskId ?? this.taskId,
       userId: userId ?? this.userId,

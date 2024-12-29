@@ -12,7 +12,7 @@ class NotesRepository extends BaseRepository<NoteModel> {
   const NotesRepository(super.db);
 
   @override
-  Set<String> get watchTables => {'notes', 'projects'};
+  Set<String> get REMOVEwatchTables => {'notes', 'projects'};
 
   @override
   NoteModel fromJson(Map<String, dynamic> json) {

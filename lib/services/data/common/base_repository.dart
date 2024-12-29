@@ -1,38 +1,48 @@
 import 'package:logging/logging.dart';
 import 'package:powersync/powersync.dart';
+import 'package:seren_ai_flutter/services/data/common/i_has_id.dart';
 
 final Logger log = Logger('base-repository');
 
 /// Base class for watching / getting data from the database
 /// Does not provide any mutation methods (see service classes for that)
-abstract class BaseRepository<T> {
-
+abstract class BaseRepository<T extends IHasId> {
   final PowerSyncDatabase db;
 
-  const BaseRepository(this.db);
+  final String primaryTable;
+
+  const BaseRepository(this.db, {required this.primaryTable});
 
   T fromJson(Map<String, dynamic> json);
 
-  Set<String> get watchTables;
+  Map<String, dynamic> toJson(T item);
 
-  Stream<List<T>> watch(String query, Map<String, dynamic> params) {
+  // TODO p3: check that watch tables are being set correctly
+  // Especially since we just removed joined models
+  Set<String> get REMOVEwatchTables => {};
+
+  // todo - merge the base table db with the base repostiory
+  // turn into a CRUD dedicated class
+
+  Stream<List<T>> watch(String query, Map<String, dynamic> params,
+      {Set<String>? triggerOnTables}) {
     return db
         .watch(
-          query,
-          parameters: params.values.toList(),
-          triggerOnTables: watchTables,
-        )
+      query,
+      parameters: params.values.toList(),
+      triggerOnTables: triggerOnTables ?? [primaryTable],
+    )
         .map((results) {
-          try {
-            return results.map((row) => fromJson(row)).toList();
-          } catch (e, stackTrace) {
-            log.severe('Error in BaseRepository.watch for query: $query');
-            log.severe('Parameters: $params');
-            log.severe('Error: $e');
-            log.severe('StackTrace: $stackTrace');
-            rethrow; // Rethrow to maintain error propagation
-          }
-        });
+      try {
+        return results.map((row) => fromJson(row)).toList();
+      } catch (e, stackTrace) {
+        log.severe('Error in BaseRepository.watch for query: $query');
+        log.severe('Parameters: $params');
+        log.severe('Error: $e');
+        log.severe('StackTrace: $stackTrace');
+        rethrow; // Rethrow to maintain error propagation
+      }
+    });
   }
 
   Future<List<T>> get(String query, Map<String, dynamic> params) async {
@@ -40,28 +50,77 @@ abstract class BaseRepository<T> {
     return results.map((row) => fromJson(row)).toList();
   }
 
-  Stream<T> watchSingle(String query, Map<String, dynamic> params) {
+  Stream<T> watchSingle(String query, Map<String, dynamic> params,
+      {Set<String>? triggerOnTables}) {
     return db
         .watch(
-          query,
-          parameters: params.values.toList(),
-          triggerOnTables: watchTables,
-        )
+      query,
+      parameters: params.values.toList(),
+      triggerOnTables: triggerOnTables ?? [primaryTable],
+    )
         .map((results) {
-          try {
-            return fromJson(results.first);
-          } catch (e, stackTrace) {
-            log.severe('Error in BaseRepository.watchSingle for query: $query');
-            log.severe('Parameters: $params');
-            log.severe('Error: $e');
-            log.severe('StackTrace: $stackTrace');
-            rethrow;
-          }
-        });
+      try {
+        return fromJson(results.first);
+      } catch (e, stackTrace) {
+        log.severe('Error in BaseRepository.watchSingle for query: $query');
+        log.severe('Parameters: $params');
+        log.severe('Error: $e');
+        log.severe('StackTrace: $stackTrace');
+        rethrow;
+      }
+    });
   }
 
   Future<T> getSingle(String query, Map<String, dynamic> params) async {
     final results = await db.execute(query, params.values.toList());
     return fromJson(results.first);
+  }
+
+  Future<void> insertItem(T item) async {
+    final Map<String, dynamic> json = toJson(item);
+
+    final columns = '(${json.keys.join(', ')})';
+    final valuesPlaceholder =
+        'VALUES(${List.filled(json.keys.length, '?').join(', ')})';
+    final values = json.values.toList();
+    try {
+      final result = await db.execute(
+          'INSERT INTO $primaryTable $columns $valuesPlaceholder', values);
+    } catch (e) {
+      throw Exception('Failed to insert item into $primaryTable: $e');
+    }
+  }
+
+  Future<void> upsertItem(T item) async {
+    final existingItem =
+        await db.execute('SELECT * FROM $primaryTable WHERE id = ?', [item.id]);
+    if (existingItem.isEmpty) {
+      await insertItem(item);
+    } else {
+      await updateItem(item);
+    }
+  }
+
+  Future<void> updateItem(T item) async {
+    final Map<String, dynamic> json = toJson(item);
+    final setClause = json.entries
+        .where((entry) => entry.key != 'id')
+        .map((entry) => '${entry.key} = ${_sqlEscape(entry.value)}')
+        .join(', ');
+
+    await db.execute(
+        'UPDATE $primaryTable SET $setClause WHERE id = ${_sqlEscape(item.id)}');
+  }
+
+  Future<void> deleteItem(String id) async {
+    await db.execute('DELETE FROM $primaryTable WHERE id = ${_sqlEscape(id)}');
+  }
+
+  String _sqlEscape(dynamic value) {
+    if (value == null) return 'NULL';
+    if (value is num) return value.toString();
+    if (value is bool) return value ? '1' : '0';
+    if (value is DateTime) return "'${value.toIso8601String()}'";
+    return "'${value.toString().replaceAll("'", "''")}'";
   }
 }

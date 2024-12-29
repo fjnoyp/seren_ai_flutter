@@ -3,14 +3,14 @@ import 'package:seren_ai_flutter/services/auth/cur_auth_state_provider.dart';
 import 'package:seren_ai_flutter/services/data/common/status_enum.dart';
 import 'package:seren_ai_flutter/services/data/projects/models/project_model.dart';
 import 'package:seren_ai_flutter/services/data/tasks/models/joined_task_model.dart';
-import 'package:seren_ai_flutter/services/data/tasks/models/task_comments_model.dart';
+import 'package:seren_ai_flutter/services/data/tasks/models/task_comment_model.dart';
 import 'package:seren_ai_flutter/services/data/tasks/models/task_model.dart';
-import 'package:seren_ai_flutter/services/data/tasks/models/task_user_assignments_model.dart';
+import 'package:seren_ai_flutter/services/data/tasks/models/task_user_assignment_model.dart';
 import 'package:seren_ai_flutter/services/data/tasks/providers/cur_task_state_provider.dart';
 import 'package:seren_ai_flutter/services/data/tasks/providers/joined_task_comments_provider.dart';
-import 'package:seren_ai_flutter/services/data/tasks/task_comments_db_provider.dart';
-import 'package:seren_ai_flutter/services/data/tasks/task_user_assignments_db_provider.dart';
-import 'package:seren_ai_flutter/services/data/tasks/tasks_db_provider.dart';
+import 'package:seren_ai_flutter/services/data/tasks/repositories/task_comments_db_provider.dart';
+import 'package:seren_ai_flutter/services/data/tasks/repositories/task_user_assignments_db_provider.dart';
+import 'package:seren_ai_flutter/services/data/tasks/repositories/tasks_db_provider.dart';
 import 'package:seren_ai_flutter/services/data/users/models/user_model.dart';
 
 final curTaskServiceProvider = Provider<CurTaskService>((ref) {
@@ -92,7 +92,7 @@ class CurTaskService {
   void addComment(String text) {
     if (_state.value != null) {
       final curUser = ref.read(curUserProvider).value;
-      final comment = TaskCommentsModel(
+      final comment = TaskCommentModel(
         authorUserId: curUser!.id,
         parentTaskId: _state.value!.task.id,
         content: text,
@@ -123,7 +123,7 @@ class CurTaskService {
     await ref.read(tasksDbProvider).upsertItem(_state.value!.task);
 
     final taskUserAssignments = _state.value!.assignees
-        .map((user) => TaskUserAssignmentsModel(
+        .map((user) => TaskUserAssignmentModel(
               taskId: _state.value!.task.id,
               userId: user.id,
             ))

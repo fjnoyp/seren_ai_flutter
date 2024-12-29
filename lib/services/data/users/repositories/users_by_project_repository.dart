@@ -13,7 +13,7 @@ class UsersByProjectRepository extends BaseRepository<UserModel> {
   const UsersByProjectRepository(super.db);
 
   @override
-  Set<String> get watchTables => {'users', 'user_project_assignments'};
+  Set<String> get REMOVEwatchTables => {'users', 'user_project_assignments'};
 
   @override
   UserModel fromJson(Map<String, dynamic> json) {
