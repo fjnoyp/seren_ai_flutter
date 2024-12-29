@@ -4,7 +4,8 @@ import 'package:seren_ai_flutter/services/data/db_setup/db_provider.dart';
 import 'package:seren_ai_flutter/services/data/ai_chats/models/ai_chat_message_model.dart';
 import 'package:seren_ai_flutter/services/data/common/base_repository.dart';
 
-final aiChatMessagesRepositoryProvider = Provider<AiChatMessagesRepository>((ref) {
+final aiChatMessagesRepositoryProvider =
+    Provider<AiChatMessagesRepository>((ref) {
   return AiChatMessagesRepository(ref.watch(dbProvider));
 });
 
@@ -14,7 +15,7 @@ class AiChatMessagesRepository extends BaseRepository<AiChatMessageModel> {
   const AiChatMessagesRepository(super.db);
 
   @override
-  Set<String> get watchTables => {'ai_chat_messages'};
+  Set<String> get REMOVEwatchTables => {'ai_chat_messages'};
 
   @override
   AiChatMessageModel fromJson(Map<String, dynamic> json) {

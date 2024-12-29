@@ -12,7 +12,7 @@ class ShiftsRepository extends BaseRepository<JoinedShiftModel> {
   const ShiftsRepository(super.db);
 
   @override
-  Set<String> get watchTables => {'shifts', 'projects'};
+  Set<String> get REMOVEwatchTables => {'shifts', 'projects'};
 
   @override
   JoinedShiftModel fromJson(Map<String, dynamic> json) {

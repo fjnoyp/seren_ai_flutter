@@ -12,7 +12,7 @@ class UserOrgRolesRepository extends BaseRepository<UserOrgRoleModel> {
   const UserOrgRolesRepository(super.db);
 
   @override
-  Set<String> get watchTables => {'user_org_roles'};
+  Set<String> get REMOVEwatchTables => {'user_org_roles'};
 
   @override
   UserOrgRoleModel fromJson(Map<String, dynamic> json) {

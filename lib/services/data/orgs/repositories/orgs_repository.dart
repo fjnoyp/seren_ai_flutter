@@ -12,7 +12,7 @@ class OrgsRepository extends BaseRepository<OrgModel> {
   const OrgsRepository(super.db);
 
   @override
-  Set<String> get watchTables => {'orgs'};
+  Set<String> get REMOVEwatchTables => {'orgs'};
 
   @override
   OrgModel fromJson(Map<String, dynamic> json) {
@@ -40,6 +40,4 @@ class OrgsRepository extends BaseRepository<OrgModel> {
       },
     );
   }
-
-  
 }

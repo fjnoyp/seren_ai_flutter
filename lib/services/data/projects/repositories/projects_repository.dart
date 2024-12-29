@@ -12,7 +12,7 @@ class ProjectsRepository extends BaseRepository<ProjectModel> {
   const ProjectsRepository(super.db);
 
   @override
-  Set<String> get watchTables => {
+  Set<String> get REMOVEwatchTables => {
         'projects',
         'user_project_assignments',
         'team_project_assignments',
