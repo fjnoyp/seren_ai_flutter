@@ -105,14 +105,6 @@ class CurTaskService {
     }
   }
 
-  Future<void> updateComments() async {
-    if (_state.value != null) {
-      final comments = ref.read(taskCommentsProvider).value ?? [];
-
-      _notifier.setNewTask(_state.value!.copyWith(comments: comments));
-    }
-  }
-
   Future<void> setReminder(int? reminderOffsetMinutes) async {
     if (_state.value != null) {
       _notifier.setNewTask(

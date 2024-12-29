@@ -1,5 +1,6 @@
 import 'dart:developer';
 import 'dart:io' show Platform;
+import 'package:flutter/foundation.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:seren_ai_flutter/common/shared_preferences_service_provider.dart';
@@ -61,6 +62,12 @@ class NotificationService {
       ),
       onDidReceiveBackgroundNotificationResponse: notificationTapBackground,
     );
+
+    // TODO p2: support local notifications on web
+    // flutterlocalnotifications is not supported on web
+    if (kIsWeb) {
+      return;
+    }
 
     // Request permissions for Android
     if (Platform.isAndroid) {
