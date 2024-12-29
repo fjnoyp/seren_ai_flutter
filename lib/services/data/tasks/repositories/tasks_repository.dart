@@ -9,14 +9,16 @@ final tasksRepositoryProvider = Provider<TasksRepository>((ref) {
 });
 
 class TasksRepository extends BaseRepository<TaskModel> {
-  const TasksRepository(super.db);
-
-  @override
-  Set<String> get watchTables => {'tasks', 'projects'};
+  const TasksRepository(super.db, {super.primaryTable = 'tasks'});
 
   @override
   TaskModel fromJson(Map<String, dynamic> json) {
     return TaskModel.fromJson(json);
+  }
+
+  @override
+  Map<String, dynamic> toJson(TaskModel item) {
+    return item.toJson();
   }
 
   // Watch viewable tasks for a user (tasks where they are assigned to the project or are the author)
@@ -59,6 +61,25 @@ class TasksRepository extends BaseRepository<TaskModel> {
     return get(
       TaskQueries.userAssignedTasksQuery,
       {'user_id': userId},
+    );
+  }
+
+  Future<TaskModel?> getTaskById({
+    required String taskId,
+  }) async {
+    final result = await get(
+      TaskQueries.getTaskByIdQuery,
+      {'task_id': taskId},
+    );
+    return result.isNotEmpty ? result.first : null;
+  }
+
+  Future<List<TaskModel>> getChildTasks({
+    required String parentTaskId,
+  }) {
+    return get(
+      TaskQueries.getTasksByParentIdQuery,
+      {'parent_task_id': parentTaskId},
     );
   }
 }

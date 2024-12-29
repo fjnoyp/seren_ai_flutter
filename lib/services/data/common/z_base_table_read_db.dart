@@ -1,5 +1,6 @@
+/*
 import 'package:powersync/powersync.dart';
-import 'package:seren_ai_flutter/services/data/common/base_table_db.dart';
+import 'package:seren_ai_flutter/services/data/common/z_base_table_db.dart';
 import 'package:seren_ai_flutter/services/data/common/i_has_id.dart';
 
 typedef FromJson<T> = T Function(Map<String, dynamic> json);
@@ -88,3 +89,4 @@ class BaseTableReadDb<T extends IHasId> extends BaseTableDb<T> {
     return item;
   }
 }
+*/

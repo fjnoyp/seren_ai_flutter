@@ -12,7 +12,7 @@ class UsersRepository extends BaseRepository<UserModel> {
   const UsersRepository(super.db);
 
   @override
-  Set<String> get watchTables => {'users'};
+  Set<String> get REMOVEwatchTables => {'users'};
 
   @override
   UserModel fromJson(Map<String, dynamic> json) {
@@ -45,5 +45,14 @@ class UsersRepository extends BaseRepository<UserModel> {
     required List<String> userIds,
   }) async {
     return get(UserQueries.usersByIdQuery, {'user_ids': userIds});
+  }
+
+  Stream<List<UserModel>> watchTaskAssigneeUsers({
+    required String taskId,
+  }) {
+    return watch(
+      UserQueries.taskAssigneeUsersQuery,
+      {'task_id': taskId},
+    );
   }
 }

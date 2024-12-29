@@ -117,8 +117,10 @@ class TaskModel implements IHasId {
       dueDate: null,
       createdAt: now,
       updatedAt: now,
-      authorUserId: '', // This should be set to the current user's ID in practice
-      parentProjectId: '', // This should be set to a valid project ID in practice
+      authorUserId:
+          '', // This should be set to the current user's ID in practice
+      parentProjectId:
+          '', // This should be set to a valid project ID in practice
       estimatedDurationMinutes: null,
       reminderOffsetMinutes: 0,
       startDateTime: null,
@@ -158,8 +160,9 @@ class TaskModel implements IHasId {
       parentProjectId: parentProjectId ?? this.parentProjectId,
       estimatedDurationMinutes:
           estimatedDurationMinutes ?? this.estimatedDurationMinutes,
-      reminderOffsetMinutes:
-          removeReminder ? null : reminderOffsetMinutes ?? this.reminderOffsetMinutes,
+      reminderOffsetMinutes: removeReminder
+          ? null
+          : reminderOffsetMinutes ?? this.reminderOffsetMinutes,
       startDateTime: startDateTime ?? this.startDateTime,
       parentTaskId: parentTaskId ?? this.parentTaskId,
       blockedByTaskId: blockedByTaskId ?? this.blockedByTaskId,

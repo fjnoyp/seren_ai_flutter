@@ -1,3 +1,4 @@
+/*
 import 'package:powersync/powersync.dart';
 import 'package:seren_ai_flutter/services/data/common/i_has_id.dart';
 
@@ -34,15 +35,6 @@ class BaseTableDb<T extends IHasId> {
     } catch (e) {
       throw Exception('Failed to insert item into $tableName: $e');
     }
-
-    //final values = '(${json.values.map(_sqlEscape).join(', ')})';
-
-    /*
-    final columns = json.keys.join(', ');
-    final values = json.values.map(_sqlEscape).join(', dW');
-    
-    await db.execute('INSERT INTO $tableName ($columns) VALUES ($values)');
-    */
   }
 
   Future<void> upsertItem(T item) async {
@@ -99,3 +91,4 @@ class BaseTableDb<T extends IHasId> {
     return "'${value.toString().replaceAll("'", "''")}'";
   }
 }
+*/
