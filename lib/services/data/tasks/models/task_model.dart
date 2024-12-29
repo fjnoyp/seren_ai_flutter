@@ -68,6 +68,15 @@ class TaskModel implements IHasId {
   @JsonKey(name: 'reminder_offset_minutes')
   final int? reminderOffsetMinutes;
 
+  @JsonKey(name: 'start_date_time')
+  final DateTime? startDateTime;
+
+  @JsonKey(name: 'parent_task_id')
+  final String? parentTaskId;
+
+  @JsonKey(name: 'blocked_by_task_id')
+  final String? blockedByTaskId;
+
   static int? _durationFromJson(dynamic value) {
     if (value == null) return null;
     if (value is int) return value;
@@ -91,6 +100,9 @@ class TaskModel implements IHasId {
     required this.parentProjectId,
     this.estimatedDurationMinutes,
     this.reminderOffsetMinutes,
+    this.startDateTime,
+    this.parentTaskId,
+    this.blockedByTaskId,
   })  : id = id ?? uuid.v4(),
         assert(dueDate != null || reminderOffsetMinutes == null);
 
@@ -105,12 +117,13 @@ class TaskModel implements IHasId {
       dueDate: null,
       createdAt: now,
       updatedAt: now,
-      authorUserId:
-          '', // This should be set to the current user's ID in practice
-      parentProjectId:
-          '', // This should be set to a valid project ID in practice
+      authorUserId: '', // This should be set to the current user's ID in practice
+      parentProjectId: '', // This should be set to a valid project ID in practice
       estimatedDurationMinutes: null,
-      reminderOffsetMinutes: null,
+      reminderOffsetMinutes: 0,
+      startDateTime: null,
+      parentTaskId: null,
+      blockedByTaskId: null,
     );
   }
 
@@ -127,6 +140,9 @@ class TaskModel implements IHasId {
     String? parentProjectId,
     int? estimatedDurationMinutes,
     int? reminderOffsetMinutes,
+    DateTime? startDateTime,
+    String? parentTaskId,
+    String? blockedByTaskId,
     bool removeReminder = false,
   }) {
     return TaskModel(
@@ -142,9 +158,11 @@ class TaskModel implements IHasId {
       parentProjectId: parentProjectId ?? this.parentProjectId,
       estimatedDurationMinutes:
           estimatedDurationMinutes ?? this.estimatedDurationMinutes,
-      reminderOffsetMinutes: removeReminder
-          ? null
-          : reminderOffsetMinutes ?? this.reminderOffsetMinutes,
+      reminderOffsetMinutes:
+          removeReminder ? null : reminderOffsetMinutes ?? this.reminderOffsetMinutes,
+      startDateTime: startDateTime ?? this.startDateTime,
+      parentTaskId: parentTaskId ?? this.parentTaskId,
+      blockedByTaskId: blockedByTaskId ?? this.blockedByTaskId,
     );
   }
 

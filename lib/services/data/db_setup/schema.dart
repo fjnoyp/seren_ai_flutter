@@ -81,6 +81,9 @@ const tasksSchemas = [
     Column.text('parent_project_id'),
     Column.text('estimated_duration_minutes'),
     Column.integer('reminder_offset_minutes'),
+    Column.text('start_date_time'),
+    Column.text('parent_task_id'),
+    Column.text('blocked_by_task_id'),
   ]),
   Table(taskCommentsTable, [
     // Column.text('id'),
