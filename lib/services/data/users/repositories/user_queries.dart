@@ -40,4 +40,14 @@ abstract class UserQueries {
     AND status = 'pending'
     ORDER BY created_at DESC;
   ''';
+
+  /// Params:
+  /// - task_id: String
+  /// Used to fetch all users that are assigned to a specific task
+  static const String taskAssigneeUsersQuery = '''
+    SELECT *
+    FROM users u
+    LEFT JOIN task_user_assignments tua ON u.id = tua.user_id
+    WHERE tua.task_id = :task_id
+  ''';
 }

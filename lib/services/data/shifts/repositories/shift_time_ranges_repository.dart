@@ -4,7 +4,8 @@ import 'package:seren_ai_flutter/services/data/db_setup/db_provider.dart';
 import 'package:seren_ai_flutter/services/data/common/base_repository.dart';
 import 'package:seren_ai_flutter/services/data/shifts/repositories/shift_queries.dart';
 
-final shiftTimeRangesRepositoryProvider = Provider<ShiftTimeRangesRepository>((ref) {
+final shiftTimeRangesRepositoryProvider =
+    Provider<ShiftTimeRangesRepository>((ref) {
   return ShiftTimeRangesRepository(ref.watch(dbProvider));
 });
 
@@ -13,10 +14,10 @@ class ShiftTimeRangesRepository extends BaseRepository<DateTimeRange> {
   const ShiftTimeRangesRepository(super.db);
 
   @override
-  Set<String> get watchTables => {
-    'shift_timeframes',
-    'shift_overrides',
-  };
+  Set<String> get REMOVEwatchTables => {
+        'shift_timeframes',
+        'shift_overrides',
+      };
 
   @override
   DateTimeRange fromJson(Map<String, dynamic> json) {
@@ -32,7 +33,7 @@ class ShiftTimeRangesRepository extends BaseRepository<DateTimeRange> {
     required DateTime day,
   }) {
     final dayStart = DateTime(day.year, day.month, day.day);
-    
+
     return watch(
       ShiftQueries.getActiveShiftRanges,
       {
@@ -50,7 +51,7 @@ class ShiftTimeRangesRepository extends BaseRepository<DateTimeRange> {
     required DateTime day,
   }) {
     final dayStart = DateTime(day.year, day.month, day.day);
-    
+
     return get(
       ShiftQueries.getActiveShiftRanges,
       {

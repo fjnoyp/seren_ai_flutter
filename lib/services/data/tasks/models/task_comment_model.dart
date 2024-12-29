@@ -2,10 +2,10 @@ import 'package:json_annotation/json_annotation.dart';
 import 'package:seren_ai_flutter/services/data/common/i_has_id.dart';
 import 'package:seren_ai_flutter/services/data/common/uuid.dart';
 
-part 'task_comments_model.g.dart';
+part 'task_comment_model.g.dart';
 
 @JsonSerializable()
-class TaskCommentsModel implements IHasId {
+class TaskCommentModel implements IHasId {
   @override
   final String id;
 
@@ -29,8 +29,8 @@ class TaskCommentsModel implements IHasId {
   @JsonKey(name: 'end_datetime')
   final DateTime? endDateTime;
 
-  TaskCommentsModel({
-    String? id, 
+  TaskCommentModel({
+    String? id,
     required this.authorUserId,
     required this.parentTaskId,
     this.createdAt,
@@ -40,7 +40,7 @@ class TaskCommentsModel implements IHasId {
     this.endDateTime,
   }) : id = id ?? uuid.v4();
 
-  TaskCommentsModel copyWith({
+  TaskCommentModel copyWith({
     String? id,
     String? authorUserId,
     String? parentTaskId,
@@ -50,7 +50,7 @@ class TaskCommentsModel implements IHasId {
     DateTime? startDateTime,
     DateTime? endDateTime,
   }) {
-    return TaskCommentsModel(
+    return TaskCommentModel(
       id: id ?? this.id,
       authorUserId: authorUserId ?? this.authorUserId,
       parentTaskId: parentTaskId ?? this.parentTaskId,
@@ -62,6 +62,7 @@ class TaskCommentsModel implements IHasId {
     );
   }
 
-  factory TaskCommentsModel.fromJson(Map<String, dynamic> json) => _$TaskCommentsModelFromJson(json);
-  Map<String, dynamic> toJson() => _$TaskCommentsModelToJson(this);
+  factory TaskCommentModel.fromJson(Map<String, dynamic> json) =>
+      _$TaskCommentModelFromJson(json);
+  Map<String, dynamic> toJson() => _$TaskCommentModelToJson(this);
 }

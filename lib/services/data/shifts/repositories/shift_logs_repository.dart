@@ -12,7 +12,7 @@ class ShiftLogsRepository extends BaseRepository<ShiftLogModel> {
   const ShiftLogsRepository(super.db);
 
   @override
-  Set<String> get watchTables => {'shift_logs'};
+  Set<String> get REMOVEwatchTables => {'shift_logs'};
 
   @override
   ShiftLogModel fromJson(Map<String, dynamic> json) {
@@ -27,7 +27,7 @@ class ShiftLogsRepository extends BaseRepository<ShiftLogModel> {
       ShiftQueries.getCurrentShiftLogs,
       {
         'shift_id': shiftId,
-        'user_id': userId,        
+        'user_id': userId,
       },
     ).map((logs) => logs.isEmpty ? null : logs.first);
   }
@@ -38,7 +38,7 @@ class ShiftLogsRepository extends BaseRepository<ShiftLogModel> {
   }) async {
     final logs = await get(ShiftQueries.getCurrentShiftLogs, {
       'shift_id': shiftId,
-      'user_id': userId,      
+      'user_id': userId,
     });
     return logs.isEmpty ? null : logs.first;
   }

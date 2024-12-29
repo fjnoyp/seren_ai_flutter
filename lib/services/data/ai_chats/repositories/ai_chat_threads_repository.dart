@@ -4,7 +4,8 @@ import 'package:seren_ai_flutter/services/data/db_setup/db_provider.dart';
 import 'package:seren_ai_flutter/services/data/ai_chats/models/ai_chat_thread_model.dart';
 import 'package:seren_ai_flutter/services/data/common/base_repository.dart';
 
-final aiChatThreadsRepositoryProvider = Provider<AiChatThreadsRepository>((ref) {
+final aiChatThreadsRepositoryProvider =
+    Provider<AiChatThreadsRepository>((ref) {
   return AiChatThreadsRepository(ref.watch(dbProvider));
 });
 
@@ -12,7 +13,7 @@ class AiChatThreadsRepository extends BaseRepository<AiChatThreadModel> {
   const AiChatThreadsRepository(super.db);
 
   @override
-  Set<String> get watchTables => {'ai_chat_threads'};
+  Set<String> get REMOVEwatchTables => {'ai_chat_threads'};
 
   @override
   AiChatThreadModel fromJson(Map<String, dynamic> json) {
@@ -36,7 +37,6 @@ class AiChatThreadsRepository extends BaseRepository<AiChatThreadModel> {
     required String userId,
     required String orgId,
   }) async {
-
     return get(
       AiChatQueries.getUserThread,
       {
