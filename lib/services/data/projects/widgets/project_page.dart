@@ -3,17 +3,19 @@ import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:seren_ai_flutter/common/navigation_service_provider.dart';
 import 'package:seren_ai_flutter/common/routes/app_routes.dart';
 import 'package:seren_ai_flutter/common/universal_platform/universal_platform.dart';
+import 'package:seren_ai_flutter/services/data/common/widgets/async_value_handler_widget.dart';
 import 'package:seren_ai_flutter/services/data/common/widgets/editable_page_mode_enum.dart';
 import 'package:seren_ai_flutter/services/data/orgs/models/user_org_role_model.dart';
 import 'package:seren_ai_flutter/services/data/orgs/providers/cur_user_org_roles_provider.dart';
 import 'package:seren_ai_flutter/services/data/projects/models/project_model.dart';
-import 'package:seren_ai_flutter/services/data/projects/providers/cur_project_service_provider.dart';
-import 'package:seren_ai_flutter/services/data/projects/providers/cur_project_state_provider.dart';
+import 'package:seren_ai_flutter/services/data/projects/providers/editing_project_provider.dart';
+import 'package:seren_ai_flutter/services/data/projects/providers/selected_project_provider.dart';
 import 'package:seren_ai_flutter/services/data/projects/widgets/action_buttons/delete_project_button.dart';
 import 'package:seren_ai_flutter/services/data/projects/widgets/action_buttons/edit_project_button.dart';
 import 'package:seren_ai_flutter/services/data/projects/widgets/action_buttons/update_project_assignees_button.dart';
 import 'package:seren_ai_flutter/services/data/projects/widgets/form/project_selection_fields.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+import 'package:seren_ai_flutter/services/data/users/providers/users_in_project_provider.dart';
 import 'package:seren_ai_flutter/services/data/users/widgets/user_avatar.dart';
 
 class ProjectPage extends HookConsumerWidget {
@@ -23,45 +25,73 @@ class ProjectPage extends HookConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    return Padding(
-      padding: const EdgeInsets.all(16.0),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          if (mode == EditablePageMode.readOnly) ...[
-            const ProjectInfoHeader(),
-            const SizedBox(height: 16),
-            const ProjectAssigneesList()
-          ] else ...[
-            ProjectNameField(),
-            const SizedBox(height: 8),
-            const Divider(),
-            Padding(
-              padding: const EdgeInsets.only(left: 16),
-              child: Column(
-                children: [
-                  ProjectDescriptionSelectionField(context),
-                  const Divider(),
-                  ProjectAddressField(context),
-                ],
-              ),
-            ),
-            const SizedBox(height: 24),
-            Padding(
-              padding: const EdgeInsets.only(top: 24, bottom: 32),
-              child: SizedBox(
-                width: double.infinity,
-                child: FilledButton.tonal(
-                  onPressed: () async {
-                    ref.read(curProjectServiceProvider).saveProject();
-                  },
-                  child: Text(AppLocalizations.of(context)!.save),
+    // Only watch selectedProjectServiceProvider in non-create modes
+    if (mode != EditablePageMode.create) {
+      final projectState = ref.watch(selectedProjectProvider);
+      if (projectState.isLoading) {
+        return const Center(child: CircularProgressIndicator());
+      }
+
+      if (projectState.hasError || projectState.value == null) {
+        // Handle project deletion by other users
+        WidgetsBinding.instance.addPostFrameCallback((_) {
+          // Pop the current project page (route or dialog)
+          ref.read(navigationServiceProvider).pop();
+          // Remove all project details routes (in case of dialog, we'd need to pop again)
+          ref.read(navigationServiceProvider).popUntil((route) =>
+              !(route.settings.name?.contains(AppRoutes.projectDetails.name) ??
+                  false));
+        });
+        return const SizedBox.shrink();
+      }
+    }
+
+    return SingleChildScrollView(
+      child: Padding(
+        padding: const EdgeInsets.all(16.0),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            if (mode == EditablePageMode.readOnly) ...[
+              const ProjectInfoHeader(),
+              const SizedBox(height: 16),
+              const ProjectAssigneesList()
+            ] else ...[
+              ProjectNameField(),
+              const SizedBox(height: 8),
+              const Divider(),
+              Padding(
+                padding: const EdgeInsets.only(left: 16),
+                child: Column(
+                  children: [
+                    ProjectDescriptionSelectionField(context),
+                    const Divider(),
+                    ProjectAddressField(context),
+                  ],
                 ),
               ),
-            ),
-          ]
-        ],
+              const SizedBox(height: 24),
+              Padding(
+                padding: const EdgeInsets.only(top: 24, bottom: 32),
+                child: SizedBox(
+                  width: double.infinity,
+                  child: FilledButton.tonal(
+                    onPressed: () {
+                      final projectService =
+                          ref.read(editingProjectProvider.notifier);
+                      if (projectService.isValidProject) {
+                        projectService.saveProject();
+                        ref.read(navigationServiceProvider).pop();
+                      }
+                    },
+                    child: Text(AppLocalizations.of(context)!.save),
+                  ),
+                ),
+              ),
+            ]
+          ],
+        ),
       ),
     );
   }
@@ -72,21 +102,23 @@ class ProjectInfoHeader extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final joinedProject = ref.watch(curProjectStateProvider);
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      mainAxisSize: MainAxisSize.min,
-      children: [
-        Text(
-          joinedProject.project.name,
-          style: Theme.of(context).textTheme.headlineMedium,
-        ),
-        if (joinedProject.project.address != null)
-          Text(joinedProject.project.address!),
-        const SizedBox(height: 16, width: double.infinity),
-        if (joinedProject.project.description != null)
-          Text(joinedProject.project.description!),
-      ],
+    return AsyncValueHandlerWidget(
+      value: ref.watch(selectedProjectProvider),
+      data: (project) {
+        return Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Text(
+              project.name,
+              style: Theme.of(context).textTheme.headlineMedium,
+            ),
+            if (project.address != null) Text(project.address!),
+            const SizedBox(height: 16, width: double.infinity),
+            if (project.description != null) Text(project.description!),
+          ],
+        );
+      },
     );
   }
 }
@@ -96,7 +128,10 @@ class ProjectAssigneesList extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final joinedProject = ref.watch(curProjectStateProvider);
+    final projectId = ref.read(selectedProjectProvider).value!.id;
+    final projectAssignees =
+        ref.watch(usersInProjectProvider(projectId)).valueOrNull ?? [];
+
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       mainAxisSize: MainAxisSize.min,
@@ -108,13 +143,13 @@ class ProjectAssigneesList extends ConsumerWidget {
         const SizedBox(height: 4),
         ListView.builder(
           shrinkWrap: true,
-          itemCount: joinedProject.assignees.length,
+          itemCount: projectAssignees.length,
           itemBuilder: (context, index) {
             return ListTile(
               dense: true,
-              leading: UserAvatar(joinedProject.assignees[index]),
+              leading: UserAvatar(projectAssignees[index]),
               title: Text(
-                  '${joinedProject.assignees[index].firstName} ${joinedProject.assignees[index].lastName}'),
+                  '${projectAssignees[index].firstName} ${projectAssignees[index].lastName}'),
             );
           },
         ),
@@ -132,9 +167,9 @@ Future<void> openProjectPage(
   assert(project != null || mode != EditablePageMode.readOnly);
 
   if (mode == EditablePageMode.create) {
-    ref.read(curProjectServiceProvider).setToNewProject();
+    ref.read(editingProjectProvider.notifier).createNewProject();
   } else if (mode == EditablePageMode.readOnly) {
-    await ref.read(curProjectServiceProvider).loadProject(project!);
+    ref.read(selectedProjectProvider.notifier).setProject(project!);
   }
 
   final title = switch (mode) {
