@@ -31,11 +31,6 @@ class ProjectModel implements IHasId {
     this.updatedAt,
   }) : id = id ?? uuid.v4();
 
-  factory ProjectModel.empty() => ProjectModel(
-        name: '',
-        parentOrgId: '',
-      );
-
   ProjectModel copyWith({
     String? name,
     String? description,

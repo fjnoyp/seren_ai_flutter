@@ -177,10 +177,8 @@ class WebProjectTasksSection extends HookConsumerWidget {
                 label: Text(AppLocalizations.of(context)!.createNewTask),
                 onPressed: () async => await openTaskPage(context, ref,
                     mode: EditablePageMode.create,
-                    initialProject: ref
-                        .read(selectedProjectServiceProvider)
-                        .value!
-                        .project),
+                    initialProject:
+                        ref.read(selectedProjectServiceProvider).value!),
               ),
             ],
           ),
@@ -214,6 +212,7 @@ class _ProjectTasksBoardView extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    final project = ref.watch(selectedProjectServiceProvider).value!;
     return Row(
       children: StatusEnum.values
           .where((status) =>
@@ -237,12 +236,7 @@ class _ProjectTasksBoardView extends ConsumerWidget {
                         padding: const EdgeInsets.symmetric(horizontal: 16),
                         child: TasksListView(
                           filter: (joinedTask) =>
-                              joinedTask.task.parentProjectId ==
-                                  ref
-                                      .watch(selectedProjectServiceProvider)
-                                      .value!
-                                      .project
-                                      .id &&
+                              joinedTask.task.parentProjectId == project.id &&
                               joinedTask.task.status == status &&
                               (filterCondition == null ||
                                   filterCondition!(joinedTask)),
@@ -261,10 +255,7 @@ class _ProjectTasksBoardView extends ConsumerWidget {
                         ),
                         onPressed: () async => await openTaskPage(context, ref,
                             mode: EditablePageMode.create,
-                            initialProject: ref
-                                .read(selectedProjectServiceProvider)
-                                .value!
-                                .project,
+                            initialProject: project,
                             initialStatus: status),
                         child: Text(
                           AppLocalizations.of(context)!.createNewTask,
@@ -289,6 +280,7 @@ class _ProjectTasksListView extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    final project = ref.watch(selectedProjectServiceProvider).value!;
     return AsyncValueHandlerWidget(
       value: ref.watch(joinedCurUserViewableTasksProvider),
       data: (tasks) {
@@ -298,12 +290,7 @@ class _ProjectTasksListView extends ConsumerWidget {
               (status) {
                 final filteredTasks = tasks
                         ?.where((task) =>
-                            task.task.parentProjectId ==
-                                ref
-                                    .watch(selectedProjectServiceProvider)
-                                    .value!
-                                    .project
-                                    .id &&
+                            task.task.parentProjectId == project.id &&
                             task.task.status == status &&
                             (filterCondition == null || filterCondition!(task)))
                         .toList() ??
@@ -335,10 +322,7 @@ class _ProjectTasksListView extends ConsumerWidget {
                         dense: true,
                         onTap: () => openTaskPage(context, ref,
                             mode: EditablePageMode.create,
-                            initialProject: ref
-                                .read(selectedProjectServiceProvider)
-                                .value!
-                                .project,
+                            initialProject: project,
                             initialStatus: status),
                         leading: const SizedBox.shrink(),
                         title: Text(

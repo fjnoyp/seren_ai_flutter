@@ -10,7 +10,7 @@ class ProjectNameField extends BaseNameField {
   }) : super(
           isEditable: true,
           nameProvider: editingProjectServiceProvider
-              .select((joinedProject) => joinedProject.project.name),
+              .select((project) => project.name),
           updateName: (ref, name) => ref
               .read(editingProjectServiceProvider.notifier)
               .updateProject(name: name),
@@ -24,7 +24,7 @@ class ProjectDescriptionSelectionField extends BaseTextBlockEditSelectionField {
           labelWidget: const Icon(Icons.description),
           hintText: AppLocalizations.of(context)!.enterProjectDescription,
           descriptionProvider: editingProjectServiceProvider.select(
-              (joinedProject) => joinedProject.project.description ?? ''),
+              (project) => project.description ?? ''),
           updateDescription: (ref, description) => ref
               .read(editingProjectServiceProvider.notifier)
               .updateProject(description: description),
@@ -38,7 +38,7 @@ class ProjectAddressField extends BaseTextBlockEditSelectionField {
           labelWidget: const Icon(Icons.location_on),
           hintText: AppLocalizations.of(context)!.enterProjectAddress,
           descriptionProvider: editingProjectServiceProvider
-              .select((joinedProject) => joinedProject.project.address ?? ''),
+              .select((project) => project.address ?? ''),
           updateDescription: (ref, address) => ref
               .read(editingProjectServiceProvider.notifier)
               .updateProject(address: address),

@@ -104,20 +104,19 @@ class ProjectInfoHeader extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     return AsyncValueHandlerWidget(
       value: ref.watch(selectedProjectServiceProvider),
-      data: (joinedProject) {
+      data: (project) {
         return Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           mainAxisSize: MainAxisSize.min,
           children: [
             Text(
-              joinedProject.project.name,
+              project.name,
               style: Theme.of(context).textTheme.headlineMedium,
             ),
-            if (joinedProject.project.address != null)
-              Text(joinedProject.project.address!),
+            if (project.address != null) Text(project.address!),
             const SizedBox(height: 16, width: double.infinity),
-            if (joinedProject.project.description != null)
-              Text(joinedProject.project.description!),
+            if (project.description != null)
+              Text(project.description!),
           ],
         );
       },
@@ -130,8 +129,7 @@ class ProjectAssigneesList extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final projectId =
-        ref.read(selectedProjectServiceProvider).value!.project.id;
+    final projectId = ref.read(selectedProjectServiceProvider).value!.id;
     final projectAssignees =
         ref.watch(usersInProjectProvider(projectId)).valueOrNull ?? [];
 
@@ -172,7 +170,7 @@ Future<void> openProjectPage(
   if (mode == EditablePageMode.create) {
     ref.read(editingProjectServiceProvider.notifier).createNewProject();
   } else if (mode == EditablePageMode.readOnly) {
-    ref.read(selectedProjectServiceProvider.notifier).setProject(project!.id);
+    ref.read(selectedProjectServiceProvider.notifier).setProject(project!);
   }
 
   final title = switch (mode) {

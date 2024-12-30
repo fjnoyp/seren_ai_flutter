@@ -4,6 +4,7 @@ import 'package:seren_ai_flutter/services/data/projects/providers/project_assign
 import 'package:seren_ai_flutter/services/data/projects/providers/selected_project_service_provider.dart';
 import 'package:seren_ai_flutter/services/data/projects/widgets/form/assignees_from_cur_org_selection_modal.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+import 'package:seren_ai_flutter/services/data/users/providers/users_in_project_provider.dart';
 
 class UpdateProjectAssigneesButton extends ConsumerWidget {
   const UpdateProjectAssigneesButton({super.key});
@@ -31,12 +32,14 @@ class UpdateProjectAssigneesModal extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final joinedProject = ref.read(selectedProjectServiceProvider).value!;
+    final project = ref.read(selectedProjectServiceProvider).value!;
     final projectService =
-        ref.read(projectAssignmentsServiceProvider(joinedProject.project.id));
+        ref.read(projectAssignmentsServiceProvider(project.id));
+    final assignees =
+        ref.watch(usersInProjectProvider(project.id)).valueOrNull ?? [];
 
     return AssigneesFromCurOrgSelectionModal(
-      initialSelectedUsers: joinedProject.assignees,
+      initialSelectedUsers: assignees,
       onAssigneesChanged: (_, assignees) async =>
           await projectService.updateAssignees(assignees),
     );

@@ -25,7 +25,7 @@ class WebProjectPage extends HookConsumerWidget {
       (
         name: AppLocalizations.of(context)!.notes,
         child: NoteListByProjectId(
-            ref.watch(selectedProjectServiceProvider).value!.project.id)
+            ref.watch(selectedProjectServiceProvider).value!.id)
       ),
     ];
 
@@ -57,7 +57,7 @@ class WebProjectPage extends HookConsumerWidget {
                     Row(
                       children: [
                         Text(
-                          selectedProject.project.name,
+                          selectedProject.name,
                           style: Theme.of(context).textTheme.headlineMedium,
                         ),
                         IconButton(
@@ -92,7 +92,7 @@ class _CurrentProjectReadinessBar extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final project = ref.watch(selectedProjectServiceProvider).value!.project;
+    final project = ref.watch(selectedProjectServiceProvider).value!;
     final tasks = ref
         .watch(joinedCurUserViewableTasksProvider)
         .valueOrNull

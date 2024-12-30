@@ -21,7 +21,7 @@ class EditProjectButton extends ConsumerWidget {
         }
         openProjectPage(ref, context,
             mode: EditablePageMode.edit,
-            project: ref.read(selectedProjectServiceProvider).value!.project);
+            project: ref.read(selectedProjectServiceProvider).value!);
       },
     );
   }

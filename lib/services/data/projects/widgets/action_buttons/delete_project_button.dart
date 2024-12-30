@@ -18,7 +18,7 @@ class DeleteProjectButton extends ConsumerWidget {
       icon: const Icon(Icons.delete),
       onPressed: () async {
         final itemName =
-            ref.read(selectedProjectServiceProvider).value!.project.name;
+            ref.read(selectedProjectServiceProvider).value!.name;
         await showDialog(
           context: context,
           builder: (context) => DeleteConfirmationDialog(
@@ -29,7 +29,6 @@ class DeleteProjectButton extends ConsumerWidget {
                   .deleteItem(ref
                       .read(selectedProjectServiceProvider)
                       .value!
-                      .project
                       .id)
                   .then((_) => ref.read(navigationServiceProvider).pop());
               ref.invalidate(selectedProjectServiceProvider);

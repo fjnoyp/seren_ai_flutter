@@ -34,7 +34,6 @@ enum TaskFilterOption {
                 .watch(usersInProjectProvider(ref
                     .watch(selectedProjectServiceProvider)
                     .value!
-                    .project
                     .id))
                 .value
                 ?.map((e) => (
