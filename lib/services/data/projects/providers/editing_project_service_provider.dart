@@ -26,6 +26,7 @@ class EditingProjectService extends Notifier<JoinedProjectModel> {
         parentOrgId: orgId,
       ),
     );
+    state = newProject;
     return newProject;
   }
 
