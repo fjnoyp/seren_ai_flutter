@@ -6,7 +6,7 @@ import 'package:intl/intl.dart';
 import 'package:seren_ai_flutter/services/data/common/status_enum.dart';
 import 'package:seren_ai_flutter/services/data/common/widgets/async_value_handler_widget.dart';
 import 'package:seren_ai_flutter/services/data/common/widgets/editable_page_mode_enum.dart';
-import 'package:seren_ai_flutter/services/data/projects/providers/cur_project_state_provider.dart';
+import 'package:seren_ai_flutter/services/data/projects/providers/selected_project_provider.dart';
 import 'package:seren_ai_flutter/services/data/projects/task_filter_option_enum.dart';
 import 'package:seren_ai_flutter/services/data/projects/task_sort_option_enum.dart';
 import 'package:seren_ai_flutter/services/data/tasks/models/joined_task_model.dart';
@@ -177,7 +177,7 @@ class WebProjectTasksSection extends HookConsumerWidget {
                 label: Text(AppLocalizations.of(context)!.createNewTask),
                 onPressed: () async => await openTaskPage(context, ref,
                     mode: EditablePageMode.create,
-                    initialProject: ref.read(curProjectStateProvider).project),
+                    initialProject: ref.read(selectedProjectProvider).value!),
               ),
             ],
           ),
@@ -211,6 +211,7 @@ class _ProjectTasksBoardView extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    final project = ref.watch(selectedProjectProvider).value!;
     return Row(
       children: StatusEnum.values
           .where((status) =>
@@ -234,11 +235,7 @@ class _ProjectTasksBoardView extends ConsumerWidget {
                         padding: const EdgeInsets.symmetric(horizontal: 16),
                         child: TasksListView(
                           filter: (joinedTask) =>
-                              joinedTask.task.parentProjectId ==
-                                  ref
-                                      .watch(curProjectStateProvider)
-                                      .project
-                                      .id &&
+                              joinedTask.task.parentProjectId == project.id &&
                               joinedTask.task.status == status &&
                               (filterCondition == null ||
                                   filterCondition!(joinedTask)),
@@ -257,8 +254,7 @@ class _ProjectTasksBoardView extends ConsumerWidget {
                         ),
                         onPressed: () async => await openTaskPage(context, ref,
                             mode: EditablePageMode.create,
-                            initialProject:
-                                ref.read(curProjectStateProvider).project,
+                            initialProject: project,
                             initialStatus: status),
                         child: Text(
                           AppLocalizations.of(context)!.createNewTask,
@@ -283,6 +279,7 @@ class _ProjectTasksListView extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    final project = ref.watch(selectedProjectProvider).value!;
     return AsyncValueHandlerWidget(
       value: ref.watch(joinedCurUserViewableTasksProvider),
       data: (tasks) {
@@ -292,8 +289,7 @@ class _ProjectTasksListView extends ConsumerWidget {
               (status) {
                 final filteredTasks = tasks
                         ?.where((task) =>
-                            task.task.parentProjectId ==
-                                ref.watch(curProjectStateProvider).project.id &&
+                            task.task.parentProjectId == project.id &&
                             task.task.status == status &&
                             (filterCondition == null || filterCondition!(task)))
                         .toList() ??
@@ -325,8 +321,7 @@ class _ProjectTasksListView extends ConsumerWidget {
                         dense: true,
                         onTap: () => openTaskPage(context, ref,
                             mode: EditablePageMode.create,
-                            initialProject:
-                                ref.read(curProjectStateProvider).project,
+                            initialProject: project,
                             initialStatus: status),
                         leading: const SizedBox.shrink(),
                         title: Text(
