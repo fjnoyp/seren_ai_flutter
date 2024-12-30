@@ -42,6 +42,13 @@ class JoinedProjectsRepository extends BaseRepository<JoinedProjectModel> {
     );
   }
 
+  Stream<JoinedProjectModel> watchJoinedProjectById(String projectId) {
+    return watchSingle(
+      ProjectQueries.joinedProjectByIdQuery,
+      {'project_id': projectId},
+    );
+  }
+
   Future<JoinedProjectModel> getJoinedProjectById(String projectId) async {
     return getSingle(
       ProjectQueries.joinedProjectByIdQuery,

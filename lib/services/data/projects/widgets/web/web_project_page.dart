@@ -10,6 +10,7 @@ import 'package:seren_ai_flutter/services/data/projects/widgets/project_page.dar
 import 'package:seren_ai_flutter/services/data/projects/widgets/web/web_project_tasks_section.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:seren_ai_flutter/services/data/tasks/providers/cur_user_viewable_tasks_provider.dart';
+import 'package:seren_ai_flutter/services/data/common/widgets/async_value_handler_widget.dart';
 
 class WebProjectPage extends HookConsumerWidget {
   const WebProjectPage({super.key});
@@ -30,59 +31,58 @@ class WebProjectPage extends HookConsumerWidget {
 
     final isProjectInfoView = useState(false);
 
-    return Padding(
-      padding: const EdgeInsets.all(16),
-      child: isProjectInfoView.value
-          ? Row(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Padding(
-                  padding: const EdgeInsets.only(top: 16),
-                  child: IconButton(
-                    onPressed: () => isProjectInfoView.value = false,
-                    icon: const Icon(Icons.arrow_back),
-                  ),
-                ),
-                const Expanded(child: _WebProjectInfoView()),
-              ],
-            )
-          : DefaultTabController(
-              length: tabs.length,
-              child: Column(
+    return AsyncValueHandlerWidget(
+      value: ref.watch(selectedProjectServiceProvider),
+      data: (selectedProject) => Padding(
+        padding: const EdgeInsets.all(16),
+        child: isProjectInfoView.value
+            ? Row(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Row(
-                    children: [
-                      Text(
-                        ref
-                            .watch(selectedProjectServiceProvider)
-                            .value!
-                            .project
-                            .name,
-                        style: Theme.of(context).textTheme.headlineMedium,
-                      ),
-                      IconButton(
-                        onPressed: () => isProjectInfoView.value = true,
-                        color: Theme.of(context).colorScheme.tertiary,
-                        icon: const Icon(Icons.settings),
-                      ),
-                    ],
-                  ),
-                  const SizedBox(height: 8),
-                  const _CurrentProjectReadinessBar(),
-                  const SizedBox(height: 16),
-                  TabBar(
-                    tabs: tabs.map((tab) => Tab(text: tab.name)).toList(),
-                  ),
-                  Expanded(
-                    child: TabBarView(
-                      physics: const NeverScrollableScrollPhysics(),
-                      children: tabs.map((tab) => tab.child).toList(),
+                  Padding(
+                    padding: const EdgeInsets.only(top: 16),
+                    child: IconButton(
+                      onPressed: () => isProjectInfoView.value = false,
+                      icon: const Icon(Icons.arrow_back),
                     ),
                   ),
+                  const Expanded(child: _WebProjectInfoView()),
                 ],
+              )
+            : DefaultTabController(
+                length: tabs.length,
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Row(
+                      children: [
+                        Text(
+                          selectedProject.project.name,
+                          style: Theme.of(context).textTheme.headlineMedium,
+                        ),
+                        IconButton(
+                          onPressed: () => isProjectInfoView.value = true,
+                          color: Theme.of(context).colorScheme.tertiary,
+                          icon: const Icon(Icons.settings),
+                        ),
+                      ],
+                    ),
+                    const SizedBox(height: 8),
+                    const _CurrentProjectReadinessBar(),
+                    const SizedBox(height: 16),
+                    TabBar(
+                      tabs: tabs.map((tab) => Tab(text: tab.name)).toList(),
+                    ),
+                    Expanded(
+                      child: TabBarView(
+                        physics: const NeverScrollableScrollPhysics(),
+                        children: tabs.map((tab) => tab.child).toList(),
+                      ),
+                    ),
+                  ],
+                ),
               ),
-            ),
+      ),
     );
   }
 }

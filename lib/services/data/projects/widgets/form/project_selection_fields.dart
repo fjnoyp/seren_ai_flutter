@@ -13,7 +13,7 @@ class ProjectNameField extends BaseNameField {
               .select((joinedProject) => joinedProject.project.name),
           updateName: (ref, name) => ref
               .read(editingProjectServiceProvider.notifier)
-              .updateProjectName(name),
+              .updateProject(name: name),
         );
 }
 
@@ -27,7 +27,7 @@ class ProjectDescriptionSelectionField extends BaseTextBlockEditSelectionField {
               (joinedProject) => joinedProject.project.description ?? ''),
           updateDescription: (ref, description) => ref
               .read(editingProjectServiceProvider.notifier)
-              .updateDescription(description),
+              .updateProject(description: description),
         );
 }
 
@@ -41,6 +41,6 @@ class ProjectAddressField extends BaseTextBlockEditSelectionField {
               .select((joinedProject) => joinedProject.project.address ?? ''),
           updateDescription: (ref, address) => ref
               .read(editingProjectServiceProvider.notifier)
-              .updateAddress(address),
+              .updateProject(address: address),
         );
 }
