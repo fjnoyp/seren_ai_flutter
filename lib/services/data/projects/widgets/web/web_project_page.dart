@@ -3,7 +3,7 @@ import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:seren_ai_flutter/services/data/common/status_enum.dart';
 import 'package:seren_ai_flutter/services/data/notes/widgets/notes_list_page.dart';
-import 'package:seren_ai_flutter/services/data/projects/providers/selected_project_provider.dart';
+import 'package:seren_ai_flutter/services/data/projects/providers/selected_project_service_provider.dart';
 import 'package:seren_ai_flutter/services/data/projects/widgets/action_buttons/edit_project_button.dart';
 import 'package:seren_ai_flutter/services/data/projects/widgets/action_buttons/update_project_assignees_button.dart';
 import 'package:seren_ai_flutter/services/data/projects/widgets/project_page.dart';
@@ -23,8 +23,8 @@ class WebProjectPage extends HookConsumerWidget {
       ),
       (
         name: AppLocalizations.of(context)!.notes,
-        child:
-            NoteListByProjectId(ref.watch(selectedProjectProvider).project.id)
+        child: NoteListByProjectId(
+            ref.watch(selectedProjectServiceProvider).value!.project.id)
       ),
     ];
 
@@ -54,7 +54,11 @@ class WebProjectPage extends HookConsumerWidget {
                   Row(
                     children: [
                       Text(
-                        ref.watch(selectedProjectProvider).project.name,
+                        ref
+                            .watch(selectedProjectServiceProvider)
+                            .value!
+                            .project
+                            .name,
                         style: Theme.of(context).textTheme.headlineMedium,
                       ),
                       IconButton(
@@ -88,7 +92,7 @@ class _CurrentProjectReadinessBar extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final project = ref.watch(selectedProjectProvider).project;
+    final project = ref.watch(selectedProjectServiceProvider).value!.project;
     final tasks = ref
         .watch(joinedCurUserViewableTasksProvider)
         .valueOrNull

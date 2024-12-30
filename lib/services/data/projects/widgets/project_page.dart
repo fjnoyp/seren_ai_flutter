@@ -7,8 +7,8 @@ import 'package:seren_ai_flutter/services/data/common/widgets/editable_page_mode
 import 'package:seren_ai_flutter/services/data/orgs/models/user_org_role_model.dart';
 import 'package:seren_ai_flutter/services/data/orgs/providers/cur_user_org_roles_provider.dart';
 import 'package:seren_ai_flutter/services/data/projects/models/project_model.dart';
-import 'package:seren_ai_flutter/services/data/projects/providers/project_service_provider.dart';
-import 'package:seren_ai_flutter/services/data/projects/providers/selected_project_provider.dart';
+import 'package:seren_ai_flutter/services/data/projects/providers/editing_project_service_provider.dart';
+import 'package:seren_ai_flutter/services/data/projects/providers/selected_project_service_provider.dart';
 import 'package:seren_ai_flutter/services/data/projects/widgets/action_buttons/delete_project_button.dart';
 import 'package:seren_ai_flutter/services/data/projects/widgets/action_buttons/edit_project_button.dart';
 import 'package:seren_ai_flutter/services/data/projects/widgets/action_buttons/update_project_assignees_button.dart';
@@ -54,7 +54,8 @@ class ProjectPage extends HookConsumerWidget {
                 width: double.infinity,
                 child: FilledButton.tonal(
                   onPressed: () {
-                    final projectService = ref.read(projectServiceProvider);
+                    final projectService =
+                        ref.read(editingProjectServiceProvider.notifier);
                     if (projectService.validateProject()) {
                       projectService.saveProject();
                       ref.read(navigationServiceProvider).pop();
@@ -76,20 +77,20 @@ class ProjectInfoHeader extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final joinedProject = ref.watch(selectedProjectProvider);
+    final joinedProject = ref.watch(selectedProjectServiceProvider);
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       mainAxisSize: MainAxisSize.min,
       children: [
         Text(
-          joinedProject.project.name,
+          joinedProject.value!.project.name,
           style: Theme.of(context).textTheme.headlineMedium,
         ),
-        if (joinedProject.project.address != null)
-          Text(joinedProject.project.address!),
+        if (joinedProject.value!.project.address != null)
+          Text(joinedProject.value!.project.address!),
         const SizedBox(height: 16, width: double.infinity),
-        if (joinedProject.project.description != null)
-          Text(joinedProject.project.description!),
+        if (joinedProject.value!.project.description != null)
+          Text(joinedProject.value!.project.description!),
       ],
     );
   }
@@ -100,7 +101,7 @@ class ProjectAssigneesList extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final joinedProject = ref.watch(selectedProjectProvider);
+    final joinedProject = ref.watch(selectedProjectServiceProvider);
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       mainAxisSize: MainAxisSize.min,
@@ -112,13 +113,13 @@ class ProjectAssigneesList extends ConsumerWidget {
         const SizedBox(height: 4),
         ListView.builder(
           shrinkWrap: true,
-          itemCount: joinedProject.assignees.length,
+          itemCount: joinedProject.value!.assignees.length,
           itemBuilder: (context, index) {
             return ListTile(
               dense: true,
-              leading: UserAvatar(joinedProject.assignees[index]),
+              leading: UserAvatar(joinedProject.value!.assignees[index]),
               title: Text(
-                  '${joinedProject.assignees[index].firstName} ${joinedProject.assignees[index].lastName}'),
+                  '${joinedProject.value!.assignees[index].firstName} ${joinedProject.value!.assignees[index].lastName}'),
             );
           },
         ),
@@ -136,9 +137,11 @@ Future<void> openProjectPage(
   assert(project != null || mode != EditablePageMode.readOnly);
 
   if (mode == EditablePageMode.create) {
-    ref.read(projectServiceProvider).createEmptyProject();
+    ref.read(editingProjectServiceProvider.notifier).createNewProject();
   } else if (mode == EditablePageMode.readOnly) {
-    await ref.read(projectServiceProvider).loadProject(project!);
+    await ref
+        .read(editingProjectServiceProvider.notifier)
+        .loadProject(project!);
   }
 
   final title = switch (mode) {
