@@ -7,8 +7,8 @@ import 'package:seren_ai_flutter/services/data/common/widgets/editable_page_mode
 import 'package:seren_ai_flutter/services/data/orgs/models/user_org_role_model.dart';
 import 'package:seren_ai_flutter/services/data/orgs/providers/cur_user_org_roles_provider.dart';
 import 'package:seren_ai_flutter/services/data/projects/models/project_model.dart';
-import 'package:seren_ai_flutter/services/data/projects/providers/cur_project_service_provider.dart';
-import 'package:seren_ai_flutter/services/data/projects/providers/cur_project_state_provider.dart';
+import 'package:seren_ai_flutter/services/data/projects/providers/project_service_provider.dart';
+import 'package:seren_ai_flutter/services/data/projects/providers/selected_project_provider.dart';
 import 'package:seren_ai_flutter/services/data/projects/widgets/action_buttons/delete_project_button.dart';
 import 'package:seren_ai_flutter/services/data/projects/widgets/action_buttons/edit_project_button.dart';
 import 'package:seren_ai_flutter/services/data/projects/widgets/action_buttons/update_project_assignees_button.dart';
@@ -53,8 +53,12 @@ class ProjectPage extends HookConsumerWidget {
               child: SizedBox(
                 width: double.infinity,
                 child: FilledButton.tonal(
-                  onPressed: () async {
-                    ref.read(curProjectServiceProvider).saveProject();
+                  onPressed: () {
+                    final projectService = ref.read(projectServiceProvider);
+                    if (projectService.validateProject()) {
+                      projectService.saveProject();
+                      ref.read(navigationServiceProvider).pop();
+                    }
                   },
                   child: Text(AppLocalizations.of(context)!.save),
                 ),
@@ -72,7 +76,7 @@ class ProjectInfoHeader extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final joinedProject = ref.watch(curProjectStateProvider);
+    final joinedProject = ref.watch(selectedProjectProvider);
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       mainAxisSize: MainAxisSize.min,
@@ -96,7 +100,7 @@ class ProjectAssigneesList extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final joinedProject = ref.watch(curProjectStateProvider);
+    final joinedProject = ref.watch(selectedProjectProvider);
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       mainAxisSize: MainAxisSize.min,
@@ -132,9 +136,9 @@ Future<void> openProjectPage(
   assert(project != null || mode != EditablePageMode.readOnly);
 
   if (mode == EditablePageMode.create) {
-    ref.read(curProjectServiceProvider).setToNewProject();
+    ref.read(projectServiceProvider).createEmptyProject();
   } else if (mode == EditablePageMode.readOnly) {
-    await ref.read(curProjectServiceProvider).loadProject(project!);
+    await ref.read(projectServiceProvider).loadProject(project!);
   }
 
   final title = switch (mode) {

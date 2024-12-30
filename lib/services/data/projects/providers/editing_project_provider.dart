@@ -3,14 +3,12 @@ import 'package:seren_ai_flutter/services/data/orgs/providers/cur_org_dependency
 import 'package:seren_ai_flutter/services/data/projects/models/joined_project_model.dart';
 import 'package:seren_ai_flutter/services/data/projects/models/project_model.dart';
 
-// TODO: Double check if this is needed
-// since we don't have any initial logic like in tasks and notes
-final curProjectStateProvider =
-    NotifierProvider<CurProjectStateNotifier, JoinedProjectModel>(() {
-  return CurProjectStateNotifier();
+final editingProjectProvider =
+    NotifierProvider<EditingProjectNotifier, JoinedProjectModel>(() {
+  return EditingProjectNotifier();
 });
 
-class CurProjectStateNotifier extends Notifier<JoinedProjectModel> {
+class EditingProjectNotifier extends Notifier<JoinedProjectModel> {
   @override
   JoinedProjectModel build() {
     return JoinedProjectModel.empty();

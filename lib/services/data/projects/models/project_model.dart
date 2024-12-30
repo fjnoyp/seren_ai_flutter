@@ -42,6 +42,7 @@ class ProjectModel implements IHasId {
     String? address,
   }) =>
       ProjectModel(
+        id: id,
         name: name ?? this.name,
         description: description ?? this.description,
         address: address ?? this.address,
