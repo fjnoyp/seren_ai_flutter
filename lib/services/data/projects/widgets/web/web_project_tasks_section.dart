@@ -6,7 +6,7 @@ import 'package:intl/intl.dart';
 import 'package:seren_ai_flutter/services/data/common/status_enum.dart';
 import 'package:seren_ai_flutter/services/data/common/widgets/async_value_handler_widget.dart';
 import 'package:seren_ai_flutter/services/data/common/widgets/editable_page_mode_enum.dart';
-import 'package:seren_ai_flutter/services/data/projects/providers/selected_project_service_provider.dart';
+import 'package:seren_ai_flutter/services/data/projects/providers/selected_project_provider.dart';
 import 'package:seren_ai_flutter/services/data/projects/task_filter_option_enum.dart';
 import 'package:seren_ai_flutter/services/data/projects/task_sort_option_enum.dart';
 import 'package:seren_ai_flutter/services/data/tasks/models/joined_task_model.dart';
@@ -177,8 +177,7 @@ class WebProjectTasksSection extends HookConsumerWidget {
                 label: Text(AppLocalizations.of(context)!.createNewTask),
                 onPressed: () async => await openTaskPage(context, ref,
                     mode: EditablePageMode.create,
-                    initialProject:
-                        ref.read(selectedProjectServiceProvider).value!),
+                    initialProject: ref.read(selectedProjectProvider).value!),
               ),
             ],
           ),
@@ -212,7 +211,7 @@ class _ProjectTasksBoardView extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final project = ref.watch(selectedProjectServiceProvider).value!;
+    final project = ref.watch(selectedProjectProvider).value!;
     return Row(
       children: StatusEnum.values
           .where((status) =>
@@ -280,7 +279,7 @@ class _ProjectTasksListView extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final project = ref.watch(selectedProjectServiceProvider).value!;
+    final project = ref.watch(selectedProjectProvider).value!;
     return AsyncValueHandlerWidget(
       value: ref.watch(joinedCurUserViewableTasksProvider),
       data: (tasks) {

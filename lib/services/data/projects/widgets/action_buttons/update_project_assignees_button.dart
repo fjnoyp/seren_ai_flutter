@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:seren_ai_flutter/services/data/projects/providers/project_assignments_service_provider.dart';
-import 'package:seren_ai_flutter/services/data/projects/providers/selected_project_service_provider.dart';
+import 'package:seren_ai_flutter/services/data/projects/providers/selected_project_provider.dart';
 import 'package:seren_ai_flutter/services/data/projects/widgets/form/assignees_from_cur_org_selection_modal.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:seren_ai_flutter/services/data/users/providers/users_in_project_provider.dart';
@@ -32,7 +32,7 @@ class UpdateProjectAssigneesModal extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final project = ref.read(selectedProjectServiceProvider).value!;
+    final project = ref.read(selectedProjectProvider).value!;
     final projectService =
         ref.read(projectAssignmentsServiceProvider(project.id));
     final assignees =

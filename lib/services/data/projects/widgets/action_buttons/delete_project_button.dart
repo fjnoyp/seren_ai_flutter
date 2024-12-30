@@ -5,7 +5,7 @@ import 'package:seren_ai_flutter/common/routes/app_routes.dart';
 import 'package:seren_ai_flutter/common/universal_platform/universal_platform.dart';
 import 'package:seren_ai_flutter/services/data/common/widgets/delete_confirmation_dialog.dart';
 import 'package:seren_ai_flutter/services/data/projects/projects_db_provider.dart';
-import 'package:seren_ai_flutter/services/data/projects/providers/selected_project_service_provider.dart';
+import 'package:seren_ai_flutter/services/data/projects/providers/selected_project_provider.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 class DeleteProjectButton extends ConsumerWidget {
@@ -17,8 +17,7 @@ class DeleteProjectButton extends ConsumerWidget {
       tooltip: AppLocalizations.of(context)!.deleteProjectTooltip,
       icon: const Icon(Icons.delete),
       onPressed: () async {
-        final itemName =
-            ref.read(selectedProjectServiceProvider).value!.name;
+        final itemName = ref.read(selectedProjectProvider).value!.name;
         await showDialog(
           context: context,
           builder: (context) => DeleteConfirmationDialog(
@@ -26,12 +25,9 @@ class DeleteProjectButton extends ConsumerWidget {
             onDelete: () {
               final projectsDb = ref.watch(projectsDbProvider);
               projectsDb
-                  .deleteItem(ref
-                      .read(selectedProjectServiceProvider)
-                      .value!
-                      .id)
+                  .deleteItem(ref.read(selectedProjectProvider).value!.id)
                   .then((_) => ref.read(navigationServiceProvider).pop());
-              ref.invalidate(selectedProjectServiceProvider);
+              ref.invalidate(selectedProjectProvider);
               if (isWebVersion) {
                 ref.read(navigationServiceProvider).navigateToAndRemoveUntil(
                     AppRoutes.home.name, (_) => false);

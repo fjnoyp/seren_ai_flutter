@@ -7,7 +7,7 @@ import 'package:seren_ai_flutter/services/data/projects/providers/cur_user_viewa
 import 'package:seren_ai_flutter/services/data/projects/repositories/projects_repository.dart';
 import 'package:seren_ai_flutter/services/data/users/models/user_model.dart';
 
-final selectedProjectServiceProvider =
+final selectedProjectProvider =
     NotifierProvider<SelectedProjectNotifier, AsyncValue<ProjectModel>>(
         () => SelectedProjectNotifier());
 

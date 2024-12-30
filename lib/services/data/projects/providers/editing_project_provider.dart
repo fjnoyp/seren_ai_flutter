@@ -3,12 +3,12 @@ import 'package:seren_ai_flutter/services/data/orgs/providers/cur_org_dependency
 import 'package:seren_ai_flutter/services/data/projects/models/project_model.dart';
 import 'package:seren_ai_flutter/services/data/projects/projects_db_provider.dart';
 
-final editingProjectServiceProvider =
-    NotifierProvider<EditingProjectService, ProjectModel>(() {
-  return EditingProjectService();
+final editingProjectProvider =
+    NotifierProvider<EditingProjectNotifier, ProjectModel>(() {
+  return EditingProjectNotifier();
 });
 
-class EditingProjectService extends Notifier<ProjectModel> {
+class EditingProjectNotifier extends Notifier<ProjectModel> {
   @override
   ProjectModel build() {
     return createNewProject();

@@ -8,8 +8,8 @@ import 'package:seren_ai_flutter/services/data/common/widgets/editable_page_mode
 import 'package:seren_ai_flutter/services/data/orgs/models/user_org_role_model.dart';
 import 'package:seren_ai_flutter/services/data/orgs/providers/cur_user_org_roles_provider.dart';
 import 'package:seren_ai_flutter/services/data/projects/models/project_model.dart';
-import 'package:seren_ai_flutter/services/data/projects/providers/editing_project_service_provider.dart';
-import 'package:seren_ai_flutter/services/data/projects/providers/selected_project_service_provider.dart';
+import 'package:seren_ai_flutter/services/data/projects/providers/editing_project_provider.dart';
+import 'package:seren_ai_flutter/services/data/projects/providers/selected_project_provider.dart';
 import 'package:seren_ai_flutter/services/data/projects/widgets/action_buttons/delete_project_button.dart';
 import 'package:seren_ai_flutter/services/data/projects/widgets/action_buttons/edit_project_button.dart';
 import 'package:seren_ai_flutter/services/data/projects/widgets/action_buttons/update_project_assignees_button.dart';
@@ -27,7 +27,7 @@ class ProjectPage extends HookConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     // Only watch selectedProjectServiceProvider in non-create modes
     if (mode != EditablePageMode.create) {
-      final projectState = ref.watch(selectedProjectServiceProvider);
+      final projectState = ref.watch(selectedProjectProvider);
       if (projectState.isLoading) {
         return const Center(child: CircularProgressIndicator());
       }
@@ -79,7 +79,7 @@ class ProjectPage extends HookConsumerWidget {
                   child: FilledButton.tonal(
                     onPressed: () {
                       final projectService =
-                          ref.read(editingProjectServiceProvider.notifier);
+                          ref.read(editingProjectProvider.notifier);
                       if (projectService.isValidProject) {
                         projectService.saveProject();
                         ref.read(navigationServiceProvider).pop();
@@ -103,7 +103,7 @@ class ProjectInfoHeader extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     return AsyncValueHandlerWidget(
-      value: ref.watch(selectedProjectServiceProvider),
+      value: ref.watch(selectedProjectProvider),
       data: (project) {
         return Column(
           crossAxisAlignment: CrossAxisAlignment.start,
@@ -115,8 +115,7 @@ class ProjectInfoHeader extends ConsumerWidget {
             ),
             if (project.address != null) Text(project.address!),
             const SizedBox(height: 16, width: double.infinity),
-            if (project.description != null)
-              Text(project.description!),
+            if (project.description != null) Text(project.description!),
           ],
         );
       },
@@ -129,7 +128,7 @@ class ProjectAssigneesList extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final projectId = ref.read(selectedProjectServiceProvider).value!.id;
+    final projectId = ref.read(selectedProjectProvider).value!.id;
     final projectAssignees =
         ref.watch(usersInProjectProvider(projectId)).valueOrNull ?? [];
 
@@ -168,9 +167,9 @@ Future<void> openProjectPage(
   assert(project != null || mode != EditablePageMode.readOnly);
 
   if (mode == EditablePageMode.create) {
-    ref.read(editingProjectServiceProvider.notifier).createNewProject();
+    ref.read(editingProjectProvider.notifier).createNewProject();
   } else if (mode == EditablePageMode.readOnly) {
-    ref.read(selectedProjectServiceProvider.notifier).setProject(project!);
+    ref.read(selectedProjectProvider.notifier).setProject(project!);
   }
 
   final title = switch (mode) {
