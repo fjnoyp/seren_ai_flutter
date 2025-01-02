@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
+import 'package:seren_ai_flutter/common/universal_platform/universal_platform.dart';
 import 'package:seren_ai_flutter/services/ai_interaction/ai_chat_service_provider.dart';
 import 'package:seren_ai_flutter/services/data/ai_chats/models/ai_chat_thread_model.dart';
 import 'package:seren_ai_flutter/services/ai_interaction/widgets/testing/ai_debug_page.dart';
@@ -22,7 +23,19 @@ class AIChatsPage extends HookConsumerWidget {
 
     return SafeArea(
       child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
         children: [
+          if (isWebVersion) ...[
+            const SizedBox(width: 24),
+            Hero(
+              tag: 'ai-chat-title',
+              child: Text(
+                AppLocalizations.of(context)!.aiAssistant,
+                style: Theme.of(context).textTheme.headlineMedium,
+              ),
+            ),
+            const SizedBox(width: 24),
+          ],
           if (isDebugMode)
             Align(
               alignment: Alignment.topRight,
@@ -62,24 +75,27 @@ class AIChatTextField extends HookConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final messageController = useTextEditingController();
 
-    return TextField(
-      controller: messageController,
-      onSubmitted: (value) {
-        if (value.isEmpty) return;
-        ref.read(aiChatServiceProvider).sendMessageToAi(value);
-        messageController.clear();
-      },
-      decoration: InputDecoration(
-        labelText: AppLocalizations.of(context)!.askAQuestion,
-        suffixIcon: IconButton(
-          icon: const Icon(Icons.send),
-          onPressed: () {
-            final message = messageController.text;
-            if (message.isNotEmpty) {
-              ref.read(aiChatServiceProvider).sendMessageToAi(message);
-              messageController.clear();
-            }
-          },
+    return Hero(
+      tag: 'ai-chat-text-field',
+      child: TextField(
+        controller: messageController,
+        onSubmitted: (value) {
+          if (value.isEmpty) return;
+          ref.read(aiChatServiceProvider).sendMessageToAi(value);
+          messageController.clear();
+        },
+        decoration: InputDecoration(
+          labelText: AppLocalizations.of(context)!.askAQuestion,
+          suffixIcon: IconButton(
+            icon: const Icon(Icons.send),
+            onPressed: () {
+              final message = messageController.text;
+              if (message.isNotEmpty) {
+                ref.read(aiChatServiceProvider).sendMessageToAi(message);
+                messageController.clear();
+              }
+            },
+          ),
         ),
       ),
     );
@@ -100,7 +116,11 @@ class ChatThreadDisplay extends ConsumerWidget {
                     Text(AppLocalizations.of(context)!.noChatThreadAvailable))
             : Column(children: [
                 ChatThreadCard(thread: chatThread),
-                const Expanded(child: PaginatedChatMessagesDisplay()),
+                const Expanded(
+                    child: Hero(
+                  tag: 'ai-chat-messages-display',
+                  child: PaginatedChatMessagesDisplay(),
+                )),
               ]),
       ),
     );

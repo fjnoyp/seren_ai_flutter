@@ -143,9 +143,11 @@ class AppState extends State<App> {
               );
             },
             AppRoutes.aiChats.name: (context) => _GuardScaffold(
-                AppLocalizations.of(context)!.aiChatThreads,
-                const AIChatsPage(),
-                showBottomBar: false),
+                  AppLocalizations.of(context)!.aiChatThreads,
+                  const AIChatsPage(),
+                  showBottomBar: false,
+                  showAppBar: false,
+                ),
             AppRoutes.shifts.name: (context) => _GuardScaffold(
                 AppLocalizations.of(context)!.shifts, const ShiftsPage()),
             // This page is never loaded

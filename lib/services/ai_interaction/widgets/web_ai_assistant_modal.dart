@@ -12,7 +12,7 @@ class WebAiAssistantModal extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     return SizedBox(
-      width: MediaQuery.of(context).size.width * 0.3,
+      width: MediaQuery.of(context).size.width / 3,
       child: Card(
         elevation: 4,
         margin: const EdgeInsets.all(16),
@@ -24,8 +24,11 @@ class WebAiAssistantModal extends ConsumerWidget {
                 mainAxisAlignment: MainAxisAlignment.end,
                 children: [
                   const SizedBox(width: 12),
-                  Text(AppLocalizations.of(context)!.aiAssistant,
-                      style: Theme.of(context).textTheme.titleMedium),
+                  Hero(
+                    tag: 'ai-chat-title',
+                    child: Text(AppLocalizations.of(context)!.aiAssistant,
+                        style: Theme.of(context).textTheme.titleMedium),
+                  ),
                   const Expanded(child: SizedBox.shrink()),
                   IconButton(
                     onPressed: () {
@@ -52,7 +55,11 @@ class WebAiAssistantModal extends ConsumerWidget {
                   ),
                 ],
               ),
-              const Expanded(child: PaginatedChatMessagesDisplay()),
+              const Expanded(
+                  child: Hero(
+                tag: 'ai-chat-messages-display',
+                child: PaginatedChatMessagesDisplay(),
+              )),
               const AIChatTextField(),
             ],
           ),
