@@ -558,5 +558,28 @@
     "normal": "Normal",
     "low": "Low",
     "veryLow": "Very Low",
-    "selectPriority": "Select Priority"
+    "selectPriority": "Select Priority",
+
+    "@_": {"description": "AI Quick Actions"},
+    "askAIForNewTask": "Ask AI for a new task",
+    "askAIForNewTaskHint": "Please create a task named [task name]",
+    "followUpTaskDescription": "What is the task about?",
+    "followUpTaskPriority": "What is the task priority?",
+    "followUpTaskDueDate": "What is the task due date?",
+    "followUpTaskEstimatedDurationMinutes": "What is the task estimated duration in minutes?",
+    "findTasks": "Find tasks",
+    "findTasksHint": "Please find me the task [...]",
+    "updateTasks": "Update a task",
+    "updateTasksHint": "Please update the [field] of the task [task name] to [new value]",
+    "askAIForNewProject": "Ask AI for a new project",
+    "askAIForNewProjectHint": "Please create a project named [project name]",
+    "followUpProjectDescription": "What is the project about?",
+    "followUpProjectLocation": "Where is the project located?",
+    "inviteSomeone": "Invite someone",
+    "inviteSomeoneHint": "Invite [user@example.com] as a member to ${orgName}",
+    "@inviteSomeoneHint": {
+        "placeholders": {
+            "orgName": {"type": "String"}
+        }
+    }
 }
