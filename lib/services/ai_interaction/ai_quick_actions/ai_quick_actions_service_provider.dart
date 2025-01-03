@@ -53,7 +53,10 @@ class AIQuickActionsService extends Notifier<List<AIQuickAction>> {
           ];
           break;
         case AppRoutes.home:
-          // TODO: Add quick actions for home page
+          state = [
+            AIQuickAction.checkOverdueTasks(context),
+            AIQuickAction.getMyShiftLogs(context),
+          ];
           break;
         case AppRoutes.taskPage:
           // TODO: Add quick actions for task page

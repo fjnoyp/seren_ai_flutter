@@ -45,6 +45,23 @@ class AIQuickAction {
         userInputHint: AppLocalizations.of(context)!.updateTasksHint,
       );
 
+  factory AIQuickAction.checkOverdueTasks(BuildContext context) =>
+      AIQuickAction(
+        description: AppLocalizations.of(context)!.checkOverdueTasks,
+        userInputHint: AppLocalizations.of(context)!.checkOverdueTasksHint,
+      );
+
+  factory AIQuickAction.getMyShiftAssignments(BuildContext context) =>
+      AIQuickAction(
+        description: AppLocalizations.of(context)!.getMyShiftAssignments,
+        userInputHint: AppLocalizations.of(context)!.getMyShiftAssignmentsHint,
+      );
+
+  factory AIQuickAction.getMyShiftLogs(BuildContext context) => AIQuickAction(
+        description: AppLocalizations.of(context)!.getMyShiftLogs,
+        userInputHint: AppLocalizations.of(context)!.getMyShiftLogsHint,
+      );
+
   // factory AIQuickAction.createProject(BuildContext context) => AIQuickAction(
   //       description: AppLocalizations.of(context)!.askAIForNewProject,
   //       userInputHint: AppLocalizations.of(context)!.askAIForNewProjectHint,
