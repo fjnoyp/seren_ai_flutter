@@ -27,7 +27,7 @@ import 'package:seren_ai_flutter/services/data/tasks/models/task_model.dart';
 import 'package:seren_ai_flutter/services/data/tasks/providers/cur_task_service_provider.dart';
 import 'package:seren_ai_flutter/services/data/tasks/repositories/joined_task_repository.dart';
 import 'package:seren_ai_flutter/services/data/tasks/repositories/tasks_repository.dart';
-import 'package:seren_ai_flutter/services/data/tasks/tasks_db_provider.dart';
+import 'package:seren_ai_flutter/services/data/tasks/repositories/tasks_db_provider.dart';
 import 'package:seren_ai_flutter/services/data/tasks/tool_methods/models/create_task_result_model.dart';
 import 'package:seren_ai_flutter/services/data/tasks/tool_methods/models/delete_task_result_model.dart';
 import 'package:seren_ai_flutter/services/data/tasks/tool_methods/models/find_tasks_result_model.dart';

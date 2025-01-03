@@ -19,7 +19,7 @@ final curTaskServiceProvider = Provider<CurTaskService>((ref) {
 
 class CurTaskService {
   final Ref ref;
-  final AsyncValue<JoinedTaskModel?> _state;
+  //final AsyncValue<JoinedTaskModel?> _state;
   final CurTaskStateNotifier _notifier;
 
   CurTaskService(this.ref)
@@ -30,7 +30,7 @@ class CurTaskService {
     _notifier.setToNewTask(project: project, status: status);
   }
 
-  void loadTask(JoinedTaskModel joinedTask) {
+  void setTask(JoinedTaskModel joinedTask) {
     _notifier.setNewTask(joinedTask);
   }
 
