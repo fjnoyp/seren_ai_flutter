@@ -1,69 +1,50 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:seren_ai_flutter/services/data/projects/repositories/projects_repository.dart';
-import 'package:seren_ai_flutter/services/data/tasks/models/task_comment_model.dart';
-import 'package:seren_ai_flutter/services/data/tasks/models/task_model.dart';
-import 'package:seren_ai_flutter/services/data/projects/models/project_model.dart';
 import 'package:seren_ai_flutter/services/auth/cur_auth_state_provider.dart';
 import 'package:seren_ai_flutter/services/data/common/status_enum.dart';
+import 'package:seren_ai_flutter/services/data/projects/models/project_model.dart';
+import 'package:seren_ai_flutter/services/data/projects/providers/selected_project_provider.dart';
+import 'package:seren_ai_flutter/services/data/tasks/models/task_comment_model.dart';
+import 'package:seren_ai_flutter/services/data/tasks/models/task_model.dart';
+import 'package:seren_ai_flutter/services/data/tasks/models/task_user_assignment_model.dart';
 import 'package:seren_ai_flutter/services/data/tasks/repositories/task_comments_db_provider.dart';
 import 'package:seren_ai_flutter/services/data/tasks/repositories/task_user_assignments_db_provider.dart';
 import 'package:seren_ai_flutter/services/data/tasks/repositories/tasks_db_provider.dart';
 import 'package:seren_ai_flutter/services/data/users/models/user_model.dart';
 
-final createTaskProvider = FutureProvider.autoDispose<TaskModel>((ref) async {
-  final curUser = ref.read(curUserProvider).value;
-  if (curUser == null) throw Exception('No current user');
-
-  final defaultProject = await ref
-      .read(projectsRepositoryProvider)
-      .getProjectById(projectId: curUser.defaultProjectId ?? '');
-
-  return TaskModel(
-    name: 'New Task',
-    description: '',
-    status: StatusEnum.open,
-    authorUserId: curUser.id,
-    parentProjectId: defaultProject?.id,
-  );
-});
-
 final editingTaskProvider =
-    NotifierProvider<EditingTaskNotifier, AsyncValue<TaskModel?>>(() {
+    NotifierProvider<EditingTaskNotifier, AsyncValue<TaskModel>>(() {
   return EditingTaskNotifier();
 });
 
-class EditingTaskNotifier extends Notifier<AsyncValue<TaskModel?>> {
+class EditingTaskNotifier extends Notifier<AsyncValue<TaskModel>> {
   @override
-  AsyncValue<TaskModel?> build() {
-    return const AsyncValue.data(null);
+  AsyncValue<TaskModel> build() {
+    return const AsyncValue.data(TaskModel.empty());
   }
 
-  // Core state mutations
-  Future<void> createNewTask(
-      {ProjectModel? project, StatusEnum? status}) async {
+  Future<void> createNewTask() async {
     state = const AsyncValue.loading();
     try {
-      if (ref.read(curUserProvider).value case final curUser?) {
-        final defaultProject = await ref
-            .read(projectsRepositoryProvider)
-            .getProjectById(projectId: curUser.defaultProjectId ?? '');
+      final curUser = ref.read(curUserProvider).value;
+      if (curUser == null) throw Exception('No current user');
 
-        final newTask = TaskModel.empty().copyWith(
-          authorUser: curUser,
-          task: TaskModel.defaultTask().copyWith(
-            authorUserId: curUser.id,
-            parentProjectId: project?.id ?? defaultProject?.id,
-            status: status,
-          ),
-          project: project ?? defaultProject,
-          assignees: [],
-          comments: [],
-        );
+      final selectedProjectAsync = ref.watch(selectedProjectProvider);
 
-        state = AsyncValue.data(newTask);
-      }
-    } catch (error) {
-      state = AsyncValue.error(error, StackTrace.empty);
+      final newTask = await selectedProjectAsync.when(
+        data: (project) => TaskModel(
+          name: 'New Task',
+          description: '',
+          status: StatusEnum.open,
+          authorUserId: curUser.id,
+          parentProjectId: project.id,
+        ),
+        loading: () => throw Exception('Project is still loading'),
+        error: (err, stack) => throw Exception('Failed to load project: $err'),
+      );
+
+      state = AsyncValue.data(newTask);
+    } catch (e, st) {
+      state = AsyncValue.error(e, st);
     }
   }
 
@@ -71,106 +52,92 @@ class EditingTaskNotifier extends Notifier<AsyncValue<TaskModel?>> {
     state = AsyncValue.data(task);
   }
 
-  // Field updates
-  void updateName(String name) {
-    _updateTask((task) => task.copyWith(name: name));
+  // Consolidated update method
+  void update({
+    String? name,
+    String? description,
+    StatusEnum? status,
+    PriorityEnum? priority,
+    DateTime? dueDate,
+    List<UserModel>? assignees,
+    ProjectModel? project,
+  }) {
+    state.whenData((currentTask) {
+      final updatedTask = currentTask.copyWith(
+        name: name ?? currentTask.name,
+        description: description ?? currentTask.description,
+        status: status ?? currentTask.status,
+        priority: priority ?? currentTask.priority,
+        dueDate: dueDate ?? currentTask.dueDate,
+        assignees: assignees ?? currentTask.assignees,
+        project: project ?? currentTask.project,
+        parentProjectId: project?.id ?? currentTask.parentProjectId,
+      );
+      state = AsyncValue.data(updatedTask);
+    });
   }
 
-  void updateDescription(String? description) {
-    _updateTask((task) => task.copyWith(description: description));
-  }
+  // how will comments and assignees, children tasks be handled?
+  // since those are fields not on the current task we're editing
 
-  void updateStatus(StatusEnum? status) {
-    _updateTask((task) => task.copyWith(status: status));
-  }
+  // we should just be updating everything in real time any way ....
+  // so we don't need to cache all the changes and then save them out
+  // later ...
 
-  void updatePriority(PriorityEnum? priority) {
-    _updateTask((task) => task.copyWith(priority: priority));
-  }
+  // so one to many relationships, those updates should be handled in a separate repo with separate providers for listening to those values too ...
 
-  void updateDueDate(DateTime? dueDate) {
-    _updateTask((task) => task.copyWith(dueDate: dueDate));
-  }
+  // Future<void> addComment(String text) async {
+  //   final curUser = ref.read(curUserProvider).value;
+  //   if (curUser == null) return;
 
-  void updateAssignees(List<UserModel> assignees) {
-    _updateJoinedTask((joined) => joined.copyWith(assignees: assignees));
-  }
+  //   state.whenData((currentTask) async {
+  //     final comment = TaskCommentModel(
+  //       authorUserId: curUser.id,
+  //       parentTaskId: currentTask.id,
+  //       content: text,
+  //       createdAt: DateTime.now().toUtc(),
+  //       updatedAt: DateTime.now().toUtc(),
+  //     );
 
-  void updateProject(ProjectModel? project) {
-    _updateJoinedTask((joined) => joined.copyWith(
-          project: project,
-          task: joined.task.copyWith(parentProjectId: project?.id),
-        ));
-  }
+  //     await ref.read(taskCommentsDbProvider).upsertItem(comment);
 
-  // Comments
-  void addComment(String text) async {
-    if (state.value == null) return;
+  //     final updatedTask = currentTask.copyWith(
+  //       comments: [...currentTask.comments, comment],
+  //     );
+  //     state = AsyncValue.data(updatedTask);
+  //   });
+  // }
 
-    final curUser = ref.read(curUserProvider).value;
-    if (curUser == null) return;
-
-    final comment = TaskCommentModel(
-      authorUserId: curUser.id,
-      parentTaskId: state.value!.task.id,
-      content: text,
-      createdAt: DateTime.now().toUtc(),
-      updatedAt: DateTime.now().toUtc(),
-    );
-
-    await ref.read(taskCommentsDbProvider).upsertItem(comment);
-    _updateJoinedTask((joined) => joined.copyWith(
-          comments: [...joined.comments, comment],
-        ));
-  }
-
-  // Save all changes
   Future<void> saveChanges() async {
-    if (state.value == null) return;
+    state.whenData((task) async {
+      // Save task
+      await ref.read(tasksDbProvider).upsertItem(task);
 
-    final joinedTask = state.value!;
+      // Save assignees
+      final assignments = task.assignees
+          .map((user) => TaskUserAssignmentModel(
+                taskId: task.id,
+                userId: user.id,
+              ))
+          .toList();
 
-    // Save task
-    await ref.read(tasksDbProvider).upsertItem(joinedTask.task);
+      final assignmentsDb = ref.read(taskUserAssignmentsReadDbProvider);
 
-    // Save assignees
-    final assignments = joinedTask.assignees
-        .map((user) => TaskUserAssignmentModel(
-              taskId: joinedTask.task.id,
-              userId: user.id,
-            ))
-        .toList();
+      // Delete removed assignments
+      final previousAssignments = await assignmentsDb.getItems(eqFilters: [
+        {'key': 'task_id', 'value': task.id}
+      ]);
 
-    final assignmentsDb = ref.read(taskUserAssignmentsReadDbProvider);
-
-    // Delete removed assignments
-    final previousAssignments = await assignmentsDb.getItems(eqFilters: [
-      {'key': 'task_id', 'value': joinedTask.task.id}
-    ]);
-
-    for (var assignment in previousAssignments) {
-      if (!assignments.any((e) => e.userId == assignment.userId)) {
-        await assignmentsDb.deleteItem(assignment.id);
+      for (var assignment in previousAssignments) {
+        if (!assignments.any((e) => e.userId == assignment.userId)) {
+          await assignmentsDb.deleteItem(assignment.id);
+        }
       }
-    }
 
-    // Add new assignments
-    await assignmentsDb.upsertItems(assignments);
+      // Add new assignments
+      await assignmentsDb.upsertItems(assignments);
+    });
   }
 
-  // Helper methods
-  void _updateTask(TaskModel Function(TaskModel) update) {
-    if (state.value == null) return;
-    _updateJoinedTask((joined) => joined.copyWith(
-          task: update(joined.task),
-        ));
-  }
-
-  void _updateJoinedTask(TaskModel Function(TaskModel) update) {
-    if (state.value == null) return;
-    state = AsyncValue.data(update(state.value!));
-  }
-
-  // Validation
-  bool get isValid => state.value?.task.name.isNotEmpty ?? false;
+  bool get isValid => state.valueOrNull?.name.isNotEmpty ?? false;
 }

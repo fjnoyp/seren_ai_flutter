@@ -25,7 +25,7 @@ class EditingProjectNotifier extends Notifier<ProjectModel> {
     return newProject;
   }
 
-  Future<void> loadProject(ProjectModel project) async {
+  Future<void> setProject(ProjectModel project) async {
     state = project;
   }
 
