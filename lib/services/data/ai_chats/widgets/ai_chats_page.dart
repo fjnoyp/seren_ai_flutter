@@ -3,12 +3,14 @@ import 'package:flutter/services.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:seren_ai_flutter/common/universal_platform/universal_platform.dart';
+import 'package:seren_ai_flutter/services/ai_interaction/ai_chat_service_provider.dart';
 import 'package:seren_ai_flutter/services/ai_interaction/widgets/ai_chat_text_field.dart';
 import 'package:seren_ai_flutter/services/data/ai_chats/models/ai_chat_thread_model.dart';
 import 'package:seren_ai_flutter/services/ai_interaction/widgets/testing/ai_debug_page.dart';
 import 'package:seren_ai_flutter/services/data/ai_chats/providers/cur_user_ai_chat_messages_provider.dart';
 import 'package:seren_ai_flutter/services/data/ai_chats/providers/cur_user_ai_chat_thread_provider.dart';
 import 'package:seren_ai_flutter/services/data/ai_chats/widgets/ai_chat_message_view_card.dart';
+import 'package:seren_ai_flutter/services/data/ai_chats/widgets/ai_is_responding_indicator.dart';
 import 'package:seren_ai_flutter/services/data/common/widgets/async_value_handler_widget.dart';
 import 'package:seren_ai_flutter/widgets/common/debug_mode_provider.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
@@ -222,6 +224,8 @@ class PaginatedChatMessagesDisplay extends HookConsumerWidget {
           child: Text(AppLocalizations.of(context)!.error(error.toString()))),
       data: (providerData) {
         final messages = providerData.state;
+        final isAiResponding = ref.watch(isAiRespondingProvider);
+
         return messages.isEmpty
             ? Text(AppLocalizations.of(context)!.noMessagesAvailable)
             : Stack(
@@ -230,13 +234,18 @@ class PaginatedChatMessagesDisplay extends HookConsumerWidget {
                     reverse: true,
                     controller: scrollController,
                     itemCount: messages.length +
-                        (providerData.notifier.hasMore ? 1 : 0),
+                        (providerData.notifier.hasMore ? 1 : 0) +
+                        (isAiResponding ? 1 : 0),
                     itemBuilder: (context, index) {
                       if (index == messages.length &&
                           providerData.notifier.hasMore) {
                         return const Center(child: CircularProgressIndicator());
                       }
-                      final message = messages[index];
+                      if (index == 0 && isAiResponding) {
+                        return const AiIsRespondingIndicator();
+                      }
+                      final message =
+                          messages[isAiResponding ? index - 1 : index];
                       return KeyedSubtree(
                         key: ValueKey(message.id),
                         child: AiChatMessageViewCard(message: message),
