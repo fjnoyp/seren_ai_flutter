@@ -12,7 +12,7 @@ class LgAiBaseMessageModel {
   LgAiBaseMessageModel({
     required dynamic messageContent,
     required dynamic messageType,
-    required String id,
+    required this.id,
     Map<String, dynamic>? additionalFields,
   })  : content = (messageContent is List)
             ? json.encode(messageContent)
@@ -20,7 +20,6 @@ class LgAiBaseMessageModel {
         type = (messageType == "ai")
             ? LgAiChatMessageRole.ai
             : LgAiChatMessageRole.tool,
-        id = id,
         _additionalFields = additionalFields ?? {};
 
   factory LgAiBaseMessageModel.fromJson(Map<String, dynamic> json) {

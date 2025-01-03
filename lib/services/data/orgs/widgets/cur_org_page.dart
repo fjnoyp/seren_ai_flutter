@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:seren_ai_flutter/common/navigation_service_provider.dart';
 import 'package:seren_ai_flutter/common/routes/app_routes.dart';
 import 'package:seren_ai_flutter/services/data/common/widgets/editable_page_mode_enum.dart';
 import 'package:seren_ai_flutter/services/data/orgs/models/user_org_role_model.dart';
@@ -62,7 +63,7 @@ class CurOrgPage extends ConsumerWidget {
             Align(
               alignment: Alignment.center,
               child: OutlinedButton(
-                onPressed: () => openManageOrgUsersPage(context, ref),
+                onPressed: () => openManageOrgUsersPage(ref),
                 child: Text(AppLocalizations.of(context)!.manageOrgUsers),
               ),
             ),
@@ -83,8 +84,8 @@ class CurOrgPage extends ConsumerWidget {
                 child: ElevatedButton(
                   onPressed: () async {
                     ref.read(curOrgServiceProvider.notifier).saveOrg();
-                    Navigator.pop(context);
-                    openOrgPage(context);
+                    ref.read(navigationServiceProvider).pop(context);
+                    openOrgPage(ref);
                   },
                   style: ElevatedButton.styleFrom(
                     backgroundColor: Theme.of(context).colorScheme.secondary,
@@ -101,12 +102,12 @@ class CurOrgPage extends ConsumerWidget {
   }
 }
 
-void openOrgPage(BuildContext context,
+void openOrgPage(WidgetRef ref,
     {EditablePageMode mode = EditablePageMode.readOnly}) {
   final actions = [
     if (mode == EditablePageMode.readOnly) const EditOrgButton()
   ];
 
-  Navigator.pushNamed(context, AppRoutes.organization.name,
+  ref.read(navigationServiceProvider).navigateTo(AppRoutes.organization.name,
       arguments: {'mode': mode, 'actions': actions});
 }

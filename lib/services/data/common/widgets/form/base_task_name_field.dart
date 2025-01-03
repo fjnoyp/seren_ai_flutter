@@ -33,6 +33,9 @@ class BaseNameField extends HookConsumerWidget {
     // And updating state onChanged will reset the TextField
 
     // TODO: p2 - should remove hack and find better solution
+    // We can externalize the textcontroller to a provider and use it to update the state
+    // (See lib/services/ai_interaction/widgets/ai_chat_text_field.dart)
+
     // Current approach will NOT work with keyboards and button is pressed, as submit event is never triggered
 
     /*

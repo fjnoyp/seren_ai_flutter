@@ -41,7 +41,5 @@ MaterialColor? getTaskPriorityColor(PriorityEnum priority) {
       return Colors.grey;
     case PriorityEnum.veryLow:
       return Colors.lightBlue;
-    default:
-      return null;
   }
 }

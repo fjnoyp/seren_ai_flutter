@@ -1,4 +1,3 @@
-import 'package:powersync/powersync.dart';
 import 'package:seren_ai_flutter/services/data/common/base_table_db.dart';
 import 'package:seren_ai_flutter/services/data/common/i_has_id.dart';
 
@@ -12,21 +11,13 @@ typedef ToJson<T> = Map<String, dynamic> Function(T item);
 // And using futureProvider to fetch data once and not over and over again ...
 
 class BaseTableReadDb<T extends IHasId> extends BaseTableDb<T> {
-  @override
-  final String tableName;
-  @override
-  final FromJson<T> fromJson;
-  @override
-  final ToJson<T> toJson;
-  @override
-  final PowerSyncDatabase db;
 
   BaseTableReadDb({
-    required this.db,
-    required this.tableName,
-    required this.fromJson,
-    required this.toJson,
-  }) : super(db: db, tableName: tableName, fromJson: fromJson, toJson: toJson);
+    required super.db,
+    required super.tableName,
+    required super.fromJson,
+    required super.toJson,
+  });
 
   Future<List<T>> getItems(
       {Iterable<String>? ids,

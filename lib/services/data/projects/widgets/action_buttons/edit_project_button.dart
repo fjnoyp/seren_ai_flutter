@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:seren_ai_flutter/common/navigation_service_provider.dart';
 import 'package:seren_ai_flutter/common/universal_platform/universal_platform.dart';
 import 'package:seren_ai_flutter/services/data/common/widgets/editable_page_mode_enum.dart';
 import 'package:seren_ai_flutter/services/data/projects/providers/selected_project_provider.dart';
@@ -17,7 +18,7 @@ class EditProjectButton extends ConsumerWidget {
       onPressed: () {
         if (!isWebVersion) {
           // remove self from stack
-          Navigator.pop(context);
+          ref.read(navigationServiceProvider).pop();
         }
         openProjectPage(ref, context,
             mode: EditablePageMode.edit,

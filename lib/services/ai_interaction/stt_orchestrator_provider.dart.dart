@@ -1,3 +1,5 @@
+import 'dart:developer';
+
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import 'package:seren_ai_flutter/services/speech_to_text/speech_to_text_listen_state_provider.dart';
@@ -18,7 +20,7 @@ final sttOrchestratorProvider = Provider((ref) {
         }
 
 
-    print('received speech state: ${speechState.speechState}');
+    log('received speech state: ${speechState.speechState}');
 
     // Stop tts if stt starts 
     if (speechState.speechState == SpeechToTextStateEnum.startListening) {
@@ -35,7 +37,7 @@ final sttOrchestratorProvider = Provider((ref) {
         return;
       }
 
-      print('received speech text: ${speechText.text}');
+      log('received speech text: ${speechText.text}');
 
       // await ref.read(aiChatServiceProvider).sendMessageToAi(speechText.text);
 

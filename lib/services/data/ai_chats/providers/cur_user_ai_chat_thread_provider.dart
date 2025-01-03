@@ -4,7 +4,7 @@ import 'package:seren_ai_flutter/services/data/ai_chats/models/ai_chat_thread_mo
 import 'package:seren_ai_flutter/services/data/ai_chats/repositories/ai_chat_threads_repository.dart';
 import 'package:seren_ai_flutter/services/data/orgs/providers/cur_org_dependency_provider.dart';
 
-// TODO p2: This should be a FutureProvider as should all other context providers 
+// TODO p2: This should be a NotifierProvider<AsyncValue<AiChatThreadModel?>>
 final curUserAiChatThreadProvider =
     StreamProvider.autoDispose<AiChatThreadModel?>((ref) {
   return CurAuthDependencyProvider.watchStream(

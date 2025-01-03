@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
+import 'package:seren_ai_flutter/common/navigation_service_provider.dart';
 import 'package:seren_ai_flutter/services/data/orgs/models/user_org_role_model.dart';
 import 'package:seren_ai_flutter/services/data/orgs/providers/cur_org_service_provider.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
@@ -77,7 +78,7 @@ class InviteUserByEmailDialog extends HookConsumerWidget {
           onPressed: () => ref
               .read(curOrgServiceProvider.notifier)
               .inviteUser(emailController.text, orgRole.value)
-              .then((_) => Navigator.pop(context)),
+              .then((_) => ref.read(navigationServiceProvider).pop()),
           child: Text(AppLocalizations.of(context)!.invite),
         ),
       ],

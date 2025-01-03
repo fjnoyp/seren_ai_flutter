@@ -1,5 +1,6 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:seren_ai_flutter/common/current_route_provider.dart';
+import 'package:seren_ai_flutter/common/navigation_service_provider.dart';
 import 'package:seren_ai_flutter/common/routes/app_routes.dart';
 import 'package:seren_ai_flutter/services/ai_interaction/ai_request/models/results/ai_request_result_model.dart';
 import 'package:seren_ai_flutter/services/ai_interaction/ai_request/models/requests/ai_action_request_model.dart';
@@ -56,9 +57,6 @@ class AiRequestExecutor {
       case AiRequestType.actionRequest:
         result = await _handleActionRequest(allowToolUiActions, aiRequest as AiActionRequestModel);
         break;
-
-      default:
-        throw Exception('Unknown tool response type: ${aiRequest.requestType}');
     }
 
     return result;
@@ -69,10 +67,10 @@ class AiRequestExecutor {
       AiUiActionRequestModel uiAction) async {
     switch (uiAction.uiActionType) {
       case AiUIActionRequestType.shiftsPage:
-        // TODO p1: open shifts page
+        if (allowToolUiActions) {
+          ref.read(navigationServiceProvider).navigateTo(AppRoutes.shifts.name);
+        }
         return ErrorRequestResultModel(resultForAi: 'Not implemented', showOnly: true);
-      default:
-        return ErrorRequestResultModel(resultForAi: 'Unknown UI action: ${uiAction.toString()}', showOnly: true);
     }
   }
 
@@ -93,9 +91,6 @@ class AiRequestExecutor {
             ref: ref, 
             infoRequest: infoRequest as FindTasksRequestModel,            
             );
-
-      default:
-        return ErrorRequestResultModel(resultForAi: 'Unknown info request: ${infoRequest.toString()}', showOnly: true);
     }
   }
 
@@ -117,9 +112,6 @@ class AiRequestExecutor {
 
       case AiActionRequestType.assignUserToTask:
         return await taskToolMethods.assignUserToTask(ref: ref, actionRequest: actionRequest as AssignUserToTaskRequestModel);
-
-      default:
-        return ErrorRequestResultModel(resultForAi: 'Unknown action request: ${actionRequest.toString()}', showOnly: true);
     }
   }
 }

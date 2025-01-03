@@ -7,6 +7,7 @@
 
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:seren_ai_flutter/services/data/db_setup/db_provider.dart';
+import 'package:seren_ai_flutter/services/data/orgs/models/user_org_role_model.dart';
 import 'package:seren_ai_flutter/services/data/orgs/providers/cur_org_dependency_provider.dart';
 import 'package:seren_ai_flutter/services/data/orgs/providers/cur_user_org_roles_provider.dart';
 import 'package:seren_ai_flutter/services/data/teams/cur_team/joined_cur_user_team_assignments_listener_provider.dart';
@@ -19,9 +20,9 @@ final curUserViewableTeamsListenerProvider =
 class CurUserViewableTeamsListenerProvider extends Notifier<List<TeamModel>?> {
   @override
   List<TeamModel>? build() {
-    final watchedIsCurUserOrgAdmin = ref.watch(curUserOrgRoleProvider);
+    final watchedCurUserOrgRole = ref.watch(curUserOrgRoleProvider);
 
-    if (watchedIsCurUserOrgAdmin.valueOrNull == true) {
+    if (watchedCurUserOrgRole.valueOrNull == OrgRole.admin) {
       final watchedCurOrgId = ref.watch(curOrgIdProvider);
 
       final query =

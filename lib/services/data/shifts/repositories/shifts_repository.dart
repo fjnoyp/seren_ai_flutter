@@ -21,22 +21,26 @@ class ShiftsRepository extends BaseRepository<JoinedShiftModel> {
 
   Stream<List<JoinedShiftModel>> watchUserShifts({
     required String userId,
+    required String orgId,
   }) {
     return watch(
       ShiftQueries.getUserShifts,
       {
         'user_id': userId,
+        'org_id': orgId,
       },
     );
   }
 
   Future<List<JoinedShiftModel>> getUserShifts({
     required String userId,
+    required String orgId,
   }) async {
     return get(
       ShiftQueries.getUserShifts,
       {
         'user_id': userId,
+        'org_id': orgId,
       },
     );
   }

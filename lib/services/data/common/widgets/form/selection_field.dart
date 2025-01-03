@@ -334,7 +334,7 @@ class AnimatedModalMinuteSelectionField extends HookConsumerWidget {
                                       .then((value) =>
                                           onValueChanged?.call(ref, value))
                                   : onValueChanged?.call(ref, option.minutes);
-                              Navigator.pop(context, option.minutes);
+                              ref.read(navigationServiceProvider).pop(option.minutes);
                             },
                           );
                         },

@@ -60,7 +60,7 @@ class TaskListItemView extends ConsumerWidget {
                     Text(
                       '${project?.name}',
                       style: theme.textTheme.labelSmall?.copyWith(
-                          color: theme.colorScheme.onSurface.withOpacity(0.7)),
+                          color: theme.colorScheme.onSurface.withAlpha(180)),
                     ),
                 ],
               ),

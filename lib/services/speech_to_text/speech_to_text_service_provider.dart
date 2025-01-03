@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:developer';
 //import 'dart:io';
 
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -86,7 +87,7 @@ class SpeechToTextService {
 
   var prevStatus = '';
   void _statusListener(String status) {
-    print(status);
+    log(status);
 
     if (prevStatus == status) {
       return;

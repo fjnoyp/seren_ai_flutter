@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
+import 'package:seren_ai_flutter/common/navigation_service_provider.dart';
 import 'package:seren_ai_flutter/common/routes/app_routes.dart';
 import 'package:seren_ai_flutter/services/data/common/widgets/delete_confirmation_dialog.dart';
 import 'package:seren_ai_flutter/services/data/orgs/models/joined_user_org_role_model.dart';
@@ -88,7 +89,7 @@ class ChangeUserRoleDialog extends HookConsumerWidget {
           onPressed: () {
             showDialog(
                 context: context,
-                // TODO: Externalize confirmation dialog's content
+                // TODO p3: Externalize confirmation dialog's content
                 // to use a more proper message here
                 builder: (context) => DeleteConfirmationDialog(
                     itemName: '${currentUserRole.user?.firstName}',
@@ -96,7 +97,7 @@ class ChangeUserRoleDialog extends HookConsumerWidget {
                       ref
                           .read(userOrgRolesDbProvider)
                           .deleteItem(currentUserRole.orgRole.id);
-                      Navigator.of(context).pop();
+                      ref.read(navigationServiceProvider).pop();
                     }));
           },
           child: Text(AppLocalizations.of(context)!.removeUser),
@@ -105,7 +106,7 @@ class ChangeUserRoleDialog extends HookConsumerWidget {
           onPressed: () {
             ref.read(userOrgRolesDbProvider).upsertItem(
                 currentUserRole.orgRole.copyWith(orgRole: state.value));
-            Navigator.of(context).pop();
+            ref.read(navigationServiceProvider).pop();
           },
           child: Text(AppLocalizations.of(context)!.save),
         ),
@@ -114,11 +115,12 @@ class ChangeUserRoleDialog extends HookConsumerWidget {
   }
 }
 
-void openManageOrgUsersPage(BuildContext context, WidgetRef ref) {
-  Navigator.pushNamed(context, AppRoutes.manageOrgUsers.name, arguments: {
-    'actions': [
-      if (ref.read(curUserOrgRoleProvider).value == OrgRole.admin)
-        const InviteUserToOrgButton()
-    ],
-  });
+void openManageOrgUsersPage(WidgetRef ref) {
+  ref.read(navigationServiceProvider).navigateTo(AppRoutes.manageOrgUsers.name,
+      arguments: {
+        'actions': [
+          if (ref.read(curUserOrgRoleProvider).value == OrgRole.admin)
+            const InviteUserToOrgButton()
+        ],
+      });
 }

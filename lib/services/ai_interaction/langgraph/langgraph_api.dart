@@ -1,4 +1,6 @@
 
+import 'dart:developer';
+
 import 'package:dio/dio.dart';
 import 'package:seren_ai_flutter/services/ai_interaction/langgraph/models/lg_ai_base_message_model.dart';
 import 'package:seren_ai_flutter/services/ai_interaction/langgraph/models/lg_assistant_model.dart';
@@ -123,8 +125,8 @@ class LanggraphApi {
 
           // Skip heartbeat messages
           if (decodedData.trim() == ': heartbeat') {
-            print('skipping heartbeat message');
-            print(decodedData);
+            log('skipping heartbeat message');
+            log(decodedData);
             continue;
           }
 
@@ -162,7 +164,7 @@ class LanggraphApi {
         }
       }
     } catch (e, stackTrace) {
-      print('Error in streamRun: $e');
+      log('Error in streamRun: $e');
       yield* Stream.error(e, stackTrace);
     }
   }

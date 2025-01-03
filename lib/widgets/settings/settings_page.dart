@@ -41,7 +41,7 @@ class SettingsAccountSection extends ConsumerWidget {
             ? Center(child: Text(AppLocalizations.of(context)!.noAuthUser))
             : Column(
                 children: [
-                  // TODO: Add account editing fields here: name, surname, avatar...
+                  // TODO p5: Add account editing fields here: name, surname, avatar...
                   ListTile(
                     dense: true,
                     leading: const Icon(Icons.email),

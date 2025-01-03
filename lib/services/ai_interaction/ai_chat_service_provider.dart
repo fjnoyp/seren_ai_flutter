@@ -22,6 +22,7 @@ import 'package:seren_ai_flutter/services/data/notes/providers/cur_note_state_pr
 import 'package:seren_ai_flutter/services/data/orgs/providers/cur_org_dependency_provider.dart';
 
 import 'package:logging/logging.dart';
+import 'package:seren_ai_flutter/services/data/orgs/providers/cur_org_service_provider.dart';
 import 'package:seren_ai_flutter/services/data/tasks/providers/cur_task_state_provider.dart';
 import 'package:seren_ai_flutter/services/text_to_speech/text_to_speech_notifier.dart';
 
@@ -32,12 +33,6 @@ final isAiRespondingProvider = StateProvider<bool>((ref) => false);
 final isAiEditingProvider = StateProvider<bool>((ref) => false);
 
 final aiChatServiceProvider = Provider<AIChatService>(AIChatService.new);
-
-/*
-
-TODO p1: fix bug where ai keeps speaking 
-
-*/
 
 /// Intermediary with LangGraph API
 class AIChatService {
@@ -62,7 +57,6 @@ class AIChatService {
       // Get or create thread
       final aiChatThread = await _getOrCreateAiChatThread(curUser.id, curOrgId);
 
-      // TODO p0: get UI context and send it message
       final uiContext = _getUIContext();
 
       // Save user message
@@ -225,7 +219,7 @@ class AIChatService {
     final aiChatThreadsRepo = ref.read(aiChatThreadsRepositoryProvider);
     final langgraphService = ref.read(langgraphServiceProvider);
     final aiChatThreadsService = ref.read(aiChatThreadsServiceProvider);
-    final curOrgId = ref.read(curOrgIdProvider);
+    final curOrg = ref.read(curOrgServiceProvider);
     final curUser = ref.read(curUserProvider).value;
 
     final existingThread = await aiChatThreadsRepo.getUserThread(
@@ -237,8 +231,7 @@ class AIChatService {
       return existingThread;
     }
 
-    // TODO p3: get org name for assistant name
-    final name = '${curUser!.email} - $curOrgId';
+    final name = '${curUser!.email} - ${curOrg.name}';
 
     // Get timezone offset string
     final timezoneOffsetMinutes = DateTime.now().timeZoneOffset.inMinutes;

@@ -8,8 +8,7 @@ class DeleteTaskResultModel extends AiRequestResultModel {
     required this.taskName,
   }) : super(resultType: AiRequestResultType.deleteTask);
 
-  // TODO: remove nullability (supposed to be not null in the backend)
-  final bool? isDeleted;
+  final bool isDeleted;
   final String? taskName;
 
   factory DeleteTaskResultModel.fromJson(Map<String, dynamic> json) {

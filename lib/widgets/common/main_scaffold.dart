@@ -130,7 +130,6 @@ class MainScaffold extends ConsumerWidget {
                           },
                           tooltip: AppLocalizations.of(context)!.menu,
                         ),
-                        // TODO p2: back button is in a weird location. we should only conditionally show back button
                         if (ref.read(navigationServiceProvider).canPop)
                           IconButton(
                             icon: Icon(Icons.arrow_back,
@@ -240,14 +239,14 @@ class MainScaffold extends ConsumerWidget {
           TextButton(
             onPressed: () {
               curUserInvitesService.declineInvite(invite);
-              Navigator.of(context).pop();
+              ref.read(navigationServiceProvider).pop();
             },
             child: Text(AppLocalizations.of(context)!.decline),
           ),
           FilledButton(
             onPressed: () {
               curUserInvitesService.acceptInvite(invite);
-              Navigator.of(context).pop();
+              ref.read(navigationServiceProvider).pop();
             },
             child: Text(AppLocalizations.of(context)!.accept),
           ),

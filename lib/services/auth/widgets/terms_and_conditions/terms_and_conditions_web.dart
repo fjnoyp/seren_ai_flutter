@@ -8,7 +8,7 @@ class TermsAndConditionsView extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     // Register view factory
-    final String viewId = 'terms-and-conditions-view';
+    const viewId = 'terms-and-conditions-view';
     // ignore: undefined_prefixed_name
     ui.platformViewRegistry.registerViewFactory(viewId, (int viewId) {
       final iframe = html.IFrameElement()
@@ -19,7 +19,7 @@ class TermsAndConditionsView extends StatelessWidget {
       return iframe;
     });
 
-    return Scaffold(
+    return const Scaffold(
       body: HtmlElementView(viewType: viewId),
     );
   }

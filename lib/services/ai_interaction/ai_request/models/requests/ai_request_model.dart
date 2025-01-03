@@ -38,8 +38,6 @@ abstract class AiRequestModel {
         return AiInfoRequestModel.fromJson(json);
       case AiRequestType.actionRequest:
         return AiActionRequestModel.fromJson(json);
-      default:
-        throw ArgumentError('Invalid AiRequestType: ${json['request_type']}');
     }
   }
 

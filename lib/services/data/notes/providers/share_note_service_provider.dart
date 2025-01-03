@@ -1,4 +1,6 @@
 //import 'dart:io';
+import 'dart:developer';
+
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:seren_ai_flutter/services/data/notes/models/joined_note_model.dart';
 import 'package:seren_ai_flutter/services/data/notes/providers/cur_note_state_provider.dart';
@@ -38,7 +40,7 @@ class ShareNoteService {
         subject: name,
       );
     } catch (e) {
-      print('PDF generation/sharing error: $e');
+      log('PDF generation/sharing error: $e');
       rethrow;
     }
   }

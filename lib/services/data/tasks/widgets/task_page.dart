@@ -225,7 +225,7 @@ Future<void> openBlankTaskPage(Ref ref) async {
       arguments: {'mode': EditablePageMode.create, 'title': 'Create Task'});
 }
 
-// TODO p2: init state within the page itself ... we should only rely on arguments to init the page (to support deep linking)
+// TODO p3: init state within the page itself ... we should only rely on arguments to init the page (to support deep linking)
 /// `initialProject` and `initialStatus` fields are only used for create mode. 
 /// They are used to set the parent project and status of the new task
 ///

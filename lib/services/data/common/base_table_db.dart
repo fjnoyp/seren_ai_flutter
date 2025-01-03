@@ -29,7 +29,7 @@ class BaseTableDb<T extends IHasId> {
         'VALUES(${List.filled(json.keys.length, '?').join(', ')})';
     final values = json.values.toList();
     try {
-      final result = await db.execute(
+      await db.execute(
           'INSERT INTO $tableName $columns $valuesPlaceholder', values);
     } catch (e) {
       throw Exception('Failed to insert item into $tableName: $e');

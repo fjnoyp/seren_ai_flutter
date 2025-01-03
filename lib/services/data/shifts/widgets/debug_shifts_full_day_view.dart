@@ -69,7 +69,7 @@ Widget debugShiftsFullDayView(String shiftId, DateTime day) {
                 }),
 
                 // Timeframes
-                ...(timeframes ?? []).map((timeFrame) {
+                ...(timeframes).map((timeFrame) {
                   if (timeFrame.dayOfWeek != day.weekday) {
                     return const SizedBox.shrink();
                   }
@@ -81,18 +81,18 @@ Widget debugShiftsFullDayView(String shiftId, DateTime day) {
                     endTime: end,
                     totalHeight: height,
                     hourHeight: hourHeight,
-                    color: Colors.blue.withOpacity(0.5),
+                    color: Colors.blue.withAlpha(128),
                     label: 'SHIFT: \n${_formatTimeRange(start, end)}',
                   );
                 }),
 
                 // Overrides
-                ...(overrides ?? []).map((override) {
+                ...(overrides).map((override) {
                   final start = override.startDateTime.toLocal();
                   final end = override.endDateTime.toLocal();
                   final color = override.isRemoval
-                      ? Colors.red.withOpacity(0.5)
-                      : Colors.orange.withOpacity(0.5);
+                      ? Colors.red.withAlpha(128)
+                      : Colors.orange.withAlpha(128);
                   return _buildTimeBlock(
                     day: day,
                     startTime: start,
@@ -106,12 +106,12 @@ Widget debugShiftsFullDayView(String shiftId, DateTime day) {
                 }),
 
                 // Logs
-                ...(logs ?? []).map((log) {
+                ...(logs).map((log) {
                   final start = log.clockInDatetime.toLocal();
                   final end = log.clockOutDatetime?.toLocal() ?? DateTime.now();
                   final color = log.isBreak
-                      ? Colors.yellow.withOpacity(0.5)
-                      : Colors.green.withOpacity(0.5);
+                      ? Colors.yellow.withAlpha(128)
+                      : Colors.green.withAlpha(128);
                   return _buildTimeBlock(
                     day: day,
                     startTime: start,
@@ -124,7 +124,7 @@ Widget debugShiftsFullDayView(String shiftId, DateTime day) {
                   );
                 }),
 
-                ...(shiftTimeRanges ?? []).map((range) {
+                ...(shiftTimeRanges).map((range) {
                   final start = range.start.toLocal();
                   final end = range.end.toLocal();
                   return _buildTimeBlock(
@@ -133,7 +133,7 @@ Widget debugShiftsFullDayView(String shiftId, DateTime day) {
                     endTime: end,
                     totalHeight: height,
                     hourHeight: hourHeight,
-                    color: Colors.blue.withOpacity(0.5),
+                    color: Colors.blue.withAlpha(128),
                     label: 'actual shift: \n${_formatTimeRange(start, end)}',
                     leftOffset: 3 * timeBlockWidth,
                   );

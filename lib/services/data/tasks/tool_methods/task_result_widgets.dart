@@ -94,7 +94,6 @@ class DeleteTaskResultWidget extends ConsumerWidget {
                   .deletedTask(result.taskName ?? ''),
               false => AppLocalizations.of(context)!
                   .taskDeletionCancelledByUser(result.taskName ?? ''),
-              _ => result.resultForAi,
             },
             style: Theme.of(context).textTheme.titleMedium,
           ),

@@ -11,8 +11,8 @@ import 'package:seren_ai_flutter/services/data/notes/providers/cur_note_service_
 import 'package:seren_ai_flutter/services/data/notes/providers/cur_note_state_provider.dart';
 import 'package:seren_ai_flutter/services/data/notes/providers/note_attachments_service_provider.dart';
 import 'package:seren_ai_flutter/services/data/notes/repositories/joined_notes_repository.dart';
-import 'package:seren_ai_flutter/services/data/notes/widgets/delete_note_button.dart';
-import 'package:seren_ai_flutter/services/data/notes/widgets/edit_note_button.dart';
+import 'package:seren_ai_flutter/services/data/notes/widgets/action_buttons/delete_note_button.dart';
+import 'package:seren_ai_flutter/services/data/notes/widgets/action_buttons/edit_note_button.dart';
 import 'package:seren_ai_flutter/services/data/notes/widgets/form/note_selection_fields.dart';
 import 'package:seren_ai_flutter/services/data/notes/widgets/pdf/share_note_button.dart';
 import 'package:seren_ai_flutter/services/data/notes/widgets/note_attachments/note_attachment_section.dart';
@@ -138,7 +138,7 @@ class NotePage extends HookConsumerWidget {
   }
 }
 
-// TODO p2: init state within the page itself ... we should only rely on arguments to init the page (to support deep linking)
+// TODO p3: init state within the page itself ... we should only rely on arguments to init the page (to support deep linking)
 Future<void> openNotePage(BuildContext context, WidgetRef ref,
     {required EditablePageMode mode,
     String? parentProjectId,

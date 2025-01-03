@@ -72,7 +72,7 @@ class DrawerView extends ConsumerWidget {
                       _AdminOnlyListTile(
                         icon: Icons.business,
                         title: AppLocalizations.of(context)!.organization,
-                        onTap: () => openOrgPage(context),
+                        onTap: () => openOrgPage(ref),
                       ),
                       isWebVersion
                           ? Consumer(

@@ -90,6 +90,7 @@ abstract class ShiftQueries {
 
   /// Params:
   /// - user_id: String
+  /// - org_id: String
   static const getUserShifts = '''
   SELECT DISTINCT 
     s.id AS s_id,
@@ -109,5 +110,6 @@ abstract class ShiftQueries {
   JOIN shift_user_assignments sua ON s.id = sua.shift_id
   JOIN projects p ON s.parent_project_id = p.id
   WHERE sua.user_id = @user_id
+    AND p.parent_org_id = @org_id
   ''';
 }

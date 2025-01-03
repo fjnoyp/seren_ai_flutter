@@ -1,5 +1,7 @@
 
 
+import 'dart:developer';
+
 import 'package:seren_ai_flutter/services/ai_interaction/langgraph/langgraph_api.dart';
 import 'package:seren_ai_flutter/services/ai_interaction/langgraph/models/lg_ai_base_message_model.dart';
 import 'package:seren_ai_flutter/services/ai_interaction/langgraph/models/lg_ai_chat_message_role.dart';
@@ -27,19 +29,19 @@ curl --request POST \
 
 */
 
-Future<void> testLanggraphClientMethods() async {
-  final client = createLanggraphClient();
-  const threadId = 'c55a9029-ef0b-4160-b0d5-bce5e0930be2';
-  const assistantId = "07265b79-da09-4093-9f39-158867182e18";
+// Future<void> testLanggraphClientMethods() async {
+//   final client = createLanggraphClient();
+//   const threadId = 'c55a9029-ef0b-4160-b0d5-bce5e0930be2';
+//   const assistantId = "07265b79-da09-4093-9f39-158867182e18";
 
-  //await streamRunExample('testing, please call getShiftInfo', client, threadId, assistantId);
+//   //await streamRunExample('testing, please call getShiftInfo', client, threadId, assistantId);
 
-  // Uncomment to test other methods
-  // await testGetThreadRuns(client);
-  // await testCreateThread(client);
-  // await testCreateAssistant(client);
-  // await testGetThreadState(client, threadId);
-}
+//   // Uncomment to test other methods
+//   // await testGetThreadRuns(client);
+//   // await testCreateThread(client);
+//   // await testCreateAssistant(client);
+//   // await testGetThreadState(client, threadId);
+// }
 
 
 
@@ -65,29 +67,29 @@ Future<void> streamRunExample(String content, LanggraphApi client, String thread
   
   await for (final message in messageStream) {
     // Handle each message as it comes in
-    print("message: ${message.toString()}");
+    log("message: ${message.toString()}");
   }
 } catch (e) {
   // This will catch both stream errors and timeout exceptions
-  print('Stream error: $e');
+  log('Stream error: $e');
 }
 }
 
 Future<void> testGetThreadRuns(LanggraphApi client) async {
   try {
     final runs = await client.getThreadRuns('3ea75a49-76fe-45b3-b31d-43b22f40f613');
-    print('Thread runs: $runs');
+    log('Thread runs: $runs');
   } catch (e) {
-    print('Error getting thread runs: $e');
+    log('Error getting thread runs: $e');
   }
 }
 
 Future<void> testCreateThread(LanggraphApi client) async {
   try {
     final newThreadId = await client.createThread();
-    print('Created new thread with ID: $newThreadId');
+    log('Created new thread with ID: $newThreadId');
   } catch (e) {
-    print('Error creating thread: $e');
+    log('Error creating thread: $e');
   }
 }
 
@@ -104,17 +106,17 @@ Future<void> testCreateThread(LanggraphApi client) async {
 //       metadata: {}, // Optional
 //       ifExists: "raise", // Or "update" or "return_existing"
 //     );
-//     print('Created assistant with ID: $assistantId');
+//     log('Created assistant with ID: $assistantId');
 //   } catch (e) {
-//     print('Error creating assistant: $e');
+//     log('Error creating assistant: $e');
 //   }
 // }
 
 Future<void> testGetThreadState(LanggraphApi client, String threadId) async {
   try {
     final threadState = await client.getThreadState(threadId);
-    print('Thread state: $threadState');
+    log('Thread state: $threadState');
   } catch (e) {
-    print('Error getting thread state: $e');
+    log('Error getting thread state: $e');
   }
 }
