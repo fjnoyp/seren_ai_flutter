@@ -17,7 +17,6 @@ class TaskCommentSection extends HookConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final showTextField = useState(false);
-    final TaskModel task = TaskModel(id: taskId);
 
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 8.0),
@@ -39,6 +38,8 @@ class TaskCommentSection extends HookConsumerWidget {
             ],
           ),
           StreamBuilder(
+                        // TODO p0 - switch with comment repository call ...
+
             stream: task.watchComments(ref),
             builder: (context, snapshot) {
               if (snapshot.hasError) {
@@ -76,6 +77,7 @@ class _TaskCommentField extends BaseTaskCommentField {
           enabled: true,
           commentProvider: curTaskStateProvider.select((state) => ''),
           addComment: (ref, text) {
+            // TODO p0 - switch with comment repository call ...
             ref.read(curTaskServiceProvider).addComment(text);
             onSubmit();
           },

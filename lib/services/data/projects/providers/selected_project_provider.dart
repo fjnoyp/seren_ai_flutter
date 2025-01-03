@@ -59,6 +59,9 @@ class SelectedProjectNotifier extends Notifier<AsyncValue<ProjectModel>> {
           ref.read(curUserViewableProjectsProvider).value ?? [];
       if (userProjects.isNotEmpty) {
         setProject(userProjects.first);
+      } else {
+        // TODO p2: handle no projects found for user case
+        throw Exception('No projects found for user');
       }
     }
   }
