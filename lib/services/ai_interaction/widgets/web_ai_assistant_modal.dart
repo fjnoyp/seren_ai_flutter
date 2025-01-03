@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:seren_ai_flutter/common/navigation_service_provider.dart';
 import 'package:seren_ai_flutter/common/routes/app_routes.dart';
 import 'package:seren_ai_flutter/services/ai_interaction/is_ai_modal_visible_provider.dart';
+import 'package:seren_ai_flutter/services/ai_interaction/widgets/ai_chat_text_field.dart';
 import 'package:seren_ai_flutter/services/data/ai_chats/widgets/ai_chats_page.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
@@ -44,9 +45,11 @@ class WebAiAssistantModal extends ConsumerWidget {
                     icon: const Icon(Icons.open_in_new),
                   ),
                   IconButton(
-                    onPressed: () => ref
-                        .read(isAiModalVisibleProvider.notifier)
-                        .state = false,
+                    onPressed: () {
+                      // Confirm if we should clear the text field when closing the modal
+                      ref.read(aiChatTextEditingControllerProvider).clear();
+                      ref.read(isAiModalVisibleProvider.notifier).state = false;
+                    },
                     style: IconButton.styleFrom(
                       padding: EdgeInsets.zero,
                       backgroundColor: Colors.transparent,
