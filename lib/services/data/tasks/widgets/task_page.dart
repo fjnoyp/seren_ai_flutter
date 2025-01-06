@@ -129,9 +129,7 @@ class TaskPage extends HookConsumerWidget {
                     final curAuthUser = ref.read(curUserProvider).value;
 
                     if (curAuthUser == null) {
-                      log.severe(
-                          AppLocalizations.of(context)!.userNotAuthenticated);
-                      return;
+                      throw UnauthorizedException();
                     }
 
                     await _validateTaskAndMaybeSave(ref, context);
