@@ -12,6 +12,17 @@ import 'package:seren_ai_flutter/services/data/tasks/repositories/tasks_reposito
 import 'package:seren_ai_flutter/services/data/users/models/user_model.dart';
 import 'package:seren_ai_flutter/services/data/users/repositories/users_repository.dart';
 
+// TODO p0: switch to immediate edit system
+// The current code is inconsistent ...
+// The assignees and other task fields are not changed immediately
+// But the comments are
+// And the comment changes are watched via the commentsProvider and not via the curEditingTaskStateProvider ...
+
+// Ideally the ai editing of state will happen by ONLY knowing the current task id ...
+// So even new tasks should be created immediately
+// Then the ai just needs to make calls to the taskrepository
+// And all UI code shoudl just show the watched data of taskrepository ...
+
 final curEditingTaskStateProvider =
     NotifierProvider<EditingTaskNotifier, AsyncValue<EditingTaskState>>(() {
   return EditingTaskNotifier();
