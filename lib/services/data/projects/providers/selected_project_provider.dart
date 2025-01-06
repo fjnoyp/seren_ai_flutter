@@ -14,24 +14,30 @@ final selectedProjectProvider =
 class SelectedProjectNotifier extends Notifier<AsyncValue<ProjectModel>> {
   @override
   AsyncValue<ProjectModel> build() {
+    // Only watch the current user
     final curUser = ref.watch(curUserProvider).value;
 
     if (curUser == null) {
       return AsyncError('No user found', StackTrace.current);
     }
 
-    setToDefaultOrFirstAssignedProject(curUser);
-
-    final userProjects = ref.watch(curUserViewableProjectsProvider).value ?? [];
-    if (userProjects.isNotEmpty &&
-        state.value != null &&
-        !userProjects.any((e) => e.id == state.value!.id)) {
-      log('User has no longer access to ${state.value!.name}');
-      state = AsyncError(
-          'User has no longer access to this project', StackTrace.current);
+    // Initial setup
+    if (state.value == null) {
+      setToDefaultOrFirstAssignedProject(curUser);
     }
 
-    return const AsyncLoading();
+    // Check access only when needed, don't watch continuously
+    ref.listen(curUserViewableProjectsProvider, (previous, next) {
+      if (next.value != null &&
+          state.value != null &&
+          !next.value!.any((e) => e.id == state.value!.id)) {
+        log('User has no longer access to ${state.value!.name}');
+        state = AsyncError(
+            'User has no longer access to this project', StackTrace.current);
+      }
+    });
+
+    return state is AsyncLoading ? const AsyncLoading() : state;
   }
 
   void setProject(ProjectModel project) {
@@ -42,7 +48,7 @@ class SelectedProjectNotifier extends Notifier<AsyncValue<ProjectModel>> {
     // Defaults to user default project
     if (user.defaultProjectId != null) {
       final defaultProject = await ref
-          .watch(projectsRepositoryProvider)
+          .read(projectsRepositoryProvider)
           .getProjectById(projectId: user.defaultProjectId!);
       if (defaultProject != null) {
         setProject(defaultProject);
@@ -50,7 +56,7 @@ class SelectedProjectNotifier extends Notifier<AsyncValue<ProjectModel>> {
     } else {
       // Defaults to some assigned project when user default project is null
       final userProjects =
-          ref.watch(curUserViewableProjectsProvider).value ?? [];
+          ref.read(curUserViewableProjectsProvider).value ?? [];
       if (userProjects.isNotEmpty) {
         setProject(userProjects.first);
       }
