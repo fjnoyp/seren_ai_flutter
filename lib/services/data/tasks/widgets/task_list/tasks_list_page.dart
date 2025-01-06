@@ -27,18 +27,15 @@ class TasksListPage extends ConsumerWidget {
             child: Padding(
               padding: const EdgeInsets.symmetric(horizontal: 10.0),
               child: TabBarView(
-                  children: [
-                    TasksListView(
-                        filter: (joinedTask) =>
-                            joinedTask.task.status == StatusEnum.open),
-                    TasksListView(
-                        filter: (joinedTask) =>
-                            joinedTask.task.status == StatusEnum.inProgress),
-                    TasksListView(
-                        filter: (joinedTask) =>
-                            joinedTask.task.status == StatusEnum.finished),
-                  ],
-                ),
+                children: [
+                  TasksListView(
+                      filter: (task) => task.status == StatusEnum.open),
+                  TasksListView(
+                      filter: (task) => task.status == StatusEnum.inProgress),
+                  TasksListView(
+                      filter: (task) => task.status == StatusEnum.finished),
+                ],
+              ),
             ),
           ),
           CreateItemBottomButton(

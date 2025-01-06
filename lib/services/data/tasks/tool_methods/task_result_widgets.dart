@@ -29,7 +29,7 @@ class FindTasksResultWidget extends ConsumerWidget {
             child: Text(AppLocalizations.of(context)!.noTasksFound),
           ),
         ...result.tasks.map((task) {
-          return TaskListItemView(joinedTask: task);
+          return TaskListItemView(task: task);
         }),
       ],
     );
@@ -50,7 +50,7 @@ class CreateTaskResultWidget extends ConsumerWidget {
             children: [
               Text(AppLocalizations.of(context)!
                   .createdNewTask(result.task.name)),
-              TaskListItemView(joinedTask: result),
+              TaskListItemView(task: result.task),
             ],
           );
   }
@@ -69,7 +69,7 @@ class UpdateTaskFieldsResultWidget extends ConsumerWidget {
             mainAxisSize: MainAxisSize.min,
             children: [
               Text(AppLocalizations.of(context)!.updatedTask(result.task.name)),
-              TaskListItemView(joinedTask: result),
+              TaskListItemView(task: result.task),
             ],
           );
   }
