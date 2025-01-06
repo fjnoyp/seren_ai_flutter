@@ -44,13 +44,13 @@ class CreateTaskResultWidget extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     return ref.read(currentRouteProvider).contains(AppRoutes.aiChats.name)
         ? Text(AppLocalizations.of(context)!
-            .createdNewTaskAndOpenedTaskPage(result.joinedTask.task.name))
+            .createdNewTaskAndOpenedTaskPage(result.task.name))
         : Column(
             mainAxisSize: MainAxisSize.min,
             children: [
               Text(AppLocalizations.of(context)!
-                  .createdNewTask(result.joinedTask.task.name)),
-              TaskListItemView(joinedTask: result.joinedTask),
+                  .createdNewTask(result.task.name)),
+              TaskListItemView(joinedTask: result),
             ],
           );
   }
@@ -64,13 +64,12 @@ class UpdateTaskFieldsResultWidget extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     return ref.read(currentRouteProvider).contains(AppRoutes.aiChats.name)
         ? Text(AppLocalizations.of(context)!
-            .updatedTaskAndShowedResultInUI(result.joinedTask.task.name))
+            .updatedTaskAndShowedResultInUI(result.task.name))
         : Column(
             mainAxisSize: MainAxisSize.min,
             children: [
-              Text(AppLocalizations.of(context)!
-                  .updatedTask(result.joinedTask.task.name)),
-              TaskListItemView(joinedTask: result.joinedTask),
+              Text(AppLocalizations.of(context)!.updatedTask(result.task.name)),
+              TaskListItemView(joinedTask: result),
             ],
           );
   }
