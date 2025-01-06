@@ -3,6 +3,12 @@ import 'package:seren_ai_flutter/services/data/db_setup/db_provider.dart';
 import 'package:seren_ai_flutter/services/data/users/models/user_model.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
+class UnauthorizedException implements Exception {
+  final String message = 'User must be authorized to perform this action';
+
+  UnauthorizedException();
+}
+
 final curUserProvider =
     NotifierProvider<CurUserNotifier, AsyncValue<UserModel?>>(
         CurUserNotifier.new);
