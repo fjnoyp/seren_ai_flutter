@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:seren_ai_flutter/services/data/common/widgets/async_value_handler_widget.dart';
 import 'package:seren_ai_flutter/services/data/common/widgets/form/selection_field.dart';
@@ -86,72 +87,89 @@ class AssigneesSelectionModal extends HookConsumerWidget {
       return const Center(child: CircularProgressIndicator());
     }
 
-    return AsyncValueHandlerWidget(
-      value: ref.watch(usersInProjectProvider(curProject.id)),
-      data: (users) => Padding(
-        padding: EdgeInsets.only(
-          bottom: MediaQuery.of(context).viewInsets.bottom,
-        ),
-        child: Container(
-          padding: const EdgeInsets.all(16),
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  Text(AppLocalizations.of(context)!.onlyUsersIn),
-                  Text(curProject.name,
-                      style: const TextStyle(fontWeight: FontWeight.bold)),
-                  Text(AppLocalizations.of(context)!.canBeAssigned),
-                ],
-              ),
-              if (ref.read(curUserOrgRoleProvider).value == OrgRole.admin ||
-                  ref.read(curUserOrgRoleProvider).value == OrgRole.editor)
-                ElevatedButton(
-                  onPressed: () => showModalBottomSheet(
-                    context: context,
-                    builder: (BuildContext context) {
-                      return const UpdateProjectAssigneesModal();
-                    },
-                  ),
-                  child: Text(AppLocalizations.of(context)!
-                      .addUsersTo(curProject.name)),
-                ),
-              ConstrainedBox(
-                constraints: BoxConstraints(
-                  maxHeight: MediaQuery.of(context).size.height * 0.5,
-                ),
-                child: ListView.builder(
-                  itemCount: users.length,
-                  itemBuilder: (context, index) {
-                    final user = users[index];
-                    final isSelected =
-                        initialSelectedUsers.contains(user);
-                    return CheckboxListTile(
-                      title: Text('${user.firstName} ${user.lastName}'),
-                      controlAffinity: ListTileControlAffinity.leading,
-                      value: isSelected,
-                      onChanged: (bool? value) {
-                        if (value != null) {
-                          final updatedUsers = List<UserModel>.from(
-                              initialSelectedUsers);
-                          if (value) {
-                            updatedUsers.add(user);
-                          } else {
-                            updatedUsers.remove(user);
-                          }
-                          onAssigneesChanged(ref, updatedUsers);
-                        }
-                      },
-                    );
-                  },
-                ),
-              ),
-            ],
+    final selectedUsers = useState<List<UserModel>>(initialSelectedUsers);
+
+    return Column(
+      mainAxisSize: MainAxisSize.min,
+      crossAxisAlignment: CrossAxisAlignment.end,
+      children: [
+        Padding(
+          padding: const EdgeInsets.only(top: 8.0, right: 8.0),
+          child: IconButton(
+            onPressed: () => Navigator.of(context).pop(),
+            icon: const Icon(Icons.close),
           ),
         ),
-      ),
+        AsyncValueHandlerWidget(
+          value: ref.watch(usersInProjectProvider(curProject.id)),
+          data: (users) => Padding(
+            padding: EdgeInsets.only(
+              bottom: MediaQuery.of(context).viewInsets.bottom,
+            ),
+            child: Container(
+              padding: const EdgeInsets.all(16),
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Text(AppLocalizations.of(context)!.onlyUsersIn),
+                      Text(curProject.name,
+                          style: const TextStyle(fontWeight: FontWeight.bold)),
+                      Text(AppLocalizations.of(context)!.canBeAssigned),
+                    ],
+                  ),
+                  if (ref.read(curUserOrgRoleProvider).value == OrgRole.admin ||
+                      ref.read(curUserOrgRoleProvider).value == OrgRole.editor)
+                    ElevatedButton(
+                      onPressed: () => showModalBottomSheet(
+                        context: context,
+                        builder: (BuildContext context) {
+                          return const UpdateProjectAssigneesModal();
+                        },
+                      ),
+                      child: Text(AppLocalizations.of(context)!
+                          .addUsersTo(curProject.name)),
+                    ),
+                  ConstrainedBox(
+                    constraints: BoxConstraints(
+                      maxHeight: MediaQuery.of(context).size.height * 0.5,
+                    ),
+                    child: ListView.builder(
+                      itemCount: users.length,
+                      itemBuilder: (context, index) {
+                        final user = users[index];
+                        final isSelected = selectedUsers.value.contains(user);
+                        return CheckboxListTile(
+                          title: Text('${user.firstName} ${user.lastName}'),
+                          controlAffinity: ListTileControlAffinity.leading,
+                          value: isSelected,
+                          onChanged: (bool? value) {
+                            if (value != null) {
+                              if (value) {
+                                selectedUsers.value = [
+                                  ...selectedUsers.value,
+                                  user
+                                ];
+                              } else {
+                                selectedUsers.value = selectedUsers.value
+                                    .where((u) => u != user)
+                                    .toList();
+                              }
+                              onAssigneesChanged(ref, selectedUsers.value);
+                            }
+                          },
+                        );
+                      },
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ),
+        ),
+      ],
     );
   }
 }
