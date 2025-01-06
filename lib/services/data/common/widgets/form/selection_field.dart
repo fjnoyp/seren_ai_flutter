@@ -89,6 +89,7 @@ class AnimatedModalSelectionField<T> extends HookConsumerWidget {
   }
 }
 
+// TODO p3: why is isValueRequired false, why is onValueChanged allowed to have nullable values, is this necessary?
 class ModalSelectionField<T> extends SelectionField<T> {
   ModalSelectionField({
     super.key,

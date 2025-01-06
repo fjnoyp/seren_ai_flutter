@@ -4,6 +4,7 @@ import 'package:seren_ai_flutter/common/navigation_service_provider.dart';
 import 'package:seren_ai_flutter/services/data/common/widgets/editable_page_mode_enum.dart';
 import 'package:seren_ai_flutter/services/data/tasks/widgets/task_page.dart';
 
+// Triggers edit of current task
 class EditTaskButton extends ConsumerWidget {
   const EditTaskButton({super.key});
 
