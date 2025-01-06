@@ -55,4 +55,15 @@ class UsersRepository extends BaseRepository<UserModel> {
       {'task_id': taskId},
     );
   }
+
+  Future<List<UserModel>> getTaskAssignedUsers({
+    required String taskId,
+  }) async {
+    return get(
+      UserQueries.getTaskAssignedUsersQuery,
+      {
+        'task_id': taskId,
+      },
+    );
+  }
 }
