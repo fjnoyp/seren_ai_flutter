@@ -9,7 +9,6 @@ import 'package:seren_ai_flutter/services/data/common/widgets/async_value_handle
 import 'package:seren_ai_flutter/services/data/common/widgets/editable_page_mode_enum.dart';
 import 'package:seren_ai_flutter/services/data/tasks/models/task_model.dart';
 import 'package:seren_ai_flutter/services/data/tasks/providers/cur_user_viewable_tasks_provider.dart';
-import 'package:seren_ai_flutter/services/data/tasks/repositories/joined_task_repository.dart';
 import 'package:seren_ai_flutter/services/data/tasks/widgets/task_page.dart';
 import 'package:seren_ai_flutter/widgets/home/base_home_card.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
@@ -51,7 +50,9 @@ class TaskHomeCard extends ConsumerWidget {
                       child: BaseHomeInnerCard.filled(
                         child: InkWell(
                           onTap: () {
-                            ref.read(navigationServiceProvider).navigateTo(AppRoutes.tasks.name);
+                            ref
+                                .read(navigationServiceProvider)
+                                .navigateTo(AppRoutes.tasks.name);
                           },
                           child: Center(
                             child: Text(
@@ -79,11 +80,8 @@ class _TaskCardItem extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     return GestureDetector(
       onTap: () async {
-        final joinedTask = await ref
-            .read(joinedTasksRepositoryProvider)
-            .getJoinedTaskById(task.id);
         await openTaskPage(context, ref,
-            mode: EditablePageMode.readOnly, initialJoinedTask: joinedTask);
+            mode: EditablePageMode.readOnly, initialTask: task);
       },
       child: BaseHomeInnerCard.outlined(
         child: SizedBox(

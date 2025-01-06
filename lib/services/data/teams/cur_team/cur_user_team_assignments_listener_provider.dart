@@ -16,7 +16,7 @@ class CurUserTeamAssignmentsListenerNotifier
     final watchedCurAuthUser = ref.read(curUserProvider).value;
 
     if (watchedCurAuthUser == null) {
-      return null;
+      throw UnauthorizedException();
     }
 
     final db = ref.read(dbProvider);
