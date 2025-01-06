@@ -4,6 +4,8 @@ import 'package:seren_ai_flutter/services/data/common/status_enum.dart';
 import 'package:seren_ai_flutter/services/data/common/uuid.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+import 'package:seren_ai_flutter/services/data/projects/models/project_model.dart';
+import 'package:seren_ai_flutter/services/data/users/models/user_model.dart';
 
 part 'task_model.g.dart';
 
@@ -107,7 +109,7 @@ class TaskModel implements IHasId {
         assert(dueDate != null || reminderOffsetMinutes == null);
 
   // Factory constructor for creating a TaskModel with default values
-  factory TaskModel.defaultTask() {
+  factory TaskModel.empty() {
     final now = DateTime.now().toUtc();
     return TaskModel(
       name: 'New Task',
@@ -172,4 +174,20 @@ class TaskModel implements IHasId {
   factory TaskModel.fromJson(Map<String, dynamic> json) =>
       _$TaskModelFromJson(json);
   Map<String, dynamic> toJson() => _$TaskModelToJson(this);
+
+  Map<String, dynamic> toAiReadableMap(
+      {ProjectModel? project, UserModel? author, List<UserModel>? assignees}) {
+    return {
+      'task': {
+        'name': name,
+        'description': description,
+        'status': status,
+        'priority': priority,
+        'due_date': dueDate?.toIso8601String(),
+      },
+      'author': author?.email ?? 'Unknown',
+      'project': project?.name ?? 'No Project',
+      'assignees': assignees?.map((user) => user.email).toList() ?? [],
+    };
+  }
 }

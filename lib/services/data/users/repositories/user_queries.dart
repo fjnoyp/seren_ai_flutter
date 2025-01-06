@@ -50,4 +50,13 @@ abstract class UserQueries {
     LEFT JOIN task_user_assignments tua ON u.id = tua.user_id
     WHERE tua.task_id = :task_id
   ''';
+
+  /// Params:
+  /// - task_id: String
+  static const String getTaskAssignedUsersQuery = '''
+    SELECT DISTINCT u.*
+    FROM users u
+    INNER JOIN task_user_assignments tua ON u.id = tua.user_id
+    WHERE tua.task_id = :task_id;
+  ''';
 }

@@ -91,6 +91,21 @@ abstract class BaseRepository<T extends IHasId> {
     }
   }
 
+  Future<void> insertItems(List<T> items) async {
+    if (items.isEmpty) return;
+
+    final Map<String, dynamic> firstItemJson = toJson(items.first);
+    final columns = firstItemJson.keys.join(', ');
+
+    final values = items.map((item) {
+      final itemJson = toJson(item);
+      return '(${itemJson.values.map(_sqlEscape).join(', ')})';
+    }).join(', ');
+
+    await db.executeBatch(
+        'INSERT INTO $primaryTable ($columns) VALUES $values', []);
+  }
+
   Future<void> upsertItem(T item) async {
     final existingItem =
         await db.execute('SELECT * FROM $primaryTable WHERE id = ?', [item.id]);
@@ -98,6 +113,12 @@ abstract class BaseRepository<T extends IHasId> {
       await insertItem(item);
     } else {
       await updateItem(item);
+    }
+  }
+
+  Future<void> upsertItems(List<T> items) async {
+    for (final item in items) {
+      await upsertItem(item);
     }
   }
 
