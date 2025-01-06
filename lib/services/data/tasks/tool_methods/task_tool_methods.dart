@@ -22,18 +22,21 @@ import 'package:seren_ai_flutter/services/data/common/status_enum.dart';
 import 'package:seren_ai_flutter/services/data/common/utils/string_similarity_extension.dart';
 import 'package:seren_ai_flutter/services/data/common/widgets/delete_confirmation_dialog.dart';
 import 'package:seren_ai_flutter/services/data/common/widgets/editable_page_mode_enum.dart';
-import 'package:seren_ai_flutter/services/data/tasks/models/joined_task_model.dart';
+import 'package:seren_ai_flutter/services/data/projects/models/project_model.dart';
+import 'package:seren_ai_flutter/services/data/projects/repositories/projects_repository.dart';
 import 'package:seren_ai_flutter/services/data/tasks/models/task_model.dart';
-import 'package:seren_ai_flutter/services/data/tasks/providers/cur_task_service_provider.dart';
-import 'package:seren_ai_flutter/services/data/tasks/repositories/joined_task_repository.dart';
+import 'package:seren_ai_flutter/services/data/tasks/providers/cur_editing_task_state_provider.dart';
+import 'package:seren_ai_flutter/services/data/tasks/providers/cur_user_viewable_tasks_provider.dart';
+import 'package:seren_ai_flutter/services/data/tasks/repositories/task_user_assignments_repository.dart';
 import 'package:seren_ai_flutter/services/data/tasks/repositories/tasks_repository.dart';
-import 'package:seren_ai_flutter/services/data/tasks/repositories/tasks_db_provider.dart';
 import 'package:seren_ai_flutter/services/data/tasks/tool_methods/models/create_task_result_model.dart';
 import 'package:seren_ai_flutter/services/data/tasks/tool_methods/models/delete_task_result_model.dart';
 import 'package:seren_ai_flutter/services/data/tasks/tool_methods/models/find_tasks_result_model.dart';
 import 'package:seren_ai_flutter/services/data/tasks/tool_methods/models/task_request_models.dart';
 import 'package:seren_ai_flutter/services/data/tasks/tool_methods/models/update_task_fields_result_model.dart';
 import 'package:seren_ai_flutter/services/data/tasks/widgets/action_buttons/edit_task_button.dart';
+import 'package:seren_ai_flutter/services/data/users/models/user_model.dart';
+import 'package:seren_ai_flutter/services/data/users/repositories/users_repository.dart';
 
 class TaskToolMethods {
   // Threshold for string similarity (0.0 to 1.0)
@@ -46,9 +49,26 @@ class TaskToolMethods {
     final userId = _getUserId(ref);
     if (userId == null) return _handleNoAuth();
 
-    final joinedTasks = await ref
-        .read(joinedTasksRepositoryProvider)
-        .getUserViewableJoinedTasks(userId);
+    final allTasks = await ref
+        .read(tasksRepositoryProvider)
+        .getUserViewableTasks(userId: userId);
+
+    // Pre-fetch all projects and authors
+    final projectsMap = <String, ProjectModel?>{};
+    final authorsMap = <String, UserModel?>{};
+    final assigneesMap = <String, List<UserModel>>{};
+
+    for (final task in allTasks) {
+      projectsMap[task.parentProjectId] = await ref
+          .read(projectsRepositoryProvider)
+          .getProjectById(projectId: task.parentProjectId);
+      authorsMap[task.authorUserId] = await ref
+          .read(usersRepositoryProvider)
+          .getUser(userId: task.authorUserId);
+      assigneesMap[task.id] = await ref
+          .read(usersRepositoryProvider)
+          .getTaskAssignedUsers(taskId: task.id);
+    }
 
     // Get a list of dates to allow for due date search
     final List<DateTime> dueDatesToGet = infoRequest.dueDatesToGet != null
@@ -60,11 +80,7 @@ class TaskToolMethods {
             : [];
 
     // Filter tasks based on search criteria
-    final filteredTasks = joinedTasks.where((joinedTask) {
-      final task = joinedTask.task;
-      final project = joinedTask.project;
-      final author = joinedTask.authorUser;
-
+    final filteredTasks = allTasks.where((task) {
       // Name search with fuzzy matching
       if (infoRequest.taskName != null &&
           task.name.similarity(infoRequest.taskName!) < _similarityThreshold) {
@@ -80,6 +96,7 @@ class TaskToolMethods {
       }
 
       // Project name search with fuzzy matching
+      final project = projectsMap[task.parentProjectId];
       if (infoRequest.parentProjectName != null &&
           project != null &&
           project.name.similarity(infoRequest.parentProjectName!) <
@@ -88,6 +105,7 @@ class TaskToolMethods {
       }
 
       // Author email / username search with fuzzy matching
+      final author = authorsMap[task.authorUserId];
       if (infoRequest.authorUserName != null &&
           author != null &&
           author.email.similarity(infoRequest.authorUserName!) <
@@ -154,10 +172,10 @@ class TaskToolMethods {
       }
 
       // Assigned users match using similarity calculation
-      if (infoRequest.assignedUserNames != null &&
-          infoRequest.assignedUserNames!.isNotEmpty) {
+      final assignedUsers = assigneesMap[task.id];
+      if (infoRequest.assignedUserNames != null && assignedUsers != null) {
         final taskAssigneeNames =
-            joinedTask.assignees.map((u) => u.email.toLowerCase()).toList();
+            assignedUsers.map((u) => u.email.toLowerCase()).toList();
         final searchNames =
             infoRequest.assignedUserNames!.map((n) => n.toLowerCase()).toList();
 
@@ -174,7 +192,7 @@ class TaskToolMethods {
     return FindTasksResultModel(
       tasks: filteredTasks,
       resultForAi:
-          'Found ${filteredTasks.length} matching tasks: ${filteredTasks.map((task) => task.toReadableMap()).toList()}',
+          'Found ${filteredTasks.length} matching tasks: ${filteredTasks.map((task) => task.toAiReadableMap(project: projectsMap[task.parentProjectId], author: authorsMap[task.authorUserId], assignees: assigneesMap[task.id])).toList()}',
       showOnly: infoRequest.showOnly,
     );
   }
@@ -187,7 +205,7 @@ class TaskToolMethods {
     if (userId == null) return _handleNoAuth();
 
     // Create a new task with fields from the request
-    final task = TaskModel(
+    final newTask = TaskModel(
       name: actionRequest.taskName,
       description: actionRequest.taskDescription,
       dueDate: actionRequest.taskDueDate != null
@@ -205,23 +223,17 @@ class TaskToolMethods {
     );
 
     // Save the task in the current task service
-    await ref.read(tasksDbProvider).upsertItem(task);
-
-    log('Created new task "${task.name}"');
-
-    final savedJoinedTask = await ref
-        .read(joinedTasksRepositoryProvider)
-        .getJoinedTaskById(task.id);
+    await ref.read(tasksRepositoryProvider).upsertItem(newTask);
 
     // Navigate to task page in readOnly mode
     if (allowToolUiActions) {
-      ref.read(curTaskServiceProvider).loadTask(savedJoinedTask!);
+      ref.read(curEditingTaskStateProvider.notifier).setTask(newTask);
 
       final navigationService = ref.read(navigationServiceProvider);
       navigationService.navigateTo(AppRoutes.taskPage.name, arguments: {
         'mode': EditablePageMode.readOnly,
         'actions': [const EditTaskButton()],
-        'title': task.name,
+        'title': newTask.name,
       });
 
       log('and opened task page');
@@ -230,29 +242,30 @@ class TaskToolMethods {
     }
 
     return CreateTaskResultModel(
-      joinedTask: savedJoinedTask!,
+      task: newTask,
       resultForAi: allowToolUiActions
-          ? 'Created new task "${task.name}" and opened task page'
-          : 'Created new task "${task.name}", but UI actions are not allowed',
+          ? 'Created new task "${newTask.name}" and opened task page'
+          : 'Created new task "${newTask.name}", but UI actions are not allowed',
       showOnly: true,
     );
   }
 
   // TODO p2: move this to a db method
-  Future<List<JoinedTaskModel>> _getJoinedTasksByName(
+  // Finds the tasks with the highest similarity to the search task name
+  Future<List<TaskModel>> _getTasksByName(
       Ref ref, String searchTaskName) async {
     final userId = _getUserId(ref);
     if (userId == null) return [];
 
-    final joinedTasks = await ref
-        .read(joinedTasksRepositoryProvider)
-        .getUserViewableJoinedTasks(userId);
+    final allTasks = await ref
+        .read(tasksRepositoryProvider)
+        .getUserViewableTasks(userId: userId);
 
     // Calculate similarity scores and sort
-    final tasksWithScores = joinedTasks
-        .map((joinedTask) {
-          final similarity = joinedTask.task.name.similarity(searchTaskName);
-          return (joinedTask, similarity);
+    final tasksWithScores = allTasks
+        .map((task) {
+          final similarity = task.name.similarity(searchTaskName);
+          return (task, similarity);
         })
         .where((tuple) => tuple.$2 >= _similarityThreshold)
         .toList()
@@ -266,13 +279,11 @@ class TaskToolMethods {
       {required Ref ref,
       required UpdateTaskFieldsRequestModel actionRequest,
       required bool allowToolUiActions}) async {
-    final matchingTasks =
-        await _getJoinedTasksByName(ref, actionRequest.taskName);
+    final matchingTasks = await _getTasksByName(ref, actionRequest.taskName);
 
     // TODO p2: determine task matching logic - may want to ask user for confirmation or add a good undo
     // For now - just update the first matching task
-    final joinedTask = matchingTasks.first;
-    final taskToModify = joinedTask.task;
+    final taskToModify = matchingTasks.first;
 
     final updatedTask = taskToModify.copyWith(
       name: actionRequest.taskName,
@@ -293,14 +304,12 @@ class TaskToolMethods {
 
     // Show the new task fields and ask for confirmation
 
-    final updatedJoinedTask = joinedTask.copyWith(task: updatedTask);
-
     if (allowToolUiActions) {
-      ref.read(curTaskServiceProvider).loadTask(updatedJoinedTask);
+      ref.read(curEditingTaskStateProvider.notifier).setTask(updatedTask);
     }
 
     return UpdateTaskFieldsResultModel(
-      joinedTask: updatedJoinedTask,
+      task: updatedTask,
       resultForAi: 'Updated task "${updatedTask.name}" and showed result in UI',
       showOnly: true,
     );
@@ -340,28 +349,25 @@ class TaskToolMethods {
     }
 
     // If the task is found, move on to deleting it
-    final joinedTask = await ref
-        .read(joinedTasksRepositoryProvider)
-        .getJoinedTaskById(filteredTasks.first.id);
-    final taskService = ref.read(curTaskServiceProvider);
-    taskService.loadTask(joinedTask!);
+    final toDeleteTask = filteredTasks.first;
+    ref.read(curEditingTaskStateProvider.notifier).setTask(toDeleteTask);
 
     final navigationService = ref.read(navigationServiceProvider);
     final deleted = await navigationService.showPopupDialog(
       DeleteConfirmationDialog(
-        itemName: joinedTask.task.name,
+        itemName: toDeleteTask.name,
         onDelete: () async {
-          await ref.read(tasksDbProvider).deleteItem(joinedTask.task.id);
+          await ref.read(tasksRepositoryProvider).deleteItem(toDeleteTask.id);
         },
       ),
     );
 
     return DeleteTaskResultModel(
       resultForAi: deleted == true
-          ? 'Successfully deleted task "${joinedTask.task.name}"'
-          : 'Task deletion cancelled by user for "${joinedTask.task.name}"',
+          ? 'Successfully deleted task "${toDeleteTask.name}"'
+          : 'Task deletion cancelled by user for "${toDeleteTask.name}"',
       isDeleted: deleted,
-      taskName: joinedTask.task.name,
+      taskName: toDeleteTask.name,
       showOnly: true,
     );
   }

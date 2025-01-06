@@ -4,6 +4,9 @@ import 'package:seren_ai_flutter/services/data/projects/models/project_model.dar
 import 'package:seren_ai_flutter/services/data/projects/repositories/projects_repository.dart';
 import 'package:seren_ai_flutter/services/auth/cur_auth_dependency_provider.dart';
 
+// TODO p0: update the underlying SQL query to get all projects for admins
+// Instead of having logic here to do that
+
 /// Stream provider for projects the current user can view
 final curUserViewableProjectsProvider =
     StreamProvider.autoDispose<List<ProjectModel>>(

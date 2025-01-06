@@ -9,14 +9,17 @@ final taskCommentsRepositoryProvider = Provider<TaskCommentsRepository>((ref) {
 });
 
 class TaskCommentsRepository extends BaseRepository<TaskCommentModel> {
-  const TaskCommentsRepository(super.db);
-
-  @override
-  Set<String> get REMOVEwatchTables => {'task_comments'};
+  const TaskCommentsRepository(super.db,
+      {super.primaryTable = 'task_comments'});
 
   @override
   TaskCommentModel fromJson(Map<String, dynamic> json) {
     return TaskCommentModel.fromJson(json);
+  }
+
+  @override
+  Map<String, dynamic> toJson(TaskCommentModel item) {
+    return item.toJson();
   }
 
   Stream<List<TaskCommentModel>> watchTaskComments({

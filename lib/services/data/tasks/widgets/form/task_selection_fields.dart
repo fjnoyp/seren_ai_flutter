@@ -8,8 +8,7 @@ import 'package:seren_ai_flutter/services/data/common/widgets/form/base_project_
 import 'package:seren_ai_flutter/services/data/common/widgets/form/base_status_selection_field.dart';
 import 'package:seren_ai_flutter/services/data/common/widgets/form/base_task_name_field.dart';
 import 'package:seren_ai_flutter/services/data/projects/providers/cur_user_viewable_projects_provider.dart';
-import 'package:seren_ai_flutter/services/data/tasks/providers/cur_task_service_provider.dart';
-import 'package:seren_ai_flutter/services/data/tasks/providers/cur_task_state_provider.dart';
+import 'package:seren_ai_flutter/services/data/tasks/providers/cur_editing_task_state_provider.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 class TaskProjectSelectionField extends BaseProjectSelectionField {
@@ -17,11 +16,12 @@ class TaskProjectSelectionField extends BaseProjectSelectionField {
     super.key,
     required super.isEditable,
   }) : super(
-          projectProvider:
-              curTaskStateProvider.select((state) => state.value?.project),
+          projectIdProvider: curEditingTaskStateProvider
+              .select((state) => state.value?.taskModel.parentProjectId),
           selectableProjectsProvider: curUserViewableProjectsProvider,
-          updateProject: (ref, project) =>
-              ref.read(curTaskServiceProvider).updateParentProject(project),
+          updateProject: (ref, project) => ref
+              .read(curEditingTaskStateProvider.notifier)
+              .updateTaskFields(parentProjectId: project!.id),
         );
 }
 
@@ -30,10 +30,11 @@ class TaskStatusSelectionField extends BaseStatusSelectionField {
     super.key,
     required super.enabled,
   }) : super(
-          statusProvider:
-              curTaskStateProvider.select((state) => state.value?.task.status),
-          updateStatus: (ref, status) =>
-              ref.read(curTaskServiceProvider).updateStatus(status),
+          statusProvider: curEditingTaskStateProvider
+              .select((state) => state.value?.taskModel.status),
+          updateStatus: (ref, status) => ref
+              .read(curEditingTaskStateProvider.notifier)
+              .updateTaskFields(status: status),
         );
 }
 
@@ -42,10 +43,11 @@ class TaskPrioritySelectionField extends BasePrioritySelectionField {
     super.key,
     required super.enabled,
   }) : super(
-          priorityProvider: curTaskStateProvider
-              .select((state) => state.value?.task.priority),
-          updatePriority: (ref, priority) =>
-              ref.read(curTaskServiceProvider).updatePriority(priority),
+          priorityProvider: curEditingTaskStateProvider
+              .select((state) => state.value?.taskModel.priority),
+          updatePriority: (ref, priority) => ref
+              .read(curEditingTaskStateProvider.notifier)
+              .updateTaskFields(priority: priority),
         );
 }
 
@@ -54,10 +56,11 @@ class TaskNameField extends BaseNameField {
     super.key,
     required super.isEditable,
   }) : super(
-          nameProvider: curTaskStateProvider
-              .select((state) => state.value?.task.name ?? ''),
-          updateName: (ref, name) =>
-              ref.read(curTaskServiceProvider).updateTaskName(name),
+          nameProvider: curEditingTaskStateProvider
+              .select((state) => state.value?.taskModel.name ?? ''),
+          updateName: (ref, name) => ref
+              .read(curEditingTaskStateProvider.notifier)
+              .updateTaskFields(name: name),
         );
 }
 
@@ -66,10 +69,11 @@ class TaskDueDateSelectionField extends BaseDueDateSelectionField {
     super.key,
     required super.enabled,
   }) : super(
-          dueDateProvider:
-              curTaskStateProvider.select((state) => state.value?.task.dueDate),
-          updateDueDate: (ref, pickedDateTime) =>
-              ref.read(curTaskServiceProvider).updateDueDate(pickedDateTime),
+          dueDateProvider: curEditingTaskStateProvider
+              .select((state) => state.value?.taskModel.dueDate),
+          updateDueDate: (ref, pickedDateTime) => ref
+              .read(curEditingTaskStateProvider.notifier)
+              .updateTaskFields(dueDate: pickedDateTime),
         );
 }
 
@@ -79,14 +83,15 @@ class ReminderMinuteOffsetFromDueDateSelectionField
     super.key,
     required super.enabled,
   }) : super(
-          reminderProvider: curTaskStateProvider
-              .select((state) => state.value?.task.reminderOffsetMinutes),
-          updateReminder: (ref, reminder) =>
-              ref.read(curTaskServiceProvider).setReminder(reminder),
+          reminderProvider: curEditingTaskStateProvider
+              .select((state) => state.value?.taskModel.reminderOffsetMinutes),
+          updateReminder: (ref, reminder) => ref
+              .read(curEditingTaskStateProvider.notifier)
+              .updateTaskFields(reminderOffsetMinutes: reminder),
           labelWidgetBuilder: (ref) => ref
-                      .watch(curTaskStateProvider)
+                      .watch(curEditingTaskStateProvider)
                       .value
-                      ?.task
+                      ?.taskModel
                       .reminderOffsetMinutes ==
                   null
               ? const Icon(Icons.notifications_off)
@@ -101,10 +106,11 @@ class TaskDescriptionSelectionField extends BaseTextBlockEditSelectionField {
     required BuildContext context,
   }) : super(
           hintText: AppLocalizations.of(context)!.description,
-          descriptionProvider: curTaskStateProvider
-              .select((state) => state.value?.task.description ?? ''),
-          updateDescription: (ref, description) =>
-              ref.read(curTaskServiceProvider).updateDescription(description),
+          descriptionProvider: curEditingTaskStateProvider
+              .select((state) => state.value?.taskModel.description ?? ''),
+          updateDescription: (ref, description) => ref
+              .read(curEditingTaskStateProvider.notifier)
+              .updateTaskFields(description: description),
         );
 }
 
@@ -113,11 +119,12 @@ class TaskAssigneesSelectionField extends BaseAssigneesSelectionField {
     super.key,
     required super.enabled,
   }) : super(
-          assigneesProvider: curTaskStateProvider
+          assigneesProvider: curEditingTaskStateProvider
               .select((state) => state.value?.assignees ?? []),
-          projectProvider:
-              curTaskStateProvider.select((state) => state.value?.project),
-          updateAssignees: (ref, assignees) =>
-              ref.read(curTaskServiceProvider).updateAssignees(assignees),
+          projectIdProvider: curEditingTaskStateProvider
+              .select((state) => state.value?.taskModel.parentProjectId),
+          updateAssignees: (ref, assignees) => ref
+              .read(curEditingTaskStateProvider.notifier)
+              .updateAssignees(assignees: assignees ?? []),
         );
 }
