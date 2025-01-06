@@ -111,7 +111,7 @@ class MainScaffold extends ConsumerWidget {
                 ],
               ),
               floatingActionButton: (showAiAssistant && !isAiAssistantExpanded)
-                  ? const AIAssistantButtonWithQuickActions()
+                  ? const WebAiAssistantButtonWithQuickActions()
                   : null,
             )
           : Scaffold(
@@ -217,7 +217,7 @@ class MainScaffold extends ConsumerWidget {
               floatingActionButton: showAiAssistant
                   ? isAiAssistantExpanded
                       ? null
-                      : const AIAssistantButton()
+                      : const AiAssistantButton()
                   : null,
             ),
     );

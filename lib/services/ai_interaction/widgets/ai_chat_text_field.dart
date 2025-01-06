@@ -6,8 +6,8 @@ import 'package:seren_ai_flutter/services/ai_interaction/ai_chat_service_provide
 final aiChatTextEditingControllerProvider =
     Provider<TextEditingController>((_) => TextEditingController());
 
-class AIChatTextField extends ConsumerWidget {
-  const AIChatTextField({super.key});
+class AiChatTextField extends ConsumerWidget {
+  const AiChatTextField({super.key});
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {

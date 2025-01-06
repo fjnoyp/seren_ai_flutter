@@ -21,7 +21,7 @@ class AiIsRespondingIndicator extends StatelessWidget {
         const Expanded(
           child: Padding(
             padding: EdgeInsets.only(bottom: 24, top: 24, right: 24),
-            child: JumpingDotsIndicator(),
+            child: _JumpingDotsIndicator(),
           ),
         ),
       ],
@@ -29,9 +29,8 @@ class AiIsRespondingIndicator extends StatelessWidget {
   }
 }
 
-
-class JumpingDotsIndicator extends HookWidget {
-  const JumpingDotsIndicator({super.key});
+class _JumpingDotsIndicator extends HookWidget {
+  const _JumpingDotsIndicator();
 
   @override
   Widget build(BuildContext context) {

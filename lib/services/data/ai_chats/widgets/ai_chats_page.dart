@@ -59,7 +59,7 @@ class AIChatsPage extends HookConsumerWidget {
                       ChatThreadDisplay(),
                       Padding(
                         padding: EdgeInsets.all(12.0),
-                        child: AIChatTextField(),
+                        child: AiChatTextField(),
                       ),
                     ],
                   ),

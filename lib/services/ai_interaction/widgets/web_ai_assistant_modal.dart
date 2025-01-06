@@ -47,7 +47,7 @@ class WebAiAssistantModal extends ConsumerWidget {
                   IconButton(
                     onPressed: () {
                       // Confirm if we should clear the text field when closing the modal
-                      ref.read(aiChatTextEditingControllerProvider).clear();
+                      // ref.read(aiChatTextEditingControllerProvider).clear();
                       ref.read(isAiModalVisibleProvider.notifier).state = false;
                     },
                     style: IconButton.styleFrom(
@@ -63,7 +63,7 @@ class WebAiAssistantModal extends ConsumerWidget {
                 tag: 'ai-chat-messages-display',
                 child: PaginatedChatMessagesDisplay(),
               )),
-              const AIChatTextField(),
+              const AiChatTextField(),
             ],
           ),
         ),

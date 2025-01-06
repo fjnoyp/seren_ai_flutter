@@ -5,12 +5,12 @@ import 'package:seren_ai_flutter/common/routes/app_routes.dart';
 import 'package:seren_ai_flutter/services/ai_interaction/ai_quick_actions/models/ai_quick_action.dart';
 
 final aiQuickActionsServiceProvider =
-    NotifierProvider<AIQuickActionsService, List<AIQuickAction>>(
-        AIQuickActionsService.new);
+    NotifierProvider<AiQuickActionsService, List<AiQuickAction>>(
+        AiQuickActionsService.new);
 
-class AIQuickActionsService extends Notifier<List<AIQuickAction>> {
+class AiQuickActionsService extends Notifier<List<AiQuickAction>> {
   @override
-  List<AIQuickAction> build() {
+  List<AiQuickAction> build() {
     _generateQuickActionsForCurrentPage();
     return [];
   }
@@ -18,14 +18,14 @@ class AIQuickActionsService extends Notifier<List<AIQuickAction>> {
   /// Adds a quick action to the list of quick actions.
   ///
   /// For eventual use from the UI.
-  void addQuickAction(AIQuickAction quickAction) {
+  void addQuickAction(AiQuickAction quickAction) {
     state = [...state, quickAction];
   }
 
   /// Removes a quick action from the list of quick actions.
   ///
   /// For eventual use from the UI.
-  void removeQuickAction(AIQuickAction quickAction) {
+  void removeQuickAction(AiQuickAction quickAction) {
     state = state.where((action) => action != quickAction).toList();
   }
 
@@ -41,21 +41,21 @@ class AIQuickActionsService extends Notifier<List<AIQuickAction>> {
         // We don't use break here so that we also use project page quick actions
         case AppRoutes.projects:
           state = [
-            AIQuickAction.createTask(context),
-            AIQuickAction.findTasks(context),
-            AIQuickAction.updateTasks(context),
-            // AIQuickAction.createProject(context),
+            AiQuickAction.createTask(context),
+            AiQuickAction.findTasks(context),
+            AiQuickAction.updateTasks(context),
+            // AiQuickAction.createProject(context),
           ];
           break;
         case AppRoutes.manageOrgUsers:
           state = [
-            // AIQuickAction.inviteUserToOrg(context, ref.read(curOrgServiceProvider).name),
+            // AiQuickAction.inviteUserToOrg(context, ref.read(curOrgServiceProvider).name),
           ];
           break;
         case AppRoutes.home:
           state = [
-            AIQuickAction.checkOverdueTasks(context),
-            AIQuickAction.getMyShiftLogs(context),
+            AiQuickAction.checkOverdueTasks(context),
+            AiQuickAction.getMyShiftLogs(context),
           ];
           break;
         case AppRoutes.taskPage:
@@ -77,5 +77,5 @@ class AIQuickActionsService extends Notifier<List<AIQuickAction>> {
   }
 
   /// Sends current context data to the AI and generates quick actions based on the AI's response.
-  void generateQuickActionsFromAI() {}
+  void generateQuickActionsFromAi() {}
 }
