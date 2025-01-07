@@ -5,7 +5,10 @@ import 'package:seren_ai_flutter/services/data/tasks/repositories/tasks_reposito
 import 'package:seren_ai_flutter/services/notifications/notification_service.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
-import 'dart:developer' as dev;
+// TODO p3: the stream subscription is being recreated every time the provider is read, causing multiple listeners.
+// But when we use autoDispose, the provider is being disposed too quickly and the stream is not being listened to.
+// We need to find a way to listen to the stream and not recreate the subscription every time the provider is read.
+// For now, this solution is working (but it's repeatdly cancelling and rescheduling notifications 2-3 times per reminder update)
 
 final taskScheduleNotificationsServiceProvider = Provider((ref) {
   final notificationService = ref.read(notificationServiceProvider);
@@ -16,25 +19,54 @@ final taskScheduleNotificationsServiceProvider = Provider((ref) {
         .read(tasksRepositoryProvider)
         .watchUserAssignedTasks(userId: userId),
   ).listen((tasks) async {
+    final tasksToSchedule =
+        tasks.where((task) => task.reminderOffsetMinutes != null).toList();
+
     // Get localizations from the current context when needed
     final context =
         ref.read(navigationServiceProvider).navigatorKey.currentContext;
     if (context == null) return;
     final localizations = AppLocalizations.of(context)!;
 
-    // TODO: only replace notifications that have changed instead of cancelling and rescheduling all
-    await notificationService.cancelAllNotifications();
-    dev.log('Cancelled all notifications');
+    final notifications =
+        await notificationService.getPendingNotifications(ref, 'task');
 
-    for (final task
-        in tasks.where((task) => task.reminderOffsetMinutes != null)) {
+    // Remove notifications that are no longer valid
+    for (final (taskId, scheduledDate, notification) in notifications) {
+      if (tasksToSchedule.any((task) => task.id == taskId)) {
+        final task = tasksToSchedule.firstWhere((task) => task.id == taskId);
+
+        // Compare dates ignoring milliseconds to avoid precision issues
+        final existingSchedule =
+            scheduledDate.copyWith(millisecond: 0, microsecond: 0);
+        final newSchedule = task.dueDate!
+            .subtract(Duration(minutes: task.reminderOffsetMinutes!))
+            .copyWith(millisecond: 0, microsecond: 0);
+
+        if (existingSchedule == newSchedule) {
+          // If scheduled date matches, remove from tasksToSchedule (already scheduled)
+          tasksToSchedule.removeWhere((t) => t.id == taskId);
+        } else {
+          // If scheduled date does not match, cancel the notification
+          await notificationService.cancelNotification(notification.id);
+        }
+      } else {
+        // If task is not in tasksToSchedule, cancel the notification
+        await notificationService.cancelNotification(notification.id);
+      }
+    }
+
+    for (final task in tasksToSchedule) {
       final scheduledDate = task.dueDate!.toLocal().subtract(
             Duration(minutes: task.reminderOffsetMinutes!),
           );
 
+      // If scheduled date is in the future, schedule the notification
       if (scheduledDate.isAfter(DateTime.now())) {
         await notificationService.scheduleNotification(
-          id: tasks.indexOf(task),
+          ref: ref,
+          notificationType: 'task',
+          elementId: task.id,
           title: localizations.taskReminder,
           body: localizations.taskReminderBody(
             task.name,

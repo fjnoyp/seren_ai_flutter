@@ -1,7 +1,9 @@
+import 'dart:convert';
 import 'dart:developer';
 import 'dart:io' show Platform;
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:seren_ai_flutter/common/shared_preferences_service_provider.dart';
 import 'notification_handlers.dart';
 import 'package:timezone/timezone.dart' as tz;
 import 'package:timezone/data/latest.dart' as tz;
@@ -10,10 +12,6 @@ final notificationServiceProvider = Provider<NotificationService>((ref) {
   throw UnimplementedError('NotificationService not overridden');
 });
 
-// TODO: Currently we cancel and reschedule all notifications because we can't maintain
-// a stable mapping between tasks and their notifications.
-// This is because notification IDs are changing based on array position at the update time,
-// because it changes when notifications are added/dismissed.
 class NotificationService {
   final _notificationsPlugin = FlutterLocalNotificationsPlugin();
 
@@ -40,28 +38,28 @@ class NotificationService {
     // Initialize settings for both platforms with the background handler
     await _notificationsPlugin.initialize(
       InitializationSettings(
-      android: const AndroidInitializationSettings(
-          '@mipmap/ic_launcher'), // default icon
-      iOS: DarwinInitializationSettings(
-        notificationCategories: [
-          DarwinNotificationCategory(
-            'demoCategory',
-            actions: <DarwinNotificationAction>[
-              DarwinNotificationAction.plain(
-                'task_reminder',
-                'It\'s almost Task Due Date!',
-                options: <DarwinNotificationActionOption>{
-                  DarwinNotificationActionOption.foreground,
-                },
-              ),
-            ],
-            options: <DarwinNotificationCategoryOption>{
-              DarwinNotificationCategoryOption.hiddenPreviewShowTitle,
-            },
-          )
-        ],
+        android: const AndroidInitializationSettings(
+            '@mipmap/ic_launcher'), // default icon
+        iOS: DarwinInitializationSettings(
+          notificationCategories: [
+            DarwinNotificationCategory(
+              'demoCategory',
+              actions: <DarwinNotificationAction>[
+                DarwinNotificationAction.plain(
+                  'task_reminder',
+                  'It\'s almost Task Due Date!',
+                  options: <DarwinNotificationActionOption>{
+                    DarwinNotificationActionOption.foreground,
+                  },
+                ),
+              ],
+              options: <DarwinNotificationCategoryOption>{
+                DarwinNotificationCategoryOption.hiddenPreviewShowTitle,
+              },
+            )
+          ],
+        ),
       ),
-    ),
       onDidReceiveBackgroundNotificationResponse: notificationTapBackground,
     );
 
@@ -85,12 +83,25 @@ class NotificationService {
     }
   }
 
+  /// Schedule a notification
+  ///
+  /// The notification will be saved in shared preferences
+  /// using the notificationType as prefix,
+  /// DateTime.now().millisecondsSinceEpoch as key,
+  /// and the elementId and scheduledDate as value
   Future<void> scheduleNotification({
-    required int id,
+    required Ref ref,
+    required String elementId,
+    required String notificationType,
     required String title,
     required String body,
     required DateTime scheduledDate,
   }) async {
+    // Generate a unique ID for the notification
+    // (use milliseconds since epoch to avoid collisions
+    // and use %0x7FFFFFFF to avoid overflow,
+    // since the notifications plugin uses int32 for the id)
+    final id = DateTime.now().millisecondsSinceEpoch % 0x7FFFFFFF;
     await _notificationsPlugin.zonedSchedule(
       id,
       title,
@@ -101,24 +112,49 @@ class NotificationService {
       uiLocalNotificationDateInterpretation:
           UILocalNotificationDateInterpretation.absoluteTime,
     );
+
+    ref.read(sharedPreferencesProvider).setString(
+        '${notificationType}_notification_$id',
+        jsonEncode({
+          'element_id': elementId,
+          'scheduled_date': scheduledDate.toIso8601String()
+        }));
+
     log('Scheduled notification with id $id to notify at $scheduledDate');
   }
 
-  // Cancel a specific notification by ID
+  // TODO p0: save changes to shared preferences when notifications are cancelled
+  /// Cancel a specific notification by ID
   Future<void> cancelNotification(int id) async {
     await _notificationsPlugin.cancel(id);
+    log('Cancelled notification with id $id');
   }
 
-  // Cancel all scheduled notifications
-  Future<void> cancelAllNotifications() async {
-    await _notificationsPlugin.cancelAll();
-  }
+  // TODO p0: save changes to shared preferences when notifications are cancelled
+  /// Cancel all scheduled notifications
+  // Future<void> cancelAllNotifications() async {
+  //   await _notificationsPlugin.cancelAll();
+  //   log('Cancelled all notifications');
+  // }
 
-  // Get pending notification requests
-  Future<List<PendingNotificationRequest>> getPendingNotifications() async {
+  /// Get pending notification requests
+  ///
+  /// Returns a list of records, where the first element is the element id
+  /// and the third element is the pending notification request
+  Future<List<(String, DateTime, PendingNotificationRequest)>>
+      getPendingNotifications(Ref ref, String notificationType) async {
+    final sharedPreferences = ref.read(sharedPreferencesProvider);
     final pendingNotifications =
         await _notificationsPlugin.pendingNotificationRequests();
-    return pendingNotifications;
+
+    return pendingNotifications.map((e) {
+      final elementData = jsonDecode(sharedPreferences
+          .getString('${notificationType}_notification_${e.id}')!);
+      final elementId = elementData['element_id'].toString();
+      final scheduledDate = DateTime.parse(elementData['scheduled_date']);
+
+      return (elementId, scheduledDate, e);
+    }).toList();
   }
 
   static const _platformDetails = NotificationDetails(
