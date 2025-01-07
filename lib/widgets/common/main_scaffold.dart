@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_svg/svg.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:seren_ai_flutter/common/navigation_service_provider.dart';
 import 'package:seren_ai_flutter/common/routes/app_routes.dart';
 import 'package:seren_ai_flutter/common/universal_platform/universal_platform.dart';
 import 'package:seren_ai_flutter/services/ai_interaction/is_ai_modal_visible_provider.dart';
+import 'package:seren_ai_flutter/services/ai_interaction/widgets/ai_assistant_button.dart';
 import 'package:seren_ai_flutter/services/ai_interaction/widgets/user_input_display_widget.dart';
 import 'package:seren_ai_flutter/services/ai_interaction/widgets/web_ai_assistant_modal.dart';
 import 'package:seren_ai_flutter/services/data/db_setup/app_config.dart';
@@ -99,16 +99,7 @@ class MainScaffold extends ConsumerWidget {
                           child: Stack(
                             alignment: Alignment.centerRight,
                             children: [
-                              Row(
-                                children: [
-                                  Expanded(child: body),
-                                  if (showAiAssistant &&
-                                      !isAiAssistantExpanded) ...[
-                                    const _AIAssistantButton(),
-                                    const SizedBox(width: 16),
-                                  ],
-                                ],
-                              ),
+                              Expanded(child: body),
                               if (showAiAssistant && isAiAssistantExpanded)
                                 const WebAiAssistantModal(),
                             ],
@@ -119,6 +110,9 @@ class MainScaffold extends ConsumerWidget {
                   ),
                 ],
               ),
+              floatingActionButton: (showAiAssistant && !isAiAssistantExpanded)
+                  ? const WebAiAssistantButtonWithQuickActions()
+                  : null,
             )
           : Scaffold(
               backgroundColor: theme.scaffoldBackgroundColor,
@@ -172,13 +166,9 @@ class MainScaffold extends ConsumerWidget {
                 ],
               ),
               drawer: const DrawerView(),
-              body: Stack(
-                children: [
-                  Padding(
-                    padding: const EdgeInsets.all(0),
-                    child: body,
-                  ),
-                ],
+              body: Padding(
+                padding: const EdgeInsets.all(0),
+                child: body,
               ),
 
               /*
@@ -227,7 +217,7 @@ class MainScaffold extends ConsumerWidget {
               floatingActionButton: showAiAssistant
                   ? isAiAssistantExpanded
                       ? null
-                      : const _AIAssistantButton()
+                      : const AiAssistantButton()
                   : null,
             ),
     );
@@ -262,26 +252,6 @@ class MainScaffold extends ConsumerWidget {
             child: Text(AppLocalizations.of(context)!.accept),
           ),
         ],
-      ),
-    );
-  }
-}
-
-class _AIAssistantButton extends ConsumerWidget {
-  const _AIAssistantButton();
-
-  @override
-  Widget build(BuildContext context, WidgetRef ref) {
-    return Tooltip(
-      message: AppLocalizations.of(context)!.aiAssistant,
-      child: GestureDetector(
-        onTap: () => ref.read(isAiModalVisibleProvider.notifier).state = true,
-        child: Hero(
-            tag: 'ai-button',
-            child: SizedBox(
-                height: 56.0,
-                width: 56.0,
-                child: SvgPicture.asset('assets/images/AI button.svg'))),
       ),
     );
   }

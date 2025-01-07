@@ -72,11 +72,12 @@ class NavigationService {
 
   Future<dynamic> showPopupDialog(Widget dialog,
       {bool barrierDismissible = true}) async {
-    final context = navigatorKey.currentState!.context;
     return await showDialog(
       context: context,
       builder: (context) => dialog,
       barrierDismissible: barrierDismissible,
     );
   }
+
+  BuildContext get context => navigatorKey.currentState!.context;
 }
