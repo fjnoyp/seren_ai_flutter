@@ -14,7 +14,7 @@ final taskScheduleNotificationsServiceProvider = Provider((ref) {
     ref: ref,
     builder: (userId) => ref
         .read(tasksRepositoryProvider)
-        .watchUserViewableTasks(userId: userId),
+        .watchUserAssignedTasks(userId: userId),
   ).listen((tasks) async {
     // Get localizations from the current context when needed
     final context =
