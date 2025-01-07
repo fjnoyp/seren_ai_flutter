@@ -162,15 +162,22 @@ class _UserMessageWidget extends StatelessWidget {
   Widget build(BuildContext context) {
     return Padding(
       padding: const EdgeInsets.only(left: 80.0),
-      child: Card(
-        color: Theme.of(context).colorScheme.primaryContainer,
-        child: Padding(
-          padding: const EdgeInsets.all(16.0),
-          child: _CollapsibleText(
-            message,
-            alignment: AlignmentDirectional.centerEnd,
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.end,
+        children: [
+          Flexible(
+            child: Card(
+              color: Theme.of(context).colorScheme.primaryContainer,
+              child: Padding(
+                padding: const EdgeInsets.all(16.0),
+                child: _CollapsibleText(
+                  message,
+                  alignment: AlignmentDirectional.centerEnd,
+                ),
+              ),
+            ),
           ),
-        ),
+        ],
       ),
     );
   }
