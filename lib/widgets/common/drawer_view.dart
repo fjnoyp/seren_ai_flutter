@@ -117,10 +117,11 @@ class DrawerView extends ConsumerWidget {
                             .read(navigationServiceProvider)
                             .navigateTo(AppRoutes.testSQLPage.name),
                       ),
-                      _DrawerListTile(
-                        icon: Icons.chat,
-                        title: AppLocalizations.of(context)!.aiChatThreads,
-                        onTap: () => ref
+                      if (!isWebVersion)
+                        _DrawerListTile(
+                          icon: Icons.chat,
+                          title: AppLocalizations.of(context)!.aiChatThreads,
+                          onTap: () => ref
                             .read(navigationServiceProvider)
                             .navigateTo(AppRoutes.aiChats.name),
                       ),

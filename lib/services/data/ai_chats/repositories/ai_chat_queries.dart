@@ -5,7 +5,9 @@ abstract class AiChatQueries {
   SELECT *
   FROM ai_chat_messages
   WHERE parent_chat_thread_id = :thread_id
-  ORDER BY created_at DESC
+  ORDER BY 
+    created_at IS NULL DESC,
+    created_at DESC
   LIMIT :limit
   OFFSET :offset;
   ''';
