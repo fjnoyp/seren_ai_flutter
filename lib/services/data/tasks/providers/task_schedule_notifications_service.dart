@@ -8,11 +8,6 @@ import 'package:seren_ai_flutter/services/data/tasks/repositories/tasks_reposito
 import 'package:seren_ai_flutter/services/notifications/notification_service.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
-// TODO p3: the stream subscription is being recreated every time the provider is read, causing multiple listeners.
-// But when we use autoDispose, the provider is being disposed too quickly and the stream is not being listened to.
-// We need to find a way to listen to the stream and not recreate the subscription every time the provider is read.
-// For now, this solution is working (but it's repeatdly cancelling and rescheduling notifications 2-3 times per reminder update)
-
 final taskScheduleNotificationsServiceProvider = Provider((ref) {
   List<TaskModel>? previousScheduledTasks;
   // Add this flag to track if we've already set up the listener
