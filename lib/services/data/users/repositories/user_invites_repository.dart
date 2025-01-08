@@ -9,14 +9,16 @@ final userInvitesRepositoryProvider = Provider<UserInvitesRepository>((ref) {
 });
 
 class UserInvitesRepository extends BaseRepository<InviteModel> {
-  const UserInvitesRepository(super.db);
-
-  @override
-  Set<String> get REMOVEwatchTables => {'invites', 'orgs', 'users'};
+  const UserInvitesRepository(super.db, {super.primaryTable = 'invites'});
 
   @override
   InviteModel fromJson(Map<String, dynamic> json) {
     return InviteModel.fromJson(json);
+  }
+
+  @override
+  Map<String, dynamic> toJson(InviteModel item) {
+    return item.toJson();
   }
 
   Stream<List<InviteModel>> watchPendingInvitesByEmail({
