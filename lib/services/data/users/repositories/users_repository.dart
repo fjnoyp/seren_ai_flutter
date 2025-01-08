@@ -4,19 +4,27 @@ import 'package:seren_ai_flutter/services/data/users/models/user_model.dart';
 import 'package:seren_ai_flutter/services/data/common/base_repository.dart';
 import 'package:seren_ai_flutter/services/data/users/repositories/user_queries.dart';
 
+final usersInProjectProvider = FutureProvider.family<List<UserModel>, String>(
+  (ref, projectId) => ref
+      .watch(usersRepositoryProvider)
+      .getUsersInProject(projectId: projectId),
+);
+
 final usersRepositoryProvider = Provider<UsersRepository>((ref) {
   return UsersRepository(ref.watch(dbProvider));
 });
 
 class UsersRepository extends BaseRepository<UserModel> {
-  const UsersRepository(super.db);
-
-  @override
-  Set<String> get REMOVEwatchTables => {'users'};
+  const UsersRepository(super.db, {super.primaryTable = 'users'});
 
   @override
   UserModel fromJson(Map<String, dynamic> json) {
     return UserModel.fromJson(json);
+  }
+
+  @override
+  Map<String, dynamic> toJson(UserModel item) {
+    return item.toJson();
   }
 
   // Watch a specific user by ID
@@ -63,6 +71,30 @@ class UsersRepository extends BaseRepository<UserModel> {
       UserQueries.getTaskAssignedUsersQuery,
       {
         'task_id': taskId,
+      },
+    );
+  }
+
+  // Watch users assigned to a specific project
+  Stream<List<UserModel>> watchUsersInProject({
+    required String projectId,
+  }) {
+    return watch(
+      UserQueries.usersInProjectQuery,
+      {
+        'project_id': projectId,
+      },
+    );
+  }
+
+  // Get users assigned to a specific project
+  Future<List<UserModel>> getUsersInProject({
+    required String projectId,
+  }) async {
+    return await get(
+      UserQueries.usersInProjectQuery,
+      {
+        'project_id': projectId,
       },
     );
   }
