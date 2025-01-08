@@ -10,14 +10,17 @@ final aiChatThreadsRepositoryProvider =
 });
 
 class AiChatThreadsRepository extends BaseRepository<AiChatThreadModel> {
-  const AiChatThreadsRepository(super.db);
-
-  @override
-  Set<String> get REMOVEwatchTables => {'ai_chat_threads'};
+  const AiChatThreadsRepository(super.db,
+      {super.primaryTable = 'ai_chat_threads'});
 
   @override
   AiChatThreadModel fromJson(Map<String, dynamic> json) {
     return AiChatThreadModel.fromJson(json);
+  }
+
+  @override
+  Map<String, dynamic> toJson(AiChatThreadModel item) {
+    return item.toJson();
   }
 
   Stream<AiChatThreadModel?> watchUserThread({
