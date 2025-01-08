@@ -11,7 +11,7 @@ import 'package:seren_ai_flutter/services/data/projects/models/project_model.dar
 import 'package:seren_ai_flutter/services/data/projects/providers/selected_project_provider.dart';
 import 'package:seren_ai_flutter/services/data/projects/widgets/action_buttons/update_project_assignees_button.dart';
 import 'package:seren_ai_flutter/services/data/users/models/user_model.dart';
-import 'package:seren_ai_flutter/services/data/users/providers/users_in_project_provider.dart';
+import 'package:seren_ai_flutter/services/data/users/repositories/users_repository.dart';
 
 class BaseAssigneesSelectionField extends HookConsumerWidget {
   final bool enabled;
