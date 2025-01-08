@@ -1,4 +1,3 @@
-import 'dart:convert';
 import 'dart:developer';
 import 'dart:io' show Platform;
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
@@ -86,12 +85,10 @@ class NotificationService {
   /// Schedule a notification
   ///
   /// The notification will be saved in shared preferences
-  /// using the notificationType as prefix,
-  /// DateTime.now().millisecondsSinceEpoch as key,
-  /// and the elementId and scheduledDate as value
+  /// as a list of notification ids,
+  /// using the notificationType as prefix.
   Future<void> scheduleNotification({
     required Ref ref,
-    required String elementId,
     required String notificationType,
     required String title,
     required String body,
@@ -113,48 +110,46 @@ class NotificationService {
           UILocalNotificationDateInterpretation.absoluteTime,
     );
 
-    ref.read(sharedPreferencesProvider).setString(
-        '${notificationType}_notification_$id',
-        jsonEncode({
-          'element_id': elementId,
-          'scheduled_date': scheduledDate.toIso8601String()
-        }));
+    final currentNotifications = ref
+            .read(sharedPreferencesProvider)
+            .getStringList('${notificationType}_notifications') ??
+        [];
+
+    ref.read(sharedPreferencesProvider).setStringList(
+        '${notificationType}_notifications',
+        [...currentNotifications, id.toString()]);
 
     log('Scheduled notification with id $id to notify at $scheduledDate');
   }
 
-  // TODO p0: save changes to shared preferences when notifications are cancelled
-  /// Cancel a specific notification by ID
-  Future<void> cancelNotification(int id) async {
-    await _notificationsPlugin.cancel(id);
-    log('Cancelled notification with id $id');
+  /// Cancel all scheduled notifications of a specific type
+  Future<void> cancelAllNotificationsOfType({
+    required Ref ref,
+    required String notificationType,
+  }) async {
+    final currentNotifications = ref
+            .read(sharedPreferencesProvider)
+            .getStringList('${notificationType}_notifications') ??
+        [];
+
+    for (final id in currentNotifications) {
+      await _notificationsPlugin.cancel(int.parse(id));
+    }
+
+    ref
+        .read(sharedPreferencesProvider)
+        .setStringList('${notificationType}_notifications', []);
+
+    log('Cancelled all notifications of type $notificationType');
   }
 
-  // TODO p0: save changes to shared preferences when notifications are cancelled
-  /// Cancel all scheduled notifications
-  // Future<void> cancelAllNotifications() async {
-  //   await _notificationsPlugin.cancelAll();
-  //   log('Cancelled all notifications');
-  // }
-
   /// Get pending notification requests
-  ///
-  /// Returns a list of records, where the first element is the element id
-  /// and the third element is the pending notification request
-  Future<List<(String, DateTime, PendingNotificationRequest)>>
-      getPendingNotifications(Ref ref, String notificationType) async {
-    final sharedPreferences = ref.read(sharedPreferencesProvider);
+  Future<List<PendingNotificationRequest>> getPendingNotifications(
+      Ref ref, String notificationType) async {
     final pendingNotifications =
         await _notificationsPlugin.pendingNotificationRequests();
 
-    return pendingNotifications.map((e) {
-      final elementData = jsonDecode(sharedPreferences
-          .getString('${notificationType}_notification_${e.id}')!);
-      final elementId = elementData['element_id'].toString();
-      final scheduledDate = DateTime.parse(elementData['scheduled_date']);
-
-      return (elementId, scheduledDate, e);
-    }).toList();
+    return pendingNotifications;
   }
 
   static const _platformDetails = NotificationDetails(
