@@ -12,14 +12,17 @@ final aiChatMessagesRepositoryProvider =
 class AiChatMessagesRepository extends BaseRepository<AiChatMessageModel> {
   static const int defaultPageSize = 40;
 
-  const AiChatMessagesRepository(super.db);
-
-  @override
-  Set<String> get REMOVEwatchTables => {'ai_chat_messages'};
+  const AiChatMessagesRepository(super.db,
+      {super.primaryTable = 'ai_chat_messages'});
 
   @override
   AiChatMessageModel fromJson(Map<String, dynamic> json) {
     return AiChatMessageModel.fromJson(json);
+  }
+
+  @override
+  Map<String, dynamic> toJson(AiChatMessageModel item) {
+    return item.toJson();
   }
 
   Stream<List<AiChatMessageModel>> watchThreadMessages({
