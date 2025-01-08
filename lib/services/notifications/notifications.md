@@ -38,8 +38,4 @@ Here are the key reasons why cancelling and rescheduling all notifications is be
 
 While it might seem less efficient at first glance, the reliability and simplicity benefits far outweigh any minor performance considerations.
 
-> But as we may use the notification service in other places, we shouldn't cancel all notifications in the task schedule notifications service, because it would reschedule only task related notifications and lose other notifications.
-
-> So we're using the notification service in a way that it's not the best practice, but it's the best solution for our use case. We're saving the notification id and scheduled date in SharedPreferences (like `'[notificationType]_notification_[id]'` as the key and a json encoded string `{'element_id': [elementId], 'scheduled_date': [scheduledDate]}` as the value), so we can cancel and reschedule notifications when needed.
-
-> Another solution would be to implement a cancel notification method in the notification service, that would take the notification type and cancel all notifications of that type instead of the current cancelAllNotifications method.
+> But as we may use the notification service in other places, we shouldn't cancel all notifications in the task schedule notifications service, because it would reschedule only task related notifications and lose other notifications. So we're using a method that takes the notification type and cancel all notifications of that type.
