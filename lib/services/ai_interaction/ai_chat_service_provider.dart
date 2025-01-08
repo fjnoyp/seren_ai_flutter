@@ -15,14 +15,13 @@ import 'package:seren_ai_flutter/services/auth/cur_auth_state_provider.dart';
 import 'package:seren_ai_flutter/services/data/ai_chats/models/ai_chat_message_model.dart';
 import 'package:seren_ai_flutter/services/data/ai_chats/models/ai_chat_message_type.dart';
 import 'package:seren_ai_flutter/services/data/ai_chats/models/ai_chat_thread_model.dart';
-import 'package:seren_ai_flutter/services/data/ai_chats/repositories/ai_chat_messages_service.dart';
+import 'package:seren_ai_flutter/services/data/ai_chats/repositories/ai_chat_messages_repository.dart';
 import 'package:seren_ai_flutter/services/data/ai_chats/repositories/ai_chat_threads_repository.dart';
-import 'package:seren_ai_flutter/services/data/ai_chats/repositories/ai_chat_threads_service.dart';
 import 'package:seren_ai_flutter/services/data/notes/providers/cur_note_state_provider.dart';
 import 'package:seren_ai_flutter/services/data/orgs/providers/cur_org_dependency_provider.dart';
 
 import 'package:logging/logging.dart';
-import 'package:seren_ai_flutter/services/data/tasks/providers/cur_task_state_provider.dart';
+import 'package:seren_ai_flutter/services/data/tasks/providers/cur_editing_task_state_provider.dart';
 import 'package:seren_ai_flutter/services/text_to_speech/text_to_speech_notifier.dart';
 
 final log = Logger('AIChatService');
@@ -49,7 +48,7 @@ class AIChatService {
     final isAiRespondingNotifier = ref.read(isAiRespondingProvider.notifier);
     final curOrgId = ref.read(curOrgIdProvider);
     final curUser = ref.read(curUserProvider).value;
-    final aiChatMessagesService = ref.read(aiChatMessagesServiceProvider);
+    final aiChatMessagesRepo = ref.read(aiChatMessagesRepositoryProvider);
 
     isAiRespondingNotifier.state = true;
 
@@ -66,7 +65,7 @@ class AIChatService {
       final uiContext = _getUIContext();
 
       // Save user message
-      await aiChatMessagesService.saveMessage(AiChatMessageModel(
+      await aiChatMessagesRepo.insertItem(AiChatMessageModel(
           content: message,
           type: AiChatMessageType.user,
           parentChatThreadId: aiChatThread.id));
@@ -102,8 +101,8 @@ class AIChatService {
     //sb.writeln('CurUser: ${curUser?.email}\n');
 
     if (appRoute == AppRoutes.taskPage) {
-      final curTask = ref.read(curTaskStateProvider).value;
-      sb.writeln('CurTask: ${curTask?.toReadableMap()}');
+      final curTask = ref.read(curEditingTaskStateProvider).value;
+      sb.writeln('CurTask: ${curTask?.taskModel.toAiReadableMap()}');
     } else if (appRoute == AppRoutes.notePage) {
       final curNote = ref.read(curNoteStateProvider).value;
       sb.writeln('CurNote: ${curNote?.toReadableMap()}');
@@ -120,7 +119,7 @@ class AIChatService {
     final langgraphService = ref.read(langgraphServiceProvider);
     final lastAiMessageListener =
         ref.read(lastAiMessageListenerProvider.notifier);
-    final aiChatMessagesService = ref.read(aiChatMessagesServiceProvider);
+    final aiChatMessagesRepo = ref.read(aiChatMessagesRepositoryProvider);
 
     // Call Langgraph API
     final lgBaseMessages = await langgraphService.runAi(
@@ -147,7 +146,7 @@ class AIChatService {
     }
 
     // Save response to DB
-    await aiChatMessagesService.saveMessages(aiChatMessages);
+    await aiChatMessagesRepo.insertItems(aiChatMessages);
 
     // Execute request if needed
     await _tryExecuteAiRequests(aiChatThread, aiChatMessages);
@@ -158,7 +157,7 @@ class AIChatService {
     final lastAiMessageListener =
         ref.read(lastAiMessageListenerProvider.notifier);
     final aiRequestExecutor = ref.read(aiRequestExecutorProvider);
-    final aiChatMessagesService = ref.read(aiChatMessagesServiceProvider);
+    final aiChatMessagesRepo = ref.read(aiChatMessagesRepositoryProvider);
     final langGraphService = ref.read(langgraphServiceProvider);
 
     // === Check if Execution is needed ===
@@ -197,7 +196,7 @@ class AIChatService {
         type: AiChatMessageType.tool,
         parentChatThreadId: aiChatThread.id);
 
-    await aiChatMessagesService.saveMessage(aiResultMessage);
+    await aiChatMessagesRepo.insertItem(aiResultMessage);
 
     lastAiMessageListener.addAiChatMessage(aiResultMessage);
 
@@ -224,7 +223,6 @@ class AIChatService {
       String userId, String orgId) async {
     final aiChatThreadsRepo = ref.read(aiChatThreadsRepositoryProvider);
     final langgraphService = ref.read(langgraphServiceProvider);
-    final aiChatThreadsService = ref.read(aiChatThreadsServiceProvider);
     final curOrgId = ref.read(curOrgIdProvider);
     final curUser = ref.read(curUserProvider).value;
 
@@ -263,13 +261,9 @@ class AIChatService {
       parentOrgId: orgId,
     );
 
-    final result = await aiChatThreadsService.saveThread(newThread);
+    await aiChatThreadsRepo.insertItem(newThread);
 
-    if (result.error != null) {
-      throw Exception('Failed to create new AI chat thread: ${result.error}');
-    }
-
-    return result.thread!;
+    return newThread;
   }
 
   Future<void> speakAiMessage(List<AiChatMessageModel> result) async {
