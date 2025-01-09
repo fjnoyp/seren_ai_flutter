@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:seren_ai_flutter/common/navigation_service_provider.dart';
+import 'package:seren_ai_flutter/common/universal_platform/universal_platform.dart';
 import 'package:seren_ai_flutter/services/data/common/widgets/form/color_animation.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
@@ -42,17 +43,45 @@ class AnimatedModalSelectionField<T> extends HookConsumerWidget {
           style: TextStyle(color: colorAnimation.colorTween.value),
           child: IconTheme(
             data: IconThemeData(color: colorAnimation.colorTween.value),
-            child: ModalSelectionField<T>(
-              labelWidget: labelWidget,
-              validator: validator,
-              valueToString: valueToString,
-              enabled: enabled,
-              value: value,
-              options: options,
-              onValueChanged: onValueChanged,
-              defaultColor: colorAnimation.colorTween.value,
-              isValueRequired: isValueRequired,
-            ),
+            child: isWebVersion
+                ? MenuAnchor(
+                    builder: (context, controller, child) => SelectionField<T>(
+                      labelWidget: labelWidget,
+                      validator: validator,
+                      valueToString: valueToString,
+                      enabled: enabled,
+                      value: value,
+                      onValueChanged: onValueChanged,
+                      defaultColor: colorAnimation.colorTween.value,
+                      onTap: (_) => controller.isOpen
+                          ? controller.close()
+                          : controller.open(),
+                    ),
+                    menuChildren: isWebVersion
+                        ? options
+                            .map(
+                              (option) => MenuItemButton(
+                                  onPressed: () {
+                                    if (context.mounted) {
+                                      onValueChanged?.call(ref, option);
+                                    }
+                                  },
+                                  child: Text(valueToString(option))),
+                            )
+                            .toList()
+                        : [],
+                  )
+                : ModalSelectionField<T>(
+                    labelWidget: labelWidget,
+                    validator: validator,
+                    valueToString: valueToString,
+                    enabled: enabled,
+                    value: value,
+                    options: options,
+                    onValueChanged: onValueChanged,
+                    defaultColor: colorAnimation.colorTween.value,
+                    isValueRequired: isValueRequired,
+                  ),
           ),
         );
       },
@@ -73,7 +102,7 @@ class ModalSelectionField<T> extends SelectionField<T> {
     super.defaultColor,
     bool isValueRequired = false,
   }) : super(
-          showSelectionModal: (BuildContext context) async {
+          onTap: (BuildContext context) async {
             FocusManager.instance.primaryFocus?.unfocus();
 
             final result = await showModalBottomSheet<T>(
@@ -112,7 +141,7 @@ class AnimatedSelectionField<T> extends SelectionField<T> {
     super.onValueChanged,
     required super.labelWidget,
     required super.valueToString,
-    required super.showSelectionModal,
+    required super.onTap,
     super.validator,
     super.enabled,
     super.defaultColor,
@@ -140,7 +169,7 @@ class AnimatedSelectionField<T> extends SelectionField<T> {
               onValueChanged: onValueChanged,
               labelWidget: labelWidget,
               valueToString: valueToString,
-              showSelectionModal: showSelectionModal,
+              onTap: onTap,
               validator: validator,
               enabled: enabled,
               defaultColor: colorAnimation.colorTween.value,
@@ -155,7 +184,7 @@ class AnimatedSelectionField<T> extends SelectionField<T> {
 class SelectionField<T> extends HookConsumerWidget {
   final Widget labelWidget;
   final String Function(T?) valueToString;
-  final Future<T?> Function(BuildContext) showSelectionModal;
+  final Function(BuildContext) onTap;
   final FormFieldValidator<T>? validator;
   final bool enabled;
   final T? value;
@@ -167,7 +196,7 @@ class SelectionField<T> extends HookConsumerWidget {
     super.key,
     required this.labelWidget,
     required this.valueToString,
-    required this.showSelectionModal,
+    required this.onTap,
     required this.value,
     this.onValueChanged,
     this.validator,
@@ -212,7 +241,7 @@ class SelectionField<T> extends HookConsumerWidget {
                           ? () async {
                               // Using ShowBottomSheet or ShowDatePicker invalidates the ref context after the modal closes
                               // Only fix has been to use consumer directly in the modal builder when the tap occurs
-                              await showSelectionModal(context).then((value) {
+                              await onTap(context).then((value) {
                                 field.didChange(value);
                                 field.validate();
                               });
@@ -282,14 +311,30 @@ class AnimatedModalMinuteSelectionField extends HookConsumerWidget {
       triggerValue: value,
     );
 
-    return AnimatedBuilder(
-      animation: colorAnimation.colorTween,
-      builder: (context, child) {
-        return DefaultTextStyle(
-          style: TextStyle(color: colorAnimation.colorTween.value),
-          child: IconTheme(
-            data: IconThemeData(color: colorAnimation.colorTween.value),
-            child: SelectionField<int>(
+    final options = [
+      (
+        value: null,
+        label: AppLocalizations.of(context)!.noReminder,
+        onPressed: () async => onValueChanged?.call(ref, null),
+      ),
+      ...quickOptions.map((e) => (
+            value: e,
+            label: AppLocalizations.of(context)!.minutes(e ~/ 60, e % 60),
+            onPressed: () async => onValueChanged?.call(ref, e),
+          )),
+      (
+        value: null,
+        label: AppLocalizations.of(context)!.other,
+        onPressed: () async {
+          final result = await _showChooseDurationDialog(context);
+          onValueChanged?.call(ref, result);
+        }
+      ),
+    ];
+
+    return isWebVersion
+        ? MenuAnchor(
+            builder: (context, controller, child) => SelectionField<int>(
               labelWidget: labelWidget,
               validator: validator,
               valueToString: (value) => value == null
@@ -300,54 +345,65 @@ class AnimatedModalMinuteSelectionField extends HookConsumerWidget {
               value: value,
               onValueChanged: onValueChanged,
               defaultColor: colorAnimation.colorTween.value,
-              showSelectionModal: (BuildContext context) async {
-                return showModalBottomSheet(
-                  context: context,
-                  builder: (BuildContext context) => Consumer(
-                    builder:
-                        (BuildContext context, WidgetRef ref, Widget? child) {
-                      final List<({int? minutes, String label})> options = [
-                        (
-                          minutes: null,
-                          label: AppLocalizations.of(context)!.noReminder
-                        ),
-                        ...quickOptions.map((e) => (
-                              minutes: e,
-                              label: AppLocalizations.of(context)!
-                                  .minutes(e ~/ 60, e % 60)
-                            )),
-                        (
-                          minutes: null,
-                          label: AppLocalizations.of(context)!.other
-                        ),
-                      ];
-                      return ListView.builder(
-                        itemCount: options.length,
-                        itemBuilder: (BuildContext context, int index) {
-                          final option = options[index];
+              onTap: (_) =>
+                  controller.isOpen ? controller.close() : controller.open(),
+            ),
+            menuChildren: isWebVersion
+                ? options
+                    .map(
+                      (option) => MenuItemButton(
+                          onPressed: () {
+                            if (context.mounted) {
+                              option.onPressed();
+                            }
+                          },
+                          child: Text(option.label)),
+                    )
+                    .toList()
+                : [],
+          )
+        : AnimatedBuilder(
+            animation: colorAnimation.colorTween,
+            builder: (context, child) {
+              return DefaultTextStyle(
+                style: TextStyle(color: colorAnimation.colorTween.value),
+                child: IconTheme(
+                  data: IconThemeData(color: colorAnimation.colorTween.value),
+                  child: SelectionField<int>(
+                    labelWidget: labelWidget,
+                    validator: validator,
+                    valueToString: (value) => value == null
+                        ? AppLocalizations.of(context)!.noReminderSet
+                        : AppLocalizations.of(context)!
+                            .minutes(value ~/ 60, value % 60),
+                    enabled: enabled,
+                    value: value,
+                    onValueChanged: onValueChanged,
+                    defaultColor: colorAnimation.colorTween.value,
+                    onTap: (BuildContext context) async {
+                      return showModalBottomSheet(
+                        context: context,
+                        builder: (BuildContext context) => ListView.builder(
+                          itemCount: options.length,
+                          itemBuilder: (BuildContext context, int index) {
+                            final option = options[index];
 
-                          return ListTile(
-                            title: Text(option.label),
-                            onTap: () async {
-                              index == options.length - 1
-                                  ? await _showChooseDurationDialog(context)
-                                      .then((value) =>
-                                          onValueChanged?.call(ref, value))
-                                  : onValueChanged?.call(ref, option.minutes);
-                              Navigator.pop(context, option.minutes);
-                            },
-                          );
-                        },
+                            return ListTile(
+                              title: Text(option.label),
+                              onTap: () async {
+                                await option.onPressed();
+                                Navigator.pop(context, option.value);
+                              },
+                            );
+                          },
+                        ),
                       );
                     },
                   ),
-                );
-              },
-            ),
-          ),
-        );
-      },
-    );
+                ),
+              );
+            },
+          );
   }
 
   Future<int?> _showChooseDurationDialog(BuildContext context) async {
