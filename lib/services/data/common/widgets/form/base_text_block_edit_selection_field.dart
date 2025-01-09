@@ -3,9 +3,10 @@ import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:seren_ai_flutter/common/navigation_service_provider.dart';
+import 'package:seren_ai_flutter/common/universal_platform/universal_platform.dart';
 import 'package:seren_ai_flutter/services/data/common/widgets/form/selection_field.dart';
 
-class BaseTextBlockEditSelectionField extends ConsumerWidget {
+class BaseTextBlockEditSelectionField extends HookConsumerWidget {
   final bool isEditable;
   final ProviderListenable<String?> descriptionProvider;
   final Function(WidgetRef, String?) updateDescription;
@@ -24,36 +25,56 @@ class BaseTextBlockEditSelectionField extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final curDescription = ref.watch(descriptionProvider);
+    final controller = useTextEditingController(text: curDescription);
 
-    return isEditable || (curDescription != null && curDescription.isNotEmpty)
-        ? AnimatedSelectionField<String>(
-            labelWidget: labelWidget ?? const Icon(Icons.description),
-            validator: (description) => null,
-            // description == null || description.isEmpty
-            //     ? AppLocalizations.of(context)!.textIsRequired
-            //     : null,
-            valueToString: (description) =>
-                description ?? AppLocalizations.of(context)!.enterText,
-            enabled: isEditable,
-            value: curDescription?.isEmpty ?? true ? hintText : curDescription,
-            onValueChanged: updateDescription,
-            showSelectionModal: (BuildContext context) async {
+    return isWebVersion && isEditable
+        ? TextFormField(
+            controller: controller,
+            maxLines: 5,
+            decoration: InputDecoration(
+              hintText: hintText ?? AppLocalizations.of(context)!.enterTextHere,
+              border: const OutlineInputBorder(),
+            ),
+            onFieldSubmitted: (value) async {
+              await updateDescription(ref, value);
+            },
+            onTapOutside: (event) async {
+              await updateDescription(ref, controller.text);
               FocusManager.instance.primaryFocus?.unfocus();
-              showModalBottomSheet<String>(
-                context: context,
-                isScrollControlled: true,
-                builder: (BuildContext context) {
-                  return TextBlockWritingModal(
-                    initialDescription: curDescription ?? '',
-                    onDescriptionChanged: updateDescription,
-                  );
-                },
-              );
-              FocusManager.instance.primaryFocus?.unfocus();
-              return null;
             },
           )
-        : const SizedBox.shrink();
+        : isEditable || (curDescription != null && curDescription.isNotEmpty)
+            ? AnimatedSelectionField<String>(
+                labelWidget: labelWidget ?? const Icon(Icons.description),
+                validator: (description) => null,
+                // description == null || description.isEmpty
+                //     ? AppLocalizations.of(context)!.textIsRequired
+                //     : null,
+                valueToString: (description) =>
+                    description ?? AppLocalizations.of(context)!.enterText,
+                enabled: isEditable,
+                value:
+                    curDescription?.isEmpty ?? true ? hintText : curDescription,
+                onValueChanged: updateDescription,
+                onTap: isWebVersion
+                    ? (_) async => null
+                    : (BuildContext context) async {
+                        FocusManager.instance.primaryFocus?.unfocus();
+                        showModalBottomSheet<String>(
+                          context: context,
+                          isScrollControlled: true,
+                          builder: (BuildContext context) {
+                            return TextBlockWritingModal(
+                              initialDescription: curDescription ?? '',
+                              onDescriptionChanged: updateDescription,
+                            );
+                          },
+                        );
+                        FocusManager.instance.primaryFocus?.unfocus();
+                        return null;
+                      },
+              )
+            : const SizedBox.shrink();
   }
 }
 

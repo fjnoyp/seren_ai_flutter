@@ -2,11 +2,13 @@ import 'package:flutter/material.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
+import 'package:seren_ai_flutter/common/universal_platform/universal_platform.dart';
 import 'package:seren_ai_flutter/services/data/common/widgets/async_value_handler_widget.dart';
 import 'package:seren_ai_flutter/services/data/common/widgets/form/selection_field.dart';
 import 'package:seren_ai_flutter/services/data/orgs/models/user_org_role_model.dart';
 import 'package:seren_ai_flutter/services/data/orgs/providers/cur_user_org_roles_provider.dart';
 import 'package:seren_ai_flutter/services/data/projects/models/project_model.dart';
+import 'package:seren_ai_flutter/services/data/projects/providers/selected_project_provider.dart';
 import 'package:seren_ai_flutter/services/data/projects/widgets/action_buttons/update_project_assignees_button.dart';
 import 'package:seren_ai_flutter/services/data/users/models/user_model.dart';
 import 'package:seren_ai_flutter/services/data/users/providers/users_in_project_provider.dart';
@@ -44,20 +46,35 @@ class BaseAssigneesSelectionField extends HookConsumerWidget {
       enabled: enabled && curProject != null,
       value: curAssignees,
       onValueChanged: updateAssignees,
-      showSelectionModal: (BuildContext context) async {
+      onTap: (BuildContext context) async {
         FocusManager.instance.primaryFocus?.unfocus();
-        await showModalBottomSheet<List<UserModel>>(
-          context: context,
-          isScrollControlled: true,
-          builder: (BuildContext context) {
-            return AssigneesSelectionModal(
+        if (isWebVersion) {
+          await showDialog<List<UserModel>>(
+            context: context,
+            builder: (_) => AlertDialog(
+              content: SizedBox(
+                width: MediaQuery.of(context).size.width / 3,
+                child: AssigneesSelectionModal(
+                  initialSelectedUsers: curAssignees,
+                  onAssigneesChanged: updateAssignees,
+                  //selectableUsersProvider: selectableUsersProvider,
+                  projectProvider: projectProvider,
+                ),
+              ),
+            ),
+          );
+        } else {
+          await showModalBottomSheet<List<UserModel>>(
+            context: context,
+            isScrollControlled: true,
+            builder: (_) => AssigneesSelectionModal(
               initialSelectedUsers: curAssignees,
               onAssigneesChanged: updateAssignees,
               //selectableUsersProvider: selectableUsersProvider,
               projectProvider: projectProvider,
-            );
-          },
-        );
+            ),
+          );
+        }
         FocusManager.instance.primaryFocus?.unfocus();
         return null;
       },
@@ -123,12 +140,27 @@ class AssigneesSelectionModal extends HookConsumerWidget {
                   if (ref.read(curUserOrgRoleProvider).value == OrgRole.admin ||
                       ref.read(curUserOrgRoleProvider).value == OrgRole.editor)
                     ElevatedButton(
-                      onPressed: () => showModalBottomSheet(
-                        context: context,
-                        builder: (BuildContext context) {
-                          return const UpdateProjectAssigneesModal();
-                        },
-                      ),
+                      onPressed: () {
+                        ref
+                            .read(selectedProjectProvider.notifier)
+                            .setProject(curProject);
+                        if (isWebVersion) {
+                          showDialog(
+                            context: context,
+                            builder: (_) => AlertDialog(
+                              content: SizedBox(
+                                width: MediaQuery.of(context).size.width / 2,
+                                child: const UpdateProjectAssigneesModal(),
+                              ),
+                            ),
+                          );
+                        } else {
+                          showModalBottomSheet(
+                            context: context,
+                            builder: (_) => const UpdateProjectAssigneesModal(),
+                          );
+                        }
+                      },
                       child: Text(AppLocalizations.of(context)!
                           .addUsersTo(curProject.name)),
                     ),
