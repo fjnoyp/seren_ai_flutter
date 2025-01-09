@@ -26,7 +26,7 @@ class BaseDueDateSelectionField extends ConsumerWidget {
       valueToString: (date) => _valueToString(date, context: context),
       enabled: enabled,
       value: dueDate?.toLocal(),
-      showSelectionModal: (BuildContext context) async {
+      onTap: (BuildContext context) async {
         return _pickDueDate(context, initialDate: dueDate ?? DateTime.now())
             .then(
           (pickedDateTime) => pickedDateTime != null
