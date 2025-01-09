@@ -85,26 +85,21 @@ class WebProjectTasksSection extends HookConsumerWidget {
                                   child: Text(option.name),
                                   onPressed: () {
                                     if (option.value == 'customDateRange') {
-                                      showDateRangePicker(
-                                              context: context,
-                                              firstDate: DateTime(2000),
-                                              lastDate: DateTime(2100))
-                                          .then(
-                                        (value) {
-                                          if (value != null) {
-                                            filterBy[index].value = (
-                                              value:
-                                                  '${filter.name}_${option.value}',
-                                              name:
-                                                  '${filter.getDisplayName(context)}: ${DateFormat.MMMd().format(value.start)} - ${DateFormat.Md().format(value.end)}',
-                                              filter: (task) =>
-                                                  option.filter?.call(task) ??
-                                                  filter.filterFunction(
-                                                      task, value)
-                                            );
-                                          }
-                                        },
-                                      );
+                                      _showCustomDateRangePicker(context)
+                                          .then((value) {
+                                        if (value != null) {
+                                          filterBy[index].value = (
+                                            value:
+                                                '${filter.name}_${option.value}',
+                                            name:
+                                                '${filter.getDisplayName(context)}: ${DateFormat.MMMd().format(value.start)} - ${DateFormat.Md().format(value.end)}',
+                                            filter: (task) =>
+                                                option.filter?.call(task) ??
+                                                filter.filterFunction(
+                                                    task, value)
+                                          );
+                                        }
+                                      });
                                     } else {
                                       filterBy[index].value = (
                                         value: '${filter.name}_${option.value}',
@@ -199,6 +194,23 @@ class WebProjectTasksSection extends HookConsumerWidget {
           ),
         ),
       ],
+    );
+  }
+
+  Future<dynamic> _showCustomDateRangePicker(BuildContext context) {
+    return showDialog(
+      context: context,
+      builder: (context) => Dialog(
+        child: SizedBox(
+          width: 360,
+          height: 480,
+          child: DateRangePickerDialog(
+            firstDate: DateTime(2000),
+            lastDate: DateTime(2100),
+            initialEntryMode: DatePickerEntryMode.calendarOnly,
+          ),
+        ),
+      ),
     );
   }
 }
