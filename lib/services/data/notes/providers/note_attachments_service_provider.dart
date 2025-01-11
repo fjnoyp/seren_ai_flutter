@@ -1,7 +1,5 @@
 //import 'dart:io';
 
-import 'dart:typed_data';
-
 import 'package:flutter/foundation.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:open_file/open_file.dart';
@@ -9,7 +7,7 @@ import 'package:seren_ai_flutter/common/path_provider/path_provider.dart';
 import 'package:seren_ai_flutter/common/utils/string_extension.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import 'package:flutter_image_compress/flutter_image_compress.dart';
-
+import 'dart:html' if (dart.library.html) 'dart:html' as html;
 
 final noteAttachmentsServiceProvider =
     NotifierProvider<NoteAttachmentsService, List<String>>(
@@ -116,21 +114,33 @@ class NoteAttachmentsService extends Notifier<List<String>> {
     required String noteId,
   }) async {
     if (kIsWeb) {
-      // TODO
-      throw UnimplementedError('Open Attachment not implemented for web');
-      // // For web, open in new tab or trigger download
-      // final url = supabaseStorage
-      //     .from('note_attachments')
-      //     .getPublicUrl('$noteId/${fileUrl.getFilePathName()}');
-      // window.open(url, '_blank');
-      // return true;
+      // For web, open in new tab or trigger download
+      final url = supabaseStorage
+          .from('note_attachments')
+          .getPublicUrl('$noteId/${fileUrl.getFilePathName()}');
+
+      // Create an anchor element to trigger download
+      final anchor = html.AnchorElement(href: url)
+        ..setAttribute('download', fileUrl.getFilePathName())
+        ..style.display = 'none'
+        ..target = '_blank';
+
+      // Add to document body and trigger click
+      html.document.body!.children.add(anchor);
+      anchor.click();
+
+      // Small delay before removing to ensure download starts
+      await Future.delayed(const Duration(milliseconds: 100));
+      anchor.remove();
+
+      return true;
     }
 
     // For native platforms, create temporary file and open
     final bytes = await getAttachmentBytes(fileUrl: fileUrl, noteId: noteId);
     //final tempDir = await pathProvider.getTemporaryPath();
     final tempFile = XFile.fromData(bytes, name: fileUrl.getFilePathName());
-    
+
     await OpenFile.open(tempFile.path);
     return true;
   }
