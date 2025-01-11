@@ -2,6 +2,7 @@
 
 import 'package:cross_file/cross_file.dart';
 import 'package:file_picker/file_picker.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -53,12 +54,14 @@ class _AddAttachmentButton extends ConsumerWidget {
                   ListTile(
                     leading: const Icon(Icons.image),
                     title: Text(AppLocalizations.of(context)!.images),
-                    onTap: () => ref.read(navigationServiceProvider).pop(FileType.image),
+                    onTap: () =>
+                        ref.read(navigationServiceProvider).pop(FileType.image),
                   ),
                   ListTile(
                     leading: const Icon(Icons.attach_file),
                     title: Text(AppLocalizations.of(context)!.files),
-                    onTap: () => ref.read(navigationServiceProvider).pop(FileType.any),
+                    onTap: () =>
+                        ref.read(navigationServiceProvider).pop(FileType.any),
                   ),
                   const SizedBox(height: 25),
                 ],
@@ -105,23 +108,36 @@ class _AddAttachmentButton extends ConsumerWidget {
         );
       }
 
-      // Filter valid files directly
-      final validFiles = result.files.where((file) {
-        if (file.size > maxFileSizeBytes) {
-          ScaffoldMessenger.of(ref.context).showSnackBar(
-            SnackBar(
-              content: Text(AppLocalizations.of(ref.context)!
-                  .fileTooLarge(file.path!.getFilePathName())),
-              backgroundColor: Theme.of(ref.context).colorScheme.error,
-            ),
-          );
-          return false;
-        }
-        return true;
-      }).take(maxFileCount);
+      // Filter valid files with platform-specific handling
+      final validFiles = result.files
+          .where((file) {
+            if (file.size > maxFileSizeBytes) {
+              ScaffoldMessenger.of(ref.context).showSnackBar(
+                SnackBar(
+                  content: Text(AppLocalizations.of(ref.context)!.fileTooLarge(
+                      kIsWeb ? file.name : file.path!.getFilePathName())),
+                  backgroundColor: Theme.of(ref.context).colorScheme.error,
+                ),
+              );
+              return false;
+            }
+            return true;
+          })
+          .take(maxFileCount)
+          .toList();
 
-      // Create File objects directly from valid PlatformFile objects
-      List<XFile> files = validFiles.map((file) => XFile(file.path!)).toList();
+      // Create XFile objects with platform-specific handling
+      List<XFile> files = kIsWeb
+          ? validFiles
+              .map((file) => XFile.fromData(
+                    file.bytes!,
+                    name: file.name,
+                    mimeType: file.extension != null
+                        ? 'application/${file.extension}'
+                        : null,
+                  ))
+              .toList()
+          : validFiles.map((file) => XFile(file.path!)).toList();
 
       // Show a non-blocking loading snackbar
       ScaffoldMessenger.of(ref.context).showSnackBar(
@@ -146,12 +162,10 @@ class _AddAttachmentButton extends ConsumerWidget {
       );
 
       // Upload files in a non-blocking way
-      (
-        ref.read(noteAttachmentsServiceProvider.notifier).uploadAttachments(
-              files,
-              noteId: ref.read(curNoteServiceProvider).curNoteId,
-            ),
-      );
+      ref.read(noteAttachmentsServiceProvider.notifier).uploadAttachments(
+            files,
+            noteId: ref.read(curNoteServiceProvider).curNoteId,
+          );
     }
   }
 
