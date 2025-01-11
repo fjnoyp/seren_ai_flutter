@@ -182,7 +182,7 @@ class _AddAttachmentButton extends ConsumerWidget {
   }
 }
 
-class _AttachmentPreviewButton extends StatelessWidget {
+class _AttachmentPreviewButton extends ConsumerWidget {
   const _AttachmentPreviewButton(
     this.attachmentUrl, {
     required this.enableDelete,
@@ -192,16 +192,23 @@ class _AttachmentPreviewButton extends StatelessWidget {
   final bool enableDelete;
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
     return Row(
       mainAxisSize: MainAxisSize.min,
       children: [
         Expanded(
           child: OutlinedButton.icon(
-            onPressed: () => showDialog(
-              context: context,
-              builder: (context) => _AttachmentPreview(attachmentUrl),
-            ),
+            onPressed: () => kIsWeb
+                ? ref
+                    .read(noteAttachmentsServiceProvider.notifier)
+                    .openAttachmentLocally(
+                      fileUrl: attachmentUrl,
+                      noteId: ref.read(curNoteServiceProvider).curNoteId,
+                    )
+                : showDialog(
+                    context: context,
+                    builder: (context) => _AttachmentPreview(attachmentUrl),
+                  ),
             // TODO p3: conditionally change the icon based on its file extension
             icon: const Icon(Icons.attach_file),
             label: Text(
