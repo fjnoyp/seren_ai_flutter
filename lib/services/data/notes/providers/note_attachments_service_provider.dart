@@ -53,31 +53,37 @@ class NoteAttachmentsService extends Notifier<List<String>> {
   }) async {
     for (var file in files) {
       XFile fileToUpload = file;
-      String fileName = file.path.getFilePathName();
+      String fileName = kIsWeb ? file.name : file.path.getFilePathName();
 
       // Only compress if it's an image
-      if (file.path.toLowerCase().endsWith('.jpg') ||
-          file.path.toLowerCase().endsWith('.jpeg') ||
-          file.path.toLowerCase().endsWith('.png')) {
-        final bytes = await file.readAsBytes();
-        final compressedBytes = await FlutterImageCompress.compressWithList(
-          bytes,
-          quality: 65,
-        );
-        
-        fileToUpload = XFile.fromData(compressedBytes);
-        
-        // Update filename to .jpg extension if needed
-        if (!fileName.toLowerCase().endsWith('.jpg')) {
-          fileName = '${fileName.substring(0, fileName.lastIndexOf('.'))}.jpg';
+      if (fileName.toLowerCase().endsWith('.jpg') ||
+          fileName.toLowerCase().endsWith('.jpeg') ||
+          fileName.toLowerCase().endsWith('.png')) {
+        try {
+          final bytes = await fileToUpload.readAsBytes();
+          final compressedBytes = await FlutterImageCompress.compressWithList(
+            bytes,
+            quality: 65,
+          );
+
+          fileToUpload = XFile.fromData(compressedBytes, name: fileName);
+
+          // Update filename to .jpg extension if needed
+          if (!fileName.toLowerCase().endsWith('.jpg')) {
+            fileName =
+                '${fileName.substring(0, fileName.lastIndexOf('.'))}.jpg';
+          }
+        } catch (e) {
+          // Handle compression error
+          print('Error compressing image: $e');
         }
       }
 
       await supabaseStorage.from('note_attachments').uploadBinary(
-        '$noteId/$fileName',
-        await fileToUpload.readAsBytes(),
-        fileOptions: const FileOptions(upsert: true),
-      );
+            '$noteId/$fileName',
+            await fileToUpload.readAsBytes(),
+            fileOptions: const FileOptions(upsert: true),
+          );
     }
 
     fetchNoteAttachments(noteId: noteId);
