@@ -11,14 +11,17 @@ final userProjectAssignmentsRepositoryProvider =
 
 class UserProjectAssignmentsRepository
     extends BaseRepository<UserProjectAssignmentModel> {
-  const UserProjectAssignmentsRepository(super.db);
-
-  @override
-  Set<String> get REMOVEwatchTables => {'user_project_assignments'};
+  const UserProjectAssignmentsRepository(super.db,
+      {super.primaryTable = 'user_project_assignments'});
 
   @override
   UserProjectAssignmentModel fromJson(Map<String, dynamic> json) {
     return UserProjectAssignmentModel.fromJson(json);
+  }
+
+  @override
+  Map<String, dynamic> toJson(UserProjectAssignmentModel item) {
+    return item.toJson();
   }
 
   Stream<List<UserProjectAssignmentModel>> watchUserProjectAssignments({

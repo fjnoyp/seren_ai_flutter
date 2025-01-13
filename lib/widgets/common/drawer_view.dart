@@ -6,8 +6,8 @@ import 'package:seren_ai_flutter/common/routes/app_routes.dart';
 import 'package:seren_ai_flutter/common/universal_platform/universal_platform.dart';
 import 'package:seren_ai_flutter/services/auth/cur_auth_state_provider.dart';
 import 'package:seren_ai_flutter/services/data/orgs/models/user_org_role_model.dart';
-import 'package:seren_ai_flutter/services/data/orgs/providers/cur_org_dependency_provider.dart';
-import 'package:seren_ai_flutter/services/data/orgs/providers/cur_user_org_roles_provider.dart';
+import 'package:seren_ai_flutter/services/data/orgs/providers/cur_selected_org_id_notifier.dart';
+import 'package:seren_ai_flutter/services/data/orgs/providers/cur_user_org_role_provider.dart';
 import 'package:seren_ai_flutter/services/data/orgs/providers/cur_user_orgs_provider.dart';
 import 'package:seren_ai_flutter/services/data/orgs/widgets/cur_org_page.dart';
 import 'package:seren_ai_flutter/services/data/orgs/widgets/org_avatar_image.dart';
@@ -26,7 +26,7 @@ class DrawerView extends ConsumerWidget {
     final user = ref.watch(curUserProvider).value;
     final isDebugMode = ref.watch(isDebugModeSNP);
 
-    final curOrgId = ref.watch(curOrgIdProvider);
+    final curOrgId = ref.watch(curSelectedOrgIdNotifierProvider);
     final curOrg = curOrgId != null
         ? ref
             .watch(curUserOrgsProvider)
