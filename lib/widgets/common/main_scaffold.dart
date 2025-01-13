@@ -99,7 +99,7 @@ class MainScaffold extends ConsumerWidget {
                           child: Stack(
                             alignment: Alignment.centerRight,
                             children: [
-                              Expanded(child: body),
+                              body,
                               if (showAiAssistant && isAiAssistantExpanded)
                                 const WebAiAssistantModal(),
                             ],

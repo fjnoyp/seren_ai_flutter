@@ -1,5 +1,7 @@
 //import 'dart:io';
 
+import 'dart:async';
+
 import 'package:firebase_core/firebase_core.dart';
 
 import 'package:firebase_crashlytics/firebase_crashlytics.dart'
@@ -41,14 +43,25 @@ void main() async {
     await notificationService.initialize();
   }
 
-  runApp(
-    ProviderScope(
-      overrides: [
-        dbProvider.overrideWithValue(db),
-        sharedPreferencesProvider.overrideWithValue(prefs),
-        notificationServiceProvider.overrideWithValue(notificationService),
-      ],
-      child: const App(),
-    ),
-  );
+  runZonedGuarded(() {
+    FlutterError.onError = (FlutterErrorDetails details) {
+      FlutterError.presentError(details);
+      debugPrint('Flutter Error: ${details.exception}');
+      debugPrint('Stack trace: ${details.stack}');
+    };
+
+    runApp(
+      ProviderScope(
+        overrides: [
+          dbProvider.overrideWithValue(db),
+          sharedPreferencesProvider.overrideWithValue(prefs),
+          notificationServiceProvider.overrideWithValue(notificationService),
+        ],
+        child: const App(),
+      ),
+    );
+  }, (error, stack) {
+    debugPrint('Caught error: $error');
+    debugPrint('Stack trace: $stack');
+  });
 }
