@@ -7,8 +7,10 @@ import 'package:seren_ai_flutter/services/data/common/widgets/delete_confirmatio
 import 'package:seren_ai_flutter/services/data/orgs/models/joined_user_org_role_model.dart';
 import 'package:seren_ai_flutter/services/data/orgs/models/user_org_role_model.dart';
 import 'package:seren_ai_flutter/services/data/orgs/providers/cur_org_dependency_provider.dart';
-import 'package:seren_ai_flutter/services/data/orgs/providers/cur_user_org_roles_provider.dart';
-import 'package:seren_ai_flutter/services/data/orgs/user_org_roles_db_provider.dart';
+import 'package:seren_ai_flutter/services/data/orgs/providers/cur_user_org_role_provider.dart';
+import 'package:seren_ai_flutter/services/data/orgs/providers/joined_org_roles_by_org_stream_provider.dart';
+import 'package:seren_ai_flutter/services/data/orgs/repositories/user_org_roles_repository.dart';
+
 import 'package:seren_ai_flutter/services/data/orgs/widgets/action_buttons/invite_user_to_org_button.dart';
 
 class ManageOrgUsersPage extends ConsumerWidget {
@@ -22,7 +24,8 @@ class ManageOrgUsersPage extends ConsumerWidget {
       return Center(child: Text(AppLocalizations.of(context)!.noOrgSelected));
     }
 
-    final joinedOrgRoles = ref.watch(joinedCurOrgRolesProvider);
+    final joinedOrgRoles =
+        ref.watch(joinedOrgRolesByOrgStreamProvider(curOrgId));
 
     return joinedOrgRoles.valueOrNull == null
         ? Center(child: Text(AppLocalizations.of(context)!.noUsersInOrg))
@@ -91,10 +94,10 @@ class ChangeUserRoleDialog extends HookConsumerWidget {
                 // TODO: Externalize confirmation dialog's content
                 // to use a more proper message here
                 builder: (context) => DeleteConfirmationDialog(
-                    itemName: '${currentUserRole.user?.firstName}',
+                    itemName: '${currentUserRole.user.firstName}',
                     onDelete: () {
                       ref
-                          .read(userOrgRolesDbProvider)
+                          .read(userOrgRolesRepositoryProvider)
                           .deleteItem(currentUserRole.orgRole.id);
                       Navigator.of(context).pop();
                     }));
@@ -103,7 +106,7 @@ class ChangeUserRoleDialog extends HookConsumerWidget {
         ),
         FilledButton(
           onPressed: () {
-            ref.read(userOrgRolesDbProvider).upsertItem(
+            ref.read(userOrgRolesRepositoryProvider).upsertItem(
                 currentUserRole.orgRole.copyWith(orgRole: state.value));
             Navigator.of(context).pop();
           },
