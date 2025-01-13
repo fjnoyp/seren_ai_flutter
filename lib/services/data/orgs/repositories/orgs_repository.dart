@@ -9,10 +9,12 @@ final orgsRepositoryProvider = Provider<OrgsRepository>((ref) {
 });
 
 class OrgsRepository extends BaseRepository<OrgModel> {
-  const OrgsRepository(super.db);
+  const OrgsRepository(super.db, {super.primaryTable = 'orgs'});
 
   @override
-  Set<String> get REMOVEwatchTables => {'orgs'};
+  Map<String, dynamic> toJson(OrgModel item) {
+    return item.toJson();
+  }
 
   @override
   OrgModel fromJson(Map<String, dynamic> json) {

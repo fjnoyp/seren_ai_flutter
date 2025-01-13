@@ -84,6 +84,9 @@ dependencies:
   flutter_local_notifications: ^18.0.1
   timezone: ^0.10.0
 
+  # for stream combining (combine2) 
+  rxdart: ^0.28.0
+
 dev_dependencies:
   flutter_test:
     sdk: flutter    # Note: flutter_test needs the SDK source

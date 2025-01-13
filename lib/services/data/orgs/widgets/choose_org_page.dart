@@ -3,8 +3,8 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:seren_ai_flutter/services/data/common/widgets/async_value_handler_widget.dart';
 import 'package:seren_ai_flutter/services/data/orgs/providers/cur_org_dependency_provider.dart';
-import 'package:seren_ai_flutter/services/data/orgs/providers/cur_user_org_roles_provider.dart';
 import 'package:seren_ai_flutter/services/data/orgs/providers/cur_user_org_service_provider.dart';
+import 'package:seren_ai_flutter/services/data/orgs/providers/joined_org_roles_by_org_stream_provider.dart';
 
 class ChooseOrgPage extends ConsumerWidget {
   const ChooseOrgPage({super.key});
@@ -13,10 +13,14 @@ class ChooseOrgPage extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final curOrgId = ref.watch(curOrgIdProvider);
 
+    if (curOrgId == null) {
+      return const Center(child: CircularProgressIndicator());
+    }
+
     final theme = Theme.of(context);
 
     return AsyncValueHandlerWidget(
-      value: ref.watch(joinedCurUserRolesProvider),
+      value: ref.watch(joinedOrgRolesByOrgStreamProvider(curOrgId)),
       data: (orgRoles) => orgRoles.isEmpty
           ? Center(child: Text(AppLocalizations.of(context)!.noOrganizations))
           : ListView.builder(
@@ -47,7 +51,8 @@ class ChooseOrgPage extends ConsumerWidget {
                     contentPadding: const EdgeInsets.all(16.0),
                     title: Center(child: Text(orgModel.name)),
                     subtitle: Center(
-                      child: Text(orgRoleModel.orgRole.toHumanReadable(context)),
+                      child:
+                          Text(orgRoleModel.orgRole.toHumanReadable(context)),
                     ),
                     onTap: () {
                       ref
