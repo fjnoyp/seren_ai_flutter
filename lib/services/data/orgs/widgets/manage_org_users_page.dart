@@ -6,9 +6,9 @@ import 'package:seren_ai_flutter/common/routes/app_routes.dart';
 import 'package:seren_ai_flutter/services/data/common/widgets/delete_confirmation_dialog.dart';
 import 'package:seren_ai_flutter/services/data/orgs/models/joined_user_org_role_model.dart';
 import 'package:seren_ai_flutter/services/data/orgs/models/user_org_role_model.dart';
-import 'package:seren_ai_flutter/services/data/orgs/providers/cur_org_dependency_provider.dart';
+import 'package:seren_ai_flutter/services/data/orgs/providers/cur_selected_org_id_notifier.dart';
 import 'package:seren_ai_flutter/services/data/orgs/providers/cur_user_org_role_provider.dart';
-import 'package:seren_ai_flutter/services/data/orgs/providers/joined_org_roles_by_org_stream_provider.dart';
+import 'package:seren_ai_flutter/services/data/orgs/providers/joined_user_org_roles_by_org_stream_provider.dart';
 import 'package:seren_ai_flutter/services/data/orgs/repositories/user_org_roles_repository.dart';
 
 import 'package:seren_ai_flutter/services/data/orgs/widgets/action_buttons/invite_user_to_org_button.dart';
@@ -18,14 +18,14 @@ class ManageOrgUsersPage extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final curOrgId = ref.watch(curOrgIdProvider);
+    final curOrgId = ref.watch(curSelectedOrgIdNotifierProvider);
 
     if (curOrgId == null) {
       return Center(child: Text(AppLocalizations.of(context)!.noOrgSelected));
     }
 
     final joinedOrgRoles =
-        ref.watch(joinedOrgRolesByOrgStreamProvider(curOrgId));
+        ref.watch(joinedUserOrgRolesByOrgStreamProvider(curOrgId));
 
     return joinedOrgRoles.valueOrNull == null
         ? Center(child: Text(AppLocalizations.of(context)!.noUsersInOrg))

@@ -4,12 +4,6 @@ import 'package:seren_ai_flutter/services/data/users/models/user_model.dart';
 import 'package:seren_ai_flutter/services/data/common/base_repository.dart';
 import 'package:seren_ai_flutter/services/data/users/repositories/user_queries.dart';
 
-final usersInProjectProvider = StreamProvider.family<List<UserModel>, String>(
-  (ref, projectId) => ref
-      .watch(usersRepositoryProvider)
-      .watchUsersInProject(projectId: projectId),
-);
-
 final usersRepositoryProvider = Provider<UsersRepository>((ref) {
   return UsersRepository(ref.watch(dbProvider));
 });

@@ -49,10 +49,8 @@ class SelectedProjectNotifier extends Notifier<AsyncValue<ProjectModel>> {
     if (user.defaultProjectId != null) {
       final defaultProject = await ref
           .read(projectsRepositoryProvider)
-          .getProjectById(projectId: user.defaultProjectId!);
-      if (defaultProject != null) {
-        setProject(defaultProject);
-      }
+          .getById(user.defaultProjectId!);
+      setProject(defaultProject);
     } else {
       // Defaults to some assigned project when user default project is null
       final userProjects =

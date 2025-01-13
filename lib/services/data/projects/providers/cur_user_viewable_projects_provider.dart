@@ -1,5 +1,5 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:seren_ai_flutter/services/data/orgs/providers/cur_org_dependency_provider.dart';
+import 'package:seren_ai_flutter/services/data/orgs/providers/cur_selected_org_id_notifier.dart';
 import 'package:seren_ai_flutter/services/data/projects/models/project_model.dart';
 import 'package:seren_ai_flutter/services/data/projects/repositories/projects_repository.dart';
 import 'package:seren_ai_flutter/services/auth/cur_auth_dependency_provider.dart';
@@ -18,7 +18,7 @@ final curUserViewableProjectsProvider =
       builder: (isOrgAdmin) {
         if (isOrgAdmin) {
           // If user is org admin, return all projects for the org
-          final curOrgId = ref.watch(curOrgIdProvider);
+          final curOrgId = ref.watch(curSelectedOrgIdNotifierProvider);
           return projectsRepo.watchOrgProjects(orgId: curOrgId!);
         } else {
           // Otherwise, return only projects user has access to

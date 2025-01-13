@@ -6,7 +6,7 @@ import 'package:seren_ai_flutter/common/universal_platform/universal_platform.da
 import 'package:seren_ai_flutter/services/data/common/widgets/async_value_handler_widget.dart';
 import 'package:seren_ai_flutter/services/data/common/widgets/editable_page_mode_enum.dart';
 import 'package:seren_ai_flutter/services/data/orgs/models/user_org_role_model.dart';
-import 'package:seren_ai_flutter/services/data/orgs/providers/cur_user_org_roles_provider.dart';
+import 'package:seren_ai_flutter/services/data/orgs/providers/cur_user_org_role_provider.dart';
 import 'package:seren_ai_flutter/services/data/projects/models/project_model.dart';
 import 'package:seren_ai_flutter/services/data/projects/providers/editing_project_provider.dart';
 import 'package:seren_ai_flutter/services/data/projects/providers/selected_project_provider.dart';

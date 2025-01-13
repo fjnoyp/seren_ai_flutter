@@ -2,11 +2,13 @@ import 'package:flutter/material.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:seren_ai_flutter/services/data/orgs/models/user_org_role_model.dart';
-import 'package:seren_ai_flutter/services/data/orgs/providers/cur_org_service_provider.dart';
+import 'package:seren_ai_flutter/services/data/orgs/providers/org_invite_service_provider.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 class InviteUserToOrgButton extends ConsumerWidget {
-  const InviteUserToOrgButton({super.key});
+  const InviteUserToOrgButton({required this.orgId, super.key});
+
+  final String orgId;
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -15,7 +17,7 @@ class InviteUserToOrgButton extends ConsumerWidget {
       onPressed: () {
         showDialog(
           context: context,
-          builder: (context) => const InviteUserByEmailDialog(),
+          builder: (context) => InviteUserByEmailDialog(orgId: orgId),
         );
       },
     );
@@ -23,7 +25,9 @@ class InviteUserToOrgButton extends ConsumerWidget {
 }
 
 class InviteUserByEmailDialog extends HookConsumerWidget {
-  const InviteUserByEmailDialog({super.key});
+  const InviteUserByEmailDialog({required this.orgId, super.key});
+
+  final String orgId;
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -75,8 +79,8 @@ class InviteUserByEmailDialog extends HookConsumerWidget {
       actions: [
         FilledButton(
           onPressed: () => ref
-              .read(curOrgServiceProvider.notifier)
-              .inviteUser(emailController.text, orgRole.value)
+              .read(orgInviteServiceProvider)
+              .inviteUser(orgId, emailController.text, orgRole.value)
               .then((_) => Navigator.pop(context)),
           child: Text(AppLocalizations.of(context)!.invite),
         ),
