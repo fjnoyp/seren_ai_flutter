@@ -5,8 +5,8 @@ import 'package:seren_ai_flutter/common/navigation_service_provider.dart';
 import 'package:seren_ai_flutter/services/auth/cur_auth_state_provider.dart';
 import 'package:seren_ai_flutter/services/data/common/widgets/async_value_handler_widget.dart';
 import 'package:seren_ai_flutter/services/data/common/widgets/editable_page_mode_enum.dart';
-import 'package:seren_ai_flutter/services/data/notes/models/joined_note_model.dart';
-import 'package:seren_ai_flutter/services/data/notes/providers/notes_provider.dart';
+import 'package:seren_ai_flutter/services/data/notes/models/note_model.dart';
+import 'package:seren_ai_flutter/services/data/notes/providers/notes_by_project_stream_provider.dart';
 import 'package:seren_ai_flutter/services/data/notes/widgets/note_page.dart';
 import 'package:seren_ai_flutter/widgets/home/base_home_card.dart';
 import 'package:seren_ai_flutter/common/routes/app_routes.dart';
@@ -23,32 +23,32 @@ class NoteHomeCard extends ConsumerWidget {
       title: AppLocalizations.of(context)!.notes,
       child: Center(
         child: AsyncValueHandlerWidget(
-          value:
-              ref.watch(curUserJoinedNotesProvider(curUser?.defaultProjectId)),
+          value: ref
+              .watch(notesByProjectStreamProvider(curUser?.defaultProjectId)),
           data: (notes) => notes.isEmpty
               ? Text(AppLocalizations.of(context)!.noNotes)
               : Column(
                   mainAxisSize: MainAxisSize.min,
                   children: [
                     ...notes.take(2).map(
-                          (note) => _NoteCardItem(joinedNote: note),
+                          (note) => _NoteCardItem(note: note),
                         ),
                     Flexible(
                       fit: FlexFit.loose,
                       child: BaseHomeInnerCard.filled(
-                      child: InkWell(
+                        child: InkWell(
                           onTap: () {
                             ref
                                 .read(navigationServiceProvider)
                                 .navigateTo(AppRoutes.noteList.name);
                           },
                           child: Center(
-                          child: Text(
-                            AppLocalizations.of(context)!.seeAll,
-                            style: Theme.of(context).textTheme.bodySmall,
+                            child: Text(
+                              AppLocalizations.of(context)!.seeAll,
+                              style: Theme.of(context).textTheme.bodySmall,
+                            ),
                           ),
                         ),
-                      ),
                       ),
                     ),
                   ],
@@ -60,22 +60,22 @@ class NoteHomeCard extends ConsumerWidget {
 }
 
 class _NoteCardItem extends ConsumerWidget {
-  final JoinedNoteModel joinedNote;
+  final NoteModel note;
 
-  const _NoteCardItem({required this.joinedNote});
+  const _NoteCardItem({required this.note});
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     return GestureDetector(
       onTap: () => openNotePage(context, ref,
-          mode: EditablePageMode.readOnly, noteId: joinedNote.note.id),
+          mode: EditablePageMode.readOnly, noteId: note.id),
       child: BaseHomeInnerCard.outlined(
         child: SizedBox(
           width: double.infinity,
           child: Padding(
             padding: const EdgeInsets.all(8.0),
             child: Text(
-              joinedNote.note.name,
+              note.name,
               style: Theme.of(context).textTheme.labelSmall,
               overflow: TextOverflow.ellipsis,
             ),

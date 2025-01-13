@@ -4,10 +4,10 @@ import 'package:seren_ai_flutter/services/data/users/models/user_model.dart';
 import 'package:seren_ai_flutter/services/data/common/base_repository.dart';
 import 'package:seren_ai_flutter/services/data/users/repositories/user_queries.dart';
 
-final usersInProjectProvider = FutureProvider.family<List<UserModel>, String>(
+final usersInProjectProvider = StreamProvider.family<List<UserModel>, String>(
   (ref, projectId) => ref
       .watch(usersRepositoryProvider)
-      .getUsersInProject(projectId: projectId),
+      .watchUsersInProject(projectId: projectId),
 );
 
 final usersRepositoryProvider = Provider<UsersRepository>((ref) {
@@ -25,20 +25,6 @@ class UsersRepository extends BaseRepository<UserModel> {
   @override
   Map<String, dynamic> toJson(UserModel item) {
     return item.toJson();
-  }
-
-  // Watch a specific user by ID
-  Stream<UserModel?> watchUser({
-    required String userId,
-  }) {
-    return watchSingle(UserQueries.userByIdQuery, {'user_id': userId});
-  }
-
-  // Get a specific user by ID
-  Future<UserModel?> getUser({
-    required String userId,
-  }) async {
-    return getSingle(UserQueries.userByIdQuery, {'user_id': userId});
   }
 
   // Watch specific users by their IDs

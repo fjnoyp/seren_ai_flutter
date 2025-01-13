@@ -17,7 +17,7 @@ import 'package:seren_ai_flutter/services/data/ai_chats/models/ai_chat_message_t
 import 'package:seren_ai_flutter/services/data/ai_chats/models/ai_chat_thread_model.dart';
 import 'package:seren_ai_flutter/services/data/ai_chats/repositories/ai_chat_messages_repository.dart';
 import 'package:seren_ai_flutter/services/data/ai_chats/repositories/ai_chat_threads_repository.dart';
-import 'package:seren_ai_flutter/services/data/notes/providers/cur_note_state_provider.dart';
+import 'package:seren_ai_flutter/services/data/notes/providers/cur_editing_note_state_provider.dart';
 import 'package:seren_ai_flutter/services/data/orgs/providers/cur_org_dependency_provider.dart';
 
 import 'package:logging/logging.dart';
@@ -104,8 +104,9 @@ class AIChatService {
       final curTask = ref.read(curEditingTaskStateProvider).value;
       sb.writeln('CurTask: ${curTask?.taskModel.toAiReadableMap()}');
     } else if (appRoute == AppRoutes.notePage) {
-      final curNote = ref.read(curNoteStateProvider).value;
-      sb.writeln('CurNote: ${curNote?.toReadableMap()}');
+      final curNoteMap =
+          ref.read(curEditingNoteStateProvider.notifier).toReadableMap();
+      sb.writeln('CurNote: $curNoteMap');
     }
 
     return sb.toString();
