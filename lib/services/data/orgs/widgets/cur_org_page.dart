@@ -3,9 +3,10 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:seren_ai_flutter/common/routes/app_routes.dart';
 import 'package:seren_ai_flutter/services/data/common/widgets/editable_page_mode_enum.dart';
 import 'package:seren_ai_flutter/services/data/orgs/models/user_org_role_model.dart';
-import 'package:seren_ai_flutter/services/data/orgs/providers/cur_org_service_provider.dart';
+import 'package:seren_ai_flutter/services/data/orgs/providers/org_invite_service_provider.dart';
 import 'package:seren_ai_flutter/services/data/orgs/providers/cur_user_org_role_provider.dart';
-import 'package:seren_ai_flutter/services/data/orgs/providers/joined_org_roles_by_org_stream_provider.dart';
+import 'package:seren_ai_flutter/services/data/orgs/providers/joined_user_org_roles_by_org_stream_provider.dart';
+import 'package:seren_ai_flutter/services/data/orgs/repositories/orgs_repository.dart';
 import 'package:seren_ai_flutter/services/data/orgs/widgets/action_buttons/edit_org_button.dart';
 import 'package:seren_ai_flutter/services/data/orgs/widgets/form/org_selection_fields.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
@@ -22,7 +23,7 @@ class CurOrgPage extends ConsumerWidget {
     final curOrg = ref.watch(curOrgServiceProvider);
 
     final admins = ref
-            .watch(joinedOrgRolesByOrgStreamProvider(curOrg.id))
+            .watch(joinedUserOrgRolesByOrgStreamProvider(curOrg.id))
             .value
             ?.where((joinedOrgRole) =>
                 joinedOrgRole.orgRole.orgRole == OrgRole.admin)
@@ -83,7 +84,7 @@ class CurOrgPage extends ConsumerWidget {
                 width: double.infinity,
                 child: ElevatedButton(
                   onPressed: () async {
-                    ref.read(curOrgServiceProvider.notifier).saveOrg();
+                    ref.read(orgsRepositoryProvider).upsertItem(curOrg);
                     Navigator.pop(context);
                     openOrgPage(context);
                   },

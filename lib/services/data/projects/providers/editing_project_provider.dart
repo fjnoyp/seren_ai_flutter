@@ -1,5 +1,5 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:seren_ai_flutter/services/data/orgs/providers/cur_org_dependency_provider.dart';
+import 'package:seren_ai_flutter/services/data/orgs/providers/cur_selected_org_id_notifier.dart';
 import 'package:seren_ai_flutter/services/data/projects/models/project_model.dart';
 import 'package:seren_ai_flutter/services/data/projects/projects_db_provider.dart';
 
@@ -15,7 +15,7 @@ class EditingProjectNotifier extends Notifier<ProjectModel> {
   }
 
   ProjectModel createNewProject() {
-    final orgId = ref.read(curOrgIdProvider)!;
+    final orgId = ref.read(curSelectedOrgIdNotifierProvider)!;
     final newProject = ProjectModel(
       name: 'New Project',
       description: '',

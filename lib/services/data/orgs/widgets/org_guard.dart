@@ -3,7 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:seren_ai_flutter/common/navigation_service_provider.dart';
 import 'package:seren_ai_flutter/common/routes/app_routes.dart';
 import 'package:seren_ai_flutter/services/data/orgs/models/org_model.dart';
-import 'package:seren_ai_flutter/services/data/orgs/providers/cur_org_dependency_provider.dart';
+import 'package:seren_ai_flutter/services/data/orgs/providers/cur_selected_org_id_notifier.dart';
 import 'package:seren_ai_flutter/services/data/orgs/providers/cur_user_org_service_provider.dart';
 import 'package:seren_ai_flutter/services/data/orgs/providers/cur_user_orgs_provider.dart';
 
@@ -15,7 +15,7 @@ class OrgGuard extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final curOrgId = ref.watch(curOrgIdProvider);
+    final curOrgId = ref.watch(curSelectedOrgIdNotifierProvider);
     final curUserOrgs = ref.watch(curUserOrgsProvider);
 
     // Check if user no longer belongs to current org

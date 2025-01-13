@@ -5,9 +5,9 @@ import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:intl/intl.dart';
 import 'package:seren_ai_flutter/services/data/orgs/models/joined_user_org_role_model.dart';
 import 'package:seren_ai_flutter/services/data/orgs/models/user_org_role_model.dart';
-import 'package:seren_ai_flutter/services/data/orgs/providers/cur_org_dependency_provider.dart';
+import 'package:seren_ai_flutter/services/data/orgs/providers/cur_selected_org_id_notifier.dart';
 import 'package:seren_ai_flutter/services/data/orgs/providers/cur_user_org_role_provider.dart';
-import 'package:seren_ai_flutter/services/data/orgs/providers/joined_org_roles_by_org_stream_provider.dart';
+import 'package:seren_ai_flutter/services/data/orgs/providers/joined_user_org_roles_by_org_stream_provider.dart';
 import 'package:seren_ai_flutter/services/data/orgs/widgets/action_buttons/invite_user_to_org_button.dart';
 import 'package:seren_ai_flutter/services/data/orgs/widgets/manage_org_users_page.dart';
 import 'package:seren_ai_flutter/services/data/users/models/user_model.dart';
@@ -17,7 +17,7 @@ class WebManageOrgUsersPage extends HookConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final curOrgId = ref.watch(curOrgIdProvider);
+    final curOrgId = ref.watch(curSelectedOrgIdNotifierProvider);
 
     if (curOrgId == null) {
       return Center(child: Text(AppLocalizations.of(context)!.noOrgSelected));
@@ -93,7 +93,8 @@ class _UsersTable extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final joinedOrgRoles = ref.watch(joinedOrgRolesByOrgStreamProvider(orgId));
+    final joinedOrgRoles =
+        ref.watch(joinedUserOrgRolesByOrgStreamProvider(orgId));
 
     final filteredJoinedOrgRoles = joinedOrgRoles.valueOrNull
             ?.where((joinedOrgRole) => filter?.call(joinedOrgRole) ?? true)
