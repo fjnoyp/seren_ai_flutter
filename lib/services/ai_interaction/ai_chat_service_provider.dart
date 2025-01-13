@@ -18,7 +18,7 @@ import 'package:seren_ai_flutter/services/data/ai_chats/models/ai_chat_thread_mo
 import 'package:seren_ai_flutter/services/data/ai_chats/repositories/ai_chat_messages_repository.dart';
 import 'package:seren_ai_flutter/services/data/ai_chats/repositories/ai_chat_threads_repository.dart';
 import 'package:seren_ai_flutter/services/data/notes/providers/cur_editing_note_state_provider.dart';
-import 'package:seren_ai_flutter/services/data/orgs/providers/cur_org_dependency_provider.dart';
+import 'package:seren_ai_flutter/services/data/orgs/providers/cur_selected_org_id_notifier.dart';
 
 import 'package:logging/logging.dart';
 import 'package:seren_ai_flutter/services/data/tasks/providers/cur_editing_task_state_provider.dart';
@@ -46,7 +46,7 @@ class AIChatService {
 
   Future<void> sendMessageToAi(String message) async {
     final isAiRespondingNotifier = ref.read(isAiRespondingProvider.notifier);
-    final curOrgId = ref.read(curOrgIdProvider);
+    final curOrgId = ref.read(curSelectedOrgIdNotifierProvider);
     final curUser = ref.read(curUserProvider).value;
     final aiChatMessagesRepo = ref.read(aiChatMessagesRepositoryProvider);
 
@@ -224,7 +224,7 @@ class AIChatService {
       String userId, String orgId) async {
     final aiChatThreadsRepo = ref.read(aiChatThreadsRepositoryProvider);
     final langgraphService = ref.read(langgraphServiceProvider);
-    final curOrgId = ref.read(curOrgIdProvider);
+    final curOrgId = ref.read(curSelectedOrgIdNotifierProvider);
     final curUser = ref.read(curUserProvider).value;
 
     final existingThread = await aiChatThreadsRepo.getUserThread(

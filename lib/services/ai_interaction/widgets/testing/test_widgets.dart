@@ -1,4 +1,3 @@
-
 import 'package:flutter/material.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
@@ -6,7 +5,7 @@ import 'package:seren_ai_flutter/services/ai_interaction/langgraph/langgraph_ser
 import 'package:seren_ai_flutter/services/ai_interaction/langgraph/models/lg_config_model.dart';
 
 import 'package:seren_ai_flutter/services/auth/cur_auth_state_provider.dart';
-import 'package:seren_ai_flutter/services/data/orgs/providers/cur_org_dependency_provider.dart';
+import 'package:seren_ai_flutter/services/data/orgs/providers/cur_selected_org_id_notifier.dart';
 
 class TestLanggraphWidget extends HookConsumerWidget {
   const TestLanggraphWidget({super.key});
@@ -24,9 +23,10 @@ class TestLanggraphWidget extends HookConsumerWidget {
             try {
               final curUser = ref.read(curUserProvider).value;
 
-              final curOrg = ref.read(curOrgIdProvider);
+              final curOrg = ref.read(curSelectedOrgIdNotifierProvider);
 
-              final assistantId = await langgraphService.langgraphApi.createAssistant(
+              final assistantId =
+                  await langgraphService.langgraphApi.createAssistant(
                 name: 'Test Assistant',
                 lgConfig: LgConfigSchemaModel(
                   userId: curUser!.id,
@@ -47,7 +47,7 @@ class TestLanggraphWidget extends HookConsumerWidget {
               //     'what is my shift today?', curUser!.id, curOrg!);
 
               // final result = await langgraphService.langgraphApi.getThreadState(
-              //  'fbb8ef11-5f6b-4d28-a12a-1facb2969d98',               
+              //  'fbb8ef11-5f6b-4d28-a12a-1facb2969d98',
               // );
 
               // final showMessages = result.messages.sublist(result.messages.length - 3);
@@ -78,9 +78,9 @@ class TestLanggraphWidget extends HookConsumerWidget {
               //     .map((message) => message.toJson().toString())
               //     .toList()
               //     .toString();
-              
             } catch (e) {
-              responseState.value = 'Error: ${e.toString()}\nStack Trace: ${StackTrace.current}';
+              responseState.value =
+                  'Error: ${e.toString()}\nStack Trace: ${StackTrace.current}';
             }
           },
           child: const Text('Test Get Run'),
@@ -102,7 +102,6 @@ class TestAiWidget extends HookConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final responseState = useState<String?>(null);
     final isVisible = useState<bool>(true); // State to show/hide contents
-
 
     return Container(
       padding: const EdgeInsets.all(4), // Reduced padding

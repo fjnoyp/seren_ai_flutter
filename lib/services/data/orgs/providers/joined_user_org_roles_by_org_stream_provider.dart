@@ -5,7 +5,7 @@ import 'package:seren_ai_flutter/services/data/orgs/repositories/user_org_roles_
 import 'package:seren_ai_flutter/services/data/orgs/repositories/orgs_repository.dart';
 import 'package:seren_ai_flutter/services/data/users/repositories/users_repository.dart';
 
-final joinedOrgRolesByOrgStreamProvider = StreamProvider.autoDispose
+final joinedUserOrgRolesByOrgStreamProvider = StreamProvider.autoDispose
     .family<List<JoinedUserOrgRoleModel>, String>((ref, orgId) {
   return CurAuthDependencyProvider.watchStream<List<JoinedUserOrgRoleModel>>(
     ref: ref,

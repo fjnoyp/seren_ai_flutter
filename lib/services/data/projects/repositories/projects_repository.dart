@@ -9,19 +9,16 @@ final projectsRepositoryProvider = Provider<ProjectsRepository>((ref) {
 });
 
 class ProjectsRepository extends BaseRepository<ProjectModel> {
-  const ProjectsRepository(super.db);
-
-  @override
-  Set<String> get REMOVEwatchTables => {
-        'projects',
-        'user_project_assignments',
-        'team_project_assignments',
-        'user_team_assignments'
-      };
+  const ProjectsRepository(super.db, {super.primaryTable = 'projects'});
 
   @override
   ProjectModel fromJson(Map<String, dynamic> json) {
     return ProjectModel.fromJson(json);
+  }
+
+  @override
+  Map<String, dynamic> toJson(ProjectModel item) {
+    return item.toJson();
   }
 
   // Watch projects for a user (projects where they are assigned directly or via teams)
