@@ -9,29 +9,36 @@ import 'package:seren_ai_flutter/services/data/projects/models/project_model.dar
 import 'package:seren_ai_flutter/services/data/users/models/user_model.dart';
 
 // Load related task data for displaying in a list
-final taskRelationsListDetailsProvider =
-    FutureProvider.family<TaskListItemDetails, TaskModel>((ref, task) async {
-  final Future<ProjectModel?> projectFuture = ref
-      .watch(projectsRepositoryProvider)
-      .getProjectById(projectId: task.parentProjectId);
+final taskListItemRelationsFutureProvider = FutureProvider.autoDispose
+    .family<TaskListItemRelations, TaskModel>((ref, task) async {
+  final Future<ProjectModel?> projectFuture =
+      ref.watch(projectsRepositoryProvider).getById(task.parentProjectId);
+
   final Future<List<UserModel>> assigneesFuture =
       ref.watch(usersRepositoryProvider).getTaskAssignedUsers(taskId: task.id);
 
+  final Future<UserModel?> authorFuture =
+      ref.watch(usersRepositoryProvider).getById(task.authorUserId);
+
   final project = await projectFuture;
   final assignees = await assigneesFuture;
+  final author = await authorFuture;
 
-  return TaskListItemDetails(
+  return TaskListItemRelations(
     project: project,
     assignees: assignees,
+    author: author,
   );
 });
 
-class TaskListItemDetails {
+class TaskListItemRelations {
   final ProjectModel? project;
   final List<UserModel> assignees;
+  final UserModel? author;
 
-  TaskListItemDetails({
+  TaskListItemRelations({
     this.project,
     required this.assignees,
+    this.author,
   });
 }

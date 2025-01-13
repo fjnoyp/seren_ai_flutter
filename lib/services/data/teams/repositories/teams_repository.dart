@@ -19,14 +19,4 @@ class TeamsRepository extends BaseRepository<TeamModel> {
   Map<String, dynamic> toJson(TeamModel item) {
     return item.toJson();
   }
-
-  Future<TeamModel?> getById({
-    required String teamId,
-  }) async {
-    final result = await get(
-      'SELECT * FROM teams WHERE id = :team_id;',
-      {'team_id': teamId},
-    );
-    return result.isNotEmpty ? result.first : null;
-  }
 }

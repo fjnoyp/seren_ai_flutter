@@ -7,10 +7,9 @@ import 'package:seren_ai_flutter/common/navigation_service_provider.dart';
 import 'package:seren_ai_flutter/common/routes/app_routes.dart';
 import 'package:seren_ai_flutter/services/data/common/widgets/async_value_handler_widget.dart';
 import 'package:seren_ai_flutter/services/data/common/widgets/editable_page_mode_enum.dart';
-import 'package:seren_ai_flutter/services/data/notes/providers/cur_note_service_provider.dart';
-import 'package:seren_ai_flutter/services/data/notes/providers/cur_note_state_provider.dart';
+import 'package:seren_ai_flutter/services/data/notes/providers/cur_editing_note_state_provider.dart';
 import 'package:seren_ai_flutter/services/data/notes/providers/note_attachments_service_provider.dart';
-import 'package:seren_ai_flutter/services/data/notes/repositories/joined_notes_repository.dart';
+import 'package:seren_ai_flutter/services/data/notes/repositories/notes_repository.dart';
 import 'package:seren_ai_flutter/services/data/notes/widgets/delete_note_button.dart';
 import 'package:seren_ai_flutter/services/data/notes/widgets/edit_note_button.dart';
 import 'package:seren_ai_flutter/services/data/notes/widgets/form/note_selection_fields.dart';
@@ -43,12 +42,12 @@ class NotePage extends HookConsumerWidget {
           ref
               .read(noteAttachmentsServiceProvider.notifier)
               .removeUnuploadedAttachments(
-                  ref.read(curNoteServiceProvider).curNoteId);
+                  ref.read(curEditingNoteStateProvider.notifier).curNoteId);
         }
       },
       child: AsyncValueHandlerWidget(
-        value: ref.watch(curNoteStateProvider),
-        data: (joinedNote) => SingleChildScrollView(
+        value: ref.watch(curEditingNoteStateProvider),
+        data: (state) => SingleChildScrollView(
           child: Padding(
             padding: const EdgeInsets.all(16.0),
             child: Column(
@@ -57,13 +56,13 @@ class NotePage extends HookConsumerWidget {
                 isEnabled
                     ? NoteNameField(isEditable: true)
                     : Text(
-                        joinedNote!.note.name,
+                        state.noteModel.name,
                         style: Theme.of(context).textTheme.headlineMedium,
                       ),
                 const SizedBox(height: 8),
                 if (!isEnabled)
                   Text(DateFormat.yMd(AppLocalizations.of(context)!.localeName)
-                      .format(joinedNote!.note.date!)),
+                      .format(state.noteModel.date!)),
                 const Divider(),
 
                 // ======================
@@ -96,7 +95,10 @@ class NotePage extends HookConsumerWidget {
                       const Divider(),
                       NoteStatusSelectionField(enabled: isEnabled),
                       const Divider(),
-                      NoteAttachmentSection(isEnabled),
+                      NoteAttachmentSection(
+                        isEnabled,
+                        noteId: state.noteModel.id,
+                      ),
                     ],
                   ),
                 ),
@@ -108,7 +110,9 @@ class NotePage extends HookConsumerWidget {
                     width: double.infinity,
                     child: ElevatedButton(
                       onPressed: () {
-                        ref.read(curNoteServiceProvider).saveNote();
+                        ref
+                            .read(curEditingNoteStateProvider.notifier)
+                            .saveChanges();
 
                         // TODO p4: handle error cases
                         if (context.mounted) {
@@ -148,21 +152,21 @@ Future<void> openNotePage(BuildContext context, WidgetRef ref,
       .popUntil((route) => route.settings.name != AppRoutes.notePage.name);
 
   if (mode == EditablePageMode.create) {
-    ref.read(curNoteServiceProvider).createNote(
+    ref.read(curEditingNoteStateProvider.notifier).createNewNote(
           parentProjectId: parentProjectId,
         );
   } else if (mode == EditablePageMode.edit ||
       mode == EditablePageMode.readOnly) {
     if (noteId != null) {
-      final note =
-          await ref.read(joinedNotesRepositoryProvider).getJoinedNote(noteId);
-      ref.read(curNoteServiceProvider).loadNote(note);
+      final note = await ref.read(notesRepositoryProvider).getById(noteId);
+      ref.read(curEditingNoteStateProvider.notifier).loadNote(note);
     }
   }
 
   final actions = switch (mode) {
     EditablePageMode.edit => [const DeleteNoteButton()],
     EditablePageMode.readOnly => [
+        // TODO p3: note should not be implicit, we should be directly passing down which note should be affected here by using the notes retrieved from above ... current code can cause issues if the note is not the current note
         const EditNoteButton(),
         const ShareNoteButton(),
       ],
@@ -174,7 +178,7 @@ Future<void> openNotePage(BuildContext context, WidgetRef ref,
     EditablePageMode.create => AppLocalizations.of(context)!.createNote,
     // if mode is readOnly, we assume task state is loaded
     EditablePageMode.readOnly =>
-      ref.read(curNoteStateProvider).value!.note.name,
+      ref.read(curEditingNoteStateProvider).value!.noteModel.name,
   };
 
   if (mode == EditablePageMode.edit || mode == EditablePageMode.create) {

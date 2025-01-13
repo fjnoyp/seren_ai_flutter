@@ -10,13 +10,14 @@ import 'package:permission_handler/permission_handler.dart';
 import 'package:seren_ai_flutter/common/navigation_service_provider.dart';
 import 'package:seren_ai_flutter/common/universal_platform/universal_platform.dart';
 import 'package:seren_ai_flutter/common/utils/string_extension.dart';
-import 'package:seren_ai_flutter/services/data/notes/providers/cur_note_service_provider.dart';
 import 'package:seren_ai_flutter/services/data/notes/providers/note_attachments_service_provider.dart';
 
 class NoteAttachmentSection extends ConsumerWidget {
-  const NoteAttachmentSection(this.isEnabled, {super.key});
+  const NoteAttachmentSection(this.isEnabled,
+      {required this.noteId, super.key});
 
   final bool isEnabled;
+  final String noteId;
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -27,18 +28,21 @@ class NoteAttachmentSection extends ConsumerWidget {
           alignment: WrapAlignment.center,
           spacing: 16.0,
           children: [
-            ...ref.watch(noteAttachmentsServiceProvider).map(
-                (e) => _AttachmentPreviewButton(e, enableDelete: isEnabled)),
+            ...ref.watch(noteAttachmentsServiceProvider).map((e) =>
+                _AttachmentPreviewButton(e,
+                    noteId: noteId, enableDelete: isEnabled)),
           ],
         ),
-        if (isEnabled) const _AddAttachmentButton(),
+        if (isEnabled) _AddAttachmentButton(noteId: noteId),
       ],
     );
   }
 }
 
 class _AddAttachmentButton extends ConsumerWidget {
-  const _AddAttachmentButton();
+  const _AddAttachmentButton({required this.noteId});
+
+  final String noteId;
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -164,7 +168,7 @@ class _AddAttachmentButton extends ConsumerWidget {
       // Upload files in a non-blocking way
       ref.read(noteAttachmentsServiceProvider.notifier).uploadAttachments(
             files,
-            noteId: ref.read(curNoteServiceProvider).curNoteId,
+            noteId: noteId,
           );
     }
   }
@@ -186,10 +190,12 @@ class _AttachmentPreviewButton extends ConsumerWidget {
   const _AttachmentPreviewButton(
     this.attachmentUrl, {
     required this.enableDelete,
+    required this.noteId,
   });
 
   final String attachmentUrl;
   final bool enableDelete;
+  final String noteId;
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -203,11 +209,12 @@ class _AttachmentPreviewButton extends ConsumerWidget {
                     .read(noteAttachmentsServiceProvider.notifier)
                     .openAttachmentLocally(
                       fileUrl: attachmentUrl,
-                      noteId: ref.read(curNoteServiceProvider).curNoteId,
+                      noteId: noteId,
                     )
                 : showDialog(
                     context: context,
-                    builder: (context) => _AttachmentPreview(attachmentUrl),
+                    builder: (context) =>
+                  _AttachmentPreview(attachmentUrl, noteId: noteId),
                   ),
             // TODO p3: conditionally change the icon based on its file extension
             icon: const Icon(Icons.attach_file),
@@ -221,7 +228,8 @@ class _AttachmentPreviewButton extends ConsumerWidget {
           IconButton(
             onPressed: () => showDialog(
               context: context,
-              builder: (context) => _DeleteAttachmentDialog(attachmentUrl),
+              builder: (context) =>
+                  _DeleteAttachmentDialog(attachmentUrl, noteId: noteId),
             ),
             icon: Icon(Icons.close, color: Theme.of(context).colorScheme.error),
           ),
@@ -231,9 +239,10 @@ class _AttachmentPreviewButton extends ConsumerWidget {
 }
 
 class _DeleteAttachmentDialog extends ConsumerWidget {
-  const _DeleteAttachmentDialog(this.attachmentUrl);
+  const _DeleteAttachmentDialog(this.attachmentUrl, {required this.noteId});
 
   final String attachmentUrl;
+  final String noteId;
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -249,7 +258,7 @@ class _DeleteAttachmentDialog extends ConsumerWidget {
           onPressed: () {
             ref.read(noteAttachmentsServiceProvider.notifier).deleteAttachment(
                   fileUrl: attachmentUrl,
-                  noteId: ref.read(curNoteServiceProvider).curNoteId,
+                  noteId: noteId,
                 );
             ref.read(navigationServiceProvider).pop();
           },
@@ -261,9 +270,10 @@ class _DeleteAttachmentDialog extends ConsumerWidget {
 }
 
 class _AttachmentPreview extends ConsumerWidget {
-  const _AttachmentPreview(this.attachmentUrl);
+  const _AttachmentPreview(this.attachmentUrl, {required this.noteId});
 
   final String attachmentUrl;
+  final String noteId;
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -310,7 +320,7 @@ class _AttachmentPreview extends ConsumerWidget {
                           .read(noteAttachmentsServiceProvider.notifier)
                           .openAttachmentLocally(
                             fileUrl: attachmentUrl,
-                            noteId: ref.read(curNoteServiceProvider).curNoteId,
+                            noteId: noteId,
                           ),
                       child: Text(AppLocalizations.of(context)!.openFile),
                     ),

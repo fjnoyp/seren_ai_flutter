@@ -8,7 +8,7 @@ import 'package:seren_ai_flutter/services/data/common/status_enum.dart';
 import 'package:seren_ai_flutter/services/data/common/widgets/async_value_handler_widget.dart';
 import 'package:seren_ai_flutter/services/data/common/widgets/editable_page_mode_enum.dart';
 import 'package:seren_ai_flutter/services/data/tasks/models/task_model.dart';
-import 'package:seren_ai_flutter/services/data/tasks/providers/cur_user_viewable_tasks_provider.dart';
+import 'package:seren_ai_flutter/services/data/tasks/providers/cur_user_viewable_tasks_stream_provider.dart';
 import 'package:seren_ai_flutter/services/data/tasks/widgets/task_page.dart';
 import 'package:seren_ai_flutter/widgets/home/base_home_card.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
@@ -18,7 +18,7 @@ class TaskHomeCard extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final watchedTasks = ref.watch(curUserViewableTasksProvider);
+    final watchedTasks = ref.watch(curUserViewableTasksStreamProvider);
 
     return BaseHomeCard(
       title: AppLocalizations.of(context)!.todaysTasks,
