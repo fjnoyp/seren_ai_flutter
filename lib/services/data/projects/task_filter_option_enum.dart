@@ -48,22 +48,26 @@ enum TaskFilterOption {
           (
             value: 'overdue',
             name: AppLocalizations.of(context)!.overdue,
-            filter: (task) => task.task.dueDate!.isBefore(DateTime.now())
+            filter: (task) =>
+                task.task.dueDate?.isBefore(DateTime.now()) ?? false
           ),
           (
             value: 'today',
             name: AppLocalizations.of(context)!.today,
-            filter: (task) => task.task.dueDate!.isSameDate(DateTime.now())
+            filter: (task) =>
+                task.task.dueDate?.isSameDate(DateTime.now()) ?? false
           ),
           (
             value: 'thisWeek',
             name: AppLocalizations.of(context)!.thisWeek,
-            filter: (task) => task.task.dueDate!.isSameWeek(DateTime.now())
+            filter: (task) =>
+                task.task.dueDate?.isSameWeek(DateTime.now()) ?? false
           ),
           (
             value: 'thisMonth',
             name: AppLocalizations.of(context)!.thisMonth,
-            filter: (task) => task.task.dueDate!.isSameMonth(DateTime.now())
+            filter: (task) =>
+                task.task.dueDate?.isSameMonth(DateTime.now()) ?? false
           ),
           (
             value: 'customDateRange',
@@ -86,17 +90,20 @@ enum TaskFilterOption {
           (
             value: 'today',
             name: AppLocalizations.of(context)!.today,
-            filter: (task) => task.task.createdAt!.isSameDate(DateTime.now())
+            filter: (task) =>
+                task.task.createdAt?.isSameDate(DateTime.now()) ?? false
           ),
           (
             value: 'thisWeek',
             name: AppLocalizations.of(context)!.thisWeek,
-            filter: (task) => task.task.createdAt!.isSameWeek(DateTime.now())
+            filter: (task) =>
+                task.task.createdAt?.isSameWeek(DateTime.now()) ?? false
           ),
           (
             value: 'thisMonth',
             name: AppLocalizations.of(context)!.thisMonth,
-            filter: (task) => task.task.createdAt!.isSameMonth(DateTime.now())
+            filter: (task) =>
+                task.task.createdAt?.isSameMonth(DateTime.now()) ?? false
           ),
           (
             value: 'customDateRange',
@@ -111,13 +118,13 @@ enum TaskFilterOption {
       switch (this) {
         TaskFilterOption.assignees => (task, _) => true,
         TaskFilterOption.dueDate => (task, dateRange) => dateRange != null
-            ? task.task.dueDate!.isAfter(dateRange.start) &&
-                task.task.dueDate!.isBefore(dateRange.end)
+            ? (task.task.dueDate?.isAfter(dateRange.start) ?? false) &&
+                (task.task.dueDate?.isBefore(dateRange.end) ?? false)
             : true,
         TaskFilterOption.priority => (task, _) => true,
         TaskFilterOption.creationDate => (task, dateRange) => dateRange != null
-            ? task.task.createdAt!.isAfter(dateRange.start) &&
-                task.task.createdAt!.isBefore(dateRange.end)
+            ? (task.task.createdAt?.isAfter(dateRange.start) ?? false) &&
+                (task.task.createdAt?.isBefore(dateRange.end) ?? false)
             : true,
       };
 }
