@@ -4,14 +4,13 @@ import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:seren_ai_flutter/services/ai_interaction/langgraph/langgraph_service.dart';
 import 'package:seren_ai_flutter/services/ai_interaction/langgraph/models/lg_config_model.dart';
 import 'package:seren_ai_flutter/services/auth/cur_auth_state_provider.dart';
-import 'package:seren_ai_flutter/services/data/orgs/providers/cur_org_dependency_provider.dart';
+import 'package:seren_ai_flutter/services/data/orgs/providers/cur_selected_org_id_notifier.dart';
 
 class AiDebugPage extends HookConsumerWidget {
   const AiDebugPage({super.key});
 
   Future<String> createAssistant(String curUserId, String curOrgId,
       LanggraphService langgraphService) async {
-
     final config = LgConfigSchemaModel(
       userId: curUserId,
       orgId: curOrgId,
@@ -27,13 +26,13 @@ class AiDebugPage extends HookConsumerWidget {
     return assistantId;
   }
 
-  Future<String> getAssistants(String curUserId, String curOrgId, LanggraphService langgraphService) async {
-
+  Future<String> getAssistants(String curUserId, String curOrgId,
+      LanggraphService langgraphService) async {
     final config = LgConfigSchemaModel(
-        userId: curUserId,
-        orgId: curOrgId,
-        timezoneOffsetMinutes: 30,
-        language: 'pt',
+      userId: curUserId,
+      orgId: curOrgId,
+      timezoneOffsetMinutes: 30,
+      language: 'pt',
     );
 
     final assistants = await langgraphService.langgraphApi.searchAssistants(
@@ -41,18 +40,18 @@ class AiDebugPage extends HookConsumerWidget {
     );
 
     // convert to string list of ids
-    final assistantIds = assistants.map((assistant) => assistant.assistantId).toList();
+    final assistantIds =
+        assistants.map((assistant) => assistant.assistantId).toList();
 
     return assistantIds.join(', ');
   }
 
   Future<void> deleteAllAssistants(LanggraphService langgraphService) async {
-
-    final assistants = await langgraphService.langgraphApi.searchAssistants(      
-    );
+    final assistants = await langgraphService.langgraphApi.searchAssistants();
 
     for (final assistant in assistants) {
-      await langgraphService.langgraphApi.deleteAssistant(assistant.assistantId);
+      await langgraphService.langgraphApi
+          .deleteAssistant(assistant.assistantId);
     }
   }
 
@@ -62,7 +61,6 @@ class AiDebugPage extends HookConsumerWidget {
   }
 
   Future<void> deleteAllThreads(LanggraphService langgraphService) async {
-
     final threads = await langgraphService.langgraphApi.searchThreads();
 
     for (final thread in threads) {
@@ -75,7 +73,7 @@ class AiDebugPage extends HookConsumerWidget {
     final responseState = useState<String?>(null);
     final langgraphService = ref.watch(langgraphServiceProvider);
     final curUserId = ref.read(curUserProvider).value!.id;
-    final curOrgId = ref.read(curOrgIdProvider)!;
+    final curOrgId = ref.read(curSelectedOrgIdNotifierProvider)!;
 
     Widget buildDebugButton({
       required String label,
@@ -92,7 +90,8 @@ class AiDebugPage extends HookConsumerWidget {
                 responseState.value = successMessage;
               }
             } catch (e) {
-              responseState.value = 'Error: ${e.toString()}\nStack Trace: ${StackTrace.current}';
+              responseState.value =
+                  'Error: ${e.toString()}\nStack Trace: ${StackTrace.current}';
             }
           },
           child: Text(label),
@@ -106,14 +105,16 @@ class AiDebugPage extends HookConsumerWidget {
         buildDebugButton(
           label: 'Test Create Assistant',
           onPressed: () async {
-            final assistantId = await createAssistant(curUserId, curOrgId, langgraphService);
+            final assistantId =
+                await createAssistant(curUserId, curOrgId, langgraphService);
             responseState.value = 'Created Assistant: $assistantId';
           },
         ),
         buildDebugButton(
-          label: 'Test Get Assistants', 
+          label: 'Test Get Assistants',
           onPressed: () async {
-            final assistantIds = await getAssistants(curUserId, curOrgId, langgraphService);
+            final assistantIds =
+                await getAssistants(curUserId, curOrgId, langgraphService);
             responseState.value = 'Found Assistants: $assistantIds';
           },
         ),
