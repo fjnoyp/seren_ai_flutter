@@ -264,6 +264,7 @@ Future<void> openTaskPage(
   }
 
   final actions = switch (mode) {
+    // TODO p3: task should not be implicit, we should be directly passing down which task should be affected here by using the notes retrieved from above ... if the task is not the current task
     EditablePageMode.edit => [const DeleteTaskButton()],
     EditablePageMode.readOnly => [const EditTaskButton()],
     _ => null,

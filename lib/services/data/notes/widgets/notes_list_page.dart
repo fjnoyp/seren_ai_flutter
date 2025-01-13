@@ -8,7 +8,7 @@ import 'package:seren_ai_flutter/services/data/common/widgets/async_value_handle
 import 'package:seren_ai_flutter/services/data/common/widgets/create_item_bottom_button.dart';
 import 'package:seren_ai_flutter/services/data/common/widgets/editable_page_mode_enum.dart';
 import 'package:seren_ai_flutter/services/data/notes/models/note_model.dart';
-import 'package:seren_ai_flutter/services/data/notes/providers/notes_provider.dart';
+import 'package:seren_ai_flutter/services/data/notes/providers/notes_by_project_stream_provider.dart';
 import 'package:seren_ai_flutter/services/data/notes/widgets/note_page.dart';
 import 'package:seren_ai_flutter/services/data/projects/providers/cur_user_viewable_projects_provider.dart';
 
@@ -92,15 +92,16 @@ class NoteListByProjectId extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     return AsyncValueHandlerWidget(
-      value: ref.watch(curUserNotesProvider(projectId)),
+      value: ref.watch(notesByProjectStreamProvider(projectId)),
       data: (notes) => notes.isEmpty
-          ? Center(child: Text(AppLocalizations.of(context)!.thisProjectHasNoNotes))
+          ? Center(
+              child: Text(AppLocalizations.of(context)!.thisProjectHasNoNotes))
           : Center(
-          child: ListView.builder(
-          itemCount: notes.length,
-            itemBuilder: (context, index) => _NoteItem(notes[index]),
-          ),
-        ),
+              child: ListView.builder(
+                itemCount: notes.length,
+                itemBuilder: (context, index) => _NoteItem(notes[index]),
+              ),
+            ),
     );
   }
 }

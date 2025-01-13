@@ -64,16 +64,6 @@ class TasksRepository extends BaseRepository<TaskModel> {
     );
   }
 
-  Future<TaskModel?> getTaskById({
-    required String taskId,
-  }) async {
-    final result = await get(
-      TaskQueries.getTaskByIdQuery,
-      {'task_id': taskId},
-    );
-    return result.isNotEmpty ? result.first : null;
-  }
-
   Future<List<TaskModel>> getChildTasks({
     required String parentTaskId,
   }) {

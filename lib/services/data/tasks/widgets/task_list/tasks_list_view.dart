@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:seren_ai_flutter/services/data/common/widgets/async_value_handler_widget.dart';
 import 'package:seren_ai_flutter/services/data/tasks/models/task_model.dart';
-import 'package:seren_ai_flutter/services/data/tasks/providers/cur_user_viewable_tasks_provider.dart';
+import 'package:seren_ai_flutter/services/data/tasks/providers/cur_user_viewable_tasks_stream_provider.dart';
 import 'package:seren_ai_flutter/services/data/tasks/widgets/task_list/task_list_item_view.dart';
 
 class TasksListView extends ConsumerWidget {
@@ -14,7 +14,7 @@ class TasksListView extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     return AsyncValueHandlerWidget(
-      value: ref.watch(curUserViewableTasksProvider),
+      value: ref.watch(curUserViewableTasksStreamProvider),
       data: (tasks) {
         // TODO p2: we can split providers instead ...
         final filteredTasks = tasks?.where(filter).toList();

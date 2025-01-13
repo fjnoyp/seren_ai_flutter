@@ -1,14 +1,5 @@
 abstract class UserQueries {
   /// Params:
-  /// - user_id: String
-  /// Used to fetch a specific user by their ID
-  static const String userByIdQuery = '''
-    SELECT *
-    FROM users
-    WHERE id = :user_id
-  ''';
-
-  /// Params:
   /// - user_ids: List<String>
   /// Used to fetch specific users by their IDs
   static const String usersByIdQuery = '''
