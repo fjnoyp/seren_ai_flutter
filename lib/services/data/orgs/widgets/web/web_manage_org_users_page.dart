@@ -6,9 +6,11 @@ import 'package:intl/intl.dart';
 import 'package:seren_ai_flutter/services/data/orgs/models/joined_user_org_role_model.dart';
 import 'package:seren_ai_flutter/services/data/orgs/models/user_org_role_model.dart';
 import 'package:seren_ai_flutter/services/data/orgs/providers/cur_org_dependency_provider.dart';
-import 'package:seren_ai_flutter/services/data/orgs/providers/cur_user_org_roles_provider.dart';
+import 'package:seren_ai_flutter/services/data/orgs/providers/cur_user_org_role_provider.dart';
+import 'package:seren_ai_flutter/services/data/orgs/providers/joined_org_roles_by_org_stream_provider.dart';
 import 'package:seren_ai_flutter/services/data/orgs/widgets/action_buttons/invite_user_to_org_button.dart';
 import 'package:seren_ai_flutter/services/data/orgs/widgets/manage_org_users_page.dart';
+import 'package:seren_ai_flutter/services/data/users/models/user_model.dart';
 
 class WebManageOrgUsersPage extends HookConsumerWidget {
   const WebManageOrgUsersPage({super.key});
@@ -65,11 +67,12 @@ class WebManageOrgUsersPage extends HookConsumerWidget {
           const SizedBox(height: 20),
           Expanded(
               child: _UsersTable(
+                  orgId: curOrgId,
                   filter: (joinedOrgRole) =>
-                      joinedOrgRole.user!.email
+                      joinedOrgRole.user.email
                           .toLowerCase()
                           .contains(searchText.text.toLowerCase()) ||
-                      '${joinedOrgRole.user!.firstName} ${joinedOrgRole.user!.lastName}'
+                      '${joinedOrgRole.user.firstName} ${joinedOrgRole.user.lastName}'
                           .toLowerCase()
                           .contains(searchText.text.toLowerCase()) ||
                       joinedOrgRole.orgRole.orgRole
@@ -83,13 +86,14 @@ class WebManageOrgUsersPage extends HookConsumerWidget {
 }
 
 class _UsersTable extends ConsumerWidget {
-  const _UsersTable({this.filter});
+  const _UsersTable({required this.orgId, this.filter});
 
+  final String orgId;
   final bool Function(JoinedUserOrgRoleModel joinedOrgRole)? filter;
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final joinedOrgRoles = ref.watch(joinedCurOrgRolesProvider);
+    final joinedOrgRoles = ref.watch(joinedOrgRolesByOrgStreamProvider(orgId));
 
     final filteredJoinedOrgRoles = joinedOrgRoles.valueOrNull
             ?.where((joinedOrgRole) => filter?.call(joinedOrgRole) ?? true)

@@ -1,3 +1,3 @@
-abstract class IHasId {
+abstract class IHasId<T> {
   String get id;
 }

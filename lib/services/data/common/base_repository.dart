@@ -45,6 +45,10 @@ abstract class BaseRepository<T extends IHasId> {
     });
   }
 
+  Stream<T> watchById(String id) {
+    return watchSingle('SELECT * FROM $primaryTable WHERE id = ?', {'id': id});
+  }
+
   Future<List<T>> get(String query, Map<String, dynamic> params) async {
     final results = await db.execute(query, params.values.toList());
     return results.map((row) => fromJson(row)).toList();
