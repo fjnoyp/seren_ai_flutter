@@ -27,14 +27,13 @@ final curEditingTaskStateProvider =
   return EditingTaskNotifier();
 });
 
+// Since comments are saved immediately, they aren't managed by this provider
 class EditingTaskState {
   TaskModel taskModel;
-  List<TaskCommentModel> comments;
   List<UserModel> assignees;
 
   EditingTaskState({
     required this.taskModel,
-    required this.comments,
     required this.assignees,
   });
 
@@ -45,7 +44,6 @@ class EditingTaskState {
   }) {
     return EditingTaskState(
       taskModel: taskModel ?? this.taskModel,
-      comments: comments ?? this.comments,
       assignees: assignees ?? this.assignees,
     );
   }
@@ -56,7 +54,6 @@ class EditingTaskNotifier extends Notifier<AsyncValue<EditingTaskState>> {
   AsyncValue<EditingTaskState> build() {
     return AsyncValue.data(EditingTaskState(
       taskModel: TaskModel.empty(),
-      comments: [],
       assignees: [],
     ));
   }
@@ -83,7 +80,6 @@ class EditingTaskNotifier extends Notifier<AsyncValue<EditingTaskState>> {
 
       state = AsyncValue.data(EditingTaskState(
         taskModel: newTask,
-        comments: [],
         assignees: [],
       ));
     } catch (e, st) {
@@ -106,7 +102,6 @@ class EditingTaskNotifier extends Notifier<AsyncValue<EditingTaskState>> {
 
       state = AsyncValue.data(EditingTaskState(
         taskModel: task,
-        comments: comments,
         assignees: assignees,
       ));
     } catch (e, st) {
@@ -136,16 +131,6 @@ class EditingTaskNotifier extends Notifier<AsyncValue<EditingTaskState>> {
           reminderOffsetMinutes:
               reminderOffsetMinutes ?? currentTask.reminderOffsetMinutes);
       state = AsyncValue.data(currentState.copyWith(taskModel: updatedTask));
-    });
-  }
-
-  Future<void> saveAndAddComment(TaskCommentModel comment) async {
-    await ref.read(taskCommentsRepositoryProvider).upsertItem(comment);
-
-    state.whenData((currentState) {
-      final updatedState =
-          currentState.copyWith(comments: [...currentState.comments, comment]);
-      state = AsyncValue.data(updatedState);
     });
   }
 
@@ -218,12 +203,6 @@ class EditingTaskNotifier extends Notifier<AsyncValue<EditingTaskState>> {
                 'description': currentState.taskModel.description,
                 'status': currentState.taskModel.status,
                 'due_date': currentState.taskModel.dueDate?.toIso8601String(),
-                'comments': currentState.comments
-                    .map((comment) => {
-                          'content': comment.content,
-                          'created_at': comment.createdAt?.toIso8601String(),
-                        })
-                    .toList(),
               },
               'assignees':
                   currentState.assignees.map((user) => user.email).toList(),
