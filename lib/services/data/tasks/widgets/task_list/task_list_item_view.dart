@@ -4,7 +4,7 @@ import 'package:seren_ai_flutter/common/universal_platform/universal_platform.da
 import 'package:seren_ai_flutter/services/data/common/widgets/editable_page_mode_enum.dart';
 import 'package:seren_ai_flutter/services/data/tasks/models/task_model.dart';
 import 'package:intl/intl.dart';
-import 'package:seren_ai_flutter/services/data/tasks/providers/task_relations_list_details_provider.dart';
+import 'package:seren_ai_flutter/services/data/tasks/providers/task_list_item_relations_future_provider.dart';
 import 'package:seren_ai_flutter/services/data/tasks/widgets/task_list/task_priority_view.dart';
 import 'package:seren_ai_flutter/services/data/tasks/widgets/task_page.dart';
 import 'package:seren_ai_flutter/services/data/tasks/widgets/ui_constants.dart';
@@ -16,7 +16,7 @@ class TaskListItemView extends ConsumerWidget {
   const TaskListItemView({super.key, required this.task});
 
   Widget _buildTaskDetails(
-      BuildContext context, WidgetRef ref, TaskListItemDetails details) {
+      BuildContext context, WidgetRef ref, TaskListItemRelations details) {
     final theme = Theme.of(context);
     final dueDateColor = getDueDateColor(task.dueDate);
 
@@ -100,7 +100,7 @@ class TaskListItemView extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final theme = Theme.of(context);
-    final taskDetails = ref.watch(taskRelationsListDetailsProvider(task));
+    final taskDetails = ref.watch(taskListItemRelationsFutureProvider(task));
 
     return GestureDetector(
       onTap: () async {
@@ -135,7 +135,7 @@ class TaskListTileItemView extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final dueDateColor = getDueDateColor(task.dueDate);
-    final taskDetails = ref.watch(taskRelationsListDetailsProvider(task));
+    final taskDetails = ref.watch(taskListItemRelationsFutureProvider(task));
 
     return ListTile(
       dense: true,

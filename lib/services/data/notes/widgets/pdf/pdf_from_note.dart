@@ -3,27 +3,28 @@ import 'package:intl/intl.dart';
 import 'package:pdf/pdf.dart';
 import 'package:pdf/widgets.dart';
 import 'package:seren_ai_flutter/common/utils/string_extension.dart';
-import 'package:seren_ai_flutter/services/data/notes/models/joined_note_model.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
-import 'package:seren_ai_flutter/services/data/notes/providers/cur_note_state_provider.dart';
+import 'package:seren_ai_flutter/services/data/notes/providers/cur_editing_note_state_provider.dart';
 import 'package:seren_ai_flutter/services/data/notes/providers/note_attachments_service_provider.dart';
 
 class NoteToPdfConverter extends Document {
   final WidgetRef ref;
 
-  NoteToPdfConverter(this.ref) : super(theme: ThemeData.withFont(
-    base: Font.courier(),
-    italic: Font.courierOblique(), 
-    bold: Font.courierBold(),
-    boldItalic: Font.courierBoldOblique(),
-  ));
+  NoteToPdfConverter(this.ref)
+      : super(
+            theme: ThemeData.withFont(
+          base: Font.courier(),
+          italic: Font.courierOblique(),
+          bold: Font.courierBold(),
+          boldItalic: Font.courierBoldOblique(),
+        ));
 
   final pageFormat = PdfPageFormat.a4;
 
   Future<void> buildPdf() async {
-    final joinedNote = ref.watch(curNoteStateProvider).valueOrNull;
+    final noteState = ref.watch(curEditingNoteStateProvider).valueOrNull;
 
-    final attachmentWidgets = await _attachmentWidgets(joinedNote!);
+    final attachmentWidgets = await _attachmentWidgets(noteState!);
 
     addPage(
       Page(
@@ -31,7 +32,7 @@ class NoteToPdfConverter extends Document {
         build: (Context context) {
           return Column(
             children: [
-              ..._headerWidgets(joinedNote),
+              ..._headerWidgets(noteState),
               SizedBox(height: 12.0),
               Divider(),
               SizedBox(height: 12.0),
@@ -39,7 +40,7 @@ class NoteToPdfConverter extends Document {
                 alignment: Alignment.topLeft,
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
-                  children: _bodyWidgets(joinedNote),
+                  children: _bodyWidgets(noteState),
                 ),
               ),
               SizedBox(height: 16.0),
@@ -51,57 +52,57 @@ class NoteToPdfConverter extends Document {
     );
   }
 
-  List<Widget> _headerWidgets(JoinedNoteModel joinedNote) {
+  List<Widget> _headerWidgets(EditingNoteState noteState) {
     return [
       Text(
-        joinedNote.note.name,
+        noteState.noteModel.name,
         style: const TextStyle(fontSize: 28.0),
       ),
       Text(
-        joinedNote.project?.name ??
+        noteState.project?.name ??
             AppLocalizations.of(ref.context)!.pdfPersonal,
         style: const TextStyle(fontSize: 16.0),
       ),
       SizedBox(height: 16.0),
       Text(
         AppLocalizations.of(ref.context)!.pdfCreatedBy(
-          '${joinedNote.authorUser?.firstName} ${joinedNote.authorUser?.lastName}',
+          '${noteState.authorUser?.firstName} ${noteState.authorUser?.lastName}',
           DateFormat.yMMMd(AppLocalizations.of(ref.context)!.localeName)
-              .format(joinedNote.note.createdAt!),
+              .format(noteState.noteModel.createdAt!),
         ),
       ),
       SizedBox(height: 16.0),
       Text(
         AppLocalizations.of(ref.context)!.pdfStatus(
-            joinedNote.note.status?.toHumanReadable(ref.context) ?? ''),
+            noteState.noteModel.status?.toHumanReadable(ref.context) ?? ''),
       ),
     ];
   }
 
-  List<Widget> _bodyWidgets(JoinedNoteModel joinedNote) {
+  List<Widget> _bodyWidgets(EditingNoteState noteState) {
     return [
       Text(
         AppLocalizations.of(ref.context)!.pdfDescription,
         style: TextStyle(fontStyle: FontStyle.italic),
       ),
-      Text(joinedNote.note.description ?? ''),
+      Text(noteState.noteModel.description ?? ''),
       SizedBox(height: 16.0),
       Text(
         AppLocalizations.of(ref.context)!.pdfAddress,
         style: TextStyle(fontStyle: FontStyle.italic),
       ),
-      Text(joinedNote.note.address ?? ''),
+      Text(noteState.noteModel.address ?? ''),
       SizedBox(height: 16.0),
       Text(
         AppLocalizations.of(ref.context)!.pdfActionRequired,
         style: TextStyle(fontStyle: FontStyle.italic),
       ),
-      Text(joinedNote.note.actionRequired ?? ''),
+      Text(noteState.noteModel.actionRequired ?? ''),
     ];
   }
 
   Future<List<Widget>> _attachmentWidgets(
-    JoinedNoteModel joinedNote,
+    EditingNoteState noteState,
   ) async {
     final imageAttachments = <MemoryImage>[];
     final fileAttachments = <UrlLink>[];
@@ -116,7 +117,7 @@ class NoteToPdfConverter extends Document {
                     .read(noteAttachmentsServiceProvider.notifier)
                     .getAttachmentBytes(
                       fileUrl: e,
-                      noteId: joinedNote.note.id,
+                      noteId: noteState.noteModel.id,
                     ),
               ),
             ),

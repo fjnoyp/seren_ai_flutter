@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:seren_ai_flutter/services/data/tasks/models/task_model.dart';
-import 'package:seren_ai_flutter/services/data/tasks/providers/cur_user_viewable_tasks_provider.dart';
+import 'package:seren_ai_flutter/services/data/tasks/providers/cur_user_viewable_tasks_stream_provider.dart';
 
 // State class to hold all Gantt-related data
 class GanttState {
@@ -41,7 +41,7 @@ final ganttTaskProvider =
   final notifier = GanttTaskNotifier();
 
   // Watch for changes to tasks and update the Gantt state
-  ref.listen(curUserViewableTasksProvider, (previous, next) {
+  ref.listen(curUserViewableTasksStreamProvider, (previous, next) {
     if (next.hasValue && next.value != null) {
       notifier.processTaskData(next.value!);
     }

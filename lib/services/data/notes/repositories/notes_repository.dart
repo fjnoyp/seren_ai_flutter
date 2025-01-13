@@ -9,35 +9,23 @@ final notesRepositoryProvider = Provider<NotesRepository>((ref) {
 });
 
 class NotesRepository extends BaseRepository<NoteModel> {
-  const NotesRepository(super.db);
-
-  @override
-  Set<String> get REMOVEwatchTables => {'notes', 'projects'};
+  const NotesRepository(super.db, {super.primaryTable = 'notes'});
 
   @override
   NoteModel fromJson(Map<String, dynamic> json) {
     return NoteModel.fromJson(json);
   }
 
-  Stream<List<NoteModel>> watchUserNotes({
+  @override
+  Map<String, dynamic> toJson(NoteModel item) {
+    return item.toJson();
+  }
+
+  Stream<List<NoteModel>> watchNotesByProject({
     required String userId,
     String? projectId,
   }) {
     return watch(
-      projectId == null
-          ? NoteQueries.getUserPersonalNotes
-          : NoteQueries.getProjectNotes,
-      {
-        if (projectId == null) 'user_id': userId else 'project_id': projectId,
-      },
-    );
-  }
-
-  Future<List<NoteModel>> getUserNotes({
-    required String userId,
-    String? projectId,
-  }) async {
-    return await get(
       projectId == null
           ? NoteQueries.getUserPersonalNotes
           : NoteQueries.getProjectNotes,

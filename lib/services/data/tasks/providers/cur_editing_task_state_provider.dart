@@ -1,7 +1,6 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:seren_ai_flutter/services/auth/cur_auth_state_provider.dart';
 import 'package:seren_ai_flutter/services/data/common/status_enum.dart';
-import 'package:seren_ai_flutter/services/data/projects/models/project_model.dart';
 import 'package:seren_ai_flutter/services/data/projects/providers/selected_project_provider.dart';
 import 'package:seren_ai_flutter/services/data/tasks/models/task_comment_model.dart';
 import 'package:seren_ai_flutter/services/data/tasks/models/task_model.dart';
@@ -209,6 +208,29 @@ class EditingTaskNotifier extends Notifier<AsyncValue<EditingTaskState>> {
       //Add new assignments
       await assignmentsDb.upsertItems(assignments);
     });
+  }
+
+  Future<Map<String, dynamic>> toReadableMap() async {
+    final value = state
+        .whenData((currentState) => {
+              'task': {
+                'name': currentState.taskModel.name,
+                'description': currentState.taskModel.description,
+                'status': currentState.taskModel.status,
+                'due_date': currentState.taskModel.dueDate?.toIso8601String(),
+                'comments': currentState.comments
+                    .map((comment) => {
+                          'content': comment.content,
+                          'created_at': comment.createdAt?.toIso8601String(),
+                        })
+                    .toList(),
+              },
+              'assignees':
+                  currentState.assignees.map((user) => user.email).toList(),
+            })
+        .value;
+
+    return value ?? {};
   }
 
   bool get isValid => state.valueOrNull?.taskModel.name.isNotEmpty ?? false;

@@ -51,11 +51,4 @@ class ProjectsRepository extends BaseRepository<ProjectModel> {
   }) async {
     return get(ProjectQueries.orgProjectsQuery, {'org_id': orgId});
   }
-
-  Future<ProjectModel?> getProjectById({
-    required String projectId,
-  }) async {
-    return get(ProjectQueries.projectByIdQuery, {'project_id': projectId})
-        .then((projects) => projects.firstOrNull);
-  }
 }
