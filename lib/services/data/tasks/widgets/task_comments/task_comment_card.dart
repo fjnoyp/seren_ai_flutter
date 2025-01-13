@@ -13,9 +13,8 @@ class TaskCommentCard extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final authorFuture = ref
-        .watch(usersRepositoryProvider)
-        .getUser(userId: comment.authorUserId);
+    final authorFuture =
+        ref.watch(usersRepositoryProvider).getById(comment.authorUserId);
 
     return Card(
       child: Padding(

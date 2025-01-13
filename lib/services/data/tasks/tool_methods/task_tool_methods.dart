@@ -26,7 +26,7 @@ import 'package:seren_ai_flutter/services/data/projects/models/project_model.dar
 import 'package:seren_ai_flutter/services/data/projects/repositories/projects_repository.dart';
 import 'package:seren_ai_flutter/services/data/tasks/models/task_model.dart';
 import 'package:seren_ai_flutter/services/data/tasks/providers/cur_editing_task_state_provider.dart';
-import 'package:seren_ai_flutter/services/data/tasks/providers/cur_user_viewable_tasks_provider.dart';
+import 'package:seren_ai_flutter/services/data/tasks/providers/cur_user_viewable_tasks_stream_provider.dart';
 import 'package:seren_ai_flutter/services/data/tasks/repositories/task_user_assignments_repository.dart';
 import 'package:seren_ai_flutter/services/data/tasks/repositories/tasks_repository.dart';
 import 'package:seren_ai_flutter/services/data/tasks/tool_methods/models/create_task_result_model.dart';
@@ -61,10 +61,9 @@ class TaskToolMethods {
     for (final task in allTasks) {
       projectsMap[task.parentProjectId] = await ref
           .read(projectsRepositoryProvider)
-          .getProjectById(projectId: task.parentProjectId);
-      authorsMap[task.authorUserId] = await ref
-          .read(usersRepositoryProvider)
-          .getUser(userId: task.authorUserId);
+          .getById(task.parentProjectId);
+      authorsMap[task.authorUserId] =
+          await ref.read(usersRepositoryProvider).getById(task.authorUserId);
       assigneesMap[task.id] = await ref
           .read(usersRepositoryProvider)
           .getTaskAssignedUsers(taskId: task.id);

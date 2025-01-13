@@ -4,8 +4,7 @@ import 'package:seren_ai_flutter/services/data/common/widgets/form/base_project_
 import 'package:seren_ai_flutter/services/data/common/widgets/form/base_status_selection_field.dart';
 import 'package:seren_ai_flutter/services/data/common/widgets/form/base_text_block_edit_selection_field.dart';
 import 'package:seren_ai_flutter/services/data/common/widgets/form/base_task_name_field.dart';
-import 'package:seren_ai_flutter/services/data/notes/providers/cur_note_service_provider.dart';
-import 'package:seren_ai_flutter/services/data/notes/providers/cur_note_state_provider.dart';
+import 'package:seren_ai_flutter/services/data/notes/providers/cur_editing_note_state_provider.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:seren_ai_flutter/services/data/projects/providers/cur_user_viewable_projects_provider.dart';
 
@@ -14,10 +13,11 @@ class NoteNameField extends BaseNameField {
     super.key,
     required super.isEditable,
   }) : super(
-          nameProvider: curNoteStateProvider
-              .select((state) => state.value?.note.name ?? ''),
-          updateName: (ref, name) =>
-              ref.read(curNoteServiceProvider).updateNoteName(name),
+          nameProvider: curEditingNoteStateProvider
+              .select((state) => state.value?.noteModel.name ?? ''),
+          updateName: (ref, name) => ref
+              .read(curEditingNoteStateProvider.notifier)
+              .updateFields(name: name),
         );
 }
 
@@ -26,10 +26,11 @@ class NoteStatusSelectionField extends BaseStatusSelectionField {
     super.key,
     required super.enabled,
   }) : super(
-          statusProvider:
-              curNoteStateProvider.select((state) => state.value?.note.status),
-          updateStatus: (ref, status) =>
-              ref.read(curNoteServiceProvider).updateStatus(status),
+          statusProvider: curEditingNoteStateProvider
+              .select((state) => state.value?.noteModel.status),
+          updateStatus: (ref, status) => ref
+              .read(curEditingNoteStateProvider.notifier)
+              .updateFields(status: status),
         );
 }
 
@@ -38,10 +39,11 @@ class NoteDateSelectionField extends BaseDueDateSelectionField {
     super.key,
   }) : super(
           enabled: true,
-          dueDateProvider:
-              curNoteStateProvider.select((state) => state.value?.note.date),
-          updateDueDate: (ref, pickedDateTime) =>
-              ref.read(curNoteServiceProvider).updateDate(pickedDateTime),
+          dueDateProvider: curEditingNoteStateProvider
+              .select((state) => state.value?.noteModel.date),
+          updateDueDate: (ref, pickedDateTime) => ref
+              .read(curEditingNoteStateProvider.notifier)
+              .updateFields(date: pickedDateTime),
         );
 }
 
@@ -52,10 +54,11 @@ class NoteDescriptionSelectionField extends BaseTextBlockEditSelectionField {
     required BuildContext context,
   }) : super(
           hintText: AppLocalizations.of(context)!.description,
-          descriptionProvider: curNoteStateProvider
-              .select((state) => state.value?.note.description ?? ''),
-          updateDescription: (ref, description) =>
-              ref.read(curNoteServiceProvider).updateDescription(description),
+          descriptionProvider: curEditingNoteStateProvider
+              .select((state) => state.value?.noteModel.description ?? ''),
+          updateDescription: (ref, description) => ref
+              .read(curEditingNoteStateProvider.notifier)
+              .updateFields(description: description),
         );
 }
 
@@ -64,11 +67,12 @@ class NoteProjectSelectionField extends BaseProjectSelectionField {
     super.key,
     required super.isEditable,
   }) : super(
-          projectProvider:
-              curNoteStateProvider.select((state) => state.value?.project),
+          projectIdProvider: curEditingNoteStateProvider
+              .select((state) => state.value?.noteModel.parentProjectId),
           selectableProjectsProvider: curUserViewableProjectsProvider,
-          updateProject: (ref, project) =>
-              ref.read(curNoteServiceProvider).updateParentProject(project),
+          updateProject: (ref, project) => ref
+              .read(curEditingNoteStateProvider.notifier)
+              .updateFields(project: project),
           isProjectRequired: false,
         );
 }
@@ -80,10 +84,11 @@ class NoteAddressSelectionField extends BaseTextBlockEditSelectionField {
     required BuildContext context,
   }) : super(
           hintText: AppLocalizations.of(context)!.address,
-          descriptionProvider: curNoteStateProvider
-              .select((state) => state.value?.note.address ?? ''),
-          updateDescription: (ref, address) =>
-              ref.read(curNoteServiceProvider).updateAddress(address),
+          descriptionProvider: curEditingNoteStateProvider
+              .select((state) => state.value?.noteModel.address ?? ''),
+          updateDescription: (ref, address) => ref
+              .read(curEditingNoteStateProvider.notifier)
+              .updateFields(address: address),
           labelWidget: const Icon(Icons.location_on),
         );
 }
@@ -95,11 +100,11 @@ class NoteActionRequiredSelectionField extends BaseTextBlockEditSelectionField {
     required super.isEditable,
   }) : super(
           hintText: '',
-          descriptionProvider: curNoteStateProvider
-              .select((state) => state.value?.note.actionRequired ?? ''),
+          descriptionProvider: curEditingNoteStateProvider
+              .select((state) => state.value?.noteModel.actionRequired ?? ''),
           updateDescription: (ref, actionRequired) => ref
-              .read(curNoteServiceProvider)
-              .updateActionRequired(actionRequired),
+              .read(curEditingNoteStateProvider.notifier)
+              .updateFields(actionRequired: actionRequired),
           labelWidget: Text(AppLocalizations.of(context)!.actionRequired),
         );
 }

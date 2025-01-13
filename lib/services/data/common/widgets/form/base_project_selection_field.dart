@@ -31,9 +31,7 @@ class BaseProjectSelectionField extends ConsumerWidget {
     return FutureBuilder<ProjectModel?>(
       // Fetch project whenever ID changes
       future: projectId != null
-          ? ref
-              .read(projectsRepositoryProvider)
-              .getProjectById(projectId: projectId)
+          ? ref.read(projectsRepositoryProvider).getById(projectId)
           : Future.value(null),
       builder: (context, projectSnapshot) {
         // Handle loading states

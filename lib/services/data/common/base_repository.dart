@@ -50,6 +50,12 @@ abstract class BaseRepository<T extends IHasId> {
     return results.map((row) => fromJson(row)).toList();
   }
 
+  Future<T> getById(String id) async {
+    final results =
+        await db.execute('SELECT * FROM $primaryTable WHERE id = ?', [id]);
+    return fromJson(results.first);
+  }
+
   Stream<T> watchSingle(String query, Map<String, dynamic> params,
       {Set<String>? triggerOnTables}) {
     return db

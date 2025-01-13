@@ -41,10 +41,6 @@ abstract class TaskQueries {
     ORDER BY created_at DESC
   ''';
 
-  static const String getTaskByIdQuery = '''
-    SELECT * FROM tasks WHERE id = :task_id;
-  ''';
-
   /// Params:
   /// - parent_task_id: String
   static const String getTasksByParentIdQuery = '''

@@ -18,3 +18,7 @@ Issue there could be 100s of projects to choose from ...
 
 
 
+
+# Refactor Work 
+
+p0 Jan 12 2024 - remove interim state providers, having a local and remote state for models causes issues with the data editing provider + widgets as it's unclear which state is being modified (it's easy to accidentally pass a remote state provider, and end up saving/modifying the wrong version of the model instead ...)
