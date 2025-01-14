@@ -16,7 +16,7 @@ final joinedUserOrgRolesByOrgStreamProvider = StreamProvider.autoDispose
           .watchOrgRolesByOrg(orgId)
           .asyncMap((roles) async {
         // For each role, load its related user and org
-        final joinedRoles = await Future.wait(
+        final joinedRoles = (await Future.wait(
           roles.map((role) async {
             final user =
                 await ref.read(usersRepositoryProvider).getById(role.userId);
@@ -29,7 +29,8 @@ final joinedUserOrgRolesByOrgStreamProvider = StreamProvider.autoDispose
               org: org,
             );
           }),
-        );
+        ))
+            .toList();
 
         return joinedRoles;
       });
