@@ -18,6 +18,7 @@ class TasksRepository extends BaseRepository<TaskModel> {
   TaskModel fromJson(Map<String, dynamic> json) {
     return TaskModel.fromJson(json);
   }
+
   // Watch viewable tasks for a user (tasks where they are assigned to the project or are the author)
   Stream<List<TaskModel>> watchUserViewableTasks({
     required String userId,
@@ -31,7 +32,7 @@ class TasksRepository extends BaseRepository<TaskModel> {
     );
   }
 
-  // TODO p2: introduce pagination once we have a lot of tasks 
+  // TODO p2: introduce pagination once we have a lot of tasks
   // Get viewable tasks for a user (tasks where they are assigned to the project or are the author)
   Future<List<TaskModel>> getUserViewableTasks({
     required String userId,
@@ -42,6 +43,22 @@ class TasksRepository extends BaseRepository<TaskModel> {
         'user_id': userId,
         'author_user_id': userId,
       },
+    );
+  }
+
+  // Watch assigned tasks for a user (tasks where they are assigned to the task directly)
+  Stream<List<TaskModel>> watchUserAssignedTasks({required String userId}) {
+    return watch(
+      TaskQueries.userAssignedTasksQuery,
+      {'user_id': userId},
+    );
+  }
+
+  // Get assigned tasks for a user (tasks where they are assigned to the task directly)
+  Future<List<TaskModel>> getUserAssignedTasks({required String userId}) async {
+    return get(
+      TaskQueries.userAssignedTasksQuery,
+      {'user_id': userId},
     );
   }
 }
