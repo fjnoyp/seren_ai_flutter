@@ -39,10 +39,8 @@ enum TaskFilterOption {
                       name: '${e.firstName} ${e.lastName}',
                       filter: (TaskModel task) {
                         final assignees = ref
-                                .watch(
-                                    taskListItemRelationsFutureProvider(task))
-                                .valueOrNull
-                                ?.assignees ??
+                                .watch(taskAssigneesProvider(task))
+                                .valueOrNull ??
                             [];
                         return assignees.any((assignee) => assignee.id == e.id);
                       }
