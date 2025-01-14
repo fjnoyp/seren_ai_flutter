@@ -122,14 +122,16 @@ class EditingTaskNotifier extends Notifier<AsyncValue<EditingTaskState>> {
     state.whenData((currentState) {
       final currentTask = currentState.taskModel;
       final updatedTask = currentTask.copyWith(
-          name: name ?? currentTask.name,
-          description: description ?? currentTask.description,
-          status: status ?? currentTask.status,
-          priority: priority ?? currentTask.priority,
-          dueDate: dueDate ?? currentTask.dueDate,
-          parentProjectId: parentProjectId ?? currentTask.parentProjectId,
-          reminderOffsetMinutes:
-              reminderOffsetMinutes ?? currentTask.reminderOffsetMinutes);
+        name: name ?? currentTask.name,
+        description: description ?? currentTask.description,
+        status: status ?? currentTask.status,
+        priority: priority ?? currentTask.priority,
+        dueDate: dueDate ?? currentTask.dueDate,
+        parentProjectId: parentProjectId ?? currentTask.parentProjectId,
+        reminderOffsetMinutes:
+            reminderOffsetMinutes ?? currentTask.reminderOffsetMinutes,
+        removeReminder: reminderOffsetMinutes == null,
+      );
       state = AsyncValue.data(currentState.copyWith(taskModel: updatedTask));
     });
   }

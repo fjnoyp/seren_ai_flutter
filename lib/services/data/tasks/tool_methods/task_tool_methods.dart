@@ -22,12 +22,11 @@ import 'package:seren_ai_flutter/services/data/common/status_enum.dart';
 import 'package:seren_ai_flutter/services/data/common/utils/string_similarity_extension.dart';
 import 'package:seren_ai_flutter/services/data/common/widgets/delete_confirmation_dialog.dart';
 import 'package:seren_ai_flutter/services/data/common/widgets/editable_page_mode_enum.dart';
+import 'package:seren_ai_flutter/services/data/orgs/providers/cur_selected_org_id_notifier.dart';
 import 'package:seren_ai_flutter/services/data/projects/models/project_model.dart';
 import 'package:seren_ai_flutter/services/data/projects/repositories/projects_repository.dart';
 import 'package:seren_ai_flutter/services/data/tasks/models/task_model.dart';
 import 'package:seren_ai_flutter/services/data/tasks/providers/cur_editing_task_state_provider.dart';
-import 'package:seren_ai_flutter/services/data/tasks/providers/cur_user_viewable_tasks_stream_provider.dart';
-import 'package:seren_ai_flutter/services/data/tasks/repositories/task_user_assignments_repository.dart';
 import 'package:seren_ai_flutter/services/data/tasks/repositories/tasks_repository.dart';
 import 'package:seren_ai_flutter/services/data/tasks/tool_methods/models/create_task_result_model.dart';
 import 'package:seren_ai_flutter/services/data/tasks/tool_methods/models/delete_task_result_model.dart';
@@ -49,9 +48,12 @@ class TaskToolMethods {
     final userId = _getUserId(ref);
     if (userId == null) return _handleNoAuth();
 
+    final selectedOrgId = ref.watch(curSelectedOrgIdNotifierProvider);
+    if (selectedOrgId == null) return ErrorRequestResultModel(resultForAi: 'No org selected', showOnly: true);
+
     final allTasks = await ref
         .read(tasksRepositoryProvider)
-        .getUserViewableTasks(userId: userId);
+        .getUserViewableTasks(userId: userId, orgId: selectedOrgId);
 
     // Pre-fetch all projects and authors
     final projectsMap = <String, ProjectModel?>{};
@@ -256,9 +258,12 @@ class TaskToolMethods {
     final userId = _getUserId(ref);
     if (userId == null) return [];
 
+    final selectedOrgId = ref.watch(curSelectedOrgIdNotifierProvider);
+    if (selectedOrgId == null) return [];
+
     final allTasks = await ref
         .read(tasksRepositoryProvider)
-        .getUserViewableTasks(userId: userId);
+        .getUserViewableTasks(userId: userId, orgId: selectedOrgId);
 
     // Calculate similarity scores and sort
     final tasksWithScores = allTasks
@@ -328,9 +333,12 @@ class TaskToolMethods {
     final userId = _getUserId(ref);
     if (userId == null) return _handleNoAuth();
 
+    final selectedOrgId = ref.watch(curSelectedOrgIdNotifierProvider);
+    if (selectedOrgId == null) return ErrorRequestResultModel(resultForAi: 'No org selected', showOnly: true);
+
     final joinedTasks = await ref
         .read(tasksRepositoryProvider)
-        .getUserViewableTasks(userId: userId);
+        .getUserViewableTasks(userId: userId, orgId: selectedOrgId);
 
     final filteredTasks = joinedTasks.where((task) =>
         task.name.similarity(actionRequest.taskName) >= _similarityThreshold);

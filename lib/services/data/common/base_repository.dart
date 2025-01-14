@@ -15,7 +15,7 @@ abstract class BaseRepository<T extends IHasId> {
 
   T fromJson(Map<String, dynamic> json);
 
-  Map<String, dynamic> toJson(T item);
+  Map<String, dynamic> toJson(T item) => item.toJson();
 
   // TODO p3: check that watch tables are being set correctly
   // Especially since we just removed joined models
@@ -54,10 +54,10 @@ abstract class BaseRepository<T extends IHasId> {
     return results.map((row) => fromJson(row)).toList();
   }
 
-  Future<T> getById(String id) async {
+  Future<T?> getById(String id) async {
     final results =
         await db.execute('SELECT * FROM $primaryTable WHERE id = ?', [id]);
-    return fromJson(results.first);
+    return results.isNotEmpty ? fromJson(results.first) : null;
   }
 
   Stream<T> watchSingle(String query, Map<String, dynamic> params,
@@ -96,6 +96,7 @@ abstract class BaseRepository<T extends IHasId> {
     try {
       final result = await db.execute(
           'INSERT INTO $primaryTable $columns $valuesPlaceholder', values);
+      log.info('Inserted item into $primaryTable: $result');
     } catch (e) {
       throw Exception('Failed to insert item into $primaryTable: $e');
     }
@@ -106,14 +107,15 @@ abstract class BaseRepository<T extends IHasId> {
 
     final Map<String, dynamic> firstItemJson = toJson(items.first);
     final columns = firstItemJson.keys.join(', ');
+    final placeholders = List.filled(firstItemJson.length, '?').join(', ');
 
     final values = items.map((item) {
       final itemJson = toJson(item);
-      return '(${itemJson.values.map(_sqlEscape).join(', ')})';
-    }).join(', ');
+      return itemJson.values.map(_sqlEscape).toList();
+    }).toList();
 
     await db.executeBatch(
-        'INSERT INTO $primaryTable ($columns) VALUES $values', []);
+        'INSERT INTO $primaryTable ($columns) VALUES $placeholders', values);
   }
 
   Future<void> upsertItem(T item) async {

@@ -1,7 +1,7 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:seren_ai_flutter/services/data/orgs/providers/cur_selected_org_id_notifier.dart';
 import 'package:seren_ai_flutter/services/data/projects/models/project_model.dart';
-import 'package:seren_ai_flutter/services/data/projects/projects_db_provider.dart';
+import 'package:seren_ai_flutter/services/data/projects/repositories/projects_repository.dart';
 
 final editingProjectProvider =
     NotifierProvider<EditingProjectNotifier, ProjectModel>(() {
@@ -45,6 +45,6 @@ class EditingProjectNotifier extends Notifier<ProjectModel> {
   }
 
   Future<void> saveProject() async {
-    await ref.read(projectsDbProvider).upsertItem(state);
+    await ref.read(projectsRepositoryProvider).upsertItem(state);
   }
 }
