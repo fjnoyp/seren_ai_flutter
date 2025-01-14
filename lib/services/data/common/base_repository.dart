@@ -87,7 +87,10 @@ abstract class BaseRepository<T extends IHasId> {
     return fromJson(results.first);
   }
 
-  Future<void> insertItem(T item) async {
+  // TODO p0: TEST and check that this is correctly implemented
+  // it should return the id of the created item
+  // for the repository to use it to update its fields
+  Future<String> insertItem(T item) async {
     final Map<String, dynamic> json = toJson(item);
 
     final columns = '(${json.keys.join(', ')})';
@@ -98,6 +101,7 @@ abstract class BaseRepository<T extends IHasId> {
       final result = await db.execute(
           'INSERT INTO $primaryTable $columns $valuesPlaceholder', values);
       log.info('Inserted item into $primaryTable: $result');
+      return result.single['id'];
     } catch (e) {
       throw Exception('Failed to insert item into $primaryTable: $e');
     }
@@ -119,13 +123,14 @@ abstract class BaseRepository<T extends IHasId> {
         'INSERT INTO $primaryTable ($columns) VALUES $placeholders', values);
   }
 
-  Future<void> upsertItem(T item) async {
+  Future<String> upsertItem(T item) async {
     final existingItem =
         await db.execute('SELECT * FROM $primaryTable WHERE id = ?', [item.id]);
     if (existingItem.isEmpty) {
-      await insertItem(item);
+      return await insertItem(item);
     } else {
       await updateItem(item);
+      return item.id;
     }
   }
 
