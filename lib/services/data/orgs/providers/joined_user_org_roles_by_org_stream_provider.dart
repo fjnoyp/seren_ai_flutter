@@ -7,21 +7,22 @@ import 'package:seren_ai_flutter/services/data/users/repositories/users_reposito
 
 final joinedUserOrgRolesByOrgStreamProvider = StreamProvider.autoDispose
     .family<List<JoinedUserOrgRoleModel>, String>((ref, orgId) {
+  // Why do we need CurAuthDependencyProvider if we're not using userId?
   return CurAuthDependencyProvider.watchStream<List<JoinedUserOrgRoleModel>>(
     ref: ref,
-    builder: (userId) {
+    builder: (_) {
       // Get the base stream of org roles
       return ref
           .watch(userOrgRolesRepositoryProvider)
           .watchOrgRolesByOrg(orgId)
           .asyncMap((roles) async {
-        // For each role, load its related user and org
+        final org = await ref.read(orgsRepositoryProvider).getById(orgId);
+
+        // For each role, load its related user
         final joinedRoles = (await Future.wait(
           roles.map((role) async {
             final user =
                 await ref.read(usersRepositoryProvider).getById(role.userId);
-            final org =
-                await ref.read(orgsRepositoryProvider).getById(role.orgId);
 
             return JoinedUserOrgRoleModel(
               orgRole: role,

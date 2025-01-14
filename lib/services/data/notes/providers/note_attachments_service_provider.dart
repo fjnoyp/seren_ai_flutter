@@ -7,7 +7,7 @@ import 'package:seren_ai_flutter/common/path_provider/path_provider.dart';
 import 'package:seren_ai_flutter/common/utils/string_extension.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import 'package:flutter_image_compress/flutter_image_compress.dart';
-import 'dart:html' if (dart.library.html) 'dart:html' as html;
+import 'package:seren_ai_flutter/common/platform/url_launcher.dart';
 
 final noteAttachmentsServiceProvider =
     NotifierProvider<NoteAttachmentsService, List<String>>(
@@ -119,20 +119,7 @@ class NoteAttachmentsService extends Notifier<List<String>> {
           .from('note_attachments')
           .getPublicUrl('$noteId/${fileUrl.getFilePathName()}');
 
-      // Create an anchor element to trigger download
-      final anchor = html.AnchorElement(href: url)
-        ..setAttribute('download', fileUrl.getFilePathName())
-        ..style.display = 'none'
-        ..target = '_blank';
-
-      // Add to document body and trigger click
-      html.document.body!.children.add(anchor);
-      anchor.click();
-
-      // Small delay before removing to ensure download starts
-      await Future.delayed(const Duration(milliseconds: 100));
-      anchor.remove();
-
+      UrlLauncher.downloadFile(url, fileUrl.getFilePathName());
       return true;
     }
 

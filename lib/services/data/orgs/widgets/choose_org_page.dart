@@ -3,7 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:seren_ai_flutter/services/data/common/widgets/async_value_handler_widget.dart';
 import 'package:seren_ai_flutter/services/data/orgs/providers/cur_selected_org_id_notifier.dart';
-import 'package:seren_ai_flutter/services/data/orgs/providers/joined_user_org_roles_by_org_stream_provider.dart';
+import 'package:seren_ai_flutter/services/data/orgs/providers/cur_user_joined_org_roles_stream_provider.dart';
 
 class ChooseOrgPage extends ConsumerWidget {
   const ChooseOrgPage({super.key});
@@ -19,7 +19,7 @@ class ChooseOrgPage extends ConsumerWidget {
     final theme = Theme.of(context);
 
     return AsyncValueHandlerWidget(
-      value: ref.watch(joinedUserOrgRolesByOrgStreamProvider(curOrgId)),
+      value: ref.watch(curUserJoinedOrgRolesStreamProvider),
       data: (orgRoles) => orgRoles.isEmpty
           ? Center(child: Text(AppLocalizations.of(context)!.noOrganizations))
           : ListView.builder(
