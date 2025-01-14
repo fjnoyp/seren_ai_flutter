@@ -94,7 +94,8 @@ class ChangeUserRoleDialog extends HookConsumerWidget {
                 // TODO: Externalize confirmation dialog's content
                 // to use a more proper message here
                 builder: (context) => DeleteConfirmationDialog(
-                    itemName: '${currentUserRole.user.firstName}',
+                    itemName:
+                        '${currentUserRole.user?.firstName} ${currentUserRole.user?.lastName}',
                     onDelete: () {
                       ref
                           .read(userOrgRolesRepositoryProvider)
@@ -117,11 +118,11 @@ class ChangeUserRoleDialog extends HookConsumerWidget {
   }
 }
 
-void openManageOrgUsersPage(BuildContext context, WidgetRef ref) {
+void openManageOrgUsersPage(BuildContext context, WidgetRef ref, String orgId) {
   Navigator.pushNamed(context, AppRoutes.manageOrgUsers.name, arguments: {
     'actions': [
       if (ref.read(curUserOrgRoleProvider).value == OrgRole.admin)
-        const InviteUserToOrgButton()
+        InviteUserToOrgButton(orgId: orgId)
     ],
   });
 }

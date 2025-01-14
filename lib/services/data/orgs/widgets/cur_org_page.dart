@@ -3,8 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:seren_ai_flutter/common/routes/app_routes.dart';
 import 'package:seren_ai_flutter/services/data/common/widgets/editable_page_mode_enum.dart';
 import 'package:seren_ai_flutter/services/data/orgs/models/user_org_role_model.dart';
-import 'package:seren_ai_flutter/services/data/orgs/providers/org_invite_service_provider.dart';
-import 'package:seren_ai_flutter/services/data/orgs/providers/cur_user_org_role_provider.dart';
+import 'package:seren_ai_flutter/services/data/orgs/providers/cur_selected_org_id_notifier.dart';
 import 'package:seren_ai_flutter/services/data/orgs/providers/joined_user_org_roles_by_org_stream_provider.dart';
 import 'package:seren_ai_flutter/services/data/orgs/repositories/orgs_repository.dart';
 import 'package:seren_ai_flutter/services/data/orgs/widgets/action_buttons/edit_org_button.dart';
@@ -20,7 +19,18 @@ class CurOrgPage extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final curOrg = ref.watch(curOrgServiceProvider);
+    final curOrgAsync = ref.watch(curSelectedOrgProvider);
+
+    if (curOrgAsync.isLoading) {
+      return const Center(child: CircularProgressIndicator());
+    }
+
+    if (curOrgAsync.hasError) {
+      return Center(child: Text('Error: ${curOrgAsync.error}'));
+    }
+
+    final curOrg = curOrgAsync.value;
+    if (curOrg == null) return const SizedBox.shrink();
 
     final admins = ref
             .watch(joinedUserOrgRolesByOrgStreamProvider(curOrg.id))
@@ -64,18 +74,19 @@ class CurOrgPage extends ConsumerWidget {
             Align(
               alignment: Alignment.center,
               child: OutlinedButton(
-                onPressed: () => openManageOrgUsersPage(context, ref),
+                onPressed: () =>
+                    openManageOrgUsersPage(context, ref, curOrg.id),
                 child: Text(AppLocalizations.of(context)!.manageOrgUsers),
               ),
             ),
             const SizedBox(height: 24)
           ] else ...[
-            OrgNameField(),
+            OrgNameField(orgId: curOrg.id),
             const SizedBox(height: 8),
             const Divider(),
             Padding(
               padding: const EdgeInsets.only(left: 16),
-              child: OrgAddressField(),
+              child: OrgAddressField(orgId: curOrg.id),
             ),
             const SizedBox(height: 24),
             Padding(
