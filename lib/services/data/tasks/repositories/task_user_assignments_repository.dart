@@ -3,6 +3,7 @@ import 'package:seren_ai_flutter/services/data/db_setup/db_provider.dart';
 import 'package:seren_ai_flutter/services/data/tasks/models/task_user_assignment_model.dart';
 import 'package:seren_ai_flutter/services/data/common/base_repository.dart';
 import 'package:seren_ai_flutter/services/data/tasks/repositories/task_queries.dart';
+import 'package:seren_ai_flutter/services/data/users/models/user_model.dart';
 
 final taskUserAssignmentsRepositoryProvider =
     Provider<TaskUserAssignmentsRepository>((ref) {
@@ -44,18 +45,5 @@ class TaskUserAssignmentsRepository
         'task_id': taskId,
       },
     );
-  }
-
-  Future<String?> getTaskAssignmentId({
-    required String taskId,
-    required String userId,
-  }) async {
-    return getSingle(
-      TaskQueries.getTaskUserAssignmentIdQuery,
-      {
-        'task_id': taskId,
-        'user_id': userId,
-      },
-    ).then((result) => result.id);
   }
 }

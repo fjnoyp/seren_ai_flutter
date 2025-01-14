@@ -57,7 +57,8 @@ class WebManageOrgUsersPage extends HookConsumerWidget {
                 FilledButton.icon(
                   onPressed: () => showDialog(
                     context: context,
-                    builder: (context) => const InviteUserByEmailDialog(),
+                    builder: (context) =>
+                        InviteUserByEmailDialog(orgId: curOrgId),
                   ),
                   icon: const Icon(Icons.person_add),
                   label: Text(AppLocalizations.of(context)!.inviteUser),
@@ -69,10 +70,11 @@ class WebManageOrgUsersPage extends HookConsumerWidget {
               child: _UsersTable(
                   orgId: curOrgId,
                   filter: (joinedOrgRole) =>
-                      joinedOrgRole.user.email
-                          .toLowerCase()
-                          .contains(searchText.text.toLowerCase()) ||
-                      '${joinedOrgRole.user.firstName} ${joinedOrgRole.user.lastName}'
+                      joinedOrgRole.user != null &&
+                          joinedOrgRole.user!.email
+                              .toLowerCase()
+                              .contains(searchText.text.toLowerCase()) ||
+                      '${joinedOrgRole.user!.firstName} ${joinedOrgRole.user!.lastName}'
                           .toLowerCase()
                           .contains(searchText.text.toLowerCase()) ||
                       joinedOrgRole.orgRole.orgRole

@@ -4,7 +4,6 @@ import 'package:seren_ai_flutter/common/navigation_service_provider.dart';
 import 'package:seren_ai_flutter/common/routes/app_routes.dart';
 import 'package:seren_ai_flutter/services/data/orgs/models/org_model.dart';
 import 'package:seren_ai_flutter/services/data/orgs/providers/cur_selected_org_id_notifier.dart';
-import 'package:seren_ai_flutter/services/data/orgs/providers/cur_user_org_service_provider.dart';
 import 'package:seren_ai_flutter/services/data/orgs/providers/cur_user_orgs_provider.dart';
 
 /// Ensure user has a current organization or redirect to chooseOrgRoute page
@@ -21,7 +20,7 @@ class OrgGuard extends ConsumerWidget {
     // Check if user no longer belongs to current org
     if (curUserOrgs.hasValue &&
         _userNoLongerBelongsTo(curOrgId, curUserOrgs: curUserOrgs.value!)) {
-      ref.read(curUserOrgServiceProvider).clearDesiredOrgId();
+      ref.read(curSelectedOrgIdNotifierProvider.notifier).clearDesiredOrgId();
     }
 
     if (curOrgId == null) {
@@ -30,7 +29,7 @@ class OrgGuard extends ConsumerWidget {
           // If user only has one org, set it as the desired org
           WidgetsBinding.instance.addPostFrameCallback((_) {
             ref
-                .read(curUserOrgServiceProvider)
+                .read(curSelectedOrgIdNotifierProvider.notifier)
                 .setDesiredOrgId(curUserOrgs.value!.first.id);
           });
           return const Center(child: CircularProgressIndicator());

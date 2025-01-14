@@ -4,6 +4,7 @@ import 'package:logging/logging.dart';
 import 'package:seren_ai_flutter/common/is_show_save_dialog_on_pop_provider.dart';
 import 'package:seren_ai_flutter/common/navigation_service_provider.dart';
 import 'package:seren_ai_flutter/common/routes/app_routes.dart';
+import 'package:seren_ai_flutter/services/auth/cur_auth_state_provider.dart';
 import 'package:seren_ai_flutter/services/data/common/status_enum.dart';
 import 'package:seren_ai_flutter/services/data/common/widgets/editable_page_mode_enum.dart';
 import 'package:seren_ai_flutter/services/data/projects/models/project_model.dart';
@@ -57,7 +58,7 @@ class TaskPage extends HookConsumerWidget {
 
     final curTaskState = ref.watch(curEditingTaskStateProvider);
 
-    final curTask = curTaskState.value?.taskModel;
+    final curTask = curTaskState.value;
 
     return SingleChildScrollView(
       child: Padding(
@@ -77,10 +78,11 @@ class TaskPage extends HookConsumerWidget {
                     crossAxisAlignment: CrossAxisAlignment.end,
                     children: [
                       TaskPriorityView(
-                          priority: curTask?.priority ?? PriorityEnum.normal),
+                          priority: curTask?.taskModel.priority ??
+                              PriorityEnum.normal),
                       const SizedBox(height: 4),
                       TaskStatusView(
-                          status: curTask?.status ?? StatusEnum.open),
+                          status: curTask?.taskModel.status ?? StatusEnum.open),
                     ],
                   )
               ],
@@ -116,30 +118,29 @@ class TaskPage extends HookConsumerWidget {
             ),
 
             if (mode == EditablePageMode.readOnly)
-              TaskCommentSection(curTask?.id ?? ''),
+              TaskCommentSection(curTask?.taskModel.id ?? ''),
             const SizedBox(height: 24),
 
-            if (mode == EditablePageMode.create)
-              PopScope(
-                onPopInvokedWithResult: (_, result) async {
-                  if (result != true) {
-                    ref
-                        .read(curEditingTaskStateProvider.notifier)
-                        .deleteNewTask();
-                  }
-                },
-                child: SizedBox(
-                  width: double.infinity,
-                  child: ElevatedButton(
-                    onPressed: () async {
-                      await _validateTaskAndMaybeSave(ref, context);
-                    },
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor: theme.colorScheme.secondary,
-                      foregroundColor: theme.colorScheme.onSecondary,
-                    ),
-                    child: Text(AppLocalizations.of(context)!.createTask),
+            if (mode != EditablePageMode.readOnly)
+              SizedBox(
+                width: double.infinity,
+                child: ElevatedButton(
+                  onPressed: () async {
+                    final curAuthUser = ref.read(curUserProvider).value;
+
+                    if (curAuthUser == null) {
+                      throw UnauthorizedException();
+                    }
+
+                    await _validateTaskAndMaybeSave(ref, context);
+                  },
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: theme.colorScheme.secondary,
+                    foregroundColor: theme.colorScheme.onSecondary,
                   ),
+                  child: Text(mode == EditablePageMode.edit
+                      ? AppLocalizations.of(context)!.updateTask
+                      : AppLocalizations.of(context)!.createTask),
                 ),
               ),
 
@@ -154,12 +155,12 @@ class TaskPage extends HookConsumerWidget {
       WidgetRef ref, BuildContext context) async {
     final curTaskState = ref.read(curEditingTaskStateProvider);
 
-    final curTask = curTaskState.value?.taskModel;
+    final curTask = curTaskState.value;
 
-    final isValidTask = curTask?.name.isNotEmpty ?? false;
+    final isValidTask = curTask?.taskModel.name.isNotEmpty ?? false;
 
     if (isValidTask) {
-      ref.read(navigationServiceProvider).pop(true);
+      await ref.read(curEditingTaskStateProvider.notifier).saveChanges();
 
       if (context.mounted) {
         ref.read(isShowSaveDialogOnPopProvider.notifier).reset();
@@ -167,10 +168,10 @@ class TaskPage extends HookConsumerWidget {
       }
     } else {
       // takes action to solve each validation error
-      if (curTask?.parentProjectId.isEmpty ?? false) {
+      if (curTask?.taskModel.parentProjectId.isEmpty ?? false) {
         _takeActionOnEmptyProjectValue(context)
             .then((_) => _validateTaskAndMaybeSave(ref, context));
-      } else if (curTask?.name.isEmpty ?? false) {
+      } else if (curTask?.taskModel.name.isEmpty ?? false) {
         _takeActionOnEmptyNameValue(context)
             .then((_) => _validateTaskAndMaybeSave(ref, context));
       }
