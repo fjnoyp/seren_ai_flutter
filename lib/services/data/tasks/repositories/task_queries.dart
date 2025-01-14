@@ -2,6 +2,7 @@ abstract class TaskQueries {
   /// Params:
   /// - user_id: String
   /// - author_user_id: String
+  /// 
   /// Used to fetch tasks where the user is either:
   /// 1. Assigned to the project containing the task
   /// 2. The author of the task
@@ -18,6 +19,17 @@ abstract class TaskQueries {
     OR uta.user_id = :user_id
     OR t.author_user_id = :author_user_id
     OR (uor.org_role = 'admin');
+    ''';
+
+  /// Params:
+  /// - user_id: String
+  /// 
+  /// Used to fetch tasks where the user is assigned to the task directly
+  static const String userAssignedTasksQuery = '''
+    SELECT DISTINCT t.*
+    FROM tasks t
+    LEFT JOIN task_user_assignments tua ON t.id = tua.task_id
+    WHERE tua.user_id = :user_id;
     ''';
 
   /// Params:
