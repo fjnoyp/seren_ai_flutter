@@ -10,10 +10,8 @@ final shiftTimeframesRepositoryProvider =
 });
 
 class ShiftTimeframesRepository extends BaseRepository<ShiftTimeframeModel> {
-  const ShiftTimeframesRepository(super.db);
-
-  @override
-  Set<String> get REMOVEwatchTables => {'shift_timeframes'};
+  const ShiftTimeframesRepository(super.db,
+      {super.primaryTable = 'shift_timeframes'});
 
   @override
   ShiftTimeframeModel fromJson(Map<String, dynamic> json) {

@@ -9,10 +9,7 @@ final shiftLogsRepositoryProvider = Provider<ShiftLogsRepository>((ref) {
 });
 
 class ShiftLogsRepository extends BaseRepository<ShiftLogModel> {
-  const ShiftLogsRepository(super.db);
-
-  @override
-  Set<String> get REMOVEwatchTables => {'shift_logs'};
+  const ShiftLogsRepository(super.db, {super.primaryTable = 'shift_logs'});
 
   @override
   ShiftLogModel fromJson(Map<String, dynamic> json) {

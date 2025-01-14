@@ -180,13 +180,13 @@ class ShiftToolMethods {
     return curShiftState.when(
       loading: () => null,
       error: (error, stackTrace) => null,
-      data: (joinedShift) {
-        if (joinedShift == null) {
+      data: (shift) {
+        if (shift == null) {
           return null;
         }
         return (
           userId: curAuthState.value!.id,
-          shiftId: joinedShift.shift.id,
+          shiftId: shift.id,
         );
       },
     );

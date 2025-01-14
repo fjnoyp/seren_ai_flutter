@@ -16,20 +16,25 @@ class TasksRepository extends BaseRepository<TaskModel> {
     return TaskModel.fromJson(json);
   }
 
-  @override
-  Map<String, dynamic> toJson(TaskModel item) {
-    return item.toJson();
-  }
-
   // Watch viewable tasks for a user (tasks where they are assigned to the project or are the author)
   Stream<List<TaskModel>> watchUserViewableTasks({
     required String userId,
+    required String orgId,
   }) {
     return watch(
       TaskQueries.userViewableTasksQuery,
       {
         'user_id': userId,
         'author_user_id': userId,
+        'org_id': orgId,
+      },
+      triggerOnTables: {
+        'tasks',
+        'user_project_assignments',
+        'team_project_assignments',
+        'user_team_assignments',
+        'projects',
+        'user_org_roles',
       },
     );
   }
@@ -38,12 +43,14 @@ class TasksRepository extends BaseRepository<TaskModel> {
   // Get viewable tasks for a user (tasks where they are assigned to the project or are the author)
   Future<List<TaskModel>> getUserViewableTasks({
     required String userId,
+    required String orgId,
   }) async {
     return get(
       TaskQueries.userViewableTasksQuery,
       {
         'user_id': userId,
         'author_user_id': userId,
+        'org_id': orgId,
       },
     );
   }

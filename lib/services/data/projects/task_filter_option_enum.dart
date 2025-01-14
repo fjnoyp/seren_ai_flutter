@@ -3,9 +3,9 @@ import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:seren_ai_flutter/common/utils/date_time_extension.dart';
 import 'package:seren_ai_flutter/services/data/projects/providers/selected_project_provider.dart';
-import 'package:seren_ai_flutter/services/data/tasks/models/joined_task_model.dart';
 import 'package:seren_ai_flutter/services/data/tasks/models/task_model.dart';
-import 'package:seren_ai_flutter/services/data/users/providers/users_in_project_provider.dart';
+import 'package:seren_ai_flutter/services/data/tasks/providers/task_list_item_relations_future_provider.dart';
+import 'package:seren_ai_flutter/services/data/users/providers/user_in_project_provider.dart';
 
 enum TaskFilterOption {
   assignees,
@@ -26,7 +26,7 @@ enum TaskFilterOption {
     }
   }
 
-  List<({String value, String name, bool Function(JoinedTaskModel)? filter})>
+  List<({String value, String name, bool Function(TaskModel)? filter})>
       getSubOptions(BuildContext context, WidgetRef ref) {
     switch (this) {
       case TaskFilterOption.assignees:
@@ -37,8 +37,15 @@ enum TaskFilterOption {
                 ?.map((e) => (
                       value: e.id,
                       name: '${e.firstName} ${e.lastName}',
-                      filter: (JoinedTaskModel task) =>
-                          task.assignees.any((assignee) => assignee.id == e.id)
+                      filter: (TaskModel task) {
+                        final assignees = ref
+                                .watch(
+                                    taskListItemRelationsFutureProvider(task))
+                                .valueOrNull
+                                ?.assignees ??
+                            [];
+                        return assignees.any((assignee) => assignee.id == e.id);
+                      }
                     ))
                 .toList() ??
             [];
@@ -48,26 +55,22 @@ enum TaskFilterOption {
           (
             value: 'overdue',
             name: AppLocalizations.of(context)!.overdue,
-            filter: (task) =>
-                task.task.dueDate?.isBefore(DateTime.now()) ?? false
+            filter: (task) => task.dueDate?.isBefore(DateTime.now()) ?? false
           ),
           (
             value: 'today',
             name: AppLocalizations.of(context)!.today,
-            filter: (task) =>
-                task.task.dueDate?.isSameDate(DateTime.now()) ?? false
+            filter: (task) => task.dueDate?.isSameDate(DateTime.now()) ?? false
           ),
           (
             value: 'thisWeek',
             name: AppLocalizations.of(context)!.thisWeek,
-            filter: (task) =>
-                task.task.dueDate?.isSameWeek(DateTime.now()) ?? false
+            filter: (task) => task.dueDate?.isSameWeek(DateTime.now()) ?? false
           ),
           (
             value: 'thisMonth',
             name: AppLocalizations.of(context)!.thisMonth,
-            filter: (task) =>
-                task.task.dueDate?.isSameMonth(DateTime.now()) ?? false
+            filter: (task) => task.dueDate?.isSameMonth(DateTime.now()) ?? false
           ),
           (
             value: 'customDateRange',
@@ -81,7 +84,7 @@ enum TaskFilterOption {
             .map((e) => (
                   value: e.name,
                   name: e.toHumanReadable(context),
-                  filter: (task) => task.task.priority == e
+                  filter: (task) => task.priority == e
                 ))
             .toList();
 
@@ -91,19 +94,19 @@ enum TaskFilterOption {
             value: 'today',
             name: AppLocalizations.of(context)!.today,
             filter: (task) =>
-                task.task.createdAt?.isSameDate(DateTime.now()) ?? false
+                task.createdAt?.isSameDate(DateTime.now()) ?? false
           ),
           (
             value: 'thisWeek',
             name: AppLocalizations.of(context)!.thisWeek,
             filter: (task) =>
-                task.task.createdAt?.isSameWeek(DateTime.now()) ?? false
+                task.createdAt?.isSameWeek(DateTime.now()) ?? false
           ),
           (
             value: 'thisMonth',
             name: AppLocalizations.of(context)!.thisMonth,
             filter: (task) =>
-                task.task.createdAt?.isSameMonth(DateTime.now()) ?? false
+                task.createdAt?.isSameMonth(DateTime.now()) ?? false
           ),
           (
             value: 'customDateRange',
@@ -114,17 +117,16 @@ enum TaskFilterOption {
     }
   }
 
-  bool Function(JoinedTaskModel, DateTimeRange?) get filterFunction =>
-      switch (this) {
+  bool Function(TaskModel, DateTimeRange?) get filterFunction => switch (this) {
         TaskFilterOption.assignees => (task, _) => true,
         TaskFilterOption.dueDate => (task, dateRange) => dateRange != null
-            ? (task.task.dueDate?.isAfter(dateRange.start) ?? false) &&
-                (task.task.dueDate?.isBefore(dateRange.end) ?? false)
+            ? (task.dueDate?.isAfter(dateRange.start) ?? false) &&
+                (task.dueDate?.isBefore(dateRange.end) ?? false)
             : true,
         TaskFilterOption.priority => (task, _) => true,
         TaskFilterOption.creationDate => (task, dateRange) => dateRange != null
-            ? (task.task.createdAt?.isAfter(dateRange.start) ?? false) &&
-                (task.task.createdAt?.isBefore(dateRange.end) ?? false)
+            ? (task.createdAt?.isAfter(dateRange.start) ?? false) &&
+                (task.createdAt?.isBefore(dateRange.end) ?? false)
             : true,
       };
 }

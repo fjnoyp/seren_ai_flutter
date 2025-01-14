@@ -5,13 +5,15 @@ import 'package:intl/intl.dart';
 import 'package:seren_ai_flutter/common/utils/duration_extension.dart';
 import 'package:seren_ai_flutter/services/data/common/widgets/delete_confirmation_dialog.dart';
 import 'package:seren_ai_flutter/services/data/common/widgets/form/base_text_block_edit_selection_field.dart';
-import 'package:seren_ai_flutter/services/data/shifts/models/joined_shift_model.dart';
+import 'package:seren_ai_flutter/services/data/shifts/models/shift_model.dart';
 import 'package:seren_ai_flutter/services/data/common/widgets/async_value_handler_widget.dart';
 import 'package:seren_ai_flutter/services/data/shifts/models/shift_log_model.dart';
+import 'package:seren_ai_flutter/services/data/shifts/providers/cur_user_shift_log_actions_provider.dart';
 import 'package:seren_ai_flutter/services/data/shifts/providers/open_shift_log_provider.dart';
 import 'package:seren_ai_flutter/services/data/shifts/providers/shift_logs_service_provider.dart';
 import 'package:seren_ai_flutter/services/data/shifts/providers/cur_shift_state_provider.dart';
 import 'package:seren_ai_flutter/services/data/shifts/providers/shift_logs_provider.dart';
+import 'package:seren_ai_flutter/services/data/shifts/providers/shift_project_future_provider.dart';
 import 'package:seren_ai_flutter/services/data/shifts/providers/shift_time_ranges_providers.dart';
 import 'package:seren_ai_flutter/services/data/shifts/widgets/debug_shifts_full_day_view.dart';
 import 'package:seren_ai_flutter/widgets/common/debug_mode_provider.dart';
@@ -134,7 +136,7 @@ class TestWidget extends ConsumerWidget {
 
 class _DayShiftsWidget extends HookConsumerWidget {
   final DateTime day;
-  final JoinedShiftModel shift;
+  final ShiftModel shift;
 
   const _DayShiftsWidget({required this.shift, required this.day});
 
@@ -144,7 +146,9 @@ class _DayShiftsWidget extends HookConsumerWidget {
 
     final theme = Theme.of(context);
 
-    final shiftId = shift.shift.id;
+    final shiftId = shift.id;
+
+    final parentProject = ref.watch(shiftProjectFutureProvider(shift));
 
     return Stack(
       alignment: Alignment.topCenter,
@@ -174,7 +178,7 @@ class _DayShiftsWidget extends HookConsumerWidget {
                       children: [
                         Padding(
                           padding: const EdgeInsets.only(left: 15),
-                          child: Text(shift.shift.name,
+                          child: Text(shift.name,
                               style: theme.textTheme.titleLarge),
                         ),
                         const Divider(),
@@ -197,9 +201,13 @@ class _DayShiftsWidget extends HookConsumerWidget {
                             children: [
                               const Icon(Icons.location_on_outlined),
                               const SizedBox(width: 10),
-                              Text(shift.parentProject?.address ??
-                                  AppLocalizations.of(context)!
-                                      .noProjectAddress),
+                              // switch to shift.address in future
+                              AsyncValueHandlerWidget(
+                                value: parentProject,
+                                data: (project) => Text(project?.address ??
+                                    AppLocalizations.of(context)!
+                                        .noProjectAddress),
+                              ),
                             ],
                           ),
                         ),

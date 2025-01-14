@@ -2,8 +2,9 @@ abstract class TaskQueries {
   /// Params:
   /// - user_id: String
   /// - author_user_id: String
+  /// - org_id: String
   /// 
-  /// Used to fetch tasks where the user is either:
+  /// Used to fetch tasks of an organization where the user is either:
   /// 1. Assigned to the project containing the task
   /// 2. The author of the task
   /// 3. An admin of the organization that owns the project
@@ -13,12 +14,12 @@ abstract class TaskQueries {
     LEFT JOIN user_project_assignments pua ON t.parent_project_id = pua.project_id
     LEFT JOIN team_project_assignments tpa ON t.parent_project_id = tpa.project_id
     LEFT JOIN user_team_assignments uta ON tpa.team_id = uta.team_id
-    LEFT JOIN projects p ON t.parent_project_id = p.id
-    LEFT JOIN user_org_roles uor ON p.parent_org_id = uor.org_id AND uor.user_id = :user_id
+    LEFT JOIN projects p ON t.parent_project_id = p.id AND p.parent_org_id = :org_id
+    LEFT JOIN user_org_roles uor ON uor.org_id = :org_id AND uor.user_id = :user_id
     WHERE pua.user_id = :user_id
     OR uta.user_id = :user_id
     OR t.author_user_id = :author_user_id
-    OR (uor.org_role = 'admin');
+    OR uor.org_role = 'admin';
     ''';
 
   /// Params:

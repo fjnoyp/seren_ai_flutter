@@ -6,9 +6,9 @@ import 'package:seren_ai_flutter/services/data/shifts/repositories/shift_overrid
 final curUserShiftOverridesProvider = StreamProvider.autoDispose.family<List<ShiftOverrideModel>, ({DateTime day})>((ref, args) {
   return CurShiftDependencyProvider.watchStream<List<ShiftOverrideModel>>(
     ref: ref,
-    builder: (userId, joinedShift) {
+    builder: (userId, shift) {
       return ref.watch(shiftOverridesRepositoryProvider).watchOverridesForDay(
-        shiftId: joinedShift.shift.id,
+        shiftId: shift.id,
         userId: userId,
         day: args.day.toUtc(),
       );

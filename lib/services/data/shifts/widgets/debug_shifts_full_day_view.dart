@@ -69,7 +69,7 @@ Widget debugShiftsFullDayView(String shiftId, DateTime day) {
                 }),
 
                 // Timeframes
-                ...(timeframes ?? []).map((timeFrame) {
+                ...timeframes.map((timeFrame) {
                   if (timeFrame.dayOfWeek != day.weekday) {
                     return const SizedBox.shrink();
                   }
@@ -87,7 +87,7 @@ Widget debugShiftsFullDayView(String shiftId, DateTime day) {
                 }),
 
                 // Overrides
-                ...(overrides ?? []).map((override) {
+                ...overrides.map((override) {
                   final start = override.startDateTime.toLocal();
                   final end = override.endDateTime.toLocal();
                   final color = override.isRemoval
@@ -106,7 +106,7 @@ Widget debugShiftsFullDayView(String shiftId, DateTime day) {
                 }),
 
                 // Logs
-                ...(logs ?? []).map((log) {
+                ...logs.map((log) {
                   final start = log.clockInDatetime.toLocal();
                   final end = log.clockOutDatetime?.toLocal() ?? DateTime.now();
                   final color = log.isBreak
@@ -124,7 +124,7 @@ Widget debugShiftsFullDayView(String shiftId, DateTime day) {
                   );
                 }),
 
-                ...(shiftTimeRanges ?? []).map((range) {
+                ...shiftTimeRanges.map((range) {
                   final start = range.start.toLocal();
                   final end = range.end.toLocal();
                   return _buildTimeBlock(

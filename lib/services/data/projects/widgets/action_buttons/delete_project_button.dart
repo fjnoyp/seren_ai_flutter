@@ -4,9 +4,9 @@ import 'package:seren_ai_flutter/common/navigation_service_provider.dart';
 import 'package:seren_ai_flutter/common/routes/app_routes.dart';
 import 'package:seren_ai_flutter/common/universal_platform/universal_platform.dart';
 import 'package:seren_ai_flutter/services/data/common/widgets/delete_confirmation_dialog.dart';
-import 'package:seren_ai_flutter/services/data/projects/projects_db_provider.dart';
 import 'package:seren_ai_flutter/services/data/projects/providers/selected_project_provider.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+import 'package:seren_ai_flutter/services/data/projects/repositories/projects_repository.dart';
 
 class DeleteProjectButton extends ConsumerWidget {
   const DeleteProjectButton({super.key});
@@ -23,8 +23,8 @@ class DeleteProjectButton extends ConsumerWidget {
           builder: (context) => DeleteConfirmationDialog(
             itemName: itemName,
             onDelete: () {
-              final projectsDb = ref.watch(projectsDbProvider);
-              projectsDb
+              final projectsRepository = ref.watch(projectsRepositoryProvider);
+              projectsRepository
                   .deleteItem(ref.read(selectedProjectProvider).value!.id)
                   .then((_) => ref.read(navigationServiceProvider).pop());
               ref.invalidate(selectedProjectProvider);
