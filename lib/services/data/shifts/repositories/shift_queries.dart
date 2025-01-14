@@ -28,7 +28,7 @@ abstract class ShiftQueries {
         AND (date(start_datetime) = date(@day_start)
         OR date(end_datetime) = date(@day_start))
     )
-    SELECT range_start, range_end
+    SELECT *
     FROM (
       SELECT range_start, range_end
       FROM timeframe_ranges t
@@ -90,24 +90,12 @@ abstract class ShiftQueries {
 
   /// Params:
   /// - user_id: String
+  /// - org_id: String
   static const getUserShifts = '''
-  SELECT DISTINCT 
-    s.id AS s_id,
-    s.name AS s_name,
-    s.author_user_id AS s_author_user_id,
-    s.parent_project_id AS s_parent_project_id,
-    s.created_at AS s_created_at,
-    s.updated_at AS s_updated_at,
-    p.id AS p_id,
-    p.name AS p_name,
-    p.description AS p_description,
-    p.address AS p_address,
-    p.parent_org_id AS p_parent_org_id,
-    p.created_at AS p_created_at,
-    p.updated_at AS p_updated_at
+  SELECT DISTINCT s.*
   FROM shifts s
   JOIN shift_user_assignments sua ON s.id = sua.shift_id
-  JOIN projects p ON s.parent_project_id = p.id
   WHERE sua.user_id = @user_id
+  AND s.org_id = @org_id
   ''';
 }

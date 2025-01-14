@@ -6,8 +6,8 @@ import 'package:seren_ai_flutter/services/data/shifts/repositories/shift_logs_re
 final curUserOpenShiftLogProvider = StreamProvider.autoDispose<ShiftLogModel?>((ref) {
   return CurShiftDependencyProvider.watchStream(
     ref: ref,
-    builder: (userId, joinedShift) => ref.watch(shiftLogsRepositoryProvider).watchCurrentOpenLog(
-      shiftId: joinedShift.shift.id,
+    builder: (userId, shift) => ref.watch(shiftLogsRepositoryProvider).watchCurrentOpenLog(
+      shiftId: shift.id,
       userId: userId,
     ),
   );

@@ -4,7 +4,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:intl/intl.dart';
 import 'package:seren_ai_flutter/services/data/shifts/models/shift_log_model.dart';
 import 'package:seren_ai_flutter/services/data/common/widgets/async_value_handler_widget.dart';
-import 'package:seren_ai_flutter/services/data/shifts/providers/shift_logs_service_provider.dart';
+import 'package:seren_ai_flutter/services/data/shifts/providers/cur_user_shift_log_actions_provider.dart';
 import 'package:seren_ai_flutter/services/data/shifts/providers/cur_shift_state_provider.dart';
 import 'package:seren_ai_flutter/services/data/shifts/providers/open_shift_log_provider.dart';
 import 'package:seren_ai_flutter/widgets/home/base_home_card.dart';
