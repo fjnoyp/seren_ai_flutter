@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
-import 'package:seren_ai_flutter/services/data/tasks/models/joined_task_model.dart';
+import 'package:seren_ai_flutter/services/data/tasks/models/task_model.dart';
 
 enum TaskSortOption {
   priority,
@@ -18,13 +18,13 @@ enum TaskSortOption {
     }
   }
 
-  Comparator<JoinedTaskModel> get comparator => switch (this) {
+  Comparator<TaskModel> get comparator => switch (this) {
         TaskSortOption.priority => (a, b) =>
-            (a.task.priority?.toInt() ?? double.maxFinite)
-                .compareTo(b.task.priority?.toInt() ?? double.maxFinite),
+            (a.priority?.toInt() ?? double.maxFinite)
+                .compareTo(b.priority?.toInt() ?? double.maxFinite),
         TaskSortOption.dueDate => (a, b) =>
-            a.task.dueDate!.compareTo(b.task.dueDate!),
+            a.dueDate!.compareTo(b.dueDate!),
         TaskSortOption.createdAt => (a, b) =>
-            a.task.createdAt!.compareTo(b.task.createdAt!),
+            a.createdAt!.compareTo(b.createdAt!),
       };
 }

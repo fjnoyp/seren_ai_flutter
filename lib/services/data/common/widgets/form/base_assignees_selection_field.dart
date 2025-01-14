@@ -133,7 +133,7 @@ class AssigneesSelectionModal extends HookConsumerWidget {
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
                       Text(AppLocalizations.of(context)!.onlyUsersIn),
-                      Text(curProject.name,
+                      Text(curProjectId,
                           style: const TextStyle(fontWeight: FontWeight.bold)),
                       Text(AppLocalizations.of(context)!.canBeAssigned),
                     ],
@@ -163,7 +163,7 @@ class AssigneesSelectionModal extends HookConsumerWidget {
                         }
                       },
                       child: Text(AppLocalizations.of(context)!
-                          .addUsersTo(curProject.name)),
+                          .addUsersTo(curProjectId)),
                     ),
                   ConstrainedBox(
                     constraints: BoxConstraints(

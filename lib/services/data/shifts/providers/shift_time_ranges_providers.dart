@@ -8,8 +8,8 @@ final curUserShiftTimeRangesProvider = StreamProvider.autoDispose
     .family<List<DateTimeRange>, ({DateTime day})>((ref, args) {
   return CurShiftDependencyProvider.watchStream(
     ref: ref,
-    builder: (userId, joinedShift) => ref.watch(shiftTimeRangesRepositoryProvider).watchActiveRanges(
-      shiftId: joinedShift.shift.id,
+    builder: (userId, shift) => ref.watch(shiftTimeRangesRepositoryProvider).watchActiveRanges(
+      shiftId: shift.id,
       userId: userId,
       day: args.day.dateOnlyUTC(),
     ),
