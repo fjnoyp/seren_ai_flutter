@@ -9,7 +9,7 @@ import 'package:seren_ai_flutter/services/data/common/widgets/editable_page_mode
 import 'package:seren_ai_flutter/services/data/projects/providers/selected_project_provider.dart';
 import 'package:seren_ai_flutter/services/data/projects/task_filter_option_enum.dart';
 import 'package:seren_ai_flutter/services/data/projects/task_sort_option_enum.dart';
-import 'package:seren_ai_flutter/services/data/tasks/models/joined_task_model.dart';
+import 'package:seren_ai_flutter/services/data/tasks/models/task_model.dart';
 import 'package:seren_ai_flutter/services/data/tasks/providers/cur_user_viewable_tasks_stream_provider.dart';
 import 'package:seren_ai_flutter/services/data/tasks/widgets/task_list/task_list_item_view.dart';
 import 'package:seren_ai_flutter/services/data/tasks/widgets/task_list/tasks_list_view.dart';
@@ -27,11 +27,11 @@ class WebProjectTasksSection extends HookConsumerWidget {
             ({
               String value,
               String name,
-              bool Function(JoinedTaskModel) filter,
+              bool Function(TaskModel) filter,
             })?>(null))
         .toList();
 
-    bool filterCondition(JoinedTaskModel task) {
+    bool filterCondition(TaskModel task) {
       bool result = true;
       for (var filter in filterBy) {
         if (filter.value?.filter != null) {
@@ -218,8 +218,8 @@ class WebProjectTasksSection extends HookConsumerWidget {
 class _ProjectTasksBoardView extends ConsumerWidget {
   const _ProjectTasksBoardView({this.sort, this.filterCondition});
 
-  final Comparator<JoinedTaskModel>? sort;
-  final bool Function(JoinedTaskModel)? filterCondition;
+  final Comparator<TaskModel>? sort;
+  final bool Function(TaskModel)? filterCondition;
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -246,11 +246,11 @@ class _ProjectTasksBoardView extends ConsumerWidget {
                       child: Padding(
                         padding: const EdgeInsets.symmetric(horizontal: 16),
                         child: TasksListView(
-                          filter: (joinedTask) =>
-                              joinedTask.task.parentProjectId == project.id &&
-                              joinedTask.task.status == status &&
+                          filter: (task) =>
+                              task.parentProjectId == project.id &&
+                              task.status == status &&
                               (filterCondition == null ||
-                                  filterCondition!(joinedTask)),
+                                  filterCondition!(task)),
                           sort: sort,
                         ),
                       ),
@@ -286,14 +286,14 @@ class _ProjectTasksBoardView extends ConsumerWidget {
 class _ProjectTasksListView extends ConsumerWidget {
   const _ProjectTasksListView({this.sort, this.filterCondition});
 
-  final Comparator<JoinedTaskModel>? sort;
-  final bool Function(JoinedTaskModel)? filterCondition;
+  final Comparator<TaskModel>? sort;
+  final bool Function(TaskModel)? filterCondition;
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final project = ref.watch(selectedProjectProvider).value!;
     return AsyncValueHandlerWidget(
-      value: ref.watch(joinedCurUserViewableTasksProvider),
+      value: ref.watch(curUserViewableTasksStreamProvider),
       data: (tasks) {
         return SingleChildScrollView(
           child: Column(
@@ -301,8 +301,8 @@ class _ProjectTasksListView extends ConsumerWidget {
               (status) {
                 final filteredTasks = tasks
                         ?.where((task) =>
-                            task.task.parentProjectId == project.id &&
-                            task.task.status == status &&
+                            task.parentProjectId == project.id &&
+                            task.status == status &&
                             (filterCondition == null || filterCondition!(task)))
                         .toList() ??
                     [];

@@ -15,7 +15,7 @@ import 'package:seren_ai_flutter/services/data/projects/widgets/action_buttons/e
 import 'package:seren_ai_flutter/services/data/projects/widgets/action_buttons/update_project_assignees_button.dart';
 import 'package:seren_ai_flutter/services/data/projects/widgets/form/project_selection_fields.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
-import 'package:seren_ai_flutter/services/data/users/providers/users_in_project_provider.dart';
+import 'package:seren_ai_flutter/services/data/users/providers/user_in_project_provider.dart';
 import 'package:seren_ai_flutter/services/data/users/widgets/user_avatar.dart';
 
 class ProjectPage extends HookConsumerWidget {

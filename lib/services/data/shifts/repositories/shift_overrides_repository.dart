@@ -10,10 +10,8 @@ final shiftOverridesRepositoryProvider =
 });
 
 class ShiftOverridesRepository extends BaseRepository<ShiftOverrideModel> {
-  const ShiftOverridesRepository(super.db);
-
-  @override
-  Set<String> get REMOVEwatchTables => {'shift_overrides'};
+  const ShiftOverridesRepository(super.db,
+      {super.primaryTable = 'shift_overrides'});
 
   @override
   ShiftOverrideModel fromJson(Map<String, dynamic> json) {

@@ -7,9 +7,9 @@ import 'package:seren_ai_flutter/services/data/shifts/repositories/shift_logs_re
 final curUserShiftLogsProvider = StreamProvider.autoDispose.family<List<ShiftLogModel>, ({DateTime day})>((ref, args) {
   return CurShiftDependencyProvider.watchStream<List<ShiftLogModel>>(
     ref: ref,
-    builder: (userId, joinedShift) {
+    builder: (userId, shift) {
       return ref.watch(shiftLogsRepositoryProvider).watchUserShiftLogsForDay(
-        shiftId: joinedShift.shift.id,
+        shiftId: shift.id,
         userId: userId,
         day: args.day.dateOnlyUTC(),
       );

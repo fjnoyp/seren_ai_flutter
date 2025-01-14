@@ -25,7 +25,16 @@ class ProjectsRepository extends BaseRepository<ProjectModel> {
   Stream<List<ProjectModel>> watchUserProjects({
     required String userId,
   }) {
-    return watch(ProjectQueries.userViewableProjectsQuery, {'user_id': userId});
+    return watch(
+      ProjectQueries.userViewableProjectsQuery,
+      {'user_id': userId},
+      triggerOnTables: {
+        'projects',
+        'user_project_assignments',
+        'team_project_assignments',
+        'user_team_assignments'
+      },
+    );
   }
 
   // Get projects for a user (projects where they are assigned directly or via teams)

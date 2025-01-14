@@ -1,7 +1,6 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:seren_ai_flutter/services/data/projects/models/user_project_assignment_model.dart';
 import 'package:seren_ai_flutter/services/data/projects/repositories/user_project_assignments_repository.dart';
-import 'package:seren_ai_flutter/services/data/projects/user_project_assignments_db_provider.dart';
 import 'package:seren_ai_flutter/services/data/users/models/user_model.dart';
 
 final projectAssignmentsServiceProvider =
@@ -17,7 +16,8 @@ class ProjectAssignmentsService {
   Future<void> updateAssignees(List<UserModel>? assignees) async {
     if (assignees == null) return;
 
-    final userProjectAssignmentsDb = ref.read(userProjectAssignmentsDbProvider);
+    final userProjectAssignmentsRepository =
+        ref.read(userProjectAssignmentsRepositoryProvider);
 
     final previousAssignments = await ref
         .read(userProjectAssignmentsRepositoryProvider)
@@ -25,7 +25,7 @@ class ProjectAssignmentsService {
 
     for (var assignment in previousAssignments) {
       if (!assignees.any((e) => e.id == assignment.id)) {
-        await userProjectAssignmentsDb.deleteItem(assignment.id);
+        await userProjectAssignmentsRepository.deleteItem(assignment.id);
       }
     }
 
@@ -38,7 +38,7 @@ class ProjectAssignmentsService {
         .toList();
 
     if (newAssignments.isNotEmpty) {
-      await userProjectAssignmentsDb.upsertItems(newAssignments);
+      await userProjectAssignmentsRepository.upsertItems(newAssignments);
     }
   }
 }

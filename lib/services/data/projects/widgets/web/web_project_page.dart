@@ -94,15 +94,15 @@ class _CurrentProjectReadinessBar extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final project = ref.watch(selectedProjectProvider).value!;
     final tasks = ref
-        .watch(joinedCurUserViewableTasksProvider)
+        .watch(curUserViewableTasksStreamProvider)
         .valueOrNull
-        ?.where((e) => e.task.parentProjectId == project.id);
+        ?.where((e) => e.parentProjectId == project.id);
 
     // TODO: improve readiness calculation using tasks estimated duration
     final completedTasksCount =
-        tasks?.where((e) => e.task.status == StatusEnum.finished).length ?? 0;
+        tasks?.where((e) => e.status == StatusEnum.finished).length ?? 0;
     final totalTasksCount = tasks
-            ?.where((e) => e.task.status != StatusEnum.cancelled)
+            ?.where((e) => e.status != StatusEnum.cancelled)
             .toList()
             .length ??
         0;
