@@ -16,18 +16,13 @@ class UserOrgRolesRepository extends BaseRepository<UserOrgRoleModel> {
     return UserOrgRoleModel.fromJson(json);
   }
 
-  @override
-  Map<String, dynamic> toJson(UserOrgRoleModel item) {
-    return item.toJson();
-  }
-
-  Stream<List<UserOrgRoleModel>> watchCurrentUserOrgRoles(String userId) {
+  Stream<List<UserOrgRoleModel>> watchOrgRolesByUser(String userId) {
     return watch(OrgQueries.userOrgRolesQuery, {
       'user_id': userId,
     });
   }
 
-  Future<List<UserOrgRoleModel>> getCurrentUserOrgRoles(String userId) async {
+  Future<List<UserOrgRoleModel>> getOrgRolesByUser(String userId) async {
     return get(OrgQueries.userOrgRolesQuery, {
       'user_id': userId,
     });
