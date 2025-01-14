@@ -5,6 +5,7 @@ import 'package:intl/intl.dart';
 import 'package:seren_ai_flutter/common/utils/duration_extension.dart';
 import 'package:seren_ai_flutter/services/data/common/widgets/delete_confirmation_dialog.dart';
 import 'package:seren_ai_flutter/services/data/common/widgets/form/base_text_block_edit_selection_field.dart';
+import 'package:seren_ai_flutter/services/data/projects/providers/project_by_id_stream_provider.dart';
 import 'package:seren_ai_flutter/services/data/shifts/models/shift_model.dart';
 import 'package:seren_ai_flutter/services/data/common/widgets/async_value_handler_widget.dart';
 import 'package:seren_ai_flutter/services/data/shifts/models/shift_log_model.dart';
@@ -13,7 +14,6 @@ import 'package:seren_ai_flutter/services/data/shifts/providers/open_shift_log_p
 import 'package:seren_ai_flutter/services/data/shifts/providers/shift_logs_service_provider.dart';
 import 'package:seren_ai_flutter/services/data/shifts/providers/cur_shift_state_provider.dart';
 import 'package:seren_ai_flutter/services/data/shifts/providers/shift_logs_provider.dart';
-import 'package:seren_ai_flutter/services/data/shifts/providers/shift_project_future_provider.dart';
 import 'package:seren_ai_flutter/services/data/shifts/providers/shift_time_ranges_providers.dart';
 import 'package:seren_ai_flutter/services/data/shifts/widgets/debug_shifts_full_day_view.dart';
 import 'package:seren_ai_flutter/widgets/common/debug_mode_provider.dart';
@@ -148,7 +148,7 @@ class _DayShiftsWidget extends HookConsumerWidget {
 
     final shiftId = shift.id;
 
-    final parentProject = ref.watch(shiftProjectFutureProvider(shift));
+    final parentProject = ref.watch(projectByIdStreamProvider(shift.parentProjectId));
 
     return Stack(
       alignment: Alignment.topCenter,

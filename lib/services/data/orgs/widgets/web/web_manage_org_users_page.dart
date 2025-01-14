@@ -10,7 +10,6 @@ import 'package:seren_ai_flutter/services/data/orgs/providers/cur_user_org_role_
 import 'package:seren_ai_flutter/services/data/orgs/providers/joined_user_org_roles_by_org_stream_provider.dart';
 import 'package:seren_ai_flutter/services/data/orgs/widgets/action_buttons/invite_user_to_org_button.dart';
 import 'package:seren_ai_flutter/services/data/orgs/widgets/manage_org_users_page.dart';
-import 'package:seren_ai_flutter/services/data/users/models/user_model.dart';
 
 class WebManageOrgUsersPage extends HookConsumerWidget {
   const WebManageOrgUsersPage({super.key});
@@ -71,7 +70,7 @@ class WebManageOrgUsersPage extends HookConsumerWidget {
                   orgId: curOrgId,
                   filter: (joinedOrgRole) =>
                       joinedOrgRole.user != null &&
-                          joinedOrgRole.user!.email
+                          (joinedOrgRole.user!.email
                               .toLowerCase()
                               .contains(searchText.text.toLowerCase()) ||
                       '${joinedOrgRole.user!.firstName} ${joinedOrgRole.user!.lastName}'
@@ -80,7 +79,7 @@ class WebManageOrgUsersPage extends HookConsumerWidget {
                       joinedOrgRole.orgRole.orgRole
                           .toHumanReadable(context)
                           .toLowerCase()
-                          .contains(searchText.text.toLowerCase()))),
+                          .contains(searchText.text.toLowerCase())))),
         ],
       ),
     );

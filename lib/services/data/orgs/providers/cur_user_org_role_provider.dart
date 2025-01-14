@@ -1,5 +1,4 @@
 import 'package:hooks_riverpod/hooks_riverpod.dart';
-import 'package:seren_ai_flutter/services/data/orgs/models/joined_user_org_role_model.dart';
 import 'package:seren_ai_flutter/services/data/orgs/models/user_org_role_model.dart';
 import 'package:seren_ai_flutter/services/data/orgs/providers/cur_selected_org_id_notifier.dart';
 import 'package:seren_ai_flutter/services/auth/cur_auth_dependency_provider.dart';
@@ -14,7 +13,7 @@ final curUserOrgRoleProvider = StreamProvider<OrgRole>(
         final repository = ref.watch(userOrgRolesRepositoryProvider);
         final curOrgId = ref.watch(curSelectedOrgIdNotifierProvider);
 
-        return repository.watchCurrentUserOrgRoles(userId).map(
+        return repository.watchOrgRolesByUser(userId).map(
           (roles) {
             return roles.firstWhere((role) => role.orgId == curOrgId).orgRole;
           },

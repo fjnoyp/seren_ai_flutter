@@ -7,12 +7,10 @@ import 'package:seren_ai_flutter/services/data/common/widgets/async_value_handle
 import 'package:seren_ai_flutter/services/data/common/widgets/form/selection_field.dart';
 import 'package:seren_ai_flutter/services/data/orgs/models/user_org_role_model.dart';
 import 'package:seren_ai_flutter/services/data/orgs/providers/cur_user_org_role_provider.dart';
-import 'package:seren_ai_flutter/services/data/projects/models/project_model.dart';
-import 'package:seren_ai_flutter/services/data/projects/providers/selected_project_provider.dart';
+import 'package:seren_ai_flutter/services/data/projects/providers/project_by_id_stream_provider.dart';
 import 'package:seren_ai_flutter/services/data/projects/widgets/action_buttons/update_project_assignees_button.dart';
 import 'package:seren_ai_flutter/services/data/users/models/user_model.dart';
 import 'package:seren_ai_flutter/services/data/users/providers/user_in_project_provider.dart';
-import 'package:seren_ai_flutter/services/data/users/repositories/users_repository.dart';
 
 class BaseAssigneesSelectionField extends HookConsumerWidget {
   final bool enabled;
@@ -105,6 +103,7 @@ class AssigneesSelectionModal extends HookConsumerWidget {
       return const Center(child: CircularProgressIndicator());
     }
 
+    final curProject = ref.watch(projectByIdStreamProvider(curProjectId));
     final selectedUsers = useState<List<UserModel>>(initialSelectedUsers);
 
     return Column(
@@ -133,7 +132,11 @@ class AssigneesSelectionModal extends HookConsumerWidget {
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
                       Text(AppLocalizations.of(context)!.onlyUsersIn),
-                      Text(curProjectId,
+                      Text(
+                          curProject.when(
+                              data: (project) => project?.name ?? '',
+                              error: (e, __) => 'Err: $e',
+                              loading: () => '...'),
                           style: const TextStyle(fontWeight: FontWeight.bold)),
                       Text(AppLocalizations.of(context)!.canBeAssigned),
                     ],
@@ -142,26 +145,24 @@ class AssigneesSelectionModal extends HookConsumerWidget {
                       ref.read(curUserOrgRoleProvider).value == OrgRole.editor)
                     ElevatedButton(
                       onPressed: () {
-                        // Why are we setting the project here?
-                        // This doesn't seem right
-                        // We're trying to set the assignees for a project, we shouldn't be implicitly changing the selectedProject to do that .
-                        ref
-                            .read(selectedProjectProvider.notifier)
-                            .setProject(curProject);
                         if (isWebVersion) {
                           showDialog(
                             context: context,
                             builder: (_) => AlertDialog(
                               content: SizedBox(
                                 width: MediaQuery.of(context).size.width / 2,
-                                child: const UpdateProjectAssigneesModal(),
+                                child: UpdateProjectAssigneesModal(
+                                  projectId: curProjectId,
+                                ),
                               ),
                             ),
                           );
                         } else {
                           showModalBottomSheet(
                             context: context,
-                            builder: (_) => const UpdateProjectAssigneesModal(),
+                            builder: (_) => UpdateProjectAssigneesModal(
+                              projectId: curProjectId,
+                            ),
                           );
                         }
                       },

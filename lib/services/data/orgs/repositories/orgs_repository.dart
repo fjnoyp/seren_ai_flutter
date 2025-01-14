@@ -42,4 +42,12 @@ class OrgsRepository extends BaseRepository<OrgModel> {
       },
     );
   }
+
+  Future<void> updateOrgName(String orgId, String name) async {
+    await updateField(orgId, 'name', name);
+  }
+
+  Future<void> updateOrgAddress(String orgId, String address) async {
+    await updateField(orgId, 'address', address);
+  }
 }
