@@ -142,6 +142,9 @@ class AssigneesSelectionModal extends HookConsumerWidget {
                       ref.read(curUserOrgRoleProvider).value == OrgRole.editor)
                     ElevatedButton(
                       onPressed: () {
+                        // Why are we setting the project here?
+                        // This doesn't seem right
+                        // We're trying to set the assignees for a project, we shouldn't be implicitly changing the selectedProject to do that .
                         ref
                             .read(selectedProjectProvider.notifier)
                             .setProject(curProject);
