@@ -4,8 +4,8 @@ import 'package:seren_ai_flutter/services/data/orgs/models/org_model.dart';
 
 class JoinedUserOrgRoleModel {
   final UserOrgRoleModel orgRole;
-  final UserModel user;
-  final OrgModel org;
+  final UserModel? user;
+  final OrgModel? org;
 
   JoinedUserOrgRoleModel({
     required this.orgRole,

@@ -1,3 +1,4 @@
+import 'package:flutter/material.dart';
 import 'package:logging/logging.dart';
 import 'package:powersync/powersync.dart';
 import 'package:seren_ai_flutter/services/data/common/i_has_id.dart';
@@ -147,6 +148,12 @@ abstract class BaseRepository<T extends IHasId> {
 
   Future<void> deleteItem(String id) async {
     await db.execute('DELETE FROM $primaryTable WHERE id = ${_sqlEscape(id)}');
+  }
+
+  @protected
+  Future<void> updateField(String id, String field, dynamic value) async {
+    await db.execute(
+        'UPDATE $primaryTable SET $field = ? WHERE id = ?', [value, id]);
   }
 
   String _sqlEscape(dynamic value) {
