@@ -2,10 +2,8 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:seren_ai_flutter/services/auth/cur_auth_state_provider.dart';
 import 'package:seren_ai_flutter/services/data/common/status_enum.dart';
 import 'package:seren_ai_flutter/services/data/projects/providers/selected_project_provider.dart';
-import 'package:seren_ai_flutter/services/data/tasks/models/task_comment_model.dart';
 import 'package:seren_ai_flutter/services/data/tasks/models/task_model.dart';
 import 'package:seren_ai_flutter/services/data/tasks/models/task_user_assignment_model.dart';
-import 'package:seren_ai_flutter/services/data/tasks/repositories/task_comments_repository.dart';
 import 'package:seren_ai_flutter/services/data/tasks/repositories/task_user_assignments_repository.dart';
 import 'package:seren_ai_flutter/services/data/tasks/repositories/tasks_repository.dart';
 import 'package:seren_ai_flutter/services/data/users/models/user_model.dart';
@@ -39,7 +37,6 @@ class EditingTaskState {
 
   EditingTaskState copyWith({
     TaskModel? taskModel,
-    List<TaskCommentModel>? comments,
     List<UserModel>? assignees,
   }) {
     return EditingTaskState(
@@ -52,10 +49,7 @@ class EditingTaskState {
 class EditingTaskNotifier extends Notifier<AsyncValue<EditingTaskState>> {
   @override
   AsyncValue<EditingTaskState> build() {
-    return AsyncValue.data(EditingTaskState(
-      taskModel: TaskModel.empty(),
-      assignees: [],
-    ));
+    return const AsyncValue.loading();
   }
 
   Future<void> createNewTask() async {
@@ -78,6 +72,8 @@ class EditingTaskNotifier extends Notifier<AsyncValue<EditingTaskState>> {
         error: (err, stack) => throw Exception('Failed to load project: $err'),
       );
 
+      await ref.read(tasksRepositoryProvider).insertItem(newTask);
+
       state = AsyncValue.data(EditingTaskState(
         taskModel: newTask,
         assignees: [],
@@ -90,11 +86,6 @@ class EditingTaskNotifier extends Notifier<AsyncValue<EditingTaskState>> {
   Future<void> setTask(TaskModel task) async {
     state = const AsyncValue.loading();
     try {
-      final comments =
-          await ref.read(taskCommentsRepositoryProvider).getTaskComments(
-                taskId: task.id,
-              );
-
       final assignees =
           await ref.read(usersRepositoryProvider).getTaskAssignedUsers(
                 taskId: task.id,
@@ -119,7 +110,7 @@ class EditingTaskNotifier extends Notifier<AsyncValue<EditingTaskState>> {
     String? parentProjectId,
     int? reminderOffsetMinutes,
   }) {
-    state.whenData((currentState) {
+    state.whenData((currentState) async {
       final currentTask = currentState.taskModel;
       final updatedTask = currentTask.copyWith(
         name: name ?? currentTask.name,
@@ -132,48 +123,17 @@ class EditingTaskNotifier extends Notifier<AsyncValue<EditingTaskState>> {
             reminderOffsetMinutes ?? currentTask.reminderOffsetMinutes,
         removeReminder: reminderOffsetMinutes == null,
       );
+
+      await ref.read(tasksRepositoryProvider).updateItem(updatedTask);
+
       state = AsyncValue.data(currentState.copyWith(taskModel: updatedTask));
     });
   }
 
   void updateAssignees({required List<UserModel> assignees}) {
-    state.whenData((currentState) {
-      final updatedState = currentState.copyWith(assignees: assignees);
-      state = AsyncValue.data(updatedState);
-    });
-  }
-
-  void addAssignee(UserModel assignee) {
-    state.whenData((currentState) {
-      final updatedState = currentState
-          .copyWith(assignees: [...currentState.assignees, assignee]);
-      state = AsyncValue.data(updatedState);
-    });
-  }
-
-  void removeAssignee(UserModel assignee) {
-    state.whenData((currentState) {
-      final updatedState = currentState.copyWith(
-          assignees: currentState.assignees
-              .where((e) => e.id != assignee.id)
-              .toList());
-      state = AsyncValue.data(updatedState);
-    });
-  }
-
-  Future<void> saveChanges() async {
     state.whenData((currentState) async {
-      // === Save task ===
-      await ref
-          .read(tasksRepositoryProvider)
-          .upsertItem(currentState.taskModel);
-
-      // === Comments are saved immediately ===
-
-      // === Save assignees ===
       final currentTask = currentState.taskModel;
-
-      final assignments = currentState.assignees
+      final assignments = assignees
           .map((user) => TaskUserAssignmentModel(
                 taskId: currentTask.id,
                 userId: user.id,
@@ -194,6 +154,72 @@ class EditingTaskNotifier extends Notifier<AsyncValue<EditingTaskState>> {
 
       //Add new assignments
       await assignmentsDb.upsertItems(assignments);
+
+      state = AsyncValue.data(currentState.copyWith(assignees: assignees));
+    });
+  }
+
+  void addAssignee(UserModel assignee) {
+    state.whenData((currentState) async {
+      final currentTask = currentState.taskModel;
+      await ref
+          .read(taskUserAssignmentsRepositoryProvider)
+          .upsertItem(TaskUserAssignmentModel(
+            taskId: currentTask.id,
+            userId: assignee.id,
+          ));
+
+      state = AsyncValue.data(currentState.copyWith(assignees: [
+        ...currentState.assignees,
+        assignee,
+      ]));
+    });
+  }
+
+  void removeAssignee(UserModel assignee) {
+    state.whenData((currentState) async {
+      final currentTask = currentState.taskModel;
+      final assignmentId = await ref
+          .read(taskUserAssignmentsRepositoryProvider)
+          .getTaskAssignmentId(
+            taskId: currentTask.id,
+            userId: assignee.id,
+          );
+
+      if (assignmentId != null) {
+        await ref
+            .read(taskUserAssignmentsRepositoryProvider)
+            .deleteItem(assignmentId);
+      }
+
+      state = AsyncValue.data(currentState.copyWith(assignees: [
+        ...currentState.assignees.where((user) => user.id != assignee.id),
+      ]));
+    });
+  }
+
+  Future<void> deleteNewTask() async {
+    state.whenData((currentState) async {
+      final currentTask = currentState.taskModel;
+
+      for (var assignee in currentState.assignees) {
+        final assignmentId = await ref
+            .read(taskUserAssignmentsRepositoryProvider)
+            .getTaskAssignmentId(
+              taskId: currentTask.id,
+              userId: assignee.id,
+            );
+
+        if (assignmentId != null) {
+          await ref
+              .read(taskUserAssignmentsRepositoryProvider)
+              .deleteItem(assignmentId);
+        }
+      }
+
+      await ref.read(tasksRepositoryProvider).deleteItem(currentTask.id);
+
+      state = const AsyncValue.loading();
     });
   }
 

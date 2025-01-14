@@ -8,29 +8,20 @@ import 'package:seren_ai_flutter/services/data/projects/models/project_model.dar
 import 'package:seren_ai_flutter/services/data/users/models/user_model.dart';
 
 // Load related note data for displaying in a list
-final noteRelationsProvider = FutureProvider.autoDispose
-    .family<NoteListItemDetails, NoteModel>((ref, note) async {
-  final Future<ProjectModel?> projectFuture =
-      ref.watch(projectsRepositoryProvider).getById(note.parentProjectId ?? '');
+// We're not using them for now as we're not displaying these info in the list
 
-  final Future<UserModel?> authorFuture =
-      ref.watch(usersRepositoryProvider).getById(note.authorUserId);
+final noteProjectProvider = FutureProvider.autoDispose
+    .family<ProjectModel?, NoteModel>((ref, note) async {
+  final projectFuture =
+      ref.read(projectsRepositoryProvider).getById(note.parentProjectId ?? '');
 
-  final project = await projectFuture;
-  final author = await authorFuture;
-
-  return NoteListItemDetails(
-    project: project,
-    author: author,
-  );
+  return await projectFuture;
 });
 
-class NoteListItemDetails {
-  final ProjectModel? project;
-  final UserModel? author;
+final noteAuthorProvider =
+    FutureProvider.autoDispose.family<UserModel?, NoteModel>((ref, note) async {
+  final authorFuture =
+      ref.read(usersRepositoryProvider).getById(note.authorUserId);
 
-  NoteListItemDetails({
-    this.project,
-    this.author,
-  });
-}
+  return await authorFuture;
+});
