@@ -8,40 +8,38 @@ abstract class ShiftQueries {
   /// - day_of_week: int
   /// - user_id: String
   static const getActiveShiftRanges = '''
-    WITH timeframe_ranges AS (
-      SELECT 
+    SELECT *
+    FROM (
+      SELECT
+        *,
         datetime(date(@day_start), substr(start_time, 1, 5)) as range_start,
-        datetime(date(@day_start), time(substr(start_time, 1, 5), duration)) as range_end,
-        0 as is_removal
-      FROM shift_timeframes
-      WHERE shift_id = @shift_id
+        datetime(date(@day_start), time(substr(start_time, 1, 5), duration)) as range_end
+      FROM shift_timeframes t
+      WHERE NOT EXISTS (
+        SELECT 1 FROM shift_overrides o
+        WHERE o.is_removal = 1
+          AND o.start_datetime < range_end 
+          AND o.end_datetime > range_start
+      )
+        AND shift_id = @shift_id
         AND day_of_week = @day_of_week
-    ),
-    override_ranges AS (
-      SELECT 
-        start_datetime as range_start,
-        end_datetime as range_end,
-        is_removal
-      FROM shift_overrides
-      WHERE shift_id = @shift_id
+      UNION ALL
+      SELECT
+        o.id,
+        o.shift_id,
+        @day_of_week as day_of_week,
+        time(o.start_datetime) as start_time,
+        datetime(date(@day_start), time(o.end_datetime)) - datetime(date(@day_start), time(o.start_datetime)) as duration,
+        o.created_at,
+        o.updated_at,
+        o.start_datetime as range_start,
+        o.end_datetime as range_end
+      FROM shift_overrides o
+      WHERE o.shift_id = @shift_id
+        AND is_removal = 0
         AND (user_id = @user_id OR user_id IS NULL)
         AND (date(start_datetime) = date(@day_start)
         OR date(end_datetime) = date(@day_start))
-    )
-    SELECT *
-    FROM (
-      SELECT range_start, range_end
-      FROM timeframe_ranges t
-      WHERE NOT EXISTS (
-        SELECT 1 FROM override_ranges o
-        WHERE o.is_removal = 1
-          AND o.range_start < t.range_end 
-          AND o.range_end > t.range_start
-      )
-      UNION ALL
-      SELECT range_start, range_end
-      FROM override_ranges
-      WHERE is_removal = 0
     )
     ORDER BY range_start;
   ''';

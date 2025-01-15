@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
+import 'package:intl/intl.dart';
 import 'package:seren_ai_flutter/services/data/db_setup/db_provider.dart';
 import 'package:seren_ai_flutter/services/data/common/base_repository.dart';
 import 'package:seren_ai_flutter/services/data/shifts/models/shift_timeframe_model.dart';
@@ -38,12 +39,11 @@ class ShiftTimeRangesRepository extends BaseRepository<ShiftTimeframeModel> {
       triggerOnTables: {'shift_timeframes', 'shift_overrides'},
     );
 
-    return timeframes.map((results) => results
-        .map((tf) => DateTimeRange(
-              start: DateTime.parse(tf.startTime),
-              end: DateTime.parse(tf.startTime).add(tf.duration),
-            ))
-        .toList());
+    return timeframes.map(
+      (results) => results
+          .map((timeframe) => _getDateTimeRange(timeframe, day))
+          .toList(),
+    );
   }
 
   Future<List<DateTimeRange>> getActiveRanges({
@@ -64,10 +64,16 @@ class ShiftTimeRangesRepository extends BaseRepository<ShiftTimeframeModel> {
     );
 
     return timeframes
-        .map((tf) => DateTimeRange(
-              start: DateTime.parse(tf.startTime),
-              end: DateTime.parse(tf.startTime).add(tf.duration),
-            ))
+        .map((timeframe) => _getDateTimeRange(timeframe, day))
         .toList();
+  }
+
+  DateTimeRange _getDateTimeRange(ShiftTimeframeModel tf, DateTime day) {
+    final startTime = DateFormat('HH:mm:ssZ').parse(tf.startTime);
+    final startDateTime = DateTime(day.year, day.month, day.day, startTime.hour,
+        startTime.minute, startTime.second);
+    final endDateTime = startDateTime.add(tf.duration);
+
+    return DateTimeRange(start: startDateTime, end: endDateTime);
   }
 }
