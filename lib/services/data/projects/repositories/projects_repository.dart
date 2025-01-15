@@ -16,23 +16,22 @@ class ProjectsRepository extends BaseRepository<ProjectModel> {
     return ProjectModel.fromJson(json);
   }
 
-  @override
-  Map<String, dynamic> toJson(ProjectModel item) {
-    return item.toJson();
-  }
-
   // Watch projects for a user (projects where they are assigned directly or via teams)
   Stream<List<ProjectModel>> watchUserProjects({
     required String userId,
-  }) {
-    return watch(
+    required String orgId,
+  }) {    return watch(
       ProjectQueries.userViewableProjectsQuery,
-      {'user_id': userId},
+      {
+        'user_id': userId,
+        'org_id': orgId,
+      },
       triggerOnTables: {
         'projects',
         'user_project_assignments',
         'team_project_assignments',
-        'user_team_assignments'
+        'user_team_assignments',
+        'user_org_roles',
       },
     );
   }
@@ -42,19 +41,5 @@ class ProjectsRepository extends BaseRepository<ProjectModel> {
     required String userId,
   }) async {
     return get(ProjectQueries.userViewableProjectsQuery, {'user_id': userId});
-  }
-
-  // Watch projects for an org
-  Stream<List<ProjectModel>> watchOrgProjects({
-    required String orgId,
-  }) {
-    return watch(ProjectQueries.orgProjectsQuery, {'org_id': orgId});
-  }
-
-  // Get projects for an org
-  Future<List<ProjectModel>> getOrgProjects({
-    required String orgId,
-  }) async {
-    return get(ProjectQueries.orgProjectsQuery, {'org_id': orgId});
   }
 }
