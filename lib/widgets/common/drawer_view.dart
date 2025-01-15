@@ -1,4 +1,3 @@
-import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:seren_ai_flutter/common/navigation_service_provider.dart';
@@ -131,7 +130,7 @@ class DrawerView extends ConsumerWidget {
                       .read(navigationServiceProvider)
                       .navigateTo(AppRoutes.shifts.name),
                 ),
-                _DrawerListTile(
+                _DebugModeListTile(
                   icon: Icons.table_chart_outlined,
                   title: 'Gantt Chart',
                   onTap: () =>
