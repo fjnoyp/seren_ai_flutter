@@ -148,7 +148,8 @@ class _DayShiftsWidget extends HookConsumerWidget {
 
     final shiftId = shift.id;
 
-    final parentProject = ref.watch(projectByIdStreamProvider(shift.parentProjectId));
+    final parentProject =
+        ref.watch(projectByIdStreamProvider(shift.parentProjectId));
 
     return Stack(
       alignment: Alignment.topCenter,
@@ -172,7 +173,7 @@ class _DayShiftsWidget extends HookConsumerWidget {
                     )
                   : const SizedBox(height: 20),
               isDebugMode.value
-                  ? debugShiftsFullDayView(shiftId, day)
+                  ? DebugShiftsFullDayView(shiftId, day)
                   : Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
