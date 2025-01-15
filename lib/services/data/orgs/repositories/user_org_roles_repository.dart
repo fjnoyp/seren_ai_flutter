@@ -5,11 +5,12 @@ import 'package:seren_ai_flutter/services/data/common/base_repository.dart';
 import 'package:seren_ai_flutter/services/data/orgs/repositories/org_queries.dart';
 
 final userOrgRolesRepositoryProvider = Provider<UserOrgRolesRepository>((ref) {
-  return UserOrgRolesRepository(ref.watch(dbProvider), primaryTable: '');
+  return UserOrgRolesRepository(ref.watch(dbProvider));
 });
 
 class UserOrgRolesRepository extends BaseRepository<UserOrgRoleModel> {
-  const UserOrgRolesRepository(super.db, {required super.primaryTable});
+  const UserOrgRolesRepository(super.db)
+      : super(primaryTable: 'user_org_roles');
 
   @override
   UserOrgRoleModel fromJson(Map<String, dynamic> json) {
