@@ -69,9 +69,15 @@ class ShiftTimeRangesRepository extends BaseRepository<ShiftTimeframeModel> {
   }
 
   DateTimeRange _getDateTimeRange(ShiftTimeframeModel tf, DateTime day) {
-    final startTime = DateFormat('HH:mm:ssZ').parse(tf.startTime);
-    final startDateTime = DateTime(day.year, day.month, day.day, startTime.hour,
-        startTime.minute, startTime.second);
+    final startTime = DateFormat('HH:mm:ssZ').parse(tf.startTime, true);
+    final startDateTime = DateTime.utc(
+      day.year,
+      day.month,
+      day.day,
+      startTime.hour,
+      startTime.minute,
+      startTime.second,
+    ).toLocal();
     final endDateTime = startDateTime.add(tf.duration);
 
     return DateTimeRange(start: startDateTime, end: endDateTime);
