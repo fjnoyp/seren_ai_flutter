@@ -12,10 +12,6 @@ class ChooseOrgPage extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final curOrgId = ref.watch(curSelectedOrgIdNotifierProvider);
 
-    if (curOrgId == null) {
-      return const Center(child: CircularProgressIndicator());
-    }
-
     final theme = Theme.of(context);
 
     return AsyncValueHandlerWidget(
