@@ -95,7 +95,8 @@ abstract class ShiftQueries {
   SELECT DISTINCT s.*
   FROM shifts s
   JOIN shift_user_assignments sua ON s.id = sua.shift_id
+  JOIN projects p ON s.parent_project_id = p.id
   WHERE sua.user_id = @user_id
-  AND s.org_id = @org_id
+  AND p.parent_org_id = @org_id
   ''';
 }
