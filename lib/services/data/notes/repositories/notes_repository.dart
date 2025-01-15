@@ -16,11 +16,6 @@ class NotesRepository extends BaseRepository<NoteModel> {
     return NoteModel.fromJson(json);
   }
 
-  @override
-  Map<String, dynamic> toJson(NoteModel item) {
-    return item.toJson();
-  }
-
   Stream<List<NoteModel>> watchNotesByProject({
     required String userId,
     String? projectId,
