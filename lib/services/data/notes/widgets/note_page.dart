@@ -160,7 +160,7 @@ Future<void> openNotePage(BuildContext context, WidgetRef ref,
     if (noteId != null) {
       final note = await ref.read(notesRepositoryProvider).getById(noteId);
       if (note != null) {
-        ref.read(curEditingNoteStateProvider.notifier).loadNote(note);
+        await ref.read(curEditingNoteStateProvider.notifier).loadNote(note);
       }
     }
   }
