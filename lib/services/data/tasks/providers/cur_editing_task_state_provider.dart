@@ -1,7 +1,7 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:seren_ai_flutter/services/auth/cur_auth_state_provider.dart';
 import 'package:seren_ai_flutter/services/data/common/status_enum.dart';
-import 'package:seren_ai_flutter/services/data/projects/providers/selected_project_provider.dart';
+import 'package:seren_ai_flutter/services/data/projects/providers/cur_selected_project_providers.dart';
 import 'package:seren_ai_flutter/services/data/tasks/models/task_comment_model.dart';
 import 'package:seren_ai_flutter/services/data/tasks/models/task_model.dart';
 import 'package:seren_ai_flutter/services/data/tasks/models/task_user_assignment_model.dart';
@@ -64,7 +64,7 @@ class EditingTaskNotifier extends Notifier<AsyncValue<EditingTaskState>> {
       final curUser = ref.read(curUserProvider).value;
       if (curUser == null) throw Exception('No current user');
 
-      final selectedProjectAsync = ref.watch(selectedProjectProvider);
+      final selectedProjectAsync = ref.watch(curSelectedProjectStreamProvider);
 
       final newTask = await selectedProjectAsync.when(
         data: (project) => TaskModel(
@@ -72,7 +72,7 @@ class EditingTaskNotifier extends Notifier<AsyncValue<EditingTaskState>> {
           description: '',
           status: StatusEnum.open,
           authorUserId: curUser.id,
-          parentProjectId: project.id,
+          parentProjectId: project!.id,
         ),
         loading: () => throw Exception('Project is still loading'),
         error: (err, stack) => throw Exception('Failed to load project: $err'),
