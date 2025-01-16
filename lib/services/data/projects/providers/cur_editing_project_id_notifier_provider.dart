@@ -10,13 +10,11 @@ final curEditingProjectIdNotifierProvider =
 
 class EditingProjectIdNotifier extends Notifier<String?> {
   @override
-  String? build() {
-    return null;
-  }
+  String? build() => null;
 
-  Future<void> setProjectId(String projectId) async {
-    state = projectId;
-  }
+  void setProjectId(String projectId) => state = projectId;
+
+  void clearProjectId() => state = null;
 
   Future<void> createNewProject() async {
     try {
@@ -34,13 +32,6 @@ class EditingProjectIdNotifier extends Notifier<String?> {
       state = newProject.id;
     } catch (_, __) {
       throw Exception('Failed to create new project');
-    }
-  }
-
-  Future<void> deleteNewProject() async {
-    if (state != null) {
-      await ref.read(projectsRepositoryProvider).deleteItem(state!);
-      state = null;
     }
   }
 }
