@@ -13,7 +13,8 @@ class FindTasksResultModel extends AiRequestResultModel {
   factory FindTasksResultModel.fromJson(Map<String, dynamic> json) {
     return FindTasksResultModel(
       tasks: (json['tasks'] as List)
-          .map((task) => TaskModel.fromJson(task))
+          // Adjustment to fit old and new data structures
+          .map((task) => TaskModel.fromJson(task['task'] ?? task))
           .toList(),
       resultForAi: json['result_for_ai'],
       showOnly: json['show_only'],
