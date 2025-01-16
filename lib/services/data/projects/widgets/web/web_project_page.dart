@@ -119,6 +119,8 @@ class _CurrentProjectReadinessBar extends ConsumerWidget {
   }
 }
 
+// If we make this a public class, we need to change the way we get the project id
+// externalizing it
 class _WebProjectInfoView extends ConsumerWidget {
   const _WebProjectInfoView();
 
@@ -140,7 +142,8 @@ class _WebProjectInfoView extends ConsumerWidget {
           Stack(
             alignment: Alignment.topRight,
             children: [
-              const ProjectAssigneesList(),
+              ProjectAssigneesList(
+                  ref.watch(curSelectedProjectIdNotifierProvider)!),
               UpdateProjectAssigneesButton(
                   ref.watch(curSelectedProjectIdNotifierProvider)!),
             ],
