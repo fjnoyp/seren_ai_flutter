@@ -7,41 +7,49 @@ import 'package:seren_ai_flutter/services/data/projects/providers/cur_user_viewa
 import 'package:seren_ai_flutter/services/data/projects/repositories/projects_repository.dart';
 import 'package:seren_ai_flutter/services/data/users/models/user_model.dart';
 
-final selectedProjectProvider =
-    NotifierProvider<SelectedProjectNotifier, AsyncValue<ProjectModel>>(
-        () => SelectedProjectNotifier());
+final curSelectedProjectStreamProvider = StreamProvider<ProjectModel?>((ref) {
+  final projectId = ref.watch(curSelectedProjectIdNotifierProvider);
+  if (projectId == null) return Stream.value(null);
 
-class SelectedProjectNotifier extends Notifier<AsyncValue<ProjectModel>> {
+  final projectsRepo = ref.read(projectsRepositoryProvider);
+  return projectsRepo.watchById(projectId);
+});
+
+final curSelectedProjectIdNotifierProvider =
+    NotifierProvider<CurSelectedProjectIdNotifier, String?>(() {
+  return CurSelectedProjectIdNotifier();
+});
+
+class CurSelectedProjectIdNotifier extends Notifier<String?> {
   @override
-  AsyncValue<ProjectModel> build() {
+  String? build() {
     // Only watch the current user
     final curUser = ref.watch(curUserProvider).value;
 
     if (curUser == null) {
-      return AsyncError('No user found', StackTrace.current);
+      throw Exception('No user found');
     }
 
     // Initial setup
-    if (state.value == null) {
+    if (state == null) {
       setToDefaultOrFirstAssignedProject(curUser);
     }
 
     // Check access only when needed, don't watch continuously
     ref.listen(curUserViewableProjectsProvider, (previous, next) {
       if (next.value != null &&
-          state.value != null &&
-          !next.value!.any((e) => e.id == state.value!.id)) {
-        log('User has no longer access to ${state.value!.name}');
-        state = AsyncError(
-            'User has no longer access to this project', StackTrace.current);
+          state != null &&
+          !next.value!.any((e) => e.id == state!)) {
+        log('User has no longer access to project ${state!}');
+        state = null;
       }
     });
 
-    return state is AsyncLoading ? const AsyncLoading() : state;
+    return state; // state is AsyncLoading ? const AsyncLoading() : state;
   }
 
-  void setProject(ProjectModel project) {
-    state = AsyncData(project);
+  void setProjectId(String projectId) {
+    state = projectId;
   }
 
   Future<void> setToDefaultOrFirstAssignedProject(UserModel user) async {
@@ -51,17 +59,16 @@ class SelectedProjectNotifier extends Notifier<AsyncValue<ProjectModel>> {
           .read(projectsRepositoryProvider)
           .getById(user.defaultProjectId!);
       if (defaultProject != null) {
-        setProject(defaultProject);
+        setProjectId(defaultProject.id);
       }
     } else {
       // Defaults to some assigned project when user default project is null
       final userProjects =
           ref.read(curUserViewableProjectsProvider).value ?? [];
       if (userProjects.isNotEmpty) {
-        setProject(userProjects.first);
+        setProjectId(userProjects.first.id);
       } else {
-        // TODO p2: handle no projects found for user case
-        throw Exception('No projects found for user');
+        state = null;
       }
     }
   }

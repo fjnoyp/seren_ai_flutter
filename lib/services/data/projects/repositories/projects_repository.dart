@@ -20,7 +20,8 @@ class ProjectsRepository extends BaseRepository<ProjectModel> {
   Stream<List<ProjectModel>> watchUserProjects({
     required String userId,
     required String orgId,
-  }) {    return watch(
+  }) {
+    return watch(
       ProjectQueries.userViewableProjectsQuery,
       {
         'user_id': userId,
@@ -41,5 +42,20 @@ class ProjectsRepository extends BaseRepository<ProjectModel> {
     required String userId,
   }) async {
     return get(ProjectQueries.userViewableProjectsQuery, {'user_id': userId});
+  }
+
+  Future<void> updateProjectName(String projectId, String name) async {
+    if (name.isNotEmpty) {
+      await updateField(projectId, 'name', name);
+    }
+  }
+
+  Future<void> updateProjectDescription(
+      String projectId, String description) async {
+    await updateField(projectId, 'description', description);
+  }
+
+  Future<void> updateProjectAddress(String projectId, String address) async {
+    await updateField(projectId, 'address', address);
   }
 }

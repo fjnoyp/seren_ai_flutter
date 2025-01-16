@@ -2,12 +2,13 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:seren_ai_flutter/common/universal_platform/universal_platform.dart';
 import 'package:seren_ai_flutter/services/data/common/widgets/editable_page_mode_enum.dart';
-import 'package:seren_ai_flutter/services/data/projects/providers/selected_project_provider.dart';
 import 'package:seren_ai_flutter/services/data/projects/widgets/project_page.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 class EditProjectButton extends ConsumerWidget {
-  const EditProjectButton({super.key});
+  const EditProjectButton(this.projectId, {super.key});
+
+  final String projectId;
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -17,11 +18,11 @@ class EditProjectButton extends ConsumerWidget {
       onPressed: () {
         if (!isWebVersion) {
           // remove self from stack
-          Navigator.pop(context);
+          Navigator.of(context).pop();
         }
+
         openProjectPage(ref, context,
-            mode: EditablePageMode.edit,
-            project: ref.read(selectedProjectProvider).value!);
+            mode: EditablePageMode.edit, projectId: projectId);
       },
     );
   }

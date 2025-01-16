@@ -19,11 +19,6 @@ class UserProjectAssignmentsRepository
     return UserProjectAssignmentModel.fromJson(json);
   }
 
-  @override
-  Map<String, dynamic> toJson(UserProjectAssignmentModel item) {
-    return item.toJson();
-  }
-
   Stream<List<UserProjectAssignmentModel>> watchUserProjectAssignments({
     required String projectId,
   }) {
