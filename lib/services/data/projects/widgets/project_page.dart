@@ -9,6 +9,7 @@ import 'package:seren_ai_flutter/services/data/orgs/models/user_org_role_model.d
 import 'package:seren_ai_flutter/services/data/orgs/providers/cur_user_org_role_provider.dart';
 import 'package:seren_ai_flutter/services/data/projects/providers/cur_editing_project_id_notifier_provider.dart';
 import 'package:seren_ai_flutter/services/data/projects/providers/cur_selected_project_providers.dart';
+import 'package:seren_ai_flutter/services/data/projects/repositories/projects_repository.dart';
 import 'package:seren_ai_flutter/services/data/projects/widgets/action_buttons/delete_project_button.dart';
 import 'package:seren_ai_flutter/services/data/projects/widgets/action_buttons/edit_project_button.dart';
 import 'package:seren_ai_flutter/services/data/projects/widgets/action_buttons/update_project_assignees_button.dart';
@@ -80,9 +81,13 @@ class ProjectPage extends HookConsumerWidget {
                 PopScope(
                   onPopInvokedWithResult: (_, result) async {
                     if (result != true) {
+                      final projectIdToDelete = curEditingProjectId;
                       ref
                           .read(curEditingProjectIdNotifierProvider.notifier)
-                          .deleteNewProject();
+                          .clearProjectId();
+                      await ref
+                          .read(projectsRepositoryProvider)
+                          .deleteItem(projectIdToDelete);
                     }
                   },
                   child: Padding(
