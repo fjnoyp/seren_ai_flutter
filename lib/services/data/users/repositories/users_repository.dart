@@ -41,6 +41,10 @@ class UsersRepository extends BaseRepository<UserModel> {
     return watch(
       UserQueries.taskAssigneeUsersQuery,
       {'task_id': taskId},
+      triggerOnTables: {
+        'users',
+        'task_user_assignments',
+      },
     );
   }
 
@@ -63,6 +67,12 @@ class UsersRepository extends BaseRepository<UserModel> {
       UserQueries.usersInProjectQuery,
       {
         'project_id': projectId,
+      },
+      triggerOnTables: {
+        'users',
+        'user_project_assignments',
+        'user_team_assignments',
+        'team_project_assignments',
       },
     );
   }

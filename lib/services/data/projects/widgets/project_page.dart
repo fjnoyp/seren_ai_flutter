@@ -26,12 +26,12 @@ class ProjectPage extends HookConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     // Only watch selectedProjectServiceProvider in non-create modes
     if (mode != EditablePageMode.create) {
-      final projectState = ref.watch(curSelectedProjectStreamProvider);
-      if (projectState.isLoading) {
+      final curSelectedProject = ref.watch(curSelectedProjectStreamProvider);
+      if (curSelectedProject.isLoading) {
         return const Center(child: CircularProgressIndicator());
       }
 
-      if (projectState.hasError || projectState.value == null) {
+      if (curSelectedProject.hasError || curSelectedProject.value == null) {
         // Handle project deletion by other users
         WidgetsBinding.instance.addPostFrameCallback((_) {
           // Pop the current project page (route or dialog)
@@ -58,7 +58,8 @@ class ProjectPage extends HookConsumerWidget {
             if (mode == EditablePageMode.readOnly) ...[
               const ProjectInfoHeader(),
               const SizedBox(height: 16),
-              const ProjectAssigneesList()
+              ProjectAssigneesList(
+                  ref.watch(curSelectedProjectIdNotifierProvider) ?? '')
             ] else ...[
               ProjectNameField(curEditingProjectId),
               const SizedBox(height: 8),
@@ -133,11 +134,12 @@ class ProjectInfoHeader extends ConsumerWidget {
 }
 
 class ProjectAssigneesList extends ConsumerWidget {
-  const ProjectAssigneesList({super.key});
+  const ProjectAssigneesList(this.projectId, {super.key});
+
+  final String projectId;
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final projectId = ref.read(curSelectedProjectStreamProvider).value!.id;
     final projectAssignees =
         ref.watch(usersInProjectProvider(projectId)).valueOrNull ?? [];
 
