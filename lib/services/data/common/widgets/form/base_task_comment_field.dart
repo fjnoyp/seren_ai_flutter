@@ -7,25 +7,22 @@ class BaseTaskCommentField extends HookConsumerWidget {
   const BaseTaskCommentField({
     super.key,
     required this.enabled,
-    required this.commentProvider,
     required this.addComment,
   });
 
   final bool enabled;
-  final ProviderListenable<String> commentProvider;
   final Function(WidgetRef, String) addComment;
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final curComment = ref.watch(commentProvider);
-    final commentController = useTextEditingController(text: curComment);
+    final commentController = useTextEditingController();
     final focusNode = useFocusNode();
 
     final colorAnimation = useAiActionColorAnimation(
       context,
       ref,
       duration: const Duration(seconds: 1),
-      triggerValue: curComment,
+      triggerValue: commentController.text,
     );
 
     return AnimatedBuilder(

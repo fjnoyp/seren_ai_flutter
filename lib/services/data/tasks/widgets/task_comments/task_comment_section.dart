@@ -6,7 +6,6 @@ import 'package:seren_ai_flutter/services/data/common/widgets/form/base_task_com
 import 'package:seren_ai_flutter/services/data/tasks/widgets/task_comments/task_comment_card.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:seren_ai_flutter/services/data/tasks/repositories/task_comments_repository.dart';
-import 'package:seren_ai_flutter/services/data/tasks/providers/cur_editing_task_state_provider.dart';
 import 'package:seren_ai_flutter/services/data/tasks/models/task_comment_model.dart';
 
 class TaskCommentSection extends HookConsumerWidget {
@@ -62,7 +61,7 @@ class TaskCommentSection extends HookConsumerWidget {
           if (showTextField.value)
             _TaskCommentField(
               taskId: taskId,
-              onSubmit: () {
+              afterSubmit: () {
                 showTextField.value = false;
               },
             ),
@@ -75,11 +74,9 @@ class TaskCommentSection extends HookConsumerWidget {
 class _TaskCommentField extends BaseTaskCommentField {
   _TaskCommentField({
     required this.taskId,
-    required this.onSubmit,
+    required this.afterSubmit,
   }) : super(
           enabled: true,
-          commentProvider: curEditingTaskStateProvider
-              .select((state) => state.valueOrNull?.taskModel.id ?? ''),
           addComment: (ref, text) async {
             final curAuthUser = ref.read(curUserProvider).value;
 
@@ -87,24 +84,17 @@ class _TaskCommentField extends BaseTaskCommentField {
               throw UnauthorizedException();
             }
 
-            final curState = ref.read(curEditingTaskStateProvider);
-            if (curState.hasValue) {
-              final comment = TaskCommentModel(
-                parentTaskId: taskId,
-                content: text,
-                authorUserId: curAuthUser.id,
-              );
-              ref.read(taskCommentsRepositoryProvider).upsertItem(comment);
+            final comment = TaskCommentModel(
+              parentTaskId: taskId,
+              content: text,
+              authorUserId: curAuthUser.id,
+            );
+            ref.read(taskCommentsRepositoryProvider).upsertItem(comment);
 
-              // TODO p0: this is not updating the curEditingTaskState ...
-              // We should remove that class and make all edits immediate
-              // Which is what this change does, but now makes it inconsistent with existing logic ...
-
-              onSubmit();
-            }
+            afterSubmit();
           },
         );
 
   final String taskId;
-  final VoidCallback onSubmit;
+  final VoidCallback afterSubmit;
 }
