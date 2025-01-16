@@ -166,8 +166,11 @@ class AssigneesSelectionModal extends HookConsumerWidget {
                           );
                         }
                       },
-                      child: Text(AppLocalizations.of(context)!
-                          .addUsersTo(curProjectId)),
+                      child: Text(AppLocalizations.of(context)!.addUsersTo(
+                          curProject.when(
+                              data: (project) => project?.name ?? '',
+                              error: (e, __) => 'Err: $e',
+                              loading: () => '...'))),
                     ),
                   ConstrainedBox(
                     constraints: BoxConstraints(
