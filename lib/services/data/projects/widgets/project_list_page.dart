@@ -57,7 +57,7 @@ class ProjectListTile extends ConsumerWidget {
           maxLines: 2,
           overflow: TextOverflow.ellipsis),
       trailing: const Icon(Icons.chevron_right),
-      onTap: () => openProjectPage(ref, context, project: project),
+      onTap: () => openProjectPage(ref, context, projectId: project.id),
     );
   }
 }

@@ -4,12 +4,15 @@ import 'package:seren_ai_flutter/common/navigation_service_provider.dart';
 import 'package:seren_ai_flutter/common/routes/app_routes.dart';
 import 'package:seren_ai_flutter/common/universal_platform/universal_platform.dart';
 import 'package:seren_ai_flutter/services/data/common/widgets/delete_confirmation_dialog.dart';
-import 'package:seren_ai_flutter/services/data/projects/providers/selected_project_provider.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+import 'package:seren_ai_flutter/services/data/projects/providers/cur_selected_project_providers.dart';
+import 'package:seren_ai_flutter/services/data/projects/providers/project_by_id_stream_provider.dart';
 import 'package:seren_ai_flutter/services/data/projects/repositories/projects_repository.dart';
 
 class DeleteProjectButton extends ConsumerWidget {
-  const DeleteProjectButton({super.key});
+  const DeleteProjectButton(this.projectId, {super.key});
+
+  final String projectId;
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -17,23 +20,32 @@ class DeleteProjectButton extends ConsumerWidget {
       tooltip: AppLocalizations.of(context)!.deleteProjectTooltip,
       icon: const Icon(Icons.delete),
       onPressed: () async {
-        final itemName = ref.read(selectedProjectProvider).value!.name;
         await showDialog(
           context: context,
-          builder: (context) => DeleteConfirmationDialog(
-            itemName: itemName,
-            onDelete: () {
-              final projectsRepository = ref.watch(projectsRepositoryProvider);
-              projectsRepository
-                  .deleteItem(ref.read(selectedProjectProvider).value!.id)
-                  .then((_) => ref.read(navigationServiceProvider).pop());
-              ref.invalidate(selectedProjectProvider);
-              if (isWebVersion) {
-                ref.read(navigationServiceProvider).navigateToAndRemoveUntil(
-                    AppRoutes.home.name, (_) => false);
-              }
-            },
-          ),
+          builder: (context) {
+            final projectName =
+                ref.watch(projectByIdStreamProvider(projectId)).value?.name ??
+                    '';
+
+            return DeleteConfirmationDialog(
+              itemName: projectName,
+              onDelete: () {
+                final projectsRepository =
+                    ref.watch(projectsRepositoryProvider);
+                projectsRepository
+                    .deleteItem(projectId)
+                    .then((_) => ref.read(navigationServiceProvider).pop());
+                if (projectId ==
+                    ref.read(curSelectedProjectIdNotifierProvider)!) {
+                  ref.invalidate(curSelectedProjectIdNotifierProvider);
+                }
+                if (isWebVersion) {
+                  ref.read(navigationServiceProvider).navigateToAndRemoveUntil(
+                      AppRoutes.home.name, (_) => false);
+                }
+              },
+            );
+          },
         );
       },
     );
