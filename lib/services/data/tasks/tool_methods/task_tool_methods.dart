@@ -26,7 +26,7 @@ import 'package:seren_ai_flutter/services/data/orgs/providers/cur_selected_org_i
 import 'package:seren_ai_flutter/services/data/projects/models/project_model.dart';
 import 'package:seren_ai_flutter/services/data/projects/repositories/projects_repository.dart';
 import 'package:seren_ai_flutter/services/data/tasks/models/task_model.dart';
-import 'package:seren_ai_flutter/services/data/tasks/providers/cur_editing_task_state_provider.dart';
+import 'package:seren_ai_flutter/services/data/tasks/providers/cur_editing_task_id_notifier_provider.dart';
 import 'package:seren_ai_flutter/services/data/tasks/repositories/tasks_repository.dart';
 import 'package:seren_ai_flutter/services/data/tasks/tool_methods/models/create_task_result_model.dart';
 import 'package:seren_ai_flutter/services/data/tasks/tool_methods/models/delete_task_result_model.dart';
@@ -49,7 +49,10 @@ class TaskToolMethods {
     if (userId == null) return _handleNoAuth();
 
     final selectedOrgId = ref.watch(curSelectedOrgIdNotifierProvider);
-    if (selectedOrgId == null) return ErrorRequestResultModel(resultForAi: 'No org selected', showOnly: true);
+    if (selectedOrgId == null) {
+      return ErrorRequestResultModel(
+          resultForAi: 'No org selected', showOnly: true);
+    }
 
     final allTasks = await ref
         .read(tasksRepositoryProvider)
@@ -228,12 +231,12 @@ class TaskToolMethods {
 
     // Navigate to task page in readOnly mode
     if (allowToolUiActions) {
-      ref.read(curEditingTaskStateProvider.notifier).setTask(newTask);
+      ref.read(curEditingTaskIdNotifierProvider.notifier).setTaskId(newTask.id);
 
       final navigationService = ref.read(navigationServiceProvider);
       navigationService.navigateTo(AppRoutes.taskPage.name, arguments: {
         'mode': EditablePageMode.readOnly,
-        'actions': [const EditTaskButton()],
+        'actions': [EditTaskButton(newTask.id)],
         'title': newTask.name,
       });
 
@@ -309,7 +312,7 @@ class TaskToolMethods {
     // Show the new task fields and ask for confirmation
 
     if (allowToolUiActions) {
-      ref.read(curEditingTaskStateProvider.notifier).setTask(updatedTask);
+      ref.read(curEditingTaskIdNotifierProvider.notifier).setTaskId(updatedTask.id);
     }
 
     return UpdateTaskFieldsResultModel(
@@ -334,7 +337,10 @@ class TaskToolMethods {
     if (userId == null) return _handleNoAuth();
 
     final selectedOrgId = ref.watch(curSelectedOrgIdNotifierProvider);
-    if (selectedOrgId == null) return ErrorRequestResultModel(resultForAi: 'No org selected', showOnly: true);
+    if (selectedOrgId == null) {
+      return ErrorRequestResultModel(
+          resultForAi: 'No org selected', showOnly: true);
+    }
 
     final joinedTasks = await ref
         .read(tasksRepositoryProvider)
@@ -357,7 +363,7 @@ class TaskToolMethods {
 
     // If the task is found, move on to deleting it
     final toDeleteTask = filteredTasks.first;
-    ref.read(curEditingTaskStateProvider.notifier).setTask(toDeleteTask);
+    ref.read(curEditingTaskIdNotifierProvider.notifier).setTaskId(toDeleteTask.id);
 
     final navigationService = ref.read(navigationServiceProvider);
     final deleted = await navigationService.showPopupDialog(
