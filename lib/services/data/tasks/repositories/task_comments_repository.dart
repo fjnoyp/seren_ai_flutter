@@ -17,11 +17,6 @@ class TaskCommentsRepository extends BaseRepository<TaskCommentModel> {
     return TaskCommentModel.fromJson(json);
   }
 
-  @override
-  Map<String, dynamic> toJson(TaskCommentModel item) {
-    return item.toJson();
-  }
-
   Stream<List<TaskCommentModel>> watchTaskComments({
     required String taskId,
   }) {
