@@ -10,7 +10,8 @@ class UpdateTaskFieldsResultModel extends AiRequestResultModel {
 
   factory UpdateTaskFieldsResultModel.fromJson(Map<String, dynamic> json) {
     return UpdateTaskFieldsResultModel(
-      task: TaskModel.fromJson(json['task']),
+      // Adjustment to fit old and new data structures
+      task: TaskModel.fromJson(json['task'] ?? json['joined_task']['task']),
       resultForAi: json['result_for_ai'],
       showOnly: json['show_only'],
     );
