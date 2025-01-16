@@ -1,16 +1,16 @@
 import 'package:flutter/material.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:logging/logging.dart';
-import 'package:seren_ai_flutter/common/is_show_save_dialog_on_pop_provider.dart';
 import 'package:seren_ai_flutter/common/navigation_service_provider.dart';
 import 'package:seren_ai_flutter/common/routes/app_routes.dart';
-import 'package:seren_ai_flutter/services/auth/cur_auth_state_provider.dart';
 import 'package:seren_ai_flutter/services/data/common/status_enum.dart';
 import 'package:seren_ai_flutter/services/data/common/widgets/editable_page_mode_enum.dart';
 import 'package:seren_ai_flutter/services/data/projects/models/project_model.dart';
-import 'package:seren_ai_flutter/services/data/projects/providers/cur_user_viewable_projects_provider.dart';
 import 'package:seren_ai_flutter/services/data/tasks/models/task_model.dart';
-import 'package:seren_ai_flutter/services/data/tasks/providers/cur_editing_task_state_provider.dart';
+import 'package:seren_ai_flutter/services/data/tasks/providers/cur_editing_task_id_notifier_provider.dart';
+import 'package:seren_ai_flutter/services/data/tasks/providers/cur_selected_task_id_providers.dart';
+import 'package:seren_ai_flutter/services/data/tasks/providers/task_stream_provider.dart';
+import 'package:seren_ai_flutter/services/data/tasks/repositories/tasks_repository.dart';
 import 'package:seren_ai_flutter/services/data/tasks/widgets/action_buttons/delete_task_button.dart';
 import 'package:seren_ai_flutter/services/data/tasks/widgets/action_buttons/edit_task_button.dart';
 import 'package:seren_ai_flutter/services/data/tasks/widgets/form/task_selection_fields.dart';
@@ -42,12 +42,10 @@ final log = Logger('TaskPage');
 /// For creating / editing a task
 class TaskPage extends HookConsumerWidget {
   final EditablePageMode mode;
-  //final JoinedTaskModel? initialJoinedTask;
 
   const TaskPage({
     super.key,
     required this.mode,
-    //this.initialJoinedTask,
   });
 
   @override
@@ -56,9 +54,11 @@ class TaskPage extends HookConsumerWidget {
 
     final isEnabled = mode != EditablePageMode.readOnly;
 
-    final curTaskState = ref.watch(curEditingTaskStateProvider);
+    final curTaskId = isEnabled
+        ? ref.watch(curEditingTaskIdNotifierProvider)!
+        : ref.watch(curSelectedTaskIdStateProvider)!;
 
-    final curTask = curTaskState.value;
+    final curTask = ref.watch(taskStreamProvider(curTaskId));
 
     return SingleChildScrollView(
       child: Padding(
@@ -66,23 +66,25 @@ class TaskPage extends HookConsumerWidget {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            TaskProjectSelectionField(isEditable: isEnabled),
+            TaskProjectSelectionField(taskId: curTaskId, isEditable: isEnabled),
 
             Row(
               children: [
                 // Title Input
-                Expanded(child: TaskNameField(isEditable: isEnabled)),
+                Expanded(
+                    child: TaskNameField(
+                        taskId: curTaskId, isEditable: isEnabled)),
                 if (mode == EditablePageMode.readOnly)
                   Column(
                     mainAxisSize: MainAxisSize.min,
                     crossAxisAlignment: CrossAxisAlignment.end,
                     children: [
                       TaskPriorityView(
-                          priority: curTask?.taskModel.priority ??
-                              PriorityEnum.normal),
+                          priority:
+                              curTask.value?.priority ?? PriorityEnum.normal),
                       const SizedBox(height: 4),
                       TaskStatusView(
-                          status: curTask?.taskModel.status ?? StatusEnum.open),
+                          status: curTask.value?.status ?? StatusEnum.open),
                     ],
                   )
               ],
@@ -97,50 +99,58 @@ class TaskPage extends HookConsumerWidget {
               child: Column(
                 children: [
                   TaskDescriptionSelectionField(
+                    taskId: curTaskId,
                     isEditable: isEnabled,
                     context: context,
                   ),
                   const Divider(),
                   if (isEnabled) ...[
-                    TaskPrioritySelectionField(enabled: isEnabled),
+                    TaskPrioritySelectionField(
+                        taskId: curTaskId, enabled: isEnabled),
                     const Divider(),
-                    TaskStatusSelectionField(enabled: isEnabled),
+                    TaskStatusSelectionField(
+                        taskId: curTaskId, enabled: isEnabled),
                     const Divider(),
                   ],
-                  TaskDueDateSelectionField(enabled: isEnabled),
+                  TaskDueDateSelectionField(
+                      taskId: curTaskId, enabled: isEnabled),
                   const Divider(),
                   ReminderMinuteOffsetFromDueDateSelectionField(
-                      enabled: isEnabled),
+                      taskId: curTaskId, enabled: isEnabled),
                   const Divider(),
-                  TaskAssigneesSelectionField(enabled: isEnabled),
+                  TaskAssigneesSelectionField(
+                      taskId: curTaskId, enabled: isEnabled),
                 ],
               ),
             ),
 
             if (mode == EditablePageMode.readOnly)
-              TaskCommentSection(curTask?.taskModel.id ?? ''),
+              TaskCommentSection(curTask.value?.id ?? ''),
             const SizedBox(height: 24),
 
-            if (mode != EditablePageMode.readOnly)
-              SizedBox(
-                width: double.infinity,
-                child: ElevatedButton(
-                  onPressed: () async {
-                    final curAuthUser = ref.read(curUserProvider).value;
-
-                    if (curAuthUser == null) {
-                      throw UnauthorizedException();
-                    }
-
-                    await _validateTaskAndMaybeSave(ref, context);
-                  },
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: theme.colorScheme.secondary,
-                    foregroundColor: theme.colorScheme.onSecondary,
+            if (mode == EditablePageMode.create)
+              PopScope(
+                onPopInvokedWithResult: (_, result) async {
+                  if (result != true) {
+                    final curTaskId =
+                        ref.read(curEditingTaskIdNotifierProvider)!;
+                    ref
+                        .read(curEditingTaskIdNotifierProvider.notifier)
+                        .clearTaskId();
+                    ref.read(tasksRepositoryProvider).deleteItem(curTaskId);
+                  }
+                },
+                child: SizedBox(
+                  width: double.infinity,
+                  child: ElevatedButton(
+                    onPressed: () =>
+                        ref.read(navigationServiceProvider).pop(true),
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: theme.colorScheme.secondary,
+                      foregroundColor: theme.colorScheme.onSecondary,
+                    ),
+                    child: Text(AppLocalizations.of(context)!.createTask),
                   ),
-                  child: Text(mode == EditablePageMode.edit
-                      ? AppLocalizations.of(context)!.updateTask
-                      : AppLocalizations.of(context)!.createTask),
                 ),
               ),
 
@@ -150,77 +160,6 @@ class TaskPage extends HookConsumerWidget {
       ),
     );
   }
-
-  Future<void> _validateTaskAndMaybeSave(
-      WidgetRef ref, BuildContext context) async {
-    final curTaskState = ref.read(curEditingTaskStateProvider);
-
-    final curTask = curTaskState.value;
-
-    final isValidTask = curTask?.taskModel.name.isNotEmpty ?? false;
-
-    if (isValidTask) {
-      await ref.read(curEditingTaskStateProvider.notifier).saveChanges();
-
-      if (context.mounted) {
-        ref.read(isShowSaveDialogOnPopProvider.notifier).reset();
-        ref.read(navigationServiceProvider).pop();
-      }
-    } else {
-      // takes action to solve each validation error
-      if (curTask?.taskModel.parentProjectId.isEmpty ?? false) {
-        _takeActionOnEmptyProjectValue(context)
-            .then((_) => _validateTaskAndMaybeSave(ref, context));
-      } else if (curTask?.taskModel.name.isEmpty ?? false) {
-        _takeActionOnEmptyNameValue(context)
-            .then((_) => _validateTaskAndMaybeSave(ref, context));
-      }
-    }
-  }
-
-  Future<dynamic> _takeActionOnEmptyProjectValue(BuildContext context) {
-    // TODO p4: refactor to avoid hard coded solution
-    return showModalBottomSheet(
-      context: context,
-      builder: (BuildContext context) => Consumer(
-        builder: (BuildContext context, WidgetRef ref, Widget? child) {
-          final selectableProjects = ref.read(curUserViewableProjectsProvider);
-          return ListView.builder(
-            itemCount: selectableProjects.valueOrNull?.length ?? 0,
-            itemBuilder: (BuildContext context, int index) {
-              final project = selectableProjects.valueOrNull?[index];
-              return ListTile(
-                title: Text(project?.name ?? ''),
-                onTap: () {
-                  ref
-                      .read(curEditingTaskStateProvider.notifier)
-                      .updateTaskFields(parentProjectId: project?.id);
-                  ref.read(navigationServiceProvider).pop(project);
-                },
-              );
-            },
-          );
-        },
-      ),
-    );
-  }
-
-  Future<void> _takeActionOnEmptyNameValue(BuildContext context) async {}
-}
-
-// TODO p3: figure out how to remove code duplication due to WidgetRef vs Ref
-Future<void> openBlankTaskPage(Ref ref) async {
-  final navigationService = ref.read(navigationServiceProvider);
-
-  navigationService
-      .popUntil((route) => route.settings.name != AppRoutes.taskPage.name);
-
-  ref.read(curEditingTaskStateProvider.notifier).build();
-
-  ref.read(isShowSaveDialogOnPopProvider.notifier).setCanSave(true);
-
-  await navigationService.navigateTo(AppRoutes.taskPage.name,
-      arguments: {'mode': EditablePageMode.create, 'title': 'Create Task'});
 }
 
 // TODO p2: init state within the page itself ... we should only rely on arguments to init the page (to support deep linking)
@@ -241,32 +180,47 @@ Future<void> openTaskPage(
       .read(navigationServiceProvider)
       .popUntil((route) => route.settings.name != AppRoutes.taskPage.name);
 
-  // CREATE - wipe existing task state
+  switch (mode) {
+    // CREATE - wipe existing task state
+    case EditablePageMode.create:
+      await ref.read(curEditingTaskIdNotifierProvider.notifier).createNewTask();
+      break;
+    // EDIT/READ - optionally load provided initial task id
+    case EditablePageMode.edit:
+      // initialTask can be null if we are opening an existing task page for edit
+      if (initialTask != null) {
+        ref
+            .read(curEditingTaskIdNotifierProvider.notifier)
+            .setTaskId(initialTask.id);
+      }
+      break;
+    case EditablePageMode.readOnly:
+      if (initialTask != null) {
+        ref.read(curSelectedTaskIdStateProvider.notifier).state =
+            initialTask.id;
+      }
+  }
+
+  final curTaskId = mode == EditablePageMode.readOnly
+      ? ref.watch(curSelectedTaskIdStateProvider)!
+      : ref.watch(curEditingTaskIdNotifierProvider)!;
+
   if (mode == EditablePageMode.create) {
-    ref.read(curEditingTaskStateProvider.notifier).createNewTask();
     if (initialProject != null) {
       ref
-          .read(curEditingTaskStateProvider.notifier)
-          .updateTaskFields(parentProjectId: initialProject.id);
+          .read(tasksRepositoryProvider)
+          .updateTaskParentProjectId(curTaskId, initialProject.id);
     }
     if (initialStatus != null) {
       ref
-          .read(curEditingTaskStateProvider.notifier)
-          .updateTaskFields(status: initialStatus);
-    }
-  }
-  // EDIT/READ - optionally load provided initial task
-  else if (mode == EditablePageMode.edit || mode == EditablePageMode.readOnly) {
-    // initialTask can be null if we are opening an existing task page for edit
-    if (initialTask != null) {
-      ref.read(curEditingTaskStateProvider.notifier).setTask(initialTask);
+          .read(tasksRepositoryProvider)
+          .updateTaskStatus(curTaskId, initialStatus);
     }
   }
 
   final actions = switch (mode) {
-    // TODO p3: task should not be implicit, we should be directly passing down which task should be affected here by using the notes retrieved from above ... if the task is not the current task
-    EditablePageMode.edit => [const DeleteTaskButton()],
-    EditablePageMode.readOnly => [const EditTaskButton()],
+    EditablePageMode.edit => [DeleteTaskButton(curTaskId)],
+    EditablePageMode.readOnly => [EditTaskButton(curTaskId)],
     _ => null,
   };
 
@@ -276,12 +230,11 @@ Future<void> openTaskPage(
     // if mode is readOnly, we assume initialTask is provided
     // or at least the task state is loaded
     EditablePageMode.readOnly => initialTask?.name ??
-        ref.read(curEditingTaskStateProvider).value!.taskModel.name,
+        await ref
+            .read(tasksRepositoryProvider)
+            .getById(curTaskId)
+            .then((task) => task?.name),
   };
-
-  if (mode == EditablePageMode.edit || mode == EditablePageMode.create) {
-    ref.read(isShowSaveDialogOnPopProvider.notifier).setCanSave(true);
-  }
 
   await ref.read(navigationServiceProvider).navigateTo(AppRoutes.taskPage.name,
       arguments: {'mode': mode, 'actions': actions, 'title': title});
