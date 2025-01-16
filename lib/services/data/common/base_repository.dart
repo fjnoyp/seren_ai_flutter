@@ -87,9 +87,6 @@ abstract class BaseRepository<T extends IHasId> {
     return fromJson(results.first);
   }
 
-  // TODO p0: TEST and check that this is correctly implemented
-  // it should return the id of the created item
-  // for the repository to use it to update its fields
   Future<void> insertItem(T item) async {
     final Map<String, dynamic> json = toJson(item);
 
@@ -118,7 +115,7 @@ abstract class BaseRepository<T extends IHasId> {
     }).toList();
 
     await db.executeBatch(
-        'INSERT INTO $primaryTable ($columns) VALUES $placeholders', values);
+        'INSERT INTO $primaryTable ($columns) VALUES($placeholders)', values);
   }
 
   Future<void> upsertItem(T item) async {
