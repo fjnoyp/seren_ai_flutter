@@ -3,7 +3,7 @@ import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:seren_ai_flutter/services/data/common/status_enum.dart';
 import 'package:seren_ai_flutter/services/data/notes/widgets/notes_list_page.dart';
-import 'package:seren_ai_flutter/services/data/projects/providers/selected_project_provider.dart';
+import 'package:seren_ai_flutter/services/data/projects/providers/cur_selected_project_providers.dart';
 import 'package:seren_ai_flutter/services/data/projects/widgets/action_buttons/edit_project_button.dart';
 import 'package:seren_ai_flutter/services/data/projects/widgets/action_buttons/update_project_assignees_button.dart';
 import 'package:seren_ai_flutter/services/data/projects/widgets/project_page.dart';
@@ -24,14 +24,15 @@ class WebProjectPage extends HookConsumerWidget {
       ),
       (
         name: AppLocalizations.of(context)!.notes,
-        child: NoteListByProjectId(ref.watch(selectedProjectProvider).value!.id)
+        child: NoteListByProjectId(
+            ref.watch(curSelectedProjectIdNotifierProvider)!)
       ),
     ];
 
     final isProjectInfoView = useState(false);
 
     return AsyncValueHandlerWidget(
-      value: ref.watch(selectedProjectProvider),
+      value: ref.watch(curSelectedProjectStreamProvider),
       data: (selectedProject) => Padding(
         padding: const EdgeInsets.all(16),
         child: isProjectInfoView.value
@@ -56,7 +57,7 @@ class WebProjectPage extends HookConsumerWidget {
                     Row(
                       children: [
                         Text(
-                          selectedProject.name,
+                          selectedProject?.name ?? '',
                           style: Theme.of(context).textTheme.headlineMedium,
                         ),
                         IconButton(
@@ -92,7 +93,7 @@ class _CurrentProjectReadinessBar extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final project = ref.watch(selectedProjectProvider).value!;
+    final project = ref.watch(curSelectedProjectStreamProvider).value!;
     final tasks = ref
         .watch(curUserViewableTasksStreamProvider)
         .valueOrNull
@@ -101,11 +102,9 @@ class _CurrentProjectReadinessBar extends ConsumerWidget {
     // TODO: improve readiness calculation using tasks estimated duration
     final completedTasksCount =
         tasks?.where((e) => e.status == StatusEnum.finished).length ?? 0;
-    final totalTasksCount = tasks
-            ?.where((e) => e.status != StatusEnum.cancelled)
-            .toList()
-            .length ??
-        0;
+    final totalTasksCount =
+        tasks?.where((e) => e.status != StatusEnum.cancelled).toList().length ??
+            0;
 
     final readiness =
         totalTasksCount > 0 ? completedTasksCount / totalTasksCount : 0.0;
@@ -120,28 +119,30 @@ class _CurrentProjectReadinessBar extends ConsumerWidget {
   }
 }
 
-class _WebProjectInfoView extends StatelessWidget {
+class _WebProjectInfoView extends ConsumerWidget {
   const _WebProjectInfoView();
 
   @override
-  Widget build(BuildContext context) {
-    return const Padding(
-      padding: EdgeInsets.all(16),
+  Widget build(BuildContext context, WidgetRef ref) {
+    return Padding(
+      padding: const EdgeInsets.all(16),
       child: Column(
         children: [
           Stack(
             alignment: Alignment.topRight,
             children: [
-              ProjectInfoHeader(),
-              EditProjectButton(),
+              const ProjectInfoHeader(),
+              EditProjectButton(
+                  ref.watch(curSelectedProjectIdNotifierProvider)!),
             ],
           ),
-          Divider(height: 32),
+          const Divider(height: 32),
           Stack(
             alignment: Alignment.topRight,
             children: [
-              ProjectAssigneesList(),
-              UpdateProjectAssigneesButton(),
+              const ProjectAssigneesList(),
+              UpdateProjectAssigneesButton(
+                  ref.watch(curSelectedProjectIdNotifierProvider)!),
             ],
           ),
         ],

@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:seren_ai_flutter/common/utils/date_time_extension.dart';
-import 'package:seren_ai_flutter/services/data/projects/providers/selected_project_provider.dart';
+import 'package:seren_ai_flutter/services/data/projects/providers/cur_selected_project_providers.dart';
 import 'package:seren_ai_flutter/services/data/tasks/models/task_model.dart';
 import 'package:seren_ai_flutter/services/data/tasks/providers/task_list_item_relations_future_provider.dart';
 import 'package:seren_ai_flutter/services/data/users/providers/user_in_project_provider.dart';
@@ -32,7 +32,7 @@ enum TaskFilterOption {
       case TaskFilterOption.assignees:
         return ref
                 .watch(usersInProjectProvider(
-                    ref.watch(selectedProjectProvider).value!.id))
+                    ref.watch(curSelectedProjectStreamProvider).value!.id))
                 .value
                 ?.map((e) => (
                       value: e.id,

@@ -87,7 +87,7 @@ class DrawerView extends ConsumerWidget {
                             options: projects,
                             optionToString: (project) => project.name,
                             onTapOption: (project) =>
-                                openProjectPage(ref, context, project: project),
+                                openProjectPage(ref, context, projectId: project.id),
                             onTapAddButton: () =>
                                 openCreateProjectPage(ref, context),
                           );

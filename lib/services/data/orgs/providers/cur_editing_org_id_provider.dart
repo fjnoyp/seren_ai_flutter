@@ -28,10 +28,9 @@ class EditingOrgIdNotifier extends Notifier<String?> {
         address: '',
       );
 
-      final newOrgId =
-          await ref.read(orgsRepositoryProvider).upsertItem(newOrg);
+      await ref.read(orgsRepositoryProvider).upsertItem(newOrg);
 
-      state = newOrgId;
+      state = newOrg.id;
     } catch (_, __) {
       throw Exception('Failed to create new org');
     }
