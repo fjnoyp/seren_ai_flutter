@@ -35,7 +35,7 @@ class UsersRepository extends BaseRepository<UserModel> {
     return get(UserQueries.usersByIdQuery, {'user_ids': userIds});
   }
 
-  Stream<List<UserModel>> watchTaskAssigneeUsers({
+  Stream<List<UserModel>> watchTaskAssignedUsers({
     required String taskId,
   }) {
     return watch(

@@ -1,4 +1,5 @@
 import 'package:hooks_riverpod/hooks_riverpod.dart';
+import 'package:seren_ai_flutter/services/data/common/status_enum.dart';
 import 'package:seren_ai_flutter/services/data/db_setup/db_provider.dart';
 import 'package:seren_ai_flutter/services/data/tasks/models/task_model.dart';
 import 'package:seren_ai_flutter/services/data/common/base_repository.dart';
@@ -77,6 +78,76 @@ class TasksRepository extends BaseRepository<TaskModel> {
     return get(
       TaskQueries.getTasksByParentIdQuery,
       {'parent_task_id': parentTaskId},
+    );
+  }
+
+  Future<void> updateTaskName(String taskId, String? name) async {
+    if (name == null) return;
+
+    await updateField(
+      taskId,
+      'name',
+      name,
+    );
+  }
+
+  Future<void> updateTaskDescription(String taskId, String? description) async {
+    await updateField(
+      taskId,
+      'description',
+      description,
+    );
+  }
+
+  Future<void> updateTaskStatus(String taskId, StatusEnum? status) async {
+    if (status == null) return;
+
+    await updateField(
+      taskId,
+      'status',
+      status.name,
+    );
+  }
+
+  Future<void> updateTaskPriority(String taskId, PriorityEnum? priority) async {
+    if (priority == null) return;
+
+    await updateField(
+      taskId,
+      'priority',
+      priority.name,
+    );
+  }
+
+  Future<void> updateTaskDueDate(String taskId, DateTime? dueDate) async {
+    await updateField(
+      taskId,
+      'due_date',
+      dueDate?.toIso8601String(),
+    );
+  }
+
+  Future<void> updateTaskParentProjectId(
+    String taskId,
+    String? parentProjectId,
+  ) async {
+    if (parentProjectId == null) return;
+
+    await updateField(
+      taskId,
+      'parent_project_id',
+      parentProjectId,
+    );
+  }
+
+  Future<void> updateTaskReminderOffsetMinutes(
+    String taskId,
+    int? reminderOffsetMinutes,
+  ) async {
+    await updateField(
+      taskId,
+      'reminder_offset_minutes',
+      reminderOffsetMinutes,
     );
   }
 }

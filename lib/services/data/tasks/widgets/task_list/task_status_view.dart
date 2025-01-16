@@ -40,8 +40,6 @@ IconData? getTaskStatusIcon(StatusEnum status) {
       return Icons.cancel_outlined;
     case StatusEnum.archived:
       return Icons.archive_outlined;
-    default:
-      return null;
   }
 }
 
