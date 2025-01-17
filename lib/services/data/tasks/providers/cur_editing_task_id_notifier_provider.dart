@@ -4,6 +4,7 @@ import 'package:seren_ai_flutter/services/data/common/status_enum.dart';
 import 'package:seren_ai_flutter/services/data/projects/providers/cur_selected_project_providers.dart';
 import 'package:seren_ai_flutter/services/data/tasks/models/task_model.dart';
 import 'package:seren_ai_flutter/services/data/tasks/repositories/tasks_repository.dart';
+import 'package:seren_ai_flutter/services/data/users/repositories/users_repository.dart';
 
 final curEditingTaskIdNotifierProvider =
     NotifierProvider<EditingTaskIdNotifier, String?>(() {
@@ -27,11 +28,11 @@ class EditingTaskIdNotifier extends Notifier<String?> {
       if (selectedProjectId == null) throw Exception('No selected project');
 
       final newTask = TaskModel(
-          name: 'New Task',
-          description: '',
-          status: StatusEnum.open,
-          authorUserId: curUser.id,
-          parentProjectId: selectedProjectId,
+        name: 'New Task',
+        description: '',
+        status: StatusEnum.open,
+        authorUserId: curUser.id,
+        parentProjectId: selectedProjectId,
       );
 
       await ref.read(tasksRepositoryProvider).upsertItem(newTask);
@@ -41,4 +42,26 @@ class EditingTaskIdNotifier extends Notifier<String?> {
       throw Exception('Failed to create new task: $e');
     }
   }
+
+  Future<Map<String, dynamic>> toReadableMap() async {
+    if (state == null) return {'error': 'No editing task'};
+
+    final curTask = await ref.read(tasksRepositoryProvider).getById(state!);
+    if (curTask == null) return {'error': 'Task not found'};
+
+    final curAssignees = await ref
+        .read(usersRepositoryProvider)
+        .getTaskAssignedUsers(taskId: state!);
+
+    return {
+      'task': {
+        'name': curTask.name,
+        'description': curTask.description,
+        'status': curTask.status,
+        'due_date': curTask.dueDate?.toIso8601String(),
+      },
+      'assignees': curAssignees.map((user) => user.email).toList(),
+    };
+  }
 }
+
