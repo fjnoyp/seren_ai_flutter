@@ -9,7 +9,7 @@ import 'package:seren_ai_flutter/services/data/tasks/widgets/task_list/task_prio
 import 'package:seren_ai_flutter/services/data/tasks/widgets/task_page.dart';
 import 'package:seren_ai_flutter/services/data/tasks/widgets/ui_constants.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
-import 'package:seren_ai_flutter/services/data/users/providers/users_in_task_stream_provider.dart';
+import 'package:seren_ai_flutter/services/data/users/providers/assigned_users_in_task_stream_provider.dart';
 import 'package:seren_ai_flutter/services/data/users/widgets/user_avatar.dart';
 
 class TaskListItemView extends ConsumerWidget {
@@ -20,8 +20,9 @@ class TaskListItemView extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final theme = Theme.of(context);
     final dueDateColor = getDueDateColor(task.dueDate);
-    final taskProject = ref.watch(projectByIdStreamProvider(task.parentProjectId));
-    final taskAssignees = ref.watch(usersInTaskStreamProvider(task.id));
+    final taskProject =
+        ref.watch(projectByIdStreamProvider(task.parentProjectId));
+    final taskAssignees = ref.watch(assignedUsersInTaskStreamProvider(task.id));
 
     return GestureDetector(
       onTap: () async {
@@ -132,7 +133,7 @@ class TaskListTileItemView extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final dueDateColor = getDueDateColor(task.dueDate);
-    final taskAssignees = ref.watch(usersInTaskStreamProvider(task.id));
+    final taskAssignees = ref.watch(assignedUsersInTaskStreamProvider(task.id));
 
     return ListTile(
       dense: true,

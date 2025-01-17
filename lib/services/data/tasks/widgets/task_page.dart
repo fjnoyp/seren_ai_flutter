@@ -7,9 +7,8 @@ import 'package:seren_ai_flutter/services/data/common/status_enum.dart';
 import 'package:seren_ai_flutter/services/data/common/widgets/editable_page_mode_enum.dart';
 import 'package:seren_ai_flutter/services/data/projects/models/project_model.dart';
 import 'package:seren_ai_flutter/services/data/tasks/models/task_model.dart';
-import 'package:seren_ai_flutter/services/data/tasks/providers/cur_editing_task_id_notifier_provider.dart';
-import 'package:seren_ai_flutter/services/data/tasks/providers/cur_selected_task_id_providers.dart';
-import 'package:seren_ai_flutter/services/data/tasks/providers/task_stream_provider.dart';
+import 'package:seren_ai_flutter/services/data/tasks/providers/cur_selected_task_id_notifier_provider.dart';
+import 'package:seren_ai_flutter/services/data/tasks/providers/task_by_id_stream_provider.dart';
 import 'package:seren_ai_flutter/services/data/tasks/repositories/tasks_repository.dart';
 import 'package:seren_ai_flutter/services/data/tasks/widgets/action_buttons/delete_task_button.dart';
 import 'package:seren_ai_flutter/services/data/tasks/widgets/action_buttons/edit_task_button.dart';
@@ -54,11 +53,9 @@ class TaskPage extends HookConsumerWidget {
 
     final isEnabled = mode != EditablePageMode.readOnly;
 
-    final curTaskId = isEnabled
-        ? ref.watch(curEditingTaskIdNotifierProvider)!
-        : ref.watch(curSelectedTaskIdStateProvider)!;
+    final curTaskId = ref.watch(curSelectedTaskIdNotifierProvider)!;
 
-    final curTask = ref.watch(taskStreamProvider(curTaskId));
+    final curTask = ref.watch(taskByIdStreamProvider(curTaskId));
 
     return SingleChildScrollView(
       child: Padding(
@@ -133,9 +130,9 @@ class TaskPage extends HookConsumerWidget {
                 onPopInvokedWithResult: (_, result) async {
                   if (result != true) {
                     final curTaskId =
-                        ref.read(curEditingTaskIdNotifierProvider)!;
+                        ref.read(curSelectedTaskIdNotifierProvider)!;
                     ref
-                        .read(curEditingTaskIdNotifierProvider.notifier)
+                        .read(curSelectedTaskIdNotifierProvider.notifier)
                         .clearTaskId();
                     ref.read(tasksRepositoryProvider).deleteItem(curTaskId);
                   }
@@ -163,60 +160,30 @@ class TaskPage extends HookConsumerWidget {
 }
 
 // TODO p2: init state within the page itself ... we should only rely on arguments to init the page (to support deep linking)
-/// `initialProject` and `initialStatus` fields are only used for create mode.
-/// They are used to set the parent project and status of the new task
-///
-/// **If you use them with edit mode, they will be ignored**
 Future<void> openTaskPage(
   BuildContext context,
   WidgetRef ref, {
   required EditablePageMode mode,
   TaskModel? initialTask,
-  ProjectModel? initialProject,
-  StatusEnum? initialStatus,
 }) async {
+  if (mode == EditablePageMode.create) {
+    return await openNewTaskPage(context, ref);
+  }
+
   // Remove previous TaskPage to avoid duplicate task pages
   ref
       .read(navigationServiceProvider)
       .popUntil((route) => route.settings.name != AppRoutes.taskPage.name);
 
-  switch (mode) {
-    // CREATE - wipe existing task state
-    case EditablePageMode.create:
-      await ref.read(curEditingTaskIdNotifierProvider.notifier).createNewTask();
-      break;
-    // EDIT/READ - optionally load provided initial task id
-    case EditablePageMode.edit:
-      // initialTask can be null if we are opening an existing task page for edit
-      if (initialTask != null) {
-        ref
-            .read(curEditingTaskIdNotifierProvider.notifier)
-            .setTaskId(initialTask.id);
-      }
-      break;
-    case EditablePageMode.readOnly:
-      if (initialTask != null) {
-        ref.read(curSelectedTaskIdStateProvider.notifier).state =
-            initialTask.id;
-      }
+  // load provided initial task id
+  // initialTask can be null if we are opening an existing task page for edit
+  if (initialTask != null) {
+    ref
+        .read(curSelectedTaskIdNotifierProvider.notifier)
+        .setTaskId(initialTask.id);
   }
 
-  final curTaskId = mode == EditablePageMode.readOnly
-      ? ref.watch(curSelectedTaskIdStateProvider)!
-      : ref.watch(curEditingTaskIdNotifierProvider)!;
-
-  if (mode == EditablePageMode.create) {
-    if (initialProject != null) {
-      ref
-          .read(tasksRepositoryProvider)
-          .updateTaskParentProjectId(curTaskId, initialProject.id);
-    }
-    if (initialStatus != null) {
-      ref
-          .read(tasksRepositoryProvider)
-          .updateTaskStatus(curTaskId, initialStatus);
-    }
-  }
+  final curTaskId = ref.watch(curSelectedTaskIdNotifierProvider)!;
 
   final actions = switch (mode) {
     EditablePageMode.edit => [DeleteTaskButton(curTaskId)],
@@ -226,7 +193,6 @@ Future<void> openTaskPage(
 
   final title = switch (mode) {
     EditablePageMode.edit => AppLocalizations.of(context)!.updateTask,
-    EditablePageMode.create => AppLocalizations.of(context)!.createTask,
     // if mode is readOnly, we assume initialTask is provided
     // or at least the task state is loaded
     EditablePageMode.readOnly => initialTask?.name ??
@@ -234,8 +200,48 @@ Future<void> openTaskPage(
             .read(tasksRepositoryProvider)
             .getById(curTaskId)
             .then((task) => task?.name),
+    // we don't handle create mode here because it is handled in openNewTaskPage
+    // which is called in the beginning of this method
+    _ => '',
   };
 
   await ref.read(navigationServiceProvider).navigateTo(AppRoutes.taskPage.name,
       arguments: {'mode': mode, 'actions': actions, 'title': title});
+}
+
+Future<void> openNewTaskPage(
+  BuildContext context,
+  WidgetRef ref, {
+  ProjectModel? initialProject,
+  StatusEnum? initialStatus,
+}) async {
+  // Remove previous TaskPage to avoid duplicate task pages (if any)
+  ref
+      .read(navigationServiceProvider)
+      .popUntil((route) => route.settings.name != AppRoutes.taskPage.name);
+
+  await ref.read(curSelectedTaskIdNotifierProvider.notifier).createNewTask();
+
+  final curTaskId = ref.watch(curSelectedTaskIdNotifierProvider)!;
+
+  if (initialProject != null) {
+    ref
+        .read(tasksRepositoryProvider)
+        .updateTaskParentProjectId(curTaskId, initialProject.id);
+  }
+
+  if (initialStatus != null) {
+    ref
+        .read(tasksRepositoryProvider)
+        .updateTaskStatus(curTaskId, initialStatus);
+  }
+
+  await ref.read(navigationServiceProvider).navigateTo(
+    AppRoutes.taskPage.name,
+    arguments: {
+      'mode': EditablePageMode.create,
+      'actions': [DeleteTaskButton(curTaskId)],
+      'title': AppLocalizations.of(context)!.createTask,
+    },
+  );
 }
