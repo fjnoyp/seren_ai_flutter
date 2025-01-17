@@ -4,8 +4,8 @@ import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:seren_ai_flutter/common/utils/date_time_extension.dart';
 import 'package:seren_ai_flutter/services/data/projects/providers/cur_selected_project_providers.dart';
 import 'package:seren_ai_flutter/services/data/tasks/models/task_model.dart';
-import 'package:seren_ai_flutter/services/data/tasks/providers/task_list_item_relations_future_provider.dart';
 import 'package:seren_ai_flutter/services/data/users/providers/user_in_project_provider.dart';
+import 'package:seren_ai_flutter/services/data/users/providers/users_in_task_stream_provider.dart';
 
 enum TaskFilterOption {
   assignees,
@@ -40,9 +40,8 @@ enum TaskFilterOption {
                       filter: (TaskModel task) {
                         final assignees = ref
                                 .watch(
-                                    taskListItemRelationsFutureProvider(task))
-                                .valueOrNull
-                                ?.assignees ??
+                                    usersInTaskStreamProvider(task.id))
+                                .valueOrNull ??
                             [];
                         return assignees.any((assignee) => assignee.id == e.id);
                       }
