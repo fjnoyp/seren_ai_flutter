@@ -21,7 +21,7 @@ import 'package:seren_ai_flutter/services/data/notes/providers/cur_editing_note_
 import 'package:seren_ai_flutter/services/data/orgs/providers/cur_selected_org_id_notifier.dart';
 
 import 'package:logging/logging.dart';
-import 'package:seren_ai_flutter/services/data/tasks/providers/cur_editing_task_id_notifier_provider.dart';
+import 'package:seren_ai_flutter/services/data/tasks/providers/cur_selected_task_id_notifier_provider.dart';
 import 'package:seren_ai_flutter/services/text_to_speech/text_to_speech_notifier.dart';
 
 final log = Logger('AIChatService');
@@ -101,7 +101,7 @@ class AIChatService {
 
     if (appRoute == AppRoutes.taskPage) {
       final curEditingTaskMap = await ref
-          .read(curEditingTaskIdNotifierProvider.notifier)
+          .read(curSelectedTaskIdNotifierProvider.notifier)
           .toReadableMap();
       sb.writeln('CurTask: $curEditingTaskMap');
     } else if (appRoute == AppRoutes.notePage) {
