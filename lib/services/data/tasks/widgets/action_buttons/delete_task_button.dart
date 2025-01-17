@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:seren_ai_flutter/services/data/common/widgets/delete_confirmation_dialog.dart';
-import 'package:seren_ai_flutter/services/data/tasks/providers/task_stream_provider.dart';
+import 'package:seren_ai_flutter/services/data/tasks/providers/task_by_id_stream_provider.dart';
 import 'package:seren_ai_flutter/services/data/tasks/repositories/tasks_repository.dart';
 
 class DeleteTaskButton extends ConsumerWidget {
@@ -15,7 +15,7 @@ class DeleteTaskButton extends ConsumerWidget {
       icon: const Icon(Icons.delete),
       onPressed: () async {
         final itemName =
-            ref.watch(taskStreamProvider(taskId)).value?.name ?? '';
+            ref.watch(taskByIdStreamProvider(taskId)).value?.name ?? '';
         await showDialog(
           context: context,
           builder: (context) {
