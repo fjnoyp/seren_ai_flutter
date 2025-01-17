@@ -96,5 +96,9 @@ class _TaskCommentField extends BaseTaskCommentField {
         );
 
   final String taskId;
+
+  /// Callback to be called after the comment is sent
+  /// 
+  /// Currently used to hide the comment field after the comment is sent
   final VoidCallback afterSubmit;
 }

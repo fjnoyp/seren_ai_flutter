@@ -6,12 +6,12 @@ import 'package:seren_ai_flutter/services/data/tasks/models/task_model.dart';
 import 'package:seren_ai_flutter/services/data/tasks/repositories/tasks_repository.dart';
 import 'package:seren_ai_flutter/services/data/users/repositories/users_repository.dart';
 
-final curEditingTaskIdNotifierProvider =
-    NotifierProvider<EditingTaskIdNotifier, String?>(() {
-  return EditingTaskIdNotifier();
+final curSelectedTaskIdNotifierProvider =
+    NotifierProvider<CurSelectedTaskIdNotifier, String?>(() {
+  return CurSelectedTaskIdNotifier();
 });
 
-class EditingTaskIdNotifier extends Notifier<String?> {
+class CurSelectedTaskIdNotifier extends Notifier<String?> {
   @override
   String? build() => null;
 
@@ -64,4 +64,3 @@ class EditingTaskIdNotifier extends Notifier<String?> {
     };
   }
 }
-
