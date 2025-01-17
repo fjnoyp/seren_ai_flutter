@@ -10,9 +10,9 @@ import 'package:seren_ai_flutter/services/data/common/widgets/form/base_task_nam
 import 'package:seren_ai_flutter/services/data/projects/providers/cur_user_viewable_projects_provider.dart';
 import 'package:seren_ai_flutter/services/data/tasks/providers/task_assignments_service_provider.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
-import 'package:seren_ai_flutter/services/data/tasks/providers/task_stream_provider.dart';
+import 'package:seren_ai_flutter/services/data/tasks/providers/task_by_id_stream_provider.dart';
 import 'package:seren_ai_flutter/services/data/tasks/repositories/tasks_repository.dart';
-import 'package:seren_ai_flutter/services/data/users/providers/users_in_task_stream_provider.dart';
+import 'package:seren_ai_flutter/services/data/users/providers/assigned_users_in_task_stream_provider.dart';
 
 class TaskProjectSelectionField extends BaseProjectSelectionField {
   final String taskId;
@@ -22,7 +22,7 @@ class TaskProjectSelectionField extends BaseProjectSelectionField {
     required super.isEditable,
     required this.taskId,
   }) : super(
-          projectIdProvider: taskStreamProvider(taskId)
+          projectIdProvider: taskByIdStreamProvider(taskId)
               .select((task) => task.value?.parentProjectId),
           selectableProjectsProvider: curUserViewableProjectsProvider,
           updateProject: (ref, project) => ref
@@ -39,8 +39,8 @@ class TaskStatusSelectionField extends BaseStatusSelectionField {
     required super.enabled,
     required this.taskId,
   }) : super(
-          statusProvider:
-              taskStreamProvider(taskId).select((task) => task.value?.status),
+          statusProvider: taskByIdStreamProvider(taskId)
+              .select((task) => task.value?.status),
           updateStatus: (ref, status) => ref
               .read(tasksRepositoryProvider)
               .updateTaskStatus(taskId, status),
@@ -55,8 +55,8 @@ class TaskPrioritySelectionField extends BasePrioritySelectionField {
     required super.enabled,
     required this.taskId,
   }) : super(
-          priorityProvider:
-              taskStreamProvider(taskId).select((task) => task.value?.priority),
+          priorityProvider: taskByIdStreamProvider(taskId)
+              .select((task) => task.value?.priority),
           updatePriority: (ref, priority) => ref
               .read(tasksRepositoryProvider)
               .updateTaskPriority(taskId, priority),
@@ -71,7 +71,7 @@ class TaskNameField extends BaseNameField {
     required super.isEditable,
     required this.taskId,
   }) : super(
-          nameProvider: taskStreamProvider(taskId)
+          nameProvider: taskByIdStreamProvider(taskId)
               .select((task) => task.value?.name ?? ''),
           updateName: (ref, name) =>
               ref.read(tasksRepositoryProvider).updateTaskName(taskId, name),
@@ -86,8 +86,8 @@ class TaskDueDateSelectionField extends BaseDueDateSelectionField {
     required super.enabled,
     required this.taskId,
   }) : super(
-          dueDateProvider:
-              taskStreamProvider(taskId).select((task) => task.value?.dueDate),
+          dueDateProvider: taskByIdStreamProvider(taskId)
+              .select((task) => task.value?.dueDate),
           updateDueDate: (ref, pickedDateTime) => ref
               .read(tasksRepositoryProvider)
               .updateTaskDueDate(taskId, pickedDateTime),
@@ -103,13 +103,13 @@ class ReminderMinuteOffsetFromDueDateSelectionField
     required super.enabled,
     required this.taskId,
   }) : super(
-          reminderProvider: taskStreamProvider(taskId)
+          reminderProvider: taskByIdStreamProvider(taskId)
               .select((task) => task.value?.reminderOffsetMinutes),
           updateReminder: (ref, reminder) => ref
               .read(tasksRepositoryProvider)
               .updateTaskReminderOffsetMinutes(taskId, reminder),
           labelWidgetBuilder: (ref) => ref
-                      .watch(taskStreamProvider(taskId))
+                      .watch(taskByIdStreamProvider(taskId))
                       .value
                       ?.reminderOffsetMinutes ==
                   null
@@ -128,7 +128,7 @@ class TaskDescriptionSelectionField extends BaseTextBlockEditSelectionField {
     required this.taskId,
   }) : super(
           hintText: AppLocalizations.of(context)!.description,
-          descriptionProvider: taskStreamProvider(taskId)
+          descriptionProvider: taskByIdStreamProvider(taskId)
               .select((task) => task.value?.description ?? ''),
           updateDescription: (ref, description) => ref
               .read(tasksRepositoryProvider)
@@ -144,9 +144,9 @@ class TaskAssigneesSelectionField extends BaseAssigneesSelectionField {
     required super.enabled,
     required this.taskId,
   }) : super(
-          assigneesProvider: usersInTaskStreamProvider(taskId)
+          assigneesProvider: assignedUsersInTaskStreamProvider(taskId)
               .select((users) => users.value ?? []),
-          projectIdProvider: taskStreamProvider(taskId)
+          projectIdProvider: taskByIdStreamProvider(taskId)
               .select((task) => task.value?.parentProjectId),
           updateAssignees: (ref, assignees) => ref
               .read(taskAssignmentsServiceProvider)

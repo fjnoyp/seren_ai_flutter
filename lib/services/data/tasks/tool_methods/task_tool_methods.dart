@@ -26,7 +26,7 @@ import 'package:seren_ai_flutter/services/data/orgs/providers/cur_selected_org_i
 import 'package:seren_ai_flutter/services/data/projects/models/project_model.dart';
 import 'package:seren_ai_flutter/services/data/projects/repositories/projects_repository.dart';
 import 'package:seren_ai_flutter/services/data/tasks/models/task_model.dart';
-import 'package:seren_ai_flutter/services/data/tasks/providers/cur_editing_task_id_notifier_provider.dart';
+import 'package:seren_ai_flutter/services/data/tasks/providers/cur_selected_task_id_notifier_provider.dart';
 import 'package:seren_ai_flutter/services/data/tasks/repositories/tasks_repository.dart';
 import 'package:seren_ai_flutter/services/data/tasks/tool_methods/models/create_task_result_model.dart';
 import 'package:seren_ai_flutter/services/data/tasks/tool_methods/models/delete_task_result_model.dart';
@@ -231,7 +231,9 @@ class TaskToolMethods {
 
     // Navigate to task page in readOnly mode
     if (allowToolUiActions) {
-      ref.read(curEditingTaskIdNotifierProvider.notifier).setTaskId(newTask.id);
+      ref
+          .read(curSelectedTaskIdNotifierProvider.notifier)
+          .setTaskId(newTask.id);
 
       final navigationService = ref.read(navigationServiceProvider);
       navigationService.navigateTo(AppRoutes.taskPage.name, arguments: {
@@ -312,7 +314,9 @@ class TaskToolMethods {
     // Show the new task fields and ask for confirmation
 
     if (allowToolUiActions) {
-      ref.read(curEditingTaskIdNotifierProvider.notifier).setTaskId(updatedTask.id);
+      ref
+          .read(curSelectedTaskIdNotifierProvider.notifier)
+          .setTaskId(updatedTask.id);
     }
 
     return UpdateTaskFieldsResultModel(
@@ -363,7 +367,9 @@ class TaskToolMethods {
 
     // If the task is found, move on to deleting it
     final toDeleteTask = filteredTasks.first;
-    ref.read(curEditingTaskIdNotifierProvider.notifier).setTaskId(toDeleteTask.id);
+    ref
+        .read(curSelectedTaskIdNotifierProvider.notifier)
+        .setTaskId(toDeleteTask.id);
 
     final navigationService = ref.read(navigationServiceProvider);
     final deleted = await navigationService.showPopupDialog(
