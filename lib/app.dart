@@ -170,7 +170,8 @@ class AppState extends State<App> {
             },
             AppRoutes.termsAndConditions.name: (context) =>
                 const TermsAndConditionsWebview(),
-            AppRoutes.taskGantt.name: (context) => const TaskGanttPage(),
+            AppRoutes.taskGantt.name: (context) =>
+                const _GuardScaffold('Gantt', TaskGanttPage()),
             AppRoutes.settings.name: (context) => _GuardScaffold(
                   AppLocalizations.of(context)!.settings,
                   const SettingsPage(),

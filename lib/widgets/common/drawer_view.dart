@@ -86,8 +86,9 @@ class DrawerView extends ConsumerWidget {
                             title: AppLocalizations.of(context)!.projects,
                             options: projects,
                             optionToString: (project) => project.name,
-                            onTapOption: (project) =>
-                                openProjectPage(ref, context, projectId: project.id),
+                            onTapOption: (project) => openProjectPage(
+                                ref, context,
+                                projectId: project.id),
                             onTapAddButton: () =>
                                 openCreateProjectPage(ref, context),
                           );
