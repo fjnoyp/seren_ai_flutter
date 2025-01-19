@@ -40,6 +40,12 @@ final ganttTaskProvider =
     StateNotifierProvider<GanttTaskNotifier, GanttState>((ref) {
   final notifier = GanttTaskNotifier();
 
+  // Immediately fetch initial data
+  final tasksAsyncValue = ref.read(curUserViewableTasksStreamProvider);
+  if (tasksAsyncValue.hasValue && tasksAsyncValue.value != null) {
+    notifier.processTaskData(tasksAsyncValue.value!);
+  }
+
   // Watch for changes to tasks and update the Gantt state
   ref.listen(curUserViewableTasksStreamProvider, (previous, next) {
     if (next.hasValue && next.value != null) {
