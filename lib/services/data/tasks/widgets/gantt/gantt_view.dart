@@ -7,7 +7,11 @@ import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
+import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:intl/intl.dart';
+import 'package:seren_ai_flutter/services/data/tasks/widgets/gantt/gantt_providers.dart';
+import 'package:seren_ai_flutter/services/data/tasks/widgets/gantt/gantt_static_column_view.dart';
+import 'package:seren_ai_flutter/services/data/tasks/widgets/gantt/gantt_task_data_item_bar_view.dart';
 
 // How are left side values given?
 
@@ -19,23 +23,22 @@ import 'package:intl/intl.dart';
 
 class GanttEvent {
   final String title;
-  final DateTime startDate;
-  final Duration duration;
+  final DateTime? startDate;
+  final DateTime? endDate;
+  final Duration? duration;
   final Color color;
 
   GanttEvent({
     required this.title,
-    required this.startDate,
-    required DateTime endDate,
+    this.startDate,
+    this.endDate,
     required this.color,
-  }) : duration = endDate.difference(startDate) {
-    // final colorValue = title.hashCode;
-    // final hue = (colorValue % 360).abs().toDouble();
-    // color = HSLColor.fromAHSL(1.0, hue, 0.7, 0.5).toColor();
-  }
+  }) : duration = (startDate != null && endDate != null)
+            ? endDate.difference(startDate)
+            : null;
 }
 
-class GanttView extends HookWidget {
+class GanttView extends HookConsumerWidget {
   final List<String> staticHeadersValues;
   final List<List<String>> staticRowsValues;
 
@@ -51,14 +54,8 @@ class GanttView extends HookWidget {
   static const double cellWidth = 100.0;
   static const double cellHeight = 50.0;
 
-  double calculateEventPosition(DateTime date, int start) {
-    final startDate = DateTime.now().add(Duration(days: start));
-    final difference = date.difference(startDate).inDays;
-    return difference * cellWidth;
-  }
-
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
     final mainHorizontalController = useScrollController();
     final mainVerticalController = useScrollController();
     final headerController = useScrollController();
@@ -96,9 +93,6 @@ class GanttView extends HookWidget {
         final maxScroll = position.maxScrollExtent;
         final currentScroll = position.pixels;
 
-        print('currentScroll: $currentScroll');
-        print('maxScroll: $maxScroll');
-
         final isScrollingLeft =
             position.userScrollDirection == ScrollDirection.forward;
 
@@ -107,7 +101,6 @@ class GanttView extends HookWidget {
           isLoadingRight.value = true;
 
           Future.microtask(() {
-            print('loading more right!');
             final (start, end) = columnRange.value;
             columnRange.value = (start, end + 90);
 
@@ -125,7 +118,6 @@ class GanttView extends HookWidget {
           final previousStart = columnRange.value.$1;
 
           Future.microtask(() {
-            print('loading more left!');
             final (start, end) = columnRange.value;
             columnRange.value = (start - 90, end);
 
@@ -181,10 +173,10 @@ class GanttView extends HookWidget {
 
     return Row(
       children: [
-        StaticColumn(
-          headers: staticHeadersValues,
-          staticRowsValues: staticRowsValues,
-          rowCount: rowCount.value,
+        GanttStaticColumnView(
+          //headers: staticHeadersValues,
+          //staticRowsValues: staticRowsValues,
+          //rowCount: rowCount.value,
           cellWidth: cellWidth,
           cellHeight: cellHeight,
           verticalController: leftController,
@@ -210,35 +202,26 @@ class GanttView extends HookWidget {
                 ),
                 child: Column(
                   children: [
-                    // Header
-                    SizedBox(
-                      height: 60,
-                      child: Row(
-                        children: [
-                          dateHeaders(
-                              totalWidth: totalWidth,
-                              columnRange: columnRange,
-                              headerController: headerController,
-                              context: context),
-                        ],
-                      ),
+                    GanttHeader(
+                      cellWidth: cellWidth,
+                      cellHeight: 60,
+                      totalWidth: totalWidth,
+                      columnRange: columnRange,
+                      headerController: headerController,
                     ),
 
                     // Body
                     Expanded(
-                      child: Row(
-                        children: [
-                          body(
-                              mainHorizontalController:
-                                  mainHorizontalController,
-                              totalWidth: totalWidth,
-                              mainVerticalController: mainVerticalController,
-                              rowCount: rowCount.value,
-                              columnRange: columnRange,
-                              events: events,
-                              staticHeadersWidth: staticHeadersWidth,
-                              context: context),
-                        ],
+                      child: GanttBody(
+                        //events: events,
+                        cellWidth: cellWidth,
+                        cellHeight: cellHeight,
+                        mainHorizontalController: mainHorizontalController,
+                        totalWidth: totalWidth,
+                        mainVerticalController: mainVerticalController,
+                        rowCount: rowCount.value,
+                        columnRange: columnRange,
+                        staticHeadersWidth: staticHeadersWidth,
                       ),
                     ),
                   ],
@@ -250,253 +233,164 @@ class GanttView extends HookWidget {
       ],
     );
   }
+}
 
-  Widget dateHeaders({
-    required double totalWidth,
-    required ValueNotifier<(int, int)> columnRange,
-    required ScrollController headerController,
-    required BuildContext context,
-  }) {
-    return Expanded(
-      child: SingleChildScrollView(
-        controller: headerController,
-        scrollDirection: Axis.horizontal,
-        child: SizedBox(
-          width: totalWidth,
-          child: Column(
-            children: [
-              // Week range row
-              Row(
-                children: List.generate(
-                  (columnRange.value.$2 - columnRange.value.$1) ~/ 7,
-                  (weekIndex) {
-                    final weekStart = DateTime.now().add(
-                        Duration(days: weekIndex * 7 + columnRange.value.$1));
-                    final weekEnd = weekStart.add(const Duration(days: 6));
-                    return Container(
-                      width: cellWidth * 7,
-                      height: 30,
-                      padding: const EdgeInsets.all(4),
-                      decoration: BoxDecoration(
-                        border:
-                            Border.all(color: Theme.of(context).dividerColor),
-                      ),
-                      child: Text(
-                        '${DateFormat('dd MMM yyyy').format(weekStart)} - ${DateFormat('dd MMM yyyy').format(weekEnd)}',
-                        textAlign: TextAlign.center,
-                      ),
-                    );
-                  },
-                ),
-              ),
-              // Day numbers row
-              Row(
-                children: List.generate(
-                  columnRange.value.$2 - columnRange.value.$1,
-                  (index) {
-                    final date = DateTime.now()
-                        .add(Duration(days: index + columnRange.value.$1));
-                    return Container(
-                      width: cellWidth,
-                      height: 30,
-                      padding: const EdgeInsets.all(4),
-                      decoration: BoxDecoration(
-                        border:
-                            Border.all(color: Theme.of(context).dividerColor),
-                        color: (date.weekday == DateTime.saturday ||
-                                date.weekday == DateTime.sunday)
-                            ? Colors.grey.withOpacity(0.1)
-                            : null,
-                      ),
-                      child: Text(
-                        date.day.toString(),
-                        textAlign: TextAlign.center,
-                      ),
-                    );
-                  },
-                ),
-              ),
-            ],
-          ),
-        ),
-      ),
-    );
-  }
+class GanttHeader extends StatelessWidget {
+  final double cellWidth;
+  final double cellHeight;
+  final double totalWidth;
+  final ValueNotifier<(int, int)> columnRange;
+  final ScrollController headerController;
 
-  Widget body({
-    required ScrollController mainHorizontalController,
-    required double totalWidth,
-    required ScrollController mainVerticalController,
-    required int rowCount,
-    required ValueNotifier<(int, int)> columnRange,
-    required List<GanttEvent> events,
-    required double staticHeadersWidth,
-    required BuildContext context,
-  }) {
-    return Expanded(
-      child: SingleChildScrollView(
-        controller: mainHorizontalController,
-        scrollDirection: Axis.horizontal,
-        child: SizedBox(
-          width: totalWidth,
-          child: ListView.builder(
-            controller: mainVerticalController,
-            itemCount: rowCount,
-            itemExtent: cellHeight,
-            itemBuilder: (context, rowIndex) {
-              // Find event for this row if it exists
-              final event = events.length > rowIndex ? events[rowIndex] : null;
+  const GanttHeader({
+    super.key,
+    required this.cellWidth,
+    required this.cellHeight,
+    required this.totalWidth,
+    required this.columnRange,
+    required this.headerController,
+  });
 
-              return Stack(
-                children: [
-                  // Background grid lines (optional)
-                  Container(
-                    width: totalWidth - staticHeadersWidth,
-                    height: cellHeight,
-                    decoration: BoxDecoration(
-                      border: Border.all(color: Colors.grey.withOpacity(0.2)),
-                    ),
-                  ),
-
-                  // Event bar (if exists)
-                  if (event != null)
-                    Positioned(
-                      left: calculateEventPosition(
-                          event.startDate, columnRange.value.$1),
-                      top: 5,
-                      child: Container(
-                        width: event.duration.inDays * cellWidth,
-                        height: cellHeight - 10,
-                        decoration: BoxDecoration(
-                          color: event.color ?? Theme.of(context).primaryColor,
-                          borderRadius: BorderRadius.circular(4),
-                        ),
-                        child: Padding(
-                          padding: const EdgeInsets.symmetric(horizontal: 8),
-                          child: Text(
-                            event.title,
-                            style: const TextStyle(color: Colors.white),
-                            overflow: TextOverflow.ellipsis,
-                          ),
-                        ),
+  @override
+  Widget build(BuildContext context) {
+    return SizedBox(
+      height: cellHeight,
+      child: Row(
+        children: [
+          Expanded(
+            child: SingleChildScrollView(
+              controller: headerController,
+              scrollDirection: Axis.horizontal,
+              child: SizedBox(
+                width: totalWidth,
+                child: Column(
+                  children: [
+                    // Week range row
+                    Row(
+                      children: List.generate(
+                        (columnRange.value.$2 - columnRange.value.$1) ~/ 7,
+                        (weekIndex) {
+                          final weekStart = DateTime.now().add(Duration(
+                              days: weekIndex * 7 + columnRange.value.$1));
+                          final weekEnd =
+                              weekStart.add(const Duration(days: 6));
+                          return Container(
+                            width: cellWidth * 7,
+                            height: 30,
+                            padding: const EdgeInsets.all(4),
+                            decoration: BoxDecoration(
+                              border: Border.all(
+                                  color: Theme.of(context).dividerColor),
+                            ),
+                            child: Text(
+                              '${DateFormat('dd MMM yyyy').format(weekStart)} - ${DateFormat('dd MMM yyyy').format(weekEnd)}',
+                              textAlign: TextAlign.center,
+                            ),
+                          );
+                        },
                       ),
                     ),
-                ],
-              );
-            },
+                    // Day numbers row
+                    Row(
+                      children: List.generate(
+                        columnRange.value.$2 - columnRange.value.$1,
+                        (index) {
+                          final date = DateTime.now().add(
+                              Duration(days: index + columnRange.value.$1));
+                          return Container(
+                            width: cellWidth,
+                            height: 30,
+                            padding: const EdgeInsets.all(4),
+                            decoration: BoxDecoration(
+                              border: Border.all(
+                                  color: Theme.of(context).dividerColor),
+                              color: (date.weekday == DateTime.saturday ||
+                                      date.weekday == DateTime.sunday)
+                                  ? Colors.grey.withOpacity(0.1)
+                                  : null,
+                            ),
+                            child: Text(
+                              date.day.toString(),
+                              textAlign: TextAlign.center,
+                            ),
+                          );
+                        },
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            ),
           ),
-        ),
+        ],
       ),
     );
   }
 }
 
-class StaticColumn extends StatelessWidget {
-  final ScrollController? verticalController;
-  final List<String> headers;
-  final List<List<String>> staticRowsValues;
-  final int rowCount;
-  final double cellWidth;
-  final double cellHeight;
+// New separate widget for the body
+class GanttBody extends ConsumerWidget {
+  final ScrollController mainHorizontalController;
+  final double totalWidth;
   final ScrollController mainVerticalController;
+  final int rowCount;
+  final ValueNotifier<(int, int)> columnRange;
+  final double staticHeadersWidth;
 
-  const StaticColumn({
+  const GanttBody({
     super.key,
-    required this.headers,
-    required this.staticRowsValues,
+    required this.mainHorizontalController,
+    required this.totalWidth,
+    required this.mainVerticalController,
     required this.rowCount,
+    required this.columnRange,
+    required this.staticHeadersWidth,
     required this.cellWidth,
     required this.cellHeight,
-    this.verticalController,
-    required this.mainVerticalController,
   });
 
+  final double cellWidth;
+  final double cellHeight;
+
   @override
-  Widget build(BuildContext context) {
-    // Listener / GestureDetector allows scrolls here to trigger changes to the mainVerticalController
-    return Listener(
-      onPointerSignal: (pointerSignal) {
-        if (pointerSignal is PointerScrollEvent) {
-          mainVerticalController.position.moveTo(
-            mainVerticalController.offset + pointerSignal.scrollDelta.dy,
-            clamp: true,
-          );
-        }
-      },
-      child: GestureDetector(
-        onVerticalDragUpdate: (details) {
-          mainVerticalController.position.moveTo(
-            mainVerticalController.offset - details.delta.dy,
-            clamp: true,
-          );
-        },
-        child: SizedBox(
-          width: headers.length * cellWidth,
-          child: Column(
-            children: [
-              // Headers
-              SizedBox(
-                height: 60,
-                child: Row(
-                  children: headers
-                      .map((header) => _buildHeaderCell(header))
-                      .toList(),
-                ),
-              ),
-              // Rows
-              Expanded(
-                child: Row(
-                  children: List.generate(
-                    headers.length,
-                    (columnIndex) => _buildColumn(context, columnIndex),
+  Widget build(BuildContext context, WidgetRef ref) {
+    final visibleTasks = ref.watch(visibleGanttTasksProvider);
+
+    return SingleChildScrollView(
+      controller: mainHorizontalController,
+      scrollDirection: Axis.horizontal,
+      child: SizedBox(
+        width: totalWidth,
+        child: ListView.builder(
+          controller: mainVerticalController,
+          itemCount: visibleTasks.length,
+          itemExtent: cellHeight,
+          itemBuilder: (context, index) {
+            final task = visibleTasks[index];
+
+            return Stack(
+              children: [
+                // Background grid
+                Container(
+                  width: totalWidth - staticHeadersWidth,
+                  height: cellHeight,
+                  decoration: BoxDecoration(
+                    border: Border.all(color: Colors.grey.withOpacity(0.2)),
                   ),
                 ),
-              ),
-            ],
-          ),
+
+                //Task visualization
+                GanttTaskDataItemBarView(
+                  task: task,
+                  cellWidth: cellWidth,
+                  cellHeight: cellHeight,
+                  columnStartDay: columnRange.value.$1,
+                ),
+              ],
+            );
+          },
         ),
       ),
-    );
-  }
-
-  Widget _buildHeaderCell(String header) {
-    return Container(
-      width: cellWidth,
-      height: 60,
-      alignment: Alignment.center,
-      decoration: BoxDecoration(border: Border.all()),
-      child: Text(header),
-    );
-  }
-
-  Widget _buildColumn(BuildContext context, int columnIndex) {
-    return SizedBox(
-      width: cellWidth,
-      child: ScrollConfiguration(
-        behavior: ScrollConfiguration.of(context).copyWith(scrollbars: false),
-        child: ListView.builder(
-          physics: const NeverScrollableScrollPhysics(),
-          controller: verticalController,
-          itemCount: rowCount,
-          itemExtent: cellHeight,
-          itemBuilder: (context, rowIndex) =>
-              _buildRowCell(rowIndex, columnIndex),
-        ),
-      ),
-    );
-  }
-
-  Widget _buildRowCell(int rowIndex, int columnIndex) {
-    final cellValue = staticRowsValues.length > rowIndex &&
-            staticRowsValues[rowIndex].length > columnIndex
-        ? staticRowsValues[rowIndex][columnIndex]
-        : '';
-
-    return Container(
-      height: cellHeight,
-      alignment: Alignment.center,
-      decoration: BoxDecoration(border: Border.all()),
-      child: Text(cellValue),
     );
   }
 }

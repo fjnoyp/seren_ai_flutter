@@ -19,31 +19,32 @@ import 'package:seren_ai_flutter/services/notifications/notification_service.dar
 import 'package:shared_preferences/shared_preferences.dart';
 
 void main() async {
-  WidgetsFlutterBinding.ensureInitialized();
+  runZonedGuarded(() async {
+    WidgetsFlutterBinding.ensureInitialized();
 
-  // Initialization of Async Components
-  final prefs = await SharedPreferences.getInstance();
-  final db = await PowerSyncDatabaseFactory.openDatabase();
+    // Initialization of Async Components
+    final prefs = await SharedPreferences.getInstance();
+    final db = await PowerSyncDatabaseFactory.openDatabase();
 
-  if (!kIsWeb && !UniversalPlatform.instance().isIOS) {
-    // Initialize Firebase for Crashlytics
-    await Firebase.initializeApp();
-    // Pass all uncaught "fatal" errors from the framework to Crashlytics
-    FlutterError.onError = FirebaseCrashlytics.instance.recordFlutterFatalError;
-    // Pass all uncaught asynchronous errors that aren't handled by the Flutter framework to Crashlytics
-    PlatformDispatcher.instance.onError = (error, stack) {
-      FirebaseCrashlytics.instance.recordError(error, stack, fatal: true);
-      return true;
-    };
-  }
+    if (!kIsWeb && !UniversalPlatform.instance().isIOS) {
+      // Initialize Firebase for Crashlytics
+      await Firebase.initializeApp();
+      // Pass all uncaught "fatal" errors from the framework to Crashlytics
+      FlutterError.onError =
+          FirebaseCrashlytics.instance.recordFlutterFatalError;
+      // Pass all uncaught asynchronous errors that aren't handled by the Flutter framework to Crashlytics
+      PlatformDispatcher.instance.onError = (error, stack) {
+        FirebaseCrashlytics.instance.recordError(error, stack, fatal: true);
+        return true;
+      };
+    }
 
-  final notificationService = NotificationService();
-  if (!kIsWeb) {
-    // Initialize Notification Service
-    await notificationService.initialize();
-  }
+    final notificationService = NotificationService();
+    if (!kIsWeb) {
+      // Initialize Notification Service
+      await notificationService.initialize();
+    }
 
-  runZonedGuarded(() {
     FlutterError.onError = (FlutterErrorDetails details) {
       FlutterError.presentError(details);
       debugPrint('Flutter Error: ${details.exception}');
