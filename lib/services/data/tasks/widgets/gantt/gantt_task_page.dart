@@ -14,9 +14,9 @@ class TaskGanttPage extends ConsumerWidget {
       children: [
         Expanded(
           child: Container(
-            margin: const EdgeInsets.all(50),
+            margin: const EdgeInsets.all(0),
             decoration: BoxDecoration(
-              border: Border.all(width: 3),
+              border: Border.all(width: 0),
             ),
             child: gantt(ref),
           ),
@@ -46,15 +46,16 @@ class TaskGanttPage extends ConsumerWidget {
     final ganttEvents = ganttTasks.expand((ganttTask) {
       final mainTaskEvent = GanttEvent(
         title: ganttTask.task.name,
-        startDate: ganttTask.task.startDateTime ?? DateTime.now(),
-        endDate: ganttTask.task.dueDate ?? DateTime.now(),
+        startDate: ganttTask.task.startDateTime,
+        endDate: ganttTask.task.dueDate,
         color: ganttTask.color,
       );
+
       final subTaskEvents = ganttTask.children.map((subTask) {
         return GanttEvent(
           title: subTask.task.name,
-          startDate: subTask.task.startDateTime ?? DateTime.now(),
-          endDate: subTask.task.dueDate ?? DateTime.now(),
+          startDate: subTask.task.startDateTime,
+          endDate: subTask.task.dueDate,
           color: ganttTask.color
               .withOpacity(0.7), // make slightly more transparent
         );
