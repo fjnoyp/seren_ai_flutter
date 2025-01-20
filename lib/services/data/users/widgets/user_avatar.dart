@@ -12,7 +12,10 @@ class UserAvatar extends StatelessWidget {
   Widget build(BuildContext context) {
     return CircleAvatar(
       radius: radius,
-      foregroundImage: NetworkImage(_getUserImage()),
+      backgroundImage: NetworkImage(_getUserImage()),
+      onBackgroundImageError: (exception, stackTrace) {
+        debugPrint('Avatar image load error silently handled');
+      },
       child: Center(
         child: FittedBox(
           fit: BoxFit.scaleDown,
@@ -25,7 +28,6 @@ class UserAvatar extends StatelessWidget {
   }
 
   String _getUserImage() {
-    // TODO: externalize this
     return Supabase.instance.client.storage
         .from('user_avatars')
         .getPublicUrl(user.id);

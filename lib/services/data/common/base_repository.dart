@@ -41,7 +41,7 @@ abstract class BaseRepository<T extends IHasId> {
         log.severe('Parameters: $params');
         log.severe('Error: $e');
         log.severe('StackTrace: $stackTrace');
-        rethrow; // Rethrow to maintain error propagation
+        rethrow;
       }
     });
   }
@@ -89,14 +89,14 @@ abstract class BaseRepository<T extends IHasId> {
 
   Future<void> insertItem(T item) async {
     final Map<String, dynamic> json = toJson(item);
-
-    final columns = '(${json.keys.join(', ')})';
-    final valuesPlaceholder =
-        'VALUES(${List.filled(json.keys.length, '?').join(', ')})';
+    final columns = json.keys.join(', ');
+    final placeholders = List.filled(json.length, '?').join(', ');
     final values = json.values.toList();
+
     try {
       await db.execute(
-          'INSERT INTO $primaryTable $columns $valuesPlaceholder', values);
+          'INSERT INTO $primaryTable ($columns) VALUES ($placeholders)',
+          values);
     } catch (e) {
       throw Exception('Failed to insert item into $primaryTable: $e');
     }
@@ -109,13 +109,10 @@ abstract class BaseRepository<T extends IHasId> {
     final columns = firstItemJson.keys.join(', ');
     final placeholders = List.filled(firstItemJson.length, '?').join(', ');
 
-    final values = items.map((item) {
-      final itemJson = toJson(item);
-      return itemJson.values.map(_sqlEscape).toList();
-    }).toList();
+    final values = items.map((item) => toJson(item).values.toList()).toList();
 
     await db.executeBatch(
-        'INSERT INTO $primaryTable ($columns) VALUES($placeholders)', values);
+        'INSERT INTO $primaryTable ($columns) VALUES ($placeholders)', values);
   }
 
   Future<void> upsertItem(T item) async {
@@ -136,30 +133,27 @@ abstract class BaseRepository<T extends IHasId> {
 
   Future<void> updateItem(T item) async {
     final Map<String, dynamic> json = toJson(item);
-    final setClause = json.entries
+    final setColumns = json.entries
         .where((entry) => entry.key != 'id')
-        .map((entry) => '${entry.key} = ${_sqlEscape(entry.value)}')
+        .map((entry) => '${entry.key} = ?')
         .join(', ');
+    final values = json.entries
+        .where((entry) => entry.key != 'id')
+        .map((entry) => entry.value)
+        .toList()
+      ..add(item.id); // Add id for WHERE clause
 
     await db.execute(
-        'UPDATE $primaryTable SET $setClause WHERE id = ${_sqlEscape(item.id)}');
+        'UPDATE $primaryTable SET $setColumns WHERE id = ?', values);
   }
 
   Future<void> deleteItem(String id) async {
-    await db.execute('DELETE FROM $primaryTable WHERE id = ${_sqlEscape(id)}');
+    await db.execute('DELETE FROM $primaryTable WHERE id = ?', [id]);
   }
 
   @protected
   Future<void> updateField(String id, String field, dynamic value) async {
     await db.execute(
         'UPDATE $primaryTable SET $field = ? WHERE id = ?', [value, id]);
-  }
-
-  String _sqlEscape(dynamic value) {
-    if (value == null) return 'NULL';
-    if (value is num) return value.toString();
-    if (value is bool) return value ? '1' : '0';
-    if (value is DateTime) return "'${value.toIso8601String()}'";
-    return "'${value.toString().replaceAll("'", "''")}'";
   }
 }
