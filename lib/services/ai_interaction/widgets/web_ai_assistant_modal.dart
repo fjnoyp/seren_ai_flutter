@@ -61,7 +61,7 @@ class WebAiAssistantModal extends ConsumerWidget {
               const Expanded(
                   child: Hero(
                 tag: 'ai-chat-messages-display',
-                child: PaginatedChatMessagesDisplay(),
+                child: ChatMessagesDisplay(),
               )),
               const AiChatTextField(),
             ],

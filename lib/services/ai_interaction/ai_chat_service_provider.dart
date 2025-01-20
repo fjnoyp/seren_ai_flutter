@@ -133,7 +133,7 @@ class AIChatService {
     );
 
     // Convert lgBaseMessages as aiChatMessages
-    final aiChatMessages = lgBaseMessages
+    final aiResponseChatMessages = lgBaseMessages
         .map((lgBaseMessage) => AiChatMessageModel(
             content: lgBaseMessage.content,
             type: AiChatMessageTypeExtension.fromLgAiChatMessageRole(
@@ -143,16 +143,16 @@ class AIChatService {
 
     // Display ai response
     // For Groq - a tool call does not provide a message
-    if (aiChatMessages.isNotEmpty) {
-      lastAiMessageListener.addAiChatMessage(aiChatMessages.first);
-      if (!isWebVersion) speakAiMessage(aiChatMessages);
+    if (aiResponseChatMessages.isNotEmpty) {
+      lastAiMessageListener.addAiChatMessage(aiResponseChatMessages.first);
+      if (!isWebVersion) speakAiMessage(aiResponseChatMessages);
     }
 
     // Save response to DB
-    await aiChatMessagesRepo.insertItems(aiChatMessages);
+    await aiChatMessagesRepo.insertItems(aiResponseChatMessages);
 
     // Execute request if needed
-    await _tryExecuteAiRequests(aiChatThread, aiChatMessages);
+    await _tryExecuteAiRequests(aiChatThread, aiResponseChatMessages);
   }
 
   Future<void> _tryExecuteAiRequests(AiChatThreadModel aiChatThread,
