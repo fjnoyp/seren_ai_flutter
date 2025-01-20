@@ -44,6 +44,19 @@ class BaseNameField extends HookConsumerWidget {
     });
     */
 
+    // Add focus listener using useEffect to properly handle tap outside for web
+    useEffect(() {
+      void onFocusChange() {
+        if (!focusNode.hasFocus && nameController.text != curName) {
+          updateName(ref, nameController.text);
+          FocusScope.of(context).unfocus();
+        }
+      }
+
+      focusNode.addListener(onFocusChange);
+      return () => focusNode.removeListener(onFocusChange);
+    }, [focusNode]);
+
     return isEditable
         ? AnimatedBuilder(
             animation: colorAnimation.colorTween,
