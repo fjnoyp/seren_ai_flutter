@@ -141,6 +141,7 @@ class AppState extends State<App> {
                 args['title'],
                 TaskPage(mode: args['mode']),
                 actions: args['actions'],
+                showAppBar: !isWebVersion,
               );
             },
             AppRoutes.aiChats.name: (context) => _GuardScaffold(
