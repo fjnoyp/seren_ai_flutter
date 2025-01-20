@@ -3,9 +3,11 @@ import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:logging/logging.dart';
 import 'package:seren_ai_flutter/common/navigation_service_provider.dart';
 import 'package:seren_ai_flutter/common/routes/app_routes.dart';
+import 'package:seren_ai_flutter/common/universal_platform/universal_platform.dart';
 import 'package:seren_ai_flutter/services/data/common/status_enum.dart';
 import 'package:seren_ai_flutter/services/data/common/widgets/editable_page_mode_enum.dart';
 import 'package:seren_ai_flutter/services/data/projects/models/project_model.dart';
+import 'package:seren_ai_flutter/services/data/projects/widgets/project_page.dart';
 import 'package:seren_ai_flutter/services/data/tasks/models/task_model.dart';
 import 'package:seren_ai_flutter/services/data/tasks/providers/cur_selected_task_id_notifier_provider.dart';
 import 'package:seren_ai_flutter/services/data/tasks/providers/task_by_id_stream_provider.dart';
@@ -209,6 +211,23 @@ Future<void> openTaskPage(
 
   await ref.read(navigationServiceProvider).navigateTo(AppRoutes.taskPage.name,
       arguments: {'mode': mode, 'actions': actions, 'title': title});
+
+  // TODO p3: use this to have the same redirect behaviour as openNewTaskPage
+  // for now, it doesn't work because we need to remove "ref" from openProjectPage first
+  // await ref.read(navigationServiceProvider).navigateTo(AppRoutes.taskPage.name,
+  //     arguments: {
+  //       'mode': mode,
+  //       'actions': actions,
+  //       'title': title
+  //     }).then((_) async {
+  //   // Remove previous TaskPage to avoid duplicate task pages
+  //   ref
+  //       .read(navigationServiceProvider)
+  //       .popUntil((route) => route.settings.name != AppRoutes.taskPage.name);
+  //   if (isWebVersion) {
+  //     await _redirectToProjectPage(context, ref);
+  //   }
+  // });
 }
 
 Future<void> openNewTaskPage(
@@ -217,11 +236,6 @@ Future<void> openNewTaskPage(
   ProjectModel? initialProject,
   StatusEnum? initialStatus,
 }) async {
-  // Remove previous TaskPage to avoid duplicate task pages (if any)
-  ref
-      .read(navigationServiceProvider)
-      .popUntil((route) => route.settings.name != AppRoutes.taskPage.name);
-
   await ref.read(curSelectedTaskIdNotifierProvider.notifier).createNewTask();
 
   final curTaskId = ref.watch(curSelectedTaskIdNotifierProvider)!;
@@ -245,5 +259,24 @@ Future<void> openNewTaskPage(
       'actions': [DeleteTaskButton(curTaskId)],
       'title': AppLocalizations.of(context)!.createTask,
     },
-  );
+  ).then((_) async {
+    // Remove previous TaskPage to avoid duplicate task pages (if any)
+    ref
+        .read(navigationServiceProvider)
+        .popUntil((route) => route.settings.name != AppRoutes.taskPage.name);
+    if (isWebVersion) {
+      await _redirectToProjectPage(context, ref);
+    }
+  });
+}
+
+Future<void> _redirectToProjectPage(BuildContext context, WidgetRef ref) async {
+  final curTaskId = ref.watch(curSelectedTaskIdNotifierProvider);
+  if (curTaskId != null) {
+    final curProjectId = await ref
+        .read(tasksRepositoryProvider)
+        .getById(curTaskId)
+        .then((task) => task?.parentProjectId);
+    await openProjectPage(ref, context, projectId: curProjectId);
+  }
 }
