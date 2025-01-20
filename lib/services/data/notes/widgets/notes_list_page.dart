@@ -26,10 +26,9 @@ class NoteListPage extends HookConsumerWidget {
         Expanded(child: NoteListByProjectId(curProjectId.value)),
         CreateItemBottomButton(
           onPressed: () {
-            openNotePage(
+            openNewNotePage(
               context,
               ref,
-              mode: EditablePageMode.create,
               parentProjectId: curProjectId.value,
             );
           },
@@ -128,8 +127,12 @@ class _NoteItem extends ConsumerWidget {
         style: const TextStyle(fontSize: 12),
       ),
       onTap: () {
-        openNotePage(context, ref,
-            mode: EditablePageMode.readOnly, noteId: note.id);
+        openNotePage(
+          context,
+          ref,
+          mode: EditablePageMode.readOnly,
+          initialNoteId: note.id,
+        );
       },
     );
   }
