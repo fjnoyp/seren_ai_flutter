@@ -46,8 +46,9 @@ class HomePage extends ConsumerWidget {
                   crossAxisCount: 2,
                   crossAxisSpacing: 8.0,
                   mainAxisSpacing: 8.0,
-                  childAspectRatio:
-                      constraints.maxWidth / (constraints.maxHeight / 2),
+                  childAspectRatio: (MediaQuery.of(context).size.width > 600)
+                      ? constraints.maxWidth / (constraints.maxHeight / 2)
+                      : 1.0, // Default aspect ratio for non-web
                   children: const [
                     TaskHomeCard(),
                     NoteHomeCard(),

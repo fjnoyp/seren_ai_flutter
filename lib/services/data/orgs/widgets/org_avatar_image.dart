@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:flutter/material.dart';
 import 'package:seren_ai_flutter/services/data/orgs/models/org_model.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
@@ -23,16 +25,15 @@ class OrgAvatarImage extends StatelessWidget {
         child: Image.network(
           _getOrgImage(),
           fit: BoxFit.cover,
-          errorBuilder: (context, error, stackTrace) => Center(
-            child: Text(org.name.substring(0, 1)),
-          ),
+          errorBuilder: (context, error, stackTrace) {
+            return Center(child: Text(org.name.substring(0, 1)));
+          },
         ),
       ),
     );
   }
 
   String _getOrgImage() {
-    // TODO: externalize this
     return Supabase.instance.client.storage
         .from('org_avatars')
         .getPublicUrl(org.id);

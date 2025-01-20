@@ -1,7 +1,7 @@
 // Copy this template: `cp lib/app_config_template.dart lib/app_config.dart`
 // Edit lib/app_config.dart and enter your Supabase and PowerSync project details.
 class AppConfig {
-  static const bool isProdMode = false; // Set to false to use local config
+  static const bool isProdMode = true; // Set to false to use local config
 
   static String get supabaseUrl => isProdMode
       ? 'https://aunxmivgfpuzxwmyggvn.supabase.co'
