@@ -71,8 +71,17 @@ class TaskPage extends HookConsumerWidget {
               children: [
                 // Title Input
                 Expanded(
+                    flex: mode == EditablePageMode.readOnly ? 0 : 1,
                     child: TaskNameField(
                         taskId: curTaskId, isEditable: isEnabled)),
+                if (isWebVersion && mode == EditablePageMode.readOnly)
+                  Expanded(
+                      child: Row(
+                    children: [
+                      EditTaskButton(curTaskId),
+                      const SizedBox.shrink(),
+                    ],
+                  )),
                 if (mode == EditablePageMode.readOnly)
                   Column(
                     mainAxisSize: MainAxisSize.min,
@@ -154,6 +163,9 @@ class TaskPage extends HookConsumerWidget {
                   ),
                 ),
               ),
+
+            if (isWebVersion && mode == EditablePageMode.edit)
+              DeleteTaskButton(curTaskId, showLabelText: true),
 
             const SizedBox(height: 32),
           ],
