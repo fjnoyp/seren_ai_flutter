@@ -40,8 +40,12 @@ class ProjectsRepository extends BaseRepository<ProjectModel> {
   // Get projects for a user (projects where they are assigned directly or via teams)
   Future<List<ProjectModel>> getUserProjects({
     required String userId,
+    required String orgId,
   }) async {
-    return get(ProjectQueries.userViewableProjectsQuery, {'user_id': userId});
+    return get(ProjectQueries.userViewableProjectsQuery, {
+      'user_id': userId,
+      'org_id': orgId,
+    });
   }
 
   Future<void> updateProjectName(String projectId, String name) async {

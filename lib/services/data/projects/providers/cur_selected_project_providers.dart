@@ -2,6 +2,7 @@ import 'dart:developer';
 
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:seren_ai_flutter/services/auth/cur_auth_state_provider.dart';
+import 'package:seren_ai_flutter/services/data/orgs/providers/cur_selected_org_id_notifier.dart';
 import 'package:seren_ai_flutter/services/data/projects/models/project_model.dart';
 import 'package:seren_ai_flutter/services/data/projects/providers/cur_user_viewable_projects_provider.dart';
 import 'package:seren_ai_flutter/services/data/projects/repositories/projects_repository.dart';
@@ -63,8 +64,10 @@ class CurSelectedProjectIdNotifier extends Notifier<String?> {
       }
     } else {
       // Defaults to some assigned project when user default project is null
-      final userProjects =
-          ref.read(curUserViewableProjectsProvider).value ?? [];
+      final orgId = ref.read(curSelectedOrgIdNotifierProvider)!;
+      final userProjects = await ref
+          .read(projectsRepositoryProvider)
+          .getUserProjects(userId: user.id, orgId: orgId);
       if (userProjects.isNotEmpty) {
         setProjectId(userProjects.first.id);
       } else {
