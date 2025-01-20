@@ -115,7 +115,9 @@ class TaskPage extends HookConsumerWidget {
                       taskId: curTaskId, enabled: isEnabled),
                   const Divider(),
                   ReminderMinuteOffsetFromDueDateSelectionField(
-                      taskId: curTaskId, enabled: isEnabled),
+                    taskId: curTaskId,
+                    enabled: isEnabled && curTask.value?.dueDate != null,
+                  ),
                   const Divider(),
                   TaskAssigneesSelectionField(
                       taskId: curTaskId, enabled: isEnabled),
