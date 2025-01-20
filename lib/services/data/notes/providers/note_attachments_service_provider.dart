@@ -19,15 +19,10 @@ class NoteAttachmentsService extends Notifier<List<String>> {
     return [];
   }
 
-  // Needed in case of reset
-  List<String> _initialNoteAttachmentUrls = [];
   final supabaseStorage = Supabase.instance.client.storage;
   final pathProvider = PathProvider.getPathProviderFactory();
 
-  Future<void> fetchNoteAttachments({
-    bool firstLoad = false,
-    required String noteId,
-  }) async {
+  Future<void> fetchNoteAttachments({required String noteId}) async {
     final attachments =
         await supabaseStorage.from('note_attachments').list(path: noteId);
     attachments.removeWhere((e) => e.name.startsWith('.'));
@@ -37,10 +32,6 @@ class NoteAttachmentsService extends Notifier<List<String>> {
             .from('note_attachments')
             .getPublicUrl('$noteId/${e.name}'))
         .toList();
-
-    if (firstLoad) {
-      _initialNoteAttachmentUrls = noteAttachmentUrls;
-    }
 
     state = noteAttachmentUrls;
   }
@@ -87,19 +78,6 @@ class NoteAttachmentsService extends Notifier<List<String>> {
     fetchNoteAttachments(noteId: noteId);
   }
 
-  Future<void> removeUnuploadedAttachments(String noteId) async {
-    final attachmentsToRemove =
-        await supabaseStorage.from('note_attachments').list(path: noteId);
-    attachmentsToRemove.removeWhere((e) => _initialNoteAttachmentUrls
-        .any((url) => e.name == url.getFilePathName()));
-
-    if (attachmentsToRemove.isNotEmpty) {
-      await supabaseStorage
-          .from('note_attachments')
-          .remove(attachmentsToRemove.map((e) => '$noteId/${e.name}').toList());
-    }
-  }
-
   Future<Uint8List> getAttachmentBytes({
     required String fileUrl,
     required String noteId,
@@ -140,5 +118,19 @@ class NoteAttachmentsService extends Notifier<List<String>> {
         .from('note_attachments')
         .remove(['$noteId/${fileUrl.getFilePathName()}']);
     fetchNoteAttachments(noteId: noteId);
+  }
+
+  Future<void> deleteAllAttachments({
+    required String noteId,
+  }) async {
+    final attachments =
+        await supabaseStorage.from('note_attachments').list(path: noteId);
+    attachments.removeWhere((e) => e.name.startsWith('.'));
+
+    await supabaseStorage
+        .from('note_attachments')
+        .remove(attachments.map((e) => '$noteId/${e.name}').toList());
+
+    state = [];
   }
 }
