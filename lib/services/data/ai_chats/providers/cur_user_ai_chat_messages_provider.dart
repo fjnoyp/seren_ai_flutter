@@ -1,12 +1,11 @@
-import 'dart:developer';
-
+//import 'dart:developer';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:seren_ai_flutter/services/data/ai_chats/models/ai_chat_message_model.dart';
 import 'package:seren_ai_flutter/services/data/ai_chats/providers/cur_ai_chat_thread_dependency_provider.dart';
-import 'package:seren_ai_flutter/services/data/ai_chats/providers/cur_user_ai_chat_thread_provider.dart';
+//import 'package:seren_ai_flutter/services/data/ai_chats/providers/cur_user_ai_chat_thread_provider.dart';
 import 'package:seren_ai_flutter/services/data/ai_chats/repositories/ai_chat_messages_repository.dart';
 
-final curUserAiChatMessagesProvider =
+final curUserAiChatMessagesStreamProvider =
     StreamProvider.autoDispose<List<AiChatMessageModel>>((ref) {
   return CurAiChatThreadDependencyProvider.watchStream(
     ref: ref,
@@ -18,102 +17,106 @@ final curUserAiChatMessagesProvider =
   );
 });
 
-final curUserPaginatedAiChatMessagesProvider = Provider<
-    AsyncValue<
-        ({
-          List<AiChatMessageModel> state,
-          AiChatMessagesNotifier notifier
-        })>>((ref) {
-  final aiChatThread = ref.watch(curUserAiChatThreadProvider);
 
-  return aiChatThread.when(
-    error: (error, stack) => AsyncValue.error(error, stack),
-    loading: () => const AsyncValue.loading(),
-    data: (thread) {
-      if (thread == null) {
-        return AsyncValue.error(Exception('No thread found'), StackTrace.empty);
-      }
+// Disable for now .. pagination not working 
+// Should be simplified to be a single stream provider ... 
 
-      final aiChatMessages = ref.watch(_aiChatMessagesProvider(thread.id));
-      final notifier = ref.watch(_aiChatMessagesProvider(thread.id).notifier);
+// final curUserPaginatedAiChatMessagesProvider = Provider<
+//     AsyncValue<
+//         ({
+//           List<AiChatMessageModel> state,
+//           _AiChatMessagesNotifier notifier
+//         })>>((ref) {
+//   final aiChatThread = ref.watch(curUserAiChatThreadProvider);
 
-      return aiChatMessages.when(
-        error: (error, stack) => AsyncValue.error(error, stack),
-        loading: () => const AsyncValue.loading(),
-        data: (messages) => AsyncValue.data((
-          state: messages,
-          notifier: notifier,
-        )),
-      );
-    },
-  );
-});
+//   return aiChatThread.when(
+//     error: (error, stack) => AsyncValue.error(error, stack),
+//     loading: () => const AsyncValue.loading(),
+//     data: (thread) {
+//       if (thread == null) {
+//         return AsyncValue.error(Exception('No thread found'), StackTrace.empty);
+//       }
 
-final _aiChatMessagesProvider = StateNotifierProvider.family.autoDispose<
-    AiChatMessagesNotifier,
-    AsyncValue<List<AiChatMessageModel>>,
-    String>((ref, threadId) {
-  final repository = ref.watch(aiChatMessagesRepositoryProvider);
-  return AiChatMessagesNotifier(repository, threadId);
-});
+//       final aiChatMessages = ref.watch(_aiChatMessagesSNP(thread.id));
+//       final notifier = ref.watch(_aiChatMessagesSNP(thread.id).notifier);
 
-class AiChatMessagesNotifier
-    extends StateNotifier<AsyncValue<List<AiChatMessageModel>>> {
-  final String threadId;
+//       return aiChatMessages.when(
+//         error: (error, stack) => AsyncValue.error(error, stack),
+//         loading: () => const AsyncValue.loading(),
+//         data: (messages) => AsyncValue.data((
+//           state: messages,
+//           notifier: notifier,
+//         )),
+//       );
+//     },
+//   );
+// });
 
-  AiChatMessagesNotifier(this._repository, this.threadId)
-      : super(const AsyncValue.loading()) {
-    loadMessages();
-    _repository
-        .watchThreadMessages(threadId: threadId)
-        .skip(1)
-        .listen((newMessages) {
-      if (state case AsyncData(value: var currentMessages)) {
-        if (newMessages.first.id == currentMessages.first.id) {
-          return;
-        }
-        state = AsyncValue.data([newMessages.first, ...currentMessages]);
-        hasNewMessages = true;
-        log('refreshed with new messages');
-      }
-    });
-  }
+// final _aiChatMessagesSNP = StateNotifierProvider.family.autoDispose<
+//     _AiChatMessagesNotifier,
+//     AsyncValue<List<AiChatMessageModel>>,
+//     String>((ref, threadId) {
+//   final repository = ref.watch(aiChatMessagesRepositoryProvider);
+//   return _AiChatMessagesNotifier(repository, threadId);
+// });
 
-  final AiChatMessagesRepository _repository;
-  final int pageSize = AiChatMessagesRepository.defaultPageSize;
-  int _currentPage = 1;
-  bool _hasMore = true;
-  bool hasNewMessages = false;
+// class _AiChatMessagesNotifier
+//     extends StateNotifier<AsyncValue<List<AiChatMessageModel>>> {
+//   final String threadId;
 
-  Future<void> loadMessages() async {
-    try {
-      final messages = await _repository.getThreadMessages(
-        threadId: threadId,
-        limit: pageSize,
-        offset: (_currentPage - 1) * pageSize,
-      );
+//   _AiChatMessagesNotifier(this._repository, this.threadId)
+//       : super(const AsyncValue.loading()) {
+//     loadMessages();
+//     _repository
+//         .watchThreadMessages(threadId: threadId)
+//         .skip(1)
+//         .listen((newMessages) {
+//       if (state case AsyncData(value: var currentMessages)) {
+//         if (newMessages.first.id == currentMessages.first.id) {
+//           return;
+//         }
+//         state = AsyncValue.data([newMessages.first, ...currentMessages]);
+//         hasNewMessages = true;
+//         log('refreshed with new messages');
+//       }
+//     });
+//   }
 
-      if (messages.length < pageSize) {
-        _hasMore = false;
-      }
+//   final AiChatMessagesRepository _repository;
+//   final int pageSize = AiChatMessagesRepository.defaultPageSize;
+//   int _currentPage = 1;
+//   bool _hasMore = true;
+//   bool hasNewMessages = false;
 
-      if (_currentPage == 1) {
-        state = AsyncValue.data(messages);
-      } else {
-        final currentMessages = state.value ?? [];
-        state = AsyncValue.data([...currentMessages, ...messages]);
-      }
-    } catch (error, stack) {
-      state = AsyncValue.error(error, stack);
-    }
-  }
+//   Future<void> loadMessages() async {
+//     try {
+//       final messages = await _repository.getThreadMessages(
+//         threadId: threadId,
+//         limit: pageSize,
+//         offset: (_currentPage - 1) * pageSize,
+//       );
 
-  Future<void> loadMore() async {
-    if (!_hasMore || state.isLoading) return;
-    _currentPage++;
-    await loadMessages();
-    log('loaded more messages');
-  }
+//       if (messages.length < pageSize) {
+//         _hasMore = false;
+//       }
 
-  bool get hasMore => _hasMore;
-}
+//       if (_currentPage == 1) {
+//         state = AsyncValue.data(messages);
+//       } else {
+//         final currentMessages = state.value ?? [];
+//         state = AsyncValue.data([...currentMessages, ...messages]);
+//       }
+//     } catch (error, stack) {
+//       state = AsyncValue.error(error, stack);
+//     }
+//   }
+
+//   Future<void> loadMore() async {
+//     if (!_hasMore || state.isLoading) return;
+//     _currentPage++;
+//     await loadMessages();
+//     log('loaded more messages');
+//   }
+
+//   bool get hasMore => _hasMore;
+// }

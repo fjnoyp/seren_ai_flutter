@@ -87,7 +87,7 @@ class ChatThreadDisplay extends ConsumerWidget {
                 const Expanded(
                     child: Hero(
                   tag: 'ai-chat-messages-display',
-                  child: PaginatedChatMessagesDisplay(),
+                  child: ChatMessagesDisplay(),
                 )),
               ]),
       ),
@@ -171,7 +171,7 @@ class ChatMessagesDisplay extends HookConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final chatMessages = ref.watch(curUserAiChatMessagesProvider);
+    final chatMessages = ref.watch(curUserAiChatMessagesStreamProvider);
     return AsyncValueHandlerWidget(
       value: chatMessages,
       data: (chatMessages) => chatMessages.isEmpty
@@ -190,92 +190,93 @@ class ChatMessagesDisplay extends HookConsumerWidget {
   }
 }
 
-class PaginatedChatMessagesDisplay extends HookConsumerWidget {
-  const PaginatedChatMessagesDisplay({super.key});
+// TODO p4: fix pagination, must fix the provider first 
+// class PaginatedChatMessagesDisplay extends HookConsumerWidget {
+//   const PaginatedChatMessagesDisplay({super.key});
 
-  @override
-  Widget build(BuildContext context, WidgetRef ref) {
-    final scrollController = useScrollController();
-    final messagesProviderValue =
-        ref.watch(curUserPaginatedAiChatMessagesProvider);
+//   @override
+//   Widget build(BuildContext context, WidgetRef ref) {
+//     final scrollController = useScrollController();
+//     final messagesProviderValue =
+//         ref.watch(curUserPaginatedAiChatMessagesProvider);
 
-    useEffect(() {
-      void onScroll() {
-        final providerData = messagesProviderValue.valueOrNull;
-        if (providerData == null) return;
+//     useEffect(() {
+//       void onScroll() {
+//         final providerData = messagesProviderValue.valueOrNull;
+//         if (providerData == null) return;
 
-        if (scrollController.position.pixels >=
-            scrollController.position.maxScrollExtent * 0.8) {
-          providerData.notifier.loadMore();
-        }
+//         if (scrollController.position.pixels >=
+//             scrollController.position.maxScrollExtent * 0.8) {
+//           providerData.notifier.loadMore();
+//         }
 
-        if (scrollController.position.pixels == 0) {
-          messagesProviderValue.valueOrNull?.notifier.hasNewMessages = false;
-        }
-      }
+//         if (scrollController.position.pixels == 0) {
+//           messagesProviderValue.valueOrNull?.notifier.hasNewMessages = false;
+//         }
+//       }
 
-      scrollController.addListener(onScroll);
-      return () => scrollController.removeListener(onScroll);
-    }, [scrollController, messagesProviderValue]);
+//       scrollController.addListener(onScroll);
+//       return () => scrollController.removeListener(onScroll);
+//     }, [scrollController, messagesProviderValue]);
 
-    return messagesProviderValue.when(
-      loading: () => const Center(child: CircularProgressIndicator()),
-      error: (error, stack) => Center(
-          child: Text(AppLocalizations.of(context)!.error(error.toString()))),
-      data: (providerData) {
-        final messages = providerData.state;
-        final isAiResponding = ref.watch(isAiRespondingProvider);
+//     return messagesProviderValue.when(
+//       loading: () => const Center(child: CircularProgressIndicator()),
+//       error: (error, stack) => Center(
+//           child: Text(AppLocalizations.of(context)!.error(error.toString()))),
+//       data: (providerData) {
+//         final messages = providerData.state;
+//         final isAiResponding = ref.watch(isAiRespondingProvider);
 
-        return messages.isEmpty
-            ? Text(AppLocalizations.of(context)!.noMessagesAvailable)
-            : Stack(
-                children: [
-                  ListView.builder(
-                    reverse: true,
-                    controller: scrollController,
-                    itemCount: messages.length +
-                        (providerData.notifier.hasMore ? 1 : 0) +
-                        (isAiResponding ? 1 : 0),
-                    itemBuilder: (context, index) {
-                      if (index == messages.length &&
-                          providerData.notifier.hasMore) {
-                        return const Center(child: CircularProgressIndicator());
-                      }
-                      if (index == 0 && isAiResponding) {
-                        return const AiIsRespondingIndicator();
-                      }
-                      final message =
-                          messages[isAiResponding ? index - 1 : index];
-                      return KeyedSubtree(
-                        key: ValueKey(message.id),
-                        child: AiChatMessageViewCard(message: message),
-                      );
-                    },
-                  ),
-                  AnimatedBuilder(
-                    animation: scrollController,
-                    builder: (context, child) {
-                      return scrollController.hasClients &&
-                              scrollController.position.pixels > 100
-                          ? Positioned(
-                              bottom: 20,
-                              right: 20,
-                              child: messagesProviderValue.valueOrNull?.notifier
-                                          .hasNewMessages ??
-                                      false
-                                  ? Badge(smallSize: 12, child: child)
-                                  : child!,
-                            )
-                          : const SizedBox.shrink();
-                    },
-                    child: IconButton.filled(
-                      icon: const Icon(Icons.arrow_downward),
-                      onPressed: () => scrollController.jumpTo(0),
-                    ),
-                  ),
-                ],
-              );
-      },
-    );
-  }
-}
+//         return messages.isEmpty
+//             ? Text(AppLocalizations.of(context)!.noMessagesAvailable)
+//             : Stack(
+//                 children: [
+//                   ListView.builder(
+//                     reverse: true,
+//                     controller: scrollController,
+//                     itemCount: messages.length +
+//                         (providerData.notifier.hasMore ? 1 : 0) +
+//                         (isAiResponding ? 1 : 0),
+//                     itemBuilder: (context, index) {
+//                       if (index == messages.length &&
+//                           providerData.notifier.hasMore) {
+//                         return const Center(child: CircularProgressIndicator());
+//                       }
+//                       if (index == 0 && isAiResponding) {
+//                         return const AiIsRespondingIndicator();
+//                       }
+//                       final message =
+//                           messages[isAiResponding ? index - 1 : index];
+//                       return KeyedSubtree(
+//                         key: ValueKey(message.id),
+//                         child: AiChatMessageViewCard(message: message),
+//                       );
+//                     },
+//                   ),
+//                   AnimatedBuilder(
+//                     animation: scrollController,
+//                     builder: (context, child) {
+//                       return scrollController.hasClients &&
+//                               scrollController.position.pixels > 100
+//                           ? Positioned(
+//                               bottom: 20,
+//                               right: 20,
+//                               child: messagesProviderValue.valueOrNull?.notifier
+//                                           .hasNewMessages ??
+//                                       false
+//                                   ? Badge(smallSize: 12, child: child)
+//                                   : child!,
+//                             )
+//                           : const SizedBox.shrink();
+//                     },
+//                     child: IconButton.filled(
+//                       icon: const Icon(Icons.arrow_downward),
+//                       onPressed: () => scrollController.jumpTo(0),
+//                     ),
+//                   ),
+//                 ],
+//               );
+//       },
+//     );
+//   }
+// }
