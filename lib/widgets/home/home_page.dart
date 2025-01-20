@@ -15,44 +15,50 @@ class HomePage extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     return Padding(
       padding: const EdgeInsets.all(16.0),
-      child: SingleChildScrollView(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.start,
-          children: [
-            Align(
-              alignment: Alignment.centerLeft,
-              child: Padding(
-                padding: const EdgeInsets.all(30.0),
-                // Should we use this widget here, since an unauthenticated user will never see this page?
-                child: AsyncValueHandlerWidget(
-                  value: ref.watch(curUserProvider),
-                  data: (user) => Text(
-                    // We decided to use a time greeting to avoid genre issues when using protuguese.
-                    // i.e. Welcome = Bem-vindo (male) / Bem-vinda (female)
-                    AppLocalizations.of(context)!.timeGreeting(
-                      _getTimePeriod(DateTime.now().hour),
-                      user!.firstName,
-                    ),
-                    style: Theme.of(context).textTheme.headlineMedium,
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.start,
+        children: [
+          Align(
+            alignment: Alignment.centerLeft,
+            child: Padding(
+              padding: const EdgeInsets.all(30.0),
+              // Should we use this widget here, since an unauthenticated user will never see this page?
+              child: AsyncValueHandlerWidget(
+                value: ref.watch(curUserProvider),
+                data: (user) => Text(
+                  // We decided to use a time greeting to avoid genre issues when using protuguese.
+                  // i.e. Welcome = Bem-vindo (male) / Bem-vinda (female)
+                  AppLocalizations.of(context)!.timeGreeting(
+                    _getTimePeriod(DateTime.now().hour),
+                    user!.firstName,
                   ),
+                  style: Theme.of(context).textTheme.headlineMedium,
                 ),
               ),
             ),
-            GridView.count(
-              shrinkWrap: true,
-              physics: const NeverScrollableScrollPhysics(),
-              crossAxisCount: 2,
-              crossAxisSpacing: 8.0,
-              mainAxisSpacing: 8.0,
-              children: const [
-                TaskHomeCard(),
-                NoteHomeCard(),
-                ShiftCard(),
-                ClockInOutHomeCard(),
-              ],
+          ),
+          Expanded(
+            child: LayoutBuilder(
+              builder: (context, constraints) {
+                return GridView.count(
+                  shrinkWrap: true,
+                  physics: const NeverScrollableScrollPhysics(),
+                  crossAxisCount: 2,
+                  crossAxisSpacing: 8.0,
+                  mainAxisSpacing: 8.0,
+                  childAspectRatio:
+                      constraints.maxWidth / (constraints.maxHeight / 2),
+                  children: const [
+                    TaskHomeCard(),
+                    NoteHomeCard(),
+                    ShiftCard(),
+                    ClockInOutHomeCard(),
+                  ],
+                );
+              },
             ),
-          ],
-        ),
+          ),
+        ],
       ),
     );
   }
