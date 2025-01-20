@@ -45,6 +45,7 @@ class AnimatedModalSelectionField<T> extends HookConsumerWidget {
             data: IconThemeData(color: colorAnimation.colorTween.value),
             child: isWebVersion
                 ? MenuAnchor(
+                    alignmentOffset: const Offset(40, 0),
                     builder: (context, controller, child) => SelectionField<T>(
                       labelWidget: labelWidget,
                       validator: validator,
@@ -335,6 +336,7 @@ class AnimatedModalMinuteSelectionField extends HookConsumerWidget {
 
     return isWebVersion
         ? MenuAnchor(
+            alignmentOffset: const Offset(40, 0),
             builder: (context, controller, child) => SelectionField<int>(
               labelWidget: labelWidget,
               validator: validator,

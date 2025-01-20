@@ -125,6 +125,15 @@ class TasksRepository extends BaseRepository<TaskModel> {
       'due_date',
       dueDate?.toIso8601String(),
     );
+    // TODO p4: move this logic to backend
+    // never used, since we currently don't have a way to set due date to null
+    if (dueDate == null) {
+      await updateField(
+        taskId,
+        'reminder_offset_minutes',
+        null,
+      );
+    }
   }
 
   Future<void> updateTaskParentProjectId(
