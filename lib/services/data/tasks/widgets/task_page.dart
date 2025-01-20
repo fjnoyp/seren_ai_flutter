@@ -164,7 +164,7 @@ Future<void> openTaskPage(
   BuildContext context,
   WidgetRef ref, {
   required EditablePageMode mode,
-  TaskModel? initialTask,
+  String? initialTaskId,
 }) async {
   if (mode == EditablePageMode.create) {
     return await openNewTaskPage(context, ref);
@@ -177,10 +177,10 @@ Future<void> openTaskPage(
 
   // load provided initial task id
   // initialTask can be null if we are opening an existing task page for edit
-  if (initialTask != null) {
+  if (initialTaskId != null) {
     ref
         .read(curSelectedTaskIdNotifierProvider.notifier)
-        .setTaskId(initialTask.id);
+        .setTaskId(initialTaskId);
   }
 
   final curTaskId = ref.watch(curSelectedTaskIdNotifierProvider)!;
@@ -195,11 +195,13 @@ Future<void> openTaskPage(
     EditablePageMode.edit => AppLocalizations.of(context)!.updateTask,
     // if mode is readOnly, we assume initialTask is provided
     // or at least the task state is loaded
-    EditablePageMode.readOnly => initialTask?.name ??
-        await ref
-            .read(tasksRepositoryProvider)
-            .getById(curTaskId)
-            .then((task) => task?.name),
+    EditablePageMode.readOnly => initialTaskId != null
+        ? await ref
+                .read(tasksRepositoryProvider)
+                .getById(curTaskId)
+                .then((task) => task?.name) ??
+            ''
+        : '',
     // we don't handle create mode here because it is handled in openNewTaskPage
     // which is called in the beginning of this method
     _ => '',

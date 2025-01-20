@@ -1,5 +1,3 @@
-//import 'dart:io';
-
 import 'package:cross_file/cross_file.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/foundation.dart';
@@ -214,7 +212,7 @@ class _AttachmentPreviewButton extends ConsumerWidget {
                 : showDialog(
                     context: context,
                     builder: (context) =>
-                  _AttachmentPreview(attachmentUrl, noteId: noteId),
+                        _AttachmentPreview(attachmentUrl, noteId: noteId),
                   ),
             // TODO p3: conditionally change the icon based on its file extension
             icon: const Icon(Icons.attach_file),

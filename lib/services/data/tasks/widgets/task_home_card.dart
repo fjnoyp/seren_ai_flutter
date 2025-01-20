@@ -81,7 +81,7 @@ class _TaskCardItem extends ConsumerWidget {
     return GestureDetector(
       onTap: () async {
         await openTaskPage(context, ref,
-            mode: EditablePageMode.readOnly, initialTask: task);
+            mode: EditablePageMode.readOnly, initialTaskId: task.id);
       },
       child: BaseHomeInnerCard.outlined(
         child: SizedBox(
