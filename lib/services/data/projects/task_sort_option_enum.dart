@@ -23,7 +23,7 @@ enum TaskSortOption {
             (a.priority?.toInt() ?? double.maxFinite)
                 .compareTo(b.priority?.toInt() ?? double.maxFinite),
         TaskSortOption.dueDate => (a, b) =>
-            a.dueDate!.compareTo(b.dueDate!),
+            (a.dueDate?.compareTo(b.dueDate ?? DateTime.now()) ?? 0),
         TaskSortOption.createdAt => (a, b) =>
             a.createdAt!.compareTo(b.createdAt!),
       };

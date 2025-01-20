@@ -30,6 +30,7 @@ enum TaskFilterOption {
       getSubOptions(BuildContext context, WidgetRef ref) {
     switch (this) {
       case TaskFilterOption.assignees:
+        // TODO p3: add "not assigned" option
         return ref
                 .watch(usersInProjectProvider(
                     ref.watch(curSelectedProjectStreamProvider).value!.id))
@@ -43,7 +44,9 @@ enum TaskFilterOption {
                                     assignedUsersInTaskStreamProvider(task.id))
                                 .valueOrNull ??
                             [];
-                        return assignees.any((assignee) => assignee.id == e.id);
+                        // TODO p5: check why this is returning different ids for the same user
+                        return assignees
+                            .any((assignee) => assignee.email == e.email);
                       }
                     ))
                 .toList() ??
