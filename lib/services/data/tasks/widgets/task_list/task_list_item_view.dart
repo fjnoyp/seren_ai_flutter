@@ -27,7 +27,7 @@ class TaskListItemView extends ConsumerWidget {
     return GestureDetector(
       onTap: () async {
         await openTaskPage(context, ref,
-            mode: EditablePageMode.readOnly, initialTask: task);
+            mode: EditablePageMode.readOnly, initialTaskId: task.id);
       },
       child: Card(
         color: theme.cardColor,
@@ -138,7 +138,7 @@ class TaskListTileItemView extends ConsumerWidget {
     return ListTile(
       dense: true,
       onTap: () => openTaskPage(context, ref,
-          mode: EditablePageMode.readOnly, initialTask: task),
+          mode: EditablePageMode.readOnly, initialTaskId: task.id),
       leading: const SizedBox.shrink(),
       title: Text(task.name),
       trailing: Row(

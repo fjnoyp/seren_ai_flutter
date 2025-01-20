@@ -13,7 +13,12 @@ class EditTaskButton extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     return IconButton(
       icon: const Icon(Icons.edit),
-      onPressed: () => openTaskPage(context, ref, mode: EditablePageMode.edit),
+      onPressed: () => openTaskPage(
+        context,
+        ref,
+        mode: EditablePageMode.edit,
+        initialTaskId: taskId,
+      ),
     );
   }
 }

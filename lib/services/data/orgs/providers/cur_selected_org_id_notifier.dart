@@ -35,4 +35,20 @@ class CurSelectedOrgIdNotifier extends Notifier<String?> {
     await prefs.remove(orgIdKey);
     ref.invalidateSelf();
   }
+
+  // currently not used
+  Future<void> createNewOrg() async {
+    try {
+      final newOrg = OrgModel(
+        name: 'New Org',
+        address: '',
+      );
+
+      await ref.read(orgsRepositoryProvider).upsertItem(newOrg);
+
+      setDesiredOrgId(newOrg.id);
+    } catch (_, __) {
+      throw Exception('Failed to create new org');
+    }
+  }
 }

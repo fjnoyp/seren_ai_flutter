@@ -68,7 +68,7 @@ class _NoteCardItem extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     return GestureDetector(
       onTap: () => openNotePage(context, ref,
-          mode: EditablePageMode.readOnly, noteId: note.id),
+          mode: EditablePageMode.readOnly, initialNoteId: note.id),
       child: BaseHomeInnerCard.outlined(
         child: SizedBox(
           width: double.infinity,
