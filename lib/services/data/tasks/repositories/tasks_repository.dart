@@ -81,6 +81,20 @@ class TasksRepository extends BaseRepository<TaskModel> {
     );
   }
 
+  Stream<List<TaskModel>> watchTasksByProject({required String projectId}) {
+    return watch(
+      TaskQueries.getTasksByProjectIdQuery,
+      {'project_id': projectId},
+    );
+  }
+
+  Future<List<TaskModel>> getTasksByProject({required String projectId}) async {
+    return get(
+      TaskQueries.getTasksByProjectIdQuery,
+      {'project_id': projectId},
+    );
+  }
+
   Future<void> updateTaskName(String taskId, String? name) async {
     if (name == null) return;
 
@@ -157,6 +171,50 @@ class TasksRepository extends BaseRepository<TaskModel> {
       taskId,
       'reminder_offset_minutes',
       reminderOffsetMinutes,
+    );
+  }
+
+  Future<void> updateTaskEstimatedDurationMinutes(
+    String taskId,
+    int? estimatedDurationMinutes,
+  ) async {
+    await updateField(
+      taskId,
+      'estimated_duration_minutes',
+      estimatedDurationMinutes,
+    );
+  }
+
+  Future<void> updateTaskStartDateTime(
+    String taskId,
+    DateTime? startDateTime,
+  ) async {
+    await updateField(
+      taskId,
+      'start_date_time',
+      startDateTime?.toIso8601String(),
+    );
+  }
+
+  Future<void> updateTaskParentTaskId(
+    String taskId,
+    String? parentTaskId,
+  ) async {
+    await updateField(
+      taskId,
+      'parent_task_id',
+      parentTaskId,
+    );
+  }
+
+  Future<void> updateTaskBlockedByTaskId(
+    String taskId,
+    String? blockedByTaskId,
+  ) async {
+    await updateField(
+      taskId,
+      'blocked_by_task_id',
+      blockedByTaskId,
     );
   }
 }

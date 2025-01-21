@@ -1,8 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:seren_ai_flutter/services/data/common/widgets/form/base_assignees_selection_field.dart';
 import 'package:seren_ai_flutter/services/data/common/widgets/form/base_minute_selection_field.dart';
+import 'package:seren_ai_flutter/services/data/common/widgets/form/base_task_selection_field.dart';
 import 'package:seren_ai_flutter/services/data/common/widgets/form/base_text_block_edit_selection_field.dart';
-import 'package:seren_ai_flutter/services/data/common/widgets/form/base_due_date_selection_field.dart';
+import 'package:seren_ai_flutter/services/data/common/widgets/form/base_date_time_selection_fields.dart';
 import 'package:seren_ai_flutter/services/data/common/widgets/form/base_priority_selection_field.dart';
 import 'package:seren_ai_flutter/services/data/common/widgets/form/base_project_selection_field.dart';
 import 'package:seren_ai_flutter/services/data/common/widgets/form/base_status_selection_field.dart';
@@ -11,6 +12,7 @@ import 'package:seren_ai_flutter/services/data/projects/providers/cur_user_viewa
 import 'package:seren_ai_flutter/services/data/tasks/providers/task_assignments_service_provider.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:seren_ai_flutter/services/data/tasks/providers/task_by_id_stream_provider.dart';
+import 'package:seren_ai_flutter/services/data/tasks/providers/tasks_by_project_stream_provider.dart';
 import 'package:seren_ai_flutter/services/data/tasks/repositories/tasks_repository.dart';
 import 'package:seren_ai_flutter/services/data/users/providers/assigned_users_in_task_stream_provider.dart';
 
@@ -102,10 +104,11 @@ class ReminderMinuteOffsetFromDueDateSelectionField
     super.key,
     required super.enabled,
     required this.taskId,
+    required BuildContext context,
   }) : super(
-          reminderProvider: taskByIdStreamProvider(taskId)
+          durationProvider: taskByIdStreamProvider(taskId)
               .select((task) => task.value?.reminderOffsetMinutes),
-          updateReminder: (ref, reminder) => ref
+          updateDuration: (ref, reminder) => ref
               .read(tasksRepositoryProvider)
               .updateTaskReminderOffsetMinutes(taskId, reminder),
           labelWidgetBuilder: (ref) => ref
@@ -115,6 +118,8 @@ class ReminderMinuteOffsetFromDueDateSelectionField
                   null
               ? const Icon(Icons.notifications_off)
               : const Icon(Icons.notifications),
+          nullValueString: AppLocalizations.of(context)!.noReminderSet,
+          nullOptionString: AppLocalizations.of(context)!.noReminder,
         );
 }
 
@@ -151,5 +156,82 @@ class TaskAssigneesSelectionField extends BaseAssigneesSelectionField {
           updateAssignees: (ref, assignees) => ref
               .read(taskAssignmentsServiceProvider)
               .updateAssignees(taskId: taskId, assignees: assignees ?? []),
+        );
+}
+
+class TaskEstimatedDurationSelectionField extends BaseMinuteSelectionField {
+  final String taskId;
+
+  TaskEstimatedDurationSelectionField({
+    super.key,
+    required super.enabled,
+    required this.taskId,
+    required BuildContext context,
+  }) : super(
+          durationProvider: taskByIdStreamProvider(taskId)
+              .select((task) => task.value?.estimatedDurationMinutes),
+          updateDuration: (ref, duration) => ref
+              .read(tasksRepositoryProvider)
+              .updateTaskEstimatedDurationMinutes(taskId, duration),
+          labelWidgetBuilder: (ref) => const Icon(Icons.timer_outlined),
+          nullValueString: AppLocalizations.of(context)!.noEstimatedDurationSet,
+          nullOptionString: AppLocalizations.of(context)!.noEstimatedDuration,
+        );
+}
+
+class TaskStartDateSelectionField extends BaseStartDateSelectionField {
+  final String taskId;
+
+  TaskStartDateSelectionField({
+    super.key,
+    required super.enabled,
+    required this.taskId,
+  }) : super(
+          startDateTimeProvider: taskByIdStreamProvider(taskId)
+              .select((task) => task.value?.startDateTime),
+          updateStartDate: (ref, pickedDateTime) => ref
+              .read(tasksRepositoryProvider)
+              .updateTaskStartDateTime(taskId, pickedDateTime),
+        );
+}
+
+class TaskParentTaskSelectionField extends BaseTaskSelectionField {
+  final String taskId;
+  final String projectId;
+  TaskParentTaskSelectionField({
+    super.key,
+    required super.isEditable,
+    required this.taskId,
+    required this.projectId,
+    required BuildContext context,
+  }) : super(
+          taskIdProvider: taskByIdStreamProvider(taskId)
+              .select((task) => task.value?.parentTaskId),
+          selectableTasksProvider: tasksByProjectStreamProvider(projectId),
+          updateTask: (ref, task) => ref
+              .read(tasksRepositoryProvider)
+              .updateTaskParentTaskId(taskId, task!.id),
+          label: AppLocalizations.of(context)!.parentTask,
+        );
+}
+
+class TaskBlockedByTaskSelectionField extends BaseTaskSelectionField {
+  final String taskId;
+  final String projectId;
+
+  TaskBlockedByTaskSelectionField({
+    super.key,
+    required super.isEditable,
+    required this.taskId,
+    required this.projectId,
+    required BuildContext context,
+  }) : super(
+          taskIdProvider: taskByIdStreamProvider(taskId)
+              .select((task) => task.value?.blockedByTaskId),
+          selectableTasksProvider: tasksByProjectStreamProvider(projectId),
+          updateTask: (ref, task) => ref
+              .read(tasksRepositoryProvider)
+              .updateTaskBlockedByTaskId(taskId, task!.id),
+          label: AppLocalizations.of(context)!.blockedByTask,
         );
 }
