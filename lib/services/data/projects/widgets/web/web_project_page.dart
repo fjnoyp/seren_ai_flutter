@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:seren_ai_flutter/services/data/common/status_enum.dart';
-import 'package:seren_ai_flutter/services/data/common/widgets/create_item_bottom_button.dart';
 import 'package:seren_ai_flutter/services/data/notes/widgets/note_page.dart';
 import 'package:seren_ai_flutter/services/data/notes/widgets/notes_list_page.dart';
 import 'package:seren_ai_flutter/services/data/projects/providers/cur_selected_project_providers.dart';
@@ -163,16 +162,15 @@ class _WebProjectNotesSection extends ConsumerWidget {
     final curProjectId = ref.watch(curSelectedProjectIdNotifierProvider);
     return Column(
       children: [
-        Expanded(child: NoteListByProjectId(curProjectId)),
-        CreateItemBottomButton(
-          onPressed: () {
-            openNewNotePage(
-              context,
-              ref,
-              parentProjectId: curProjectId,
-            );
-          },
-          buttonText: AppLocalizations.of(context)!.createNewNote,
+        NoteListByProjectId(curProjectId),
+        OutlinedButton.icon(
+          icon: const Icon(Icons.add),
+          label: Text(AppLocalizations.of(context)!.createNewNote),
+          onPressed: () async => await openNewNotePage(
+            context,
+            ref,
+            parentProjectId: curProjectId,
+          ),
         ),
       ],
     );
