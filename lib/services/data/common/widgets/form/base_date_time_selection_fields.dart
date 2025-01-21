@@ -4,40 +4,68 @@ import 'package:intl/intl.dart';
 import 'package:seren_ai_flutter/services/data/common/widgets/form/selection_field.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
-class BaseDueDateSelectionField extends ConsumerWidget {
-  final bool enabled;
-  final ProviderListenable<DateTime?> dueDateProvider;
-  final Function(WidgetRef, DateTime) updateDueDate;
+class BaseDueDateSelectionField extends _BaseDateTimeSelectionField {
+  BaseDueDateSelectionField({
+    super.key,
+    required super.enabled,
+    required ProviderListenable<DateTime?> dueDateProvider,
+    required Function(WidgetRef, DateTime) updateDueDate,
+  }) : super(
+          dateTimeProvider: dueDateProvider,
+          updateDateTime: updateDueDate,
+          label: ((context) => AppLocalizations.of(context)!.chooseDueDate),
+        );
+}
 
-  const BaseDueDateSelectionField({
+class BaseStartDateSelectionField extends _BaseDateTimeSelectionField {
+  BaseStartDateSelectionField({
+    super.key,
+    required super.enabled,
+    required ProviderListenable<DateTime?> startDateTimeProvider,
+    required Function(WidgetRef, DateTime) updateStartDate,
+  }) : super(
+          dateTimeProvider: startDateTimeProvider,
+          updateDateTime: updateStartDate,
+          label: ((context) => AppLocalizations.of(context)!.chooseStartDate),
+        );
+}
+
+class _BaseDateTimeSelectionField extends ConsumerWidget {
+  final bool enabled;
+  final ProviderListenable<DateTime?> dateTimeProvider;
+  final Function(WidgetRef, DateTime) updateDateTime;
+  final String Function(BuildContext) label;
+
+  const _BaseDateTimeSelectionField({
     super.key,
     required this.enabled,
-    required this.dueDateProvider,
-    required this.updateDueDate,
+    required this.dateTimeProvider,
+    required this.updateDateTime,
+    required this.label,
   });
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final dueDate = ref.watch(dueDateProvider);
+    final curDate = ref.watch(dateTimeProvider);
 
     return AnimatedSelectionField<DateTime>(
       labelWidget: const Icon(Icons.date_range),
       validator: _validator,
       valueToString: (date) => _valueToString(date, context: context),
       enabled: enabled,
-      value: dueDate?.toLocal(),
+      value: curDate?.toLocal(),
       onTap: (BuildContext context) async {
-        return _pickDueDate(context, initialDate: dueDate ?? DateTime.now())
+        return _pickDateTime(context, initialDate: curDate ?? DateTime.now())
             .then(
           (pickedDateTime) => pickedDateTime != null
-              ? updateDueDate(ref, pickedDateTime)
+              ? updateDateTime(ref, pickedDateTime)
               : null,
         );
       },
     );
   }
 
-  Future<DateTime?> _pickDueDate(
+  Future<DateTime?> _pickDateTime(
     BuildContext context, {
     required DateTime initialDate,
   }) async {
@@ -74,9 +102,7 @@ class BaseDueDateSelectionField extends ConsumerWidget {
   String _valueToString(DateTime? date, {required BuildContext context}) {
     final dayFormat =
         DateFormat.yMMMd(AppLocalizations.of(context)!.localeName).add_jm();
-    return date == null
-        ? AppLocalizations.of(context)!.chooseDueDate
-        : dayFormat.format(date);
+    return date == null ? label(context) : dayFormat.format(date);
   }
 
   String? _validator(DateTime? date) {
