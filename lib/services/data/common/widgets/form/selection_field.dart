@@ -295,6 +295,8 @@ class AnimatedModalMinuteSelectionField extends HookConsumerWidget {
     required this.value,
     required this.quickOptions,
     this.onValueChanged,
+    required this.nullValueString,
+    required this.nullOptionString,
   });
 
   final Widget labelWidget;
@@ -303,6 +305,8 @@ class AnimatedModalMinuteSelectionField extends HookConsumerWidget {
   final int? value;
   final List<int> quickOptions;
   final void Function(WidgetRef, int?)? onValueChanged;
+  final String nullValueString;
+  final String nullOptionString;
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -316,7 +320,7 @@ class AnimatedModalMinuteSelectionField extends HookConsumerWidget {
     final options = [
       (
         value: null,
-        label: AppLocalizations.of(context)!.noReminder,
+        label: nullOptionString,
         onPressed: () async => onValueChanged?.call(ref, null),
       ),
       ...quickOptions.map((e) => (
@@ -341,7 +345,7 @@ class AnimatedModalMinuteSelectionField extends HookConsumerWidget {
               labelWidget: labelWidget,
               validator: validator,
               valueToString: (value) => value == null
-                  ? AppLocalizations.of(context)!.noReminderSet
+                  ? nullValueString
                   : AppLocalizations.of(context)!
                       .minutes(value ~/ 60, value % 60),
               enabled: enabled,
@@ -376,7 +380,7 @@ class AnimatedModalMinuteSelectionField extends HookConsumerWidget {
                     labelWidget: labelWidget,
                     validator: validator,
                     valueToString: (value) => value == null
-                        ? AppLocalizations.of(context)!.noReminderSet
+                        ? nullValueString
                         : AppLocalizations.of(context)!
                             .minutes(value ~/ 60, value % 60),
                     enabled: enabled,
