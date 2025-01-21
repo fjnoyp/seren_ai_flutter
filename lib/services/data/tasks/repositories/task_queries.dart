@@ -60,4 +60,10 @@ abstract class TaskQueries {
   static const String getTaskUserAssignmentIdQuery = '''
     SELECT id FROM task_user_assignments WHERE task_id = :task_id AND user_id = :user_id;
   ''';
+
+  /// Params:
+  /// - project_id: String
+  static const String getTasksByProjectIdQuery = '''
+    SELECT * FROM tasks WHERE parent_project_id = :project_id;
+  ''';
 }
