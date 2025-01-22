@@ -10,6 +10,7 @@ import 'package:seren_ai_flutter/common/navigation_service_provider.dart';
 import 'package:seren_ai_flutter/common/routes/app_routes.dart';
 import 'package:seren_ai_flutter/common/universal_platform/universal_platform.dart';
 import 'package:seren_ai_flutter/services/auth/widgets/auth_guard.dart';
+import 'package:seren_ai_flutter/services/auth/widgets/reset_password/reset_password_page.dart';
 import 'package:seren_ai_flutter/services/auth/widgets/sign_in_up_page.dart';
 import 'package:seren_ai_flutter/services/auth/widgets/terms_and_conditions/terms_and_conditions_webview.dart';
 import 'package:seren_ai_flutter/services/data/ai_chats/widgets/ai_chats_page.dart';
@@ -40,21 +41,22 @@ import 'package:seren_ai_flutter/widgets/common/theme_data.dart';
 
 final log = Logger('App');
 
-class App extends StatefulWidget {
+class App extends ConsumerStatefulWidget {
   const App({super.key});
 
   @override
-  AppState createState() => AppState();
+  ConsumerState<App> createState() => AppState();
 }
 
-class AppState extends State<App> {
-  late final AppLinks _appLinks;
+class AppState extends ConsumerState<App> {
+  late final CurrentRouteObserver _routeObserver;
 
   @override
   void initState() {
     super.initState();
-    _appLinks = AppLinks();
-    _initDeepLinkListener();
+    _routeObserver =
+        CurrentRouteObserver(ref.read(currentRouteProvider.notifier));
+    _initDeepLinkListener(ref);
   }
 
   @override
@@ -83,9 +85,7 @@ class AppState extends State<App> {
           // Context-less navigation setup
           navigatorKey: ref.read(navigationServiceProvider).navigatorKey,
           // Watching current route setup
-          navigatorObservers: [
-            CurrentRouteObserver(ref.read(currentRouteProvider.notifier))
-          ],
+          navigatorObservers: [_routeObserver],
           routes: {
             AppRoutes.signInUp.name: (context) => Scaffold(
                 appBar: AppBar(
@@ -180,6 +180,15 @@ class AppState extends State<App> {
                   showAppBar: false,
                   showBottomBar: false,
                 ),
+            AppRoutes.resetPassword.name: (context) => Scaffold(
+                  appBar: AppBar(
+                    title: Text(AppLocalizations.of(context)!.resetPassword),
+                    centerTitle: true,
+                  ),
+                  body: ResetPasswordPage((ModalRoute.of(context)!
+                      .settings
+                      .arguments as Map<String, dynamic>)['accessToken']),
+                ),
           },
           // For dynamically generating routes based on settings param
           onGenerateRoute: (settings) {
@@ -215,25 +224,32 @@ class AppState extends State<App> {
     );
   }
 
-  void _initDeepLinkListener() async {
+  void _initDeepLinkListener(WidgetRef ref) async {
+    final appLinks = AppLinks();
+
     try {
-      final initialLink = await _appLinks.getInitialLink();
+      final initialLink = await appLinks.getInitialLink();
       if (initialLink != null) {
-        _handleDeepLink(initialLink);
+        _handleDeepLink(ref, initialLink);
       }
 
-      _appLinks.uriLinkStream.listen((uri) {
-        _handleDeepLink(uri);
+      appLinks.uriLinkStream.listen((uri) {
+        _handleDeepLink(ref, uri);
       });
     } on Exception catch (e) {
       log.severe('Failed to get initial link: $e');
     }
   }
 
-  void _handleDeepLink(Uri uri) {
+  void _handleDeepLink(WidgetRef ref, Uri uri) {
     // Handle the deep link here
     log.info('Received deep link: $uri');
 
+    if (uri.host == 'reset-password') {
+      ref.read(navigationServiceProvider).navigateTo(
+          AppRoutes.resetPassword.name,
+          arguments: {'accessToken': uri.queryParameters['code']});
+    }
     /*
     // Example: Navigate to a specific screen based on the link
     if (uri.path.startsWith('/test')) {
