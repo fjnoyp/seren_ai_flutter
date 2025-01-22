@@ -20,6 +20,7 @@ class SignInUpPage extends ConsumerWidget {
           child: SingleChildScrollView(
             // TODO p5: maybe add seren logo here on top instead of the app bar
             child: SupaEmailAuth(
+              resetPasswordRedirectTo: 'serenai://reset-password',
               onSignInComplete: (response) {
                 ref
                     .read(navigationServiceProvider)
@@ -91,6 +92,20 @@ class SignInUpPage extends ConsumerWidget {
                   ],
                 ),
               ],
+              localization: SupaEmailAuthLocalization(
+                enterEmail: AppLocalizations.of(context)!.enterEmail,
+                validEmailError: AppLocalizations.of(context)!.validEmailError,
+                enterPassword: AppLocalizations.of(context)!.enterPassword,
+                passwordLengthError: AppLocalizations.of(context)!.passwordLengthError,
+                signIn: AppLocalizations.of(context)!.signIn,
+                signUp : AppLocalizations.of(context)!.signUp,
+                forgotPassword : AppLocalizations.of(context)!.forgotPassword,
+                dontHaveAccount: AppLocalizations.of(context)!.dontHaveAccount,
+                haveAccount: AppLocalizations.of(context)!.haveAccount,
+                sendPasswordReset: AppLocalizations.of(context)!.sendPasswordReset,
+                passwordResetSent: AppLocalizations.of(context)!.passwordResetSent,
+                backToSignIn: AppLocalizations.of(context)!.backToSignIn,
+              ),
             ),
           ),
         ),
