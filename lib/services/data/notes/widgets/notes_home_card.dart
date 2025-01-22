@@ -33,19 +33,21 @@ class NoteHomeCard extends ConsumerWidget {
                     ...notes.take(2).map(
                           (note) => _NoteCardItem(note: note),
                         ),
-                    Flexible(
-                      fit: FlexFit.loose,
-                      child: BaseHomeInnerCard.filled(
-                        child: InkWell(
-                          onTap: () {
-                            ref
-                                .read(navigationServiceProvider)
-                                .navigateTo(AppRoutes.noteList.name);
-                          },
-                          child: Center(
+                    BaseHomeInnerCard.filled(
+                      child: InkWell(
+                        onTap: () {
+                          ref
+                              .read(navigationServiceProvider)
+                              .navigateTo(AppRoutes.noteList.name);
+                        },
+                        child: SizedBox(
+                          width: double.infinity,
+                          child: Padding(
+                            padding: const EdgeInsets.symmetric(vertical: 8.0),
                             child: Text(
                               AppLocalizations.of(context)!.seeAll,
                               style: Theme.of(context).textTheme.bodySmall,
+                              textAlign: TextAlign.center,
                             ),
                           ),
                         ),

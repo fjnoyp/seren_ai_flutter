@@ -45,19 +45,21 @@ class TaskHomeCard extends ConsumerWidget {
                         (task) => Flexible(
                             fit: FlexFit.loose,
                             child: _TaskCardItem(task: task))),
-                    Flexible(
-                      fit: FlexFit.loose,
-                      child: BaseHomeInnerCard.filled(
-                        child: InkWell(
-                          onTap: () {
-                            ref
-                                .read(navigationServiceProvider)
-                                .navigateTo(AppRoutes.tasks.name);
-                          },
-                          child: Center(
+                    BaseHomeInnerCard.filled(
+                      child: InkWell(
+                        onTap: () {
+                          ref
+                              .read(navigationServiceProvider)
+                              .navigateTo(AppRoutes.tasks.name);
+                        },
+                        child: SizedBox(
+                          width: double.infinity,
+                          child: Padding(
+                            padding: const EdgeInsets.symmetric(vertical: 8.0),
                             child: Text(
                               AppLocalizations.of(context)!.seeAll,
                               style: Theme.of(context).textTheme.bodySmall,
+                              textAlign: TextAlign.center,
                             ),
                           ),
                         ),
