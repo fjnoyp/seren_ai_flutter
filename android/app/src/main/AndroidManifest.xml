@@ -28,9 +28,9 @@
     <!-- END wechat asset picker permissions -->
 
     <application
-        android:label="seren_ai_flutter"
+        android:label="Seren.ai"
         android:name="${applicationName}"
-        android:icon="@mipmap/ic_launcher">
+        android:icon="@mipmap/launcher_icon">
         <activity
             android:name=".MainActivity"
             android:exported="true"
