@@ -18,20 +18,24 @@ class AiQuickActionWidget extends ConsumerWidget {
         if (isWebVersion) {
           ref.read(isAiModalVisibleProvider.notifier).state = true;
           final textController = ref.read(aiChatTextEditingControllerProvider);
-          // textController.text = action.userInputHint;
 
-          // if (action.userInputHint.contains('[')) {
-          //   final startSelection = action.userInputHint.indexOf('[');
-          //   final endSelection = action.userInputHint.indexOf(']') + 1;
+          if (action.userInputHint.contains('[') &&
+              action.userInputHint.contains(']')) {
+            final startSelection = action.userInputHint.indexOf('[');
+            final endSelection = action.userInputHint.indexOf(']') - 1; // -1 to handle brackets removal
+            textController.text =
+                action.userInputHint.replaceAll('[', '').replaceAll(']', '');
 
-          //   textController.selection = TextSelection(
-          //     baseOffset: startSelection,
-          //     extentOffset: endSelection,
-          //   );
-          // }
-
-          ref.read(aiChatServiceProvider).sendMessageToAi(action.userInputHint);
-          textController.clear();
+            textController.selection = TextSelection(
+              baseOffset: startSelection,
+              extentOffset: endSelection,
+            );
+          } else {
+            ref
+                .read(aiChatServiceProvider)
+                .sendMessageToAi(action.userInputHint);
+            textController.clear();
+          }
         }
       },
       icon: const Icon(Icons.lightbulb_outline),

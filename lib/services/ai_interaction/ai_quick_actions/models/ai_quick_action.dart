@@ -9,7 +9,9 @@ class AiQuickAction {
 
   /// The user input hint for the quick action.
   ///
-  /// You can include placeholders in the hint using square brackets.
+  /// You can include placeholders in the hint using square brackets
+  /// to allow the user to fill in the missing information before sending the message.
+  /// Use at most 1 placeholder per hint.
   final String userInputHint;
 
   /// The follow-up questions for the quick action.
@@ -40,9 +42,9 @@ class AiQuickAction {
         userInputHint: AppLocalizations.of(context)!.findTasksHint,
       );
 
-  factory AiQuickAction.updateTasks(BuildContext context) => AiQuickAction(
-        description: AppLocalizations.of(context)!.updateTasks,
-        userInputHint: AppLocalizations.of(context)!.updateTasksHint,
+  factory AiQuickAction.updateTask(BuildContext context) => AiQuickAction(
+        description: AppLocalizations.of(context)!.updateTask,
+        userInputHint: AppLocalizations.of(context)!.updateTaskHint,
       );
 
   factory AiQuickAction.checkOverdueTasks(BuildContext context) =>

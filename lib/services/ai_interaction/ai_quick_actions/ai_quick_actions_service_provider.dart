@@ -43,7 +43,6 @@ class AiQuickActionsService extends Notifier<List<AiQuickAction>> {
           state = [
             AiQuickAction.createTask(context),
             AiQuickAction.findTasks(context),
-            AiQuickAction.updateTasks(context),
             // AiQuickAction.createProject(context),
           ];
           break;
@@ -59,7 +58,9 @@ class AiQuickActionsService extends Notifier<List<AiQuickAction>> {
           ];
           break;
         case AppRoutes.taskPage:
-          // TODO: Add quick actions for task page
+          state = [
+            AiQuickAction.updateTask(context),
+          ];
           break;
         case AppRoutes.shifts:
           // TODO: Add quick actions for shifts page
