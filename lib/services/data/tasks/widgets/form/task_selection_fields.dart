@@ -155,7 +155,9 @@ class TaskAssigneesSelectionField extends BaseAssigneesSelectionField {
               .select((task) => task.value?.parentProjectId),
           updateAssignees: (ref, assignees) => ref
               .read(taskAssignmentsServiceProvider)
-              .updateAssignees(taskId: taskId, assignees: assignees ?? []),
+              .updateAssignees(
+                  taskId: taskId,
+                  assigneeIds: assignees?.map((e) => e.id).toList() ?? []),
         );
 }
 

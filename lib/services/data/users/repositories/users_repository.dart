@@ -3,6 +3,7 @@ import 'package:seren_ai_flutter/services/data/db_setup/db_provider.dart';
 import 'package:seren_ai_flutter/services/data/users/models/user_model.dart';
 import 'package:seren_ai_flutter/services/data/common/base_repository.dart';
 import 'package:seren_ai_flutter/services/data/users/repositories/user_queries.dart';
+import 'package:supabase_flutter/supabase_flutter.dart';
 
 final usersRepositoryProvider = Provider<UsersRepository>((ref) {
   return UsersRepository(ref.watch(dbProvider));
@@ -86,6 +87,49 @@ class UsersRepository extends BaseRepository<UserModel> {
       {
         'project_id': projectId,
       },
+    );
+  }
+
+  Future<List<SearchUserResult>> searchUsersByName({
+    required String searchQuery,
+    required String orgId,
+  }) async {
+    final response = await Supabase.instance.client.rpc(
+      'search_users_by_name',
+      params: {
+        'search_query': searchQuery,
+        'search_org_id': orgId,
+      },
+    ) as List<dynamic>;
+
+    return response
+        .map((json) => SearchUserResult.fromJson(json as Map<String, dynamic>))
+        .toList();
+  }
+}
+
+class SearchUserResult {
+  final String id;
+  final String email;
+  final String firstName;
+  final String lastName;
+  final double similarityScore;
+
+  SearchUserResult({
+    required this.id,
+    required this.email,
+    required this.firstName,
+    required this.lastName,
+    required this.similarityScore,
+  });
+
+  factory SearchUserResult.fromJson(Map<String, dynamic> json) {
+    return SearchUserResult(
+      id: json['id'],
+      email: json['email'],
+      firstName: json['first_name'],
+      lastName: json['last_name'],
+      similarityScore: json['similarity_score'],
     );
   }
 }

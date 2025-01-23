@@ -11,6 +11,7 @@ import 'package:seren_ai_flutter/services/data/projects/widgets/project_page.dar
 import 'package:seren_ai_flutter/services/data/tasks/models/task_model.dart';
 import 'package:seren_ai_flutter/services/data/tasks/providers/cur_selected_task_id_notifier_provider.dart';
 import 'package:seren_ai_flutter/services/data/tasks/providers/task_by_id_stream_provider.dart';
+import 'package:seren_ai_flutter/services/data/tasks/providers/task_navigation_service.dart';
 import 'package:seren_ai_flutter/services/data/tasks/repositories/tasks_repository.dart';
 import 'package:seren_ai_flutter/services/data/tasks/widgets/action_buttons/delete_task_button.dart';
 import 'package:seren_ai_flutter/services/data/tasks/widgets/action_buttons/edit_task_button.dart';
@@ -198,73 +199,135 @@ class TaskPage extends HookConsumerWidget {
   }
 }
 
-// TODO p2: init state within the page itself ... we should only rely on arguments to init the page (to support deep linking)
+// // TODO p2: init state within the page itself ... we should only rely on arguments to init the page (to support deep linking)
+// Future<void> openTaskPage(
+//   BuildContext context,
+//   WidgetRef ref, {
+//   required EditablePageMode mode,
+//   String? initialTaskId,
+// }) async {
+//   if (mode == EditablePageMode.create) {
+//     return await openNewTaskPage(context, ref);
+//   }
+
+//   // Remove previous TaskPage to avoid duplicate task pages
+//   ref
+//       .read(navigationServiceProvider)
+//       .popUntil((route) => route.settings.name != AppRoutes.taskPage.name);
+
+//   // load provided initial task id
+//   // initialTask can be null if we are opening an existing task page for edit
+//   if (initialTaskId != null) {
+//     ref
+//         .read(curSelectedTaskIdNotifierProvider.notifier)
+//         .setTaskId(initialTaskId);
+//   }
+
+//   final curTaskId = ref.watch(curSelectedTaskIdNotifierProvider)!;
+
+//   final actions = switch (mode) {
+//     EditablePageMode.edit => [DeleteTaskButton(curTaskId)],
+//     EditablePageMode.readOnly => [EditTaskButton(curTaskId)],
+//     _ => null,
+//   };
+
+//   final title = switch (mode) {
+//     EditablePageMode.edit => AppLocalizations.of(context)!.updateTask,
+//     // if mode is readOnly, we assume initialTask is provided
+//     // or at least the task state is loaded
+//     EditablePageMode.readOnly => initialTaskId != null
+//         ? await ref
+//                 .read(tasksRepositoryProvider)
+//                 .getById(curTaskId)
+//                 .then((task) => task?.name) ??
+//             ''
+//         : '',
+//     // we don't handle create mode here because it is handled in openNewTaskPage
+//     // which is called in the beginning of this method
+//     _ => '',
+//   };
+
+//   await ref.read(navigationServiceProvider).navigateTo(AppRoutes.taskPage.name,
+//       arguments: {'mode': mode, 'actions': actions, 'title': title});
+
+//   // TODO p3: use this to have the same redirect behaviour as openNewTaskPage
+//   // for now, it doesn't work because we need to remove "ref" from openProjectPage first
+//   // await ref.read(navigationServiceProvider).navigateTo(AppRoutes.taskPage.name,
+//   //     arguments: {
+//   //       'mode': mode,
+//   //       'actions': actions,
+//   //       'title': title
+//   //     }).then((_) async {
+//   //   // Remove previous TaskPage to avoid duplicate task pages
+//   //   ref
+//   //       .read(navigationServiceProvider)
+//   //       .popUntil((route) => route.settings.name != AppRoutes.taskPage.name);
+//   //   if (isWebVersion) {
+//   //     await _redirectToProjectPage(context, ref);
+//   //   }
+//   // });
+// }
+
+// Future<void> openNewTaskPage(
+//   BuildContext context,
+//   WidgetRef ref, {
+//   ProjectModel? initialProject,
+//   StatusEnum? initialStatus,
+// }) async {
+//   await ref.read(curSelectedTaskIdNotifierProvider.notifier).createNewTask();
+
+//   final curTaskId = ref.watch(curSelectedTaskIdNotifierProvider)!;
+
+//   if (initialProject != null) {
+//     ref
+//         .read(tasksRepositoryProvider)
+//         .updateTaskParentProjectId(curTaskId, initialProject.id);
+//   }
+
+//   if (initialStatus != null) {
+//     ref
+//         .read(tasksRepositoryProvider)
+//         .updateTaskStatus(curTaskId, initialStatus);
+//   }
+
+//   await ref.read(navigationServiceProvider).navigateTo(
+//     AppRoutes.taskPage.name,
+//     arguments: {
+//       'mode': EditablePageMode.create,
+//       'actions': [DeleteTaskButton(curTaskId)],
+//       'title': AppLocalizations.of(context)!.createTask,
+//     },
+//   ).then((_) async {
+//     // Remove previous TaskPage to avoid duplicate task pages (if any)
+//     ref
+//         .read(navigationServiceProvider)
+//         .popUntil((route) => route.settings.name != AppRoutes.taskPage.name);
+//     if (isWebVersion) {
+//       await _redirectToProjectPage(context, ref);
+//     }
+//   });
+// }
+
+// Future<void> _redirectToProjectPage(BuildContext context, WidgetRef ref) async {
+//   final curTaskId = ref.watch(curSelectedTaskIdNotifierProvider);
+//   if (curTaskId != null) {
+//     final curProjectId = await ref
+//         .read(tasksRepositoryProvider)
+//         .getById(curTaskId)
+//         .then((task) => task?.parentProjectId);
+//     await openProjectPage(ref, context, projectId: curProjectId);
+//   }
+// }
+
 Future<void> openTaskPage(
   BuildContext context,
   WidgetRef ref, {
   required EditablePageMode mode,
   String? initialTaskId,
 }) async {
-  if (mode == EditablePageMode.create) {
-    return await openNewTaskPage(context, ref);
-  }
-
-  // Remove previous TaskPage to avoid duplicate task pages
   ref
-      .read(navigationServiceProvider)
-      .popUntil((route) => route.settings.name != AppRoutes.taskPage.name);
-
-  // load provided initial task id
-  // initialTask can be null if we are opening an existing task page for edit
-  if (initialTaskId != null) {
-    ref
-        .read(curSelectedTaskIdNotifierProvider.notifier)
-        .setTaskId(initialTaskId);
-  }
-
-  final curTaskId = ref.watch(curSelectedTaskIdNotifierProvider)!;
-
-  final actions = switch (mode) {
-    EditablePageMode.edit => [DeleteTaskButton(curTaskId)],
-    EditablePageMode.readOnly => [EditTaskButton(curTaskId)],
-    _ => null,
-  };
-
-  final title = switch (mode) {
-    EditablePageMode.edit => AppLocalizations.of(context)!.updateTask,
-    // if mode is readOnly, we assume initialTask is provided
-    // or at least the task state is loaded
-    EditablePageMode.readOnly => initialTaskId != null
-        ? await ref
-                .read(tasksRepositoryProvider)
-                .getById(curTaskId)
-                .then((task) => task?.name) ??
-            ''
-        : '',
-    // we don't handle create mode here because it is handled in openNewTaskPage
-    // which is called in the beginning of this method
-    _ => '',
-  };
-
-  await ref.read(navigationServiceProvider).navigateTo(AppRoutes.taskPage.name,
-      arguments: {'mode': mode, 'actions': actions, 'title': title});
-
-  // TODO p3: use this to have the same redirect behaviour as openNewTaskPage
-  // for now, it doesn't work because we need to remove "ref" from openProjectPage first
-  // await ref.read(navigationServiceProvider).navigateTo(AppRoutes.taskPage.name,
-  //     arguments: {
-  //       'mode': mode,
-  //       'actions': actions,
-  //       'title': title
-  //     }).then((_) async {
-  //   // Remove previous TaskPage to avoid duplicate task pages
-  //   ref
-  //       .read(navigationServiceProvider)
-  //       .popUntil((route) => route.settings.name != AppRoutes.taskPage.name);
-  //   if (isWebVersion) {
-  //     await _redirectToProjectPage(context, ref);
-  //   }
-  // });
+      .read(taskNavigationServiceProvider)
+      .openTask(context: context, mode: mode, initialTaskId: initialTaskId);
 }
 
 Future<void> openNewTaskPage(
@@ -273,47 +336,7 @@ Future<void> openNewTaskPage(
   ProjectModel? initialProject,
   StatusEnum? initialStatus,
 }) async {
-  await ref.read(curSelectedTaskIdNotifierProvider.notifier).createNewTask();
-
-  final curTaskId = ref.watch(curSelectedTaskIdNotifierProvider)!;
-
-  if (initialProject != null) {
-    ref
-        .read(tasksRepositoryProvider)
-        .updateTaskParentProjectId(curTaskId, initialProject.id);
-  }
-
-  if (initialStatus != null) {
-    ref
-        .read(tasksRepositoryProvider)
-        .updateTaskStatus(curTaskId, initialStatus);
-  }
-
-  await ref.read(navigationServiceProvider).navigateTo(
-    AppRoutes.taskPage.name,
-    arguments: {
-      'mode': EditablePageMode.create,
-      'actions': [DeleteTaskButton(curTaskId)],
-      'title': AppLocalizations.of(context)!.createTask,
-    },
-  ).then((_) async {
-    // Remove previous TaskPage to avoid duplicate task pages (if any)
-    ref
-        .read(navigationServiceProvider)
-        .popUntil((route) => route.settings.name != AppRoutes.taskPage.name);
-    if (isWebVersion) {
-      await _redirectToProjectPage(context, ref);
-    }
-  });
-}
-
-Future<void> _redirectToProjectPage(BuildContext context, WidgetRef ref) async {
-  final curTaskId = ref.watch(curSelectedTaskIdNotifierProvider);
-  if (curTaskId != null) {
-    final curProjectId = await ref
-        .read(tasksRepositoryProvider)
-        .getById(curTaskId)
-        .then((task) => task?.parentProjectId);
-    await openProjectPage(ref, context, projectId: curProjectId);
-  }
+  ref
+      .read(taskNavigationServiceProvider)
+      .openTask(context: context, mode: EditablePageMode.create);
 }

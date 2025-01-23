@@ -2,6 +2,8 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:seren_ai_flutter/services/data/tasks/models/task_user_assignment_model.dart';
 import 'package:seren_ai_flutter/services/data/tasks/repositories/task_user_assignments_repository.dart';
 import 'package:seren_ai_flutter/services/data/users/models/user_model.dart';
+import 'package:seren_ai_flutter/services/data/users/providers/search_users_by_name_service_provider.dart';
+import 'package:seren_ai_flutter/services/data/users/repositories/users_repository.dart';
 
 final taskAssignmentsServiceProvider =
     Provider<TaskAssignmentsService>((ref) => TaskAssignmentsService(ref));
@@ -11,15 +13,37 @@ class TaskAssignmentsService {
 
   TaskAssignmentsService(this.ref);
 
+  // userSearchQuery will be mapped to user first or last name when finding a match
+  Future<List<SearchUserResult>> tryAssignUsersByName(
+      String taskId, List<String> userSearchQuery) async {
+    if (userSearchQuery.isEmpty) return [];
+
+    final userAssignmentResults = <SearchUserResult>[];
+
+    // TODO p4: show modal asking user to confirm assignment
+    // And possibly choose between similar matches
+    for (var userName in userSearchQuery) {
+      final users = await ref
+          .read(searchUsersByNameServiceProvider)
+          .searchUsers(userName);
+      if (users.isNotEmpty) {
+        userAssignmentResults.add(users.first);
+        await _addAssignee(taskId, users.first.id);
+      }
+    }
+
+    return userAssignmentResults;
+  }
+
   Future<void> updateAssignees(
-      {required String taskId, required List<UserModel> assignees}) async {
+      {required String taskId, required List<String> assigneeIds}) async {
     final taskAssignmentsRepository =
         ref.read(taskUserAssignmentsRepositoryProvider);
 
-    final taskAssignments = assignees
-        .map((user) => TaskUserAssignmentModel(
+    final taskAssignments = assigneeIds
+        .map((userId) => TaskUserAssignmentModel(
               taskId: taskId,
-              userId: user.id,
+              userId: userId,
             ))
         .toList();
 
@@ -37,12 +61,12 @@ class TaskAssignmentsService {
     await taskAssignmentsRepository.upsertItems(taskAssignments);
   }
 
-  Future<void> addAssignee(String taskId, UserModel assignee) async {
+  Future<void> _addAssignee(String taskId, String userId) async {
     final taskAssignmentsRepository =
         ref.read(taskUserAssignmentsRepositoryProvider);
     await taskAssignmentsRepository.upsertItem(TaskUserAssignmentModel(
       taskId: taskId,
-      userId: assignee.id,
+      userId: userId,
     ));
   }
 

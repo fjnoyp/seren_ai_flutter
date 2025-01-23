@@ -55,11 +55,14 @@ class MainScaffold extends ConsumerWidget {
       onPopInvokedWithResult: (_, result) async {
         final canPop = ref.read(navigationServiceProvider).canPop;
         if (!canPop) {
-          ref
+          await ref
               .read(navigationServiceProvider)
               .navigateToAndRemoveUntil(AppRoutes.home.name, (route) => false);
         } else {
-          await ref.read(navigationServiceProvider).pop(result);
+          // Wrap in microtask to avoid navigator lock
+          await Future.microtask(() async {
+            await ref.read(navigationServiceProvider).pop(result);
+          });
         }
       },
       child: isWebVersion
@@ -101,7 +104,7 @@ class MainScaffold extends ConsumerWidget {
                             children: [
                               body,
                               if (showAiAssistant && isAiAssistantExpanded)
-                                const WebAiAssistantModal(),
+                                const WebAiAssistantView(),
                             ],
                           ),
                         ),
