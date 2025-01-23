@@ -594,8 +594,14 @@
     "followUpTaskEstimatedDurationMinutes": "What is the task estimated duration in minutes?",
     "findTasks": "Find tasks",
     "findTasksHint": "Please find me the task [...]",
-    "updateTasks": "Update a task",
-    "updateTasksHint": "Please update the [field] of the task [task name] to [new value]",
+    "updateTask": "Update this task",
+    "updateTaskHint": "Please update the [priority] of the cur task",
+    "followUpUpdateTaskFieldValue": "What is the new value for the ${field}?",
+    "@followUpUpdateTaskFieldValue": {
+        "placeholders": {
+            "field": {"type": "String"}
+        }
+    },
     "checkOverdueTasks": "Check overdue tasks",
     "checkOverdueTasksHint": "Do I have any overdue tasks?",
     "getMyShiftAssignments": "Get my shift assignments",
