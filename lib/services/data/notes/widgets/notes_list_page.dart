@@ -95,11 +95,10 @@ class NoteListByProjectId extends ConsumerWidget {
       data: (notes) => notes.isEmpty
           ? Center(
               child: Text(AppLocalizations.of(context)!.thisProjectHasNoNotes))
-          : Center(
-              child: ListView.builder(
-                itemCount: notes.length,
-                itemBuilder: (context, index) => _NoteItem(notes[index]),
-              ),
+          : ListView.builder(
+              shrinkWrap: true,
+              itemCount: notes.length,
+              itemBuilder: (context, index) => _NoteItem(notes[index]),
             ),
     );
   }

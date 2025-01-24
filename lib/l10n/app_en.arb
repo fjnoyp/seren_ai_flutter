@@ -165,6 +165,9 @@
     "inviteAs": "Invite as ",
     "invite": "Invite",
     "pendingInvite": "Pending invite",
+    "pendingInvites": "Pending invites",
+    "inviteDate": "Invite date",
+    "noInvitesInOrg": "No invites found in this organization.",
     "pendingInviteBody": "{authorUserName} invited you to join {orgName} as a {inviteOrgRole}",
     "@pendingInviteBody": {
         "placeholders": {

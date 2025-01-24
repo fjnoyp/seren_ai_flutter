@@ -51,26 +51,24 @@ class CurOrgPage extends ConsumerWidget {
                   style: Theme.of(context).textTheme.labelMedium,
                 ),
                 const SizedBox(height: 4),
-                ListView.builder(
-                  shrinkWrap: true,
-                  itemCount: admins.length,
-                  itemBuilder: (context, index) {
-                    return ListTile(
-                      dense: true,
-                      leading: UserAvatar(admins[index].user!),
-                      title: Text(
-                          '${admins[index].user!.firstName} ${admins[index].user!.lastName}'),
-                    );
-                  },
+                ...admins.map(
+                  (admin) => ListTile(
+                    dense: true,
+                    leading: UserAvatar(admin.user!),
+                    title: Text(
+                        '${admin.user!.firstName} ${admin.user!.lastName}'),
+                  ),
                 ),
                 const SizedBox(height: 24),
-                Align(
-                  alignment: Alignment.center,
-                  child: OutlinedButton(
-                    onPressed: () =>
-                        openManageOrgUsersPage(context, ref, curOrg.id),
-                    child: Text(AppLocalizations.of(context)!.manageOrgUsers),
-                  ),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    OutlinedButton(
+                      onPressed: () =>
+                          openManageOrgUsersPage(context, ref, curOrg.id),
+                      child: Text(AppLocalizations.of(context)!.manageOrgUsers),
+                    ),
+                  ],
                 ),
                 const SizedBox(height: 24)
               ] else ...[

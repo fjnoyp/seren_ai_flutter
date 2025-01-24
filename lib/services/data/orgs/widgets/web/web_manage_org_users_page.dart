@@ -5,6 +5,7 @@ import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:intl/intl.dart';
 import 'package:seren_ai_flutter/services/data/orgs/models/joined_user_org_role_model.dart';
 import 'package:seren_ai_flutter/services/data/orgs/models/user_org_role_model.dart';
+import 'package:seren_ai_flutter/services/data/orgs/providers/cur_org_pending_invites.dart';
 import 'package:seren_ai_flutter/services/data/orgs/providers/cur_selected_org_id_notifier.dart';
 import 'package:seren_ai_flutter/services/data/orgs/providers/cur_user_org_role_provider.dart';
 import 'package:seren_ai_flutter/services/data/orgs/providers/joined_user_org_roles_by_org_stream_provider.dart';
@@ -70,16 +71,20 @@ class WebManageOrgUsersPage extends HookConsumerWidget {
                   orgId: curOrgId,
                   filter: (joinedOrgRole) =>
                       joinedOrgRole.user != null &&
-                          (joinedOrgRole.user!.email
+                      (joinedOrgRole.user!.email
                               .toLowerCase()
                               .contains(searchText.text.toLowerCase()) ||
-                      '${joinedOrgRole.user!.firstName} ${joinedOrgRole.user!.lastName}'
-                          .toLowerCase()
-                          .contains(searchText.text.toLowerCase()) ||
-                      joinedOrgRole.orgRole.orgRole
-                          .toHumanReadable(context)
-                          .toLowerCase()
-                          .contains(searchText.text.toLowerCase())))),
+                          '${joinedOrgRole.user!.firstName} ${joinedOrgRole.user!.lastName}'
+                              .toLowerCase()
+                              .contains(searchText.text.toLowerCase()) ||
+                          joinedOrgRole.orgRole.orgRole
+                              .toHumanReadable(context)
+                              .toLowerCase()
+                              .contains(searchText.text.toLowerCase())))),
+          ExpansionTile(
+            title: Text(AppLocalizations.of(context)!.pendingInvites),
+            children: [_InvitesTable(orgId: curOrgId)],
+          )
         ],
       ),
     );
@@ -196,6 +201,84 @@ class _UsersTable extends ConsumerWidget {
                                         .localeName)
                                     .add_Hm()
                                     .format(user.updatedAt!.toLocal()),
+                              ),
+                            ),
+                          ],
+                        );
+                      },
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          );
+  }
+}
+
+class _InvitesTable extends ConsumerWidget {
+  const _InvitesTable({required this.orgId});
+
+  final String orgId;
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final invites = ref.watch(curOrgPendingInvitesProvider).valueOrNull;
+
+    return invites == null || invites.isEmpty
+        ? Center(child: Text(AppLocalizations.of(context)!.noInvitesInOrg))
+        : Card(
+            child: Padding(
+              padding: const EdgeInsets.all(16),
+              child: Column(
+                children: [
+                  DefaultTextStyle(
+                    style: Theme.of(context).textTheme.titleSmall!.copyWith(
+                          fontWeight: FontWeight.bold,
+                        ),
+                    child: Row(
+                      children: [
+                        Expanded(
+                          child: Text(AppLocalizations.of(context)!.email),
+                        ),
+                        Expanded(
+                          child: Text(AppLocalizations.of(context)!.role),
+                        ),
+                        Expanded(
+                          child: Text(AppLocalizations.of(context)!.inviteDate),
+                        ),
+                      ],
+                    ),
+                  ),
+                  const Divider(),
+                  ConstrainedBox(
+                    constraints: BoxConstraints(
+                      maxHeight: MediaQuery.of(context).size.height / 3,
+                    ),
+                    child: ListView.separated(
+                      shrinkWrap: true,
+                      itemCount: invites.length,
+                      separatorBuilder: (context, index) => const Divider(),
+                      itemBuilder: (context, index) {
+                        final invite = invites[index];
+
+                        return Row(
+                          children: [
+                            Expanded(
+                              child: Text(
+                                invite.email,
+                                overflow: TextOverflow.ellipsis,
+                              ),
+                            ),
+                            Expanded(
+                              child:
+                                  Text(invite.orgRole.toHumanReadable(context)),
+                            ),
+                            Expanded(
+                              child: Text(
+                                DateFormat.yMd(AppLocalizations.of(context)!
+                                        .localeName)
+                                    .add_Hm()
+                                    .format(invite.createdAt!.toLocal()),
                               ),
                             ),
                           ],
