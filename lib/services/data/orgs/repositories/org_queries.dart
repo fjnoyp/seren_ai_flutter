@@ -20,4 +20,14 @@ abstract class OrgQueries {
     SELECT * FROM user_org_roles 
     WHERE org_id = @org_id;
   ''';
+
+  /// Params:
+  /// - org_id: String
+  static const String pendingInvitesByOrgQuery = '''
+    SELECT *
+    FROM invites
+    WHERE org_id = @org_id
+    AND status = 'pending'
+    ORDER BY created_at DESC;
+  ''';
 }
