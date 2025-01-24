@@ -21,7 +21,6 @@ class EditTaskButton extends ConsumerWidget {
           : null,
       icon: const Icon(Icons.edit),
       onPressed: () => openTaskPage(
-        context,
         ref,
         mode: EditablePageMode.edit,
         initialTaskId: taskId,

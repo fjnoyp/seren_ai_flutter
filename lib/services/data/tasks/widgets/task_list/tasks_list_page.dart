@@ -40,7 +40,7 @@ class TasksListPage extends ConsumerWidget {
           ),
           CreateItemBottomButton(
             onPressed: () async =>
-                await openTaskPage(context, ref, mode: EditablePageMode.create),
+                await openTaskPage(ref, mode: EditablePageMode.create),
             buttonText: AppLocalizations.of(context)!.createNewTask,
           ),
         ],

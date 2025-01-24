@@ -1,11 +1,8 @@
-import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:seren_ai_flutter/common/routes/app_routes.dart';
-import 'package:seren_ai_flutter/common/universal_platform/universal_platform.dart';
 import 'package:seren_ai_flutter/services/data/common/status_enum.dart';
 import 'package:seren_ai_flutter/services/data/common/widgets/editable_page_mode_enum.dart';
 import 'package:seren_ai_flutter/services/data/projects/models/project_model.dart';
-import 'package:seren_ai_flutter/services/data/projects/widgets/project_page.dart';
 
 import 'package:seren_ai_flutter/services/data/tasks/providers/cur_selected_task_id_notifier_provider.dart';
 import 'package:seren_ai_flutter/common/navigation_service_provider.dart';
@@ -25,13 +22,11 @@ class TaskNavigationService {
   TaskNavigationService(this.ref);
 
   Future<void> openTask({
-    required BuildContext context,
     required EditablePageMode mode,
     String? initialTaskId,
     ProjectModel? initialProject,
     StatusEnum? initialStatus,
   }) async {
-    final navigationService = ref.read(navigationServiceProvider);
     final taskIdNotifier = ref.read(curSelectedTaskIdNotifierProvider.notifier);
 
     // Handle create mode
@@ -54,7 +49,6 @@ class TaskNavigationService {
       }
 
       await _navigateToTaskPage(
-        context: context,
         mode: EditablePageMode.create,
         taskId: curTaskId,
       );
@@ -70,17 +64,17 @@ class TaskNavigationService {
     if (curTaskId == null) return;
 
     await _navigateToTaskPage(
-      context: context,
       mode: mode,
       taskId: curTaskId,
     );
   }
 
   Future<void> _navigateToTaskPage({
-    required BuildContext context,
     required EditablePageMode mode,
     required String taskId,
   }) async {
+    final context = ref.read(navigationServiceProvider).context;
+
     final actions = switch (mode) {
       EditablePageMode.edit => [DeleteTaskButton(taskId)],
       EditablePageMode.readOnly => [EditTaskButton(taskId)],

@@ -2,12 +2,10 @@ import 'package:flutter/material.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:logging/logging.dart';
 import 'package:seren_ai_flutter/common/navigation_service_provider.dart';
-import 'package:seren_ai_flutter/common/routes/app_routes.dart';
 import 'package:seren_ai_flutter/common/universal_platform/universal_platform.dart';
 import 'package:seren_ai_flutter/services/data/common/status_enum.dart';
 import 'package:seren_ai_flutter/services/data/common/widgets/editable_page_mode_enum.dart';
 import 'package:seren_ai_flutter/services/data/projects/models/project_model.dart';
-import 'package:seren_ai_flutter/services/data/projects/widgets/project_page.dart';
 import 'package:seren_ai_flutter/services/data/tasks/models/task_model.dart';
 import 'package:seren_ai_flutter/services/data/tasks/providers/cur_selected_task_id_notifier_provider.dart';
 import 'package:seren_ai_flutter/services/data/tasks/providers/task_by_id_stream_provider.dart';
@@ -320,23 +318,15 @@ class TaskPage extends HookConsumerWidget {
 // }
 
 Future<void> openTaskPage(
-  BuildContext context,
   WidgetRef ref, {
   required EditablePageMode mode,
   String? initialTaskId,
-}) async {
-  ref
-      .read(taskNavigationServiceProvider)
-      .openTask(context: context, mode: mode, initialTaskId: initialTaskId);
-}
-
-Future<void> openNewTaskPage(
-  BuildContext context,
-  WidgetRef ref, {
   ProjectModel? initialProject,
   StatusEnum? initialStatus,
 }) async {
-  ref
-      .read(taskNavigationServiceProvider)
-      .openTask(context: context, mode: EditablePageMode.create);
+  ref.read(taskNavigationServiceProvider).openTask(
+      mode: mode,
+      initialTaskId: initialTaskId,
+      initialProject: initialProject,
+      initialStatus: initialStatus);
 }
