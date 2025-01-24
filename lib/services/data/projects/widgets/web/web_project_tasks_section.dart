@@ -11,9 +11,9 @@ import 'package:seren_ai_flutter/services/data/projects/task_filter_option_enum.
 import 'package:seren_ai_flutter/services/data/projects/task_sort_option_enum.dart';
 import 'package:seren_ai_flutter/services/data/tasks/models/task_model.dart';
 import 'package:seren_ai_flutter/services/data/tasks/providers/cur_user_viewable_tasks_stream_provider.dart';
+import 'package:seren_ai_flutter/services/data/tasks/providers/task_navigation_service.dart';
 import 'package:seren_ai_flutter/services/data/tasks/widgets/task_list/task_list_item_view.dart';
 import 'package:seren_ai_flutter/services/data/tasks/widgets/task_list/tasks_list_view.dart';
-import 'package:seren_ai_flutter/services/data/tasks/widgets/task_page.dart';
 
 class WebProjectTasksSection extends HookConsumerWidget {
   const WebProjectTasksSection({super.key});
@@ -170,10 +170,12 @@ class WebProjectTasksSection extends HookConsumerWidget {
               FilledButton.tonalIcon(
                 icon: const Icon(Icons.add),
                 label: Text(AppLocalizations.of(context)!.createNewTask),
-                onPressed: () async => await openTaskPage(ref,
-                    mode: EditablePageMode.create,
-                    initialProject:
-                        ref.read(curSelectedProjectStreamProvider).value!),
+                onPressed: () async =>
+                    await ref.read(taskNavigationServiceProvider).openTask(
+                          mode: EditablePageMode.create,
+                          initialProject:
+                              ref.read(curSelectedProjectStreamProvider).value!,
+                        ),
               ),
             ],
           ),
@@ -265,10 +267,12 @@ class _ProjectTasksBoardView extends ConsumerWidget {
                           alignment: Alignment.centerLeft,
                           overlayColor: Colors.transparent,
                         ),
-                        onPressed: () async => await openTaskPage(ref,
-                            mode: EditablePageMode.create,
-                            initialProject: project,
-                            initialStatus: status),
+                        onPressed: () async => await ref
+                            .read(taskNavigationServiceProvider)
+                            .openTask(
+                                mode: EditablePageMode.create,
+                                initialProject: project,
+                                initialStatus: status),
                         child: Text(
                           AppLocalizations.of(context)!.createNewTask,
                         ),
@@ -332,10 +336,12 @@ class _ProjectTasksListView extends ConsumerWidget {
                       const Divider(height: 1),
                       ListTile(
                         dense: true,
-                        onTap: () => openTaskPage(ref,
-                            mode: EditablePageMode.create,
-                            initialProject: project,
-                            initialStatus: status),
+                        onTap: () => ref
+                            .read(taskNavigationServiceProvider)
+                            .openTask(
+                                mode: EditablePageMode.create,
+                                initialProject: project,
+                                initialStatus: status),
                         leading: const SizedBox.shrink(),
                         title: Text(
                           AppLocalizations.of(context)!.createNewTask,

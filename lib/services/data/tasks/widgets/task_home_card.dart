@@ -9,7 +9,7 @@ import 'package:seren_ai_flutter/services/data/common/widgets/async_value_handle
 import 'package:seren_ai_flutter/services/data/common/widgets/editable_page_mode_enum.dart';
 import 'package:seren_ai_flutter/services/data/tasks/models/task_model.dart';
 import 'package:seren_ai_flutter/services/data/tasks/providers/cur_user_viewable_tasks_stream_provider.dart';
-import 'package:seren_ai_flutter/services/data/tasks/widgets/task_page.dart';
+import 'package:seren_ai_flutter/services/data/tasks/providers/task_navigation_service.dart';
 import 'package:seren_ai_flutter/widgets/home/base_home_card.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
@@ -82,7 +82,7 @@ class _TaskCardItem extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     return GestureDetector(
       onTap: () async {
-        await openTaskPage(ref,
+        await ref.read(taskNavigationServiceProvider).openTask(
             mode: EditablePageMode.readOnly, initialTaskId: task.id);
       },
       child: BaseHomeInnerCard.outlined(

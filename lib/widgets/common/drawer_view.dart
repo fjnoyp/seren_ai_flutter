@@ -4,6 +4,7 @@ import 'package:seren_ai_flutter/common/navigation_service_provider.dart';
 import 'package:seren_ai_flutter/common/routes/app_routes.dart';
 import 'package:seren_ai_flutter/common/universal_platform/universal_platform.dart';
 import 'package:seren_ai_flutter/services/auth/cur_auth_state_provider.dart';
+import 'package:seren_ai_flutter/services/data/common/widgets/editable_page_mode_enum.dart';
 import 'package:seren_ai_flutter/services/data/orgs/models/user_org_role_model.dart';
 import 'package:seren_ai_flutter/services/data/orgs/providers/cur_selected_org_id_notifier.dart';
 import 'package:seren_ai_flutter/services/data/orgs/providers/cur_user_org_role_provider.dart';
@@ -12,7 +13,7 @@ import 'package:seren_ai_flutter/services/data/orgs/widgets/cur_org_page.dart';
 import 'package:seren_ai_flutter/services/data/orgs/widgets/org_avatar_image.dart';
 import 'package:seren_ai_flutter/services/data/projects/models/project_model.dart';
 import 'package:seren_ai_flutter/services/data/projects/providers/cur_user_viewable_projects_provider.dart';
-import 'package:seren_ai_flutter/services/data/projects/widgets/project_page.dart';
+import 'package:seren_ai_flutter/services/data/projects/providers/project_navigation_service.dart';
 import 'package:seren_ai_flutter/services/data/users/widgets/user_avatar.dart';
 import 'package:seren_ai_flutter/widgets/common/debug_mode_provider.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
@@ -86,11 +87,12 @@ class DrawerView extends ConsumerWidget {
                             title: AppLocalizations.of(context)!.projects,
                             options: projects,
                             optionToString: (project) => project.name,
-                            onTapOption: (project) => openProjectPage(
-                                ref, context,
-                                projectId: project.id),
-                            onTapAddButton: () =>
-                                openCreateProjectPage(ref, context),
+                            onTapOption: (project) => ref
+                                .read(projectNavigationServiceProvider)
+                                .openProjectPage(projectId: project.id),
+                            onTapAddButton: () => ref
+                                .read(projectNavigationServiceProvider)
+                                .openProjectPage(mode: EditablePageMode.create),
                           );
                         },
                       )

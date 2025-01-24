@@ -1,12 +1,12 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:seren_ai_flutter/common/routes/app_routes.dart';
+import 'package:seren_ai_flutter/common/universal_platform/universal_platform.dart';
 import 'package:seren_ai_flutter/services/data/common/status_enum.dart';
 import 'package:seren_ai_flutter/services/data/common/widgets/editable_page_mode_enum.dart';
 import 'package:seren_ai_flutter/services/data/projects/models/project_model.dart';
-
+import 'package:seren_ai_flutter/services/data/projects/providers/project_navigation_service.dart';
 import 'package:seren_ai_flutter/services/data/tasks/providers/cur_selected_task_id_notifier_provider.dart';
 import 'package:seren_ai_flutter/common/navigation_service_provider.dart';
-
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:seren_ai_flutter/services/data/tasks/repositories/tasks_repository.dart';
 import 'package:seren_ai_flutter/services/data/tasks/widgets/action_buttons/delete_task_button.dart';
@@ -66,7 +66,16 @@ class TaskNavigationService {
     await _navigateToTaskPage(
       mode: mode,
       taskId: curTaskId,
-    );
+    ).then((_) {
+      // Remove previous TaskPage to avoid duplicate task pages (if any)
+      ref
+          .read(navigationServiceProvider)
+          .popUntil((route) => route.settings.name != AppRoutes.taskPage.name);
+
+      if (isWebVersion) {
+        _handleProjectRedirect();
+      }
+    });
   }
 
   Future<void> _navigateToTaskPage({
@@ -87,7 +96,7 @@ class TaskNavigationService {
       EditablePageMode.create => AppLocalizations.of(context)!.createTask,
     };
 
-    await ref.read(navigationServiceProvider).navigateToWithReplacement(
+    await ref.read(navigationServiceProvider).navigateTo(
       AppRoutes.taskPage.name,
       arguments: {
         'mode': mode,
@@ -104,16 +113,18 @@ class TaskNavigationService {
         .then((task) => task?.name ?? '');
   }
 
-  // Future<void> _handleProjectRedirect(Ref ref, BuildContext context) async {
-  //   final curTaskId = ref.read(curSelectedTaskIdNotifierProvider);
-  //   if (curTaskId == null) return;
+  Future<void> _handleProjectRedirect() async {
+    final curTaskId = ref.read(curSelectedTaskIdNotifierProvider);
+    if (curTaskId == null) return;
 
-  //   final curProjectId = await ref.read(tasksRepositoryProvider)
-  //       .getById(curTaskId)
-  //       .then((task) => task?.parentProjectId);
+    final curProjectId = await ref
+        .read(tasksRepositoryProvider)
+        .getById(curTaskId)
+        .then((task) => task?.parentProjectId);
 
-  //   if (curProjectId != null) {
-  //     await openProjectPage(ref, context, projectId: curProjectId);
-  //   }
-  // }
+    if (curProjectId != null) {
+      await ref.read(projectNavigationServiceProvider).openProjectPage(
+          mode: EditablePageMode.readOnly, projectId: curProjectId);
+    }
+  }
 }
