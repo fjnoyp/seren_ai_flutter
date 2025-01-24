@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:seren_ai_flutter/services/data/common/status_enum.dart';
+import 'package:seren_ai_flutter/services/data/notes/widgets/note_page.dart';
 import 'package:seren_ai_flutter/services/data/notes/widgets/notes_list_page.dart';
 import 'package:seren_ai_flutter/services/data/projects/providers/cur_selected_project_providers.dart';
 import 'package:seren_ai_flutter/services/data/projects/widgets/action_buttons/edit_project_button.dart';
@@ -24,8 +25,7 @@ class WebProjectPage extends HookConsumerWidget {
       ),
       (
         name: AppLocalizations.of(context)!.notes,
-        child: NoteListByProjectId(
-            ref.watch(curSelectedProjectIdNotifierProvider)!)
+        child: const _WebProjectNotesSection()
       ),
     ];
 
@@ -150,6 +150,29 @@ class _WebProjectInfoView extends ConsumerWidget {
           ),
         ],
       ),
+    );
+  }
+}
+
+class _WebProjectNotesSection extends ConsumerWidget {
+  const _WebProjectNotesSection();
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final curProjectId = ref.watch(curSelectedProjectIdNotifierProvider);
+    return Column(
+      children: [
+        NoteListByProjectId(curProjectId),
+        OutlinedButton.icon(
+          icon: const Icon(Icons.add),
+          label: Text(AppLocalizations.of(context)!.createNewNote),
+          onPressed: () async => await openNewNotePage(
+            context,
+            ref,
+            parentProjectId: curProjectId,
+          ),
+        ),
+      ],
     );
   }
 }

@@ -1,5 +1,3 @@
-import 'dart:io';
-
 import 'package:flutter/material.dart';
 import 'package:seren_ai_flutter/services/data/orgs/models/org_model.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
