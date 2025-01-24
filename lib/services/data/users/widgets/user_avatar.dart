@@ -12,16 +12,16 @@ class UserAvatar extends StatelessWidget {
   Widget build(BuildContext context) {
     return CircleAvatar(
       radius: radius,
-      backgroundImage: NetworkImage(_getUserImage()),
-      onBackgroundImageError: (exception, stackTrace) {
-        debugPrint('Avatar image load error silently handled');
-      },
-      child: Center(
-        child: FittedBox(
-          fit: BoxFit.scaleDown,
-          child: Text(
-            '${user.firstName.substring(0, 1)}${(radius ?? 16) > 12 ? user.lastName.substring(0, 1) : ''}',
-          ),
+      child: ClipOval(
+        child: Image.network(
+          _getUserImage(),
+          errorBuilder: (context, error, stackTrace) {
+            return Center(
+              child: Text(
+                '${user.firstName.substring(0, 1)}${(radius ?? 16) > 12 ? user.lastName.substring(0, 1) : ''}',
+              ),
+            );
+          },
         ),
       ),
     );
