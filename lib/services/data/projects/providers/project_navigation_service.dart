@@ -104,11 +104,11 @@ class ProjectNavigationService {
               }
             : null;
 
-    // Remove previous TaskPage to avoid duplicate task pages (if any)
-    await ref.read(navigationServiceProvider).navigateToWithPopUntil(
+    await ref.read(navigationServiceProvider).navigateToAndRemoveUntil(
       AppRoutes.projectDetails.name,
+      // Remove previous TaskPage to avoid duplicate task pages (if any)
+      (route) => route.settings.name != AppRoutes.projectDetails.name,
       arguments: {'title': title, 'mode': mode, 'actions': actions},
-      predicate: (route) => route.settings.name != AppRoutes.projectDetails.name,
     );
   }
 }

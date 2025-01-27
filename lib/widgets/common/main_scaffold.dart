@@ -51,18 +51,11 @@ class MainScaffold extends ConsumerWidget {
     });
 
     return PopScope(
-      canPop: false,
-      onPopInvokedWithResult: (_, result) async {
-        final canPop = ref.read(navigationServiceProvider).canPop;
-        if (!canPop) {
-          await ref
-              .read(navigationServiceProvider)
-              .navigateToAndRemoveUntil(AppRoutes.home.name, (route) => false);
-        } else {
-          // Wrap in microtask to avoid navigator lock
-          await Future.microtask(() async {
-            await ref.read(navigationServiceProvider).pop(result);
-          });
+      canPop: ref.read(navigationServiceProvider).canPop,
+      onPopInvokedWithResult: (didPop, _) async {
+        if (!didPop) {
+          Navigator.of(context)
+              .pushNamedAndRemoveUntil(AppRoutes.home.name, (route) => false);
         }
       },
       child: isWebVersion

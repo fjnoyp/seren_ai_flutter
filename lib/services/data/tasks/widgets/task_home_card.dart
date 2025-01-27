@@ -6,7 +6,6 @@ import 'package:seren_ai_flutter/common/navigation_service_provider.dart';
 import 'package:seren_ai_flutter/common/routes/app_routes.dart';
 import 'package:seren_ai_flutter/services/data/common/status_enum.dart';
 import 'package:seren_ai_flutter/services/data/common/widgets/async_value_handler_widget.dart';
-import 'package:seren_ai_flutter/services/data/common/widgets/editable_page_mode_enum.dart';
 import 'package:seren_ai_flutter/services/data/tasks/models/task_model.dart';
 import 'package:seren_ai_flutter/services/data/tasks/providers/cur_user_viewable_tasks_stream_provider.dart';
 import 'package:seren_ai_flutter/services/data/tasks/providers/task_navigation_service.dart';
@@ -81,10 +80,9 @@ class _TaskCardItem extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     return GestureDetector(
-      onTap: () async {
-        await ref.read(taskNavigationServiceProvider).openTask(
-            mode: EditablePageMode.readOnly, initialTaskId: task.id);
-      },
+      onTap: () async => await ref
+          .read(taskNavigationServiceProvider)
+          .openTask(initialTaskId: task.id),
       child: BaseHomeInnerCard.outlined(
         child: SizedBox(
           width: double.infinity,

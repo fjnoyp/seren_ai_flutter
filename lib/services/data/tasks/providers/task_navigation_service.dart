@@ -7,10 +7,9 @@ import 'package:seren_ai_flutter/services/data/projects/models/project_model.dar
 import 'package:seren_ai_flutter/services/data/projects/providers/project_navigation_service.dart';
 import 'package:seren_ai_flutter/services/data/tasks/providers/cur_selected_task_id_notifier_provider.dart';
 import 'package:seren_ai_flutter/common/navigation_service_provider.dart';
-import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:seren_ai_flutter/services/data/tasks/repositories/tasks_repository.dart';
 import 'package:seren_ai_flutter/services/data/tasks/widgets/action_buttons/delete_task_button.dart';
-import 'package:seren_ai_flutter/services/data/tasks/widgets/action_buttons/edit_task_button.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 final taskNavigationServiceProvider = Provider<TaskNavigationService>((ref) {
   return TaskNavigationService(ref);
@@ -21,57 +20,52 @@ class TaskNavigationService {
 
   TaskNavigationService(this.ref);
 
-  Future<void> openTask({
-    required EditablePageMode mode,
-    String? initialTaskId,
-    ProjectModel? initialProject,
-    StatusEnum? initialStatus,
-  }) async {
+  Future<void> openTask({required String initialTaskId}) async {
     final taskIdNotifier = ref.read(curSelectedTaskIdNotifierProvider.notifier);
 
-    // Handle create mode
-    if (mode == EditablePageMode.create) {
-      await taskIdNotifier.createNewTask();
-
-      final curTaskId = ref.read(curSelectedTaskIdNotifierProvider);
-      if (curTaskId == null) return;
-
-      if (initialProject != null) {
-        await ref
-            .read(tasksRepositoryProvider)
-            .updateTaskParentProjectId(curTaskId, initialProject.id);
-      }
-
-      if (initialStatus != null) {
-        await ref
-            .read(tasksRepositoryProvider)
-            .updateTaskStatus(curTaskId, initialStatus);
-      }
-
-      await _navigateToTaskPage(
-        mode: EditablePageMode.create,
-        taskId: curTaskId,
-      );
-      return;
-    }
-
-    // Handle existing task
-    if (initialTaskId != null) {
-      taskIdNotifier.setTaskId(initialTaskId);
-    }
+    taskIdNotifier.setTaskId(initialTaskId);
 
     final curTaskId = ref.read(curSelectedTaskIdNotifierProvider);
     if (curTaskId == null) return;
 
     await _navigateToTaskPage(
-      mode: mode,
+      mode: EditablePageMode.edit,
       taskId: curTaskId,
-    ).then((_) {
-      // Remove previous TaskPage to avoid duplicate task pages (if any)
-      ref
-          .read(navigationServiceProvider)
-          .popUntil((route) => route.settings.name != AppRoutes.taskPage.name);
+      // // we can't use this here since on web we don't have a "pop back" button
+      // ).then(
+      //   (_) {
+      //     if (isWebVersion) {
+      //       _handleProjectRedirect();
+      //     }
+      //   },
+    );
+  }
 
+  Future<void> openNewTask({
+    ProjectModel? initialProject,
+    StatusEnum? initialStatus,
+  }) async {
+    final taskIdNotifier = ref.read(curSelectedTaskIdNotifierProvider.notifier);
+
+    await taskIdNotifier.createNewTask();
+
+    final curTaskId = ref.read(curSelectedTaskIdNotifierProvider);
+    if (curTaskId == null) return;
+
+    if (initialProject != null) {
+      await ref
+          .read(tasksRepositoryProvider)
+          .updateTaskParentProjectId(curTaskId, initialProject.id);
+    }
+
+    if (initialStatus != null) {
+      await ref
+          .read(tasksRepositoryProvider)
+          .updateTaskStatus(curTaskId, initialStatus);
+    }
+
+    await _navigateToTaskPage(mode: EditablePageMode.create, taskId: curTaskId)
+        .then((_) {
       if (isWebVersion) {
         _handleProjectRedirect();
       }
@@ -84,34 +78,27 @@ class TaskNavigationService {
   }) async {
     final context = ref.read(navigationServiceProvider).context;
 
-    final actions = switch (mode) {
-      EditablePageMode.edit => [DeleteTaskButton(taskId)],
-      EditablePageMode.readOnly => [EditTaskButton(taskId)],
-      EditablePageMode.create => [DeleteTaskButton(taskId)],
-    };
+    // TODO: add save state indicator
+    final actions = [DeleteTaskButton(taskId)];
 
-    final title = switch (mode) {
-      EditablePageMode.edit => AppLocalizations.of(context)!.updateTask,
-      EditablePageMode.readOnly => await _getTaskTitle(taskId),
-      EditablePageMode.create => AppLocalizations.of(context)!.createTask,
-    };
+    final title = AppLocalizations.of(context)!.task;
 
     await ref.read(navigationServiceProvider).navigateTo(
       AppRoutes.taskPage.name,
       arguments: {
-        'mode': mode,
         'actions': actions,
         'title': title,
+        'mode': mode,
       },
     );
   }
 
-  Future<String> _getTaskTitle(String taskId) async {
-    return await ref
-        .read(tasksRepositoryProvider)
-        .getById(taskId)
-        .then((task) => task?.name ?? '');
-  }
+  // Future<String> _getTaskTitle(String taskId) async {
+  //   return await ref
+  //       .read(tasksRepositoryProvider)
+  //       .getById(taskId)
+  //       .then((task) => task?.name ?? '');
+  // }
 
   Future<void> _handleProjectRedirect() async {
     final curTaskId = ref.read(curSelectedTaskIdNotifierProvider);

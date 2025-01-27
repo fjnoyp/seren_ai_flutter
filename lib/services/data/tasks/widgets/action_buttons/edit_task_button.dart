@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:seren_ai_flutter/common/universal_platform/universal_platform.dart';
-import 'package:seren_ai_flutter/services/data/common/widgets/editable_page_mode_enum.dart';
 import 'package:seren_ai_flutter/services/data/tasks/providers/task_navigation_service.dart';
 
 // Triggers edit of current task
@@ -20,10 +19,9 @@ class EditTaskButton extends ConsumerWidget {
             )
           : null,
       icon: const Icon(Icons.edit),
-      onPressed: () => ref.read(taskNavigationServiceProvider).openTask(
-            mode: EditablePageMode.edit,
-            initialTaskId: taskId,
-          ),
+      onPressed: () => ref
+          .read(taskNavigationServiceProvider)
+          .openTask(initialTaskId: taskId),
     );
   }
 }

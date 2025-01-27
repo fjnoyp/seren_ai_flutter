@@ -50,7 +50,8 @@ class TaskPage extends HookConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final theme = Theme.of(context);
 
-    final isEnabled = mode != EditablePageMode.readOnly;
+    // TODO: move to task fields directly
+    final isEnabled = true;
 
     final curTaskId = ref.watch(curSelectedTaskIdNotifierProvider)!;
 

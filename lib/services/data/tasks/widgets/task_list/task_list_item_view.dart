@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:seren_ai_flutter/common/universal_platform/universal_platform.dart';
-import 'package:seren_ai_flutter/services/data/common/widgets/editable_page_mode_enum.dart';
 import 'package:seren_ai_flutter/services/data/projects/providers/project_by_id_stream_provider.dart';
 import 'package:seren_ai_flutter/services/data/tasks/models/task_model.dart';
 import 'package:intl/intl.dart';
@@ -28,7 +27,7 @@ class TaskListItemView extends ConsumerWidget {
       onTap: () async {
         await ref
             .read(taskNavigationServiceProvider)
-            .openTask(mode: EditablePageMode.readOnly, initialTaskId: task.id);
+            .openTask(initialTaskId: task.id);
       },
       child: Card(
         color: theme.cardColor,
@@ -140,7 +139,7 @@ class TaskListTileItemView extends ConsumerWidget {
       dense: true,
       onTap: () => ref
           .read(taskNavigationServiceProvider)
-          .openTask(mode: EditablePageMode.readOnly, initialTaskId: task.id),
+          .openTask(initialTaskId: task.id),
       leading: const SizedBox.shrink(),
       title: Text(task.name),
       trailing: Row(
