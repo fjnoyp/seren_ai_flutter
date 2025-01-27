@@ -24,14 +24,9 @@ class CurSelectedTaskIdNotifier extends Notifier<String?> {
       final curUser = ref.read(curUserProvider).value;
       if (curUser == null) throw Exception('No current user');
 
-      await ref
+      final selectedProjectId = await ref
           .read(curSelectedProjectIdNotifierProvider.notifier)
-          .setToDefaultOrFirstAssignedProject(curUser);
-      final selectedProjectId = ref
-          .read(curSelectedProjectIdNotifierProvider);
-      
-      // This exception will be thrown if the user doesn't have any projects
-      if (selectedProjectId == null) throw Exception('No project selected');
+          .getSelectedProjectOrDefault();
 
       final newTask = TaskModel(
         name: 'New Task',

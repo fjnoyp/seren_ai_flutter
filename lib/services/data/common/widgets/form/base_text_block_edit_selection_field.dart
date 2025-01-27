@@ -30,10 +30,16 @@ class BaseTextBlockEditSelectionField extends HookConsumerWidget {
     return isWebVersion && isEditable
         ? TextFormField(
             controller: controller,
-            maxLines: 5,
+            minLines: 1,
+            maxLines: null,
             decoration: InputDecoration(
               hintText: hintText ?? AppLocalizations.of(context)!.enterTextHere,
-              border: const OutlineInputBorder(),
+              prefixIcon: labelWidget,
+              filled: false,
+              enabledBorder: InputBorder.none,
+              disabledBorder: InputBorder.none,
+              focusedBorder: InputBorder.none,
+              border: InputBorder.none,
             ),
             onFieldSubmitted: (value) async {
               await updateDescription(ref, value);
@@ -43,38 +49,35 @@ class BaseTextBlockEditSelectionField extends HookConsumerWidget {
               FocusManager.instance.primaryFocus?.unfocus();
             },
           )
-        : isEditable || (curDescription != null && curDescription.isNotEmpty)
-            ? AnimatedSelectionField<String>(
-                labelWidget: labelWidget ?? const Icon(Icons.description),
-                validator: (description) => null,
-                // description == null || description.isEmpty
-                //     ? AppLocalizations.of(context)!.textIsRequired
-                //     : null,
-                valueToString: (description) =>
-                    description ?? AppLocalizations.of(context)!.enterText,
-                enabled: isEditable,
-                value:
-                    curDescription?.isEmpty ?? true ? hintText : curDescription,
-                onValueChanged: updateDescription,
-                onTap: isWebVersion
-                    ? (_) async => null
-                    : (BuildContext context) async {
-                        FocusManager.instance.primaryFocus?.unfocus();
-                        showModalBottomSheet<String>(
-                          context: context,
-                          isScrollControlled: true,
-                          builder: (BuildContext context) {
-                            return TextBlockWritingModal(
-                              initialDescription: curDescription ?? '',
-                              onDescriptionChanged: updateDescription,
-                            );
-                          },
+        : AnimatedSelectionField<String>(
+            labelWidget: labelWidget ?? const Icon(Icons.description),
+            validator: (description) => null,
+            // description == null || description.isEmpty
+            //     ? AppLocalizations.of(context)!.textIsRequired
+            //     : null,
+            valueToString: (description) =>
+                description ?? AppLocalizations.of(context)!.enterText,
+            enabled: isEditable,
+            value: curDescription?.isEmpty ?? true ? hintText : curDescription,
+            onValueChanged: updateDescription,
+            onTap: isWebVersion
+                ? (_) async => null
+                : (BuildContext context) async {
+                    FocusManager.instance.primaryFocus?.unfocus();
+                    showModalBottomSheet<String>(
+                      context: context,
+                      isScrollControlled: true,
+                      builder: (BuildContext context) {
+                        return TextBlockWritingModal(
+                          initialDescription: curDescription ?? '',
+                          onDescriptionChanged: updateDescription,
                         );
-                        FocusManager.instance.primaryFocus?.unfocus();
-                        return null;
                       },
-              )
-            : const SizedBox.shrink();
+                    );
+                    FocusManager.instance.primaryFocus?.unfocus();
+                    return null;
+                  },
+          );
   }
 }
 

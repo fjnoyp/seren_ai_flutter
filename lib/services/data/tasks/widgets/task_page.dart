@@ -2,23 +2,15 @@ import 'package:flutter/material.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:logging/logging.dart';
 import 'package:seren_ai_flutter/common/navigation_service_provider.dart';
-import 'package:seren_ai_flutter/common/routes/app_routes.dart';
 import 'package:seren_ai_flutter/common/universal_platform/universal_platform.dart';
-import 'package:seren_ai_flutter/services/data/common/status_enum.dart';
 import 'package:seren_ai_flutter/services/data/common/widgets/editable_page_mode_enum.dart';
-import 'package:seren_ai_flutter/services/data/projects/models/project_model.dart';
-import 'package:seren_ai_flutter/services/data/projects/widgets/project_page.dart';
-import 'package:seren_ai_flutter/services/data/tasks/models/task_model.dart';
 import 'package:seren_ai_flutter/services/data/tasks/providers/cur_selected_task_id_notifier_provider.dart';
 import 'package:seren_ai_flutter/services/data/tasks/providers/task_by_id_stream_provider.dart';
 import 'package:seren_ai_flutter/services/data/tasks/repositories/tasks_repository.dart';
 import 'package:seren_ai_flutter/services/data/tasks/widgets/action_buttons/delete_task_button.dart';
-import 'package:seren_ai_flutter/services/data/tasks/widgets/action_buttons/edit_task_button.dart';
 import 'package:seren_ai_flutter/services/data/tasks/widgets/form/task_selection_fields.dart';
 import 'package:seren_ai_flutter/services/data/tasks/widgets/task_comments/task_comment_section.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
-import 'package:seren_ai_flutter/services/data/tasks/widgets/task_list/task_priority_view.dart';
-import 'package:seren_ai_flutter/services/data/tasks/widgets/task_list/task_status_view.dart';
 
 /* === Thoughts on ai generation of create task === 
 1) Tasks must be assigned to specific users / projects 
@@ -44,16 +36,11 @@ final log = Logger('TaskPage');
 class TaskPage extends HookConsumerWidget {
   final EditablePageMode mode;
 
-  const TaskPage({
-    super.key,
-    required this.mode,
-  });
+  const TaskPage({super.key, required this.mode});
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final theme = Theme.of(context);
-
-    final isEnabled = mode != EditablePageMode.readOnly;
 
     final curTaskId = ref.watch(curSelectedTaskIdNotifierProvider)!;
 
@@ -65,38 +52,32 @@ class TaskPage extends HookConsumerWidget {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            TaskProjectSelectionField(taskId: curTaskId, isEditable: isEnabled),
-
             Row(
               children: [
-                // Title Input
-                Expanded(
-                    flex: mode == EditablePageMode.readOnly ? 0 : 1,
-                    child: TaskNameField(
-                        taskId: curTaskId, isEditable: isEnabled)),
-                if (isWebVersion && mode == EditablePageMode.readOnly)
-                  Expanded(
-                      child: Row(
-                    children: [
-                      EditTaskButton(curTaskId),
-                      const SizedBox.shrink(),
-                    ],
-                  )),
-                if (mode == EditablePageMode.readOnly)
-                  Column(
-                    mainAxisSize: MainAxisSize.min,
-                    crossAxisAlignment: CrossAxisAlignment.end,
-                    children: [
-                      TaskPriorityView(
-                          priority:
-                              curTask.value?.priority ?? PriorityEnum.normal),
-                      const SizedBox(height: 4),
-                      TaskStatusView(
-                          status: curTask.value?.status ?? StatusEnum.open),
-                    ],
-                  )
+                isWebVersion
+                    ? IconButton(
+                        onPressed: () =>
+                            ref.read(navigationServiceProvider).pop(true),
+                        icon: const Icon(Icons.close),
+                      )
+                    : const Expanded(child: SizedBox.shrink()),
+                const SizedBox(width: 32),
+                Text(
+                  curTask.isReloading
+                      ? AppLocalizations.of(context)!.saving
+                      : curTask.hasError
+                          ? AppLocalizations.of(context)!.errorSaving
+                          : AppLocalizations.of(context)!.allChangesSaved,
+                  style: theme.textTheme.labelMedium?.copyWith(
+                    color: theme.colorScheme.outline,
+                  ),
+                ),
               ],
             ),
+
+            const SizedBox(height: 8),
+            TaskProjectSelectionField(taskId: curTaskId),
+            TaskNameField(taskId: curTaskId),
             const SizedBox(height: 8),
 
             // ======================
@@ -108,60 +89,49 @@ class TaskPage extends HookConsumerWidget {
                 children: [
                   TaskDescriptionSelectionField(
                     taskId: curTaskId,
-                    isEditable: isEnabled,
                     context: context,
                   ),
                   const Divider(),
-                  if (isEnabled) ...[
-                    TaskPrioritySelectionField(
-                        taskId: curTaskId, enabled: isEnabled),
-                    const Divider(),
-                    TaskStatusSelectionField(
-                        taskId: curTaskId, enabled: isEnabled),
-                    const Divider(),
-                  ],
-                  TaskStartDateSelectionField(
-                      taskId: curTaskId, enabled: isEnabled),
-                  TaskDueDateSelectionField(
-                      taskId: curTaskId, enabled: isEnabled),
+                  TaskPrioritySelectionField(taskId: curTaskId),
+                  const Divider(),
+                  TaskStatusSelectionField(taskId: curTaskId),
+                  const Divider(),
+                  TaskStartDateSelectionField(taskId: curTaskId),
+                  TaskDueDateSelectionField(taskId: curTaskId),
                   const Divider(),
                   ReminderMinuteOffsetFromDueDateSelectionField(
                     context: context,
                     taskId: curTaskId,
-                    enabled: isEnabled && curTask.value?.dueDate != null,
+                    enabled: curTask.value?.dueDate != null,
                   ),
                   const Divider(),
                   TaskParentTaskSelectionField(
                     context: context,
                     taskId: curTaskId,
                     projectId: curTask.value?.parentProjectId ?? '',
-                    isEditable: isEnabled,
                   ),
                   const Divider(),
                   TaskBlockedByTaskSelectionField(
                     context: context,
                     taskId: curTaskId,
                     projectId: curTask.value?.parentProjectId ?? '',
-                    isEditable: isEnabled,
                   ),
                   const Divider(),
                   TaskEstimatedDurationSelectionField(
                     context: context,
                     taskId: curTaskId,
-                    enabled: isEnabled,
                   ),
                   const Divider(),
-                  TaskAssigneesSelectionField(
-                      taskId: curTaskId, enabled: isEnabled),
+                  TaskAssigneesSelectionField(taskId: curTaskId),
                 ],
               ),
             ),
 
-            if (mode == EditablePageMode.readOnly)
-              TaskCommentSection(curTask.value?.id ?? ''),
+            const SizedBox(height: 24),
+            TaskCommentSection(curTask.value?.id ?? ''),
             const SizedBox(height: 24),
 
-            if (mode == EditablePageMode.create)
+            if (mode == EditablePageMode.create && !isWebVersion)
               PopScope(
                 onPopInvokedWithResult: (_, result) async {
                   if (result != true) {
@@ -187,133 +157,12 @@ class TaskPage extends HookConsumerWidget {
                 ),
               ),
 
-            if (isWebVersion && mode == EditablePageMode.edit)
-              DeleteTaskButton(curTaskId, showLabelText: true),
+            if (isWebVersion) DeleteTaskButton(curTaskId, showLabelText: true),
 
             const SizedBox(height: 32),
           ],
         ),
       ),
     );
-  }
-}
-
-// TODO p2: init state within the page itself ... we should only rely on arguments to init the page (to support deep linking)
-Future<void> openTaskPage(
-  BuildContext context,
-  WidgetRef ref, {
-  required EditablePageMode mode,
-  String? initialTaskId,
-}) async {
-  if (mode == EditablePageMode.create) {
-    return await openNewTaskPage(context, ref);
-  }
-
-  // Remove previous TaskPage to avoid duplicate task pages
-  ref
-      .read(navigationServiceProvider)
-      .popUntil((route) => route.settings.name != AppRoutes.taskPage.name);
-
-  // load provided initial task id
-  // initialTask can be null if we are opening an existing task page for edit
-  if (initialTaskId != null) {
-    ref
-        .read(curSelectedTaskIdNotifierProvider.notifier)
-        .setTaskId(initialTaskId);
-  }
-
-  final curTaskId = ref.watch(curSelectedTaskIdNotifierProvider)!;
-
-  final actions = switch (mode) {
-    EditablePageMode.edit => [DeleteTaskButton(curTaskId)],
-    EditablePageMode.readOnly => [EditTaskButton(curTaskId)],
-    _ => null,
-  };
-
-  final title = switch (mode) {
-    EditablePageMode.edit => AppLocalizations.of(context)!.updateTask,
-    // if mode is readOnly, we assume initialTask is provided
-    // or at least the task state is loaded
-    EditablePageMode.readOnly => initialTaskId != null
-        ? await ref
-                .read(tasksRepositoryProvider)
-                .getById(curTaskId)
-                .then((task) => task?.name) ??
-            ''
-        : '',
-    // we don't handle create mode here because it is handled in openNewTaskPage
-    // which is called in the beginning of this method
-    _ => '',
-  };
-
-  await ref.read(navigationServiceProvider).navigateTo(AppRoutes.taskPage.name,
-      arguments: {'mode': mode, 'actions': actions, 'title': title});
-
-  // TODO p3: use this to have the same redirect behaviour as openNewTaskPage
-  // for now, it doesn't work because we need to remove "ref" from openProjectPage first
-  // await ref.read(navigationServiceProvider).navigateTo(AppRoutes.taskPage.name,
-  //     arguments: {
-  //       'mode': mode,
-  //       'actions': actions,
-  //       'title': title
-  //     }).then((_) async {
-  //   // Remove previous TaskPage to avoid duplicate task pages
-  //   ref
-  //       .read(navigationServiceProvider)
-  //       .popUntil((route) => route.settings.name != AppRoutes.taskPage.name);
-  //   if (isWebVersion) {
-  //     await _redirectToProjectPage(context, ref);
-  //   }
-  // });
-}
-
-Future<void> openNewTaskPage(
-  BuildContext context,
-  WidgetRef ref, {
-  ProjectModel? initialProject,
-  StatusEnum? initialStatus,
-}) async {
-  await ref.read(curSelectedTaskIdNotifierProvider.notifier).createNewTask();
-
-  final curTaskId = ref.watch(curSelectedTaskIdNotifierProvider)!;
-
-  if (initialProject != null) {
-    ref
-        .read(tasksRepositoryProvider)
-        .updateTaskParentProjectId(curTaskId, initialProject.id);
-  }
-
-  if (initialStatus != null) {
-    ref
-        .read(tasksRepositoryProvider)
-        .updateTaskStatus(curTaskId, initialStatus);
-  }
-
-  await ref.read(navigationServiceProvider).navigateTo(
-    AppRoutes.taskPage.name,
-    arguments: {
-      'mode': EditablePageMode.create,
-      'actions': [DeleteTaskButton(curTaskId)],
-      'title': AppLocalizations.of(context)!.createTask,
-    },
-  ).then((_) async {
-    // Remove previous TaskPage to avoid duplicate task pages (if any)
-    ref
-        .read(navigationServiceProvider)
-        .popUntil((route) => route.settings.name != AppRoutes.taskPage.name);
-    if (isWebVersion) {
-      await _redirectToProjectPage(context, ref);
-    }
-  });
-}
-
-Future<void> _redirectToProjectPage(BuildContext context, WidgetRef ref) async {
-  final curTaskId = ref.watch(curSelectedTaskIdNotifierProvider);
-  if (curTaskId != null) {
-    final curProjectId = await ref
-        .read(tasksRepositoryProvider)
-        .getById(curTaskId)
-        .then((task) => task?.parentProjectId);
-    await openProjectPage(ref, context, projectId: curProjectId);
   }
 }

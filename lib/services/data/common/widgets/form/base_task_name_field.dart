@@ -57,32 +57,38 @@ class BaseNameField extends HookConsumerWidget {
       return () => focusNode.removeListener(onFocusChange);
     }, [focusNode]);
 
-    return isEditable
-        ? AnimatedBuilder(
-            animation: colorAnimation.colorTween,
-            builder: (context, child) {
-              nameController.text = curName;
-              return TextField(
-                focusNode: focusNode,
-                controller: nameController,
-                enabled: isEditable,
-                textInputAction: TextInputAction.done,
-                onEditingComplete: () {
-                  updateName(ref, nameController.text);
-                  FocusScope.of(context).unfocus(); // Hide the keyboard
-                },
-                onTapOutside: (event) {
-                  updateName(ref, nameController.text);
-                  FocusScope.of(context).unfocus(); // Hide the keyboard
-                },
-                decoration: InputDecoration(
-                  hintText: 'Enter name',
-                  errorText: curName.isEmpty ? 'Name is required' : null,
-                ),
-                style: TextStyle(color: colorAnimation.colorTween.value),
-              );
-            },
-          )
-        : Text(curName, style: Theme.of(context).textTheme.headlineMedium);
+    return AnimatedBuilder(
+      animation: colorAnimation.colorTween,
+      builder: (context, child) {
+        nameController.text = curName;
+        return TextField(
+          focusNode: focusNode,
+          controller: nameController,
+          enabled: isEditable,
+          textInputAction: TextInputAction.done,
+          onEditingComplete: () {
+            updateName(ref, nameController.text);
+            FocusScope.of(context).unfocus(); // Hide the keyboard
+          },
+          onTapOutside: (event) {
+            updateName(ref, nameController.text);
+            FocusScope.of(context).unfocus(); // Hide the keyboard
+          },
+          decoration: InputDecoration(
+            hintText: 'Enter name',
+            errorText: curName.isEmpty ? 'Name is required' : null,
+            filled: false,
+            enabledBorder: InputBorder.none,
+            disabledBorder: InputBorder.none,
+            focusedBorder: InputBorder.none,
+            border: InputBorder.none,
+          ),
+          style: Theme.of(context)
+              .textTheme
+              .headlineMedium
+              ?.copyWith(color: colorAnimation.colorTween.value),
+        );
+      },
+    );
   }
 }
