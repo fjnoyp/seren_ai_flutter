@@ -64,10 +64,10 @@ class TaskPage extends HookConsumerWidget {
                 const SizedBox(width: 32),
                 Text(
                   curTask.isReloading
-                      ? 'Saving...'
+                      ? AppLocalizations.of(context)!.saving
                       : curTask.hasError
-                          ? '𐄂 Error saving'
-                          : '✓ All changes saved',
+                          ? AppLocalizations.of(context)!.errorSaving
+                          : AppLocalizations.of(context)!.allChangesSaved,
                   style: theme.textTheme.labelMedium?.copyWith(
                     color: theme.colorScheme.outline,
                   ),

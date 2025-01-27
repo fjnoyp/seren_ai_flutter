@@ -11,10 +11,8 @@ import 'package:seren_ai_flutter/common/utils/string_extension.dart';
 import 'package:seren_ai_flutter/services/data/notes/providers/note_attachments_service_provider.dart';
 
 class NoteAttachmentSection extends ConsumerWidget {
-  const NoteAttachmentSection(this.isEnabled,
-      {required this.noteId, super.key});
+  const NoteAttachmentSection({required this.noteId, super.key});
 
-  final bool isEnabled;
   final String noteId;
 
   @override
@@ -26,12 +24,12 @@ class NoteAttachmentSection extends ConsumerWidget {
           alignment: WrapAlignment.center,
           spacing: 16.0,
           children: [
-            ...ref.watch(noteAttachmentsServiceProvider).map((e) =>
-                _AttachmentPreviewButton(e,
-                    noteId: noteId, enableDelete: isEnabled)),
+            ...ref
+                .watch(noteAttachmentsServiceProvider)
+                .map((e) => _AttachmentPreviewButton(e, noteId: noteId)),
           ],
         ),
-        if (isEnabled) _AddAttachmentButton(noteId: noteId),
+        _AddAttachmentButton(noteId: noteId),
       ],
     );
   }
@@ -187,12 +185,10 @@ class _AddAttachmentButton extends ConsumerWidget {
 class _AttachmentPreviewButton extends ConsumerWidget {
   const _AttachmentPreviewButton(
     this.attachmentUrl, {
-    required this.enableDelete,
     required this.noteId,
   });
 
   final String attachmentUrl;
-  final bool enableDelete;
   final String noteId;
 
   @override
@@ -222,15 +218,14 @@ class _AttachmentPreviewButton extends ConsumerWidget {
             ),
           ),
         ),
-        if (enableDelete)
-          IconButton(
-            onPressed: () => showDialog(
-              context: context,
-              builder: (context) =>
-                  _DeleteAttachmentDialog(attachmentUrl, noteId: noteId),
-            ),
-            icon: Icon(Icons.close, color: Theme.of(context).colorScheme.error),
+        IconButton(
+          onPressed: () => showDialog(
+            context: context,
+            builder: (context) =>
+                _DeleteAttachmentDialog(attachmentUrl, noteId: noteId),
           ),
+          icon: Icon(Icons.close, color: Theme.of(context).colorScheme.error),
+        ),
       ],
     );
   }

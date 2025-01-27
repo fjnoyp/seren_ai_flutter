@@ -4,10 +4,9 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:seren_ai_flutter/common/navigation_service_provider.dart';
 import 'package:seren_ai_flutter/services/auth/cur_auth_state_provider.dart';
 import 'package:seren_ai_flutter/services/data/common/widgets/async_value_handler_widget.dart';
-import 'package:seren_ai_flutter/services/data/common/widgets/editable_page_mode_enum.dart';
 import 'package:seren_ai_flutter/services/data/notes/models/note_model.dart';
 import 'package:seren_ai_flutter/services/data/notes/providers/notes_by_project_stream_provider.dart';
-import 'package:seren_ai_flutter/services/data/notes/widgets/note_page.dart';
+import 'package:seren_ai_flutter/services/data/notes/providers/notes_navigation_service.dart';
 import 'package:seren_ai_flutter/widgets/home/base_home_card.dart';
 import 'package:seren_ai_flutter/common/routes/app_routes.dart';
 
@@ -69,8 +68,9 @@ class _NoteCardItem extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     return GestureDetector(
-      onTap: () => openNotePage(context, ref,
-          mode: EditablePageMode.readOnly, initialNoteId: note.id),
+      onTap: () => ref
+          .read(notesNavigationServiceProvider)
+          .openNote(noteId: note.id),
       child: BaseHomeInnerCard.outlined(
         child: SizedBox(
           width: double.infinity,

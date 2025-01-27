@@ -6,10 +6,9 @@ import 'package:intl/intl.dart';
 import 'package:seren_ai_flutter/services/auth/cur_auth_state_provider.dart';
 import 'package:seren_ai_flutter/services/data/common/widgets/async_value_handler_widget.dart';
 import 'package:seren_ai_flutter/services/data/common/widgets/create_item_bottom_button.dart';
-import 'package:seren_ai_flutter/services/data/common/widgets/editable_page_mode_enum.dart';
 import 'package:seren_ai_flutter/services/data/notes/models/note_model.dart';
 import 'package:seren_ai_flutter/services/data/notes/providers/notes_by_project_stream_provider.dart';
-import 'package:seren_ai_flutter/services/data/notes/widgets/note_page.dart';
+import 'package:seren_ai_flutter/services/data/notes/providers/notes_navigation_service.dart';
 import 'package:seren_ai_flutter/services/data/projects/providers/cur_user_viewable_projects_provider.dart';
 
 class NoteListPage extends HookConsumerWidget {
@@ -26,11 +25,9 @@ class NoteListPage extends HookConsumerWidget {
         Expanded(child: NoteListByProjectId(curProjectId.value)),
         CreateItemBottomButton(
           onPressed: () {
-            openNewNotePage(
-              context,
-              ref,
-              parentProjectId: curProjectId.value,
-            );
+            ref
+                .read(notesNavigationServiceProvider)
+                .openNewNote(parentProjectId: curProjectId.value);
           },
           buttonText: AppLocalizations.of(context)!.createNewNote,
         ),
@@ -127,12 +124,9 @@ class _NoteItem extends ConsumerWidget {
         style: const TextStyle(fontSize: 12),
       ),
       onTap: () {
-        openNotePage(
-          context,
-          ref,
-          mode: EditablePageMode.readOnly,
-          initialNoteId: note.id,
-        );
+        ref
+            .read(notesNavigationServiceProvider)
+            .openNote(noteId: note.id);
       },
     );
   }

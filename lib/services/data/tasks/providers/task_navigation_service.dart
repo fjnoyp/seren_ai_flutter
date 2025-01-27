@@ -76,14 +76,17 @@ class TaskNavigationService {
   }) async {
     final context = ref.read(navigationServiceProvider).context;
 
-    // TODO: add save state indicator (for mobile)
     final actions = [DeleteTaskButton(taskId)];
+
+    final title = mode == EditablePageMode.create
+        ? AppLocalizations.of(context)!.createTask
+        : AppLocalizations.of(context)!.updateTask;
 
     await ref.read(navigationServiceProvider).navigateTo(
       AppRoutes.taskPage.name,
       arguments: {
         'actions': actions,
-        'title': AppLocalizations.of(context)!.task,
+        'title': title,
         'mode': mode,
       },
     );
