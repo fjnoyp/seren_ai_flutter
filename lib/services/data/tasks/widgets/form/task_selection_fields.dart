@@ -21,9 +21,9 @@ class TaskProjectSelectionField extends BaseProjectSelectionField {
 
   TaskProjectSelectionField({
     super.key,
-    required super.isEditable,
     required this.taskId,
   }) : super(
+          isEditable: true,
           projectIdProvider: taskByIdStreamProvider(taskId)
               .select((task) => task.value?.parentProjectId),
           selectableProjectsProvider: curUserViewableProjectsProvider,
@@ -38,9 +38,9 @@ class TaskStatusSelectionField extends BaseStatusSelectionField {
 
   TaskStatusSelectionField({
     super.key,
-    required super.enabled,
     required this.taskId,
   }) : super(
+          enabled: true,
           statusProvider: taskByIdStreamProvider(taskId)
               .select((task) => task.value?.status),
           updateStatus: (ref, status) => ref
@@ -54,9 +54,9 @@ class TaskPrioritySelectionField extends BasePrioritySelectionField {
 
   TaskPrioritySelectionField({
     super.key,
-    required super.enabled,
     required this.taskId,
   }) : super(
+          enabled: true,
           priorityProvider: taskByIdStreamProvider(taskId)
               .select((task) => task.value?.priority),
           updatePriority: (ref, priority) => ref
@@ -70,9 +70,9 @@ class TaskNameField extends BaseNameField {
 
   TaskNameField({
     super.key,
-    required super.isEditable,
     required this.taskId,
   }) : super(
+          isEditable: true,
           nameProvider: taskByIdStreamProvider(taskId)
               .select((task) => task.value?.name ?? ''),
           updateName: (ref, name) =>
@@ -85,9 +85,9 @@ class TaskDueDateSelectionField extends BaseDueDateSelectionField {
 
   TaskDueDateSelectionField({
     super.key,
-    required super.enabled,
     required this.taskId,
   }) : super(
+          enabled: true,
           dueDateProvider: taskByIdStreamProvider(taskId)
               .select((task) => task.value?.dueDate),
           updateDueDate: (ref, pickedDateTime) => ref
@@ -128,10 +128,10 @@ class TaskDescriptionSelectionField extends BaseTextBlockEditSelectionField {
 
   TaskDescriptionSelectionField({
     super.key,
-    required super.isEditable,
     required BuildContext context,
     required this.taskId,
   }) : super(
+          isEditable: true,
           hintText: AppLocalizations.of(context)!.description,
           descriptionProvider: taskByIdStreamProvider(taskId)
               .select((task) => task.value?.description ?? ''),
@@ -146,9 +146,9 @@ class TaskAssigneesSelectionField extends BaseAssigneesSelectionField {
 
   TaskAssigneesSelectionField({
     super.key,
-    required super.enabled,
     required this.taskId,
   }) : super(
+          enabled: true,
           assigneesProvider: assignedUsersInTaskStreamProvider(taskId)
               .select((users) => users.value ?? []),
           projectIdProvider: taskByIdStreamProvider(taskId)
@@ -166,10 +166,10 @@ class TaskEstimatedDurationSelectionField extends BaseMinuteSelectionField {
 
   TaskEstimatedDurationSelectionField({
     super.key,
-    required super.enabled,
     required this.taskId,
     required BuildContext context,
   }) : super(
+          enabled: true,
           durationProvider: taskByIdStreamProvider(taskId)
               .select((task) => task.value?.estimatedDurationMinutes),
           updateDuration: (ref, duration) => ref
@@ -186,9 +186,9 @@ class TaskStartDateSelectionField extends BaseStartDateSelectionField {
 
   TaskStartDateSelectionField({
     super.key,
-    required super.enabled,
     required this.taskId,
   }) : super(
+          enabled: true,
           startDateTimeProvider: taskByIdStreamProvider(taskId)
               .select((task) => task.value?.startDateTime),
           updateStartDate: (ref, pickedDateTime) => ref
@@ -202,11 +202,11 @@ class TaskParentTaskSelectionField extends BaseTaskSelectionField {
   final String projectId;
   TaskParentTaskSelectionField({
     super.key,
-    required super.isEditable,
     required this.taskId,
     required this.projectId,
     required BuildContext context,
   }) : super(
+          enabled: true,
           taskIdProvider: taskByIdStreamProvider(taskId)
               .select((task) => task.value?.parentTaskId),
           selectableTasksProvider: tasksByProjectStreamProvider(projectId),
@@ -223,11 +223,11 @@ class TaskBlockedByTaskSelectionField extends BaseTaskSelectionField {
 
   TaskBlockedByTaskSelectionField({
     super.key,
-    required super.isEditable,
     required this.taskId,
     required this.projectId,
     required BuildContext context,
   }) : super(
+          enabled: true,
           taskIdProvider: taskByIdStreamProvider(taskId)
               .select((task) => task.value?.blockedByTaskId),
           selectableTasksProvider: tasksByProjectStreamProvider(projectId),

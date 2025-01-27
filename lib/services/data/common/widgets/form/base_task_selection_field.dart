@@ -6,7 +6,7 @@ import 'package:seren_ai_flutter/services/data/tasks/models/task_model.dart';
 import 'package:seren_ai_flutter/services/data/tasks/repositories/tasks_repository.dart';
 
 class BaseTaskSelectionField extends ConsumerWidget {
-  final bool isEditable;
+  final bool enabled;
   final ProviderListenable<String?> taskIdProvider;
   final AutoDisposeStreamProvider<List<TaskModel>?> selectableTasksProvider;
   final Function(WidgetRef, TaskModel?) updateTask;
@@ -14,7 +14,7 @@ class BaseTaskSelectionField extends ConsumerWidget {
 
   const BaseTaskSelectionField({
     super.key,
-    required this.isEditable,
+    required this.enabled,
     required this.taskIdProvider,
     required this.selectableTasksProvider,
     required this.updateTask,
@@ -50,7 +50,7 @@ class BaseTaskSelectionField extends ConsumerWidget {
         final task = taskSnapshot.data;
         final selectableTasks = selectableTasksAsync.valueOrNull ?? [];
 
-        return isEditable
+        return enabled
             ? AnimatedModalSelectionField<TaskModel>(
                 labelWidget: SizedBox(
                   width: 60,
@@ -62,7 +62,7 @@ class BaseTaskSelectionField extends ConsumerWidget {
                 validator: (_) => null,
                 valueToString: (task) =>
                     task?.name ?? AppLocalizations.of(context)!.selectATask,
-                enabled: isEditable,
+                enabled: enabled,
                 value: task,
                 options: selectableTasks,
                 onValueChanged: (ref, task) => updateTask(ref, task),

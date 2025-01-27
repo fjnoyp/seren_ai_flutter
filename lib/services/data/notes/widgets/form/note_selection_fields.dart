@@ -120,7 +120,7 @@ class NoteActionRequiredSelectionField extends BaseTextBlockEditSelectionField {
     required super.isEditable,
     required this.noteId,
   }) : super(
-          hintText: '',
+          hintText: AppLocalizations.of(context)!.actionRequired,
           descriptionProvider: noteByIdStreamProvider(noteId)
               .select((note) => note.value?.actionRequired ?? ''),
           updateDescription: (ref, actionRequired) => ref

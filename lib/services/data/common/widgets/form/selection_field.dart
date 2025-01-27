@@ -241,12 +241,14 @@ class SelectionField<T> extends HookConsumerWidget {
                         TextButton(
                       onPressed: enabled
                           ? () async {
-                              // Using ShowBottomSheet or ShowDatePicker invalidates the ref context after the modal closes
-                              // Only fix has been to use consumer directly in the modal builder when the tap occurs
-                              await onTap(context).then((value) {
-                                field.didChange(value);
-                                field.validate();
-                              });
+                            // TODO p3: reapply field validation display (currently we're just not saving invalid field values)
+                              // // Using ShowBottomSheet or ShowDatePicker invalidates the ref context after the modal closes
+                              // // Only fix has been to use consumer directly in the modal builder when the tap occurs
+                              await onTap(context);
+                              // .then((value) {
+                              //   field.didChange(value);
+                              //   field.validate();
+                              // });
                             }
                           : null,
                       style: TextButton.styleFrom(

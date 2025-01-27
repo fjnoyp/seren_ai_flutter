@@ -3,7 +3,6 @@ import 'package:seren_ai_flutter/common/routes/app_routes.dart';
 import 'package:seren_ai_flutter/common/universal_platform/universal_platform.dart';
 import 'package:seren_ai_flutter/services/data/common/status_enum.dart';
 import 'package:seren_ai_flutter/services/data/common/widgets/editable_page_mode_enum.dart';
-import 'package:seren_ai_flutter/services/data/projects/models/project_model.dart';
 import 'package:seren_ai_flutter/services/data/projects/providers/project_navigation_service.dart';
 import 'package:seren_ai_flutter/services/data/tasks/providers/cur_selected_task_id_notifier_provider.dart';
 import 'package:seren_ai_flutter/common/navigation_service_provider.dart';
@@ -31,18 +30,17 @@ class TaskNavigationService {
     await _navigateToTaskPage(
       mode: EditablePageMode.edit,
       taskId: curTaskId,
-      // // we can't use this here since on web we don't have a "pop back" button
-      // ).then(
-      //   (_) {
-      //     if (isWebVersion) {
-      //       _handleProjectRedirect();
-      //     }
-      //   },
+    ).then(
+      (_) {
+        if (isWebVersion) {
+          _handleProjectRedirect();
+        }
+      },
     );
   }
 
   Future<void> openNewTask({
-    ProjectModel? initialProject,
+    String? initialProjectId,
     StatusEnum? initialStatus,
   }) async {
     final taskIdNotifier = ref.read(curSelectedTaskIdNotifierProvider.notifier);
@@ -52,10 +50,10 @@ class TaskNavigationService {
     final curTaskId = ref.read(curSelectedTaskIdNotifierProvider);
     if (curTaskId == null) return;
 
-    if (initialProject != null) {
+    if (initialProjectId != null) {
       await ref
           .read(tasksRepositoryProvider)
-          .updateTaskParentProjectId(curTaskId, initialProject.id);
+          .updateTaskParentProjectId(curTaskId, initialProjectId);
     }
 
     if (initialStatus != null) {
@@ -78,16 +76,14 @@ class TaskNavigationService {
   }) async {
     final context = ref.read(navigationServiceProvider).context;
 
-    // TODO: add save state indicator
+    // TODO: add save state indicator (for mobile)
     final actions = [DeleteTaskButton(taskId)];
-
-    final title = AppLocalizations.of(context)!.task;
 
     await ref.read(navigationServiceProvider).navigateTo(
       AppRoutes.taskPage.name,
       arguments: {
         'actions': actions,
-        'title': title,
+        'title': AppLocalizations.of(context)!.task,
         'mode': mode,
       },
     );
