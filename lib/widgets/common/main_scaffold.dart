@@ -51,15 +51,11 @@ class MainScaffold extends ConsumerWidget {
     });
 
     return PopScope(
-      canPop: false,
-      onPopInvokedWithResult: (_, result) async {
-        final canPop = ref.read(navigationServiceProvider).canPop;
-        if (!canPop) {
-          ref
-              .read(navigationServiceProvider)
-              .navigateToAndRemoveUntil(AppRoutes.home.name, (route) => false);
-        } else {
-          await ref.read(navigationServiceProvider).pop(result);
+      canPop: ref.read(navigationServiceProvider).canPop,
+      onPopInvokedWithResult: (didPop, _) async {
+        if (!didPop) {
+          Navigator.of(context)
+              .pushNamedAndRemoveUntil(AppRoutes.home.name, (route) => false);
         }
       },
       child: isWebVersion
@@ -101,7 +97,7 @@ class MainScaffold extends ConsumerWidget {
                             children: [
                               body,
                               if (showAiAssistant && isAiAssistantExpanded)
-                                const WebAiAssistantModal(),
+                                const WebAiAssistantView(),
                             ],
                           ),
                         ),

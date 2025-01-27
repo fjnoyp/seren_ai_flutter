@@ -15,25 +15,28 @@ class AiChatTextField extends ConsumerWidget {
 
     return Hero(
       tag: 'ai-chat-text-field',
-      child: TextField(
-        controller: messageController,
-        autofocus: true,
-        onSubmitted: (value) {
-          if (value.isEmpty) return;
-          ref.read(aiChatServiceProvider).sendMessageToAi(value);
-          messageController.clear();
-        },
-        decoration: InputDecoration(
-          labelText: AppLocalizations.of(context)!.askAQuestion,
-          suffixIcon: IconButton(
-            icon: const Icon(Icons.send),
-            onPressed: () {
-              final message = messageController.text;
-              if (message.isNotEmpty) {
-                ref.read(aiChatServiceProvider).sendMessageToAi(message);
-                messageController.clear();
-              }
-            },
+      child: Material(
+        type: MaterialType.transparency,
+        child: TextField(
+          controller: messageController,
+          autofocus: true,
+          onSubmitted: (value) {
+            if (value.isEmpty) return;
+            ref.read(aiChatServiceProvider).sendMessageToAi(value);
+            messageController.clear();
+          },
+          decoration: InputDecoration(
+            labelText: AppLocalizations.of(context)!.askAQuestion,
+            suffixIcon: IconButton(
+              icon: const Icon(Icons.send),
+              onPressed: () {
+                final message = messageController.text;
+                if (message.isNotEmpty) {
+                  ref.read(aiChatServiceProvider).sendMessageToAi(message);
+                  messageController.clear();
+                }
+              },
+            ),
           ),
         ),
       ),

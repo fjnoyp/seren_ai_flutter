@@ -9,10 +9,9 @@ import 'package:seren_ai_flutter/services/data/projects/providers/cur_selected_p
 import 'package:seren_ai_flutter/services/data/projects/task_filter_option_enum.dart';
 import 'package:seren_ai_flutter/services/data/projects/task_sort_option_enum.dart';
 import 'package:seren_ai_flutter/services/data/tasks/models/task_model.dart';
-import 'package:seren_ai_flutter/services/data/tasks/providers/cur_user_viewable_tasks_stream_provider.dart';
+import 'package:seren_ai_flutter/services/data/tasks/providers/task_navigation_service.dart';
+import 'package:seren_ai_flutter/services/data/tasks/providers/tasks_by_project_stream_provider.dart';
 import 'package:seren_ai_flutter/services/data/tasks/widgets/task_list/task_list_item_view.dart';
-import 'package:seren_ai_flutter/services/data/tasks/widgets/task_list/tasks_list_view.dart';
-import 'package:seren_ai_flutter/services/data/tasks/widgets/task_page.dart';
 
 class WebProjectTasksSection extends HookConsumerWidget {
   const WebProjectTasksSection({super.key});
@@ -169,9 +168,11 @@ class WebProjectTasksSection extends HookConsumerWidget {
               FilledButton.tonalIcon(
                 icon: const Icon(Icons.add),
                 label: Text(AppLocalizations.of(context)!.createNewTask),
-                onPressed: () async => await openNewTaskPage(context, ref,
-                    initialProject:
-                        ref.read(curSelectedProjectStreamProvider).value!),
+                onPressed: () async =>
+                    await ref.read(taskNavigationServiceProvider).openNewTask(
+                          initialProjectId:
+                              ref.read(curSelectedProjectIdNotifierProvider),
+                        ),
               ),
             ],
           ),
@@ -222,61 +223,79 @@ class _ProjectTasksBoardView extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final project = ref.watch(curSelectedProjectStreamProvider).value!;
+    final projectId = ref.watch(curSelectedProjectIdNotifierProvider);
+    if (projectId == null) return const SizedBox.shrink();
+
+    final tasks = ref
+            .watch(tasksByProjectStreamProvider(projectId))
+            .valueOrNull
+            ?.where(
+                (task) => (filterCondition == null || filterCondition!(task)))
+            .toList() ??
+        [];
+
+    if (sort != null) {
+      tasks.sort(sort);
+    }
+
     return Row(
       children: StatusEnum.values
           .where((status) =>
               status != StatusEnum.cancelled && status != StatusEnum.archived)
           .map(
-            (status) => Expanded(
-              child: Card(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Padding(
-                      padding: const EdgeInsets.all(20),
+        (status) {
+          final filteredTasks =
+              tasks.where((task) => task.status == status).toList();
+          return Expanded(
+            child: Card(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Padding(
+                    padding: const EdgeInsets.all(20),
+                    child: Text(
+                      status.toHumanReadable(context),
+                      style: Theme.of(context).textTheme.titleSmall,
+                    ),
+                  ),
+                  const Divider(height: 1),
+                  Expanded(
+                    child: Padding(
+                      padding: const EdgeInsets.symmetric(horizontal: 16),
+                      child: ListView.builder(
+                        itemCount: filteredTasks.length,
+                        itemBuilder: (context, index) {
+                          return TaskListItemView(task: filteredTasks[index]);
+                        },
+                      ),
+                    ),
+                  ),
+                  const Divider(height: 1),
+                  SizedBox(
+                    width: double.infinity,
+                    child: TextButton(
+                      style: TextButton.styleFrom(
+                        padding: const EdgeInsets.all(20),
+                        alignment: Alignment.centerLeft,
+                        overlayColor: Colors.transparent,
+                      ),
+                      onPressed: () async => await ref
+                          .read(taskNavigationServiceProvider)
+                          .openNewTask(
+                            initialProjectId: projectId,
+                            initialStatus: status,
+                          ),
                       child: Text(
-                        status.toHumanReadable(context),
-                        style: Theme.of(context).textTheme.titleSmall,
+                        AppLocalizations.of(context)!.createNewTask,
                       ),
                     ),
-                    const Divider(height: 1),
-                    Expanded(
-                      child: Padding(
-                        padding: const EdgeInsets.symmetric(horizontal: 16),
-                        child: TasksListView(
-                          filter: (task) =>
-                              task.parentProjectId == project.id &&
-                              task.status == status &&
-                              (filterCondition == null ||
-                                  filterCondition!(task)),
-                          sort: sort,
-                        ),
-                      ),
-                    ),
-                    const Divider(height: 1),
-                    SizedBox(
-                      width: double.infinity,
-                      child: TextButton(
-                        style: TextButton.styleFrom(
-                          padding: const EdgeInsets.all(20),
-                          alignment: Alignment.centerLeft,
-                          overlayColor: Colors.transparent,
-                        ),
-                        onPressed: () async => await openNewTaskPage(
-                            context, ref,
-                            initialProject: project, initialStatus: status),
-                        child: Text(
-                          AppLocalizations.of(context)!.createNewTask,
-                        ),
-                      ),
-                    ),
-                  ],
-                ),
+                  ),
+                ],
               ),
             ),
-          )
-          .toList(),
+          );
+        },
+      ).toList(),
     );
   }
 }
@@ -289,9 +308,11 @@ class _ProjectTasksListView extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final project = ref.watch(curSelectedProjectStreamProvider).value!;
+    final projectId = ref.watch(curSelectedProjectIdNotifierProvider);
+    if (projectId == null) return const SizedBox.shrink();
+
     return AsyncValueHandlerWidget(
-      value: ref.watch(curUserViewableTasksStreamProvider),
+      value: ref.watch(tasksByProjectStreamProvider(projectId)),
       data: (tasks) {
         return SingleChildScrollView(
           child: Column(
@@ -299,7 +320,6 @@ class _ProjectTasksListView extends ConsumerWidget {
               (status) {
                 final filteredTasks = tasks
                         ?.where((task) =>
-                            task.parentProjectId == project.id &&
                             task.status == status &&
                             (filterCondition == null || filterCondition!(task)))
                         .toList() ??
@@ -329,8 +349,11 @@ class _ProjectTasksListView extends ConsumerWidget {
                       const Divider(height: 1),
                       ListTile(
                         dense: true,
-                        onTap: () => openNewTaskPage(context, ref,
-                            initialProject: project, initialStatus: status),
+                        onTap: () =>
+                            ref.read(taskNavigationServiceProvider).openNewTask(
+                                  initialProjectId: projectId,
+                                  initialStatus: status,
+                                ),
                         leading: const SizedBox.shrink(),
                         title: Text(
                           AppLocalizations.of(context)!.createNewTask,

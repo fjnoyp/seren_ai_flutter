@@ -1,12 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:seren_ai_flutter/common/universal_platform/universal_platform.dart';
-import 'package:seren_ai_flutter/services/data/common/widgets/editable_page_mode_enum.dart';
 import 'package:seren_ai_flutter/services/data/projects/providers/project_by_id_stream_provider.dart';
 import 'package:seren_ai_flutter/services/data/tasks/models/task_model.dart';
 import 'package:intl/intl.dart';
+import 'package:seren_ai_flutter/services/data/tasks/providers/task_navigation_service.dart';
 import 'package:seren_ai_flutter/services/data/tasks/widgets/task_list/task_priority_view.dart';
-import 'package:seren_ai_flutter/services/data/tasks/widgets/task_page.dart';
 import 'package:seren_ai_flutter/services/data/tasks/widgets/ui_constants.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:seren_ai_flutter/services/data/users/providers/assigned_users_in_task_stream_provider.dart';
@@ -26,8 +25,9 @@ class TaskListItemView extends ConsumerWidget {
 
     return GestureDetector(
       onTap: () async {
-        await openTaskPage(context, ref,
-            mode: EditablePageMode.readOnly, initialTaskId: task.id);
+        await ref
+            .read(taskNavigationServiceProvider)
+            .openTask(initialTaskId: task.id);
       },
       child: Card(
         color: theme.cardColor,
@@ -137,8 +137,9 @@ class TaskListTileItemView extends ConsumerWidget {
 
     return ListTile(
       dense: true,
-      onTap: () => openTaskPage(context, ref,
-          mode: EditablePageMode.readOnly, initialTaskId: task.id),
+      onTap: () => ref
+          .read(taskNavigationServiceProvider)
+          .openTask(initialTaskId: task.id),
       leading: const SizedBox.shrink(),
       title: Text(task.name),
       trailing: Row(
