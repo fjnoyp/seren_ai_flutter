@@ -1,7 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:seren_ai_flutter/common/is_show_save_dialog_on_pop_provider.dart';
-import 'package:seren_ai_flutter/widgets/common/confirm_save_dialog.dart';
 
 final navigationServiceProvider = Provider((ref) => NavigationService(ref));
 
@@ -37,37 +35,10 @@ class NavigationService {
 
   Future<dynamic> pop([dynamic result]) async {
     if (!navigatorKey.currentState!.mounted) return result;
-
-    final canSave = ref.read(isShowSaveDialogOnPopProvider);
-
-    if (!canSave) {
-      if (canPop) {
-        navigatorKey.currentState!.pop(result);
-        return result;
-      }
-    } else {
-      // If can save - show dialog to confirm save
-      final shouldSave = await showPopupDialog(const ConfirmSaveDialog());
-
-      if (shouldSave ?? false) {
-        ref.read(isShowSaveDialogOnPopProvider.notifier).reset();
-        if (canPop) {
-          navigatorKey.currentState!.pop(result);
-          return result;
-        }
-      }
-      // If user cancels, don't pop and return null
-      return null;
+    if (canPop) {
+      navigatorKey.currentState!.pop(result);
+      return result;
     }
-  }
-
-  Future<dynamic> navigateToWithPopUntil(
-    String routeName, {
-    Object? arguments,
-    required bool Function(Route<dynamic>) predicate,
-  }) async {
-    popUntil(predicate);
-    return navigateTo(routeName, arguments: arguments);
   }
 
   Future<dynamic> showPopupDialog(Widget dialog,

@@ -57,9 +57,11 @@ class FindTasksRequestModel extends AiInfoRequestModel {
 class CreateTaskRequestModel extends AiActionRequestModel {
   final String taskName;
   final String? taskDescription;
-  final String? taskDueDate;
-  final String? taskPriority;
+  final String? taskDueDate; // Must be in ISO 8601 format
+  final String? taskPriority; // Must be: veryLow, low, normal, high, veryHigh
   final int? estimateDurationMinutes;
+  final List<String>? assignedUserNames;
+  final String? parentProjectName;
 
   CreateTaskRequestModel({
     required this.taskName,
@@ -67,6 +69,8 @@ class CreateTaskRequestModel extends AiActionRequestModel {
     this.taskDueDate,
     this.taskPriority,
     this.estimateDurationMinutes,
+    this.assignedUserNames,
+    this.parentProjectName,
     super.args,
   }) : super(actionRequestType: AiActionRequestType.createTask);
 
@@ -78,6 +82,8 @@ class CreateTaskRequestModel extends AiActionRequestModel {
       taskDueDate: json['args']['task_due_date'],
       taskPriority: json['args']['task_priority'],
       estimateDurationMinutes: json['args']['estimate_duration_minutes'],
+      assignedUserNames: json['args']['assigned_user_names']?.cast<String>(),
+      parentProjectName: json['args']['parent_project_name'],
     );
   }
 }
@@ -89,6 +95,7 @@ class UpdateTaskFieldsRequestModel extends AiActionRequestModel {
   final String? taskStatus;
   final String? taskPriority;
   final int? estimateDurationMinutes;
+  final List<String>? assignedUserNames;
 
   UpdateTaskFieldsRequestModel({
     required this.taskName,
@@ -97,6 +104,7 @@ class UpdateTaskFieldsRequestModel extends AiActionRequestModel {
     this.taskStatus,
     this.taskPriority,
     this.estimateDurationMinutes,
+    this.assignedUserNames,
     super.args,
   }) : super(actionRequestType: AiActionRequestType.updateTaskFields);
 
@@ -109,6 +117,7 @@ class UpdateTaskFieldsRequestModel extends AiActionRequestModel {
       taskStatus: json['args']['task_status'],
       taskPriority: json['args']['task_priority'],
       estimateDurationMinutes: json['args']['estimate_duration_minutes'],
+      assignedUserNames: json['args']['assigned_user_names']?.cast<String>(),
     );
   }
 }

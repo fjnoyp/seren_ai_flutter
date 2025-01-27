@@ -6,6 +6,7 @@ import 'package:seren_ai_flutter/services/data/orgs/providers/cur_selected_org_i
 import 'package:seren_ai_flutter/services/data/projects/models/project_model.dart';
 import 'package:seren_ai_flutter/services/data/projects/providers/cur_user_viewable_projects_provider.dart';
 import 'package:seren_ai_flutter/services/data/projects/repositories/projects_repository.dart';
+import 'package:seren_ai_flutter/services/data/users/models/user_model.dart';
 
 final curSelectedProjectStreamProvider = StreamProvider<ProjectModel?>((ref) {
   final projectId = ref.watch(curSelectedProjectIdNotifierProvider);
@@ -23,74 +24,55 @@ final curSelectedProjectIdNotifierProvider =
 class CurSelectedProjectIdNotifier extends Notifier<String?> {
   @override
   String? build() {
+    // Only watch the current user
+    final curUser = ref.watch(curUserProvider).value;
+
+    if (curUser == null) {
+      throw Exception('No user found');
+    }
+
     // Check access only when needed, don't watch continuously
     ref.listen(curUserViewableProjectsProvider, (previous, next) {
       if (next.value != null &&
           state != null &&
           !next.value!.any((e) => e.id == state!)) {
         log('User has no longer access to project ${state!}');
-        _initializeDefaultProject();
+        state = null;
       }
     });
 
     // Initial setup
-    _initializeDefaultProject();
-    return null;
+    if (state == null) {
+      _setToDefaultOrFirstAssignedProject(curUser);
+    }
+
+    return state; // state is AsyncLoading ? const AsyncLoading() : state;
   }
 
   void setProjectId(String projectId) {
     state = projectId;
   }
 
-  Future<void> _initializeDefaultProject() async {
-    try {
-      final defaultId = await _findDefaultProjectId();
-      if (defaultId != null) {
-        setProjectId(defaultId);
-      }
-    } catch (e) {
-      log('Error initializing default project: $e');
-    }
-  }
-
-  Future<String?> _findDefaultProjectId() async {
-    final curUser = ref.read(curUserProvider).value;
-    if (curUser == null) {
-      throw Exception('No user found');
-    }
-
-    // Try user's default project first
-    if (curUser.defaultProjectId != null) {
+  Future<void> _setToDefaultOrFirstAssignedProject(UserModel user) async {
+    // Defaults to user default project
+    if (user.defaultProjectId != null) {
       final defaultProject = await ref
           .read(projectsRepositoryProvider)
-          .getById(curUser.defaultProjectId!);
+          .getById(user.defaultProjectId!);
       if (defaultProject != null) {
-        return defaultProject.id;
+        setProjectId(defaultProject.id);
+      }
+    } else {
+      // Defaults to some assigned project when user default project is null
+      final orgId = ref.read(curSelectedOrgIdNotifierProvider)!;
+      final userProjects = await ref
+          .read(projectsRepositoryProvider)
+          .getUserProjects(userId: user.id, orgId: orgId);
+      if (userProjects.isNotEmpty) {
+        setProjectId(userProjects.first.id);
+      } else {
+        state = null;
       }
     }
-
-    // Fall back to first available project
-    final orgId = ref.read(curSelectedOrgIdNotifierProvider)!;
-    final userProjects = await ref
-        .read(projectsRepositoryProvider)
-        .getUserProjects(userId: curUser.id, orgId: orgId);
-    if (userProjects.isNotEmpty) {
-      return userProjects.first.id;
-    }
-
-    throw Exception('No project found');
-  }
-
-  // Public method to get current state or find default
-  Future<String> getSelectedProjectOrDefault() async {
-    if (state != null) return state!;
-
-    final defaultId = await _findDefaultProjectId();
-    if (defaultId != null) {
-      setProjectId(defaultId);
-      return defaultId;
-    }
-
-    throw Exception('No project found');
   }
 }
