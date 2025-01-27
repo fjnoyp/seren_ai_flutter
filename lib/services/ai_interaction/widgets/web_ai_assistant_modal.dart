@@ -7,8 +7,8 @@ import 'package:seren_ai_flutter/services/ai_interaction/widgets/ai_chat_text_fi
 import 'package:seren_ai_flutter/services/data/ai_chats/widgets/ai_chats_page.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
-class WebAiAssistantModal extends ConsumerWidget {
-  const WebAiAssistantModal({super.key});
+class WebAiAssistantView extends ConsumerWidget {
+  const WebAiAssistantView({super.key});
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {

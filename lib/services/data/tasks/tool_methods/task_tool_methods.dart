@@ -24,9 +24,11 @@ import 'package:seren_ai_flutter/services/data/common/widgets/delete_confirmatio
 import 'package:seren_ai_flutter/services/data/common/widgets/editable_page_mode_enum.dart';
 import 'package:seren_ai_flutter/services/data/orgs/providers/cur_selected_org_id_notifier.dart';
 import 'package:seren_ai_flutter/services/data/projects/models/project_model.dart';
+import 'package:seren_ai_flutter/services/data/projects/providers/cur_selected_project_providers.dart';
 import 'package:seren_ai_flutter/services/data/projects/repositories/projects_repository.dart';
 import 'package:seren_ai_flutter/services/data/tasks/models/task_model.dart';
 import 'package:seren_ai_flutter/services/data/tasks/providers/cur_selected_task_id_notifier_provider.dart';
+import 'package:seren_ai_flutter/services/data/tasks/providers/task_assignments_service_provider.dart';
 import 'package:seren_ai_flutter/services/data/tasks/repositories/tasks_repository.dart';
 import 'package:seren_ai_flutter/services/data/tasks/tool_methods/models/create_task_result_model.dart';
 import 'package:seren_ai_flutter/services/data/tasks/tool_methods/models/delete_task_result_model.dart';
@@ -42,7 +44,7 @@ class TaskToolMethods {
   static const double _similarityThreshold = 0.6;
   static const double _differenceThreshold = 0.8;
 
-  // TODO p2: switch to pagination + db based FTS + semantic search
+  // TODO p3: switch to pagination + db based FTS + semantic search
   Future<AiRequestResultModel> findTasks(
       {required Ref ref, required FindTasksRequestModel infoRequest}) async {
     final userId = _getUserId(ref);
@@ -208,6 +210,11 @@ class TaskToolMethods {
     final userId = _getUserId(ref);
     if (userId == null) return _handleNoAuth();
 
+    // TODO p2: request project name is ignored, we will need to create a similar search projects by name function ...
+    final selectedProjectId = await ref
+        .read(curSelectedProjectIdNotifierProvider.notifier)
+        .getSelectedProjectOrDefault();
+
     // Create a new task with fields from the request
     final newTask = TaskModel(
       name: actionRequest.taskName,
@@ -223,11 +230,20 @@ class TaskToolMethods {
       estimatedDurationMinutes: actionRequest.estimateDurationMinutes,
       authorUserId: userId,
       // TODO: add `actionRequest.parentProjectId` instead of always using defaultProjectId
-      parentProjectId: ref.read(curUserProvider).value!.defaultProjectId ?? '',
+      parentProjectId: selectedProjectId,
     );
 
     // Save the task in the current task service
     await ref.read(tasksRepositoryProvider).upsertItem(newTask);
+
+    // Try to assign users by name
+    List<SearchUserResult>? userAssignmentResults;
+    if (actionRequest.assignedUserNames != null &&
+        actionRequest.assignedUserNames!.isNotEmpty) {
+      userAssignmentResults = await ref
+          .read(taskAssignmentsServiceProvider)
+          .tryAssignUsersByName(newTask.id, actionRequest.assignedUserNames!);
+    }
 
     // Navigate to task page in readOnly mode
     if (allowToolUiActions) {
@@ -249,9 +265,10 @@ class TaskToolMethods {
 
     return CreateTaskResultModel(
       task: newTask,
+      userAssignmentResults: userAssignmentResults,
       resultForAi: allowToolUiActions
           ? 'Created new task "${newTask.name}" and opened task page'
-          : 'Created new task "${newTask.name}", but UI actions are not allowed',
+          : 'Created new task "${newTask.name}"',
       showOnly: true,
     );
   }
@@ -317,6 +334,19 @@ class TaskToolMethods {
       ref
           .read(curSelectedTaskIdNotifierProvider.notifier)
           .setTaskId(updatedTask.id);
+    }
+
+    // Save task changes ...
+    await ref.read(tasksRepositoryProvider).upsertItem(updatedTask);
+
+    // Try to assign users by name
+    List<SearchUserResult>? userAssignmentResults;
+    if (actionRequest.assignedUserNames != null &&
+        actionRequest.assignedUserNames!.isNotEmpty) {
+      userAssignmentResults = await ref
+          .read(taskAssignmentsServiceProvider)
+          .tryAssignUsersByName(
+              updatedTask.id, actionRequest.assignedUserNames!);
     }
 
     return UpdateTaskFieldsResultModel(

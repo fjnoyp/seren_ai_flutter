@@ -14,9 +14,9 @@ class NoteNameField extends BaseNameField {
 
   NoteNameField({
     super.key,
-    required super.isEditable,
     required this.noteId,
   }) : super(
+          isEditable: true,
           nameProvider: noteByIdStreamProvider(noteId)
               .select((note) => note.value?.name ?? ''),
           updateName: (ref, name) =>
@@ -29,9 +29,9 @@ class NoteStatusSelectionField extends BaseStatusSelectionField {
 
   NoteStatusSelectionField({
     super.key,
-    required super.enabled,
     required this.noteId,
   }) : super(
+          enabled: true,
           statusProvider: noteByIdStreamProvider(noteId)
               .select((note) => note.value?.status),
           updateStatus: (ref, status) => ref
@@ -61,10 +61,10 @@ class NoteDescriptionSelectionField extends BaseTextBlockEditSelectionField {
 
   NoteDescriptionSelectionField({
     super.key,
-    required super.isEditable,
     required this.noteId,
     required BuildContext context,
   }) : super(
+          isEditable: true,
           hintText: AppLocalizations.of(context)!.description,
           descriptionProvider: noteByIdStreamProvider(noteId)
               .select((note) => note.value?.description ?? ''),
@@ -79,9 +79,9 @@ class NoteProjectSelectionField extends BaseProjectSelectionField {
 
   NoteProjectSelectionField({
     super.key,
-    required super.isEditable,
     required this.noteId,
   }) : super(
+          isEditable: true,
           projectIdProvider: noteByIdStreamProvider(noteId)
               .select((note) => note.value?.parentProjectId),
           selectableProjectsProvider: curUserViewableProjectsProvider,
@@ -97,10 +97,10 @@ class NoteAddressSelectionField extends BaseTextBlockEditSelectionField {
 
   NoteAddressSelectionField({
     super.key,
-    required super.isEditable,
     required this.noteId,
     required BuildContext context,
   }) : super(
+          isEditable: true,
           hintText: AppLocalizations.of(context)!.address,
           descriptionProvider: noteByIdStreamProvider(noteId)
               .select((note) => note.value?.address ?? ''),
@@ -117,10 +117,10 @@ class NoteActionRequiredSelectionField extends BaseTextBlockEditSelectionField {
   NoteActionRequiredSelectionField({
     super.key,
     required BuildContext context,
-    required super.isEditable,
     required this.noteId,
   }) : super(
-          hintText: '',
+          isEditable: true,
+          hintText: AppLocalizations.of(context)!.actionRequired,
           descriptionProvider: noteByIdStreamProvider(noteId)
               .select((note) => note.value?.actionRequired ?? ''),
           updateDescription: (ref, actionRequired) => ref
