@@ -105,9 +105,11 @@ class ProjectNavigationService {
             : null;
 
     await ref.read(navigationServiceProvider).navigateToAndRemoveUntil(
-      AppRoutes.projectDetails.name,
-      // Remove previous TaskPage to avoid duplicate task pages (if any)
-      (route) => route.settings.name != AppRoutes.projectDetails.name,
+      '${AppRoutes.projectDetails.name}/$projectId',
+      // Remove previous ProjectPage to avoid duplicate project pages (if any)
+      (route) =>
+          route.settings.name?.startsWith(AppRoutes.projectDetails.name) !=
+          true,
       arguments: {'title': title, 'mode': mode, 'actions': actions},
     );
   }
