@@ -22,6 +22,7 @@ import 'package:seren_ai_flutter/services/data/orgs/widgets/cur_org_page.dart';
 import 'package:seren_ai_flutter/services/data/orgs/widgets/manage_org_users_page.dart';
 import 'package:seren_ai_flutter/services/data/orgs/widgets/org_guard.dart';
 import 'package:seren_ai_flutter/services/data/orgs/widgets/web/web_manage_org_users_page.dart';
+import 'package:seren_ai_flutter/services/data/projects/providers/cur_selected_project_providers.dart';
 import 'package:seren_ai_flutter/services/data/projects/widgets/project_page.dart';
 import 'package:seren_ai_flutter/services/data/projects/widgets/project_list_page.dart';
 import 'package:seren_ai_flutter/services/data/projects/widgets/web/web_project_page.dart';
@@ -120,17 +121,17 @@ class AppState extends ConsumerState<App> {
             AppRoutes.projects.name: (context) => _GuardScaffold(
                 AppLocalizations.of(context)!.projects,
                 const ProjectListPage()),
-            AppRoutes.projectDetails.name: (context) {
-              final args = ModalRoute.of(context)!.settings.arguments
-                  as Map<String, dynamic>;
-              return _GuardScaffold(
-                args['title'],
-                ProjectPage(mode: args['mode'] ?? EditablePageMode.readOnly),
-                webBody: const WebProjectPage(),
-                actions: args['actions'],
-                showAppBar: !isWebVersion,
-              );
-            },
+            // AppRoutes.projectDetails.name: (context) {
+            //   final args = ModalRoute.of(context)!.settings.arguments
+            //       as Map<String, dynamic>;
+            //   return _GuardScaffold(
+            //     args['title'],
+            //     ProjectPage(mode: args['mode'] ?? EditablePageMode.readOnly),
+            //     webBody: const WebProjectPage(),
+            //     actions: args['actions'],
+            //     showAppBar: !isWebVersion,
+            //   );
+            // },
             AppRoutes.tasks.name: (context) => _GuardScaffold(
                 AppLocalizations.of(context)!.tasks, const TasksListPage()),
             AppRoutes.taskPage.name: (context) {
@@ -192,6 +193,41 @@ class AppState extends ConsumerState<App> {
           },
           // For dynamically generating routes based on settings param
           onGenerateRoute: (settings) {
+            final uri = Uri.parse(settings.name ?? '');
+
+            // Handle project details route with ID
+            if (uri.pathSegments.length > 1 &&
+                uri.pathSegments[0] ==
+                    AppRoutes.projectDetails.name.replaceAll('/', '')) {
+              final args = settings.arguments as Map<String, dynamic>?;
+
+              // TODO: move this logic to a more proper location
+              WidgetsBinding.instance.addPostFrameCallback((_) {
+                final curSelectedProjectId =
+                    ref.read(curSelectedProjectIdNotifierProvider);
+
+                if (curSelectedProjectId == null) {
+                  final projectId = uri.pathSegments[1];
+                  ref
+                      .read(curSelectedProjectIdNotifierProvider.notifier)
+                      .setProjectId(projectId);
+                }
+              });
+
+              return MaterialPageRoute(
+                settings: settings,
+                builder: (context) => _GuardScaffold(
+                  args?['title'] ?? AppLocalizations.of(context)!.project,
+                  ProjectPage(
+                    mode: args?['mode'] ?? EditablePageMode.readOnly,
+                  ),
+                  webBody: const WebProjectPage(),
+                  actions: args?['actions'],
+                  showAppBar: !isWebVersion,
+                ),
+              );
+            }
+
             /*
             if (settings.name == '/test') {
               final param = settings.arguments as String?;
