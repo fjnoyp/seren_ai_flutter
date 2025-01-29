@@ -42,7 +42,7 @@ class TaskPage extends HookConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final theme = Theme.of(context);
 
-    final curTaskId = ref.watch(curSelectedTaskIdNotifierProvider)!;
+    final curTaskId = ref.watch(curSelectedTaskIdNotifierProvider) ?? '';
 
     final curTask = ref.watch(taskByIdStreamProvider(curTaskId));
 

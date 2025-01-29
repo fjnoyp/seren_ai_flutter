@@ -4,6 +4,7 @@ import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:seren_ai_flutter/common/navigation_service_provider.dart';
 import 'package:seren_ai_flutter/common/universal_platform/universal_platform.dart';
+import 'package:seren_ai_flutter/services/data/common/widgets/form/color_animation.dart';
 import 'package:seren_ai_flutter/services/data/common/widgets/form/selection_field.dart';
 
 class BaseTextBlockEditSelectionField extends HookConsumerWidget {
@@ -27,28 +28,41 @@ class BaseTextBlockEditSelectionField extends HookConsumerWidget {
     final curDescription = ref.watch(descriptionProvider);
     final controller = useTextEditingController(text: curDescription);
 
+    final colorAnimation = useAiActionColorAnimation(
+      context,
+      ref,
+      duration: const Duration(seconds: 1),
+      triggerValue: curDescription,
+    );
+
     return isWebVersion && isEditable
-        ? TextFormField(
-            controller: controller,
-            minLines: 1,
-            maxLines: null,
-            decoration: InputDecoration(
-              hintText: hintText ?? AppLocalizations.of(context)!.enterTextHere,
-              prefixIcon: labelWidget,
-              filled: false,
-              enabledBorder: InputBorder.none,
-              disabledBorder: InputBorder.none,
-              focusedBorder: InputBorder.none,
-              border: InputBorder.none,
-            ),
-            onFieldSubmitted: (value) async {
-              await updateDescription(ref, value);
-            },
-            onTapOutside: (event) async {
-              await updateDescription(ref, controller.text);
-              FocusManager.instance.primaryFocus?.unfocus();
-            },
-          )
+        ? AnimatedBuilder(
+            animation: colorAnimation.colorTween,
+            builder: (context, _) {
+              controller.text = curDescription ?? '';
+              return TextFormField(
+                controller: controller,
+                minLines: 1,
+                maxLines: null,
+                decoration: InputDecoration(
+                  hintText:
+                      hintText ?? AppLocalizations.of(context)!.enterTextHere,
+                  prefixIcon: labelWidget,
+                  filled: false,
+                  enabledBorder: InputBorder.none,
+                  disabledBorder: InputBorder.none,
+                  focusedBorder: InputBorder.none,
+                  border: InputBorder.none,
+                ),
+                onFieldSubmitted: (value) async {
+                  await updateDescription(ref, value);
+                },
+                onTapOutside: (event) async {
+                  await updateDescription(ref, controller.text);
+                  FocusManager.instance.primaryFocus?.unfocus();
+                },
+              );
+            })
         : AnimatedSelectionField<String>(
             labelWidget: labelWidget ?? const Icon(Icons.description),
             validator: (description) => null,
