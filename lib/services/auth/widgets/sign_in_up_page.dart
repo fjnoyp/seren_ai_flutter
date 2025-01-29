@@ -4,6 +4,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:seren_ai_flutter/common/navigation_service_provider.dart';
 import 'package:seren_ai_flutter/common/routes/app_routes.dart';
 import 'package:seren_ai_flutter/services/auth/cur_auth_state_provider.dart';
+import 'package:seren_ai_flutter/services/data/users/models/user_model.dart';
 import 'package:supabase_auth_ui/supabase_auth_ui.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
@@ -30,14 +31,43 @@ class SignInUpPage extends ConsumerWidget {
                 if (response.user != null && response.user!.email != null) {
                   final user = response.user!;
 
-                  await Supabase.instance.client
-                      .rpc('create_initial_setup_for_user', params: {
-                    'auth_user_id': user.id,
-                    'email': user.email!,
-                    'first_name':
-                        user.userMetadata?['first_name']?.trim() ?? '',
-                    'last_name': user.userMetadata?['last_name']?.trim() ?? '',
-                  });
+                  // Use direct Supabase query instead of PowerSync for initial check
+                  final rawQuery = await Supabase.instance.client
+                      .from('invites')
+                      .select()
+                      .eq('email', user.email!)
+                      .eq('status', 'pending');
+
+                  if (rawQuery.isEmpty) {
+                    // if the user has no pending invites, create initial setup
+                    await Supabase.instance.client
+                        .rpc('create_initial_setup_for_user', params: {
+                      'auth_user_id': user.id,
+                      'email': user.email!,
+                      'first_name':
+                          user.userMetadata?['first_name']?.trim() ?? '',
+                      'last_name':
+                          user.userMetadata?['last_name']?.trim() ?? '',
+                    });
+                  } else {
+                    // if the user has pending invites, just create user
+                    await Supabase.instance.client.from('users').insert(
+                          UserModel(
+                            parentAuthUserId: user.id,
+                            email: user.email!,
+                            firstName:
+                                user.userMetadata?['first_name']?.trim() ?? '',
+                            lastName:
+                                user.userMetadata?['last_name']?.trim() ?? '',
+                          ).toJson()
+                            ..addAll(
+                              {
+                                'created_at': DateTime.now().toIso8601String(),
+                                'updated_at': DateTime.now().toIso8601String()
+                              },
+                            ),
+                        );
+                  }
 
                   await ref.read(curUserProvider.notifier).updateUser(user);
 
@@ -96,14 +126,17 @@ class SignInUpPage extends ConsumerWidget {
                 enterEmail: AppLocalizations.of(context)!.enterEmail,
                 validEmailError: AppLocalizations.of(context)!.validEmailError,
                 enterPassword: AppLocalizations.of(context)!.enterPassword,
-                passwordLengthError: AppLocalizations.of(context)!.passwordLengthError,
+                passwordLengthError:
+                    AppLocalizations.of(context)!.passwordLengthError,
                 signIn: AppLocalizations.of(context)!.signIn,
-                signUp : AppLocalizations.of(context)!.signUp,
-                forgotPassword : AppLocalizations.of(context)!.forgotPassword,
+                signUp: AppLocalizations.of(context)!.signUp,
+                forgotPassword: AppLocalizations.of(context)!.forgotPassword,
                 dontHaveAccount: AppLocalizations.of(context)!.dontHaveAccount,
                 haveAccount: AppLocalizations.of(context)!.haveAccount,
-                sendPasswordReset: AppLocalizations.of(context)!.sendPasswordReset,
-                passwordResetSent: AppLocalizations.of(context)!.passwordResetSent,
+                sendPasswordReset:
+                    AppLocalizations.of(context)!.sendPasswordReset,
+                passwordResetSent:
+                    AppLocalizations.of(context)!.passwordResetSent,
                 backToSignIn: AppLocalizations.of(context)!.backToSignIn,
               ),
             ),
