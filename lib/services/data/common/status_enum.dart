@@ -15,4 +15,16 @@ enum StatusEnum {
         StatusEnum.finished => AppLocalizations.of(context)!.finished,
         StatusEnum.archived => AppLocalizations.of(context)!.archived,
       };
+
+  static StatusEnum tryParse(String? value) {
+    if (value == null) return StatusEnum.open;
+    try {
+      // exception case for 'inprogress'
+      if (value.toLowerCase() == 'inprogress') return StatusEnum.inProgress;
+
+      return StatusEnum.values.byName(value.toLowerCase());
+    } catch (_) {
+      return StatusEnum.open;
+    }
+  }
 }

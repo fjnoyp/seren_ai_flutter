@@ -59,6 +59,7 @@ class CreateTaskRequestModel extends AiActionRequestModel {
   final String? taskDescription;
   final String? taskDueDate; // Must be in ISO 8601 format
   final String? taskPriority; // Must be: veryLow, low, normal, high, veryHigh
+  final String? taskStatus; // Must be: todo, inProgress, done
   final int? estimateDurationMinutes;
   final List<String>? assignedUserNames;
   final String? parentProjectName;
@@ -68,6 +69,7 @@ class CreateTaskRequestModel extends AiActionRequestModel {
     this.taskDescription,
     this.taskDueDate,
     this.taskPriority,
+    this.taskStatus,
     this.estimateDurationMinutes,
     this.assignedUserNames,
     this.parentProjectName,
@@ -81,6 +83,7 @@ class CreateTaskRequestModel extends AiActionRequestModel {
       taskDescription: json['args']['task_description'],
       taskDueDate: json['args']['task_due_date'],
       taskPriority: json['args']['task_priority'],
+      taskStatus: json['args']['task_status'],
       estimateDurationMinutes: json['args']['estimate_duration_minutes'],
       assignedUserNames: json['args']['assigned_user_names']?.cast<String>(),
       parentProjectName: json['args']['parent_project_name'],

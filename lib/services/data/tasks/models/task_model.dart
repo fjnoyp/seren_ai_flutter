@@ -24,6 +24,19 @@ enum PriorityEnum {
         PriorityEnum.veryHigh => AppLocalizations.of(context)!.veryHigh,
       };
 
+  static PriorityEnum tryParse(String? value) {
+    if (value == null) return PriorityEnum.normal;
+    try {
+      // exception case for veryLow, veryHigh
+      if (value.toLowerCase() == 'verylow') return PriorityEnum.veryLow;
+      if (value.toLowerCase() == 'veryhigh') return PriorityEnum.veryHigh;
+
+      return PriorityEnum.values.byName(value.toLowerCase());
+    } catch (_) {
+      return PriorityEnum.normal;
+    }
+  }
+
   int toInt() => switch (this) {
         PriorityEnum.veryLow => 4,
         PriorityEnum.low => 3,
