@@ -52,12 +52,14 @@ class CurOrgPage extends ConsumerWidget {
                 ),
                 const SizedBox(height: 4),
                 ...admins.map(
-                  (admin) => ListTile(
-                    dense: true,
-                    leading: UserAvatar(admin.user!),
-                    title: Text(
-                        '${admin.user!.firstName} ${admin.user!.lastName}'),
-                  ),
+                  (admin) => admin.user != null
+                      ? ListTile(
+                          dense: true,
+                          leading: UserAvatar(admin.user!),
+                          title: Text(
+                              '${admin.user!.firstName} ${admin.user!.lastName}'),
+                        )
+                      : const SizedBox.shrink(),
                 ),
                 const SizedBox(height: 24),
                 Row(
