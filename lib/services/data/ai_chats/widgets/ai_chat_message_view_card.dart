@@ -15,6 +15,8 @@ import 'package:seren_ai_flutter/services/data/tasks/tool_methods/models/find_ta
 import 'package:seren_ai_flutter/services/data/tasks/tool_methods/models/update_task_fields_result_model.dart';
 import 'package:seren_ai_flutter/services/data/tasks/tool_methods/task_result_widgets.dart';
 import 'package:seren_ai_flutter/widgets/common/debug_mode_provider.dart';
+import 'package:flutter/rendering.dart';
+import 'package:flutter/services.dart';
 
 class AiChatMessageViewCard extends HookConsumerWidget {
   final AiChatMessageModel message;
@@ -58,18 +60,32 @@ class AiChatMessageViewCard extends HookConsumerWidget {
                 children: [
                   // Debug Mode Toggle - Positioned in top right
                   if (ref.watch(isDebugModeSNP))
-                    Align(
-                      alignment: Alignment.topRight,
-                      child: IconButton(
-                        padding: EdgeInsets.zero,
-                        constraints: const BoxConstraints(),
-                        iconSize: 15,
-                        icon: Icon(
-                          showRawJson.value ? Icons.list : Icons.bug_report,
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.end,
+                      children: [
+                        IconButton(
+                          padding: const EdgeInsets.only(right: 6, top: 6),
+                          constraints: const BoxConstraints(),
+                          iconSize: 15,
+                          icon: const Icon(Icons.copy),
                           color: theme.colorScheme.primary,
+                          onPressed: () {
+                            Clipboard.setData(
+                                ClipboardData(text: message.content));
+                          },
                         ),
-                        onPressed: () => showRawJson.value = !showRawJson.value,
-                      ),
+                        IconButton(
+                          padding: const EdgeInsets.only(right: 6, top: 6),
+                          constraints: const BoxConstraints(),
+                          iconSize: 15,
+                          icon: Icon(
+                            showRawJson.value ? Icons.list : Icons.bug_report,
+                            color: theme.colorScheme.primary,
+                          ),
+                          onPressed: () =>
+                              showRawJson.value = !showRawJson.value,
+                        ),
+                      ],
                     ),
                   showRawJson.value
                       ? Padding(
