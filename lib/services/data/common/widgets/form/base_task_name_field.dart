@@ -63,6 +63,8 @@ class BaseNameField extends HookConsumerWidget {
       builder: (context, child) {
         nameController.text = curName;
         return TextField(
+          minLines: 1,
+          maxLines: null,
           focusNode: focusNode,
           controller: nameController,
           enabled: isEditable,
