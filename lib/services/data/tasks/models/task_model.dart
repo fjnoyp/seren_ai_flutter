@@ -79,6 +79,13 @@ class TaskModel implements IHasId {
   @JsonKey(name: 'blocked_by_task_id')
   final String? blockedByTaskId;
 
+  Duration? get duration {
+    if (startDateTime != null && dueDate != null) {
+      return dueDate!.difference(startDateTime!);
+    }
+    return null;
+  }
+
   static int? _durationFromJson(dynamic value) {
     if (value == null) return null;
     if (value is int) return value;

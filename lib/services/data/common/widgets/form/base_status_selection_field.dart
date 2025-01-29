@@ -8,12 +8,14 @@ class BaseStatusSelectionField extends ConsumerWidget {
   final bool enabled;
   final ProviderListenable<StatusEnum?> statusProvider;
   final Function(WidgetRef, StatusEnum?) updateStatus;
+  final bool? showLabelWidget; // Nullable boolean to show/hide the labelWidget
 
   const BaseStatusSelectionField({
     super.key,
     required this.enabled,
     required this.statusProvider,
     required this.updateStatus,
+    this.showLabelWidget = true, // Default to true
   });
 
   @override
@@ -21,10 +23,14 @@ class BaseStatusSelectionField extends ConsumerWidget {
     final curTaskStatus = ref.watch(statusProvider);
 
     return AnimatedModalSelectionField<StatusEnum>(
-      labelWidget: const Icon(Icons.flag),
-      validator: (status) => null, // status == null ? 'Status is required' : null,
+      labelWidget: showLabelWidget == true
+          ? const Icon(Icons.flag)
+          : const SizedBox.shrink(), // Show/hide based on the nullable boolean
+      validator: (status) =>
+          null, // status == null ? 'Status is required' : null,
       valueToString: (status) =>
-          status?.toHumanReadable(context) ?? AppLocalizations.of(context)!.selectStatus,
+          status?.toHumanReadable(context) ??
+          AppLocalizations.of(context)!.selectStatus,
       enabled: enabled,
       value: curTaskStatus,
       options: StatusEnum.values,
