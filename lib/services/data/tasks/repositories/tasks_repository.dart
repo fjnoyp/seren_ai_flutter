@@ -9,6 +9,14 @@ final tasksRepositoryProvider = Provider<TasksRepository>((ref) {
   return TasksRepository(ref.watch(dbProvider));
 });
 
+// TODO p5: use these enums in the updateTask methods instead
+enum TaskFieldEnum {
+  name,
+  status,
+  priority,
+  assignees,
+}
+
 class TasksRepository extends BaseRepository<TaskModel> {
   const TasksRepository(super.db, {super.primaryTable = 'tasks'});
 
@@ -215,6 +223,32 @@ class TasksRepository extends BaseRepository<TaskModel> {
       taskId,
       'blocked_by_task_id',
       blockedByTaskId,
+    );
+  }
+
+  Stream<List<TaskModel>> watchUserViewableTasksInRange({
+    required String userId,
+    required String orgId,
+    required DateTime startDate,
+    required DateTime endDate,
+  }) {
+    return watch(
+      TaskQueries.userViewableTasksInRangeQuery,
+      {
+        'user_id': userId,
+        'author_user_id': userId,
+        'org_id': orgId,
+        'start_date': startDate.toIso8601String(),
+        'end_date': endDate.toIso8601String(),
+      },
+      triggerOnTables: {
+        'tasks',
+        'user_project_assignments',
+        'team_project_assignments',
+        'user_team_assignments',
+        'projects',
+        'user_org_roles',
+      },
     );
   }
 }
