@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:seren_ai_flutter/common/navigation_service_provider.dart';
 import 'package:seren_ai_flutter/services/data/common/widgets/delete_confirmation_dialog.dart';
 import 'package:seren_ai_flutter/services/data/notes/providers/note_attachments_service_provider.dart';
 import 'package:seren_ai_flutter/services/data/notes/providers/note_by_id_stream_provider.dart';
@@ -47,9 +48,8 @@ class DeleteNoteButton extends ConsumerWidget {
             noteAttachmentsService.deleteAllAttachments(noteId: noteId);
 
             final notesRepository = ref.read(notesRepositoryProvider);
-            notesRepository
-                .deleteItem(noteId)
-                .then((_) => Navigator.of(context).maybePop());
+            ref.read(navigationServiceProvider).pop();
+            notesRepository.deleteItem(noteId);
           },
         );
       },
