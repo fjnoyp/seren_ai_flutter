@@ -45,7 +45,7 @@ class CurSelectedProjectIdNotifier extends Notifier<String?> {
   Future<void> _initializeDefaultProject() async {
     try {
       final defaultId = await _findDefaultProjectId();
-      if (defaultId != null) {
+      if (defaultId != null && state == null) {
         setProjectId(defaultId);
       }
     } catch (e) {
