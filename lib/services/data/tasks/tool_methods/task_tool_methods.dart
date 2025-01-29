@@ -122,18 +122,16 @@ class TaskToolMethods {
       // --- Keep exact matching for non-string fields:
 
       // Status match
+      final status = StatusEnum.tryParse(infoRequest.taskStatus);
       if (infoRequest.taskStatus != null &&
-          (task.status == null ||
-              task.status!.name.toLowerCase() !=
-                  infoRequest.taskStatus!.toLowerCase())) {
+          (task.status == null || task.status != status)) {
         return false;
       }
 
       // Priority match
+      final priority = PriorityEnum.tryParse(infoRequest.taskPriority);
       if (infoRequest.taskPriority != null &&
-          (task.priority == null ||
-              task.priority!.name.toLowerCase() !=
-                  infoRequest.taskPriority!.toLowerCase())) {
+          (task.priority == null || task.priority != priority)) {
         return false;
       }
 
@@ -222,10 +220,11 @@ class TaskToolMethods {
       dueDate: actionRequest.taskDueDate != null
           ? DateTime.parse(actionRequest.taskDueDate!)
           : null,
-      status: StatusEnum.open,
+      status: actionRequest.taskStatus != null
+          ? StatusEnum.tryParse(actionRequest.taskStatus)
+          : StatusEnum.open,
       priority: actionRequest.taskPriority != null
-          ? PriorityEnum.values
-              .byName(actionRequest.taskPriority!.toLowerCase())
+          ? PriorityEnum.tryParse(actionRequest.taskPriority)
           : null,
       estimatedDurationMinutes: actionRequest.estimateDurationMinutes,
       authorUserId: userId,
@@ -318,11 +317,10 @@ class TaskToolMethods {
           ? DateTime.parse(actionRequest.taskDueDate!)
           : null,
       status: actionRequest.taskStatus != null
-          ? StatusEnum.values.byName(actionRequest.taskStatus!.toLowerCase())
+          ? StatusEnum.tryParse(actionRequest.taskStatus)
           : null,
       priority: actionRequest.taskPriority != null
-          ? PriorityEnum.values
-              .byName(actionRequest.taskPriority!.toLowerCase())
+          ? PriorityEnum.tryParse(actionRequest.taskPriority)
           : null,
       estimatedDurationMinutes: actionRequest.estimateDurationMinutes,
       updatedAt: DateTime.now().toUtc(),
