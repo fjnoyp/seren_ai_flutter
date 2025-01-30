@@ -14,6 +14,7 @@ import 'package:seren_ai_flutter/services/auth/widgets/reset_password/reset_pass
 import 'package:seren_ai_flutter/services/auth/widgets/sign_in_up_page.dart';
 import 'package:seren_ai_flutter/services/auth/widgets/terms_and_conditions/terms_and_conditions_webview.dart';
 import 'package:seren_ai_flutter/services/data/ai_chats/widgets/ai_chats_page.dart';
+import 'package:seren_ai_flutter/services/data/common/base_navigation_service.dart';
 import 'package:seren_ai_flutter/services/data/common/widgets/editable_page_mode_enum.dart';
 import 'package:seren_ai_flutter/services/data/notes/widgets/notes_list_page.dart';
 import 'package:seren_ai_flutter/services/data/notes/widgets/note_page.dart';
@@ -22,7 +23,6 @@ import 'package:seren_ai_flutter/services/data/orgs/widgets/cur_org_page.dart';
 import 'package:seren_ai_flutter/services/data/orgs/widgets/manage_org_users_page.dart';
 import 'package:seren_ai_flutter/services/data/orgs/widgets/org_guard.dart';
 import 'package:seren_ai_flutter/services/data/orgs/widgets/web/web_manage_org_users_page.dart';
-import 'package:seren_ai_flutter/services/data/projects/providers/cur_selected_project_providers.dart';
 import 'package:seren_ai_flutter/services/data/projects/widgets/project_page.dart';
 import 'package:seren_ai_flutter/services/data/projects/widgets/project_list_page.dart';
 import 'package:seren_ai_flutter/services/data/projects/widgets/web/web_project_page.dart';
@@ -87,166 +87,125 @@ class AppState extends ConsumerState<App> {
           navigatorKey: ref.read(navigationServiceProvider).navigatorKey,
           // Watching current route setup
           navigatorObservers: [_routeObserver],
-          routes: {
-            AppRoutes.signInUp.name: (context) => Scaffold(
-                appBar: AppBar(
-                    title: Text(AppLocalizations.of(context)!.signInUp),
-                    centerTitle: true),
-                body: const SignInUpPage()),
-            AppRoutes.home.name: (context) => _GuardScaffold(
-                AppLocalizations.of(context)!.home, const HomePage()),
-            AppRoutes.chooseOrg.name: (context) => _AuthGuardScaffold(
-                AppLocalizations.of(context)!.chooseOrganization,
-                const ChooseOrgPage()),
-            AppRoutes.organization.name: (context) {
-              final args = ModalRoute.of(context)!.settings.arguments
-                  as Map<String, dynamic>?;
-              return _GuardScaffold(
-                AppLocalizations.of(context)!.organization,
-                CurOrgPage(mode: args?['mode'] ?? EditablePageMode.readOnly),
-                actions: args?['actions'],
-              );
-            },
-            AppRoutes.manageOrgUsers.name: (context) {
-              final args = ModalRoute.of(context)!.settings.arguments
-                  as Map<String, dynamic>;
-              return _GuardScaffold(
-                AppLocalizations.of(context)!.manageOrgUsers,
-                const ManageOrgUsersPage(),
-                actions: args['actions'],
-                webBody: const WebManageOrgUsersPage(),
-                showAppBar: !isWebVersion,
-              );
-            },
-            AppRoutes.projects.name: (context) => _GuardScaffold(
-                AppLocalizations.of(context)!.projects,
-                const ProjectListPage()),
-            // AppRoutes.projectDetails.name: (context) {
-            //   final args = ModalRoute.of(context)!.settings.arguments
-            //       as Map<String, dynamic>;
-            //   return _GuardScaffold(
-            //     args['title'],
-            //     ProjectPage(mode: args['mode'] ?? EditablePageMode.readOnly),
-            //     webBody: const WebProjectPage(),
-            //     actions: args['actions'],
-            //     showAppBar: !isWebVersion,
-            //   );
-            // },
-            AppRoutes.tasks.name: (context) => _GuardScaffold(
-                AppLocalizations.of(context)!.tasks, const TasksListPage()),
-            AppRoutes.taskPage.name: (context) {
-              final args = ModalRoute.of(context)!.settings.arguments
-                  as Map<String, dynamic>;
-
-              return _GuardScaffold(
-                args['title'],
-                TaskPage(mode: args['mode']),
-                actions: args['actions'],
-                showAppBar: !isWebVersion,
-              );
-            },
-            AppRoutes.aiChats.name: (context) => _GuardScaffold(
-                  AppLocalizations.of(context)!.aiChatThreads,
-                  const AIChatsPage(),
-                  showBottomBar: false,
-                  showAppBar: false,
-                ),
-            AppRoutes.shifts.name: (context) => _GuardScaffold(
-                AppLocalizations.of(context)!.shifts, const ShiftsPage()),
-            // This page is never loaded
-            // AppRoutes.test.name: (context) =>
-            //     const _GuardScaffold('Test', TestPage()),
-            AppRoutes.testSQLPage.name: (context) => _GuardScaffold(
-                AppLocalizations.of(context)!.testSQL, TestSQLPage()),
-            AppRoutes.noteList.name: (context) => _GuardScaffold(
-                AppLocalizations.of(context)!.notes, const NoteListPage()),
-            AppRoutes.notePage.name: (context) {
-              final args = ModalRoute.of(context)!.settings.arguments
-                  as Map<String, dynamic>;
-
-              return _GuardScaffold(
-                args['title'],
-                NotePage(mode: args['mode']),
-                actions: args['actions'],
-              );
-            },
-            AppRoutes.termsAndConditions.name: (context) =>
-                const TermsAndConditionsWebview(),
-            AppRoutes.taskGantt.name: (context) =>
-                const _GuardScaffold('Gantt', TaskGanttPage()),
-            AppRoutes.settings.name: (context) => _GuardScaffold(
-                  AppLocalizations.of(context)!.settings,
-                  const SettingsPage(),
-                  webBody: const WebSettingsPage(),
-                  showAppBar: false,
-                  showBottomBar: false,
-                ),
-            AppRoutes.resetPassword.name: (context) => Scaffold(
-                  appBar: AppBar(
-                    title: Text(AppLocalizations.of(context)!.resetPassword),
-                    centerTitle: true,
-                  ),
-                  body: ResetPasswordPage((ModalRoute.of(context)!
-                      .settings
-                      .arguments as Map<String, dynamic>)['accessToken']),
-                ),
-          },
           // For dynamically generating routes based on settings param
           onGenerateRoute: (settings) {
             final uri = Uri.parse(settings.name ?? '');
+            final args = settings.arguments as Map<String, dynamic>?;
 
-            // Handle project details route with ID
-            if (uri.pathSegments.length > 1 &&
-                uri.pathSegments[0] ==
-                    AppRoutes.projectDetails.name.replaceAll('/', '')) {
-              final args = settings.arguments as Map<String, dynamic>?;
+            final routes = {
+              AppRoutes.signInUp.name: (context) => Scaffold(
+                  appBar: AppBar(
+                      title: Text(AppLocalizations.of(context)!.signInUp),
+                      centerTitle: true),
+                  body: const SignInUpPage()),
+              AppRoutes.home.name: (context) => _GuardScaffold(
+                  AppLocalizations.of(context)!.home, const HomePage()),
+              AppRoutes.chooseOrg.name: (context) => _AuthGuardScaffold(
+                  AppLocalizations.of(context)!.chooseOrganization,
+                  const ChooseOrgPage()),
+              AppRoutes.organization.name: (context) => _GuardScaffold(
+                    AppLocalizations.of(context)!.organization,
+                    CurOrgPage(
+                        mode: args?['mode'] ?? EditablePageMode.readOnly),
+                    actions: args?['actions'],
+                  ),
+              AppRoutes.manageOrgUsers.name: (context) => _GuardScaffold(
+                    AppLocalizations.of(context)!.manageOrgUsers,
+                    const ManageOrgUsersPage(),
+                    actions: args?['actions'],
+                    webBody: const WebManageOrgUsersPage(),
+                    showAppBar: !isWebVersion,
+                  ),
+              AppRoutes.projects.name: (context) => _GuardScaffold(
+                  AppLocalizations.of(context)!.projects,
+                  const ProjectListPage()),
+              AppRoutes.projectDetails.name: (context) => _GuardScaffold(
+                    args?['title'] ?? AppLocalizations.of(context)!.project,
+                    ProjectPage(
+                      mode: args?['mode'] ?? EditablePageMode.readOnly,
+                    ),
+                    webBody: const WebProjectPage(),
+                    actions: args?['actions'],
+                    showAppBar: !isWebVersion,
+                  ),
+              AppRoutes.tasks.name: (context) => _GuardScaffold(
+                  AppLocalizations.of(context)!.tasks, const TasksListPage()),
+              AppRoutes.taskPage.name: (context) => _GuardScaffold(
+                    args?['title'] ?? AppLocalizations.of(context)!.task,
+                    TaskPage(mode: args?['mode'] ?? EditablePageMode.edit),
+                    actions: args?['actions'],
+                    showAppBar: !isWebVersion,
+                  ),
+              AppRoutes.aiChats.name: (context) => _GuardScaffold(
+                    AppLocalizations.of(context)!.aiChatThreads,
+                    const AIChatsPage(),
+                    showBottomBar: false,
+                    showAppBar: false,
+                  ),
+              AppRoutes.shifts.name: (context) => _GuardScaffold(
+                  AppLocalizations.of(context)!.shifts, const ShiftsPage()),
+              AppRoutes.testSQLPage.name: (context) => _GuardScaffold(
+                  AppLocalizations.of(context)!.testSQL, TestSQLPage()),
+              AppRoutes.noteList.name: (context) => _GuardScaffold(
+                  AppLocalizations.of(context)!.notes, const NoteListPage()),
+              AppRoutes.notePage.name: (context) => _GuardScaffold(
+                    args?['title'] ?? AppLocalizations.of(context)!.note,
+                    NotePage(mode: args?['mode'] ?? EditablePageMode.edit),
+                    actions: args?['actions'],
+                  ),
+              AppRoutes.termsAndConditions.name: (context) =>
+                  const TermsAndConditionsWebview(),
+              AppRoutes.taskGantt.name: (context) =>
+                  const _GuardScaffold('Gantt', TaskGanttPage()),
+              AppRoutes.settings.name: (context) => _GuardScaffold(
+                    AppLocalizations.of(context)!.settings,
+                    const SettingsPage(),
+                    webBody: const WebSettingsPage(),
+                    showAppBar: false,
+                    showBottomBar: false,
+                  ),
+              AppRoutes.resetPassword.name: (context) => Scaffold(
+                    appBar: AppBar(
+                      title: Text(AppLocalizations.of(context)!.resetPassword),
+                      centerTitle: true,
+                    ),
+                    body: ResetPasswordPage((ModalRoute.of(context)!
+                        .settings
+                        .arguments as Map<String, dynamic>)['accessToken']),
+                  ),
+            };
 
-              // TODO: move this logic to a more proper location
+            final MapEntry(key: path, value: builder) =
+                routes.entries.firstWhere(
+              (e) =>
+                  e.key.replaceAll('/', '') == uri.pathSegments[0] ||
+                  e.key == settings.name,
+              orElse: () =>
+                  throw Exception('Route not found: ${settings.name}'),
+            );
+
+            // Handle routes with ID - set the ID if needed
+            if (uri.pathSegments.length > 1) {
               WidgetsBinding.instance.addPostFrameCallback((_) {
-                final curSelectedProjectId =
-                    ref.read(curSelectedProjectIdNotifierProvider);
+                if (AppRoutes.fromString(path) case AppRoutes route) {
+                  final navigationService =
+                      BaseNavigationService.fromAppRoute(route, ref);
+                  if (navigationService == null) {
+                    log.severe(
+                        'Navigation service not found for ${route.name}');
+                    return;
+                  }
+                  final curSelectedId =
+                      ref.read(navigationService.idNotifierProvider);
 
-                if (curSelectedProjectId == null) {
-                  final projectId = uri.pathSegments[1];
-                  ref
-                      .read(curSelectedProjectIdNotifierProvider.notifier)
-                      .setProjectId(projectId);
+                  if (curSelectedId == null) {
+                    navigationService.setIdFunction(uri.pathSegments[1]);
+                  }
                 }
               });
-
-              return MaterialPageRoute(
-                settings: settings,
-                builder: (context) => _GuardScaffold(
-                  args?['title'] ?? AppLocalizations.of(context)!.project,
-                  ProjectPage(
-                    mode: args?['mode'] ?? EditablePageMode.readOnly,
-                  ),
-                  webBody: const WebProjectPage(),
-                  actions: args?['actions'],
-                  showAppBar: !isWebVersion,
-                ),
-              );
             }
 
-            /*
-            if (settings.name == '/test') {
-              final param = settings.arguments as String?;
-              return MaterialPageRoute(
-                builder: (context) {
-                  return TestPage(param: param);
-                },
-              );
-            } else if (settings.name == '/test2') {
-              final args = settings.arguments as Map<String, String?>;
-              return MaterialPageRoute(
-                builder: (context) {
-                  return Test2Page(args: args);
-                },
-              );
-            }
-            */
-            // Handle other routes here if needed
-            return null;
+            return MaterialPageRoute(settings: settings, builder: builder);
           },
           locale: Locale(languageCode, countryCode),
           localizationsDelegates: AppLocalizations.localizationsDelegates,

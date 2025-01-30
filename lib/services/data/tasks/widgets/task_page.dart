@@ -42,7 +42,13 @@ class TaskPage extends HookConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final theme = Theme.of(context);
 
-    final curTaskId = ref.watch(curSelectedTaskIdNotifierProvider) ?? '';
+    final curTaskId = ref.watch(curSelectedTaskIdNotifierProvider);
+    if (curTaskId == null) {
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        ref.read(navigationServiceProvider).pop(true);
+      });
+      return const Center(child: Text('No task selected'));
+    }
 
     final curTask = ref.watch(taskByIdStreamProvider(curTaskId));
 
