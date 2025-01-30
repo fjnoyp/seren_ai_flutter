@@ -241,6 +241,7 @@
 
     "@_": {"description": "Notes"},
     "notes": "Notes",
+    "note": "Note",
     "updateNote": "Update Note",
     "createNote": "Create Note",
     "deleteNote": "Delete Note",
@@ -600,7 +601,7 @@
     "followUpTaskEstimatedDurationMinutes": "What is the task estimated duration in minutes?",
     "findTasks": "Find tasks",
     "findTasksHint": "Please find me the task [...]",
-    "updateTask": "Update this task",
+    "updateThisTask": "Update this task",
     "updateTaskHint": "Please update the [priority] of the cur task",
     "followUpUpdateTaskFieldValue": "What is the new value for the ${field}?",
     "@followUpUpdateTaskFieldValue": {

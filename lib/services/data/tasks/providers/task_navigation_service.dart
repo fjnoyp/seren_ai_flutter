@@ -1,6 +1,7 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:seren_ai_flutter/common/routes/app_routes.dart';
 import 'package:seren_ai_flutter/common/universal_platform/universal_platform.dart';
+import 'package:seren_ai_flutter/services/data/common/base_navigation_service.dart';
 import 'package:seren_ai_flutter/services/data/common/status_enum.dart';
 import 'package:seren_ai_flutter/services/data/common/widgets/editable_page_mode_enum.dart';
 import 'package:seren_ai_flutter/services/data/projects/providers/project_navigation_service.dart';
@@ -14,10 +15,15 @@ final taskNavigationServiceProvider = Provider<TaskNavigationService>((ref) {
   return TaskNavigationService(ref);
 });
 
-class TaskNavigationService {
-  final Ref ref;
+class TaskNavigationService extends BaseNavigationService {
+  TaskNavigationService(super.ref);
 
-  TaskNavigationService(this.ref);
+  @override
+  NotifierProvider get idNotifierProvider => curSelectedTaskIdNotifierProvider;
+
+  @override
+  void setIdFunction(String id) =>
+      ref.read(curSelectedTaskIdNotifierProvider.notifier).setTaskId(id);
 
   Future<void> openTask({required String initialTaskId}) async {
     final taskIdNotifier = ref.read(curSelectedTaskIdNotifierProvider.notifier);
@@ -83,7 +89,7 @@ class TaskNavigationService {
         : AppLocalizations.of(context)!.updateTask;
 
     await ref.read(navigationServiceProvider).navigateTo(
-      AppRoutes.taskPage.name,
+      '${AppRoutes.taskPage.name}/$taskId',
       arguments: {
         'actions': actions,
         'title': title,
