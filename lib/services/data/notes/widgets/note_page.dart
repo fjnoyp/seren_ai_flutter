@@ -22,7 +22,14 @@ class NotePage extends HookConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final noteId = ref.watch(curSelectedNoteIdNotifierProvider)!;
+    final noteId = ref.watch(curSelectedNoteIdNotifierProvider);
+    if (noteId == null) {
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        ref.read(navigationServiceProvider).pop(true);
+      });
+      return const Center(child: Text('No note selected'));
+    }
+
     final note = ref.watch(noteByIdStreamProvider(noteId));
 
     return SingleChildScrollView(

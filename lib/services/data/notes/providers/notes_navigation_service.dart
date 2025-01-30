@@ -1,6 +1,7 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:seren_ai_flutter/common/navigation_service_provider.dart';
 import 'package:seren_ai_flutter/common/routes/app_routes.dart';
+import 'package:seren_ai_flutter/services/data/common/base_navigation_service.dart';
 import 'package:seren_ai_flutter/services/data/common/widgets/editable_page_mode_enum.dart';
 import 'package:seren_ai_flutter/services/data/notes/providers/cur_selected_note_id_notifier_provider.dart';
 import 'package:seren_ai_flutter/services/data/notes/providers/note_attachments_service_provider.dart';
@@ -12,19 +13,23 @@ final notesNavigationServiceProvider = Provider<NotesNavigationService>((ref) {
   return NotesNavigationService(ref);
 });
 
-class NotesNavigationService {
-  final Ref ref;
+class NotesNavigationService extends BaseNavigationService {
+  NotesNavigationService(super.ref);
 
-  NotesNavigationService(this.ref);
+  @override
+  NotifierProvider get idNotifierProvider => curSelectedNoteIdNotifierProvider;
+
+  @override
+  void setIdFunction(String id) {
+    ref.read(curSelectedNoteIdNotifierProvider.notifier).setNoteId(id);
+  }
 
   Future<void> openNote({required String noteId}) async {
     ref
         .read(navigationServiceProvider)
         .popUntil((route) => route.settings.name != AppRoutes.notePage.name);
 
-    ref
-        .read(curSelectedNoteIdNotifierProvider.notifier)
-        .setNoteId(noteId);
+    ref.read(curSelectedNoteIdNotifierProvider.notifier).setNoteId(noteId);
 
     ref
         .read(noteAttachmentsServiceProvider.notifier)
@@ -68,7 +73,7 @@ class NotesNavigationService {
         : AppLocalizations.of(context)!.updateNote;
 
     ref.read(navigationServiceProvider).navigateTo(
-      AppRoutes.notePage.name,
+      '${AppRoutes.notePage.name}/$noteId',
       arguments: {
         'mode': mode,
         'actions': actions,

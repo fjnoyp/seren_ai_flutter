@@ -43,7 +43,7 @@ class AiQuickAction {
       );
 
   factory AiQuickAction.updateTask(BuildContext context) => AiQuickAction(
-        description: AppLocalizations.of(context)!.updateTask,
+        description: AppLocalizations.of(context)!.updateThisTask,
         userInputHint: AppLocalizations.of(context)!.updateTaskHint,
       );
 
