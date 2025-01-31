@@ -61,51 +61,71 @@ class MainScaffold extends ConsumerWidget {
       child: isWebVersion
           ? Scaffold(
               backgroundColor: theme.scaffoldBackgroundColor,
-              body: Row(
-                children: [
-                  const Expanded(flex: 1, child: DrawerView()),
-                  Expanded(
-                    flex: 4,
-                    child: Column(
-                      children: [
-                        if (showAppBar)
-                          AppBar(
-                            backgroundColor: theme.appBarTheme.backgroundColor,
-                            automaticallyImplyLeading: false,
-                            elevation: 0,
-                            title: Padding(
-                              padding: const EdgeInsets.all(8.0),
-                              child: Text(
-                                title,
-                                style: theme.appBarTheme.titleTextStyle,
-                              ),
-                            ),
-                            actions: [
-                              if (!AppConfig.isProdMode)
-                                const Text(
-                                  'Dev',
-                                  style: TextStyle(
-                                      color: Colors.red,
-                                      fontWeight: FontWeight.bold),
+              body: LayoutBuilder(builder: (context, constraints) {
+                final isNarrow =
+                    constraints.maxWidth < 1200; // Adjust threshold as needed
+
+                return Row(
+                  children: [
+                    if (!isNarrow)
+                      const SizedBox(
+                        width: 200,
+                        child: DrawerView(),
+                      ),
+                    Expanded(
+                      flex: 4,
+                      child: Scaffold(
+                        appBar: showAppBar
+                            ? AppBar(
+                                backgroundColor:
+                                    theme.appBarTheme.backgroundColor,
+                                automaticallyImplyLeading: isNarrow,
+                                leading: isNarrow
+                                    ? Builder(
+                                        builder: (context) => IconButton(
+                                          icon: Icon(Icons.menu,
+                                              color: theme.iconTheme.color),
+                                          onPressed: () =>
+                                              Scaffold.of(context).openDrawer(),
+                                          tooltip: AppLocalizations.of(context)!
+                                              .menu,
+                                        ),
+                                      )
+                                    : null,
+                                elevation: 0,
+                                title: Padding(
+                                  padding: const EdgeInsets.all(8.0),
+                                  child: Text(
+                                    title,
+                                    style: theme.appBarTheme.titleTextStyle,
+                                  ),
                                 ),
-                              ...actions ?? [],
-                            ],
-                          ),
-                        Expanded(
-                          child: Stack(
-                            alignment: Alignment.centerRight,
-                            children: [
-                              body,
-                              if (showAiAssistant && isAiAssistantExpanded)
-                                const WebAiAssistantView(),
-                            ],
-                          ),
+                                actions: [
+                                  if (!AppConfig.isProdMode)
+                                    const Text(
+                                      'Dev',
+                                      style: TextStyle(
+                                          color: Colors.red,
+                                          fontWeight: FontWeight.bold),
+                                    ),
+                                  ...actions ?? [],
+                                ],
+                              )
+                            : null,
+                        drawer: isNarrow ? const DrawerView() : null,
+                        body: Stack(
+                          alignment: Alignment.centerRight,
+                          children: [
+                            body,
+                            if (showAiAssistant && isAiAssistantExpanded)
+                              const WebAiAssistantView(),
+                          ],
                         ),
-                      ],
+                      ),
                     ),
-                  ),
-                ],
-              ),
+                  ],
+                );
+              }),
               floatingActionButton: (showAiAssistant && !isAiAssistantExpanded)
                   ? const WebAiAssistantButtonWithQuickActions()
                   : null,

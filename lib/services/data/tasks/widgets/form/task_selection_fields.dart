@@ -14,7 +14,7 @@ import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:seren_ai_flutter/services/data/tasks/providers/task_by_id_stream_provider.dart';
 import 'package:seren_ai_flutter/services/data/tasks/providers/tasks_by_project_stream_provider.dart';
 import 'package:seren_ai_flutter/services/data/tasks/repositories/tasks_repository.dart';
-import 'package:seren_ai_flutter/services/data/users/providers/assigned_users_in_task_stream_provider.dart';
+import 'package:seren_ai_flutter/services/data/users/providers/task_assigned_users_stream_provider.dart';
 
 class TaskProjectSelectionField extends BaseProjectSelectionField {
   final String taskId;
@@ -39,6 +39,7 @@ class TaskStatusSelectionField extends BaseStatusSelectionField {
   TaskStatusSelectionField({
     super.key,
     required this.taskId,
+    super.showLabelWidget,
   }) : super(
           enabled: true,
           statusProvider: taskByIdStreamProvider(taskId)
@@ -55,6 +56,7 @@ class TaskPrioritySelectionField extends BasePrioritySelectionField {
   TaskPrioritySelectionField({
     super.key,
     required this.taskId,
+    super.showLabelWidget,
   }) : super(
           enabled: true,
           priorityProvider: taskByIdStreamProvider(taskId)
@@ -71,6 +73,7 @@ class TaskNameField extends BaseNameField {
   TaskNameField({
     super.key,
     required this.taskId,
+    super.textStyle,
   }) : super(
           isEditable: true,
           nameProvider: taskByIdStreamProvider(taskId)
@@ -149,7 +152,7 @@ class TaskAssigneesSelectionField extends BaseAssigneesSelectionField {
     required this.taskId,
   }) : super(
           enabled: true,
-          assigneesProvider: assignedUsersInTaskStreamProvider(taskId)
+          assigneesProvider: taskAssignedUsersStreamProvider(taskId)
               .select((users) => users.value ?? []),
           projectIdProvider: taskByIdStreamProvider(taskId)
               .select((task) => task.value?.parentProjectId),

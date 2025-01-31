@@ -3,16 +3,19 @@ import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:seren_ai_flutter/services/data/common/widgets/form/selection_field.dart';
 import 'package:seren_ai_flutter/services/data/tasks/models/task_model.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+
 class BasePrioritySelectionField extends ConsumerWidget {
   final bool enabled;
   final ProviderListenable<PriorityEnum?> priorityProvider;
   final Function(WidgetRef, PriorityEnum?) updatePriority;
+  final bool? showLabelWidget; // Nullable boolean to show/hide the labelWidget
 
   const BasePrioritySelectionField({
     super.key,
     required this.enabled,
     required this.priorityProvider,
     required this.updatePriority,
+    this.showLabelWidget = true, // Default to true
   });
 
   @override
@@ -20,10 +23,14 @@ class BasePrioritySelectionField extends ConsumerWidget {
     final curTaskPriority = ref.watch(priorityProvider);
 
     return AnimatedModalSelectionField<PriorityEnum>(
-      labelWidget: const Icon(Icons.priority_high),
-      validator: (priority) => null, // priority == null ? 'Priority is required' : null,
+      labelWidget: showLabelWidget == true
+          ? const Icon(Icons.priority_high)
+          : const SizedBox.shrink(), // Show/hide based on the nullable boolean
+      validator: (priority) =>
+          null, // priority == null ? 'Priority is required' : null,
       valueToString: (priority) =>
-          priority?.toHumanReadable(context) ?? AppLocalizations.of(context)!.selectPriority,
+          priority?.toHumanReadable(context) ??
+          AppLocalizations.of(context)!.selectPriority,
       enabled: enabled,
       value: curTaskPriority,
       options: PriorityEnum.values,

@@ -10,18 +10,21 @@ class UserAvatar extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return CircleAvatar(
-      radius: radius,
-      child: ClipOval(
-        child: Image.network(
-          _getUserImage(),
-          errorBuilder: (context, error, stackTrace) {
-            return Center(
-              child: Text(
-                '${user.firstName.substring(0, 1)}${(radius ?? 16) > 12 ? user.lastName.substring(0, 1) : ''}',
-              ),
-            );
-          },
+    return Tooltip(
+      message: '${user.firstName} ${user.lastName}',
+      child: CircleAvatar(
+        radius: radius,
+        child: ClipOval(
+          child: Image.network(
+            _getUserImage(),
+            errorBuilder: (context, error, stackTrace) {
+              return Center(
+                child: Text(
+                  '${user.firstName.substring(0, 1)}${(radius ?? 16) > 12 ? user.lastName.substring(0, 1) : ''}',
+                ),
+              );
+            },
+          ),
         ),
       ),
     );

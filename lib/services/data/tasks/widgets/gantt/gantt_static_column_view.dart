@@ -1,17 +1,25 @@
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:seren_ai_flutter/services/data/tasks/widgets/gantt/gantt_providers.dart';
+import 'package:seren_ai_flutter/services/data/tasks/providers/task_by_id_stream_provider.dart';
+import 'package:seren_ai_flutter/services/data/tasks/repositories/tasks_repository.dart';
+import 'package:seren_ai_flutter/services/data/tasks/widgets/form/task_selection_fields.dart';
+import 'package:seren_ai_flutter/services/data/tasks/widgets/gantt/experimental/viewable_tasks_hierarchy_provider.dart';
 
 class GanttStaticColumnView extends ConsumerWidget {
+  static const Map<TaskFieldEnum, double> columnWidths = {
+    TaskFieldEnum.name: 80.0,
+    TaskFieldEnum.status: 60.0,
+    TaskFieldEnum.priority: 60.0,
+    TaskFieldEnum.assignees: 150.0,
+  };
+
   final ScrollController? verticalController;
-  final double cellWidth;
   final double cellHeight;
   final ScrollController mainVerticalController;
 
   const GanttStaticColumnView({
     super.key,
-    required this.cellWidth,
     required this.cellHeight,
     this.verticalController,
     required this.mainVerticalController,
@@ -19,31 +27,33 @@ class GanttStaticColumnView extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final visibleTasks = ref.watch(visibleGanttTasksProvider);
-
-    final staticRowValues = visibleTasks.map((task) => [task.title]).toList();
-
-    final numColumns = staticRowValues[0].length;
+    final visibleTaskIds = ref.watch(curUserViewableTasksHierarchyIdsProvider);
+    final staticColumnHeaders = [
+      TaskFieldEnum.name,
+      TaskFieldEnum.status,
+      TaskFieldEnum.priority,
+      TaskFieldEnum.assignees
+    ];
 
     return Listener(
       onPointerSignal: _handlePointerScroll,
       child: GestureDetector(
         onVerticalDragUpdate: _handleVerticalDrag,
         child: SizedBox(
-          width: numColumns * cellWidth,
+          width: staticColumnHeaders.fold<double>(
+            0,
+            (sum, field) => sum + columnWidths[field]!,
+          ),
           child: Column(
             children: [
               _StaticHeader(
-                columnCount: numColumns,
-                cellWidth: cellWidth,
+                staticColumnHeaders: staticColumnHeaders,
               ),
-              _StaticRows(
-                columnCount: numColumns,
-                staticRowsValues: staticRowValues,
-                visibleTaskCount: visibleTasks.length,
-                cellWidth: cellWidth,
+              _StaticRowValues(
+                taskIds: visibleTaskIds,
                 cellHeight: cellHeight,
                 verticalController: verticalController,
+                staticColumnHeaders: staticColumnHeaders,
               ),
             ],
           ),
@@ -70,12 +80,10 @@ class GanttStaticColumnView extends ConsumerWidget {
 }
 
 class _StaticHeader extends StatelessWidget {
-  final int columnCount;
-  final double cellWidth;
+  final List<TaskFieldEnum> staticColumnHeaders;
 
   const _StaticHeader({
-    required this.columnCount,
-    required this.cellWidth,
+    required this.staticColumnHeaders,
   });
 
   @override
@@ -84,49 +92,63 @@ class _StaticHeader extends StatelessWidget {
       height: 60,
       child: Row(
         children: List.generate(
-            columnCount,
-            (index) => Container(
-                  width: cellWidth,
-                  height: 60,
-                  alignment: Alignment.center,
-                  decoration: BoxDecoration(border: Border.all()),
-                  child: Text('Column ${index + 1}'),
-                )),
+          staticColumnHeaders.length,
+          (index) => Container(
+            width:
+                GanttStaticColumnView.columnWidths[staticColumnHeaders[index]]!,
+            height: 60,
+            alignment: Alignment.center,
+            decoration: BoxDecoration(border: Border.all()),
+            child: Text(
+              staticColumnHeaders[index]
+                  .toString()
+                  .split('.')
+                  .last, // Display enum name
+              style: Theme.of(context)
+                  .textTheme
+                  .titleMedium!
+                  .copyWith(fontWeight: FontWeight.bold),
+            ),
+          ),
+        ),
       ),
     );
   }
 }
 
-class _StaticRows extends StatelessWidget {
-  final int columnCount;
-  final List<List<String>> staticRowsValues;
-  final int visibleTaskCount;
-  final double cellWidth;
+class _StaticRowValues extends StatelessWidget {
+  final List<String> taskIds;
   final double cellHeight;
   final ScrollController? verticalController;
+  final List<TaskFieldEnum> staticColumnHeaders;
 
-  const _StaticRows({
-    required this.columnCount,
-    required this.staticRowsValues,
-    required this.visibleTaskCount,
-    required this.cellWidth,
+  const _StaticRowValues({
+    required this.taskIds,
     required this.cellHeight,
     required this.verticalController,
+    required this.staticColumnHeaders,
   });
 
   @override
   Widget build(BuildContext context) {
+    // RepaintBoundary should wrap the ListView, not the Expanded
     return Expanded(
-      child: Row(
-        children: List.generate(
-          columnCount,
-          (columnIndex) => _StaticColumn(
-            columnIndex: columnIndex,
-            staticRowsValues: staticRowsValues,
-            //visibleTaskCount: visibleTaskCount,
-            cellWidth: cellWidth,
-            cellHeight: cellHeight,
-            verticalController: verticalController,
+      child: RepaintBoundary(
+        child: ScrollConfiguration(
+          behavior: ScrollConfiguration.of(context).copyWith(scrollbars: false),
+          child: ListView.builder(
+            physics: const ClampingScrollPhysics(),
+            controller: verticalController,
+            itemCount: taskIds.length,
+            itemExtent: cellHeight,
+            cacheExtent: 200,
+            addAutomaticKeepAlives: false,
+            addRepaintBoundaries: true,
+            itemBuilder: (context, rowIndex) => _StaticRow(
+              taskId: taskIds[rowIndex],
+              cellHeight: cellHeight,
+              staticColumnHeaders: staticColumnHeaders,
+            ),
           ),
         ),
       ),
@@ -134,70 +156,99 @@ class _StaticRows extends StatelessWidget {
   }
 }
 
-class _StaticColumn extends StatelessWidget {
-  final int columnIndex;
-  final List<List<String>> staticRowsValues;
-
-  final double cellWidth;
+// Split into separate widgets for better performance
+class _StaticRow extends ConsumerWidget {
+  final String taskId;
   final double cellHeight;
-  final ScrollController? verticalController;
+  final List<TaskFieldEnum> staticColumnHeaders;
 
-  const _StaticColumn({
-    required this.columnIndex,
-    required this.staticRowsValues,
-    required this.cellWidth,
+  const _StaticRow({
+    required this.taskId,
     required this.cellHeight,
-    required this.verticalController,
+    required this.staticColumnHeaders,
   });
 
   @override
-  Widget build(BuildContext context) {
-    return SizedBox(
-      width: cellWidth,
-      child: ScrollConfiguration(
-        behavior: ScrollConfiguration.of(context).copyWith(scrollbars: false),
-        child: ListView.builder(
-          physics: const NeverScrollableScrollPhysics(),
-          controller: verticalController,
-          itemCount: staticRowsValues.length,
-          itemExtent: cellHeight,
-          itemBuilder: (context, rowIndex) => _StaticCell(
-            rowIndex: rowIndex,
-            columnIndex: columnIndex,
-            staticRowsValues: staticRowsValues,
-            cellHeight: cellHeight,
+  Widget build(BuildContext context, WidgetRef ref) {
+    final task = ref.watch(taskByIdStreamProvider(taskId));
+
+    return task.when(
+      data: (task) => RepaintBoundary(
+        child: Row(
+          children: List.generate(
+            staticColumnHeaders.length,
+            (columnIndex) => _StaticCell(
+              taskId: taskId,
+              cellHeight: cellHeight,
+              fieldType: staticColumnHeaders[columnIndex],
+            ),
           ),
         ),
       ),
+      loading: () => const Center(child: CircularProgressIndicator()),
+      error: (error, stackTrace) =>
+          const Center(child: Text('Error loading task')),
     );
   }
 }
 
 class _StaticCell extends StatelessWidget {
-  final int rowIndex;
-  final int columnIndex;
-  final List<List<String>> staticRowsValues;
+  final String taskId;
   final double cellHeight;
+  final TaskFieldEnum fieldType;
 
   const _StaticCell({
-    required this.rowIndex,
-    required this.columnIndex,
-    required this.staticRowsValues,
+    required this.taskId,
     required this.cellHeight,
+    required this.fieldType,
   });
 
   @override
   Widget build(BuildContext context) {
-    final cellValue = staticRowsValues.length > rowIndex &&
-            staticRowsValues[rowIndex].length > columnIndex
-        ? staticRowsValues[rowIndex][columnIndex]
-        : '';
-
     return Container(
+      width: GanttStaticColumnView.columnWidths[fieldType]!,
       height: cellHeight,
       alignment: Alignment.center,
       decoration: BoxDecoration(border: Border.all()),
-      child: Text(cellValue),
+      child: _StaticCellContent(
+        taskId: taskId,
+        fieldType: fieldType,
+      ),
     );
+  }
+}
+
+class _StaticCellContent extends StatelessWidget {
+  final String taskId;
+  final TaskFieldEnum fieldType;
+
+  const _StaticCellContent({
+    required this.taskId,
+    required this.fieldType,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    switch (fieldType) {
+      case TaskFieldEnum.name:
+        return TaskNameField(
+          taskId: taskId,
+          textStyle: Theme.of(context).textTheme.bodyMedium,
+        );
+      case TaskFieldEnum.status:
+        return TaskStatusSelectionField(
+          taskId: taskId,
+          showLabelWidget: false,
+        );
+      case TaskFieldEnum.priority:
+        return TaskPrioritySelectionField(
+          taskId: taskId,
+          showLabelWidget: false,
+        );
+      case TaskFieldEnum.assignees:
+        return TaskAssigneesSelectionField(taskId: taskId);
+      default:
+        return const SizedBox.shrink();
+    }
   }
 }
