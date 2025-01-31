@@ -3,13 +3,12 @@
 import 'dart:async';
 import 'dart:ui';
 
-import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:intl/intl.dart';
-import 'package:seren_ai_flutter/services/data/tasks/widgets/gantt/gantt_providers.dart';
+import 'package:seren_ai_flutter/services/data/tasks/widgets/gantt/experimental/viewable_tasks_hierarchy_provider.dart';
 import 'package:seren_ai_flutter/services/data/tasks/widgets/gantt/gantt_static_column_view.dart';
 import 'package:seren_ai_flutter/services/data/tasks/widgets/gantt/gantt_task_data_item_bar_view.dart';
 
@@ -177,7 +176,7 @@ class GanttView extends HookConsumerWidget {
           //headers: staticHeadersValues,
           //staticRowsValues: staticRowsValues,
           //rowCount: rowCount.value,
-          cellWidth: cellWidth,
+          //cellWidth: cellWidth,
           cellHeight: cellHeight,
           verticalController: leftController,
           mainVerticalController: mainVerticalController,
@@ -354,7 +353,7 @@ class GanttBody extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final visibleTasks = ref.watch(visibleGanttTasksProvider);
+    final visibleTaskIds = ref.watch(curUserViewableTasksHierarchyIdsProvider);
 
     return SingleChildScrollView(
       controller: mainHorizontalController,
@@ -363,10 +362,10 @@ class GanttBody extends ConsumerWidget {
         width: totalWidth,
         child: ListView.builder(
           controller: mainVerticalController,
-          itemCount: visibleTasks.length,
+          itemCount: visibleTaskIds.length,
           itemExtent: cellHeight,
           itemBuilder: (context, index) {
-            final task = visibleTasks[index];
+            final taskId = visibleTaskIds[index];
 
             return Stack(
               children: [
@@ -381,7 +380,7 @@ class GanttBody extends ConsumerWidget {
 
                 //Task visualization
                 GanttTaskDataItemBarView(
-                  task: task,
+                  taskId: taskId,
                   cellWidth: cellWidth,
                   cellHeight: cellHeight,
                   columnStartDay: columnRange.value.$1,
