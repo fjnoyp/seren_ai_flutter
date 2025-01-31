@@ -9,12 +9,13 @@ class BaseNameField extends HookConsumerWidget {
     required this.isEditable,
     required this.nameProvider,
     required this.updateName,
+    this.textStyle,
   });
 
   final bool isEditable;
   final ProviderListenable<String> nameProvider;
   final Function(WidgetRef, String) updateName;
-
+  final TextStyle? textStyle;
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final curName = ref.watch(nameProvider);
@@ -83,10 +84,10 @@ class BaseNameField extends HookConsumerWidget {
             focusedBorder: InputBorder.none,
             border: InputBorder.none,
           ),
-          style: Theme.of(context)
-              .textTheme
-              .headlineMedium
-              ?.copyWith(color: colorAnimation.colorTween.value),
+          style: (textStyle ?? Theme.of(context).textTheme.headlineMedium)
+              ?.copyWith(
+            color: colorAnimation.colorTween.value,
+          ),
         );
       },
     );

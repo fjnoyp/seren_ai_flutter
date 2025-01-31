@@ -1,16 +1,19 @@
 import 'package:flutter/material.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
-import 'package:seren_ai_flutter/services/data/tasks/widgets/gantt/gantt_providers.dart';
+import 'package:seren_ai_flutter/services/data/tasks/models/task_model.dart';
+import 'package:seren_ai_flutter/services/data/tasks/providers/task_by_id_stream_provider.dart';
+import 'package:seren_ai_flutter/services/data/tasks/widgets/gantt/experimental/gantt_task_visual_state_provider.dart';
+import 'package:seren_ai_flutter/services/data/tasks/widgets/gantt/experimental/viewable_tasks_hierarchy_provider.dart';
 
 class GanttTaskDataItemBarView extends ConsumerWidget {
-  final GanttTaskData task;
+  final String taskId;
   final double cellWidth;
   final double cellHeight;
   final int columnStartDay;
 
   const GanttTaskDataItemBarView({
     super.key,
-    required this.task,
+    required this.taskId,
     required this.cellWidth,
     required this.cellHeight,
     required this.columnStartDay,
@@ -21,172 +24,157 @@ class GanttTaskDataItemBarView extends ConsumerWidget {
     return date.difference(startDate).inDays * cellWidth;
   }
 
-  Widget _buildTaskContent() {
-    return Row(
-      mainAxisAlignment: MainAxisAlignment.start,
-      children: [
-        const SizedBox(width: 10),
-        if (task.childrenIds.isNotEmpty)
-          Consumer(
-            builder: (context, ref, _) {
-              final isExpanded =
-                  ref.watch(ganttTaskUIStateProvider(task.id)).isExpanded;
-              return IconButton(
-                icon: Icon(
-                  isExpanded ? Icons.expand_less : Icons.expand_more,
-                  color: Colors.white,
-                ),
-                onPressed: () => ref
-                    .read(ganttTaskUIStateProvider(task.id).notifier)
-                    .toggleExpanded(),
-              );
-            },
-          ),
-        Expanded(
-          child: Text(
-            task.title,
-            style: const TextStyle(color: Colors.white),
-            overflow: TextOverflow.ellipsis,
-          ),
-        ),
-      ],
-    );
-  }
-
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final hasStartDate = task.startDate != null;
-    final hasEndDate = task.endDate != null;
-    final hasDuration = task.duration != null;
+    // Watch task data and visual state
+    final taskAsync = ref.watch(taskByIdStreamProvider(taskId));
+    final visualState = ref.watch(ganttTaskVisualStateProvider(taskId));
+    final isVisible = ref.watch(ganttTaskVisibilityProvider(taskId));
 
-    Widget taskWidget;
-    double leftPosition = 0;
+    return taskAsync.when(
+      loading: () => const SizedBox.shrink(),
+      error: (_, __) => const SizedBox.shrink(),
+      data: (task) {
+        if (task == null || !isVisible) return const SizedBox.shrink();
 
-    if (hasDuration) {
-      // Complete task bar
-      leftPosition = _calculateEventPosition(task.startDate!);
-      taskWidget = _CompleteTaskBar(
-        task: task,
-        cellWidth: cellWidth,
-        cellHeight: cellHeight,
-      );
-    } else if (hasStartDate || hasEndDate) {
-      // Partial task indicator
-      final date = hasStartDate ? task.startDate! : task.endDate!;
-      leftPosition = _calculateEventPosition(date);
-      final isStart = hasStartDate;
+        final hasStartDate = task.startDateTime != null;
+        final hasEndDate = task.dueDate != null;
+        final hasDuration = task.duration != null;
 
-      taskWidget = _TaskContainer(
-        width: cellWidth,
-        color: task.color,
-        cellWidth: cellWidth,
-        cellHeight: cellHeight,
-        borderRadius: BorderRadius.circular(4),
-        child: Center(
-          child: Row(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              if (!isStart)
-                const Text(
-                  "?",
-                  style: TextStyle(
+        Widget taskWidget;
+        double leftPosition = 0;
+
+        if (hasDuration) {
+          leftPosition = _calculateEventPosition(task.startDateTime!);
+          taskWidget = _CompleteTaskBar(
+            task: task,
+            color: visualState.effectiveColor,
+            cellWidth: cellWidth,
+            cellHeight: cellHeight,
+          );
+        } else if (hasStartDate || hasEndDate) {
+          final date = hasStartDate ? task.startDateTime! : task.dueDate!;
+          leftPosition = _calculateEventPosition(date);
+          final isStart = hasStartDate;
+
+          taskWidget = _TaskContainer(
+            width: cellWidth,
+            color: visualState.effectiveColor,
+            cellWidth: cellWidth,
+            cellHeight: cellHeight,
+            borderRadius: BorderRadius.circular(4),
+            child: Center(
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  if (!isStart)
+                    const Text(
+                      "?",
+                      style: TextStyle(
+                        color: Colors.white,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                  Icon(
+                    isStart ? Icons.arrow_forward : Icons.arrow_back,
                     color: Colors.white,
-                    fontWeight: FontWeight.bold,
+                    size: 16,
                   ),
-                ),
-              Icon(
-                isStart ? Icons.arrow_forward : Icons.arrow_back,
-                color: Colors.white,
-                size: 16,
+                  if (isStart)
+                    const Text(
+                      "?",
+                      style: TextStyle(
+                        color: Colors.white,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                ],
               ),
-              if (isStart)
-                const Text(
-                  "?",
-                  style: TextStyle(
-                    color: Colors.white,
-                    fontWeight: FontWeight.bold,
-                  ),
-                ),
-            ],
-          ),
-        ),
-      );
-    } else {
-      // Error indicator
-      taskWidget = _TaskContainer(
-        width: cellWidth,
-        color: Colors.red,
-        cellWidth: cellWidth,
-        cellHeight: cellHeight,
-        child: const Center(
-          child: Text(
-            'Error: No dates',
-            style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
-          ),
-        ),
-      );
-    }
+            ),
+          );
+        } else {
+          taskWidget = _TaskContainer(
+            width: cellWidth,
+            color: Colors.red,
+            cellWidth: cellWidth,
+            cellHeight: cellHeight,
+            child: const Center(
+              child: Text(
+                'Error: No dates',
+                style:
+                    TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
+              ),
+            ),
+          );
+        }
 
-    return Positioned(
-      left: leftPosition,
-      top: 5,
-      child: taskWidget,
+        return Positioned(
+          left: leftPosition,
+          top: 5,
+          child: taskWidget,
+        );
+      },
     );
   }
 }
 
-class _CompleteTaskBar extends StatelessWidget {
-  final GanttTaskData task;
+class _CompleteTaskBar extends ConsumerWidget {
+  final TaskModel task;
+  final Color color;
   final double cellWidth;
   final double cellHeight;
 
   const _CompleteTaskBar({
     required this.task,
+    required this.color,
     required this.cellWidth,
     required this.cellHeight,
   });
 
-  Widget _buildTaskContent() {
-    return Row(
-      mainAxisAlignment: MainAxisAlignment.start,
-      children: [
-        const SizedBox(width: 10),
-        if (task.childrenIds.isNotEmpty)
-          Consumer(
-            builder: (context, ref, _) {
-              final isExpanded =
-                  ref.watch(ganttTaskUIStateProvider(task.id)).isExpanded;
-              return IconButton(
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final visualState = ref.watch(ganttTaskVisualStateProvider(task.id));
+
+    return GestureDetector(
+      onTap: visualState.canExpand
+          ? () => ref
+              .read(ganttTaskVisualStateProvider(task.id).notifier)
+              .toggleExpanded()
+          : null,
+      child: _TaskContainer(
+        width: task.duration != null
+            ? task.duration!.inDays * cellWidth
+            : cellWidth,
+        color: color,
+        cellWidth: cellWidth,
+        cellHeight: cellHeight,
+        borderRadius: BorderRadius.circular(4),
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.start,
+          children: [
+            const SizedBox(width: 10),
+            if (visualState.canExpand)
+              IconButton(
                 icon: Icon(
-                  isExpanded ? Icons.expand_less : Icons.expand_more,
+                  visualState.isExpanded
+                      ? Icons.expand_less
+                      : Icons.expand_more,
                   color: Colors.white,
                 ),
                 onPressed: () => ref
-                    .read(ganttTaskUIStateProvider(task.id).notifier)
+                    .read(ganttTaskVisualStateProvider(task.id).notifier)
                     .toggleExpanded(),
-              );
-            },
-          ),
-        Expanded(
-          child: Text(
-            task.title,
-            style: const TextStyle(color: Colors.white),
-            overflow: TextOverflow.ellipsis,
-          ),
+              ),
+            Expanded(
+              child: Text(
+                task.name,
+                style: const TextStyle(color: Colors.white),
+                overflow: TextOverflow.ellipsis,
+              ),
+            ),
+          ],
         ),
-      ],
-    );
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    return _TaskContainer(
-      width: task.duration!.inDays * cellWidth,
-      color: task.color,
-      cellWidth: cellWidth,
-      cellHeight: cellHeight,
-      borderRadius: BorderRadius.circular(4),
-      child: _buildTaskContent(),
+      ),
     );
   }
 }
