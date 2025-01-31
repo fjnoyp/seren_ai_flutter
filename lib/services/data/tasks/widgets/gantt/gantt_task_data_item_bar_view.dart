@@ -135,35 +135,45 @@ class _CompleteTaskBar extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final visualState = ref.watch(ganttTaskVisualStateProvider(task.id));
 
-    return _TaskContainer(
-      width:
-          task.duration != null ? task.duration!.inDays * cellWidth : cellWidth,
-      color: color,
-      cellWidth: cellWidth,
-      cellHeight: cellHeight,
-      borderRadius: BorderRadius.circular(4),
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.start,
-        children: [
-          const SizedBox(width: 10),
-          if (visualState.canExpand)
-            IconButton(
-              icon: Icon(
-                visualState.isExpanded ? Icons.expand_less : Icons.expand_more,
-                color: Colors.white,
+    return GestureDetector(
+      onTap: visualState.canExpand
+          ? () => ref
+              .read(ganttTaskVisualStateProvider(task.id).notifier)
+              .toggleExpanded()
+          : null,
+      child: _TaskContainer(
+        width: task.duration != null
+            ? task.duration!.inDays * cellWidth
+            : cellWidth,
+        color: color,
+        cellWidth: cellWidth,
+        cellHeight: cellHeight,
+        borderRadius: BorderRadius.circular(4),
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.start,
+          children: [
+            const SizedBox(width: 10),
+            if (visualState.canExpand)
+              IconButton(
+                icon: Icon(
+                  visualState.isExpanded
+                      ? Icons.expand_less
+                      : Icons.expand_more,
+                  color: Colors.white,
+                ),
+                onPressed: () => ref
+                    .read(ganttTaskVisualStateProvider(task.id).notifier)
+                    .toggleExpanded(),
               ),
-              onPressed: () => ref
-                  .read(ganttTaskVisualStateProvider(task.id).notifier)
-                  .toggleExpanded(),
+            Expanded(
+              child: Text(
+                task.name,
+                style: const TextStyle(color: Colors.white),
+                overflow: TextOverflow.ellipsis,
+              ),
             ),
-          Expanded(
-            child: Text(
-              task.name,
-              style: const TextStyle(color: Colors.white),
-              overflow: TextOverflow.ellipsis,
-            ),
-          ),
-        ],
+          ],
+        ),
       ),
     );
   }
