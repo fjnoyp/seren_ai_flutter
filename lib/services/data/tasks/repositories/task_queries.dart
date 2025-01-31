@@ -1,7 +1,6 @@
 abstract class TaskQueries {
   /// Params:
   /// - user_id: String
-  /// - author_user_id: String
   /// - org_id: String
   ///
   /// Used to fetch tasks of an organization where the user is either:
@@ -18,9 +17,55 @@ abstract class TaskQueries {
     LEFT JOIN user_org_roles uor ON uor.org_id = :org_id AND uor.user_id = :user_id
     WHERE pua.user_id = :user_id
     OR uta.user_id = :user_id
-    OR t.author_user_id = :author_user_id
+    OR t.author_user_id = :user_id
     OR uor.org_role = 'admin';
     ''';
+
+  /// Params:
+  /// - user_id: String
+  /// - org_id: String
+  ///
+  /// Used to fetch open or in-progress tasks of an organization where the user is either:
+  /// 1. Assigned to the project containing the task - directly or via team
+  /// 2. The author of the task
+  /// 3. An admin of the organization that owns the project
+  ///
+  /// The tasks are ordered by:
+  /// 1. Whether the task is in the user's default project
+  /// 2. Whether the task has a due date
+  /// 3. The due date
+  /// 4. The priority
+  ///
+  /// Returns up to 2 tasks matching these criteria.
+  static const String userViewableTasksOrderedLimitedQuery = '''
+    SELECT t.*
+    FROM tasks t
+    WHERE t.status IN ('open', 'inProgress')
+    AND (
+      t.parent_project_id IN (
+        SELECT project_id 
+        FROM user_project_assignments 
+        WHERE user_id = :user_id
+      )
+      OR t.author_user_id = :user_id
+      OR EXISTS (
+        SELECT 1 
+        FROM user_org_roles 
+        WHERE user_id = :user_id 
+        AND org_id = :org_id 
+        AND org_role = 'admin'
+      )
+    )
+    ORDER BY 
+      CASE 
+        WHEN t.parent_project_id = (SELECT default_project_id FROM users WHERE id = :user_id) 
+        THEN 0 ELSE 1 
+      END,
+      CASE WHEN t.due_date IS NULL THEN 1 ELSE 0 END,
+      t.due_date ASC,
+      t.priority ASC
+    LIMIT 2;
+  ''';
 
   /// Params:
   /// - user_id: String

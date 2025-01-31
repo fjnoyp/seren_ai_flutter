@@ -18,3 +18,16 @@ final curUserViewableTasksStreamProvider =
     );
   },
 );
+
+final curUserViewableTasksOrderedLimitedStreamProvider =
+    StreamProvider.autoDispose<List<TaskModel>?>((ref) {
+  final curOrgId = ref.watch(curSelectedOrgIdNotifierProvider);
+  if (curOrgId == null) throw Exception('No org selected');
+
+  return CurAuthDependencyProvider.watchStream(
+    ref: ref,
+    builder: (userId) => ref
+        .watch(tasksRepositoryProvider)
+        .watchUserViewableTasksOrderedLimited(userId: userId, orgId: curOrgId),
+  );
+});

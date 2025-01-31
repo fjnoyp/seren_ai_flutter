@@ -34,7 +34,6 @@ class TasksRepository extends BaseRepository<TaskModel> {
       TaskQueries.userViewableTasksQuery,
       {
         'user_id': userId,
-        'author_user_id': userId,
         'org_id': orgId,
       },
       triggerOnTables: {
@@ -58,7 +57,6 @@ class TasksRepository extends BaseRepository<TaskModel> {
       TaskQueries.userViewableTasksQuery,
       {
         'user_id': userId,
-        'author_user_id': userId,
         'org_id': orgId,
       },
     );
@@ -100,6 +98,38 @@ class TasksRepository extends BaseRepository<TaskModel> {
     return get(
       TaskQueries.getTasksByProjectIdQuery,
       {'project_id': projectId},
+    );
+  }
+
+  Stream<List<TaskModel>> watchUserViewableTasksOrderedLimited({
+    required String userId,
+    required String orgId,
+  }) {
+    return watch(
+      TaskQueries.userViewableTasksOrderedLimitedQuery,
+      {'user_id': userId, 'org_id': orgId},
+      triggerOnTables: {
+        'tasks',
+        'user_project_assignments',
+        'team_project_assignments',
+        'user_team_assignments',
+        'projects',
+        'user_org_roles',
+        'users',
+      },
+    );
+  }
+
+  Future<List<TaskModel>> getUserViewableTasksOrderedLimited({
+    required String userId,
+    required String orgId,
+  }) async {
+    return get(
+      TaskQueries.userViewableTasksOrderedLimitedQuery,
+      {
+        'user_id': userId,
+        'org_id': orgId,
+      },
     );
   }
 
