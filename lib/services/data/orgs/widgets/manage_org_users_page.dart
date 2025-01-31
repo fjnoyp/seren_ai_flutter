@@ -73,17 +73,18 @@ class ChangeUserRoleDialog extends HookConsumerWidget {
               style: Theme.of(context).textTheme.bodyMedium),
         ],
       ),
-      content: ListView.builder(
-        shrinkWrap: true,
-        itemCount: OrgRole.values.length,
-        itemBuilder: (context, index) {
-          return RadioListTile<OrgRole>(
-            value: OrgRole.values[index],
-            groupValue: state.value,
-            onChanged: (value) => state.value = value ?? OrgRole.member,
-            title: Text(OrgRole.values[index].toHumanReadable(context)),
-          );
-        },
+      content: Column(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          ...OrgRole.values.map(
+            (role) => RadioListTile<OrgRole>(
+              value: role,
+              groupValue: state.value,
+              onChanged: (value) => state.value = value ?? OrgRole.member,
+              title: Text(role.toHumanReadable(context)),
+            ),
+          ),
+        ],
       ),
       actions: [
         TextButton(
