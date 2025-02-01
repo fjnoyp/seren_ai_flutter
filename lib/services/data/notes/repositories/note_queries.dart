@@ -20,7 +20,7 @@ abstract class NoteQueries {
 
   /// Params:
   /// - user_id: String
-  static const getDefaultProjectAndPersonalNotes = '''
+  static const getDefaultProjectNotesAndPersonalNotes = '''
       SELECT notes.* 
       FROM notes
       INNER JOIN users ON users.id = :user_id

@@ -31,10 +31,11 @@ class NotesRepository extends BaseRepository<NoteModel> {
     );
   }
 
-  Stream<List<NoteModel>> watchDefaultProjectAndPersonalNotes({
+  Stream<List<NoteModel>> watchDefaultProjectNotesAndPersonalNotes({
     required String userId,
   }) {
-    return watch(NoteQueries.getDefaultProjectAndPersonalNotes,
+    return watch(
+      NoteQueries.getDefaultProjectNotesAndPersonalNotes,
       {
         'user_id': userId,
       },

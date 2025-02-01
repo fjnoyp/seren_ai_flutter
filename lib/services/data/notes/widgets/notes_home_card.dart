@@ -18,7 +18,8 @@ class NoteHomeCard extends ConsumerWidget {
       title: AppLocalizations.of(context)!.notes,
       child: Center(
         child: AsyncValueHandlerWidget(
-          value: ref.watch(curUserDefaultProjectAndPersonalNotesStreamProvider),
+          value: ref
+              .watch(curUserDefaultProjectNotesAndPersonalNotesStreamProvider),
           data: (notes) => notes.isEmpty
               ? Text(AppLocalizations.of(context)!.noNotes)
               : Column(

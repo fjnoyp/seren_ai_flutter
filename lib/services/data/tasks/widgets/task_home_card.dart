@@ -17,7 +17,7 @@ class TaskHomeCard extends ConsumerWidget {
     return BaseHomeCard(
       title: AppLocalizations.of(context)!.todaysTasks,
       child: AsyncValueHandlerWidget(
-        value: ref.watch(curUserViewableTasksOrderedLimitedStreamProvider),
+        value: ref.watch(curUserSortedTasksStreamProvider),
         data: (watchedTasks) {
           return watchedTasks?.isEmpty ?? true
               ? Center(
@@ -27,7 +27,7 @@ class TaskHomeCard extends ConsumerWidget {
                   // Changed from ListView to Column
                   children: [
                     // Display the name, status,
-                    ...watchedTasks!.map(
+                    ...watchedTasks!.take(2).map(
                       (task) => Flexible(
                           fit: FlexFit.loose, child: _TaskCardItem(task: task)),
                     ),
