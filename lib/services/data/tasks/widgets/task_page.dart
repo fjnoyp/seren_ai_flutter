@@ -2,12 +2,10 @@ import 'package:flutter/material.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:logging/logging.dart';
 import 'package:seren_ai_flutter/common/navigation_service_provider.dart';
-import 'package:seren_ai_flutter/common/universal_platform/universal_platform.dart';
 import 'package:seren_ai_flutter/services/data/common/widgets/editable_page_mode_enum.dart';
 import 'package:seren_ai_flutter/services/data/tasks/providers/cur_selected_task_id_notifier_provider.dart';
 import 'package:seren_ai_flutter/services/data/tasks/providers/task_by_id_stream_provider.dart';
 import 'package:seren_ai_flutter/services/data/tasks/repositories/tasks_repository.dart';
-import 'package:seren_ai_flutter/services/data/tasks/widgets/action_buttons/delete_task_button.dart';
 import 'package:seren_ai_flutter/services/data/tasks/widgets/form/task_selection_fields.dart';
 import 'package:seren_ai_flutter/services/data/tasks/widgets/task_comments/task_comment_section.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
@@ -60,14 +58,7 @@ class TaskPage extends HookConsumerWidget {
           children: [
             Row(
               children: [
-                isWebVersion
-                    ? IconButton(
-                        onPressed: () =>
-                            ref.read(navigationServiceProvider).pop(true),
-                        icon: const Icon(Icons.close),
-                      )
-                    : const Expanded(child: SizedBox.shrink()),
-                const SizedBox(width: 32),
+                const Expanded(child: SizedBox.shrink()),
                 Text(
                   curTask.isReloading
                       ? AppLocalizations.of(context)!.saving
@@ -137,7 +128,7 @@ class TaskPage extends HookConsumerWidget {
             TaskCommentSection(curTask.value?.id ?? ''),
             const SizedBox(height: 24),
 
-            if (mode == EditablePageMode.create && !isWebVersion)
+            if (mode == EditablePageMode.create)
               PopScope(
                 onPopInvokedWithResult: (_, result) async {
                   if (result != true) {
@@ -162,8 +153,6 @@ class TaskPage extends HookConsumerWidget {
                   ),
                 ),
               ),
-
-            if (isWebVersion) DeleteTaskButton(curTaskId, showLabelText: true),
 
             const SizedBox(height: 32),
           ],

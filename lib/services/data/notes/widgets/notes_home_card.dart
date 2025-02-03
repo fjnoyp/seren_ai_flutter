@@ -2,7 +2,6 @@ import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:seren_ai_flutter/common/navigation_service_provider.dart';
-import 'package:seren_ai_flutter/services/auth/cur_auth_state_provider.dart';
 import 'package:seren_ai_flutter/services/data/common/widgets/async_value_handler_widget.dart';
 import 'package:seren_ai_flutter/services/data/notes/models/note_model.dart';
 import 'package:seren_ai_flutter/services/data/notes/providers/notes_by_project_stream_provider.dart';
@@ -15,15 +14,12 @@ class NoteHomeCard extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final curUser = ref.read(curUserProvider).value;
-    // TODO p3: maybe we should show personal notes here too
-
     return BaseHomeCard(
       title: AppLocalizations.of(context)!.notes,
       child: Center(
         child: AsyncValueHandlerWidget(
           value: ref
-              .watch(notesByProjectStreamProvider(curUser?.defaultProjectId)),
+              .watch(curUserDefaultProjectNotesAndPersonalNotesStreamProvider),
           data: (notes) => notes.isEmpty
               ? Text(AppLocalizations.of(context)!.noNotes)
               : Column(
@@ -68,9 +64,8 @@ class _NoteCardItem extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     return GestureDetector(
-      onTap: () => ref
-          .read(notesNavigationServiceProvider)
-          .openNote(noteId: note.id),
+      onTap: () =>
+          ref.read(notesNavigationServiceProvider).openNote(noteId: note.id),
       child: BaseHomeInnerCard.outlined(
         child: SizedBox(
           width: double.infinity,
