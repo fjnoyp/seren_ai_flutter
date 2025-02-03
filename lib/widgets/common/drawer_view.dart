@@ -26,6 +26,7 @@ class DrawerView extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final user = ref.watch(curUserProvider).value;
     final isDebugMode = ref.watch(isDebugModeSNP);
+    final curRoute = ref.watch(currentRouteProvider);
 
     final curOrgId = ref.watch(curSelectedOrgIdNotifierProvider);
     final curOrg = curOrgId != null
@@ -77,8 +78,7 @@ class DrawerView extends ConsumerWidget {
                   onTap: () => ref
                       .read(navigationServiceProvider)
                       .navigateTo(AppRoutes.home.name),
-                  selected:
-                      ref.watch(currentRouteProvider) == AppRoutes.home.name,
+                  isSelected: curRoute == AppRoutes.home.name,
                 ),
                 isWebVersion
                     ? Consumer(
@@ -109,8 +109,7 @@ class DrawerView extends ConsumerWidget {
                         onTap: () => ref
                             .read(navigationServiceProvider)
                             .navigateTo(AppRoutes.projects.name),
-                        selected: ref.watch(currentRouteProvider) ==
-                            AppRoutes.projects.name,
+                        isSelected: curRoute == AppRoutes.projects.name,
                       ),
                 if (!isWebVersion || isDebugMode)
                   _DrawerListTile(
@@ -119,8 +118,7 @@ class DrawerView extends ConsumerWidget {
                     onTap: () => ref
                         .read(navigationServiceProvider)
                         .navigateTo(AppRoutes.tasks.name),
-                    selected:
-                        ref.watch(currentRouteProvider) == AppRoutes.tasks.name,
+                    isSelected: curRoute == AppRoutes.tasks.name,
                   ),
                 _DebugModeListTile(
                   icon: Icons.square,
@@ -128,8 +126,7 @@ class DrawerView extends ConsumerWidget {
                   onTap: () => ref
                       .read(navigationServiceProvider)
                       .navigateTo(AppRoutes.testSQLPage.name),
-                  selected: ref.watch(currentRouteProvider) ==
-                      AppRoutes.testSQLPage.name,
+                  selected: curRoute == AppRoutes.testSQLPage.name,
                 ),
                 _DrawerListTile(
                   icon: Icons.chat,
@@ -137,8 +134,7 @@ class DrawerView extends ConsumerWidget {
                   onTap: () => ref
                       .read(navigationServiceProvider)
                       .navigateTo(AppRoutes.aiChats.name),
-                  selected:
-                      ref.watch(currentRouteProvider) == AppRoutes.aiChats.name,
+                  isSelected: curRoute == AppRoutes.aiChats.name,
                 ),
                 _DrawerListTile(
                   icon: Icons.punch_clock_outlined,
@@ -146,16 +142,14 @@ class DrawerView extends ConsumerWidget {
                   onTap: () => ref
                       .read(navigationServiceProvider)
                       .navigateTo(AppRoutes.shifts.name),
-                  selected:
-                      ref.watch(currentRouteProvider) == AppRoutes.shifts.name,
+                  isSelected: curRoute == AppRoutes.shifts.name,
                 ),
                 _DebugModeListTile(
                   icon: Icons.table_chart_outlined,
                   title: 'Gantt Chart',
                   onTap: () =>
                       Navigator.pushNamed(context, AppRoutes.taskGantt.name),
-                  selected: ref.watch(currentRouteProvider) ==
-                      AppRoutes.taskGantt.name,
+                  selected: curRoute == AppRoutes.taskGantt.name,
                 ),
                 if (!isWebVersion || isDebugMode)
                   _DrawerListTile(
@@ -164,8 +158,7 @@ class DrawerView extends ConsumerWidget {
                     onTap: () => ref
                         .read(navigationServiceProvider)
                         .navigateTo(AppRoutes.noteList.name),
-                    selected: ref.watch(currentRouteProvider) ==
-                        AppRoutes.noteList.name,
+                    isSelected: curRoute == AppRoutes.noteList.name,
                   ),
               ],
             ),
@@ -197,10 +190,11 @@ class _DrawerListTile extends ListTile {
     required IconData icon,
     required String title,
     required VoidCallback onTap,
-    required super.selected,
+    required bool isSelected,
   }) : super(
           dense: true,
           leading: Icon(icon),
+          selected: isSelected,
           title: Text(
             title,
             style: const TextStyle(fontWeight: FontWeight.bold),
@@ -230,7 +224,7 @@ class _DebugModeListTile extends ConsumerWidget {
             icon: icon,
             title: title,
             onTap: onTap,
-            selected: selected,
+            isSelected: selected,
           )
         : const SizedBox.shrink();
   }
