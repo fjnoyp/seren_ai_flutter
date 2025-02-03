@@ -8,37 +8,33 @@ abstract class TaskQueries {
   /// 2. The author of the task
   /// 3. An admin of the organization that owns the project
   static const String userViewableTasksQuery = '''
-    SELECT DISTINCT t.*
-    FROM tasks t
-    LEFT JOIN user_project_assignments pua ON t.parent_project_id = pua.project_id
-    LEFT JOIN team_project_assignments tpa ON t.parent_project_id = tpa.project_id
-    LEFT JOIN user_team_assignments uta ON tpa.team_id = uta.team_id
-    LEFT JOIN projects p ON t.parent_project_id = p.id AND p.parent_org_id = :org_id
-    LEFT JOIN user_org_roles uor ON uor.org_id = :org_id AND uor.user_id = :user_id
-    WHERE pua.user_id = :user_id
-    OR uta.user_id = :user_id
-    OR t.author_user_id = :user_id
-    OR uor.org_role = 'admin';
-    ''';
+  SELECT DISTINCT t.*
+  FROM tasks t
+  INNER JOIN projects p ON t.parent_project_id = p.id
+  LEFT JOIN user_project_assignments pua ON t.parent_project_id = pua.project_id AND pua.user_id = :user_id
+  LEFT JOIN user_org_roles uor ON uor.org_id = p.parent_org_id AND uor.user_id = :user_id AND uor.org_role = 'admin'
+  WHERE p.parent_org_id = :org_id
+  AND (
+    pua.user_id IS NOT NULL
+    OR uor.user_id IS NOT NULL
+  );
+''';
 
-  /// Params:
-  /// - user_id: String
-  /// - author_user_id: String
-  /// - org_id: String
-  /// - start_date: DateTime
-  /// - end_date: DateTime
-  static const String userViewableTasksInRangeQuery = '''
-    SELECT DISTINCT t.*
-    FROM tasks t
-    LEFT JOIN user_project_assignments pua ON t.parent_project_id = pua.project_id
-    LEFT JOIN team_project_assignments tpa ON t.parent_project_id = tpa.project_id
-    LEFT JOIN user_team_assignments uta ON tpa.team_id = uta.team_id
-    LEFT JOIN projects p ON t.parent_project_id = p.id AND p.parent_org_id = :org_id
-    LEFT JOIN user_org_roles uor ON uor.org_id = :org_id AND uor.user_id = :user_id
-    WHERE (pua.user_id = :user_id OR uta.user_id = :user_id OR t.author_user_id = :author_user_id OR uor.org_role = 'admin')
-    AND t.start_date >= :start_date
-    AND t.end_date <= :end_date;
-    ''';
+  // Suddenly stopped working
+  // TODO p3: support team based access control
+  // '''
+  //   SELECT DISTINCT t.*
+  //   FROM tasks t
+  //   LEFT JOIN user_project_assignments pua ON t.parent_project_id = pua.project_id
+  //   LEFT JOIN team_project_assignments tpa ON t.parent_project_id = tpa.project_id
+  //   LEFT JOIN user_team_assignments uta ON tpa.team_id = uta.team_id
+  //   LEFT JOIN projects p ON t.parent_project_id = p.id AND p.parent_org_id = :org_id
+  //   LEFT JOIN user_org_roles uor ON uor.org_id = :org_id AND uor.user_id = :user_id
+  //   WHERE pua.user_id = :user_id
+  //   OR uta.user_id = :user_id
+  //   OR t.author_user_id = :user_id
+  //   OR uor.org_role = 'admin';
+  //   ''';
 
   /// Params:
   /// - user_id: String
