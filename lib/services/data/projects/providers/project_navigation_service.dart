@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:seren_ai_flutter/common/navigation_service_provider.dart';
 import 'package:seren_ai_flutter/common/routes/app_routes.dart';
-import 'package:seren_ai_flutter/common/universal_platform/universal_platform.dart';
 import 'package:seren_ai_flutter/services/data/common/base_navigation_service.dart';
 import 'package:seren_ai_flutter/services/data/common/widgets/editable_page_mode_enum.dart';
 import 'package:seren_ai_flutter/services/data/orgs/models/user_org_role_model.dart';
@@ -63,7 +62,7 @@ class ProjectNavigationService extends BaseNavigationService {
       EditablePageMode.create => AppLocalizations.of(context)!.createProject,
     };
 
-    if (isWebVersion && mode != EditablePageMode.readOnly) {
+    if (mode != EditablePageMode.readOnly) {
       _showProjectDialog(mode, projectId!, title);
     } else {
       _navigateToProjectPage(mode, projectId!, title);

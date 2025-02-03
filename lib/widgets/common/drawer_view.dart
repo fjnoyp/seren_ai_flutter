@@ -80,8 +80,7 @@ class DrawerView extends ConsumerWidget {
                       .navigateTo(AppRoutes.home.name),
                   isSelected: curRoute == AppRoutes.home.name,
                 ),
-                isWebVersion
-                    ? Consumer(
+                Consumer(
                         builder: (context, ref, child) {
                           final projects = ref
                                   .watch(curUserViewableProjectsProvider)
@@ -102,24 +101,16 @@ class DrawerView extends ConsumerWidget {
                                 .openProjectPage(mode: EditablePageMode.create),
                           );
                         },
-                      )
-                    : _DrawerListTile(
-                        icon: Icons.work,
-                        title: AppLocalizations.of(context)!.projects,
-                        onTap: () => ref
-                            .read(navigationServiceProvider)
-                            .navigateTo(AppRoutes.projects.name),
-                        isSelected: curRoute == AppRoutes.projects.name,
                       ),
-                if (!isWebVersion || isDebugMode)
-                  _DrawerListTile(
-                    icon: Icons.task,
-                    title: AppLocalizations.of(context)!.tasks,
-                    onTap: () => ref
-                        .read(navigationServiceProvider)
-                        .navigateTo(AppRoutes.tasks.name),
-                    isSelected: curRoute == AppRoutes.tasks.name,
-                  ),
+                // if (!isWebVersion || isDebugMode)
+                //   _DrawerListTile(
+                //     icon: Icons.task,
+                //     title: AppLocalizations.of(context)!.tasks,
+                //     onTap: () => ref
+                //         .read(navigationServiceProvider)
+                //         .navigateTo(AppRoutes.tasks.name),
+                //    isSelected: curRoute == AppRoutes.tasks.name,
+                //   ),
                 _DebugModeListTile(
                   icon: Icons.square,
                   title: AppLocalizations.of(context)!.testSQL,
