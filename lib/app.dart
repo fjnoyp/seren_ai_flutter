@@ -23,9 +23,8 @@ import 'package:seren_ai_flutter/services/data/orgs/widgets/cur_org_page.dart';
 import 'package:seren_ai_flutter/services/data/orgs/widgets/manage_org_users_page.dart';
 import 'package:seren_ai_flutter/services/data/orgs/widgets/org_guard.dart';
 import 'package:seren_ai_flutter/services/data/orgs/widgets/web/web_manage_org_users_page.dart';
-import 'package:seren_ai_flutter/services/data/projects/widgets/project_page.dart';
 import 'package:seren_ai_flutter/services/data/projects/widgets/project_list_page.dart';
-import 'package:seren_ai_flutter/services/data/projects/widgets/web/web_project_page.dart';
+import 'package:seren_ai_flutter/services/data/projects/widgets/project_overview/project_overview_page.dart';
 import 'package:seren_ai_flutter/services/data/shifts/providers/cur_shift_state_provider.dart';
 import 'package:seren_ai_flutter/services/data/shifts/widgets/shifts_page.dart';
 import 'package:seren_ai_flutter/services/data/tasks/providers/task_schedule_notifications_service.dart';
@@ -122,10 +121,11 @@ class AppState extends ConsumerState<App> {
                   const ProjectListPage()),
               AppRoutes.projectDetails.name: (context) => _GuardScaffold(
                     args?['title'] ?? AppLocalizations.of(context)!.project,
-                    ProjectPage(
-                      mode: args?['mode'] ?? EditablePageMode.readOnly,
-                    ),
-                    webBody: const WebProjectPage(),
+                    const ProjectTasksPage(),
+                    // ProjectPage(
+                    //   mode: args?['mode'] ?? EditablePageMode.readOnly,
+                    // ),
+                    //webBody: const WebProjectPage(),
                     actions: args?['actions'],
                     showAppBar: !isWebVersion,
                   ),
@@ -136,9 +136,8 @@ class AppState extends ConsumerState<App> {
                     TaskPage(mode: args?['mode'] ?? EditablePageMode.edit),
                     actions: args?['actions'],
                     webBody: WebTaskPage(mode: args?['mode']),
-                showAppBar: !isWebVersion,
-    
-              ),
+                    showAppBar: !isWebVersion,
+                  ),
               AppRoutes.aiChats.name: (context) => _GuardScaffold(
                     AppLocalizations.of(context)!.aiChatThreads,
                     const AIChatsPage(),

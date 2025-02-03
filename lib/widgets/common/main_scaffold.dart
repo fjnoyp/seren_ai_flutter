@@ -8,6 +8,7 @@ import 'package:seren_ai_flutter/services/ai_interaction/widgets/ai_assistant_bu
 import 'package:seren_ai_flutter/services/ai_interaction/widgets/user_input_display_widget.dart';
 import 'package:seren_ai_flutter/services/ai_interaction/widgets/web_ai_assistant_modal.dart';
 import 'package:seren_ai_flutter/services/data/db_setup/app_config.dart';
+import 'package:seren_ai_flutter/services/data/tasks/providers/task_navigation_service.dart';
 import 'package:seren_ai_flutter/services/data/users/models/invite_model.dart';
 import 'package:seren_ai_flutter/services/data/users/providers/cur_user_invites_service_provider.dart';
 import 'drawer_view.dart';
@@ -203,30 +204,7 @@ class MainScaffold extends ConsumerWidget {
               bottomNavigationBar: showAiAssistant
                   ? isAiAssistantExpanded
                       ? const UserInputDisplayWidget()
-                      : BottomAppBar(
-                          notchMargin: 0,
-                          child: Row(
-                            mainAxisAlignment: MainAxisAlignment.spaceAround,
-                            children: [
-                              IconButton(
-                                tooltip: AppLocalizations.of(context)!.home,
-                                icon: const Icon(Icons.grid_view),
-                                onPressed: () => ref
-                                    .read(navigationServiceProvider)
-                                    .navigateToAndRemoveUntil(
-                                        AppRoutes.home.name, (route) => false),
-                              ),
-                              const SizedBox.shrink(),
-                              IconButton(
-                                tooltip: AppLocalizations.of(context)!.chat,
-                                icon: const Icon(Icons.chat_bubble_outline),
-                                onPressed: () => ref
-                                    .read(navigationServiceProvider)
-                                    .navigateTo(AppRoutes.aiChats.name),
-                              ),
-                            ],
-                          ),
-                        )
+                      : _QuickActionsBottomAppBar()
                   : null,
               floatingActionButtonLocation:
                   FloatingActionButtonLocation.centerDocked,
@@ -266,6 +244,65 @@ class MainScaffold extends ConsumerWidget {
               Navigator.of(context).pop();
             },
             child: Text(AppLocalizations.of(context)!.accept),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+class _QuickActionsBottomAppBar extends ConsumerWidget {
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    return BottomAppBar(
+      notchMargin: 0,
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.spaceAround,
+        children: [
+          IconButton(
+            tooltip: AppLocalizations.of(context)!.home,
+            icon: const Icon(Icons.grid_view),
+            onPressed: () => ref
+                .read(navigationServiceProvider)
+                .navigateToAndRemoveUntil(
+                    AppRoutes.home.name, (route) => false),
+          ),
+          IconButton(
+            tooltip: AppLocalizations.of(context)!.createNewTask,
+            icon: const Icon(Icons.add_box_outlined),
+            onPressed: () {
+              // Show a bottom modal with buttons to create items (only tasks for now)
+              showModalBottomSheet(
+                context: context,
+                builder: (BuildContext context) {
+                  return Padding(
+                    padding: const EdgeInsets.all(20.0),
+                    child: Column(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        ElevatedButton(
+                          onPressed: () async {
+                            ref
+                                .read(taskNavigationServiceProvider)
+                                .openNewTask();
+                          },
+                          child: Text(AppLocalizations.of(context)!.createTask),
+                        ),
+                      ],
+                    ),
+                  );
+                },
+              );
+            },
+          ),
+          const SizedBox.shrink(),
+          const SizedBox.shrink(),
+          IconButton(
+            tooltip: AppLocalizations.of(context)!.chat,
+            icon: const Icon(Icons.chat_bubble_outline),
+            onPressed: () => ref
+                .read(navigationServiceProvider)
+                .navigateTo(AppRoutes.aiChats.name),
           ),
         ],
       ),
