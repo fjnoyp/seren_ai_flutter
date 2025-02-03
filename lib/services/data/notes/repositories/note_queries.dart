@@ -17,4 +17,15 @@ abstract class NoteQueries {
       WHERE parent_project_id = :project_id
       ORDER BY created_at DESC
     ''';
+
+  /// Params:
+  /// - user_id: String
+  static const getDefaultProjectNotesAndPersonalNotes = '''
+      SELECT notes.* 
+      FROM notes
+      INNER JOIN users ON users.id = :user_id
+      WHERE (notes.parent_project_id = users.default_project_id
+            OR (notes.parent_project_id IS NULL AND notes.author_user_id = :user_id))
+      ORDER BY notes.created_at DESC
+    ''';
 }

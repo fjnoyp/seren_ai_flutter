@@ -32,6 +32,7 @@ import 'package:seren_ai_flutter/services/data/tasks/providers/task_schedule_not
 import 'package:seren_ai_flutter/services/data/tasks/widgets/gantt/gantt_task_page.dart';
 import 'package:seren_ai_flutter/services/data/tasks/widgets/task_page.dart';
 import 'package:seren_ai_flutter/services/ai_interaction/stt_orchestrator_provider.dart.dart';
+import 'package:seren_ai_flutter/services/data/tasks/widgets/web/web_task_page.dart';
 import 'package:seren_ai_flutter/widgets/home/home_page.dart';
 import 'package:seren_ai_flutter/widgets/common/main_scaffold.dart';
 import 'package:seren_ai_flutter/services/data/tasks/widgets/task_list/tasks_list_page.dart';
@@ -134,8 +135,10 @@ class AppState extends ConsumerState<App> {
                     args?['title'] ?? AppLocalizations.of(context)!.task,
                     TaskPage(mode: args?['mode'] ?? EditablePageMode.edit),
                     actions: args?['actions'],
-                    showAppBar: !isWebVersion,
-                  ),
+                    webBody: WebTaskPage(mode: args?['mode']),
+                showAppBar: !isWebVersion,
+    
+              ),
               AppRoutes.aiChats.name: (context) => _GuardScaffold(
                     AppLocalizations.of(context)!.aiChatThreads,
                     const AIChatsPage(),
