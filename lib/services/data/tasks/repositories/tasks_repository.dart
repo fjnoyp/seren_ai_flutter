@@ -34,7 +34,6 @@ class TasksRepository extends BaseRepository<TaskModel> {
       TaskQueries.userViewableTasksQuery,
       {
         'user_id': userId,
-        'author_user_id': userId,
         'org_id': orgId,
       },
       triggerOnTables: {
@@ -58,7 +57,6 @@ class TasksRepository extends BaseRepository<TaskModel> {
       TaskQueries.userViewableTasksQuery,
       {
         'user_id': userId,
-        'author_user_id': userId,
         'org_id': orgId,
       },
     );

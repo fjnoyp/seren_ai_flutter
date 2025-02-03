@@ -31,6 +31,17 @@ class NotesRepository extends BaseRepository<NoteModel> {
     );
   }
 
+  Stream<List<NoteModel>> watchDefaultProjectNotesAndPersonalNotes({
+    required String userId,
+  }) {
+    return watch(
+      NoteQueries.getDefaultProjectNotesAndPersonalNotes,
+      {
+        'user_id': userId,
+      },
+    );
+  }
+
   Future<void> updateNoteName(String noteId, String? name) async {
     if (name == null) return;
 

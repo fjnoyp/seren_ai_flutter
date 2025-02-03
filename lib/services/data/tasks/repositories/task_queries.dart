@@ -1,7 +1,6 @@
 abstract class TaskQueries {
   /// Params:
   /// - user_id: String
-  /// - author_user_id: String
   /// - org_id: String
   ///
   /// Used to fetch tasks of an organization where the user is either:
@@ -18,7 +17,7 @@ abstract class TaskQueries {
     LEFT JOIN user_org_roles uor ON uor.org_id = :org_id AND uor.user_id = :user_id
     WHERE pua.user_id = :user_id
     OR uta.user_id = :user_id
-    OR t.author_user_id = :author_user_id
+    OR t.author_user_id = :user_id
     OR uor.org_role = 'admin';
     ''';
 

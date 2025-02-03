@@ -18,3 +18,17 @@ final notesByProjectStreamProvider =
     );
   },
 );
+
+final curUserDefaultProjectNotesAndPersonalNotesStreamProvider =
+    StreamProvider.autoDispose<List<NoteModel>>(
+  (ref) {
+    return CurAuthDependencyProvider.watchStream<List<NoteModel>>(
+      ref: ref,
+      builder: (userId) {
+        return ref
+            .watch(notesRepositoryProvider)
+            .watchDefaultProjectNotesAndPersonalNotes(userId: userId);
+      },
+    );
+  },
+);

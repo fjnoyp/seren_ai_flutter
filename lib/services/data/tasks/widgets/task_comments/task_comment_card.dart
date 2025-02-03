@@ -42,7 +42,8 @@ class TaskCommentCard extends ConsumerWidget {
                       DateFormat.MMMMd(AppLocalizations.of(context)!.localeName)
                           .add_jm()
                           .format(comment.updatedAt?.toLocal() ??
-                              comment.createdAt!.toLocal()),
+                              comment.createdAt?.toLocal() ??
+                              DateTime.now().toLocal()),
                     ),
                   ],
                 );
