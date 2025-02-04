@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:seren_ai_flutter/services/data/tasks/models/task_model.dart';
 import 'package:seren_ai_flutter/services/data/tasks/providers/task_by_id_stream_provider.dart';
+import 'package:seren_ai_flutter/services/data/tasks/repositories/tasks_repository.dart';
 import 'package:seren_ai_flutter/services/data/tasks/widgets/gantt/experimental/gantt_task_visual_state_provider.dart';
 
 enum GanttCellDurationType { days, hours }
@@ -76,6 +77,27 @@ class GanttTaskDataItemBarView extends ConsumerWidget {
             color: visualState.effectiveColor,
             cellWidth: cellWidth,
             cellHeight: cellHeight,
+            onDragFromMiddle: (cells) {
+              final timeOffset = Duration(
+                days: cellDurationType == GanttCellDurationType.days
+                    ? cells.round()
+                    : 0,
+                hours: cellDurationType == GanttCellDurationType.days
+                    ? 0
+                    : cells.round(),
+              );
+              if (isStart) {
+                ref.read(tasksRepositoryProvider).updateTaskStartDateTime(
+                      task.id,
+                      date.add(timeOffset),
+                    );
+              } else {
+                ref.read(tasksRepositoryProvider).updateTaskDueDate(
+                      task.id,
+                      date.add(timeOffset),
+                    );
+              }
+            },
             borderRadius: BorderRadius.circular(4),
             child: Center(
               child: Row(
@@ -112,6 +134,7 @@ class GanttTaskDataItemBarView extends ConsumerWidget {
             color: Colors.red,
             cellWidth: cellWidth,
             cellHeight: cellHeight,
+            onDragFromMiddle: (_) {},
             child: const Center(
               child: Text(
                 'Error: No dates',
@@ -158,6 +181,24 @@ class _CompleteTaskBar extends ConsumerWidget {
               .toggleExpanded()
           : null,
       child: _TaskContainer(
+        onDragFromMiddle: (cells) {
+          final timeOffset = Duration(
+            days: cellDurationType == GanttCellDurationType.days
+                ? cells.round()
+                : 0,
+            hours: cellDurationType == GanttCellDurationType.days
+                ? 0
+                : cells.round(),
+          );
+          ref.read(tasksRepositoryProvider).updateTaskStartDateTime(
+                task.id,
+                task.startDateTime!.add(timeOffset),
+              );
+          ref.read(tasksRepositoryProvider).updateTaskDueDate(
+                task.id,
+                task.dueDate!.add(timeOffset),
+              );
+        },
         width: task.duration != null
             ? (cellDurationType == GanttCellDurationType.days
                     ? task.duration!.inDays
@@ -205,6 +246,7 @@ class _TaskContainer extends StatelessWidget {
   final double? width;
   final double cellWidth;
   final double cellHeight;
+  final void Function(double) onDragFromMiddle;
 
   const _TaskContainer({
     required this.child,
@@ -213,19 +255,62 @@ class _TaskContainer extends StatelessWidget {
     required this.cellHeight,
     this.borderRadius,
     this.width,
+    required this.onDragFromMiddle,
   });
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      width: width ?? cellWidth * 0.3,
-      height: cellHeight - 10,
-      decoration: BoxDecoration(
-        color: color,
-        borderRadius: borderRadius,
-        shape: BoxShape.rectangle,
+    Offset? startPosition;
+
+    // Draggable's onDragEnd is not working properly due to scroll,
+    // so we're using a Listener to get the position
+    return Listener(
+      onPointerDown: (event) {
+        startPosition = event.position;
+      },
+      onPointerUp: (event) {
+        if (startPosition != null) {
+          final delta = event.position.dx - startPosition!.dx;
+          final hoursOffset = (delta / cellWidth);
+          onDragFromMiddle(hoursOffset);
+        }
+      },
+      child: Draggable(
+        axis: Axis.horizontal,
+        // Feedback widget shown while dragging
+        feedback: Material(
+          child: Container(
+            width: width ?? cellWidth * 0.3,
+            height: cellHeight - 10,
+            decoration: BoxDecoration(
+              color: color.withAlpha(200),
+              borderRadius: borderRadius,
+              shape: BoxShape.rectangle,
+            ),
+            child: child,
+          ),
+        ),
+        // Optional: Show a child widget where the drag started
+        childWhenDragging: Container(
+          width: width ?? cellWidth * 0.3,
+          height: cellHeight - 10,
+          decoration: BoxDecoration(
+            color: color.withAlpha(55),
+            borderRadius: borderRadius,
+            shape: BoxShape.rectangle,
+          ),
+        ),
+        child: Container(
+          width: width ?? cellWidth * 0.3,
+          height: cellHeight - 10,
+          decoration: BoxDecoration(
+            color: color,
+            borderRadius: borderRadius,
+            shape: BoxShape.rectangle,
+          ),
+          child: child,
+        ),
       ),
-      child: child,
     );
   }
 }
