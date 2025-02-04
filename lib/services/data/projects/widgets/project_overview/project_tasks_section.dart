@@ -2,19 +2,31 @@ import 'package:flutter/material.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
-import 'package:intl/intl.dart';
-import 'package:seren_ai_flutter/services/data/common/status_enum.dart';
-import 'package:seren_ai_flutter/services/data/common/widgets/async_value_handler_widget.dart';
-import 'package:seren_ai_flutter/services/data/projects/providers/cur_selected_project_providers.dart';
+import 'package:seren_ai_flutter/services/ai_interaction/widgets/ai_assistant_button.dart';
 import 'package:seren_ai_flutter/services/data/projects/task_filter_option_enum.dart';
 import 'package:seren_ai_flutter/services/data/projects/task_sort_option_enum.dart';
+import 'package:seren_ai_flutter/services/data/projects/widgets/project_overview/sub_lists/project_tasks_board_view.dart';
+import 'package:seren_ai_flutter/services/data/projects/widgets/project_overview/sub_lists/project_tasks_filters.dart';
+import 'package:seren_ai_flutter/services/data/projects/widgets/project_overview/sub_lists/project_tasks_list_view.dart';
+import 'package:seren_ai_flutter/services/data/projects/widgets/project_overview/sub_lists/project_tasks_sectioned_list_view.dart';
 import 'package:seren_ai_flutter/services/data/tasks/models/task_model.dart';
-import 'package:seren_ai_flutter/services/data/tasks/providers/task_navigation_service.dart';
-import 'package:seren_ai_flutter/services/data/tasks/providers/tasks_by_project_stream_provider.dart';
-import 'package:seren_ai_flutter/services/data/tasks/widgets/task_list/task_list_item_view.dart';
 
-class ProjectTasksSection extends HookConsumerWidget {
+class ProjectTasksSection extends StatelessWidget {
   const ProjectTasksSection({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return LayoutBuilder(builder: (context, constraints) {
+      final isLargeScreen = constraints.maxWidth > 800;
+      return isLargeScreen
+          ? const ProjectTasksSectionWeb()
+          : const ProjectTasksSectionMobile();
+    });
+  }
+}
+
+class ProjectTasksSectionWeb extends HookConsumerWidget {
+  const ProjectTasksSectionWeb({super.key});
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -29,6 +41,7 @@ class ProjectTasksSection extends HookConsumerWidget {
             })?>(null))
         .toList();
 
+    // TODO p3: switch to server side filtering once there are too many tasks
     bool filterCondition(TaskModel task) {
       bool result = true;
       for (var filter in filterBy) {
@@ -39,121 +52,36 @@ class ProjectTasksSection extends HookConsumerWidget {
       return result;
     }
 
-    return LayoutBuilder(builder: (context, constraints) {
-      final isLargeScreen = constraints.maxWidth > 800;
-      return Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Padding(
-            padding: const EdgeInsets.all(8),
-            child: Row(
-              children: [
-                Expanded(
-                  child: !isLargeScreen
-                      ? GestureDetector(
-                          onTap: () {
-                            _showTaskSearchModal(
-                                context, filterBy, sortBy, viewMode);
-                          },
-                          child: Container(
-                            padding: const EdgeInsets.symmetric(
-                                horizontal: 8, vertical: 4),
-                            decoration: BoxDecoration(
-                              border: Border.all(color: Colors.grey),
-                              borderRadius: BorderRadius.circular(8),
-                            ),
-                            child: Row(
-                              mainAxisSize: MainAxisSize.min,
-                              children: [
-                                const Icon(Icons.search),
-                                const SizedBox(width: 8),
-                                Text(AppLocalizations.of(context)!.search),
-                              ],
-                            ),
-                          ),
-                        )
-                      : ProjectTasksFilterBar(
-                          filterBy: filterBy,
-                          sortBy: sortBy,
-                          viewMode: viewMode,
-                          onShowCustomDateRangePicker:
-                              _showCustomDateRangePicker,
-                        ),
-                ),
-              ],
-            ),
-          ),
-          isLargeScreen
-              ? Expanded(
-                  child: AnimatedCrossFade(
-                    firstChild: _ProjectTasksListView(
-                      sort: sortBy.value?.comparator,
-                      filterCondition: filterCondition,
-                    ),
-                    secondChild: _ProjectTasksBoardView(
-                      sort: sortBy.value?.comparator,
-                      filterCondition: filterCondition,
-                    ),
-                    crossFadeState: viewMode.value == 'list'
-                        ? CrossFadeState.showFirst
-                        : CrossFadeState.showSecond,
-                    duration: Durations.medium1,
-                  ),
-                )
-              : Expanded(
-                  child: _ProjectTasksListView(
-                    sort: sortBy.value?.comparator,
-                    filterCondition: filterCondition,
-                  ),
-                ),
-        ],
-      );
-    });
-  }
-
-  // TODO p1: none of the filters here are working
-  // TODO p1: ui list of search results not shown
-  Future<dynamic> _showTaskSearchModal(
-      BuildContext context,
-      List<
-              ValueNotifier<
-                  ({
-                    String? value,
-                    String? name,
-                    bool Function(TaskModel)? filter,
-                  })?>>
-          filterBy,
-      ValueNotifier<TaskSortOption?> sortBy,
-      ValueNotifier<String> viewMode) {
-    return showModalBottomSheet(
-      context: context,
-      isScrollControlled: true,
-      builder: (context) => DraggableScrollableSheet(
-        initialChildSize: 0.9,
-        maxChildSize: 0.9,
-        minChildSize: 0.5,
-        builder: (context, scrollController) => Padding(
-          padding: const EdgeInsets.all(16.0),
-          child: Column(
-            children: [
-              ProjectTasksFilterBar(
-                filterBy: filterBy,
-                sortBy: sortBy,
-                viewMode: viewMode,
-                onShowCustomDateRangePicker: _showCustomDateRangePicker,
-              ),
-              TextField(
-                autofocus: true,
-                decoration: InputDecoration(
-                  hintText: AppLocalizations.of(context)!.search,
-                  prefixIcon: const Icon(Icons.search),
-                  border: const OutlineInputBorder(),
-                ),
-              ),
-            ],
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Padding(
+          padding: const EdgeInsets.all(8),
+          child: ProjectTasksFilters(
+            filterBy: filterBy,
+            sortBy: sortBy,
+            viewMode: viewMode,
+            onShowCustomDateRangePicker: _showCustomDateRangePicker,
+            useHorizontalScroll: false,
           ),
         ),
-      ),
+        Expanded(
+          child: AnimatedCrossFade(
+            firstChild: ProjectTasksSectionedListView(
+              sort: sortBy.value?.comparator,
+              filterCondition: filterCondition,
+            ),
+            secondChild: ProjectTasksBoardView(
+              sort: sortBy.value?.comparator,
+              filterCondition: filterCondition,
+            ),
+            crossFadeState: viewMode.value == 'list'
+                ? CrossFadeState.showFirst
+                : CrossFadeState.showSecond,
+            duration: Durations.medium1,
+          ),
+        ),
+      ],
     );
   }
 
@@ -175,302 +103,158 @@ class ProjectTasksSection extends HookConsumerWidget {
   }
 }
 
-class ProjectTasksFilterBar extends ConsumerWidget {
-  const ProjectTasksFilterBar({
-    super.key,
-    required this.filterBy,
-    required this.sortBy,
-    required this.viewMode,
-    required this.onShowCustomDateRangePicker,
-  });
-
-  final List<
-      ValueNotifier<
-          ({
-            String? value,
-            String? name,
-            bool Function(TaskModel)? filter,
-          })?>> filterBy;
-  final ValueNotifier<TaskSortOption?> sortBy;
-  final ValueNotifier<String> viewMode;
-  final Future<DateTimeRange?> Function(BuildContext)
-      onShowCustomDateRangePicker;
+class ProjectTasksSectionMobile extends StatelessWidget {
+  const ProjectTasksSectionMobile({super.key});
 
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
-    return Wrap(
-      spacing: 8,
-      runSpacing: 4,
+  Widget build(BuildContext context) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        ...TaskFilterOption.values.map(
-          (filter) {
-            final index = TaskFilterOption.values.indexOf(filter);
-            return MenuAnchor(
-              builder: (context, controller, child) {
-                return FilterChip(
-                  selected: filterBy[index].value != null,
-                  avatar: const Icon(Icons.filter_list_outlined),
-                  label: filterBy[index].value != null
-                      ? Text(filterBy[index].value!.name!)
-                      : Text(filter.getDisplayName(context)),
-                  onDeleted: filterBy[index].value != null
-                      ? () => filterBy[index].value = null
-                      : null,
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(32),
-                  ),
-                  showCheckmark: false,
-                  onSelected: (selected) {
-                    controller.isOpen ? controller.close() : controller.open();
-                  },
-                );
-              },
-              menuChildren: filter
-                  .getSubOptions(context, ref)
-                  .map(
-                    (option) => MenuItemButton(
-                      child: Text(option.name),
-                      onPressed: () {
-                        if (option.value == 'customDateRange') {
-                          onShowCustomDateRangePicker(context).then((value) {
-                            if (value != null) {
-                              filterBy[index].value = (
-                                value: '${filter.name}_${option.value}',
-                                name:
-                                    '${filter.getDisplayName(context)}: ${DateFormat.MMMd().format(value.start)} - ${DateFormat.Md().format(value.end)}',
-                                filter: (task) =>
-                                    option.filter?.call(task) ??
-                                    filter.filterFunction(task, value)
-                              );
-                            }
-                          });
-                        } else {
-                          filterBy[index].value = (
-                            value: '${filter.name}_${option.value}',
-                            name:
-                                '${filter.getDisplayName(context)}: ${option.name}',
-                            filter: (task) =>
-                                option.filter?.call(task) ??
-                                filter.filterFunction(task, null)
-                          );
-                        }
-                      },
-                    ),
-                  )
-                  .toList(),
-              child: Text(filter.name),
-            );
-          },
-        ),
-        MenuAnchor(
-          builder: (context, controller, child) {
-            return FilterChip(
-              selected: sortBy.value != null,
-              avatar: const Icon(Icons.import_export_outlined),
-              label: sortBy.value != null
-                  ? Text(sortBy.value!.name)
-                  : Text(AppLocalizations.of(context)!.sortBy),
-              onSelected: (_) {
-                controller.isOpen ? controller.close() : controller.open();
-              },
-              onDeleted:
-                  sortBy.value != null ? () => sortBy.value = null : null,
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(32),
+        Padding(
+          padding: const EdgeInsets.all(8),
+          child: GestureDetector(
+            onTap: () => _showTaskSearchModal(context),
+            child: Container(
+              padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+              decoration: BoxDecoration(
+                border: Border.all(color: Colors.grey),
+                borderRadius: BorderRadius.circular(8),
               ),
-              showCheckmark: false,
-            );
-          },
-          menuChildren: TaskSortOption.values
-              .map(
-                (option) => MenuItemButton(
-                  child: Text(option.name),
-                  onPressed: () => sortBy.value = option,
-                ),
-              )
-              .toList(),
+              child: Row(
+                mainAxisSize: MainAxisSize.max,
+                children: [
+                  const Icon(Icons.search),
+                  const SizedBox(width: 8),
+                  Text(AppLocalizations.of(context)!.search),
+                  const Spacer(),
+                  const AiAssistantButton(size: 30),
+                ],
+              ),
+            ),
+          ),
         ),
-        SegmentedButton<String>(
-          segments: const [
-            ButtonSegment(
-                value: 'board',
-                icon: Icon(Icons.view_week),
-                label: Text('Board')),
-            ButtonSegment(
-                value: 'list', icon: Icon(Icons.list), label: Text('List')),
-          ],
-          selected: {viewMode.value},
-          onSelectionChanged: (value) => viewMode.value = value.first,
-        ),
-        const SizedBox(width: 8),
-        FilledButton.tonalIcon(
-          icon: const Icon(Icons.add),
-          label: Text(AppLocalizations.of(context)!.createNewTask),
-          onPressed: () async =>
-              await ref.read(taskNavigationServiceProvider).openNewTask(
-                    initialProjectId:
-                        ref.read(curSelectedProjectIdNotifierProvider),
-                  ),
+        const Expanded(
+          child: ProjectTasksSectionedListView(),
         ),
       ],
     );
   }
-}
 
-class _ProjectTasksBoardView extends ConsumerWidget {
-  const _ProjectTasksBoardView({this.sort, this.filterCondition});
-
-  final Comparator<TaskModel>? sort;
-  final bool Function(TaskModel)? filterCondition;
-
-  @override
-  Widget build(BuildContext context, WidgetRef ref) {
-    final projectId = ref.watch(curSelectedProjectIdNotifierProvider);
-    if (projectId == null) return const SizedBox.shrink();
-
-    final tasks = ref
-            .watch(tasksByProjectStreamProvider(projectId))
-            .valueOrNull
-            ?.where(
-                (task) => (filterCondition == null || filterCondition!(task)))
-            .toList() ??
-        [];
-
-    if (sort != null) {
-      tasks.sort(sort);
-    }
-
-    return Row(
-      children: StatusEnum.values
-          .where((status) =>
-              status != StatusEnum.cancelled && status != StatusEnum.archived)
-          .map(
-        (status) {
-          final filteredTasks =
-              tasks.where((task) => task.status == status).toList();
-          return Expanded(
-            child: Card(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Padding(
-                    padding: const EdgeInsets.all(20),
-                    child: Text(
-                      status.toHumanReadable(context),
-                      style: Theme.of(context).textTheme.titleSmall,
-                    ),
-                  ),
-                  const Divider(height: 1),
-                  Expanded(
-                    child: Padding(
-                      padding: const EdgeInsets.symmetric(horizontal: 16),
-                      child: ListView.builder(
-                        itemCount: filteredTasks.length,
-                        itemBuilder: (context, index) {
-                          return TaskListItemView(task: filteredTasks[index]);
-                        },
-                      ),
-                    ),
-                  ),
-                  const Divider(height: 1),
-                  SizedBox(
-                    width: double.infinity,
-                    child: TextButton(
-                      style: TextButton.styleFrom(
-                        padding: const EdgeInsets.all(20),
-                        alignment: Alignment.centerLeft,
-                        overlayColor: Colors.transparent,
-                      ),
-                      onPressed: () async => await ref
-                          .read(taskNavigationServiceProvider)
-                          .openNewTask(
-                            initialProjectId: projectId,
-                            initialStatus: status,
-                          ),
-                      child: Text(
-                        AppLocalizations.of(context)!.createNewTask,
-                      ),
-                    ),
-                  ),
-                ],
-              ),
-            ),
-          );
-        },
-      ).toList(),
+  Future<void> _showTaskSearchModal(BuildContext context) {
+    return showModalBottomSheet(
+      context: context,
+      isScrollControlled: true,
+      builder: (context) => const TaskSearchModal(),
+      constraints: BoxConstraints(
+        maxHeight: MediaQuery.of(context).size.height * 0.9,
+      ),
     );
   }
 }
 
-class _ProjectTasksListView extends ConsumerWidget {
-  const _ProjectTasksListView({this.sort, this.filterCondition});
-
-  final Comparator<TaskModel>? sort;
-  final bool Function(TaskModel)? filterCondition;
+class TaskSearchModal extends HookConsumerWidget {
+  const TaskSearchModal({super.key});
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final projectId = ref.watch(curSelectedProjectIdNotifierProvider);
-    if (projectId == null) return const SizedBox.shrink();
+    final searchQuery = useState('');
+    final sortBy = useState<TaskSortOption?>(null);
+    final viewMode = useState('list'); // Mobile modal always uses list view
+    final filterBy = TaskFilterOption.values
+        .map((filter) => useState<
+            ({
+              String value,
+              String name,
+              bool Function(TaskModel) filter,
+            })?>(null))
+        .toList();
 
-    return AsyncValueHandlerWidget(
-      value: ref.watch(tasksByProjectStreamProvider(projectId)),
-      data: (tasks) {
-        return SingleChildScrollView(
-          child: Column(
-            children: StatusEnum.values.map(
-              (status) {
-                final filteredTasks = tasks
-                        ?.where((task) =>
-                            task.status == status &&
-                            (filterCondition == null || filterCondition!(task)))
-                        .toList() ??
-                    [];
+    // TODO p3: switch to server side filtering once there are too many tasks
+    // TODO p2: add hybrid search on user searchQuery string to improve search ability
+    bool filterCondition(TaskModel task) {
+      bool result = true;
+      // Apply search filter
+      if (searchQuery.value.isNotEmpty) {
+        result =
+            task.name.toLowerCase().contains(searchQuery.value.toLowerCase());
+      }
+      // Apply other filters
+      for (var filter in filterBy) {
+        if (filter.value?.filter != null) {
+          result = result && filter.value!.filter(task);
+        }
+      }
+      return result;
+    }
 
-                if (sort != null) {
-                  filteredTasks.sort(sort);
-                }
-
-                return Card(
-                  child: ExpansionTile(
-                    initiallyExpanded: filteredTasks.isNotEmpty,
-                    title: Text(status.toHumanReadable(context)),
-                    expandedAlignment: Alignment.centerLeft,
-                    shape: const Border(),
-                    childrenPadding: const EdgeInsets.only(bottom: 24),
-                    children: [
-                      ListView.separated(
-                        shrinkWrap: true,
-                        physics: const NeverScrollableScrollPhysics(),
-                        itemCount: filteredTasks.length,
-                        itemBuilder: (context, index) =>
-                            TaskListTileItemView(filteredTasks[index]),
-                        separatorBuilder: (context, index) =>
-                            const Divider(height: 1),
-                      ),
-                      const Divider(height: 1),
-                      ListTile(
-                        dense: true,
-                        onTap: () =>
-                            ref.read(taskNavigationServiceProvider).openNewTask(
-                                  initialProjectId: projectId,
-                                  initialStatus: status,
-                                ),
-                        leading: const SizedBox.shrink(),
-                        title: Text(
-                          AppLocalizations.of(context)!.createNewTask,
-                          style: TextStyle(
-                              color: Theme.of(context).colorScheme.outline),
-                        ),
-                      ),
-                    ],
+    return DraggableScrollableSheet(
+      initialChildSize: 1,
+      builder: (context, scrollController) => Padding(
+        padding: const EdgeInsets.all(16.0),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Expanded(
+                  child: TextField(
+                    autofocus: true,
+                    onChanged: (value) => searchQuery.value = value,
+                    decoration: InputDecoration(
+                      hintText: AppLocalizations.of(context)!.search,
+                      prefixIcon: const Icon(Icons.search),
+                      border: const OutlineInputBorder(),
+                    ),
                   ),
-                );
-              },
-            ).toList(),
+                ),
+                AiAssistantButton(
+                  size: 30,
+                  onPreClick: () {
+                    Navigator.of(context).pop();
+                  },
+                ),
+                TextButton(
+                  onPressed: () => Navigator.of(context).pop(),
+                  child: Text(AppLocalizations.of(context)!.cancel),
+                ),
+              ],
+            ),
+            ProjectTasksFilters(
+              filterBy: filterBy,
+              sortBy: sortBy,
+              viewMode: viewMode,
+              onShowCustomDateRangePicker: _showCustomDateRangePicker,
+              showExtraViewControls: false,
+              useHorizontalScroll: true,
+            ),
+            Expanded(
+              child: ProjectTasksListView(
+                filterCondition: filterCondition,
+                //sort: sortBy.value?.comparator,
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Future<DateTimeRange?> _showCustomDateRangePicker(BuildContext context) {
+    return showDialog(
+      context: context,
+      builder: (context) => Dialog(
+        child: SizedBox(
+          width: 360,
+          height: 480,
+          child: DateRangePickerDialog(
+            firstDate: DateTime(2000),
+            lastDate: DateTime(2100),
+            initialEntryMode: DatePickerEntryMode.calendarOnly,
           ),
-        );
-      },
+        ),
+      ),
     );
   }
 }

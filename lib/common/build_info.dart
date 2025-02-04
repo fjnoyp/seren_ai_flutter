@@ -5,8 +5,8 @@ class BuildInfo {
   static const String buildDate = '';
   
   // Git info
-  static const String commitHash = '13b0090';
-  static const String branch = 'main';
+  static const String commitHash = 'c95b882';
+  static const String branch = 'feat/mobile_project_task_search_modal';
   static const String lastTag = 'no tag';
   
   // Author of last commit
@@ -16,12 +16,12 @@ class BuildInfo {
   // Recent commits (last 5)
   static const List<Map<String, String>> recentCommits = [
     {
-      "hash": "13b0090",
+      "hash": "c95b882",
       "author": "Kyle",
       "email": "kylcheng@gmail.com", 
       "message": "feat: add git version info",
       "date": "2025-02-04",
-      "relativeDate": "23 minutes ago"
+      "relativeDate": "2 hours ago"
     },
     {
       "hash": "70824d2",
@@ -29,7 +29,7 @@ class BuildInfo {
       "email": "kylcheng@gmail.com", 
       "message": "chore(projects): refactor web project views for mobile",
       "date": "2025-02-03",
-      "relativeDate": "22 hours ago"
+      "relativeDate": "23 hours ago"
     },
     {
       "hash": "822674e",
@@ -37,7 +37,7 @@ class BuildInfo {
       "email": "renata@seren-ai.co", 
       "message": "fix(ui): simplify drawer ui and enable selected display based on current route",
       "date": "2025-02-03",
-      "relativeDate": "20 hours ago"
+      "relativeDate": "22 hours ago"
     },
     {
       "hash": "d14c1f8",
@@ -45,7 +45,7 @@ class BuildInfo {
       "email": "kylcheng@gmail.com", 
       "message": "fix(tasks): update query in watch tasks",
       "date": "2025-02-03",
-      "relativeDate": "26 hours ago"
+      "relativeDate": "28 hours ago"
     },
     {
       "hash": "02f7f08",
@@ -53,7 +53,7 @@ class BuildInfo {
       "email": "renata@seren-ai.co", 
       "message": "Feat/new web UI for tasks page + ui fixes (#124)",
       "date": "2025-02-03",
-      "relativeDate": "26 hours ago"
+      "relativeDate": "28 hours ago"
     },
   ];
 
