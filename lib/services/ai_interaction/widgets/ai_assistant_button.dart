@@ -7,19 +7,29 @@ import 'package:seren_ai_flutter/services/ai_interaction/is_ai_modal_visible_pro
 import 'package:seren_ai_flutter/services/ai_interaction/widgets/ai_quick_action_widget.dart';
 
 class AiAssistantButton extends ConsumerWidget {
-  const AiAssistantButton({super.key});
+  const AiAssistantButton({
+    super.key,
+    this.size = 56.0,
+    this.onPreClick,
+  });
+
+  final double size;
+  final VoidCallback? onPreClick;
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     return Tooltip(
       message: AppLocalizations.of(context)!.aiAssistant,
       child: GestureDetector(
-        onTap: () => ref.read(isAiModalVisibleProvider.notifier).state = true,
+        onTap: () {
+          onPreClick?.call();
+          ref.read(isAiModalVisibleProvider.notifier).state = true;
+        },
         child: Hero(
             tag: 'ai-button',
             child: SizedBox(
-                height: 56.0,
-                width: 56.0,
+                height: size,
+                width: size,
                 child: SvgPicture.asset('assets/images/AI button.svg'))),
       ),
     );
