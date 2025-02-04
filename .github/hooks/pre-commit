@@ -1,6 +1,8 @@
 #!/bin/bash
 cd "$(git rev-parse --show-toplevel)"
 
+# TODO p3 - The last commit is always missed since this is a pre commit hook. The existing Github hooks do not allow for any fix on this. In future we should switch to github actions to generate the version info file. 
+
 # Get version from pubspec.yaml
 VERSION=$(grep 'version:' pubspec.yaml | cut -d' ' -f2 | cut -d'+' -f1)
 
