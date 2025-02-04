@@ -10,7 +10,7 @@ firebase deploy
 
 We have a pre-commit hook, you must configure to run using this onetime setup:
 ```bash
-git config --local include.path .github/.gitconfig
+git config --local core.hooksPath .github/hooks
 ```
 
 
