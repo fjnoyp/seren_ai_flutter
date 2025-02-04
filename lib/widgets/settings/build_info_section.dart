@@ -11,7 +11,7 @@ class BuildInfoSection extends StatelessWidget {
       dense: true,
       leading: const Icon(Icons.info_outline),
       title: Text(
-        'v${BuildInfo.version} (${BuildInfo.commitHash})',
+        'v${BuildInfo.version} (${BuildInfo.commitHash}) - Warning last commit is NOT shown',
         style: const TextStyle(fontWeight: FontWeight.bold),
       ),
       subtitle: Text(
@@ -43,6 +43,7 @@ class _BuildInfoDialog extends StatelessWidget {
             _buildSection('Branch', BuildInfo.branch),
             _buildSection('Last Tag', BuildInfo.lastTag),
             _buildSection('Total Commits', BuildInfo.totalCommits),
+            const Text('Warning: Last commit is NOT shown'),
             const Divider(),
             const Text('Recent Commits',
                 style: TextStyle(fontWeight: FontWeight.bold)),
