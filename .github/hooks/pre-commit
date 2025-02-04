@@ -10,7 +10,7 @@ cat > lib/common/build_info.dart << EOF
 class BuildInfo {
   // Core build info
   static const String version = '$VERSION';
-  static const String buildDate = '$(date +%Y-%m-%d %H:%M:%S)';
+  static const String buildDate = '$(date "+%Y-%m-%d %H:%M:%S")';
   
   // Git info
   static const String commitHash = '$(git rev-parse --short HEAD)';
