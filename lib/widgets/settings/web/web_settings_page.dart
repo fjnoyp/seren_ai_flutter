@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:seren_ai_flutter/widgets/settings/build_info_section.dart';
 import 'package:seren_ai_flutter/widgets/settings/settings_page.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
@@ -25,7 +26,13 @@ class WebSettingsPage extends StatelessWidget {
               children: [
                 Expanded(child: SettingsAccountSection()),
                 VerticalDivider(),
-                Expanded(child: SettingsAppSection()),
+                Expanded(
+                    child: Column(
+                  children: [
+                    SettingsAppSection(),
+                    BuildInfoSection(),
+                  ],
+                )),
               ],
             ),
           ),

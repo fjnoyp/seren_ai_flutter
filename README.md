@@ -1,3 +1,23 @@
+# Web Deployment 
+
+firebase login 
+firebase experiments:enable webframeworks 
+firebase init hosting 
+firebase deploy 
+
+
+# Setup 
+
+We have a pre-commit hook, you must configure to run using this onetime setup:
+```bash
+git config --local include.path .github/.gitconfig
+```
+
+
+
+
+
+
 Powersync is used to sync the data between the client and the Supabase database. Thus raw SQL can be used to query the data and with proper sync rules setup in Powersync, users will not be able to see unauthed data. 
 
 Miro Board: 
@@ -47,9 +67,3 @@ Why is the current openTaskPage code bad?
 
 - The entire page state is being initiated in a method outside of the Router
 
-# Web Deployment 
-
-firebase login 
-firebase experiments:enable webframeworks 
-firebase init hosting 
-firebase deploy 

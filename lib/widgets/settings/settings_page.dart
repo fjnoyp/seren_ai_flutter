@@ -7,7 +7,10 @@ import 'package:seren_ai_flutter/services/text_to_speech/text_to_speech_notifier
 import 'package:seren_ai_flutter/widgets/common/debug_mode_provider.dart';
 import 'package:seren_ai_flutter/widgets/common/theme_data.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+import 'package:seren_ai_flutter/widgets/settings/build_info_section.dart';
 
+//
+//
 class SettingsPage extends StatelessWidget {
   const SettingsPage({super.key});
 
@@ -18,6 +21,7 @@ class SettingsPage extends StatelessWidget {
         children: [
           SettingsAccountSection(),
           SettingsAppSection(),
+          BuildInfoSection(),
         ],
       ),
     );
@@ -157,9 +161,9 @@ class SettingsAppSection extends ConsumerWidget {
             ref.read(isDebugModeSNP.notifier).setIsDebugMode(value);
           },
         ),
-        ListTile(
-          title: Text(AppLocalizations.of(context)!.about),
-        ),
+        // ListTile(
+        //   title: Text(AppLocalizations.of(context)!.about),
+        // ),
       ],
     );
   }
