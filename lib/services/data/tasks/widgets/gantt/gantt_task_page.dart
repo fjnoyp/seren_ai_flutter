@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:seren_ai_flutter/services/data/tasks/widgets/gantt/gantt_task_snp.dart';
 import 'package:seren_ai_flutter/services/data/tasks/widgets/gantt/gantt_view.dart';
@@ -18,14 +17,19 @@ class TaskGanttPage extends ConsumerWidget {
             decoration: BoxDecoration(
               border: Border.all(width: 0),
             ),
-            child: gantt(ref),
+            child: const _Gantt(),
           ),
         )
       ],
     ));
   }
+}
 
-  Widget gantt(WidgetRef ref) {
+class _Gantt extends ConsumerWidget {
+  const _Gantt();
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
     // Load in current viewable tasks, then convert into the gantt chart data format
 
     final ganttTasks = ref.watch(ganttTaskProvider).tasks;
@@ -56,16 +60,19 @@ class TaskGanttPage extends ConsumerWidget {
           title: subTask.task.name,
           startDate: subTask.task.startDateTime,
           endDate: subTask.task.dueDate,
-          color: ganttTask.color
-              .withOpacity(0.7), // make slightly more transparent
+          color:
+              ganttTask.color.withAlpha(180), // make slightly more transparent
         );
       });
       return [mainTaskEvent, ...subTaskEvents];
     }).toList();
 
     return GanttView(
-        staticHeadersValues: ['Task Name'],
-        staticRowsValues: staticRowsValues,
-        events: ganttEvents);
+      staticHeadersValues: ['Task Name'],
+      staticRowsValues: staticRowsValues,
+      events: ganttEvents,
+      // TODO: implement toggle view type
+      viewType: GanttViewType.day,
+    );
   }
 }

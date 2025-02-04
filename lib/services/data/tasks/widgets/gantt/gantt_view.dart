@@ -37,24 +37,37 @@ class GanttEvent {
             : null;
 }
 
+enum GanttViewType { day, week, month }
+
 class GanttView extends HookConsumerWidget {
   final List<String> staticHeadersValues;
+
   final List<List<String>> staticRowsValues;
 
   final List<GanttEvent> events;
+
+  final GanttViewType viewType;
 
   const GanttView({
     super.key,
     required this.staticHeadersValues,
     required this.staticRowsValues,
     required this.events,
+    required this.viewType,
   });
 
-  static const double cellWidth = 100.0;
   static const double cellHeight = 50.0;
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    final availableWidth =
+        MediaQuery.of(context).size.width - 550; // drawer + static
+    final cellWidth = switch (viewType) {
+      GanttViewType.day => availableWidth / 24,
+      GanttViewType.week => availableWidth / 7,
+      GanttViewType.month => availableWidth / 30,
+    };
+
     final mainHorizontalController = useScrollController();
     final mainVerticalController = useScrollController();
     final headerController = useScrollController();
@@ -207,6 +220,7 @@ class GanttView extends HookConsumerWidget {
                       totalWidth: totalWidth,
                       columnRange: columnRange,
                       headerController: headerController,
+                      viewType: viewType,
                     ),
 
                     // Body
@@ -221,6 +235,7 @@ class GanttView extends HookConsumerWidget {
                         rowCount: rowCount.value,
                         columnRange: columnRange,
                         staticHeadersWidth: staticHeadersWidth,
+                        viewType: viewType,
                       ),
                     ),
                   ],
@@ -240,6 +255,7 @@ class GanttHeader extends StatelessWidget {
   final double totalWidth;
   final ValueNotifier<(int, int)> columnRange;
   final ScrollController headerController;
+  final GanttViewType viewType;
 
   const GanttHeader({
     super.key,
@@ -248,6 +264,7 @@ class GanttHeader extends StatelessWidget {
     required this.totalWidth,
     required this.columnRange,
     required this.headerController,
+    required this.viewType,
   });
 
   @override
@@ -263,65 +280,230 @@ class GanttHeader extends StatelessWidget {
               child: SizedBox(
                 width: totalWidth,
                 child: Column(
-                  children: [
-                    // Week range row
-                    Row(
-                      children: List.generate(
-                        (columnRange.value.$2 - columnRange.value.$1) ~/ 7,
-                        (weekIndex) {
-                          final weekStart = DateTime.now().add(Duration(
-                              days: weekIndex * 7 + columnRange.value.$1));
-                          final weekEnd =
-                              weekStart.add(const Duration(days: 6));
-                          return Container(
-                            width: cellWidth * 7,
-                            height: 30,
-                            padding: const EdgeInsets.all(4),
-                            decoration: BoxDecoration(
-                              border: Border.all(
-                                  color: Theme.of(context).dividerColor),
-                            ),
-                            child: Text(
-                              '${DateFormat('dd MMM yyyy').format(weekStart)} - ${DateFormat('dd MMM yyyy').format(weekEnd)}',
-                              textAlign: TextAlign.center,
-                            ),
-                          );
-                        },
-                      ),
-                    ),
-                    // Day numbers row
-                    Row(
-                      children: List.generate(
-                        columnRange.value.$2 - columnRange.value.$1,
-                        (index) {
-                          final date = DateTime.now().add(
-                              Duration(days: index + columnRange.value.$1));
-                          return Container(
-                            width: cellWidth,
-                            height: 30,
-                            padding: const EdgeInsets.all(4),
-                            decoration: BoxDecoration(
-                              border: Border.all(
-                                  color: Theme.of(context).dividerColor),
-                              color: (date.weekday == DateTime.saturday ||
-                                      date.weekday == DateTime.sunday)
-                                  ? Colors.grey.withOpacity(0.1)
-                                  : null,
-                            ),
-                            child: Text(
-                              date.day.toString(),
-                              textAlign: TextAlign.center,
-                            ),
-                          );
-                        },
-                      ),
-                    ),
-                  ],
+                  children: switch (viewType) {
+                    GanttViewType.day => [
+                        _GanttDayHeader(
+                          columnRange: columnRange.value,
+                          cellWidth: cellWidth,
+                          isDayHoursMode: true,
+                        ),
+                        _GanttHourHeader(
+                          columnRange: columnRange.value,
+                          cellWidth: cellWidth,
+                        ),
+                      ],
+                    GanttViewType.week => [
+                        _GanttWeekHeader(
+                          columnRange: columnRange.value,
+                          cellWidth: cellWidth,
+                        ),
+                        _GanttDayHeader(
+                          columnRange: columnRange.value,
+                          cellWidth: cellWidth,
+                        ),
+                      ],
+                    GanttViewType.month => [
+                        _GanttMonthHeader(
+                          columnRange: columnRange.value,
+                          cellWidth: cellWidth,
+                        ),
+                        _GanttDayHeader(
+                          columnRange: columnRange.value,
+                          cellWidth: cellWidth,
+                        ),
+                      ],
+                  },
                 ),
               ),
             ),
           ),
         ],
+      ),
+    );
+  }
+}
+
+class _GanttMonthHeader extends StatelessWidget {
+  final (int, int) columnRange;
+  final double cellWidth;
+
+  const _GanttMonthHeader({
+    required this.columnRange,
+    required this.cellWidth,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    final widgets = <Widget>[];
+    var currentDate = DateTime.now().add(Duration(days: columnRange.$1));
+    var currentMonth = DateTime(currentDate.year, currentDate.month);
+    var remainingDays = columnRange.$2 - columnRange.$1;
+
+    while (remainingDays > 0) {
+      // Calculate days until the end of current month
+      final daysInMonth =
+          DateTime(currentDate.year, currentDate.month + 1, 0).day;
+      final daysUntilMonthEnd = daysInMonth - currentDate.day + 1;
+      final daysToShow = remainingDays.clamp(0, daysUntilMonthEnd);
+
+      widgets.add(
+        Container(
+          width: cellWidth * daysToShow,
+          height: 30,
+          padding: const EdgeInsets.all(2),
+          decoration: BoxDecoration(
+            border: Border.all(color: Theme.of(context).dividerColor),
+          ),
+          child: Text(
+            DateFormat('MMMM yyyy').format(currentMonth),
+            textAlign: TextAlign.center,
+          ),
+        ),
+      );
+
+      remainingDays -= daysToShow;
+      currentDate = currentDate.add(Duration(days: daysToShow));
+      currentMonth = DateTime(currentDate.year, currentDate.month);
+    }
+
+    return Row(children: widgets);
+  }
+}
+
+class _GanttWeekHeader extends StatelessWidget {
+  final (int, int) columnRange;
+  final double cellWidth;
+
+  const _GanttWeekHeader({
+    required this.columnRange,
+    required this.cellWidth,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    final now = DateTime.now();
+    final baseDate = DateTime(now.year, now.month, now.day);
+    final offset = columnRange.$1 - baseDate.weekday + 6;
+
+    return Row(
+      children: [
+        SizedBox(
+            width: (6 - (baseDate.weekday == 7 ? 0 : baseDate.weekday)) *
+                cellWidth),
+        ...List.generate(
+          (columnRange.$2 - columnRange.$1) ~/ 7,
+          (weekIndex) {
+            final weekStart =
+                baseDate.add(Duration(days: weekIndex * 7 + offset));
+            final weekEnd = weekStart.add(const Duration(days: 6));
+
+            return Container(
+              width: cellWidth * 7,
+              height: 30,
+              padding: const EdgeInsets.all(2),
+              decoration: BoxDecoration(
+                border: Border.all(color: Theme.of(context).dividerColor),
+              ),
+              child: Text(
+                '${DateFormat('dd MMM yyyy').format(weekStart)} - ${DateFormat('dd MMM yyyy').format(weekEnd)}',
+                textAlign: TextAlign.center,
+              ),
+            );
+          },
+        ),
+      ],
+    );
+  }
+}
+
+class _GanttDayHeader extends StatelessWidget {
+  final (int, int) columnRange;
+  final double cellWidth;
+  final bool isDayHoursMode;
+
+  const _GanttDayHeader({
+    required this.columnRange,
+    required this.cellWidth,
+    this.isDayHoursMode = false,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    final cellWidthFactor = isDayHoursMode ? 24 : 1;
+    final remainingHoursFromFirstDay =
+        24 - ((columnRange.$1 + DateTime.now().hour) % 24 + 24) % 24;
+    return Row(children: [
+      if (isDayHoursMode)
+        SizedBox(width: remainingHoursFromFirstDay * cellWidth),
+      ...List.generate(
+        ((columnRange.$2 - columnRange.$1) ~/ cellWidthFactor) - 1,
+        (index) {
+          final date = DateTime.now().add(Duration(
+              days: index + (columnRange.$1 / cellWidthFactor).ceil()));
+
+          return Container(
+            width: cellWidth * cellWidthFactor,
+            height: 30,
+            padding: const EdgeInsets.all(2),
+            decoration: BoxDecoration(
+              border: Border.all(color: Theme.of(context).dividerColor),
+              color: (date.weekday == DateTime.saturday ||
+                      date.weekday == DateTime.sunday)
+                  ? Colors.grey.withAlpha(25)
+                  : null,
+            ),
+            child: FittedBox(
+              fit: BoxFit.scaleDown,
+              child: Text(
+                isDayHoursMode
+                    ? DateFormat('dd MMM yyyy').format(date)
+                    : date.day.toString(),
+                textAlign: TextAlign.center,
+              ),
+            ),
+          );
+        },
+      ),
+    ]);
+  }
+}
+
+class _GanttHourHeader extends StatelessWidget {
+  final (int, int) columnRange;
+  final double cellWidth;
+
+  const _GanttHourHeader({
+    required this.columnRange,
+    required this.cellWidth,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    final hourOffset = DateTime.now().hour;
+    return Row(
+      children: List.generate(
+        columnRange.$2 - columnRange.$1,
+        (index) {
+          // Convert to proper hour of day (0-23)
+          final hour = ((index + columnRange.$1 + hourOffset) % 24 + 24) % 24;
+
+          return Container(
+            width: cellWidth,
+            height: 30,
+            padding: const EdgeInsets.all(2),
+            decoration: BoxDecoration(
+              border: Border.all(color: Theme.of(context).dividerColor),
+              color: (hour < 9 || hour > 17) ? Colors.grey.withAlpha(25) : null,
+            ),
+            child: FittedBox(
+              fit: BoxFit.scaleDown,
+              child: Text(
+                '${hour.toString().padLeft(2, '0')}:00',
+                textAlign: TextAlign.center,
+              ),
+            ),
+          );
+        },
       ),
     );
   }
@@ -335,6 +517,7 @@ class GanttBody extends ConsumerWidget {
   final int rowCount;
   final ValueNotifier<(int, int)> columnRange;
   final double staticHeadersWidth;
+  final GanttViewType viewType;
 
   const GanttBody({
     super.key,
@@ -346,6 +529,7 @@ class GanttBody extends ConsumerWidget {
     required this.staticHeadersWidth,
     required this.cellWidth,
     required this.cellHeight,
+    required this.viewType,
   });
 
   final double cellWidth;
@@ -374,7 +558,7 @@ class GanttBody extends ConsumerWidget {
                   width: totalWidth - staticHeadersWidth,
                   height: cellHeight,
                   decoration: BoxDecoration(
-                    border: Border.all(color: Colors.grey.withOpacity(0.2)),
+                    border: Border.all(color: Colors.grey.withAlpha(51)),
                   ),
                 ),
 
@@ -383,7 +567,10 @@ class GanttBody extends ConsumerWidget {
                   taskId: taskId,
                   cellWidth: cellWidth,
                   cellHeight: cellHeight,
-                  columnStartDay: columnRange.value.$1,
+                  columnStart: columnRange.value.$1,
+                  cellDurationType: viewType == GanttViewType.day
+                      ? GanttCellDurationType.hours
+                      : GanttCellDurationType.days,
                 ),
               ],
             );
