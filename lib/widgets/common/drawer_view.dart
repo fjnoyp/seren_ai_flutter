@@ -81,27 +81,27 @@ class DrawerView extends ConsumerWidget {
                   isSelected: curRoute == AppRoutes.home.name,
                 ),
                 Consumer(
-                        builder: (context, ref, child) {
-                          final projects = ref
-                                  .watch(curUserViewableProjectsProvider)
-                                  .valueOrNull ??
-                              <ProjectModel>[];
+                  builder: (context, ref, child) {
+                    final projects = ref
+                            .watch(curUserViewableProjectsProvider)
+                            .valueOrNull ??
+                        <ProjectModel>[];
 
-                          return _ExpandableListTile(
-                            icon: Icons.work,
-                            iconColor: Theme.of(context).colorScheme.onSurface,
-                            title: AppLocalizations.of(context)!.projects,
-                            options: projects,
-                            optionToString: (project) => project.name,
-                            onTapOption: (project) => ref
-                                .read(projectNavigationServiceProvider)
-                                .openProjectPage(projectId: project.id),
-                            onTapAddButton: () => ref
-                                .read(projectNavigationServiceProvider)
-                                .openProjectPage(mode: EditablePageMode.create),
-                          );
-                        },
-                      ),
+                    return _ExpandableListTile(
+                      icon: Icons.work,
+                      iconColor: Theme.of(context).colorScheme.onSurface,
+                      title: AppLocalizations.of(context)!.projects,
+                      options: projects,
+                      optionToString: (project) => project.name,
+                      onTapOption: (project) => ref
+                          .read(projectNavigationServiceProvider)
+                          .openProjectPage(projectId: project.id),
+                      onTapAddButton: () => ref
+                          .read(projectNavigationServiceProvider)
+                          .openProjectPage(mode: EditablePageMode.create),
+                    );
+                  },
+                ),
                 // if (!isWebVersion || isDebugMode)
                 //   _DrawerListTile(
                 //     icon: Icons.task,
