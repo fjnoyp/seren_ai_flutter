@@ -24,14 +24,15 @@ class GanttTaskDataItemBarView extends ConsumerWidget {
   });
 
   double _calculateEventPosition(DateTime date) {
-    final startDate = DateTime.now().add(
+    final now = DateTime.now();
+    final startDateTime = DateTime(now.year, now.month, now.day, now.hour).add(
       Duration(
         days: cellDurationType == GanttCellDurationType.days ? columnStart : 0,
         hours: cellDurationType == GanttCellDurationType.days ? 0 : columnStart,
       ),
     );
 
-    final differenceFromStart = date.difference(startDate);
+    final differenceFromStart = date.difference(startDateTime);
     return cellWidth *
         (cellDurationType == GanttCellDurationType.days
             ? differenceFromStart.inDays
