@@ -71,7 +71,7 @@ class GanttTaskDataItemBarView extends ConsumerWidget {
         } else if (hasStartDate || hasEndDate) {
           final date = hasStartDate ? task.startDateTime! : task.dueDate!;
           leftPosition = _calculateEventPosition(date);
-          final isStart = hasStartDate;
+          final hasStart = hasStartDate;
 
           taskWidget = _TaskContainer(
             width: cellWidth,
@@ -87,7 +87,7 @@ class GanttTaskDataItemBarView extends ConsumerWidget {
                     ? 0
                     : cells.round(),
               );
-              if (isStart) {
+              if (hasStart) {
                 ref.read(tasksRepositoryProvider).updateTaskStartDateTime(
                       task.id,
                       date.add(timeOffset),
@@ -104,7 +104,7 @@ class GanttTaskDataItemBarView extends ConsumerWidget {
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  if (!isStart)
+                  if (!hasStart)
                     const Text(
                       "?",
                       style: TextStyle(
@@ -113,11 +113,11 @@ class GanttTaskDataItemBarView extends ConsumerWidget {
                       ),
                     ),
                   Icon(
-                    isStart ? Icons.arrow_forward : Icons.arrow_back,
+                    hasStart ? Icons.arrow_forward : Icons.arrow_back,
                     color: Colors.white,
                     size: 16,
                   ),
-                  if (isStart)
+                  if (hasStart)
                     const Text(
                       "?",
                       style: TextStyle(

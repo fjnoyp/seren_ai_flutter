@@ -2,62 +2,62 @@
 class BuildInfo {
   // Core build info
   static const String version = '1.0.0';
-  static const String buildDate = '';
+  static const String buildDate = '2025-02-04 08:51:33';
   
   // Git info
-  static const String commitHash = 'a4ab488';
-  static const String branch = 'main';
+  static const String commitHash = '8c134ab';
+  static const String branch = 'feat/gantt-chart-view-modes';
   static const String lastTag = 'no tag';
   
   // Author of last commit
-  static const String lastCommitAuthor = 'kc';
-  static const String lastCommitEmail = 'kylcheng@gmail.com';
+  static const String lastCommitAuthor = 'renata-sisilio';
+  static const String lastCommitEmail = 'renata@seren-ai.co';
   
   // Recent commits (last 5)
   static const List<Map<String, String>> recentCommits = [
     {
-      "hash": "a4ab488",
-      "author": "kc",
-      "email": "kylcheng@gmail.com", 
-      "message": "feat(tasks): mobile project task search modal (#128)",
+      "hash": "8c134ab",
+      "author": "renata-sisilio",
+      "email": "renata@seren-ai.co", 
+      "message": "fix(gantt): properly place tasks in timeline (was 1 hour before their actual time)",
       "date": "2025-02-04",
-      "relativeDate": "28 minutes ago"
+      "relativeDate": "63 minutes ago"
     },
     {
-      "hash": "c95b882",
-      "author": "Kyle",
-      "email": "kylcheng@gmail.com", 
-      "message": "feat: add git version info",
+      "hash": "de40746",
+      "author": "renata-sisilio",
+      "email": "renata@seren-ai.co", 
+      "message": "feat(gantt): drag and drop tasks on chart",
+      "date": "2025-02-04",
+      "relativeDate": "64 minutes ago"
+    },
+    {
+      "hash": "9fb8096",
+      "author": "renata-sisilio",
+      "email": "renata@seren-ai.co", 
+      "message": "feat(gantt): add toggle view mode button",
+      "date": "2025-02-04",
+      "relativeDate": "3 hours ago"
+    },
+    {
+      "hash": "bb634fc",
+      "author": "renata-sisilio",
+      "email": "renata@seren-ai.co", 
+      "message": "feat(gantt): implement day/week/month views for tasks gantt chart",
       "date": "2025-02-04",
       "relativeDate": "4 hours ago"
     },
     {
-      "hash": "70824d2",
+      "hash": "a972304",
       "author": "Kyle",
       "email": "kylcheng@gmail.com", 
-      "message": "chore(projects): refactor web project views for mobile",
-      "date": "2025-02-03",
-      "relativeDate": "25 hours ago"
-    },
-    {
-      "hash": "822674e",
-      "author": "renata-sisilio",
-      "email": "renata@seren-ai.co", 
-      "message": "fix(ui): simplify drawer ui and enable selected display based on current route",
-      "date": "2025-02-03",
-      "relativeDate": "24 hours ago"
-    },
-    {
-      "hash": "d14c1f8",
-      "author": "Kyle",
-      "email": "kylcheng@gmail.com", 
-      "message": "fix(tasks): update query in watch tasks",
-      "date": "2025-02-03",
-      "relativeDate": "29 hours ago"
+      "message": "fix: build info issues",
+      "date": "2025-02-04",
+      "relativeDate": "55 minutes ago"
     },
   ];
 
   // Stats
-  static const String totalCommits = '300';
+  static const String totalCommits = '305';
   static const String contributors = '       0';
 }
