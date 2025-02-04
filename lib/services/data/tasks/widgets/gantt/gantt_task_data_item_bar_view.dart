@@ -3,25 +3,38 @@ import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:seren_ai_flutter/services/data/tasks/models/task_model.dart';
 import 'package:seren_ai_flutter/services/data/tasks/providers/task_by_id_stream_provider.dart';
 import 'package:seren_ai_flutter/services/data/tasks/widgets/gantt/experimental/gantt_task_visual_state_provider.dart';
-import 'package:seren_ai_flutter/services/data/tasks/widgets/gantt/experimental/viewable_tasks_hierarchy_provider.dart';
+
+enum GanttCellDurationType { days, hours }
 
 class GanttTaskDataItemBarView extends ConsumerWidget {
   final String taskId;
   final double cellWidth;
   final double cellHeight;
-  final int columnStartDay;
+  final int columnStart;
+  final GanttCellDurationType cellDurationType;
 
   const GanttTaskDataItemBarView({
     super.key,
     required this.taskId,
     required this.cellWidth,
     required this.cellHeight,
-    required this.columnStartDay,
+    required this.columnStart,
+    required this.cellDurationType,
   });
 
   double _calculateEventPosition(DateTime date) {
-    final startDate = DateTime.now().add(Duration(days: columnStartDay));
-    return date.difference(startDate).inDays * cellWidth;
+    final startDate = DateTime.now().add(
+      Duration(
+        days: cellDurationType == GanttCellDurationType.days ? columnStart : 0,
+        hours: cellDurationType == GanttCellDurationType.days ? 0 : columnStart,
+      ),
+    );
+
+    final differenceFromStart = date.difference(startDate);
+    return cellWidth *
+        (cellDurationType == GanttCellDurationType.days
+            ? differenceFromStart.inDays
+            : differenceFromStart.inHours);
   }
 
   @override
@@ -51,6 +64,7 @@ class GanttTaskDataItemBarView extends ConsumerWidget {
             color: visualState.effectiveColor,
             cellWidth: cellWidth,
             cellHeight: cellHeight,
+            cellDurationType: cellDurationType,
           );
         } else if (hasStartDate || hasEndDate) {
           final date = hasStartDate ? task.startDateTime! : task.dueDate!;
@@ -123,12 +137,14 @@ class _CompleteTaskBar extends ConsumerWidget {
   final Color color;
   final double cellWidth;
   final double cellHeight;
+  final GanttCellDurationType cellDurationType;
 
   const _CompleteTaskBar({
     required this.task,
     required this.color,
     required this.cellWidth,
     required this.cellHeight,
+    required this.cellDurationType,
   });
 
   @override
@@ -143,7 +159,10 @@ class _CompleteTaskBar extends ConsumerWidget {
           : null,
       child: _TaskContainer(
         width: task.duration != null
-            ? task.duration!.inDays * cellWidth
+            ? (cellDurationType == GanttCellDurationType.days
+                    ? task.duration!.inDays
+                    : task.duration!.inHours) *
+                cellWidth
             : cellWidth,
         color: color,
         cellWidth: cellWidth,
@@ -183,19 +202,16 @@ class _TaskContainer extends StatelessWidget {
   final Widget child;
   final Color color;
   final BorderRadius? borderRadius;
-  final BoxShape shape;
   final double? width;
   final double cellWidth;
   final double cellHeight;
 
   const _TaskContainer({
-    super.key,
     required this.child,
     required this.color,
     required this.cellWidth,
     required this.cellHeight,
     this.borderRadius,
-    this.shape = BoxShape.rectangle,
     this.width,
   });
 
@@ -207,7 +223,7 @@ class _TaskContainer extends StatelessWidget {
       decoration: BoxDecoration(
         color: color,
         borderRadius: borderRadius,
-        shape: shape,
+        shape: BoxShape.rectangle,
       ),
       child: child,
     );
