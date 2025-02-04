@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:flutter_hooks/flutter_hooks.dart';
+import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:seren_ai_flutter/services/data/tasks/widgets/gantt/gantt_task_snp.dart';
 import 'package:seren_ai_flutter/services/data/tasks/widgets/gantt/gantt_view.dart';
 
@@ -25,12 +26,33 @@ class TaskGanttPage extends ConsumerWidget {
   }
 }
 
-class _Gantt extends ConsumerWidget {
+class _Gantt extends HookConsumerWidget {
   const _Gantt();
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    // Load in current viewable tasks, then convert into the gantt chart data format
+    final viewType = useState(GanttViewType.day);
+    final horizontalScrollController = useState<ScrollController?>(null);
+
+    // Initialize the controller
+    useEffect(() {
+      horizontalScrollController.value = ScrollController();
+      return () => horizontalScrollController.value?.dispose();
+    }, []);
+
+    // Center scroll when view type changes
+    // TODO p3: change this to track the current day
+    useEffect(() {
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        if (horizontalScrollController.value?.hasClients == true) {
+          final position = horizontalScrollController.value!.position;
+          final maxScroll = position.maxScrollExtent;
+          final middlePosition = maxScroll / 2;
+          horizontalScrollController.value!.jumpTo(middlePosition);
+        }
+      });
+      return null;
+    }, [viewType.value]);
 
     final ganttTasks = ref.watch(ganttTaskProvider).tasks;
 
@@ -67,12 +89,45 @@ class _Gantt extends ConsumerWidget {
       return [mainTaskEvent, ...subTaskEvents];
     }).toList();
 
-    return GanttView(
-      staticHeadersValues: ['Task Name'],
-      staticRowsValues: staticRowsValues,
-      events: ganttEvents,
-      // TODO: implement toggle view type
-      viewType: GanttViewType.day,
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.end,
+      children: [
+        Padding(
+          padding: const EdgeInsets.all(8.0),
+          child: SegmentedButton<GanttViewType>(
+            segments: const [
+              ButtonSegment(
+                value: GanttViewType.day,
+                icon: Icon(Icons.today_outlined),
+                label: Text('Day'),
+              ),
+              ButtonSegment(
+                value: GanttViewType.week,
+                icon: Icon(Icons.date_range_outlined),
+                label: Text('Week'),
+              ),
+              ButtonSegment(
+                value: GanttViewType.month,
+                icon: Icon(Icons.calendar_month_outlined),
+                label: Text('Month'),
+              ),
+            ],
+            selected: {viewType.value},
+            onSelectionChanged: (selected) {
+              viewType.value = selected.first;
+            },
+          ),
+        ),
+        Expanded(
+          child: GanttView(
+            staticHeadersValues: ['Task Name'],
+            staticRowsValues: staticRowsValues,
+            events: ganttEvents,
+            viewType: viewType.value,
+            horizontalScrollController: horizontalScrollController.value,
+          ),
+        ),
+      ],
     );
   }
 }
