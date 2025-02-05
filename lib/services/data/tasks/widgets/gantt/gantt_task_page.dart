@@ -31,7 +31,7 @@ class _Gantt extends HookConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final viewType = useState(GanttViewType.day);
+    final viewType = useState(GanttViewType.week);
     final horizontalScrollController = useState<ScrollController?>(null);
 
     // Initialize the controller
