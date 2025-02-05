@@ -215,7 +215,6 @@
     "enterProjectDescription": "Enter project description",
     "enterProjectAddress": "Enter project address",
     "sortBy": "Sort by",
-    "priority": "Priority",
     "dueDate": "Due date",
     "createdAt": "Created at",
     "board": "Board",
@@ -414,6 +413,9 @@
     "@_": {"description": "Tasks"},
     "tasks": "Tasks",
     "task": "Task",
+    "board": "Board",
+    "list": "List",
+    "ganttChart": "Gantt Chart",
     "updateTask": "Update Task",
     "createTask": "Create Task",
     "deleteTask": "Delete Task",
@@ -567,11 +569,16 @@
             "date": {"type": "String"}
         }
     },
+    "day": "Day",
+    "week": "Week",
+    "month": "Month",
 
     "@_": {"description": "Status Enum"},
+    "status": "Status",
     "cancelled": "Cancelled",
     "open": "Open",
     "inProgress": "In Progress",
+
     "finished": "Finished",
     "archived": "Archived",
     "selectStatus": "Select Status",
@@ -585,6 +592,7 @@
     "toolAiResult": "Tool AI Result",
 
     "@_": {"description": "Priority Enum"},
+    "priority": "Priority",
     "veryHigh": "Very High",
     "high": "High", 
     "normal": "Normal",

@@ -9,14 +9,6 @@ final tasksRepositoryProvider = Provider<TasksRepository>((ref) {
   return TasksRepository(ref.watch(dbProvider));
 });
 
-// TODO p5: use these enums in the updateTask methods instead
-enum TaskFieldEnum {
-  name,
-  status,
-  priority,
-  assignees,
-}
-
 class TasksRepository extends BaseRepository<TaskModel> {
   const TasksRepository(super.db, {super.primaryTable = 'tasks'});
 

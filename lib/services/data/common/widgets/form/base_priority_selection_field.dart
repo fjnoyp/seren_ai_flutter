@@ -3,6 +3,7 @@ import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:seren_ai_flutter/services/data/common/widgets/form/selection_field.dart';
 import 'package:seren_ai_flutter/services/data/tasks/models/task_model.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+import 'package:seren_ai_flutter/services/data/common/widgets/priority_view.dart';
 
 class BasePrioritySelectionField extends ConsumerWidget {
   final bool enabled;
@@ -31,6 +32,7 @@ class BasePrioritySelectionField extends ConsumerWidget {
       valueToString: (priority) =>
           priority?.toHumanReadable(context) ??
           AppLocalizations.of(context)!.selectPriority,
+      valueToWidget: (priority) => PriorityView(priority: priority),
       enabled: enabled,
       value: curTaskPriority,
       options: PriorityEnum.values,

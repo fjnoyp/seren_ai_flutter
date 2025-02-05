@@ -8,7 +8,8 @@ import 'package:flutter/rendering.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:intl/intl.dart';
-import 'package:seren_ai_flutter/services/data/tasks/widgets/gantt/experimental/viewable_tasks_hierarchy_provider.dart';
+import 'package:seren_ai_flutter/services/data/tasks/widgets/gantt/experimental/cur_project_tasks_hierarchy_provider.dart';
+import 'package:seren_ai_flutter/services/data/tasks/widgets/gantt/experimental/gantt_task_visual_state_provider.dart';
 import 'package:seren_ai_flutter/services/data/tasks/widgets/gantt/gantt_static_column_view.dart';
 import 'package:seren_ai_flutter/services/data/tasks/widgets/gantt/gantt_task_data_item_bar_view.dart';
 
@@ -198,6 +199,7 @@ class GanttView extends HookConsumerWidget {
           verticalController: leftController,
           mainVerticalController: mainVerticalController,
         ),
+        const VerticalDivider(width: 1),
         Expanded(
           child: Scrollbar(
             controller: mainVerticalController,
@@ -541,43 +543,44 @@ class GanttBody extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final visibleTaskIds = ref.watch(curUserViewableTasksHierarchyIdsProvider);
+    final projectTaskIds = ref.watch(curProjectTasksHierarchyIdsProvider);
 
     return SingleChildScrollView(
       controller: mainHorizontalController,
       scrollDirection: Axis.horizontal,
       child: SizedBox(
-        width: totalWidth,
-        child: ListView.builder(
+        width: totalWidth - staticHeadersWidth,
+        child: ListView.separated(
           controller: mainVerticalController,
-          itemCount: visibleTaskIds.length,
-          itemExtent: cellHeight,
+          itemCount: projectTaskIds.length,
           itemBuilder: (context, index) {
-            final taskId = visibleTaskIds[index];
+            final taskId = projectTaskIds[index];
+            final isVisible = ref.watch(ganttTaskVisibilityProvider(taskId));
 
-            return Stack(
-              children: [
-                // Background grid
-                Container(
-                  width: totalWidth - staticHeadersWidth,
-                  height: cellHeight,
-                  decoration: BoxDecoration(
-                    border: Border.all(color: Colors.grey.withAlpha(51)),
-                  ),
-                ),
-
-                //Task visualization
-                GanttTaskDataItemBarView(
-                  taskId: taskId,
-                  cellWidth: cellWidth,
-                  cellHeight: cellHeight,
-                  columnStart: columnRange.value.$1,
-                  cellDurationType: viewType == GanttViewType.day
-                      ? GanttCellDurationType.hours
-                      : GanttCellDurationType.days,
-                ),
-              ],
-            );
+            return isVisible
+                ? Stack(
+                    children: [
+                      SizedBox(height: cellHeight),
+                      //Task visualization
+                      GanttTaskDataItemBarView(
+                        taskId: taskId,
+                        cellWidth: cellWidth,
+                        cellHeight: cellHeight,
+                        columnStart: columnRange.value.$1,
+                        cellDurationType: viewType == GanttViewType.day
+                            ? GanttCellDurationType.hours
+                            : GanttCellDurationType.days,
+                      ),
+                    ],
+                  )
+                : const SizedBox.shrink();
+          },
+          separatorBuilder: (context, index) {
+            final isTaskVisible =
+                ref.watch(ganttTaskVisibilityProvider(projectTaskIds[index]));
+            return isTaskVisible
+                ? const Divider(height: 1)
+                : const SizedBox.shrink();
           },
         ),
       ),

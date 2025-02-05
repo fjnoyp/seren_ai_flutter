@@ -3,9 +3,10 @@ import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:seren_ai_flutter/services/data/tasks/widgets/gantt/gantt_task_snp.dart';
 import 'package:seren_ai_flutter/services/data/tasks/widgets/gantt/gantt_view.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
-class TaskGanttPage extends ConsumerWidget {
-  const TaskGanttPage({super.key});
+class GanttTaskPage extends ConsumerWidget {
+  const GanttTaskPage({super.key});
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -18,7 +19,7 @@ class TaskGanttPage extends ConsumerWidget {
             decoration: BoxDecoration(
               border: Border.all(width: 0),
             ),
-            child: const _Gantt(),
+            child: const GanttChart(projectId: null),
           ),
         )
       ],
@@ -26,8 +27,13 @@ class TaskGanttPage extends ConsumerWidget {
   }
 }
 
-class _Gantt extends HookConsumerWidget {
-  const _Gantt();
+class GanttChart extends HookConsumerWidget {
+  const GanttChart({super.key, required this.projectId});
+
+  /// The project id to filter the tasks by.
+  ///
+  /// If null, all tasks will be shown.
+  final String? projectId;
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -54,7 +60,7 @@ class _Gantt extends HookConsumerWidget {
       return null;
     }, [viewType.value]);
 
-    final ganttTasks = ref.watch(ganttTaskProvider).tasks;
+    final ganttTasks = ref.watch(ganttTaskProvider(projectId)).tasks;
 
     final staticRowsValues = ganttTasks.expand((ganttTask) {
       final mainTaskName = [ganttTask.task.name];
@@ -90,34 +96,7 @@ class _Gantt extends HookConsumerWidget {
     }).toList();
 
     return Column(
-      crossAxisAlignment: CrossAxisAlignment.end,
       children: [
-        Padding(
-          padding: const EdgeInsets.all(8.0),
-          child: SegmentedButton<GanttViewType>(
-            segments: const [
-              ButtonSegment(
-                value: GanttViewType.day,
-                icon: Icon(Icons.today_outlined),
-                label: Text('Day'),
-              ),
-              ButtonSegment(
-                value: GanttViewType.week,
-                icon: Icon(Icons.date_range_outlined),
-                label: Text('Week'),
-              ),
-              ButtonSegment(
-                value: GanttViewType.month,
-                icon: Icon(Icons.calendar_month_outlined),
-                label: Text('Month'),
-              ),
-            ],
-            selected: {viewType.value},
-            onSelectionChanged: (selected) {
-              viewType.value = selected.first;
-            },
-          ),
-        ),
         Expanded(
           child: GanttView(
             staticHeadersValues: ['Task Name'],
@@ -125,6 +104,32 @@ class _Gantt extends HookConsumerWidget {
             events: ganttEvents,
             viewType: viewType.value,
             horizontalScrollController: horizontalScrollController.value,
+          ),
+        ),
+        Padding(
+          padding: const EdgeInsets.all(8.0),
+          child: SegmentedButton<GanttViewType>(
+            segments: [
+              ButtonSegment(
+                value: GanttViewType.day,
+                icon: const Icon(Icons.today_outlined),
+                label: Text(AppLocalizations.of(context)!.day),
+              ),
+              ButtonSegment(
+                value: GanttViewType.week,
+                icon: const Icon(Icons.date_range_outlined),
+                label: Text(AppLocalizations.of(context)!.week),
+              ),
+              ButtonSegment(
+                value: GanttViewType.month,
+                icon: const Icon(Icons.calendar_month_outlined),
+                label: Text(AppLocalizations.of(context)!.month),
+              ),
+            ],
+            selected: {viewType.value},
+            onSelectionChanged: (selected) {
+              viewType.value = selected.first;
+            },
           ),
         ),
       ],

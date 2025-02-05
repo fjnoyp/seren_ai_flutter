@@ -228,7 +228,7 @@ class TaskToolMethods {
           : null,
       estimatedDurationMinutes: actionRequest.estimateDurationMinutes,
       authorUserId: userId,
-      // TODO: add `actionRequest.parentProjectId` instead of always using defaultProjectId
+      // TODO p4: add `actionRequest.parentProjectId` instead of always using defaultProjectId
       parentProjectId: selectedProjectId,
     );
 
@@ -338,10 +338,9 @@ class TaskToolMethods {
     await ref.read(tasksRepositoryProvider).upsertItem(updatedTask);
 
     // Try to assign users by name
-    List<SearchUserResult>? userAssignmentResults;
     if (actionRequest.assignedUserNames != null &&
         actionRequest.assignedUserNames!.isNotEmpty) {
-      userAssignmentResults = await ref
+      await ref
           .read(taskAssignmentsServiceProvider)
           .tryAssignUsersByName(
               updatedTask.id, actionRequest.assignedUserNames!);
@@ -385,7 +384,7 @@ class TaskToolMethods {
       return ErrorRequestResultModel(
           resultForAi: 'Task not found', showOnly: true);
     } else if (filteredTasks.length > 1) {
-      // TODO: handle this case
+      // TODO p3: handle this case
       return ErrorRequestResultModel(
         resultForAi:
             'Multiple tasks found with name "${actionRequest.taskName}"',
