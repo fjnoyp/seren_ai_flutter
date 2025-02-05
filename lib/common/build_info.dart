@@ -2,10 +2,10 @@
 class BuildInfo {
   // Core build info
   static const String version = '1.0.0';
-  static const String buildDate = '2025-02-05 12:27:58';
+  static const String buildDate = '2025-02-05 12:36:37';
   
   // Git info
-  static const String commitHash = '532c9f5';
+  static const String commitHash = '4493576';
   static const String branch = 'feat/gantt-drag-start-and-due-dates';
   static const String lastTag = 'no tag';
   
@@ -16,12 +16,12 @@ class BuildInfo {
   // Recent commits (last 5)
   static const List<Map<String, String>> recentCommits = [
     {
-      "hash": "532c9f5",
+      "hash": "4493576",
       "author": "renata-sisilio",
       "email": "renata@seren-ai.co", 
       "message": "feat(gantt): drag and drop start/end dates",
       "date": "2025-02-05",
-      "relativeDate": "74 minutes ago"
+      "relativeDate": "83 minutes ago"
     },
     {
       "hash": "25f0eae",
@@ -37,7 +37,7 @@ class BuildInfo {
       "email": "renata@seren-ai.co", 
       "message": "fix(mobile): allow redirect to project tasks after creating a task",
       "date": "2025-02-05",
-      "relativeDate": "2 hours ago"
+      "relativeDate": "3 hours ago"
     },
     {
       "hash": "c279247",
