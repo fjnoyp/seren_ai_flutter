@@ -31,7 +31,6 @@ class BaseTextBlockEditSelectionField extends HookConsumerWidget {
     final colorAnimation = useAiActionColorAnimation(
       context,
       ref,
-      duration: const Duration(seconds: 1),
       triggerValue: curDescription,
     );
 
