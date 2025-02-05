@@ -37,8 +37,7 @@ class OrgGuard extends ConsumerWidget {
           // If user has multiple orgs, navigate to chooseOrg page
           WidgetsBinding.instance.addPostFrameCallback((_) => ref
               .read(navigationServiceProvider)
-              .navigateToAndRemoveUntil(
-                  AppRoutes.chooseOrg.name, (route) => false));
+              .navigateTo(AppRoutes.chooseOrg.name));
           return const Center(child: CircularProgressIndicator());
         }
       }
@@ -55,8 +54,9 @@ class OrgGuard extends ConsumerWidget {
         }
         // If still no orgs after retries, proceed with navigation
         if (context.mounted) {
-          ref.read(navigationServiceProvider).navigateToAndRemoveUntil(
-              AppRoutes.chooseOrg.name, (route) => false);
+          ref
+              .read(navigationServiceProvider)
+              .navigateTo(AppRoutes.chooseOrg.name);
         }
       });
 

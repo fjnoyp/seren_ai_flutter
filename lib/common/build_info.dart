@@ -2,11 +2,11 @@
 class BuildInfo {
   // Core build info
   static const String version = '1.0.0';
-  static const String buildDate = '2025-02-04 09:11:39';
+  static const String buildDate = '2025-02-05 09:52:05';
   
   // Git info
-  static const String commitHash = '8a56df5';
-  static const String branch = 'main';
+  static const String commitHash = '0ec8d70';
+  static const String branch = 'fix/image-loader-error';
   static const String lastTag = 'no tag';
   
   // Author of last commit
@@ -16,12 +16,20 @@ class BuildInfo {
   // Recent commits (last 5)
   static const List<Map<String, String>> recentCommits = [
     {
+      "hash": "0ec8d70",
+      "author": "Kyle",
+      "email": "kylcheng@gmail.com", 
+      "message": "chore: warning build info lacks last commit",
+      "date": "2025-02-04",
+      "relativeDate": "20 hours ago"
+    },
+    {
       "hash": "8a56df5",
       "author": "Kyle",
       "email": "kylcheng@gmail.com", 
       "message": "chore: minor edits - add build info",
       "date": "2025-02-04",
-      "relativeDate": "20 minutes ago"
+      "relativeDate": "20 hours ago"
     },
     {
       "hash": "bdc17a3",
@@ -29,7 +37,7 @@ class BuildInfo {
       "email": "renata@seren-ai.co", 
       "message": "fix(gantt): properly place tasks in timeline (was 1 hour before their actual time)",
       "date": "2025-02-04",
-      "relativeDate": "83 minutes ago"
+      "relativeDate": "21 hours ago"
     },
     {
       "hash": "a89f2b8",
@@ -37,7 +45,7 @@ class BuildInfo {
       "email": "renata@seren-ai.co", 
       "message": "feat(gantt): drag and drop tasks on chart",
       "date": "2025-02-04",
-      "relativeDate": "84 minutes ago"
+      "relativeDate": "21 hours ago"
     },
     {
       "hash": "b49594a",
@@ -45,19 +53,11 @@ class BuildInfo {
       "email": "renata@seren-ai.co", 
       "message": "feat(gantt): add toggle view mode button",
       "date": "2025-02-04",
-      "relativeDate": "3 hours ago"
-    },
-    {
-      "hash": "26945b5",
-      "author": "renata-sisilio",
-      "email": "renata@seren-ai.co", 
-      "message": "feat(gantt): implement day/week/month views for tasks gantt chart",
-      "date": "2025-02-04",
-      "relativeDate": "4 hours ago"
+      "relativeDate": "23 hours ago"
     },
   ];
 
   // Stats
-  static const String totalCommits = '306';
-  static const String contributors = '       0';
+  static const String totalCommits = '307';
+  static const String contributors = '0';
 }
