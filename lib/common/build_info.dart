@@ -2,10 +2,10 @@
 class BuildInfo {
   // Core build info
   static const String version = '1.0.0';
-  static const String buildDate = '2025-02-05 10:07:04';
+  static const String buildDate = '2025-02-05 10:47:39';
   
   // Git info
-  static const String commitHash = 'f5953e8';
+  static const String commitHash = '4808363';
   static const String branch = 'fix/image-loader-error';
   static const String lastTag = 'no tag';
   
@@ -16,12 +16,28 @@ class BuildInfo {
   // Recent commits (last 5)
   static const List<Map<String, String>> recentCommits = [
     {
+      "hash": "4808363",
+      "author": "renata-sisilio",
+      "email": "renata@seren-ai.co", 
+      "message": "fix(tasks): shrink description on task cards",
+      "date": "2025-02-05",
+      "relativeDate": "11 minutes ago"
+    },
+    {
+      "hash": "fc3ab5c",
+      "author": "renata-sisilio",
+      "email": "renata@seren-ai.co", 
+      "message": "fix(mobile): allow redirect to project tasks after creating a task",
+      "date": "2025-02-05",
+      "relativeDate": "41 minutes ago"
+    },
+    {
       "hash": "f5953e8",
       "author": "renata-sisilio",
       "email": "renata@seren-ai.co", 
       "message": "fix(users/orgs): prevent image loader http code 400 fails",
       "date": "2025-02-05",
-      "relativeDate": "15 minutes ago"
+      "relativeDate": "56 minutes ago"
     },
     {
       "hash": "0ec8d70",
@@ -29,7 +45,7 @@ class BuildInfo {
       "email": "kylcheng@gmail.com", 
       "message": "chore: warning build info lacks last commit",
       "date": "2025-02-04",
-      "relativeDate": "20 hours ago"
+      "relativeDate": "21 hours ago"
     },
     {
       "hash": "8a56df5",
@@ -37,27 +53,11 @@ class BuildInfo {
       "email": "kylcheng@gmail.com", 
       "message": "chore: minor edits - add build info",
       "date": "2025-02-04",
-      "relativeDate": "20 hours ago"
-    },
-    {
-      "hash": "bdc17a3",
-      "author": "renata-sisilio",
-      "email": "renata@seren-ai.co", 
-      "message": "fix(gantt): properly place tasks in timeline (was 1 hour before their actual time)",
-      "date": "2025-02-04",
-      "relativeDate": "21 hours ago"
-    },
-    {
-      "hash": "a89f2b8",
-      "author": "renata-sisilio",
-      "email": "renata@seren-ai.co", 
-      "message": "feat(gantt): drag and drop tasks on chart",
-      "date": "2025-02-04",
       "relativeDate": "21 hours ago"
     },
   ];
 
   // Stats
-  static const String totalCommits = '308';
+  static const String totalCommits = '310';
   static const String contributors = '0';
 }
