@@ -53,6 +53,7 @@ class ChooseOrgPage extends ConsumerWidget {
                       ref
                           .read(curSelectedOrgIdNotifierProvider.notifier)
                           .setDesiredOrgId(orgModel.id);
+                      Navigator.maybePop(context);
                     },
                   ),
                 );
