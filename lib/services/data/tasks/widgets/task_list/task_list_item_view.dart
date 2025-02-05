@@ -5,7 +5,7 @@ import 'package:seren_ai_flutter/services/data/projects/providers/project_by_id_
 import 'package:seren_ai_flutter/services/data/tasks/models/task_model.dart';
 import 'package:intl/intl.dart';
 import 'package:seren_ai_flutter/services/data/tasks/providers/task_navigation_service.dart';
-import 'package:seren_ai_flutter/services/data/tasks/widgets/task_list/task_priority_view.dart';
+import 'package:seren_ai_flutter/services/data/common/widgets/priority_view.dart';
 import 'package:seren_ai_flutter/services/data/tasks/widgets/ui_constants.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:seren_ai_flutter/services/data/users/providers/task_assigned_users_stream_provider.dart';
@@ -82,7 +82,7 @@ class TaskListItemView extends ConsumerWidget {
                           .toList(),
                     ),
                     const SizedBox(height: 4),
-                    TaskPriorityView(
+                    PriorityView(
                         priority: task.priority ?? PriorityEnum.normal),
                     const SizedBox(height: 4),
                     if (task.dueDate != null)
@@ -150,7 +150,7 @@ class TaskListTileItemView extends ConsumerWidget {
               .map((e) => UserAvatar(e, radius: 8)),
           if (task.priority != null) ...[
             const SizedBox(width: 8),
-            TaskPriorityView(priority: task.priority!),
+            PriorityView(priority: task.priority!),
           ],
           if (task.dueDate != null) ...[
             const SizedBox(width: 8),

@@ -1,17 +1,23 @@
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:seren_ai_flutter/services/data/common/status_enum.dart';
+import 'package:seren_ai_flutter/services/data/tasks/models/task_model.dart';
 import 'package:seren_ai_flutter/services/data/tasks/providers/task_by_id_stream_provider.dart';
-import 'package:seren_ai_flutter/services/data/tasks/repositories/tasks_repository.dart';
-import 'package:seren_ai_flutter/services/data/tasks/widgets/form/task_selection_fields.dart';
-import 'package:seren_ai_flutter/services/data/tasks/widgets/gantt/experimental/viewable_tasks_hierarchy_provider.dart';
+import 'package:seren_ai_flutter/services/data/tasks/providers/task_navigation_service.dart';
+import 'package:seren_ai_flutter/services/data/tasks/task_field_enum.dart';
+import 'package:seren_ai_flutter/services/data/tasks/widgets/gantt/experimental/cur_project_tasks_hierarchy_provider.dart';
+import 'package:seren_ai_flutter/services/data/common/widgets/priority_view.dart';
+import 'package:seren_ai_flutter/services/data/common/widgets/status_view.dart';
+import 'package:seren_ai_flutter/services/data/tasks/widgets/gantt/experimental/gantt_task_visual_state_provider.dart';
+import 'package:seren_ai_flutter/services/data/tasks/widgets/task_assignees_avatars.dart';
 
 class GanttStaticColumnView extends ConsumerWidget {
   static const Map<TaskFieldEnum, double> columnWidths = {
-    TaskFieldEnum.name: 80.0,
-    TaskFieldEnum.status: 60.0,
-    TaskFieldEnum.priority: 60.0,
-    TaskFieldEnum.assignees: 150.0,
+    TaskFieldEnum.name: 110.0,
+    TaskFieldEnum.status: 80.0,
+    TaskFieldEnum.priority: 80.0,
+    TaskFieldEnum.assignees: 80.0,
   };
 
   final ScrollController? verticalController;
@@ -27,12 +33,12 @@ class GanttStaticColumnView extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final visibleTaskIds = ref.watch(curUserViewableTasksHierarchyIdsProvider);
+    final visibleTaskIds = ref.watch(curProjectTasksHierarchyIdsProvider);
     final staticColumnHeaders = [
       TaskFieldEnum.name,
+      TaskFieldEnum.assignees,
       TaskFieldEnum.status,
-      TaskFieldEnum.priority,
-      TaskFieldEnum.assignees
+      TaskFieldEnum.priority
     ];
 
     return Listener(
@@ -82,33 +88,29 @@ class GanttStaticColumnView extends ConsumerWidget {
 class _StaticHeader extends StatelessWidget {
   final List<TaskFieldEnum> staticColumnHeaders;
 
-  const _StaticHeader({
-    required this.staticColumnHeaders,
-  });
+  const _StaticHeader({required this.staticColumnHeaders});
 
   @override
   Widget build(BuildContext context) {
-    return SizedBox(
-      height: 60,
-      child: Row(
-        children: List.generate(
-          staticColumnHeaders.length,
-          (index) => Container(
-            width:
-                GanttStaticColumnView.columnWidths[staticColumnHeaders[index]]!,
-            height: 60,
-            alignment: Alignment.center,
-            decoration: BoxDecoration(border: Border.all()),
-            child: Text(
-              staticColumnHeaders[index]
-                  .toString()
-                  .split('.')
-                  .last, // Display enum name
-              style: Theme.of(context)
-                  .textTheme
-                  .titleMedium!
-                  .copyWith(fontWeight: FontWeight.bold),
+    return Row(
+      children: List.generate(
+        staticColumnHeaders.length,
+        (index) => Container(
+          width:
+              GanttStaticColumnView.columnWidths[staticColumnHeaders[index]]!,
+          height: 60,
+          alignment: Alignment.center,
+          decoration: BoxDecoration(
+            border: Border.symmetric(
+              horizontal: BorderSide(
+                  color: Theme.of(context).colorScheme.outlineVariant),
             ),
+          ),
+          child: Text(
+            staticColumnHeaders[index].toHumanReadable(context),
+            style: Theme.of(context).textTheme.titleSmall,
+            maxLines: 1,
+            overflow: TextOverflow.ellipsis,
           ),
         ),
       ),
@@ -116,7 +118,7 @@ class _StaticHeader extends StatelessWidget {
   }
 }
 
-class _StaticRowValues extends StatelessWidget {
+class _StaticRowValues extends ConsumerWidget {
   final List<String> taskIds;
   final double cellHeight;
   final ScrollController? verticalController;
@@ -130,25 +132,45 @@ class _StaticRowValues extends StatelessWidget {
   });
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
     // RepaintBoundary should wrap the ListView, not the Expanded
     return Expanded(
       child: RepaintBoundary(
         child: ScrollConfiguration(
           behavior: ScrollConfiguration.of(context).copyWith(scrollbars: false),
-          child: ListView.builder(
+          child: ListView.separated(
             physics: const ClampingScrollPhysics(),
             controller: verticalController,
             itemCount: taskIds.length,
-            itemExtent: cellHeight,
             cacheExtent: 200,
             addAutomaticKeepAlives: false,
             addRepaintBoundaries: true,
-            itemBuilder: (context, rowIndex) => _StaticRow(
-              taskId: taskIds[rowIndex],
-              cellHeight: cellHeight,
-              staticColumnHeaders: staticColumnHeaders,
-            ),
+            itemBuilder: (context, rowIndex) {
+              final taskId = taskIds[rowIndex];
+              final visualState =
+                  ref.watch(ganttTaskVisualStateProvider(taskId));
+              final isVisible = ref.watch(ganttTaskVisibilityProvider(taskId));
+              return visualState.canExpand
+                  ? _StaticPhaseRow(
+                      taskId: taskId,
+                      cellHeight: cellHeight,
+                      isExpanded: visualState.isExpanded,
+                    )
+                  : isVisible
+                      ? _StaticTaskRow(
+                          taskId: taskId,
+                          cellHeight: cellHeight,
+                          staticColumnHeaders: staticColumnHeaders,
+                        )
+                      : const SizedBox.shrink();
+            },
+            separatorBuilder: (context, index) {
+              final isTaskVisible =
+                  ref.watch(ganttTaskVisibilityProvider(taskIds[index]));
+              return isTaskVisible
+                  ? const Divider(height: 1)
+                  : const SizedBox.shrink();
+            },
           ),
         ),
       ),
@@ -156,13 +178,61 @@ class _StaticRowValues extends StatelessWidget {
   }
 }
 
+class _StaticPhaseRow extends ConsumerWidget {
+  final String taskId;
+  final double cellHeight;
+  final bool isExpanded;
+
+  const _StaticPhaseRow({
+    required this.taskId,
+    required this.cellHeight,
+    required this.isExpanded,
+  });
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final task = ref.watch(taskByIdStreamProvider(taskId));
+
+    return task.when(
+      data: (task) => task != null
+          ? RepaintBoundary(
+              child: InkWell(
+                onTap: () => ref
+                    .read(ganttTaskVisualStateProvider(taskId).notifier)
+                    .toggleExpanded(),
+                child: SizedBox(
+                  height: cellHeight,
+                  child: Row(
+                    children: [
+                      Icon(
+                        isExpanded ? Icons.expand_less : Icons.expand_more,
+                        color: Theme.of(context).colorScheme.outline,
+                      ),
+                      const SizedBox(width: 4),
+                      Text(task.name),
+                    ],
+                  ),
+                ),
+              ),
+            )
+          : SizedBox(height: cellHeight),
+      loading: () => SizedBox(
+        height: cellHeight,
+        child: const Center(child: LinearProgressIndicator()),
+      ),
+      error: (error, stackTrace) =>
+          const Center(child: Text('Error loading phase')),
+    );
+  }
+}
+
 // Split into separate widgets for better performance
-class _StaticRow extends ConsumerWidget {
+class _StaticTaskRow extends ConsumerWidget {
   final String taskId;
   final double cellHeight;
   final List<TaskFieldEnum> staticColumnHeaders;
 
-  const _StaticRow({
+  const _StaticTaskRow({
     required this.taskId,
     required this.cellHeight,
     required this.staticColumnHeaders,
@@ -173,21 +243,89 @@ class _StaticRow extends ConsumerWidget {
     final task = ref.watch(taskByIdStreamProvider(taskId));
 
     return task.when(
-      data: (task) => RepaintBoundary(
-        child: Row(
-          children: List.generate(
-            staticColumnHeaders.length,
-            (columnIndex) => _StaticCell(
-              taskId: taskId,
-              cellHeight: cellHeight,
-              fieldType: staticColumnHeaders[columnIndex],
-            ),
+      data: (task) => task != null
+          ? RepaintBoundary(
+              child: GestureDetector(
+                onTapDown: (details) => showMenu(
+                  context: context,
+                  position: RelativeRect.fromLTRB(
+                    details.globalPosition.dx,
+                    details.globalPosition.dy,
+                    details.globalPosition.dx + 1,
+                    details.globalPosition.dy + 1,
+                  ),
+                  items: [
+                    PopupMenuItem(
+                      enabled: false,
+                      child: _TaskDetailsPopup(task),
+                    )
+                  ],
+                ),
+                child: Row(
+                  children: List.generate(
+                    staticColumnHeaders.length,
+                    (columnIndex) => _StaticCell(
+                      taskId: taskId,
+                      cellHeight: cellHeight,
+                      fieldType: staticColumnHeaders[columnIndex],
+                    ),
+                  ),
+                ),
+              ),
+            )
+          : SizedBox(height: cellHeight),
+      loading: () => SizedBox(
+        height: cellHeight,
+        child: const Center(child: LinearProgressIndicator()),
+      ),
+      error: (error, stackTrace) =>
+          const Center(child: Text('Error loading task')),
+    );
+  }
+}
+
+class _TaskDetailsPopup extends StatelessWidget {
+  const _TaskDetailsPopup(this.task);
+
+  final TaskModel task;
+
+  @override
+  Widget build(BuildContext context) {
+    return ConstrainedBox(
+      constraints: const BoxConstraints(maxHeight: 300),
+      child: SingleChildScrollView(
+        child: Padding(
+          padding: const EdgeInsets.all(8.0),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Row(
+                children: [
+                  Flexible(
+                    child: Text(
+                      task.name,
+                      style: Theme.of(context).textTheme.titleMedium,
+                    ),
+                  ),
+                  Consumer(
+                    builder: (context, ref, child) => IconButton(
+                      onPressed: () => ref
+                          .read(taskNavigationServiceProvider)
+                          .openTask(initialTaskId: task.id),
+                      icon: const Icon(Icons.open_in_new),
+                    ),
+                  ),
+                ],
+              ),
+              const SizedBox(height: 8),
+              Text(
+                task.description ?? '',
+                style: Theme.of(context).textTheme.bodySmall,
+              ),
+            ],
           ),
         ),
       ),
-      loading: () => const Center(child: CircularProgressIndicator()),
-      error: (error, stackTrace) =>
-          const Center(child: Text('Error loading task')),
     );
   }
 }
@@ -206,10 +344,10 @@ class _StaticCell extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 2),
       width: GanttStaticColumnView.columnWidths[fieldType]!,
       height: cellHeight,
-      alignment: Alignment.center,
-      decoration: BoxDecoration(border: Border.all()),
+      alignment: Alignment.centerLeft,
       child: _StaticCellContent(
         taskId: taskId,
         fieldType: fieldType,
@@ -218,7 +356,7 @@ class _StaticCell extends StatelessWidget {
   }
 }
 
-class _StaticCellContent extends StatelessWidget {
+class _StaticCellContent extends ConsumerWidget {
   final String taskId;
   final TaskFieldEnum fieldType;
 
@@ -228,27 +366,27 @@ class _StaticCellContent extends StatelessWidget {
   });
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
+    final task = ref.watch(taskByIdStreamProvider(taskId)).value;
     switch (fieldType) {
       case TaskFieldEnum.name:
-        return TaskNameField(
-          taskId: taskId,
-          textStyle: Theme.of(context).textTheme.bodyMedium,
+        return Text(
+          task?.name ?? '',
+          maxLines: 2,
+          overflow: TextOverflow.ellipsis,
         );
       case TaskFieldEnum.status:
-        return TaskStatusSelectionField(
-          taskId: taskId,
-          showLabelWidget: false,
+        return StatusView(
+          status: task?.status ?? StatusEnum.open,
+          outline: false,
         );
       case TaskFieldEnum.priority:
-        return TaskPrioritySelectionField(
-          taskId: taskId,
-          showLabelWidget: false,
+        return PriorityView(
+          priority: task?.priority ?? PriorityEnum.normal,
+          outline: false,
         );
       case TaskFieldEnum.assignees:
-        return TaskAssigneesSelectionField(taskId: taskId);
-      default:
-        return const SizedBox.shrink();
+        return TaskAssigneesAvatars(taskId);
     }
   }
 }

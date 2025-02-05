@@ -37,7 +37,7 @@ class AiQuickActionsService extends Notifier<List<AiQuickAction>> {
 
       switch (appRoute) {
         case AppRoutes.projectDetails:
-        // TODO: Add quick actions for project details page
+        // TODO p3: Add quick actions for project details page
         // We don't use break here so that we also use project page quick actions
         case AppRoutes.projects:
           state = [
@@ -63,13 +63,13 @@ class AiQuickActionsService extends Notifier<List<AiQuickAction>> {
           ];
           break;
         case AppRoutes.shifts:
-          // TODO: Add quick actions for shifts page
+          // TODO p3: Add quick actions for shifts page
           break;
         case AppRoutes.noteList:
-          // TODO: Add quick actions for note list page
+          // TODO p3: Add quick actions for note list page
           break;
         case AppRoutes.notePage:
-          // TODO: Add quick actions for note page
+          // TODO p3: Add quick actions for note page
           break;
         default:
           state = [];

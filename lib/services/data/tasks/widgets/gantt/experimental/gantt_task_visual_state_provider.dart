@@ -1,8 +1,6 @@
-import 'dart:ui';
-
 import 'package:flutter/material.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
-import 'package:seren_ai_flutter/services/data/tasks/widgets/gantt/experimental/viewable_tasks_hierarchy_provider.dart';
+import 'package:seren_ai_flutter/services/data/tasks/widgets/gantt/experimental/cur_project_tasks_hierarchy_provider.dart';
 
 class GanttTaskVisualState {
   final bool isExpanded;
@@ -28,7 +26,7 @@ class GanttTaskVisualState {
           baseColor;
     }
     // Could modify color based on expanded state
-    return isExpanded ? baseColor : baseColor.withOpacity(0.7);
+    return isExpanded ? baseColor : baseColor.withAlpha(180);
   }
 
   GanttTaskVisualState copyWith({
@@ -49,10 +47,12 @@ class GanttTaskVisualState {
       );
 }
 
-final ganttTaskVisualStateProvider = StateNotifierProvider.family<
-    GanttTaskVisualStateNotifier, GanttTaskVisualState, String>((ref, taskId) {
-  return GanttTaskVisualStateNotifier(ref, taskId);
-});
+final ganttTaskVisualStateProvider = StateNotifierProvider.autoDispose
+    .family<GanttTaskVisualStateNotifier, GanttTaskVisualState, String>(
+  (ref, taskId) {
+    return GanttTaskVisualStateNotifier(ref, taskId);
+  },
+);
 
 class GanttTaskVisualStateNotifier extends StateNotifier<GanttTaskVisualState> {
   final Ref ref;
@@ -119,7 +119,7 @@ Color _generateColorFromId(String id) {
 
 // Computed visibility can still be separate since it depends on parent state
 final ganttTaskVisibilityProvider =
-    Provider.family<bool, String>((ref, taskId) {
+    Provider.autoDispose.family<bool, String>((ref, taskId) {
   final info = ref.watch(taskHierarchyInfoProvider(taskId));
   final taskState = ref.watch(ganttTaskVisualStateProvider(taskId));
 
