@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
+import 'package:seren_ai_flutter/common/universal_platform/universal_platform.dart';
 import 'package:seren_ai_flutter/services/data/common/status_enum.dart';
 import 'package:seren_ai_flutter/services/data/notes/providers/notes_navigation_service.dart';
 import 'package:seren_ai_flutter/services/data/notes/widgets/notes_list_page.dart';
@@ -12,6 +13,7 @@ import 'package:seren_ai_flutter/services/data/projects/widgets/project_overview
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:seren_ai_flutter/services/data/tasks/providers/cur_user_viewable_tasks_stream_provider.dart';
 import 'package:seren_ai_flutter/services/data/common/widgets/async_value_handler_widget.dart';
+import 'package:seren_ai_flutter/services/data/tasks/widgets/gantt/gantt_task_page.dart';
 
 class ProjectTasksPage extends HookConsumerWidget {
   const ProjectTasksPage({super.key});
@@ -19,10 +21,25 @@ class ProjectTasksPage extends HookConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final tabs = [
-      (
-        name: AppLocalizations.of(context)!.tasks,
-        child: const ProjectTasksSection()
-      ),
+      if (isWebVersion) ...[
+        (
+          name: AppLocalizations.of(context)!.board,
+          child: const ProjectTasksSectionWeb('board')
+        ),
+        (
+          name: AppLocalizations.of(context)!.list,
+          child: const ProjectTasksSectionWeb('list')
+        ),
+        (
+          name: AppLocalizations.of(context)!.ganttChart,
+          child: const _ProjectGanttSection()
+        ),
+      ] else ...[
+        (
+          name: AppLocalizations.of(context)!.tasks,
+          child: const ProjectTasksSection()
+        ),
+      ],
       (
         name: AppLocalizations.of(context)!.notes,
         child: const _ProjectNotesSection()
@@ -182,5 +199,15 @@ class _ProjectNotesSection extends ConsumerWidget {
         ),
       ],
     );
+  }
+}
+
+class _ProjectGanttSection extends ConsumerWidget {
+  const _ProjectGanttSection();
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final curProjectId = ref.watch(curSelectedProjectIdNotifierProvider);
+    return GanttChart(curProjectId);
   }
 }

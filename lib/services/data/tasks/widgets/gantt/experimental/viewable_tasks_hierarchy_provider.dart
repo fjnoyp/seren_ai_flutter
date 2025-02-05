@@ -1,10 +1,7 @@
-import 'package:flutter/material.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
-import 'package:seren_ai_flutter/services/auth/cur_auth_dependency_provider.dart';
-import 'package:seren_ai_flutter/services/data/orgs/providers/cur_selected_org_id_notifier.dart';
-import 'package:seren_ai_flutter/services/data/tasks/models/task_model.dart';
+import 'package:seren_ai_flutter/services/data/projects/providers/cur_selected_project_providers.dart';
 import 'package:seren_ai_flutter/services/data/tasks/providers/cur_user_viewable_tasks_stream_provider.dart';
-import 'package:seren_ai_flutter/services/data/tasks/repositories/tasks_repository.dart';
+import 'package:seren_ai_flutter/services/data/tasks/providers/tasks_by_project_stream_provider.dart';
 
 class TaskHierarchyInfo {
   final String taskId;
@@ -69,10 +66,17 @@ final taskParentChainIdsProvider =
   return chain;
 });
 
+// TODO: make this a family provider so we can use it to get hierarchy for all tasks (projectId == null)
 // Return tasks in their hierarchal groupings
 final _curUserViewableTasksHierarchyProvider =
     Provider<Map<String, TaskHierarchyInfo>>((ref) {
-  final tasks = ref.watch(curUserViewableTasksStreamProvider).value ?? [];
+  final projectId = ref.watch(curSelectedProjectIdNotifierProvider);
+  final tasks = ref
+          .watch(projectId == null
+              ? curUserViewableTasksStreamProvider
+              : tasksByProjectStreamProvider(projectId))
+          .value ??
+      [];
 
   // Build hierarchy map for O(1) lookups
   final hierarchyMap = <String, TaskHierarchyInfo>{};

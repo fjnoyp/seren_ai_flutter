@@ -19,18 +19,21 @@ class ProjectTasksSection extends StatelessWidget {
     return LayoutBuilder(builder: (context, constraints) {
       final isLargeScreen = constraints.maxWidth > 800;
       return isLargeScreen
-          ? const ProjectTasksSectionWeb()
+          ? const ProjectTasksSectionWeb('board')
           : const ProjectTasksSectionMobile();
     });
   }
 }
 
 class ProjectTasksSectionWeb extends HookConsumerWidget {
-  const ProjectTasksSectionWeb({super.key});
+  const ProjectTasksSectionWeb(this.initialViewMode, {super.key});
+
+  // TODO p0: turn into an enum and refactor from here
+  final String initialViewMode;
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final viewMode = useState('board');
+    final viewMode = useState(initialViewMode);
     final sortBy = useState<TaskSortOption?>(null);
     final filterBy = TaskFilterOption.values
         .map((filter) => useState<
@@ -61,6 +64,7 @@ class ProjectTasksSectionWeb extends HookConsumerWidget {
             filterBy: filterBy,
             sortBy: sortBy,
             viewMode: viewMode,
+            showExtraViewControls: false,
             onShowCustomDateRangePicker: _showCustomDateRangePicker,
             useHorizontalScroll: false,
           ),

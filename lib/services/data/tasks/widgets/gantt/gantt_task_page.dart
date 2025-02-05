@@ -18,7 +18,7 @@ class TaskGanttPage extends ConsumerWidget {
             decoration: BoxDecoration(
               border: Border.all(width: 0),
             ),
-            child: const _Gantt(),
+            child: const GanttChart(null),
           ),
         )
       ],
@@ -26,8 +26,13 @@ class TaskGanttPage extends ConsumerWidget {
   }
 }
 
-class _Gantt extends HookConsumerWidget {
-  const _Gantt();
+class GanttChart extends HookConsumerWidget {
+  const GanttChart(this.projectId, {super.key});
+
+  /// The project id to filter the tasks by.
+  ///
+  /// If null, all tasks will be shown.
+  final String? projectId;
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -54,7 +59,7 @@ class _Gantt extends HookConsumerWidget {
       return null;
     }, [viewType.value]);
 
-    final ganttTasks = ref.watch(ganttTaskProvider).tasks;
+    final ganttTasks = ref.watch(ganttTaskProvider(projectId)).tasks;
 
     final staticRowsValues = ganttTasks.expand((ganttTask) {
       final mainTaskName = [ganttTask.task.name];

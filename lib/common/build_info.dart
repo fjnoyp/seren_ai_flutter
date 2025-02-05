@@ -2,26 +2,50 @@
 class BuildInfo {
   // Core build info
   static const String version = '1.0.0';
-  static const String buildDate = '2025-02-05 09:26:38';
+  static const String buildDate = '2025-02-05 19:59:22';
   
   // Git info
-  static const String commitHash = '25f0eae';
-  static const String branch = 'fix/ai_task_interactions';
+  static const String commitHash = 'f106783';
+  static const String branch = 'feat/project-gantt-chart';
   static const String lastTag = 'no tag';
   
   // Author of last commit
-  static const String lastCommitAuthor = 'renata-sisilio';
-  static const String lastCommitEmail = 'renata@seren-ai.co';
+  static const String lastCommitAuthor = 'Kyle';
+  static const String lastCommitEmail = 'kylcheng@gmail.com';
   
   // Recent commits (last 5)
   static const List<Map<String, String>> recentCommits = [
+    {
+      "hash": "f106783",
+      "author": "Kyle",
+      "email": "kylcheng@gmail.com", 
+      "message": "fix: ui context for ai + task edit highlights",
+      "date": "2025-02-05",
+      "relativeDate": "6 hours ago"
+    },
+    {
+      "hash": "b9711b6",
+      "author": "renata-sisilio",
+      "email": "renata@seren-ai.co", 
+      "message": "fix(notes): limit note description preview on tile",
+      "date": "2025-02-05",
+      "relativeDate": "7 hours ago"
+    },
+    {
+      "hash": "1235915",
+      "author": "renata-sisilio",
+      "email": "renata@seren-ai.co", 
+      "message": "feat(gantt): drag and drop start/end dates",
+      "date": "2025-02-05",
+      "relativeDate": "9 hours ago"
+    },
     {
       "hash": "25f0eae",
       "author": "renata-sisilio",
       "email": "renata@seren-ai.co", 
       "message": "fix(tasks): shrink description on task cards",
       "date": "2025-02-05",
-      "relativeDate": "4 hours ago"
+      "relativeDate": "9 hours ago"
     },
     {
       "hash": "4ecab3b",
@@ -29,35 +53,11 @@ class BuildInfo {
       "email": "renata@seren-ai.co", 
       "message": "fix(mobile): allow redirect to project tasks after creating a task",
       "date": "2025-02-05",
-      "relativeDate": "4 hours ago"
-    },
-    {
-      "hash": "c279247",
-      "author": "renata-sisilio",
-      "email": "renata@seren-ai.co", 
-      "message": "fix(users/orgs): prevent image loader http code 400 fails",
-      "date": "2025-02-05",
-      "relativeDate": "5 hours ago"
-    },
-    {
-      "hash": "0ec8d70",
-      "author": "Kyle",
-      "email": "kylcheng@gmail.com", 
-      "message": "chore: warning build info lacks last commit",
-      "date": "2025-02-04",
-      "relativeDate": "24 hours ago"
-    },
-    {
-      "hash": "8a56df5",
-      "author": "Kyle",
-      "email": "kylcheng@gmail.com", 
-      "message": "chore: minor edits - add build info",
-      "date": "2025-02-04",
-      "relativeDate": "25 hours ago"
+      "relativeDate": "10 hours ago"
     },
   ];
 
   // Stats
-  static const String totalCommits = '310';
-  static const String contributors = '       0';
+  static const String totalCommits = '313';
+  static const String contributors = '0';
 }

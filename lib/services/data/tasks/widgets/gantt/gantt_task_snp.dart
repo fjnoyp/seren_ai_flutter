@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:seren_ai_flutter/services/data/tasks/models/task_model.dart';
 import 'package:seren_ai_flutter/services/data/tasks/providers/cur_user_viewable_tasks_stream_provider.dart';
+import 'package:seren_ai_flutter/services/data/tasks/providers/tasks_by_project_stream_provider.dart';
 
 // State class to hold all Gantt-related data
 class GanttState {
@@ -36,18 +37,27 @@ class GanttTask {
   });
 }
 
+/// Set the project id to filter the tasks by.
+///
+/// If null, all tasks will be shown.
 final ganttTaskProvider =
-    StateNotifierProvider<GanttTaskNotifier, GanttState>((ref) {
+    StateNotifierProvider.family<GanttTaskNotifier, GanttState, String?>(
+        (ref, projectId) {
   final notifier = GanttTaskNotifier();
 
   // Immediately fetch initial data
-  final tasksAsyncValue = ref.read(curUserViewableTasksStreamProvider);
+  final tasksAsyncValue = projectId == null
+      ? ref.read(curUserViewableTasksStreamProvider)
+      : ref.read(tasksByProjectStreamProvider(projectId));
   if (tasksAsyncValue.hasValue && tasksAsyncValue.value != null) {
     notifier.processTaskData(tasksAsyncValue.value!);
   }
 
   // Watch for changes to tasks and update the Gantt state
-  ref.listen(curUserViewableTasksStreamProvider, (previous, next) {
+  ref.listen(
+      projectId == null
+          ? curUserViewableTasksStreamProvider
+          : tasksByProjectStreamProvider(projectId), (previous, next) {
     if (next.hasValue && next.value != null) {
       notifier.processTaskData(next.value!);
     }
@@ -57,10 +67,7 @@ final ganttTaskProvider =
 });
 
 class GanttTaskNotifier extends StateNotifier<GanttState> {
-  GanttTaskNotifier()
-      : super(GanttState(
-          tasks: [],
-        ));
+  GanttTaskNotifier() : super(GanttState(tasks: []));
 
   void processTaskData(List<TaskModel> rawTasks) {
     if (rawTasks.isEmpty) return;
