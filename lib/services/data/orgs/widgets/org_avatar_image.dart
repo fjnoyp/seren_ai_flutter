@@ -63,7 +63,6 @@ class _FallbackAvatar extends StatelessWidget {
   final OrgModel org;
 
   @override
-  @override
   Widget build(BuildContext context) {
     return Center(child: Text(org.name.substring(0, 1)));
   }
