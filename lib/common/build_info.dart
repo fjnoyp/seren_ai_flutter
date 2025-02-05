@@ -2,11 +2,11 @@
 class BuildInfo {
   // Core build info
   static const String version = '1.0.0';
-  static const String buildDate = '2025-02-05 10:47:39';
+  static const String buildDate = '2025-02-05 12:27:58';
   
   // Git info
-  static const String commitHash = '4808363';
-  static const String branch = 'fix/image-loader-error';
+  static const String commitHash = '532c9f5';
+  static const String branch = 'feat/gantt-drag-start-and-due-dates';
   static const String lastTag = 'no tag';
   
   // Author of last commit
@@ -16,28 +16,36 @@ class BuildInfo {
   // Recent commits (last 5)
   static const List<Map<String, String>> recentCommits = [
     {
-      "hash": "4808363",
+      "hash": "532c9f5",
+      "author": "renata-sisilio",
+      "email": "renata@seren-ai.co", 
+      "message": "feat(gantt): drag and drop start/end dates",
+      "date": "2025-02-05",
+      "relativeDate": "74 minutes ago"
+    },
+    {
+      "hash": "25f0eae",
       "author": "renata-sisilio",
       "email": "renata@seren-ai.co", 
       "message": "fix(tasks): shrink description on task cards",
       "date": "2025-02-05",
-      "relativeDate": "11 minutes ago"
+      "relativeDate": "2 hours ago"
     },
     {
-      "hash": "fc3ab5c",
+      "hash": "4ecab3b",
       "author": "renata-sisilio",
       "email": "renata@seren-ai.co", 
       "message": "fix(mobile): allow redirect to project tasks after creating a task",
       "date": "2025-02-05",
-      "relativeDate": "41 minutes ago"
+      "relativeDate": "2 hours ago"
     },
     {
-      "hash": "f5953e8",
+      "hash": "c279247",
       "author": "renata-sisilio",
       "email": "renata@seren-ai.co", 
       "message": "fix(users/orgs): prevent image loader http code 400 fails",
       "date": "2025-02-05",
-      "relativeDate": "56 minutes ago"
+      "relativeDate": "3 hours ago"
     },
     {
       "hash": "0ec8d70",
@@ -45,19 +53,11 @@ class BuildInfo {
       "email": "kylcheng@gmail.com", 
       "message": "chore: warning build info lacks last commit",
       "date": "2025-02-04",
-      "relativeDate": "21 hours ago"
-    },
-    {
-      "hash": "8a56df5",
-      "author": "Kyle",
-      "email": "kylcheng@gmail.com", 
-      "message": "chore: minor edits - add build info",
-      "date": "2025-02-04",
-      "relativeDate": "21 hours ago"
+      "relativeDate": "22 hours ago"
     },
   ];
 
   // Stats
-  static const String totalCommits = '310';
+  static const String totalCommits = '311';
   static const String contributors = '0';
 }
