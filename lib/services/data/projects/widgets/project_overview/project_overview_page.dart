@@ -1,17 +1,20 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
+import 'package:seren_ai_flutter/common/universal_platform/universal_platform.dart';
 import 'package:seren_ai_flutter/services/data/common/status_enum.dart';
 import 'package:seren_ai_flutter/services/data/notes/providers/notes_navigation_service.dart';
 import 'package:seren_ai_flutter/services/data/notes/widgets/notes_list_page.dart';
 import 'package:seren_ai_flutter/services/data/projects/providers/cur_selected_project_providers.dart';
 import 'package:seren_ai_flutter/services/data/projects/widgets/action_buttons/edit_project_button.dart';
 import 'package:seren_ai_flutter/services/data/projects/widgets/action_buttons/update_project_assignees_button.dart';
+import 'package:seren_ai_flutter/services/data/projects/widgets/project_overview/sub_lists/project_tasks_filters.dart';
 import 'package:seren_ai_flutter/services/data/projects/widgets/project_page.dart';
 import 'package:seren_ai_flutter/services/data/projects/widgets/project_overview/project_tasks_section.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:seren_ai_flutter/services/data/tasks/providers/cur_user_viewable_tasks_stream_provider.dart';
 import 'package:seren_ai_flutter/services/data/common/widgets/async_value_handler_widget.dart';
+import 'package:seren_ai_flutter/services/data/tasks/widgets/gantt/gantt_task_page.dart';
 
 class ProjectTasksPage extends HookConsumerWidget {
   const ProjectTasksPage({super.key});
@@ -19,12 +22,32 @@ class ProjectTasksPage extends HookConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final tabs = [
-      (
-        name: AppLocalizations.of(context)!.tasks,
-        child: const ProjectTasksSection()
-      ),
+      if (isWebVersion) ...[
+        (
+          name: AppLocalizations.of(context)!.board,
+          icon: Icons.view_kanban_outlined,
+          child: const ProjectTasksSectionWeb(ProjectTasksSectionViewMode.board)
+        ),
+        (
+          name: AppLocalizations.of(context)!.list,
+          icon: Icons.list,
+          child: const ProjectTasksSectionWeb(ProjectTasksSectionViewMode.list)
+        ),
+        (
+          name: AppLocalizations.of(context)!.ganttChart,
+          icon: Icons.segment,
+          child: const _ProjectGanttSection()
+        ),
+      ] else ...[
+        (
+          name: AppLocalizations.of(context)!.tasks,
+          icon: Icons.task,
+          child: const ProjectTasksSection()
+        ),
+      ],
       (
         name: AppLocalizations.of(context)!.notes,
+        icon: Icons.description_outlined,
         child: const _ProjectNotesSection()
       ),
     ];
@@ -73,14 +96,31 @@ class ProjectTasksPage extends HookConsumerWidget {
                               iconSize: 18,
                               icon: const Icon(Icons.settings),
                             ),
+                            if (isLargeScreen) ...[
+                              const SizedBox(width: 32),
+                              SizedBox(
+                                width: 480,
+                                child: TabBar(
+                                  tabs: tabs
+                                      .map((tab) => Tab(text: tab.name))
+                                      .toList(),
+                                  dividerColor: Colors.transparent,
+                                  labelStyle: const TextStyle(
+                                      fontWeight: FontWeight.bold),
+                                ),
+                              ),
+                            ],
                           ],
                         ),
                         SizedBox(height: isLargeScreen ? 8 : 3),
                         const _CurrentProjectReadinessBar(),
-                        SizedBox(height: isLargeScreen ? 16 : 3),
-                        TabBar(
-                          tabs: tabs.map((tab) => Tab(text: tab.name)).toList(),
-                        ),
+                        if (!isLargeScreen) ...[
+                          const SizedBox(height: 3),
+                          TabBar(
+                              tabs: tabs
+                                  .map((tab) => Tab(text: tab.name))
+                                  .toList()),
+                        ],
                         Expanded(
                           child: TabBarView(
                             physics: const NeverScrollableScrollPhysics(),
@@ -108,7 +148,7 @@ class _CurrentProjectReadinessBar extends ConsumerWidget {
         .valueOrNull
         ?.where((e) => e.parentProjectId == project.id);
 
-    // TODO: improve readiness calculation using tasks estimated duration
+    // TODO p4: improve readiness calculation using tasks estimated duration
     final completedTasksCount =
         tasks?.where((e) => e.status == StatusEnum.finished).length ?? 0;
     final totalTasksCount =
@@ -180,6 +220,25 @@ class _ProjectNotesSection extends ConsumerWidget {
                     parentProjectId: curProjectId,
                   ),
         ),
+      ],
+    );
+  }
+}
+
+class _ProjectGanttSection extends ConsumerWidget {
+  const _ProjectGanttSection();
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final curProjectId = ref.watch(curSelectedProjectIdNotifierProvider);
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.end,
+      children: [
+        const Padding(
+          padding: EdgeInsets.all(8.0),
+          child: NewTaskFromCurrentProjectButton(),
+        ),
+        Expanded(child: GanttChart(projectId: curProjectId)),
       ],
     );
   }

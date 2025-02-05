@@ -1,5 +1,3 @@
-import 'dart:developer';
-
 import 'package:flutter/material.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
@@ -186,7 +184,6 @@ class GanttTaskDataItemBarView extends ConsumerWidget {
 
         return Positioned(
           left: leftPosition,
-          top: 5,
           child: taskWidget,
         );
       },
@@ -211,20 +208,13 @@ class _CompleteTaskBar extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final visualState = ref.watch(ganttTaskVisualStateProvider(task.id));
 
     int durationInCells = cellDurationType == GanttCellDurationType.days
         ? task.duration!.inDays
         : task.duration!.inHours;
     if (durationInCells == 0) durationInCells = 1;
 
-    return GestureDetector(
-      onTap: visualState.canExpand
-          ? () => ref
-              .read(ganttTaskVisualStateProvider(task.id).notifier)
-              .toggleExpanded()
-          : null,
-      child: _TaskContainer(
+    return _TaskContainer(
         onDragFromMiddle: (cells) {
           final offset = _getTimeOffset(cells, cellDurationType);
           ref.read(tasksRepositoryProvider).updateTaskStartDateTime(
@@ -238,7 +228,6 @@ class _CompleteTaskBar extends ConsumerWidget {
         },
         onDragFromStart: (cells) {
           final timeOffset = _getTimeOffset(cells, cellDurationType);
-          log('timeOffset: $timeOffset\n\ttask duration: ${task.duration}');
           if (task.duration != null && timeOffset < task.duration!) {
             ref.read(tasksRepositoryProvider).updateTaskStartDateTime(
                   task.id,
@@ -248,7 +237,6 @@ class _CompleteTaskBar extends ConsumerWidget {
         },
         onDragFromEnd: (cells) {
           final timeOffset = _getTimeOffset(cells, cellDurationType);
-          log('timeOffset: $timeOffset\n\ttask duration: ${task.duration}');
           if (task.duration != null && timeOffset > -task.duration!) {
             ref.read(tasksRepositoryProvider).updateTaskDueDate(
                   task.id,
@@ -265,18 +253,6 @@ class _CompleteTaskBar extends ConsumerWidget {
           mainAxisAlignment: MainAxisAlignment.start,
           children: [
             const SizedBox(width: 10),
-            if (visualState.canExpand)
-              IconButton(
-                icon: Icon(
-                  visualState.isExpanded
-                      ? Icons.expand_less
-                      : Icons.expand_more,
-                  color: Colors.white,
-                ),
-                onPressed: () => ref
-                    .read(ganttTaskVisualStateProvider(task.id).notifier)
-                    .toggleExpanded(),
-              ),
             Expanded(
               child: Text(
                 task.name,
@@ -286,7 +262,6 @@ class _CompleteTaskBar extends ConsumerWidget {
             ),
           ],
         ),
-      ),
     );
   }
 }

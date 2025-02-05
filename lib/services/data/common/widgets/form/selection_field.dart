@@ -11,6 +11,7 @@ class AnimatedModalSelectionField<T> extends HookConsumerWidget {
     required this.labelWidget,
     required this.validator,
     required this.valueToString,
+    this.valueToWidget,
     required this.enabled,
     required this.value,
     required this.options,
@@ -21,6 +22,7 @@ class AnimatedModalSelectionField<T> extends HookConsumerWidget {
   final Widget labelWidget;
   final String? Function(T?) validator;
   final String Function(T?) valueToString;
+  final Widget Function(T)? valueToWidget;
   final bool enabled;
   final T? value;
   final List<T> options;
@@ -49,6 +51,7 @@ class AnimatedModalSelectionField<T> extends HookConsumerWidget {
                       labelWidget: labelWidget,
                       validator: validator,
                       valueToString: valueToString,
+                      valueToWidget: valueToWidget,
                       enabled: enabled,
                       value: value,
                       onValueChanged: onValueChanged,
@@ -75,6 +78,7 @@ class AnimatedModalSelectionField<T> extends HookConsumerWidget {
                     labelWidget: labelWidget,
                     validator: validator,
                     valueToString: valueToString,
+                    valueToWidget: valueToWidget,
                     enabled: enabled,
                     value: value,
                     options: options,
@@ -98,6 +102,7 @@ class ModalSelectionField<T> extends SelectionField<T> {
     required super.labelWidget,
     required List<T> options,
     required super.valueToString,
+    super.valueToWidget,
     super.validator,
     super.enabled,
     super.defaultColor,
@@ -142,6 +147,7 @@ class AnimatedSelectionField<T> extends SelectionField<T> {
     super.onValueChanged,
     required super.labelWidget,
     required super.valueToString,
+    super.valueToWidget,
     required super.onTap,
     super.validator,
     super.enabled,
@@ -169,6 +175,7 @@ class AnimatedSelectionField<T> extends SelectionField<T> {
               onValueChanged: onValueChanged,
               labelWidget: labelWidget,
               valueToString: valueToString,
+              valueToWidget: valueToWidget,
               onTap: onTap,
               validator: validator,
               enabled: enabled,
@@ -184,6 +191,7 @@ class AnimatedSelectionField<T> extends SelectionField<T> {
 class SelectionField<T> extends HookConsumerWidget {
   final Widget labelWidget;
   final String Function(T?) valueToString;
+  final Widget Function(T)? valueToWidget;
   final Function(BuildContext) onTap;
   final FormFieldValidator<T>? validator;
   final bool enabled;
@@ -196,6 +204,7 @@ class SelectionField<T> extends HookConsumerWidget {
     super.key,
     required this.labelWidget,
     required this.valueToString,
+    this.valueToWidget,
     required this.onTap,
     required this.value,
     this.onValueChanged,
@@ -254,15 +263,20 @@ class SelectionField<T> extends HookConsumerWidget {
                         padding: const EdgeInsets.only(left: 10),
                       ),
                       // Current Value Display
-                      child: Text(
-                        valueToString(value),
-                        maxLines: 2,
-                        overflow: TextOverflow.ellipsis,
-                        style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                            color: field.hasError
-                                ? Theme.of(context).colorScheme.error
-                                : curColor),
-                      ),
+                      child: valueToWidget != null && value != null
+                          ? valueToWidget!(value!)
+                          : Text(
+                              valueToString(value),
+                              maxLines: 2,
+                              overflow: TextOverflow.ellipsis,
+                              style: Theme.of(context)
+                                  .textTheme
+                                  .bodyMedium
+                                  ?.copyWith(
+                                      color: field.hasError
+                                          ? Theme.of(context).colorScheme.error
+                                          : curColor),
+                            ),
                     ),
                   ),
                 ],

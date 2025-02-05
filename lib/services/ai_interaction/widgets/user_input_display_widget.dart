@@ -12,7 +12,7 @@ import 'package:seren_ai_flutter/services/speech_to_text/widgets/speech_transcri
 import 'package:seren_ai_flutter/services/text_to_speech/text_to_speech_notifier.dart';
 import 'package:seren_ai_flutter/services/text_to_speech/text_to_speech_service.dart';
 
-// TODO: save and retrieve this preference locally
+// TODO p5: save and retrieve this preference locally
 final textFieldVisibilityProvider = StateProvider<bool>((ref) => false);
 
 /// Class to display user's voice input or manual text input
@@ -102,7 +102,7 @@ class UserInputDisplayWidget extends ConsumerWidget {
                 alignment: Alignment.center,
                 children: [
                   // Use padding to center the volume wave visualization with the speech control button's topView
-                  // TODO: solve behavior issue with volume wave visualization before we use it again
+                  // TODO p5: solve behavior issue with volume wave visualization before we use it again
                   // Padding(
                   //   padding: EdgeInsets.only(
                   //       bottom:

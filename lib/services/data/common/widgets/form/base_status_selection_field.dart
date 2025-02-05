@@ -3,6 +3,7 @@ import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:seren_ai_flutter/services/data/common/status_enum.dart';
 import 'package:seren_ai_flutter/services/data/common/widgets/form/selection_field.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+import 'package:seren_ai_flutter/services/data/common/widgets/status_view.dart';
 
 class BaseStatusSelectionField extends ConsumerWidget {
   final bool enabled;
@@ -31,6 +32,7 @@ class BaseStatusSelectionField extends ConsumerWidget {
       valueToString: (status) =>
           status?.toHumanReadable(context) ??
           AppLocalizations.of(context)!.selectStatus,
+      valueToWidget: (status) => StatusView(status: status),
       enabled: enabled,
       value: curTaskStatus,
       options: StatusEnum.values,

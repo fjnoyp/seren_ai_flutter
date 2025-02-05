@@ -158,7 +158,7 @@ class AppState extends ConsumerState<App> {
               AppRoutes.termsAndConditions.name: (context) =>
                   const TermsAndConditionsWebview(),
               AppRoutes.taskGantt.name: (context) =>
-                  const _GuardScaffold('Gantt', TaskGanttPage()),
+                  const _GuardScaffold('Gantt', GanttTaskPage()),
               AppRoutes.settings.name: (context) => _GuardScaffold(
                     AppLocalizations.of(context)!.settings,
                     const SettingsPage(),
