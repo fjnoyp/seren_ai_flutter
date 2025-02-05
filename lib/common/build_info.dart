@@ -2,19 +2,27 @@
 class BuildInfo {
   // Core build info
   static const String version = '1.0.0';
-  static const String buildDate = '2025-02-05 09:52:05';
+  static const String buildDate = '2025-02-05 10:07:04';
   
   // Git info
-  static const String commitHash = '0ec8d70';
+  static const String commitHash = 'f5953e8';
   static const String branch = 'fix/image-loader-error';
   static const String lastTag = 'no tag';
   
   // Author of last commit
-  static const String lastCommitAuthor = 'Kyle';
-  static const String lastCommitEmail = 'kylcheng@gmail.com';
+  static const String lastCommitAuthor = 'renata-sisilio';
+  static const String lastCommitEmail = 'renata@seren-ai.co';
   
   // Recent commits (last 5)
   static const List<Map<String, String>> recentCommits = [
+    {
+      "hash": "f5953e8",
+      "author": "renata-sisilio",
+      "email": "renata@seren-ai.co", 
+      "message": "fix(users/orgs): prevent image loader http code 400 fails",
+      "date": "2025-02-05",
+      "relativeDate": "15 minutes ago"
+    },
     {
       "hash": "0ec8d70",
       "author": "Kyle",
@@ -47,17 +55,9 @@ class BuildInfo {
       "date": "2025-02-04",
       "relativeDate": "21 hours ago"
     },
-    {
-      "hash": "b49594a",
-      "author": "renata-sisilio",
-      "email": "renata@seren-ai.co", 
-      "message": "feat(gantt): add toggle view mode button",
-      "date": "2025-02-04",
-      "relativeDate": "23 hours ago"
-    },
   ];
 
   // Stats
-  static const String totalCommits = '307';
+  static const String totalCommits = '308';
   static const String contributors = '0';
 }
