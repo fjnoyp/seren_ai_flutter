@@ -70,9 +70,7 @@ class TaskNavigationService extends BaseNavigationService {
 
     await _navigateToTaskPage(mode: EditablePageMode.create, taskId: curTaskId)
         .then((_) {
-      if (isWebVersion) {
-        _handleProjectRedirect();
-      }
+      _handleProjectRedirect();
     });
   }
 
