@@ -189,7 +189,7 @@ class AppState extends ConsumerState<App> {
             // Handle routes with ID - set the ID if needed
             if (uri.pathSegments.length > 1) {
               WidgetsBinding.instance.addPostFrameCallback((_) {
-                if (AppRoutes.fromString(path) case AppRoutes route) {
+                if (AppRoutes.getAppRouteFromPath(path) case AppRoutes route) {
                   final navigationService =
                       BaseNavigationService.fromAppRoute(route, ref);
                   if (navigationService == null) {

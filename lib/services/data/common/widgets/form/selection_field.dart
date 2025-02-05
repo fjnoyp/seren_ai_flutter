@@ -32,7 +32,6 @@ class AnimatedModalSelectionField<T> extends HookConsumerWidget {
     final colorAnimation = useAiActionColorAnimation(
       context,
       ref,
-      duration: const Duration(seconds: 1),
       triggerValue: value,
     );
 
@@ -154,7 +153,6 @@ class AnimatedSelectionField<T> extends SelectionField<T> {
     final colorAnimation = useAiActionColorAnimation(
       context,
       ref,
-      duration: const Duration(seconds: 1),
       triggerValue: value,
     );
 
@@ -241,7 +239,7 @@ class SelectionField<T> extends HookConsumerWidget {
                         TextButton(
                       onPressed: enabled
                           ? () async {
-                            // TODO p3: reapply field validation display (currently we're just not saving invalid field values)
+                              // TODO p3: reapply field validation display (currently we're just not saving invalid field values)
                               // // Using ShowBottomSheet or ShowDatePicker invalidates the ref context after the modal closes
                               // // Only fix has been to use consumer directly in the modal builder when the tap occurs
                               await onTap(context);
@@ -315,7 +313,6 @@ class AnimatedModalMinuteSelectionField extends HookConsumerWidget {
     final colorAnimation = useAiActionColorAnimation(
       context,
       ref,
-      duration: const Duration(seconds: 1),
       triggerValue: value,
     );
 

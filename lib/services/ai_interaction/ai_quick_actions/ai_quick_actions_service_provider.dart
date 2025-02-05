@@ -32,7 +32,7 @@ class AiQuickActionsService extends Notifier<List<AiQuickAction>> {
   /// Automatically generates quick actions for the current page.
   void _generateQuickActionsForCurrentPage() {
     ref.listen(currentRouteProvider, (prev, next) {
-      final appRoute = AppRoutes.fromString(next);
+      final appRoute = AppRoutes.getAppRouteFromPath(next);
       final context = ref.read(navigationServiceProvider).context;
 
       switch (appRoute) {
