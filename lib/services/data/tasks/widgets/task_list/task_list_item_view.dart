@@ -110,6 +110,7 @@ class TaskListItemView extends ConsumerWidget {
                         task.description!.isNotEmpty)
                       Text(
                         task.description!,
+                        maxLines: 3,
                         style: theme.textTheme.bodySmall,
                         overflow: TextOverflow.ellipsis,
                       ),
