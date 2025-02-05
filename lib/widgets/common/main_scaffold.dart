@@ -11,6 +11,8 @@ import 'package:seren_ai_flutter/services/data/db_setup/app_config.dart';
 import 'package:seren_ai_flutter/services/data/tasks/providers/task_navigation_service.dart';
 import 'package:seren_ai_flutter/services/data/users/models/invite_model.dart';
 import 'package:seren_ai_flutter/services/data/users/providers/cur_user_invites_service_provider.dart';
+import 'package:seren_ai_flutter/widgets/common/debug_mode_provider.dart';
+import 'package:seren_ai_flutter/widgets/common/debug_state_modal.dart';
 import 'drawer_view.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
@@ -50,6 +52,8 @@ class MainScaffold extends ConsumerWidget {
         _showInviteDialog(context, ref, invite);
       }
     });
+
+    final isDebugMode = ref.watch(isDebugModeSNP);
 
     return PopScope(
       canPop: ref.read(navigationServiceProvider).canPop,
@@ -104,11 +108,12 @@ class MainScaffold extends ConsumerWidget {
                                 actions: [
                                   if (!AppConfig.isProdMode)
                                     const Text(
-                                      'Dev',
+                                      'DevConfig',
                                       style: TextStyle(
                                           color: Colors.red,
                                           fontWeight: FontWeight.bold),
                                     ),
+                                  if (isDebugMode) _DebugButton(),
                                   ...actions ?? [],
                                 ],
                               )
@@ -179,6 +184,7 @@ class MainScaffold extends ConsumerWidget {
                       style: TextStyle(
                           color: Colors.red, fontWeight: FontWeight.bold),
                     ),
+                  if (isDebugMode) _DebugButton(),
                   ...actions ?? [],
                 ],
               ),
@@ -247,6 +253,23 @@ class MainScaffold extends ConsumerWidget {
           ),
         ],
       ),
+    );
+  }
+}
+
+class _DebugButton extends ConsumerWidget {
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    return IconButton(
+      icon: const Icon(Icons.bug_report),
+      onPressed: () => _showDebugModal(context, ref),
+    );
+  }
+
+  void _showDebugModal(BuildContext context, WidgetRef ref) {
+    showDialog(
+      context: context,
+      builder: (context) => const DebugStateModal(),
     );
   }
 }

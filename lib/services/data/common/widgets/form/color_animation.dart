@@ -25,8 +25,9 @@ ColorAnimation useColorAnimation({
   return ColorAnimation(colorTween, animationController);
 }
 
-
-ColorAnimation useAiActionColorAnimation(BuildContext context, WidgetRef ref, {required Duration duration, required dynamic triggerValue}) {
+ColorAnimation useAiActionColorAnimation(BuildContext context, WidgetRef ref,
+    {Duration duration = const Duration(seconds: 3),
+    required dynamic triggerValue}) {
   final colorAnimation = useColorAnimation(
     duration: duration,
     begin: Theme.of(context).textTheme.bodyMedium?.color ?? Colors.black,
@@ -34,13 +35,15 @@ ColorAnimation useAiActionColorAnimation(BuildContext context, WidgetRef ref, {r
   );
 
   useEffect(() {
-    final isAiEditing = ref.read(isAiEditingProvider);
+    // Capture the value once when the effect runs
+    final shouldAnimate = ref.read(isAiRespondingProvider);
 
-    if (!isAiEditing) return;
-
-    colorAnimation.controller
-        .forward()
-        .then((_) => colorAnimation.controller.reverse());
+    // Only start animation if it should animate
+    if (shouldAnimate) {
+      colorAnimation.controller
+          .forward()
+          .then((_) => colorAnimation.controller.reverse());
+    }
     return null;
   }, [triggerValue]);
 
