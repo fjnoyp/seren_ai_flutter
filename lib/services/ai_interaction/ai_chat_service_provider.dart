@@ -22,13 +22,14 @@ import 'package:seren_ai_flutter/services/data/orgs/providers/cur_selected_org_i
 
 import 'package:logging/logging.dart';
 import 'package:seren_ai_flutter/services/data/tasks/providers/cur_selected_task_id_notifier_provider.dart';
+import 'package:seren_ai_flutter/services/data/tasks/tool_methods/models/task_request_models.dart';
 import 'package:seren_ai_flutter/services/text_to_speech/text_to_speech_notifier.dart';
 
 final log = Logger('AIChatService');
 
 final isAiRespondingProvider = StateProvider<bool>((ref) => false);
 
-final isAiEditingProvider = StateProvider<bool>((ref) => false);
+// final isAiEditingProvider = StateProvider<bool>((ref) => false);
 
 final aiChatServiceProvider = Provider<AIChatService>(AIChatService.new);
 
@@ -63,6 +64,32 @@ class AIChatService {
 
       final uiContext = await _getUIContext();
 
+      isAiRespondingNotifier.state = true;
+
+      // Code to test hardcoded AI requests
+      /*
+      final aiRequestExecutor = ref.read(aiRequestExecutorProvider);
+
+      await aiRequestExecutor.executeAiRequest(UpdateTaskFieldsRequestModel(
+        taskName: 'AI Set Task Test',
+        taskDueDate: DateTime.now().toUtc().toIso8601String(),
+        taskDescription: 'Task description',
+        taskStatus: 'inProgress',
+        taskPriority: 'veryLow',
+        assignedUserNames: ['authorUserId'],
+      ));
+
+      // await aiRequestExecutor.executeAiRequest(CreateTaskRequestModel(
+      //   taskName: 'AI Set Task Test',
+      //   taskDueDate: DateTime.now().toUtc().toIso8601String(),
+      //   parentProjectName: 'parentProjectId',
+      //   taskDescription: 'Task description',
+      //   taskStatus: 'inProgress',
+      //   taskPriority: 'high',
+      //   assignedUserNames: ['authorUserId'],
+      // ));
+      */
+
       // Save user message
       await aiChatMessagesRepo.insertItem(AiChatMessageModel(
           content: message,
@@ -75,6 +102,9 @@ class AIChatService {
           userMessage: message,
           uiContext: uiContext);
 
+      // Add small delay to ensure color animation can be triggered
+      await Future.delayed(const Duration(milliseconds: 50));
+
       isAiRespondingNotifier.state = false;
     } catch (e) {
       rethrow;
@@ -86,9 +116,10 @@ class AIChatService {
   Future<String> _getUIContext() async {
     final curRoute = ref.read(currentRouteProvider);
 
-    final appRoute = AppRoutes.fromString(curRoute);
+    final appRoute = AppRoutes.getAppRouteFromPath(curRoute);
 
     if (appRoute == null) {
+      log.warning('AppRoute is null but curRoute is: $curRoute');
       return '';
       //print('AppRoute: ${appRoute.toString()}');
     }
@@ -282,78 +313,3 @@ class AIChatService {
     await textToSpeech.speak(aiMessage.content);
   }
 }
-
-/*
-
-
-  List<AiChatMessageModel> _getTestAiChatMessages() {
-    final allMessages = [
-      sampleClockInRequest,
-      sampleClockOutRequest,
-      sampleCurrentShiftInfoRequest,
-      sampleShiftHistoryRequest, // TBD
-      sampleShiftsPageRequest // TBD
-    ];
-    return [sampleClockOutRequest];
-  }
-
-  Future<void> testAiCreateTask(BuildContext context) async {
-    // TEST calling Supabase Edge Function
-    final supabase = Supabase.instance.client;
-
-    ref.read(isAiEditingProvider.notifier).state = true;
-
-    await openBlankTaskPage(context, ref);
-
-    print('openTaskPage done');
-
-    await Future.delayed(Duration(milliseconds: 250));
-
-    final joinedTask = JoinedTaskModel(
-      task: TaskModel(
-        name: 'AI Set Task Test',
-        dueDate: DateTime.now().toUtc(),
-        parentProjectId: 'parentProjectId',
-        description: 'Task description',
-        status: StatusEnum.inProgress,
-        authorUserId: 'authorUserId',
-      ),
-      authorUser: UserModel(
-        id: 'authorUserId',
-        email: 'ai@seren.ai',
-        parentAuthUserId: 'parentAuthUserId',
-      ),
-
-      // TODO p1: allow managers/admins to assign a user to a project/team so they don't have to worry about any selection
-
-      // Team is just for gropuing users
-      // Tasks are only assigned based on project permissions
-
-      // https://miro.com/app/board/uXjVKCs7dtw=/?utm_source=notification&utm_medium=email&utm_campaign=daily-updates&utm_content=view-board-cta
-
-      project: ProjectModel(
-        id: 'projectId',
-        name: 'TEST',
-        description: 'test',
-        parentOrgId: 'parentOrgId',
-      ),
-      assignees: [
-        UserModel(
-          id: 'assigneeUserId',
-          email: 'ai@seren.ai',
-          parentAuthUserId: 'parentAuthUserId',
-        ),
-      ],
-      comments: [],
-    );
-
-    ref.read(curTaskServiceProvider).loadTask(joinedTask);
-
-    //test();
-
-    // Delay setting isAiEditingProvider to false to ensure animation is triggered
-    await Future.delayed(Duration(milliseconds: 500));
-
-    ref.read(isAiEditingProvider.notifier).state = false;
-  }
-  */

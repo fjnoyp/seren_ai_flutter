@@ -26,13 +26,28 @@ enum AppRoutes {
   @override
   String toString() => _path;
 
-  static AppRoutes? fromString(String path) {
+  static AppRoutes? getAppRouteFromPath(String path) {
     // Add / if not present
     if (!path.startsWith('/')) {
       path = '/$path';
     }
+    // Add trailing / if not present
+    if (!path.endsWith('/')) {
+      path = '$path/';
+    }
+
+    // Remove multiple consecutive slashes and normalize
+    path = path.replaceAll(RegExp(r'\/+'), '/');
+
     for (var route in AppRoutes.values) {
-      if (route._path == path) {
+      // Convert route path to pattern by adding trailing slash
+      String routePath = route._path;
+      if (!routePath.endsWith('/')) {
+        routePath = '$routePath/';
+      }
+
+      // Check if paths match when normalized
+      if (path == routePath) {
         return route;
       }
     }
