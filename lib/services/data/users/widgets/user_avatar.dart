@@ -8,6 +8,9 @@ class UserAvatar extends StatelessWidget {
   final UserModel user;
   final double? radius;
 
+  // Cache for existence checks
+  static final Map<String, bool> _imageExistsCache = {};
+
   @override
   Widget build(BuildContext context) {
     return Tooltip(
@@ -21,8 +24,11 @@ class UserAvatar extends StatelessWidget {
               if (snapshot.data == true) {
                 return Image.network(
                   _getUserImage(),
-                  errorBuilder: (context, error, stackTrace) =>
-                      _FallbackAvatar(user: user, radius: radius),
+                  gaplessPlayback: true,
+                  errorBuilder: (context, _, __) {
+                    _imageExistsCache.remove(user.id);
+                    return _FallbackAvatar(user: user, radius: radius);
+                  },
                 );
               }
               return _FallbackAvatar(user: user, radius: radius);
@@ -34,12 +40,19 @@ class UserAvatar extends StatelessWidget {
   }
 
   Future<bool> _checkImageExists() async {
+    // Check cache first
+    if (_imageExistsCache.containsKey(user.id)) {
+      return _imageExistsCache[user.id]!;
+    }
+
     try {
       await Supabase.instance.client.storage
           .from('user_avatars')
-          .createSignedUrl(user.id, 10); // 10 seconds expiry
+          .createSignedUrl(user.id, 30);
+      _imageExistsCache[user.id] = true;
       return true;
     } catch (e) {
+      _imageExistsCache[user.id] = false;
       return false;
     }
   }

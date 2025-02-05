@@ -3,8 +3,8 @@ import 'package:seren_ai_flutter/services/data/projects/models/user_project_assi
 import 'package:seren_ai_flutter/services/data/projects/repositories/user_project_assignments_repository.dart';
 import 'package:seren_ai_flutter/services/data/users/models/user_model.dart';
 
-final projectAssignmentsServiceProvider =
-    Provider.family<ProjectAssignmentsService, String>(
+final projectAssignmentsServiceProvider = Provider.autoDispose
+    .family<ProjectAssignmentsService, String>(
         (ref, projectId) => ProjectAssignmentsService(ref, projectId));
 
 class ProjectAssignmentsService {

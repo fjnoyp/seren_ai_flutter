@@ -11,6 +11,12 @@ import 'package:seren_ai_flutter/services/data/projects/widgets/project_overview
 import 'package:seren_ai_flutter/services/data/projects/widgets/project_overview/sub_lists/project_tasks_sectioned_list_view.dart';
 import 'package:seren_ai_flutter/services/data/tasks/models/task_model.dart';
 
+enum ProjectTasksSectionViewMode {
+  list,
+  board,
+  // TODO p2: add gantt view here once we implement filtering and sorting
+}
+
 class ProjectTasksSection extends StatelessWidget {
   const ProjectTasksSection({super.key});
 
@@ -19,18 +25,19 @@ class ProjectTasksSection extends StatelessWidget {
     return LayoutBuilder(builder: (context, constraints) {
       final isLargeScreen = constraints.maxWidth > 800;
       return isLargeScreen
-          ? const ProjectTasksSectionWeb()
+          ? const ProjectTasksSectionWeb(ProjectTasksSectionViewMode.board)
           : const ProjectTasksSectionMobile();
     });
   }
 }
 
 class ProjectTasksSectionWeb extends HookConsumerWidget {
-  const ProjectTasksSectionWeb({super.key});
+  const ProjectTasksSectionWeb(this.viewMode, {super.key});
+
+  final ProjectTasksSectionViewMode viewMode;
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final viewMode = useState('board');
     final sortBy = useState<TaskSortOption?>(null);
     final filterBy = TaskFilterOption.values
         .map((filter) => useState<
@@ -66,20 +73,16 @@ class ProjectTasksSectionWeb extends HookConsumerWidget {
           ),
         ),
         Expanded(
-          child: AnimatedCrossFade(
-            firstChild: ProjectTasksSectionedListView(
-              sort: sortBy.value?.comparator,
-              filterCondition: filterCondition,
-            ),
-            secondChild: ProjectTasksBoardView(
-              sort: sortBy.value?.comparator,
-              filterCondition: filterCondition,
-            ),
-            crossFadeState: viewMode.value == 'list'
-                ? CrossFadeState.showFirst
-                : CrossFadeState.showSecond,
-            duration: Durations.medium1,
-          ),
+          child: switch (viewMode) {
+            ProjectTasksSectionViewMode.list => ProjectTasksSectionedListView(
+                sort: sortBy.value?.comparator,
+                filterCondition: filterCondition,
+              ),
+            ProjectTasksSectionViewMode.board => ProjectTasksBoardView(
+                sort: sortBy.value?.comparator,
+                filterCondition: filterCondition,
+              ),
+          },
         ),
       ],
     );
@@ -160,7 +163,6 @@ class TaskSearchModal extends HookConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final searchQuery = useState('');
     final sortBy = useState<TaskSortOption?>(null);
-    final viewMode = useState('list'); // Mobile modal always uses list view
     final filterBy = TaskFilterOption.values
         .map((filter) => useState<
             ({
@@ -224,7 +226,7 @@ class TaskSearchModal extends HookConsumerWidget {
             ProjectTasksFilters(
               filterBy: filterBy,
               sortBy: sortBy,
-              viewMode: viewMode,
+              viewMode: ProjectTasksSectionViewMode.list,
               onShowCustomDateRangePicker: _showCustomDateRangePicker,
               showExtraViewControls: false,
               useHorizontalScroll: true,

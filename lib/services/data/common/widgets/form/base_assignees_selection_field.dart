@@ -17,6 +17,7 @@ class BaseAssigneesSelectionField extends HookConsumerWidget {
   final ProviderListenable<List<UserModel>> assigneesProvider;
   final ProviderListenable<String?> projectIdProvider;
   final Function(WidgetRef, List<UserModel>?) updateAssignees;
+  final Widget Function(List<UserModel>)? assigneesWidget;
   //final ProviderListenable<List<UserModel>> selectableUsersProvider;
   const BaseAssigneesSelectionField({
     super.key,
@@ -24,6 +25,7 @@ class BaseAssigneesSelectionField extends HookConsumerWidget {
     required this.assigneesProvider,
     required this.projectIdProvider,
     required this.updateAssignees,
+    this.assigneesWidget,
     //required this.selectableUsersProvider,
   });
 
@@ -42,9 +44,11 @@ class BaseAssigneesSelectionField extends HookConsumerWidget {
           : assignees!
               .map((assignee) => '${assignee.firstName} ${assignee.lastName}')
               .join(', '),
+      valueToWidget: assigneesWidget,
       enabled: enabled && curProjectId != null,
       value: curAssignees,
       onValueChanged: updateAssignees,
+
       onTap: (BuildContext context) async {
         FocusManager.instance.primaryFocus?.unfocus();
         if (isWebVersion) {

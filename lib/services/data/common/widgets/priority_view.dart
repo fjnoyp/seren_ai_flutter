@@ -1,10 +1,15 @@
 import 'package:flutter/material.dart';
 import 'package:seren_ai_flutter/services/data/tasks/models/task_model.dart';
 
-class TaskPriorityView extends StatelessWidget {
+class PriorityView extends StatelessWidget {
   final PriorityEnum priority;
+  final bool outline;
 
-  const TaskPriorityView({super.key, required this.priority});
+  const PriorityView({
+    super.key,
+    required this.priority,
+    this.outline = true,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -13,16 +18,22 @@ class TaskPriorityView extends StatelessWidget {
 
     return Container(
       decoration: BoxDecoration(
-        border: Border.all(color: color ?? Colors.transparent),
+        border: outline ? Border.all(color: color ?? Colors.transparent) : null,
         borderRadius: BorderRadius.circular(4),
       ),
-      padding: const EdgeInsets.all(2), // Added padding
+      padding: outline ? const EdgeInsets.all(2) : null,
       child: Row(
         mainAxisSize: MainAxisSize.min,
         children: [
           Icon(Icons.priority_high, color: color, size: 16),
-          Text(priority.toString().split('.').last,
-              style: theme.textTheme.labelSmall!.copyWith(color: color)),
+          Flexible(
+            child: Text(
+              priority.toHumanReadable(context),
+              style: theme.textTheme.labelSmall!.copyWith(color: color),
+              maxLines: 1,
+              overflow: TextOverflow.ellipsis,
+            ),
+          ),
         ],
       ),
     );

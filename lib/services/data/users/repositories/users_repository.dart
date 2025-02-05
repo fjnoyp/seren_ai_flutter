@@ -40,7 +40,7 @@ class UsersRepository extends BaseRepository<UserModel> {
     required String taskId,
   }) {
     return watch(
-      UserQueries.taskAssigneeUsersQuery,
+      UserQueries.getTaskAssignedUsersQuery,
       {'task_id': taskId},
       triggerOnTables: {
         'users',
