@@ -20,20 +20,51 @@ class OrgAvatarImage extends StatelessWidget {
       ),
       child: ClipRRect(
         borderRadius: BorderRadius.circular(8),
-        child: Image.network(
-          _getOrgImage(),
-          fit: BoxFit.cover,
-          errorBuilder: (context, error, stackTrace) {
-            return Center(child: Text(org.name.substring(0, 1)));
+        child: FutureBuilder<bool>(
+          future: _checkImageExists(),
+          builder: (context, snapshot) {
+            if (snapshot.data == true) {
+              return Image.network(
+                _getOrgImage(),
+                fit: BoxFit.cover,
+                errorBuilder: (context, error, stackTrace) {
+                  return _FallbackAvatar(org: org);
+                },
+              );
+            }
+            return _FallbackAvatar(org: org);
           },
         ),
       ),
     );
   }
 
+  Future<bool> _checkImageExists() async {
+    try {
+      await Supabase.instance.client.storage
+          .from('org_avatars')
+          .createSignedUrl(org.id, 10); // 10 seconds expiry
+      return true;
+    } catch (e) {
+      return false;
+    }
+  }
+
   String _getOrgImage() {
     return Supabase.instance.client.storage
         .from('org_avatars')
         .getPublicUrl(org.id);
+  }
+}
+
+class _FallbackAvatar extends StatelessWidget {
+  const _FallbackAvatar({required this.org});
+
+  final OrgModel org;
+
+  @override
+  @override
+  Widget build(BuildContext context) {
+    return Center(child: Text(org.name.substring(0, 1)));
   }
 }
