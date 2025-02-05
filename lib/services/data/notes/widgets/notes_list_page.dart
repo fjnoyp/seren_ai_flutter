@@ -112,6 +112,7 @@ class _NoteItem extends ConsumerWidget {
       title: Text(note.name),
       subtitle: Text(
         note.description ?? '',
+        maxLines: 3,
         overflow: TextOverflow.ellipsis,
       ),
       trailing: Text(
