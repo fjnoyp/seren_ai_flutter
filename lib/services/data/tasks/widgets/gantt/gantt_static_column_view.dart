@@ -6,6 +6,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:seren_ai_flutter/services/data/common/status_enum.dart';
 import 'package:seren_ai_flutter/services/data/tasks/models/task_model.dart';
 import 'package:seren_ai_flutter/services/data/tasks/providers/task_by_id_stream_provider.dart';
+import 'package:seren_ai_flutter/services/data/tasks/providers/task_navigation_service.dart';
 import 'package:seren_ai_flutter/services/data/tasks/task_field_enum.dart';
 import 'package:seren_ai_flutter/services/data/tasks/widgets/gantt/experimental/viewable_tasks_hierarchy_provider.dart';
 import 'package:seren_ai_flutter/services/data/tasks/widgets/task_list/task_priority_view.dart';
@@ -176,24 +177,89 @@ class _StaticRow extends ConsumerWidget {
     final task = ref.watch(taskByIdStreamProvider(taskId));
 
     return task.when(
-      data: (task) => RepaintBoundary(
-        child: Row(
-          children: List.generate(
-            staticColumnHeaders.length,
-            (columnIndex) => _StaticCell(
-              taskId: taskId,
-              cellHeight: cellHeight,
-              fieldType: staticColumnHeaders[columnIndex],
-            ),
-          ),
-        ),
-      ),
+      data: (task) => task != null
+          ? RepaintBoundary(
+              child: GestureDetector(
+                onTapDown: (details) => showMenu(
+                  context: context,
+                  position: RelativeRect.fromLTRB(
+                    details.globalPosition.dx,
+                    details.globalPosition.dy,
+                    details.globalPosition.dx + 1,
+                    details.globalPosition.dy + 1,
+                  ),
+                  items: [
+                    PopupMenuItem(
+                      enabled: false,
+                      child: _TaskDetailsPopup(task),
+                    )
+                  ],
+                ),
+                child: Row(
+                  children: List.generate(
+                    staticColumnHeaders.length,
+                    (columnIndex) => _StaticCell(
+                      taskId: taskId,
+                      cellHeight: cellHeight,
+                      fieldType: staticColumnHeaders[columnIndex],
+                    ),
+                  ),
+                ),
+              ),
+            )
+          : SizedBox(height: cellHeight),
       loading: () => SizedBox(
         height: cellHeight,
         child: const Center(child: LinearProgressIndicator()),
       ),
       error: (error, stackTrace) =>
           const Center(child: Text('Error loading task')),
+    );
+  }
+}
+
+class _TaskDetailsPopup extends StatelessWidget {
+  const _TaskDetailsPopup(this.task);
+
+  final TaskModel task;
+
+  @override
+  Widget build(BuildContext context) {
+    return ConstrainedBox(
+      constraints: const BoxConstraints(maxHeight: 300),
+      child: SingleChildScrollView(
+        child: Padding(
+          padding: const EdgeInsets.all(8.0),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Row(
+                children: [
+                  Flexible(
+                    child: Text(
+                      task.name,
+                      style: Theme.of(context).textTheme.titleMedium,
+                    ),
+                  ),
+                  Consumer(
+                    builder: (context, ref, child) => IconButton(
+                      onPressed: () => ref
+                          .read(taskNavigationServiceProvider)
+                          .openTask(initialTaskId: task.id),
+                      icon: const Icon(Icons.open_in_new),
+                    ),
+                  ),
+                ],
+              ),
+              const SizedBox(height: 8),
+              Text(
+                task.description ?? '',
+                style: Theme.of(context).textTheme.bodySmall,
+              ),
+            ],
+          ),
+        ),
+      ),
     );
   }
 }
@@ -238,7 +304,11 @@ class _StaticCellContent extends ConsumerWidget {
     final task = ref.watch(taskByIdStreamProvider(taskId)).value;
     switch (fieldType) {
       case TaskFieldEnum.name:
-        return Text(task?.name ?? '', overflow: TextOverflow.ellipsis);
+        return Text(
+          task?.name ?? '',
+          maxLines: 2,
+          overflow: TextOverflow.ellipsis,
+        );
       case TaskFieldEnum.status:
         return Center(
           child: TaskStatusView(

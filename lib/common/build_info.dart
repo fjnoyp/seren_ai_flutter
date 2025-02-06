@@ -2,10 +2,10 @@
 class BuildInfo {
   // Core build info
   static const String version = '1.0.0';
-  static const String buildDate = '2025-02-06 10:43:54';
+  static const String buildDate = '2025-02-06 11:41:21';
   
   // Git info
-  static const String commitHash = '8ca07fe';
+  static const String commitHash = '26fe446';
   static const String branch = 'feat/project-gantt-chart';
   static const String lastTag = 'no tag';
   
@@ -16,12 +16,20 @@ class BuildInfo {
   // Recent commits (last 5)
   static const List<Map<String, String>> recentCommits = [
     {
+      "hash": "26fe446",
+      "author": "renata-sisilio",
+      "email": "renata@seren-ai.co", 
+      "message": "refactor: use project tasks section viewmode as enum",
+      "date": "2025-02-06",
+      "relativeDate": "57 minutes ago"
+    },
+    {
       "hash": "8ca07fe",
       "author": "renata-sisilio",
       "email": "renata@seren-ai.co", 
       "message": "fix(gantt): adjust gantt chart ui",
       "date": "2025-02-06",
-      "relativeDate": "15 minutes ago"
+      "relativeDate": "72 minutes ago"
     },
     {
       "hash": "1f8ebf7",
@@ -29,7 +37,7 @@ class BuildInfo {
       "email": "renata@seren-ai.co", 
       "message": "feat(gantt): show gantt chart at project overview page (web only for now)",
       "date": "2025-02-05",
-      "relativeDate": "15 hours ago"
+      "relativeDate": "16 hours ago"
     },
     {
       "hash": "f106783",
@@ -37,7 +45,7 @@ class BuildInfo {
       "email": "kylcheng@gmail.com", 
       "message": "fix: ui context for ai + task edit highlights",
       "date": "2025-02-05",
-      "relativeDate": "20 hours ago"
+      "relativeDate": "21 hours ago"
     },
     {
       "hash": "b9711b6",
@@ -45,19 +53,11 @@ class BuildInfo {
       "email": "renata@seren-ai.co", 
       "message": "fix(notes): limit note description preview on tile",
       "date": "2025-02-05",
-      "relativeDate": "22 hours ago"
-    },
-    {
-      "hash": "1235915",
-      "author": "renata-sisilio",
-      "email": "renata@seren-ai.co", 
-      "message": "feat(gantt): drag and drop start/end dates",
-      "date": "2025-02-05",
-      "relativeDate": "24 hours ago"
+      "relativeDate": "23 hours ago"
     },
   ];
 
   // Stats
-  static const String totalCommits = '315';
+  static const String totalCommits = '316';
   static const String contributors = '0';
 }
