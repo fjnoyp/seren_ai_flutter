@@ -1,5 +1,3 @@
-import 'dart:developer';
-
 import 'package:flutter/material.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
@@ -238,7 +236,6 @@ class _CompleteTaskBar extends ConsumerWidget {
         },
         onDragFromStart: (cells) {
           final timeOffset = _getTimeOffset(cells, cellDurationType);
-          log('timeOffset: $timeOffset\n\ttask duration: ${task.duration}');
           if (task.duration != null && timeOffset < task.duration!) {
             ref.read(tasksRepositoryProvider).updateTaskStartDateTime(
                   task.id,
@@ -248,7 +245,6 @@ class _CompleteTaskBar extends ConsumerWidget {
         },
         onDragFromEnd: (cells) {
           final timeOffset = _getTimeOffset(cells, cellDurationType);
-          log('timeOffset: $timeOffset\n\ttask duration: ${task.duration}');
           if (task.duration != null && timeOffset > -task.duration!) {
             ref.read(tasksRepositoryProvider).updateTaskDueDate(
                   task.id,
