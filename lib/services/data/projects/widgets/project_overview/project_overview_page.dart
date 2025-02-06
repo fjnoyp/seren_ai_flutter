@@ -8,6 +8,7 @@ import 'package:seren_ai_flutter/services/data/notes/widgets/notes_list_page.dar
 import 'package:seren_ai_flutter/services/data/projects/providers/cur_selected_project_providers.dart';
 import 'package:seren_ai_flutter/services/data/projects/widgets/action_buttons/edit_project_button.dart';
 import 'package:seren_ai_flutter/services/data/projects/widgets/action_buttons/update_project_assignees_button.dart';
+import 'package:seren_ai_flutter/services/data/projects/widgets/project_overview/sub_lists/project_tasks_filters.dart';
 import 'package:seren_ai_flutter/services/data/projects/widgets/project_page.dart';
 import 'package:seren_ai_flutter/services/data/projects/widgets/project_overview/project_tasks_section.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
@@ -24,24 +25,29 @@ class ProjectTasksPage extends HookConsumerWidget {
       if (isWebVersion) ...[
         (
           name: AppLocalizations.of(context)!.board,
+          icon: Icons.view_kanban_outlined,
           child: const ProjectTasksSectionWeb('board')
         ),
         (
           name: AppLocalizations.of(context)!.list,
+          icon: Icons.list,
           child: const ProjectTasksSectionWeb('list')
         ),
         (
           name: AppLocalizations.of(context)!.ganttChart,
+          icon: Icons.segment,
           child: const _ProjectGanttSection()
         ),
       ] else ...[
         (
           name: AppLocalizations.of(context)!.tasks,
+          icon: Icons.task,
           child: const ProjectTasksSection()
         ),
       ],
       (
         name: AppLocalizations.of(context)!.notes,
+        icon: Icons.description_outlined,
         child: const _ProjectNotesSection()
       ),
     ];
@@ -90,14 +96,32 @@ class ProjectTasksPage extends HookConsumerWidget {
                               iconSize: 18,
                               icon: const Icon(Icons.settings),
                             ),
+                            if (isLargeScreen) ...[
+                              const SizedBox(width: 32),
+                              SizedBox(
+                                width: 480,
+                                child: TabBar(
+                                  tabs: tabs
+                                      .map((tab) => Tab(text: tab.name))
+                                      .toList(),
+                                  dividerColor: Colors.transparent,
+                                  indicatorColor: Colors.transparent,
+                                  labelStyle: const TextStyle(
+                                      fontWeight: FontWeight.bold),
+                                ),
+                              ),
+                            ],
                           ],
                         ),
                         SizedBox(height: isLargeScreen ? 8 : 3),
                         const _CurrentProjectReadinessBar(),
-                        SizedBox(height: isLargeScreen ? 16 : 3),
-                        TabBar(
-                          tabs: tabs.map((tab) => Tab(text: tab.name)).toList(),
-                        ),
+                        if (!isLargeScreen) ...[
+                          const SizedBox(height: 3),
+                          TabBar(
+                              tabs: tabs
+                                  .map((tab) => Tab(text: tab.name))
+                                  .toList()),
+                        ],
                         Expanded(
                           child: TabBarView(
                             physics: const NeverScrollableScrollPhysics(),
@@ -208,6 +232,15 @@ class _ProjectGanttSection extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final curProjectId = ref.watch(curSelectedProjectIdNotifierProvider);
-    return GanttChart(curProjectId);
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.end,
+      children: [
+        const Padding(
+          padding: EdgeInsets.all(8.0),
+          child: NewTaskFromCurrentProjectButton(),
+        ),
+        Expanded(child: GanttChart(curProjectId)),
+      ],
+    );
   }
 }

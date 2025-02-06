@@ -64,7 +64,6 @@ class ProjectTasksSectionWeb extends HookConsumerWidget {
             filterBy: filterBy,
             sortBy: sortBy,
             viewMode: viewMode,
-            showExtraViewControls: false,
             onShowCustomDateRangePicker: _showCustomDateRangePicker,
             useHorizontalScroll: false,
           ),

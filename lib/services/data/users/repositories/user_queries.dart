@@ -34,16 +34,8 @@ abstract class UserQueries {
 
   /// Params:
   /// - task_id: String
+  /// 
   /// Used to fetch all users that are assigned to a specific task
-  static const String taskAssigneeUsersQuery = '''
-    SELECT *
-    FROM users u
-    LEFT JOIN task_user_assignments tua ON u.id = tua.user_id
-    WHERE tua.task_id = :task_id
-  ''';
-
-  /// Params:
-  /// - task_id: String
   static const String getTaskAssignedUsersQuery = '''
     SELECT DISTINCT u.*
     FROM users u

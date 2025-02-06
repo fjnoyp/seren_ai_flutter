@@ -198,6 +198,7 @@ class GanttView extends HookConsumerWidget {
           verticalController: leftController,
           mainVerticalController: mainVerticalController,
         ),
+        const VerticalDivider(width: 1),
         Expanded(
           child: Scrollbar(
             controller: mainVerticalController,

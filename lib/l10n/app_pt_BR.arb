@@ -153,7 +153,6 @@
     "enterProjectDescription": "Adicionar descrição do projeto",
     "enterProjectAddress": "Adicionar endereço do projeto",
     "sortBy": "Ordenar por",
-    "priority": "Prioridade",
     "dueDate": "Prazo",
     "createdAt": "Criado em",
     "board": "Quadro",
@@ -312,8 +311,12 @@
     "todayDate": "Hoje ({date})",
     "tomorrowDate": "Amanhã ({date})",
     "yesterdayDate": "Ontem ({date})",
+    "day": "Dia",
+    "week": "Semana",
+    "month": "Mês",
 
     "@_": {"description": "Status Enum"},
+    "status": "Status",
     "cancelled": "Cancelada",
     "open": "Aberta",
     "inProgress": "Em Andamento",
@@ -330,6 +333,7 @@
     "toolAiResult": "Resultado de Ferramenta IA",
 
     "@_": {"description": "Priority Enum"},
+    "priority": "Prioridade",
     "veryHigh": "Muito Alta",
     "high": "Alta", 
     "normal": "Normal",

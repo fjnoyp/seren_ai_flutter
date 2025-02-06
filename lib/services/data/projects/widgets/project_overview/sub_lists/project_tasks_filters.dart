@@ -127,48 +127,63 @@ class ProjectTasksFilters extends ConsumerWidget {
             )
             .toList(),
       ),
-      if (showExtraViewControls) ...[
-        SegmentedButton<String>(
-          segments: const [
-            ButtonSegment(
-                value: 'board',
-                icon: Icon(Icons.view_week),
-                label: Text('Board')),
-            ButtonSegment(
-                value: 'list', icon: Icon(Icons.list), label: Text('List')),
-          ],
-          selected: {viewMode.value},
-          onSelectionChanged: (value) => viewMode.value = value.first,
-        ),
-        const SizedBox(width: 8),
-        FilledButton.tonalIcon(
-          icon: const Icon(Icons.add),
-          label: Text(AppLocalizations.of(context)!.createNewTask),
-          onPressed: () async =>
-              await ref.read(taskNavigationServiceProvider).openNewTask(
-                    initialProjectId:
-                        ref.read(curSelectedProjectIdNotifierProvider),
-                  ),
-        ),
-      ],
     ];
 
-    return useHorizontalScroll
-        ? SingleChildScrollView(
-            scrollDirection: Axis.horizontal,
-            child: Row(
-              children: [
-                for (var i = 0; i < filterWidgets.length; i++) ...[
-                  filterWidgets[i],
-                  if (i < filterWidgets.length - 1) const SizedBox(width: 8),
-                ],
-              ],
-            ),
-          )
-        : Wrap(
-            spacing: 8,
-            runSpacing: 4,
-            children: filterWidgets,
-          );
+    return Row(
+      children: [
+        useHorizontalScroll
+            ? SingleChildScrollView(
+                scrollDirection: Axis.horizontal,
+                child: Row(
+                  children: [
+                    for (var i = 0; i < filterWidgets.length; i++) ...[
+                      filterWidgets[i],
+                      if (i < filterWidgets.length - 1)
+                        const SizedBox(width: 8),
+                    ],
+                  ],
+                ),
+              )
+            : Wrap(
+                spacing: 8,
+                runSpacing: 4,
+                children: filterWidgets,
+              ),
+        if (showExtraViewControls) ...[
+          const Expanded(child: SizedBox()),
+          // SegmentedButton<String>(
+          //   segments: const [
+          //     ButtonSegment(
+          //         value: 'board',
+          //         icon: Icon(Icons.view_week),
+          //         label: Text('Board')),
+          //     ButtonSegment(
+          //         value: 'list', icon: Icon(Icons.list), label: Text('List')),
+          //   ],
+          //   selected: {viewMode.value},
+          //   onSelectionChanged: (value) => viewMode.value = value.first,
+          // ),
+          // const SizedBox(width: 8),
+          const NewTaskFromCurrentProjectButton(),
+        ],
+      ],
+    );
+  }
+}
+
+class NewTaskFromCurrentProjectButton extends ConsumerWidget {
+  const NewTaskFromCurrentProjectButton({super.key});
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    return FilledButton.tonalIcon(
+      icon: const Icon(Icons.add),
+      label: Text(AppLocalizations.of(context)!.createNewTask),
+      onPressed: () async => await ref
+          .read(taskNavigationServiceProvider)
+          .openNewTask(
+            initialProjectId: ref.read(curSelectedProjectIdNotifierProvider),
+          ),
+    );
   }
 }

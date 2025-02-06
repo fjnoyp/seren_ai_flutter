@@ -3,8 +3,9 @@ import 'package:seren_ai_flutter/services/data/common/status_enum.dart';
 
 class TaskStatusView extends StatelessWidget {
   final StatusEnum status;
+  final bool outline;
 
-  const TaskStatusView({super.key, required this.status});
+  const TaskStatusView({super.key, required this.status, this.outline = true});
 
   @override
   Widget build(BuildContext context) {
@@ -12,16 +13,25 @@ class TaskStatusView extends StatelessWidget {
     final color = getTaskStatusColor(status);
 
     return Container(
-      decoration: BoxDecoration(
-        border: Border.all(color: color ?? Colors.transparent),
-        borderRadius: BorderRadius.circular(4),
-      ),
-      padding: const EdgeInsets.all(2), // Added padding
+      decoration: outline
+          ? BoxDecoration(
+              border: Border.all(color: color ?? Colors.transparent),
+              borderRadius: BorderRadius.circular(4),
+            )
+          : null,
+      padding: outline ? const EdgeInsets.all(2) : null,
       child: Row(
+        mainAxisSize: MainAxisSize.min,
         children: [
           Icon(getTaskStatusIcon(status), color: color, size: 16),
-          Text(status.toString().split('.').last,
-              style: theme.textTheme.labelSmall!.copyWith(color: color)),
+          Flexible(
+            child: Text(
+              status.toHumanReadable(context),
+              style: theme.textTheme.labelSmall!.copyWith(color: color),
+              maxLines: 1,
+              overflow: TextOverflow.ellipsis,
+            ),
+          ),
         ],
       ),
     );
@@ -50,7 +60,7 @@ MaterialColor? getTaskStatusColor(StatusEnum status) {
     case StatusEnum.inProgress:
       return Colors.green;
     case StatusEnum.finished:
-      return Colors.yellow;    
+      return Colors.yellow;
     default:
       return null;
   }

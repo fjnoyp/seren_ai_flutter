@@ -2,26 +2,34 @@
 class BuildInfo {
   // Core build info
   static const String version = '1.0.0';
-  static const String buildDate = '2025-02-05 19:59:22';
+  static const String buildDate = '2025-02-06 10:29:20';
   
   // Git info
-  static const String commitHash = 'f106783';
+  static const String commitHash = '1f8ebf7';
   static const String branch = 'feat/project-gantt-chart';
   static const String lastTag = 'no tag';
   
   // Author of last commit
-  static const String lastCommitAuthor = 'Kyle';
-  static const String lastCommitEmail = 'kylcheng@gmail.com';
+  static const String lastCommitAuthor = 'renata-sisilio';
+  static const String lastCommitEmail = 'renata@seren-ai.co';
   
   // Recent commits (last 5)
   static const List<Map<String, String>> recentCommits = [
+    {
+      "hash": "1f8ebf7",
+      "author": "renata-sisilio",
+      "email": "renata@seren-ai.co", 
+      "message": "feat(gantt): show gantt chart at project overview page (web only for now)",
+      "date": "2025-02-05",
+      "relativeDate": "15 hours ago"
+    },
     {
       "hash": "f106783",
       "author": "Kyle",
       "email": "kylcheng@gmail.com", 
       "message": "fix: ui context for ai + task edit highlights",
       "date": "2025-02-05",
-      "relativeDate": "6 hours ago"
+      "relativeDate": "20 hours ago"
     },
     {
       "hash": "b9711b6",
@@ -29,7 +37,7 @@ class BuildInfo {
       "email": "renata@seren-ai.co", 
       "message": "fix(notes): limit note description preview on tile",
       "date": "2025-02-05",
-      "relativeDate": "7 hours ago"
+      "relativeDate": "22 hours ago"
     },
     {
       "hash": "1235915",
@@ -37,7 +45,7 @@ class BuildInfo {
       "email": "renata@seren-ai.co", 
       "message": "feat(gantt): drag and drop start/end dates",
       "date": "2025-02-05",
-      "relativeDate": "9 hours ago"
+      "relativeDate": "23 hours ago"
     },
     {
       "hash": "25f0eae",
@@ -45,19 +53,11 @@ class BuildInfo {
       "email": "renata@seren-ai.co", 
       "message": "fix(tasks): shrink description on task cards",
       "date": "2025-02-05",
-      "relativeDate": "9 hours ago"
-    },
-    {
-      "hash": "4ecab3b",
-      "author": "renata-sisilio",
-      "email": "renata@seren-ai.co", 
-      "message": "fix(mobile): allow redirect to project tasks after creating a task",
-      "date": "2025-02-05",
-      "relativeDate": "10 hours ago"
+      "relativeDate": "24 hours ago"
     },
   ];
 
   // Stats
-  static const String totalCommits = '313';
+  static const String totalCommits = '314';
   static const String contributors = '0';
 }
