@@ -8,7 +8,7 @@ import 'package:seren_ai_flutter/services/data/tasks/models/task_model.dart';
 import 'package:seren_ai_flutter/services/data/tasks/providers/task_by_id_stream_provider.dart';
 import 'package:seren_ai_flutter/services/data/tasks/providers/task_navigation_service.dart';
 import 'package:seren_ai_flutter/services/data/tasks/task_field_enum.dart';
-import 'package:seren_ai_flutter/services/data/tasks/widgets/gantt/experimental/viewable_tasks_hierarchy_provider.dart';
+import 'package:seren_ai_flutter/services/data/tasks/widgets/gantt/experimental/cur_project_tasks_hierarchy_provider.dart';
 import 'package:seren_ai_flutter/services/data/tasks/widgets/task_list/task_priority_view.dart';
 import 'package:seren_ai_flutter/services/data/tasks/widgets/task_list/task_status_view.dart';
 import 'package:seren_ai_flutter/services/data/users/providers/task_assigned_users_stream_provider.dart';
@@ -35,7 +35,7 @@ class GanttStaticColumnView extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final visibleTaskIds = ref.watch(curUserViewableTasksHierarchyIdsProvider);
+    final visibleTaskIds = ref.watch(curProjectTasksHierarchyIdsProvider);
     final staticColumnHeaders = [
       TaskFieldEnum.name,
       TaskFieldEnum.assignees,

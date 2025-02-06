@@ -7,7 +7,8 @@ import 'package:seren_ai_flutter/services/data/notes/widgets/pdf/note_to_pdf_con
 import 'package:share_plus/share_plus.dart';
 
 /// This provider is a family provider because it needs a [WidgetRef] to be created.
-final shareNoteServiceProvider = Provider.family<ShareNoteService, WidgetRef>(
+final shareNoteServiceProvider =
+    Provider.autoDispose.family<ShareNoteService, WidgetRef>(
   (ref, widgetRef) {
     return ShareNoteService(widgetRef);
   },

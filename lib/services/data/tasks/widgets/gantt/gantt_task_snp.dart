@@ -40,9 +40,8 @@ class GanttTask {
 /// Set the project id to filter the tasks by.
 ///
 /// If null, all tasks will be shown.
-final ganttTaskProvider =
-    StateNotifierProvider.family<GanttTaskNotifier, GanttState, String?>(
-        (ref, projectId) {
+final ganttTaskProvider = StateNotifierProvider.autoDispose
+    .family<GanttTaskNotifier, GanttState, String?>((ref, projectId) {
   final notifier = GanttTaskNotifier();
 
   // Immediately fetch initial data

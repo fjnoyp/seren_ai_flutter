@@ -159,6 +159,7 @@ class ProjectTasksFilters extends ConsumerWidget {
   }
 }
 
+// TODO p2: make it private once `ProjectTasksFilters` is used by `_ProjectGanttSection`
 class NewTaskFromCurrentProjectButton extends ConsumerWidget {
   const NewTaskFromCurrentProjectButton({super.key});
 

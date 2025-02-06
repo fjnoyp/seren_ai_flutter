@@ -149,7 +149,7 @@ class _CurrentProjectReadinessBar extends ConsumerWidget {
         .valueOrNull
         ?.where((e) => e.parentProjectId == project.id);
 
-    // TODO: improve readiness calculation using tasks estimated duration
+    // TODO p4: improve readiness calculation using tasks estimated duration
     final completedTasksCount =
         tasks?.where((e) => e.status == StatusEnum.finished).length ?? 0;
     final totalTasksCount =
@@ -239,7 +239,7 @@ class _ProjectGanttSection extends ConsumerWidget {
           padding: EdgeInsets.all(8.0),
           child: NewTaskFromCurrentProjectButton(),
         ),
-        Expanded(child: GanttChart(curProjectId)),
+        Expanded(child: GanttChart(projectId: curProjectId)),
       ],
     );
   }

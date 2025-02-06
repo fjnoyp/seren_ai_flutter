@@ -17,9 +17,9 @@ class TaskHierarchyInfo {
   }) : childrenIds = childrenIds ?? [];
 }
 
-/// Provide ids of cur user viewable tasks sorted by hierarchy (tasks grouped together by hierarhcy)
-final curUserViewableTasksHierarchyIdsProvider = Provider<List<String>>((ref) {
-  final hierarchy = ref.watch(_curUserViewableTasksHierarchyProvider);
+/// Provide ids of cur project tasks sorted by hierarchy (tasks grouped together by hierarhcy)
+final curProjectTasksHierarchyIdsProvider = Provider<List<String>>((ref) {
+  final hierarchy = ref.watch(_curProjectTasksHierarchyProvider);
 
   // Collect task IDs in the order defined by the hierarchy
   List<String> orderedTaskIds = [];
@@ -42,21 +42,21 @@ final curUserViewableTasksHierarchyIdsProvider = Provider<List<String>>((ref) {
 
 /// Provide hierarchy info for a taskId
 final taskHierarchyInfoProvider =
-    Provider.family<TaskHierarchyInfo?, String>((ref, taskId) {
+    Provider.autoDispose.family<TaskHierarchyInfo?, String>((ref, taskId) {
   // Use select() to only watch the specific map entry
-  return ref.watch(
-      _curUserViewableTasksHierarchyProvider.select((map) => map[taskId]));
+  return ref
+      .watch(_curProjectTasksHierarchyProvider.select((map) => map[taskId]));
 });
 
 // Provide top level parentId for a given taskId
 final taskParentChainIdsProvider =
-    Provider.family<List<String>, String>((ref, taskId) {
+    Provider.autoDispose.family<List<String>, String>((ref, taskId) {
   final chain = <String>[];
   String? currentId = taskId;
 
   while (currentId != null) {
     final info = ref.watch(
-        _curUserViewableTasksHierarchyProvider.select((map) => map[currentId]));
+        _curProjectTasksHierarchyProvider.select((map) => map[currentId]));
     currentId = info?.parentId;
     if (currentId != null) {
       chain.add(currentId);
@@ -66,9 +66,9 @@ final taskParentChainIdsProvider =
   return chain;
 });
 
-// TODO: make this a family provider so we can use it to get hierarchy for all tasks (projectId == null)
+// TODO p3: make this a family provider so we can use it to get hierarchy for all tasks (projectId == null)
 // Return tasks in their hierarchal groupings
-final _curUserViewableTasksHierarchyProvider =
+final _curProjectTasksHierarchyProvider =
     Provider<Map<String, TaskHierarchyInfo>>((ref) {
   final projectId = ref.watch(curSelectedProjectIdNotifierProvider);
   final tasks = ref

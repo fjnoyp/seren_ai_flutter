@@ -5,8 +5,8 @@ import 'package:seren_ai_flutter/services/data/tasks/widgets/gantt/gantt_task_sn
 import 'package:seren_ai_flutter/services/data/tasks/widgets/gantt/gantt_view.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
-class TaskGanttPage extends ConsumerWidget {
-  const TaskGanttPage({super.key});
+class GanttTaskPage extends ConsumerWidget {
+  const GanttTaskPage({super.key});
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -19,7 +19,7 @@ class TaskGanttPage extends ConsumerWidget {
             decoration: BoxDecoration(
               border: Border.all(width: 0),
             ),
-            child: const GanttChart(null),
+            child: const GanttChart(projectId: null),
           ),
         )
       ],
@@ -28,7 +28,7 @@ class TaskGanttPage extends ConsumerWidget {
 }
 
 class GanttChart extends HookConsumerWidget {
-  const GanttChart(this.projectId, {super.key});
+  const GanttChart({super.key, required this.projectId});
 
   /// The project id to filter the tasks by.
   ///
@@ -106,7 +106,6 @@ class GanttChart extends HookConsumerWidget {
             horizontalScrollController: horizontalScrollController.value,
           ),
         ),
-        
         Padding(
           padding: const EdgeInsets.all(8.0),
           child: SegmentedButton<GanttViewType>(
@@ -121,7 +120,6 @@ class GanttChart extends HookConsumerWidget {
                 icon: const Icon(Icons.date_range_outlined),
                 label: Text(AppLocalizations.of(context)!.week),
               ),
-
               ButtonSegment(
                 value: GanttViewType.month,
                 icon: const Icon(Icons.calendar_month_outlined),
@@ -129,7 +127,6 @@ class GanttChart extends HookConsumerWidget {
               ),
             ],
             selected: {viewType.value},
-
             onSelectionChanged: (selected) {
               viewType.value = selected.first;
             },

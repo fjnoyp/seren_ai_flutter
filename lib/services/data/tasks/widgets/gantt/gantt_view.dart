@@ -8,7 +8,7 @@ import 'package:flutter/rendering.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:intl/intl.dart';
-import 'package:seren_ai_flutter/services/data/tasks/widgets/gantt/experimental/viewable_tasks_hierarchy_provider.dart';
+import 'package:seren_ai_flutter/services/data/tasks/widgets/gantt/experimental/cur_project_tasks_hierarchy_provider.dart';
 import 'package:seren_ai_flutter/services/data/tasks/widgets/gantt/gantt_static_column_view.dart';
 import 'package:seren_ai_flutter/services/data/tasks/widgets/gantt/gantt_task_data_item_bar_view.dart';
 
@@ -542,7 +542,7 @@ class GanttBody extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final visibleTaskIds = ref.watch(curUserViewableTasksHierarchyIdsProvider);
+    final visibleTaskIds = ref.watch(curProjectTasksHierarchyIdsProvider);
 
     return SingleChildScrollView(
       controller: mainHorizontalController,

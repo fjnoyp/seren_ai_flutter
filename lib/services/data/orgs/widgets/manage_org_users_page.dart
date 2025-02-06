@@ -92,7 +92,7 @@ class ChangeUserRoleDialog extends HookConsumerWidget {
           onPressed: () {
             showDialog(
                 context: context,
-                // TODO: Externalize confirmation dialog's content
+                // TODO p4: Externalize confirmation dialog's content
                 // to use a more proper message here
                 builder: (context) => DeleteConfirmationDialog(
                     itemName:
