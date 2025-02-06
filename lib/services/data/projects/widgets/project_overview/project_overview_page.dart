@@ -26,12 +26,12 @@ class ProjectTasksPage extends HookConsumerWidget {
         (
           name: AppLocalizations.of(context)!.board,
           icon: Icons.view_kanban_outlined,
-          child: const ProjectTasksSectionWeb('board')
+          child: const ProjectTasksSectionWeb(ProjectTasksSectionViewMode.board)
         ),
         (
           name: AppLocalizations.of(context)!.list,
           icon: Icons.list,
-          child: const ProjectTasksSectionWeb('list')
+          child: const ProjectTasksSectionWeb(ProjectTasksSectionViewMode.list)
         ),
         (
           name: AppLocalizations.of(context)!.ganttChart,
