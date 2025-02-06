@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:seren_ai_flutter/services/data/tasks/models/task_model.dart';
 
-class TaskPriorityView extends StatelessWidget {
+class PriorityView extends StatelessWidget {
   final PriorityEnum priority;
   final bool outline;
 
-  const TaskPriorityView({
+  const PriorityView({
     super.key,
     required this.priority,
     this.outline = true,

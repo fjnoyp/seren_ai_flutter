@@ -2,10 +2,10 @@
 class BuildInfo {
   // Core build info
   static const String version = '1.0.0';
-  static const String buildDate = '2025-02-06 14:49:34';
+  static const String buildDate = '2025-02-06 16:09:40';
   
   // Git info
-  static const String commitHash = '60ad071';
+  static const String commitHash = '933a4b6';
   static const String branch = 'feat/project-gantt-chart';
   static const String lastTag = 'no tag';
   
@@ -16,12 +16,28 @@ class BuildInfo {
   // Recent commits (last 5)
   static const List<Map<String, String>> recentCommits = [
     {
+      "hash": "933a4b6",
+      "author": "renata-sisilio",
+      "email": "renata@seren-ai.co", 
+      "message": "chore(form): dynamize selection fields current value display",
+      "date": "2025-02-06",
+      "relativeDate": "5 minutes ago"
+    },
+    {
+      "hash": "f612bae",
+      "author": "renata-sisilio",
+      "email": "renata@seren-ai.co", 
+      "message": "pr comments",
+      "date": "2025-02-06",
+      "relativeDate": "80 minutes ago"
+    },
+    {
       "hash": "60ad071",
       "author": "renata-sisilio",
       "email": "renata@seren-ai.co", 
       "message": "feat(gantt): allow open task page from gantt view",
       "date": "2025-02-06",
-      "relativeDate": "3 hours ago"
+      "relativeDate": "4 hours ago"
     },
     {
       "hash": "26fe446",
@@ -29,7 +45,7 @@ class BuildInfo {
       "email": "renata@seren-ai.co", 
       "message": "refactor: use project tasks section viewmode as enum",
       "date": "2025-02-06",
-      "relativeDate": "4 hours ago"
+      "relativeDate": "5 hours ago"
     },
     {
       "hash": "8ca07fe",
@@ -37,27 +53,11 @@ class BuildInfo {
       "email": "renata@seren-ai.co", 
       "message": "fix(gantt): adjust gantt chart ui",
       "date": "2025-02-06",
-      "relativeDate": "4 hours ago"
-    },
-    {
-      "hash": "1f8ebf7",
-      "author": "renata-sisilio",
-      "email": "renata@seren-ai.co", 
-      "message": "feat(gantt): show gantt chart at project overview page (web only for now)",
-      "date": "2025-02-05",
-      "relativeDate": "19 hours ago"
-    },
-    {
-      "hash": "f106783",
-      "author": "Kyle",
-      "email": "kylcheng@gmail.com", 
-      "message": "fix: ui context for ai + task edit highlights",
-      "date": "2025-02-05",
-      "relativeDate": "24 hours ago"
+      "relativeDate": "6 hours ago"
     },
   ];
 
   // Stats
-  static const String totalCommits = '317';
+  static const String totalCommits = '319';
   static const String contributors = '0';
 }

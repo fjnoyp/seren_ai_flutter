@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:seren_ai_flutter/services/data/common/status_enum.dart';
 
-class TaskStatusView extends StatelessWidget {
+class StatusView extends StatelessWidget {
   final StatusEnum status;
   final bool outline;
 
-  const TaskStatusView({super.key, required this.status, this.outline = true});
+  const StatusView({super.key, required this.status, this.outline = true});
 
   @override
   Widget build(BuildContext context) {

@@ -1,5 +1,3 @@
-import 'dart:math';
-
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -9,10 +7,9 @@ import 'package:seren_ai_flutter/services/data/tasks/providers/task_by_id_stream
 import 'package:seren_ai_flutter/services/data/tasks/providers/task_navigation_service.dart';
 import 'package:seren_ai_flutter/services/data/tasks/task_field_enum.dart';
 import 'package:seren_ai_flutter/services/data/tasks/widgets/gantt/experimental/cur_project_tasks_hierarchy_provider.dart';
-import 'package:seren_ai_flutter/services/data/tasks/widgets/task_list/task_priority_view.dart';
-import 'package:seren_ai_flutter/services/data/tasks/widgets/task_list/task_status_view.dart';
-import 'package:seren_ai_flutter/services/data/users/providers/task_assigned_users_stream_provider.dart';
-import 'package:seren_ai_flutter/services/data/users/widgets/user_avatar.dart';
+import 'package:seren_ai_flutter/services/data/common/widgets/priority_view.dart';
+import 'package:seren_ai_flutter/services/data/common/widgets/status_view.dart';
+import 'package:seren_ai_flutter/services/data/tasks/widgets/task_assignees_avatars.dart';
 
 class GanttStaticColumnView extends ConsumerWidget {
   static const Map<TaskFieldEnum, double> columnWidths = {
@@ -311,14 +308,14 @@ class _StaticCellContent extends ConsumerWidget {
         );
       case TaskFieldEnum.status:
         return Center(
-          child: TaskStatusView(
+          child: StatusView(
             status: task?.status ?? StatusEnum.open,
             outline: false,
           ),
         );
       case TaskFieldEnum.priority:
         return Center(
-          child: TaskPriorityView(
+          child: PriorityView(
             priority: task?.priority ?? PriorityEnum.normal,
             outline: false,
           ),
@@ -326,48 +323,5 @@ class _StaticCellContent extends ConsumerWidget {
       case TaskFieldEnum.assignees:
         return TaskAssigneesAvatars(taskId);
     }
-  }
-}
-
-class TaskAssigneesAvatars extends ConsumerWidget {
-  final String taskId;
-
-  const TaskAssigneesAvatars(this.taskId, {super.key});
-
-  static const avatarsToShow = 3;
-  static const avatarRadius = 14.0;
-  static const avatarSpacing = 16.0;
-
-  @override
-  Widget build(BuildContext context, WidgetRef ref) {
-    final taskAssignees =
-        ref.watch(taskAssignedUsersStreamProvider(taskId)).value ?? [];
-
-    final centerFactor = (avatarsToShow -
-            min(taskAssignees.length, avatarsToShow) +
-            (taskAssignees.length > avatarsToShow ? 2 : 1)) /
-        2;
-
-    return Stack(
-      alignment: Alignment.center,
-      children: [
-        ...List.generate(
-          min(taskAssignees.length, avatarsToShow),
-          (index) => Positioned(
-            left: (index + centerFactor) * avatarSpacing,
-            child: UserAvatar(taskAssignees[index], radius: avatarRadius),
-          ),
-        ),
-        if (taskAssignees.length > avatarsToShow)
-          Positioned(
-            left: avatarsToShow * avatarSpacing,
-            child: CircleAvatar(
-              radius: avatarRadius,
-              backgroundColor: Theme.of(context).colorScheme.surface,
-              child: Text('+${taskAssignees.length - avatarsToShow}'),
-            ),
-          ),
-      ],
-    );
   }
 }
