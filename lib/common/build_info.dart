@@ -2,10 +2,10 @@
 class BuildInfo {
   // Core build info
   static const String version = '1.0.0';
-  static const String buildDate = '2025-02-06 16:09:40';
+  static const String buildDate = '2025-02-06 16:35:35';
   
   // Git info
-  static const String commitHash = '933a4b6';
+  static const String commitHash = '9794ca5';
   static const String branch = 'feat/project-gantt-chart';
   static const String lastTag = 'no tag';
   
@@ -16,12 +16,12 @@ class BuildInfo {
   // Recent commits (last 5)
   static const List<Map<String, String>> recentCommits = [
     {
-      "hash": "933a4b6",
+      "hash": "9794ca5",
       "author": "renata-sisilio",
       "email": "renata@seren-ai.co", 
       "message": "chore(form): dynamize selection fields current value display",
       "date": "2025-02-06",
-      "relativeDate": "5 minutes ago"
+      "relativeDate": "31 minutes ago"
     },
     {
       "hash": "f612bae",
@@ -29,7 +29,7 @@ class BuildInfo {
       "email": "renata@seren-ai.co", 
       "message": "pr comments",
       "date": "2025-02-06",
-      "relativeDate": "80 minutes ago"
+      "relativeDate": "2 hours ago"
     },
     {
       "hash": "60ad071",
@@ -37,7 +37,7 @@ class BuildInfo {
       "email": "renata@seren-ai.co", 
       "message": "feat(gantt): allow open task page from gantt view",
       "date": "2025-02-06",
-      "relativeDate": "4 hours ago"
+      "relativeDate": "5 hours ago"
     },
     {
       "hash": "26fe446",
@@ -45,7 +45,7 @@ class BuildInfo {
       "email": "renata@seren-ai.co", 
       "message": "refactor: use project tasks section viewmode as enum",
       "date": "2025-02-06",
-      "relativeDate": "5 hours ago"
+      "relativeDate": "6 hours ago"
     },
     {
       "hash": "8ca07fe",

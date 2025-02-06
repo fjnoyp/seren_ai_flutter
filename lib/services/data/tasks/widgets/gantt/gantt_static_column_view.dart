@@ -206,7 +206,7 @@ class _StaticRow extends ConsumerWidget {
             )
           : SizedBox(height: cellHeight),
       loading: () => SizedBox(
-        height: cellHeight,
+        height: cellHeight - 1, // 1 px taken by the divider
         child: const Center(child: LinearProgressIndicator()),
       ),
       error: (error, stackTrace) =>
