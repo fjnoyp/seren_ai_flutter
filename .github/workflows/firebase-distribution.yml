@@ -17,7 +17,7 @@ on:
 env:
   JAVA_VERSION: '17'
   FLUTTER_BUILD_MODE: release
-  FLUTTER_VERSION_NAME: 1.0.0
+  FLUTTER_VERSION_NAME: $VERSION  # Will be set from build_info.dart
   FLUTTER_VERSION_CODE: ${{ github.run_number }}
 
 jobs:
@@ -32,12 +32,17 @@ jobs:
       - name: Generate Release Notes
         id: release_notes
         run: |
-          VERSION_INFO="Version ${{ env.FLUTTER_VERSION_NAME }} (${{ github.run_number }})"
-          LAST_TAG=$(git describe --tags --abbrev=0 2>/dev/null || git rev-list --max-parents=0 HEAD)
-          COMMIT_LOG=$(git log ${LAST_TAG}..HEAD --pretty=format:"- %s" | sed 's/[\"]/\\&/g')
+          # Source the build info
+          source <(grep "static const String version =" lib/common/build_info.dart | sed "s/.*'\(.*\)'.*/VERSION=\1/")
+          
+          VERSION_INFO="Version $VERSION (${{ github.run_number }})"
+          
+          # Get recent commits from build_info.dart
+          COMMIT_LOG=$(grep -A 5 '"message":' lib/common/build_info.dart | grep '"message":' | cut -d'"' -f4 | sed 's/^/- /')
           if [ -z "$COMMIT_LOG" ]; then
             COMMIT_LOG="- No changes since last version"
           fi
+
           NOTES="$VERSION_INFO
 
           Recent changes:
