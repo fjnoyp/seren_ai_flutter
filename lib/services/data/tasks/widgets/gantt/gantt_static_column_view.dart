@@ -376,18 +376,14 @@ class _StaticCellContent extends ConsumerWidget {
           overflow: TextOverflow.ellipsis,
         );
       case TaskFieldEnum.status:
-        return Center(
-          child: StatusView(
-            status: task?.status ?? StatusEnum.open,
-            outline: false,
-          ),
+        return StatusView(
+          status: task?.status ?? StatusEnum.open,
+          outline: false,
         );
       case TaskFieldEnum.priority:
-        return Center(
-          child: PriorityView(
-            priority: task?.priority ?? PriorityEnum.normal,
-            outline: false,
-          ),
+        return PriorityView(
+          priority: task?.priority ?? PriorityEnum.normal,
+          outline: false,
         );
       case TaskFieldEnum.assignees:
         return TaskAssigneesAvatars(taskId);

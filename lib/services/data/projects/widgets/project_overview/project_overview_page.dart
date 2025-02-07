@@ -105,7 +105,6 @@ class ProjectTasksPage extends HookConsumerWidget {
                                       .map((tab) => Tab(text: tab.name))
                                       .toList(),
                                   dividerColor: Colors.transparent,
-                                  indicatorColor: Colors.transparent,
                                   labelStyle: const TextStyle(
                                       fontWeight: FontWeight.bold),
                                 ),
