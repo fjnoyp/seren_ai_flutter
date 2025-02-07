@@ -10,7 +10,7 @@ class StatusView extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
-    final color = getTaskStatusColor(status);
+    final color = getStatusColor(status);
 
     return Container(
       decoration: outline
@@ -23,7 +23,7 @@ class StatusView extends StatelessWidget {
       child: Row(
         mainAxisSize: MainAxisSize.min,
         children: [
-          Icon(getTaskStatusIcon(status), color: color, size: 16),
+          Icon(getStatusIcon(status), color: color, size: 16),
           Flexible(
             child: Text(
               status.toHumanReadable(context),
@@ -38,7 +38,7 @@ class StatusView extends StatelessWidget {
   }
 }
 
-IconData? getTaskStatusIcon(StatusEnum status) {
+IconData? getStatusIcon(StatusEnum status) {
   switch (status) {
     case StatusEnum.open:
       return Icons.circle_outlined;
@@ -53,7 +53,7 @@ IconData? getTaskStatusIcon(StatusEnum status) {
   }
 }
 
-MaterialColor? getTaskStatusColor(StatusEnum status) {
+MaterialColor? getStatusColor(StatusEnum status) {
   switch (status) {
     case StatusEnum.open:
       return Colors.blue;

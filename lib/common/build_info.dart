@@ -2,10 +2,10 @@
 class BuildInfo {
   // Core build info
   static const String version = '1.0.0';
-  static const String buildDate = '2025-02-07 13:46:50';
+  static const String buildDate = '2025-02-07 14:41:58';
   
   // Git info
-  static const String commitHash = 'e49a9c3';
+  static const String commitHash = 'dac0d99';
   static const String branch = 'feat/project-gantt-chart';
   static const String lastTag = 'no tag';
   
@@ -16,12 +16,20 @@ class BuildInfo {
   // Recent commits (last 5)
   static const List<Map<String, String>> recentCommits = [
     {
+      "hash": "dac0d99",
+      "author": "renata-sisilio",
+      "email": "renata@seren-ai.co", 
+      "message": "fix(ui): minor - show tab indicator on project overview page (web) and left align values on gantt static columns",
+      "date": "2025-02-07",
+      "relativeDate": "55 minutes ago"
+    },
+    {
       "hash": "e49a9c3",
       "author": "renata-sisilio",
       "email": "renata@seren-ai.co", 
       "message": "fix(gantt): collapse/expand task phases",
       "date": "2025-02-07",
-      "relativeDate": "18 minutes ago"
+      "relativeDate": "73 minutes ago"
     },
     {
       "hash": "8396b61",
@@ -29,7 +37,7 @@ class BuildInfo {
       "email": "renata@seren-ai.co", 
       "message": "removed unnecessary debugging logs",
       "date": "2025-02-06",
-      "relativeDate": "21 hours ago"
+      "relativeDate": "22 hours ago"
     },
     {
       "hash": "d1c67d0",
@@ -37,7 +45,7 @@ class BuildInfo {
       "email": "renata@seren-ai.co", 
       "message": "fix(gantt): height difference on loading state",
       "date": "2025-02-06",
-      "relativeDate": "21 hours ago"
+      "relativeDate": "22 hours ago"
     },
     {
       "hash": "9794ca5",
@@ -45,19 +53,11 @@ class BuildInfo {
       "email": "renata@seren-ai.co", 
       "message": "chore(form): dynamize selection fields current value display",
       "date": "2025-02-06",
-      "relativeDate": "22 hours ago"
-    },
-    {
-      "hash": "f612bae",
-      "author": "renata-sisilio",
-      "email": "renata@seren-ai.co", 
-      "message": "pr comments",
-      "date": "2025-02-06",
       "relativeDate": "23 hours ago"
     },
   ];
 
   // Stats
-  static const String totalCommits = '322';
+  static const String totalCommits = '323';
   static const String contributors = '0';
 }
