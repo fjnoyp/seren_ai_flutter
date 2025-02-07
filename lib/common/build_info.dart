@@ -2,10 +2,10 @@
 class BuildInfo {
   // Core build info
   static const String version = '1.0.0';
-  static const String buildDate = '2025-02-06 16:51:22';
+  static const String buildDate = '2025-02-07 13:29:04';
   
   // Git info
-  static const String commitHash = 'd1c67d0';
+  static const String commitHash = '8396b61';
   static const String branch = 'feat/project-gantt-chart';
   static const String lastTag = 'no tag';
   
@@ -16,12 +16,20 @@ class BuildInfo {
   // Recent commits (last 5)
   static const List<Map<String, String>> recentCommits = [
     {
+      "hash": "8396b61",
+      "author": "renata-sisilio",
+      "email": "renata@seren-ai.co", 
+      "message": "removed unnecessary debugging logs",
+      "date": "2025-02-06",
+      "relativeDate": "21 hours ago"
+    },
+    {
       "hash": "d1c67d0",
       "author": "renata-sisilio",
       "email": "renata@seren-ai.co", 
       "message": "fix(gantt): height difference on loading state",
       "date": "2025-02-06",
-      "relativeDate": "16 minutes ago"
+      "relativeDate": "21 hours ago"
     },
     {
       "hash": "9794ca5",
@@ -29,7 +37,7 @@ class BuildInfo {
       "email": "renata@seren-ai.co", 
       "message": "chore(form): dynamize selection fields current value display",
       "date": "2025-02-06",
-      "relativeDate": "46 minutes ago"
+      "relativeDate": "21 hours ago"
     },
     {
       "hash": "f612bae",
@@ -37,7 +45,7 @@ class BuildInfo {
       "email": "renata@seren-ai.co", 
       "message": "pr comments",
       "date": "2025-02-06",
-      "relativeDate": "2 hours ago"
+      "relativeDate": "23 hours ago"
     },
     {
       "hash": "60ad071",
@@ -45,19 +53,11 @@ class BuildInfo {
       "email": "renata@seren-ai.co", 
       "message": "feat(gantt): allow open task page from gantt view",
       "date": "2025-02-06",
-      "relativeDate": "5 hours ago"
-    },
-    {
-      "hash": "26fe446",
-      "author": "renata-sisilio",
-      "email": "renata@seren-ai.co", 
-      "message": "refactor: use project tasks section viewmode as enum",
-      "date": "2025-02-06",
-      "relativeDate": "6 hours ago"
+      "relativeDate": "26 hours ago"
     },
   ];
 
   // Stats
-  static const String totalCommits = '320';
+  static const String totalCommits = '321';
   static const String contributors = '0';
 }

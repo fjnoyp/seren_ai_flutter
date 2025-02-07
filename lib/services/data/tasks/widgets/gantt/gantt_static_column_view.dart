@@ -9,6 +9,7 @@ import 'package:seren_ai_flutter/services/data/tasks/task_field_enum.dart';
 import 'package:seren_ai_flutter/services/data/tasks/widgets/gantt/experimental/cur_project_tasks_hierarchy_provider.dart';
 import 'package:seren_ai_flutter/services/data/common/widgets/priority_view.dart';
 import 'package:seren_ai_flutter/services/data/common/widgets/status_view.dart';
+import 'package:seren_ai_flutter/services/data/tasks/widgets/gantt/experimental/gantt_task_visual_state_provider.dart';
 import 'package:seren_ai_flutter/services/data/tasks/widgets/task_assignees_avatars.dart';
 
 class GanttStaticColumnView extends ConsumerWidget {
@@ -117,7 +118,7 @@ class _StaticHeader extends StatelessWidget {
   }
 }
 
-class _StaticRowValues extends StatelessWidget {
+class _StaticRowValues extends ConsumerWidget {
   final List<String> taskIds;
   final double cellHeight;
   final ScrollController? verticalController;
@@ -131,7 +132,7 @@ class _StaticRowValues extends StatelessWidget {
   });
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
     // RepaintBoundary should wrap the ListView, not the Expanded
     return Expanded(
       child: RepaintBoundary(
@@ -144,12 +145,32 @@ class _StaticRowValues extends StatelessWidget {
             cacheExtent: 200,
             addAutomaticKeepAlives: false,
             addRepaintBoundaries: true,
-            itemBuilder: (context, rowIndex) => _StaticRow(
-              taskId: taskIds[rowIndex],
-              cellHeight: cellHeight,
-              staticColumnHeaders: staticColumnHeaders,
-            ),
-            separatorBuilder: (context, index) => const Divider(height: 1),
+            itemBuilder: (context, rowIndex) {
+              final taskId = taskIds[rowIndex];
+              final visualState =
+                  ref.watch(ganttTaskVisualStateProvider(taskId));
+              final isVisible = ref.watch(ganttTaskVisibilityProvider(taskId));
+              return visualState.canExpand
+                  ? _StaticPhaseRow(
+                      taskId: taskId,
+                      cellHeight: cellHeight,
+                      isExpanded: visualState.isExpanded,
+                    )
+                  : isVisible
+                      ? _StaticTaskRow(
+                          taskId: taskId,
+                          cellHeight: cellHeight,
+                          staticColumnHeaders: staticColumnHeaders,
+                        )
+                      : const SizedBox.shrink();
+            },
+            separatorBuilder: (context, index) {
+              final isTaskVisible =
+                  ref.watch(ganttTaskVisibilityProvider(taskIds[index]));
+              return isTaskVisible
+                  ? const Divider(height: 1)
+                  : const SizedBox.shrink();
+            },
           ),
         ),
       ),
@@ -157,13 +178,61 @@ class _StaticRowValues extends StatelessWidget {
   }
 }
 
+class _StaticPhaseRow extends ConsumerWidget {
+  final String taskId;
+  final double cellHeight;
+  final bool isExpanded;
+
+  const _StaticPhaseRow({
+    required this.taskId,
+    required this.cellHeight,
+    required this.isExpanded,
+  });
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final task = ref.watch(taskByIdStreamProvider(taskId));
+
+    return task.when(
+      data: (task) => task != null
+          ? RepaintBoundary(
+              child: InkWell(
+                onTap: () => ref
+                    .read(ganttTaskVisualStateProvider(taskId).notifier)
+                    .toggleExpanded(),
+                child: SizedBox(
+                  height: cellHeight,
+                  child: Row(
+                    children: [
+                      Icon(
+                        isExpanded ? Icons.expand_less : Icons.expand_more,
+                        color: Theme.of(context).colorScheme.outline,
+                      ),
+                      const SizedBox(width: 4),
+                      Text(task.name),
+                    ],
+                  ),
+                ),
+              ),
+            )
+          : SizedBox(height: cellHeight),
+      loading: () => SizedBox(
+        height: cellHeight,
+        child: const Center(child: LinearProgressIndicator()),
+      ),
+      error: (error, stackTrace) =>
+          const Center(child: Text('Error loading phase')),
+    );
+  }
+}
+
 // Split into separate widgets for better performance
-class _StaticRow extends ConsumerWidget {
+class _StaticTaskRow extends ConsumerWidget {
   final String taskId;
   final double cellHeight;
   final List<TaskFieldEnum> staticColumnHeaders;
 
-  const _StaticRow({
+  const _StaticTaskRow({
     required this.taskId,
     required this.cellHeight,
     required this.staticColumnHeaders,
@@ -206,7 +275,7 @@ class _StaticRow extends ConsumerWidget {
             )
           : SizedBox(height: cellHeight),
       loading: () => SizedBox(
-        height: cellHeight - 1, // 1 px taken by the divider
+        height: cellHeight,
         child: const Center(child: LinearProgressIndicator()),
       ),
       error: (error, stackTrace) =>
@@ -277,7 +346,7 @@ class _StaticCell extends StatelessWidget {
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 2),
       width: GanttStaticColumnView.columnWidths[fieldType]!,
-      height: cellHeight - 1, // 1 px taken by the divider
+      height: cellHeight,
       alignment: Alignment.centerLeft,
       child: _StaticCellContent(
         taskId: taskId,
