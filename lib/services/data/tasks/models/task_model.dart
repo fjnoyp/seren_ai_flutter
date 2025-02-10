@@ -92,6 +92,9 @@ class TaskModel implements IHasId {
   @JsonKey(name: 'blocked_by_task_id')
   final String? blockedByTaskId;
 
+  @JsonKey(name: 'is_phase', fromJson: _isPhaseFromJson, toJson: _isPhaseToJson)
+  final bool isPhase;
+
   Duration? get duration {
     if (startDateTime != null && dueDate != null) {
       return dueDate!.difference(startDateTime!);
@@ -109,6 +112,10 @@ class TaskModel implements IHasId {
 
   static dynamic _durationToJson(int? value) => value;
 
+  static bool _isPhaseFromJson(dynamic value) => value == 1;
+
+  static dynamic _isPhaseToJson(bool value) => value ? 1 : 0;
+
   TaskModel({
     String? id,
     required this.name,
@@ -125,31 +132,10 @@ class TaskModel implements IHasId {
     this.startDateTime,
     this.parentTaskId,
     this.blockedByTaskId,
+    required this.isPhase,
   })  : id = id ?? uuid.v4(),
         assert(dueDate != null || reminderOffsetMinutes == null);
 
-  // Factory constructor for creating a TaskModel with default values
-  factory TaskModel.empty() {
-    final now = DateTime.now().toUtc();
-    return TaskModel(
-      name: 'New Task',
-      description: null,
-      status: StatusEnum.open,
-      priority: PriorityEnum.normal,
-      dueDate: null,
-      createdAt: now,
-      updatedAt: now,
-      authorUserId:
-          '', // This should be set to the current user's ID in practice
-      parentProjectId:
-          '', // This should be set to a valid project ID in practice
-      estimatedDurationMinutes: null,
-      reminderOffsetMinutes: 0,
-      startDateTime: null,
-      parentTaskId: null,
-      blockedByTaskId: null,
-    );
-  }
 
   TaskModel copyWith({
     String? id,
@@ -188,11 +174,14 @@ class TaskModel implements IHasId {
       startDateTime: startDateTime ?? this.startDateTime,
       parentTaskId: parentTaskId ?? this.parentTaskId,
       blockedByTaskId: blockedByTaskId ?? this.blockedByTaskId,
+      isPhase: isPhase,
     );
   }
 
   factory TaskModel.fromJson(Map<String, dynamic> json) =>
       _$TaskModelFromJson(json);
+  
+  @override
   Map<String, dynamic> toJson() => _$TaskModelToJson(this);
 
   Map<String, dynamic> toAiReadableMap(

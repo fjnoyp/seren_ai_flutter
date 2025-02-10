@@ -8,3 +8,11 @@ final tasksByProjectStreamProvider =
       .watch(tasksRepositoryProvider)
       .watchTasksByProject(projectId: projectId),
 );
+
+final phasesByProjectStreamProvider =
+    StreamProvider.family.autoDispose<List<TaskModel>?, String>(
+  (ref, projectId) => ref
+      .watch(tasksRepositoryProvider)
+      .watchTasksByProject(projectId: projectId)
+      .map((tasks) => tasks.where((task) => task.isPhase).toList()),
+);

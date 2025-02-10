@@ -70,6 +70,13 @@ class TasksRepository extends BaseRepository<TaskModel> {
     );
   }
 
+  Stream<List<TaskModel>> watchChildTasks({required String parentTaskId}) {
+    return watch(
+      TaskQueries.getTasksByParentIdQuery,
+      {'parent_task_id': parentTaskId},
+    );
+  }
+
   Future<List<TaskModel>> getChildTasks({
     required String parentTaskId,
   }) {

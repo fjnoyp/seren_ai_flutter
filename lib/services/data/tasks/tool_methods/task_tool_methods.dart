@@ -239,6 +239,7 @@ class TaskToolMethods {
       authorUserId: userId,
       // TODO p4: add `actionRequest.parentProjectId` instead of always using defaultProjectId
       parentProjectId: selectedProjectId,
+      isPhase: false,
     );
 
     // Save the task in the current task service

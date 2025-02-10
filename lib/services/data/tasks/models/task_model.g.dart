@@ -31,6 +31,7 @@ TaskModel _$TaskModelFromJson(Map<String, dynamic> json) => TaskModel(
           : DateTime.parse(json['start_date_time'] as String),
       parentTaskId: json['parent_task_id'] as String?,
       blockedByTaskId: json['blocked_by_task_id'] as String?,
+      isPhase: TaskModel._isPhaseFromJson(json['is_phase']),
     );
 
 Map<String, dynamic> _$TaskModelToJson(TaskModel instance) => <String, dynamic>{
@@ -50,6 +51,7 @@ Map<String, dynamic> _$TaskModelToJson(TaskModel instance) => <String, dynamic>{
       'start_date_time': instance.startDateTime?.toIso8601String(),
       'parent_task_id': instance.parentTaskId,
       'blocked_by_task_id': instance.blockedByTaskId,
+      'is_phase': TaskModel._isPhaseToJson(instance.isPhase),
     };
 
 const _$StatusEnumEnumMap = {

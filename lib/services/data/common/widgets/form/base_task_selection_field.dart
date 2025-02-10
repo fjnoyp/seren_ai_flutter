@@ -11,6 +11,7 @@ class BaseTaskSelectionField extends ConsumerWidget {
   final AutoDisposeStreamProvider<List<TaskModel>?> selectableTasksProvider;
   final Function(WidgetRef, TaskModel?) updateTask;
   final String? label;
+  final String emptyValueString;
 
   const BaseTaskSelectionField({
     super.key,
@@ -19,6 +20,7 @@ class BaseTaskSelectionField extends ConsumerWidget {
     required this.selectableTasksProvider,
     required this.updateTask,
     this.label,
+    required this.emptyValueString,
   });
 
   @override
@@ -60,8 +62,7 @@ class BaseTaskSelectionField extends ConsumerWidget {
                   ),
                 ),
                 validator: (_) => null,
-                valueToString: (task) =>
-                    task?.name ?? AppLocalizations.of(context)!.selectATask,
+                valueToString: (task) => task?.name ?? emptyValueString,
                 enabled: enabled,
                 value: task,
                 options: selectableTasks,

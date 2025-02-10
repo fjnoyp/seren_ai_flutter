@@ -84,6 +84,7 @@ const tasksSchemas = [
     Column.text('start_date_time'),
     Column.text('parent_task_id'),
     Column.text('blocked_by_task_id'),
+    Column.integer('is_phase'),
   ]),
   Table(taskCommentsTable, [
     // Column.text('id'),

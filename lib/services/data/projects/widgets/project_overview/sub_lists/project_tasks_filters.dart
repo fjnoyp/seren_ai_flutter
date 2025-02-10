@@ -179,14 +179,31 @@ class NewTaskFromCurrentProjectButton extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    return FilledButton.tonalIcon(
-      icon: const Icon(Icons.add),
-      label: Text(AppLocalizations.of(context)!.createNewTask),
-      onPressed: () async => await ref
-          .read(taskNavigationServiceProvider)
-          .openNewTask(
-            initialProjectId: ref.read(curSelectedProjectIdNotifierProvider),
-          ),
+    return MenuAnchor(
+      menuChildren: [
+        MenuItemButton(
+          child: Text(AppLocalizations.of(context)!.task),
+          onPressed: () async =>
+              await ref.read(taskNavigationServiceProvider).openNewTask(
+                    initialProjectId:
+                        ref.read(curSelectedProjectIdNotifierProvider),
+                  ),
+        ),
+        MenuItemButton(
+          child: Text(AppLocalizations.of(context)!.phase),
+          onPressed: () async =>
+              await ref.read(taskNavigationServiceProvider).openNewTask(
+                    isPhase: true,
+                    initialProjectId:
+                        ref.read(curSelectedProjectIdNotifierProvider),
+                  ),
+        ),
+      ],
+      builder: (context, controller, _) => FilledButton.tonalIcon(
+        icon: const Icon(Icons.add),
+        label: Text(AppLocalizations.of(context)!.addNew),
+        onPressed: controller.open,
+      ),
     );
   }
 }

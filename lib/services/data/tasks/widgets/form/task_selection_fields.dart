@@ -151,6 +151,7 @@ class TaskAssigneesSelectionField extends BaseAssigneesSelectionField {
   TaskAssigneesSelectionField({
     super.key,
     required this.taskId,
+    required BuildContext context,
   }) : super(
           enabled: true,
           assigneesProvider: taskAssignedUsersStreamProvider(taskId)
@@ -162,10 +163,15 @@ class TaskAssigneesSelectionField extends BaseAssigneesSelectionField {
               .updateAssignees(
                   taskId: taskId,
                   assigneeIds: assignees?.map((e) => e.id).toList() ?? []),
-          assigneesWidget: (assignees) => TaskAssigneesAvatars(
-            taskId,
-            avatarsToShow: 2,
-          ),
+          assigneesWidget: (assignees) => assignees.isEmpty
+              ? Text(
+                  AppLocalizations.of(context)!.chooseAssignees,
+                  style: Theme.of(context).textTheme.bodyMedium,
+                )
+              : TaskAssigneesAvatars(
+                  taskId,
+                  avatarsToShow: 2,
+                ),
         );
 }
 
@@ -205,10 +211,10 @@ class TaskStartDateSelectionField extends BaseStartDateSelectionField {
         );
 }
 
-class TaskParentTaskSelectionField extends BaseTaskSelectionField {
+class TaskPhaseSelectionField extends BaseTaskSelectionField {
   final String taskId;
   final String projectId;
-  TaskParentTaskSelectionField({
+  TaskPhaseSelectionField({
     super.key,
     required this.taskId,
     required this.projectId,
@@ -217,11 +223,12 @@ class TaskParentTaskSelectionField extends BaseTaskSelectionField {
           enabled: true,
           taskIdProvider: taskByIdStreamProvider(taskId)
               .select((task) => task.value?.parentTaskId),
-          selectableTasksProvider: tasksByProjectStreamProvider(projectId),
+          selectableTasksProvider: phasesByProjectStreamProvider(projectId),
           updateTask: (ref, task) => ref
               .read(tasksRepositoryProvider)
               .updateTaskParentTaskId(taskId, task!.id),
-          label: AppLocalizations.of(context)!.parentTask,
+          label: AppLocalizations.of(context)!.phase,
+          emptyValueString: AppLocalizations.of(context)!.choosePhase,
         );
 }
 
@@ -243,5 +250,6 @@ class TaskBlockedByTaskSelectionField extends BaseTaskSelectionField {
               .read(tasksRepositoryProvider)
               .updateTaskBlockedByTaskId(taskId, task!.id),
           label: AppLocalizations.of(context)!.blockedByTask,
+          emptyValueString: AppLocalizations.of(context)!.selectATask,
         );
 }
