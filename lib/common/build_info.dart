@@ -2,26 +2,34 @@
 class BuildInfo {
   // Core build info
   static const String version = '1.0.0';
-  static const String buildDate = '2025-02-07 21:10:21';
+  static const String buildDate = '2025-02-10 03:34:33';
   
   // Git info
-  static const String commitHash = '10f184f';
-  static const String branch = 'main';
+  static const String commitHash = 'c795ff9';
+  static const String branch = 'fix/ai_task_interactions';
   static const String lastTag = 'no tag';
   
   // Author of last commit
-  static const String lastCommitAuthor = 'renata-sisilio';
-  static const String lastCommitEmail = 'renata@seren-ai.co';
+  static const String lastCommitAuthor = 'Kyle';
+  static const String lastCommitEmail = 'kylcheng@gmail.com';
   
   // Recent commits (last 5)
   static const List<Map<String, String>> recentCommits = [
     {
-      "hash": "10f184f",
+      "hash": "c795ff9",
+      "author": "Kyle",
+      "email": "kylcheng@gmail.com", 
+      "message": "chore(task): create task action now assigns project",
+      "date": "2025-02-10",
+      "relativeDate": "12 minutes ago"
+    },
+    {
+      "hash": "04dafee",
       "author": "renata-sisilio",
       "email": "renata@seren-ai.co", 
       "message": "fix(workflow): integrate with current pre-commit hook",
       "date": "2025-02-07",
-      "relativeDate": "6 hours ago"
+      "relativeDate": "3 days ago"
     },
     {
       "hash": "9798fe2",
@@ -29,7 +37,7 @@ class BuildInfo {
       "email": "renata@seren-ai.co", 
       "message": "feat(gantt): show gantt chart at project overview page (web only)",
       "date": "2025-02-05",
-      "relativeDate": "2 days ago"
+      "relativeDate": "5 days ago"
     },
     {
       "hash": "f106783",
@@ -37,7 +45,7 @@ class BuildInfo {
       "email": "kylcheng@gmail.com", 
       "message": "fix: ui context for ai + task edit highlights",
       "date": "2025-02-05",
-      "relativeDate": "2 days ago"
+      "relativeDate": "5 days ago"
     },
     {
       "hash": "b9711b6",
@@ -45,19 +53,11 @@ class BuildInfo {
       "email": "renata@seren-ai.co", 
       "message": "fix(notes): limit note description preview on tile",
       "date": "2025-02-05",
-      "relativeDate": "2 days ago"
-    },
-    {
-      "hash": "1235915",
-      "author": "renata-sisilio",
-      "email": "renata@seren-ai.co", 
-      "message": "feat(gantt): drag and drop start/end dates",
-      "date": "2025-02-05",
-      "relativeDate": "2 days ago"
+      "relativeDate": "5 days ago"
     },
   ];
 
   // Stats
-  static const String totalCommits = '315';
-  static const String contributors = '0';
+  static const String totalCommits = '316';
+  static const String contributors = '       0';
 }

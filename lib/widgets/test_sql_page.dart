@@ -3,9 +3,9 @@ import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:seren_ai_flutter/services/data/db_setup/db_provider.dart';
 import 'package:seren_ai_flutter/services/data/orgs/providers/cur_selected_org_id_notifier.dart';
+import 'package:seren_ai_flutter/services/data/projects/repositories/projects_repository.dart';
 import 'package:seren_ai_flutter/services/data/users/models/user_model.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
-import 'package:seren_ai_flutter/services/data/users/providers/search_users_by_name_service_provider.dart';
 import 'package:seren_ai_flutter/services/data/users/repositories/users_repository.dart';
 
 final testTasksProvider = NotifierProvider<TasksNotifier, List<UserModel>>(() {
@@ -48,6 +48,7 @@ class TestSQLPage extends HookConsumerWidget {
         padding: const EdgeInsets.all(16.0),
         child: Column(
           children: [
+            // === SEARCH USERS TEST ===
             TextField(
               controller: TextEditingController(),
               decoration: const InputDecoration(
@@ -55,15 +56,45 @@ class TestSQLPage extends HookConsumerWidget {
                 border: OutlineInputBorder(),
               ),
               onSubmitted: (value) async {
-                final users = await ref
-                    .read(searchUsersByNameServiceProvider)
-                    .searchUsers(value);
+                final org = ref.read(curSelectedOrgIdNotifierProvider);
+                if (org == null) return;
+
+                final users =
+                    await ref.read(usersRepositoryProvider).searchUsersByName(
+                          searchQuery: value,
+                          orgId: org,
+                        );
                 sqlResult.value = users
                     .map((u) =>
                         '${u.firstName} ${u.lastName} (${u.similarityScore.toStringAsFixed(2)})')
                     .join('\n'); // Changed to new line for each user
               },
             ),
+            // ==== SEARCH PROJECTS TEST ===
+            TextField(
+              controller: TextEditingController(),
+              decoration: const InputDecoration(
+                labelText: 'Search Projects',
+                border: OutlineInputBorder(),
+              ),
+              onSubmitted: (value) async {
+                final org = ref.read(curSelectedOrgIdNotifierProvider);
+                if (org == null) return;
+
+                final projects = await ref
+                    .read(projectsRepositoryProvider)
+                    .searchProjectsByName(
+                      searchQuery: value,
+                      orgId: org,
+                    );
+
+                sqlResult.value = projects
+                    .map((p) =>
+                        '${p.name} (${p.similarityScore.toStringAsFixed(2)})')
+                    .join('\n');
+              },
+            ),
+
             const SizedBox(height: 16),
             TextField(
               controller: _sqlController,

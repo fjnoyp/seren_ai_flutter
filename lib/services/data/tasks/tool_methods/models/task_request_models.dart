@@ -99,6 +99,7 @@ class UpdateTaskFieldsRequestModel extends AiActionRequestModel {
   final String? taskPriority;
   final int? estimateDurationMinutes;
   final List<String>? assignedUserNames;
+  final String? parentProjectName;
 
   UpdateTaskFieldsRequestModel({
     required this.taskName,
@@ -108,6 +109,7 @@ class UpdateTaskFieldsRequestModel extends AiActionRequestModel {
     this.taskPriority,
     this.estimateDurationMinutes,
     this.assignedUserNames,
+    this.parentProjectName,
     super.args,
   }) : super(actionRequestType: AiActionRequestType.updateTaskFields);
 
@@ -121,6 +123,7 @@ class UpdateTaskFieldsRequestModel extends AiActionRequestModel {
       taskPriority: json['args']['task_priority'],
       estimateDurationMinutes: json['args']['estimate_duration_minutes'],
       assignedUserNames: json['args']['assigned_user_names']?.cast<String>(),
+      parentProjectName: json['args']['parent_project_name'],
     );
   }
 }
