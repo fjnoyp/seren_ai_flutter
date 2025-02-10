@@ -25,6 +25,7 @@ import 'package:seren_ai_flutter/services/data/common/widgets/editable_page_mode
 import 'package:seren_ai_flutter/services/data/orgs/providers/cur_selected_org_id_notifier.dart';
 import 'package:seren_ai_flutter/services/data/projects/models/project_model.dart';
 import 'package:seren_ai_flutter/services/data/projects/providers/cur_selected_project_providers.dart';
+import 'package:seren_ai_flutter/services/data/projects/providers/search_projects_service.dart';
 import 'package:seren_ai_flutter/services/data/projects/repositories/projects_repository.dart';
 import 'package:seren_ai_flutter/services/data/tasks/models/task_model.dart';
 import 'package:seren_ai_flutter/services/data/tasks/providers/cur_selected_task_id_notifier_provider.dart';
@@ -208,10 +209,18 @@ class TaskToolMethods {
     final userId = _getUserId(ref);
     if (userId == null) return _handleNoAuth();
 
-    // TODO p2: request project name is ignored, we will need to create a similar search projects by name function ...
+    // === SELECT PROJECT ===
     final selectedProjectId = await ref
-        .read(curSelectedProjectIdNotifierProvider.notifier)
-        .getSelectedProjectOrDefault();
+        .read(searchProjectsServiceProvider)
+        .selectProject(actionRequest.parentProjectName);
+
+    if (selectedProjectId == null) {
+      return ErrorRequestResultModel(
+          resultForAi:
+              'No project found with name "${actionRequest.parentProjectName}"',
+          showOnly: true);
+    }
+    // === END SELECT PROJECT ===
 
     // Create a new task with fields from the request
     final newTask = TaskModel(
@@ -235,7 +244,7 @@ class TaskToolMethods {
     // Save the task in the current task service
     await ref.read(tasksRepositoryProvider).upsertItem(newTask);
 
-    // Try to assign users by name
+    // === ASSIGN USERS TO TASK ===
     List<SearchUserResult>? userAssignmentResults;
     if (actionRequest.assignedUserNames != null &&
         actionRequest.assignedUserNames!.isNotEmpty) {
@@ -243,7 +252,7 @@ class TaskToolMethods {
           .read(taskAssignmentsServiceProvider)
           .tryAssignUsersByName(newTask.id, actionRequest.assignedUserNames!);
     }
-
+    // === END ASSIGN USERS TO TASK ===
     // Navigate to task page in readOnly mode
     if (allowToolUiActions) {
       ref
@@ -308,7 +317,25 @@ class TaskToolMethods {
 
     // TODO p2: determine task matching logic - may want to ask user for confirmation or add a good undo
     // For now - just update the first matching task
+    if (matchingTasks.isEmpty) {
+      return ErrorRequestResultModel(
+          resultForAi: 'No matching tasks found', showOnly: true);
+    }
+
     final taskToModify = matchingTasks.first;
+
+    // === SELECT PROJECT ===
+    final selectedProjectId = await ref
+        .read(searchProjectsServiceProvider)
+        .selectProject(actionRequest.parentProjectName);
+
+    if (selectedProjectId == null) {
+      return ErrorRequestResultModel(
+          resultForAi:
+              'No project found with name "${actionRequest.parentProjectName}"',
+          showOnly: true);
+    }
+    // === END SELECT PROJECT ===
 
     final updatedTask = taskToModify.copyWith(
       name: actionRequest.taskName,
@@ -324,6 +351,7 @@ class TaskToolMethods {
           : null,
       estimatedDurationMinutes: actionRequest.estimateDurationMinutes,
       updatedAt: DateTime.now().toUtc(),
+      parentProjectId: selectedProjectId,
     );
 
     // Show the new task fields and ask for confirmation
@@ -340,10 +368,8 @@ class TaskToolMethods {
     // Try to assign users by name
     if (actionRequest.assignedUserNames != null &&
         actionRequest.assignedUserNames!.isNotEmpty) {
-      await ref
-          .read(taskAssignmentsServiceProvider)
-          .tryAssignUsersByName(
-              updatedTask.id, actionRequest.assignedUserNames!);
+      await ref.read(taskAssignmentsServiceProvider).tryAssignUsersByName(
+          updatedTask.id, actionRequest.assignedUserNames!);
     }
 
     return UpdateTaskFieldsResultModel(

@@ -6,14 +6,12 @@ import 'package:seren_ai_flutter/services/data/projects/providers/cur_selected_p
 import 'package:seren_ai_flutter/services/data/projects/task_filter_option_enum.dart';
 import 'package:seren_ai_flutter/services/data/projects/task_sort_option_enum.dart';
 import 'package:seren_ai_flutter/services/data/projects/widgets/project_overview/project_tasks_section.dart';
-import 'package:seren_ai_flutter/services/data/tasks/models/task_model.dart';
 import 'package:seren_ai_flutter/services/data/tasks/providers/task_navigation_service.dart';
+import 'package:seren_ai_flutter/services/data/tasks/providers/task_filter_state_provider.dart';
 
 class ProjectTasksFilters extends ConsumerWidget {
   const ProjectTasksFilters({
     super.key,
-    required this.filterBy,
-    required this.sortBy,
     required this.viewMode,
     required this.onShowCustomDateRangePicker,
 
@@ -24,14 +22,6 @@ class ProjectTasksFilters extends ConsumerWidget {
     required this.useHorizontalScroll,
   });
 
-  final List<
-      ValueNotifier<
-          ({
-            String? value,
-            String? name,
-            bool Function(TaskModel)? filter,
-          })?>> filterBy;
-  final ValueNotifier<TaskSortOption?> sortBy;
   final ProjectTasksSectionViewMode viewMode;
   final Future<DateTimeRange?> Function(BuildContext)
       onShowCustomDateRangePicker;
@@ -40,121 +30,145 @@ class ProjectTasksFilters extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    final filterState = ref.watch(taskFilterStateProvider);
+    final filterNotifier = ref.read(taskFilterStateProvider.notifier);
+
     final filterWidgets = [
       ...TaskFilterOption.values.map(
-        (filter) {
-          final index = TaskFilterOption.values.indexOf(filter);
-          return MenuAnchor(
-            builder: (context, controller, child) {
-              return FilterChip(
-                selected: filterBy[index].value != null,
-                avatar: const Icon(Icons.filter_list_outlined),
-                label: filterBy[index].value != null
-                    ? Text(filterBy[index].value!.name!)
-                    : Text(filter.getDisplayName(context)),
-                onDeleted: filterBy[index].value != null
-                    ? () => filterBy[index].value = null
-                    : null,
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(32),
-                ),
-                showCheckmark: false,
-                onSelected: (selected) {
-                  controller.isOpen ? controller.close() : controller.open();
-                },
-              );
-            },
-            menuChildren: filter
-                .getSubOptions(context, ref)
-                .map(
-                  (option) => MenuItemButton(
-                    child: Text(option.name),
-                    onPressed: () {
-                      if (option.value == 'customDateRange') {
-                        onShowCustomDateRangePicker(context).then((value) {
-                          if (value != null) {
-                            filterBy[index].value = (
-                              value: '${filter.name}_${option.value}',
-                              name:
-                                  '${filter.getDisplayName(context)}: ${DateFormat.MMMd().format(value.start)} - ${DateFormat.Md().format(value.end)}',
-                              filter: (task) =>
-                                  option.filter?.call(task) ??
-                                  filter.filterFunction(task, value)
-                            );
-                          }
-                        });
-                      } else {
-                        filterBy[index].value = (
-                          value: '${filter.name}_${option.value}',
-                          name:
-                              '${filter.getDisplayName(context)}: ${option.name}',
-                          filter: (task) =>
-                              option.filter?.call(task) ??
-                              filter.filterFunction(task, null)
-                        );
-                      }
-                    },
-                  ),
-                )
-                .toList(),
-            child: Text(filter.name),
-          );
-        },
+        (filter) =>
+            _buildFilterChip(ref, context, filter, filterState, filterNotifier),
       ),
-      MenuAnchor(
-        builder: (context, controller, child) {
-          return FilterChip(
-            selected: sortBy.value != null,
-            avatar: const Icon(Icons.import_export_outlined),
-            label: sortBy.value != null
-                ? Text(sortBy.value!.name)
-                : Text(AppLocalizations.of(context)!.sortBy),
-            onSelected: (_) {
-              controller.isOpen ? controller.close() : controller.open();
-            },
-            onDeleted: sortBy.value != null ? () => sortBy.value = null : null,
-            shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(32),
-            ),
-            showCheckmark: false,
-          );
-        },
-        menuChildren: TaskSortOption.values
-            .map(
-              (option) => MenuItemButton(
-                child: Text(option.name),
-                onPressed: () => sortBy.value = option,
-              ),
-            )
-            .toList(),
-      ),
+      _buildSortChip(context, filterState, filterNotifier),
     ];
 
     return Row(
       children: [
         useHorizontalScroll
-            ? SingleChildScrollView(
-                scrollDirection: Axis.horizontal,
-                child: Row(
-                  children: [
-                    for (var i = 0; i < filterWidgets.length; i++) ...[
-                      filterWidgets[i],
-                      if (i < filterWidgets.length - 1)
-                        const SizedBox(width: 8),
+            ? Expanded(
+                child: SingleChildScrollView(
+                  scrollDirection: Axis.horizontal,
+                  child: Row(
+                    children: [
+                      for (var i = 0; i < filterWidgets.length; i++) ...[
+                        filterWidgets[i],
+                        if (i < filterWidgets.length - 1)
+                          const SizedBox(width: 8),
+                      ],
                     ],
-                  ],
+                  ),
                 ),
               )
-            : Wrap(
-                spacing: 8,
-                runSpacing: 4,
-                children: filterWidgets,
+            : Expanded(
+                child: Wrap(
+                  spacing: 8,
+                  runSpacing: 4,
+                  children: filterWidgets,
+                ),
               ),
         if (showExtraViewControls) ...[
-          const Expanded(child: SizedBox()),
+          const SizedBox(width: 8),
           const NewTaskFromCurrentProjectButton(),
         ],
       ],
+    );
+  }
+
+  Widget _buildFilterChip(
+    WidgetRef ref,
+    BuildContext context,
+    TaskFilterOption filter,
+    TaskFilterState filterState,
+    TaskFilterStateNotifier filterNotifier,
+  ) {
+    final index = TaskFilterOption.values.indexOf(filter);
+    return MenuAnchor(
+      builder: (context, controller, child) {
+        return FilterChip(
+          selected: filterState.filterBy[index] != null,
+          avatar: const Icon(Icons.filter_list_outlined),
+          label: filterState.filterBy[index] != null
+              ? Text(filterState.filterBy[index]!.name!)
+              : Text(filter.getDisplayName(context)),
+          onDeleted: filterState.filterBy[index] != null
+              ? () => filterNotifier.updateFilter(index, null)
+              : null,
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(32),
+          ),
+          showCheckmark: false,
+          onSelected: (selected) {
+            controller.isOpen ? controller.close() : controller.open();
+          },
+        );
+      },
+      menuChildren: filter
+          .getSubOptions(context, ref)
+          .map(
+            (option) => MenuItemButton(
+              child: Text(option.name),
+              onPressed: () {
+                if (option.value == 'customDateRange') {
+                  onShowCustomDateRangePicker(context).then((value) {
+                    if (value != null) {
+                      filterNotifier.updateFilter(index, (
+                        value: '${filter.name}_${option.value}',
+                        name:
+                            '${filter.getDisplayName(context)}: ${DateFormat.MMMd().format(value.start)} - ${DateFormat.Md().format(value.end)}',
+                        filter: (task) =>
+                            option.filter?.call(task) ??
+                            filter.filterFunction(task, value)
+                      ));
+                    }
+                  });
+                } else {
+                  filterNotifier.updateFilter(index, (
+                    value: '${filter.name}_${option.value}',
+                    name: '${filter.getDisplayName(context)}: ${option.name}',
+                    filter: (task) =>
+                        option.filter?.call(task) ??
+                        filter.filterFunction(task, null)
+                  ));
+                }
+              },
+            ),
+          )
+          .toList(),
+    );
+  }
+
+  Widget _buildSortChip(
+    BuildContext context,
+    TaskFilterState filterState,
+    TaskFilterStateNotifier filterNotifier,
+  ) {
+    return MenuAnchor(
+      builder: (context, controller, child) {
+        return FilterChip(
+          selected: filterState.sortBy != null,
+          avatar: const Icon(Icons.import_export_outlined),
+          label: filterState.sortBy != null
+              ? Text(filterState.sortBy!.name)
+              : Text(AppLocalizations.of(context)!.sortBy),
+          onSelected: (_) {
+            controller.isOpen ? controller.close() : controller.open();
+          },
+          onDeleted: filterState.sortBy != null
+              ? () => filterNotifier.updateSortOption(null)
+              : null,
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(32),
+          ),
+          showCheckmark: false,
+        );
+      },
+      menuChildren: TaskSortOption.values
+          .map(
+            (option) => MenuItemButton(
+              child: Text(option.name),
+              onPressed: () => filterNotifier.updateSortOption(option),
+            ),
+          )
+          .toList(),
     );
   }
 }
