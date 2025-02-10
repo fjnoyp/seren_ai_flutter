@@ -3,6 +3,7 @@ import 'package:seren_ai_flutter/services/data/db_setup/db_provider.dart';
 import 'package:seren_ai_flutter/services/data/projects/models/project_model.dart';
 import 'package:seren_ai_flutter/services/data/common/base_repository.dart';
 import 'package:seren_ai_flutter/services/data/projects/repositories/project_queries.dart';
+import 'package:supabase_flutter/supabase_flutter.dart';
 
 final projectsRepositoryProvider = Provider<ProjectsRepository>((ref) {
   return ProjectsRepository(ref.watch(dbProvider));
@@ -61,5 +62,43 @@ class ProjectsRepository extends BaseRepository<ProjectModel> {
 
   Future<void> updateProjectAddress(String projectId, String address) async {
     await updateField(projectId, 'address', address);
+  }
+
+  Future<List<SearchProjectResult>> searchProjectsByName({
+    required String searchQuery,
+    required String orgId,
+  }) async {
+    final response = await Supabase.instance.client.rpc(
+      'search_projects_by_name',
+      params: {
+        'search_query': searchQuery,
+        'search_org_id': orgId,
+      },
+    ) as List<dynamic>;
+
+    return response
+        .map((json) =>
+            SearchProjectResult.fromJson(json as Map<String, dynamic>))
+        .toList();
+  }
+}
+
+class SearchProjectResult {
+  final String id;
+  final String name;
+  final double similarityScore;
+
+  SearchProjectResult({
+    required this.id,
+    required this.name,
+    required this.similarityScore,
+  });
+
+  factory SearchProjectResult.fromJson(Map<String, dynamic> json) {
+    return SearchProjectResult(
+      id: json['id'],
+      name: json['name'],
+      similarityScore: json['similarity_score'],
+    );
   }
 }
