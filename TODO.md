@@ -9,16 +9,11 @@ Issue choosing a project requires choosing a team ...
 Issue there could be 100s of projects to choose from ... 
 
 
+# Mattheus Comments
+- The AI voice feature creates tasks in the wrong project. Specify the project name for accurate task creation.
+- Enable task creation directly on the Gantt chart.
 
-# AI Bugs November 14
-1. ai cannot properly get shifts for next monday, etc. it gives the wrong offset values (this wasn’t a problem with Sonnet 3.5) 
-2. the ai chat threads start to lag out when you chat too long as there are too many messages being loaded all at once
-
-
-
-
-
-
-# Refactor Work 
-
-p0 Jan 12 2024 - remove interim state providers, having a local and remote state for models causes issues with the data editing provider + widgets as it's unclear which state is being modified (it's easy to accidentally pass a remote state provider, and end up saving/modifying the wrong version of the model instead ...)
+Top priorities:
+1. A main panel showing today's tasks and upcoming ones, accessible with a few clicks for efficient time management.
+2. The homepage should list all tasks to complete, followed by projects. Clicking a project reveals all related tasks.
+3. Display two interfaces on the same page: one for tasks to complete and another for project details.
