@@ -38,6 +38,7 @@ class TaskTag extends StatelessWidget {
             : isPhaseLabel
                 ? AppLocalizations.of(context)!.phase
                 : text ?? '',
+        overflow: TextOverflow.ellipsis,
         style: Theme.of(context).textTheme.titleSmall?.copyWith(
               color: Theme.of(context).colorScheme.onPrimary,
             ),
