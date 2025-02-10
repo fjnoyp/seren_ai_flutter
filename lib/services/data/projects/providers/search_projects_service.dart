@@ -31,6 +31,7 @@ class SearchProjectsService {
                 orgId: selectedOrgId,
               );
 
+      // TODO p4: show selector between top choices of projects
       if (projects.isNotEmpty) {
         selectedProjectId = projects.first.id;
       }

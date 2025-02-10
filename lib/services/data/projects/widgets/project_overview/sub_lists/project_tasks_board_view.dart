@@ -7,28 +7,27 @@ import 'package:seren_ai_flutter/services/data/tasks/models/task_model.dart';
 import 'package:seren_ai_flutter/services/data/tasks/providers/task_navigation_service.dart';
 import 'package:seren_ai_flutter/services/data/tasks/providers/tasks_by_project_stream_provider.dart';
 import 'package:seren_ai_flutter/services/data/tasks/widgets/task_list/task_list_item_view.dart';
+import 'package:seren_ai_flutter/services/data/tasks/providers/task_filter_state_provider.dart';
 
 class ProjectTasksBoardView extends ConsumerWidget {
-  const ProjectTasksBoardView({this.sort, this.filterCondition});
-
-  final Comparator<TaskModel>? sort;
-  final bool Function(TaskModel)? filterCondition;
+  const ProjectTasksBoardView({super.key});
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final projectId = ref.watch(curSelectedProjectIdNotifierProvider);
     if (projectId == null) return const SizedBox.shrink();
 
+    final filterState = ref.watch(taskFilterStateProvider);
+
     final tasks = ref
             .watch(tasksByProjectStreamProvider(projectId))
             .valueOrNull
-            ?.where(
-                (task) => (filterCondition == null || filterCondition!(task)))
+            ?.where(filterState.filterCondition)
             .toList() ??
         [];
 
-    if (sort != null) {
-      tasks.sort(sort);
+    if (filterState.sortComparator != null) {
+      tasks.sort(filterState.sortComparator);
     }
 
     return Row(

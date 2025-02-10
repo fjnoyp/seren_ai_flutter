@@ -8,17 +8,17 @@ import 'package:seren_ai_flutter/services/data/tasks/models/task_model.dart';
 import 'package:seren_ai_flutter/services/data/tasks/providers/task_navigation_service.dart';
 import 'package:seren_ai_flutter/services/data/tasks/providers/tasks_by_project_stream_provider.dart';
 import 'package:seren_ai_flutter/services/data/tasks/widgets/task_list/task_list_item_view.dart';
+import 'package:seren_ai_flutter/services/data/tasks/providers/task_filter_state_provider.dart';
 
 class ProjectTasksSectionedListView extends ConsumerWidget {
-  const ProjectTasksSectionedListView({this.sort, this.filterCondition});
-
-  final Comparator<TaskModel>? sort;
-  final bool Function(TaskModel)? filterCondition;
+  const ProjectTasksSectionedListView({super.key});
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final projectId = ref.watch(curSelectedProjectIdNotifierProvider);
     if (projectId == null) return const SizedBox.shrink();
+
+    final filterState = ref.watch(taskFilterStateProvider);
 
     return AsyncValueHandlerWidget(
       value: ref.watch(tasksByProjectStreamProvider(projectId)),
@@ -30,12 +30,12 @@ class ProjectTasksSectionedListView extends ConsumerWidget {
                 final filteredTasks = tasks
                         ?.where((task) =>
                             task.status == status &&
-                            (filterCondition == null || filterCondition!(task)))
+                            filterState.filterCondition(task))
                         .toList() ??
                     [];
 
-                if (sort != null) {
-                  filteredTasks.sort(sort);
+                if (filterState.sortComparator != null) {
+                  filteredTasks.sort(filterState.sortComparator);
                 }
 
                 return Card(

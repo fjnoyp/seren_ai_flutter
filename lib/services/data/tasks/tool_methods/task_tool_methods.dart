@@ -317,6 +317,11 @@ class TaskToolMethods {
 
     // TODO p2: determine task matching logic - may want to ask user for confirmation or add a good undo
     // For now - just update the first matching task
+    if (matchingTasks.isEmpty) {
+      return ErrorRequestResultModel(
+          resultForAi: 'No matching tasks found', showOnly: true);
+    }
+
     final taskToModify = matchingTasks.first;
 
     // === SELECT PROJECT ===

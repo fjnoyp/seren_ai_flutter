@@ -8,10 +8,6 @@ import 'package:seren_ai_flutter/services/data/users/models/user_model.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:seren_ai_flutter/services/data/users/repositories/users_repository.dart';
 
-final testTasksProvider = NotifierProvider<TasksNotifier, List<UserModel>>(() {
-  return TasksNotifier();
-});
-
 class TasksNotifier extends Notifier<List<UserModel>> {
   // We initialize the list of tasks to an empty list
   @override
