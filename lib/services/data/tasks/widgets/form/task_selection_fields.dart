@@ -223,7 +223,8 @@ class TaskPhaseSelectionField extends BaseTaskSelectionField {
           enabled: true,
           taskIdProvider: taskByIdStreamProvider(taskId)
               .select((task) => task.value?.parentTaskId),
-          selectableTasksProvider: phasesByProjectStreamProvider(projectId),
+          selectableTasksProvider:
+              parentTasksByProjectStreamProvider(projectId),
           updateTask: (ref, task) => ref
               .read(tasksRepositoryProvider)
               .updateTaskParentTaskId(taskId, task!.id),

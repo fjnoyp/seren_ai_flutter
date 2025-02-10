@@ -31,7 +31,7 @@ TaskModel _$TaskModelFromJson(Map<String, dynamic> json) => TaskModel(
           : DateTime.parse(json['start_date_time'] as String),
       parentTaskId: json['parent_task_id'] as String?,
       blockedByTaskId: json['blocked_by_task_id'] as String?,
-      isPhase: TaskModel._isPhaseFromJson(json['is_phase']),
+      type: $enumDecode(_$TaskTypeEnumMap, json['type']),
     );
 
 Map<String, dynamic> _$TaskModelToJson(TaskModel instance) => <String, dynamic>{
@@ -51,7 +51,7 @@ Map<String, dynamic> _$TaskModelToJson(TaskModel instance) => <String, dynamic>{
       'start_date_time': instance.startDateTime?.toIso8601String(),
       'parent_task_id': instance.parentTaskId,
       'blocked_by_task_id': instance.blockedByTaskId,
-      'is_phase': TaskModel._isPhaseToJson(instance.isPhase),
+      'type': _$TaskTypeEnumMap[instance.type]!,
     };
 
 const _$StatusEnumEnumMap = {
@@ -68,4 +68,9 @@ const _$PriorityEnumEnumMap = {
   PriorityEnum.normal: 'normal',
   PriorityEnum.high: 'high',
   PriorityEnum.veryHigh: 'veryHigh',
+};
+
+const _$TaskTypeEnumMap = {
+  TaskType.phase: 'phase',
+  TaskType.task: 'task',
 };

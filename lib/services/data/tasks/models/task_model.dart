@@ -46,6 +46,8 @@ enum PriorityEnum {
       };
 }
 
+enum TaskType { phase, task }
+
 @JsonSerializable()
 class TaskModel implements IHasId {
   @override
@@ -92,8 +94,9 @@ class TaskModel implements IHasId {
   @JsonKey(name: 'blocked_by_task_id')
   final String? blockedByTaskId;
 
-  @JsonKey(name: 'is_phase', fromJson: _isPhaseFromJson, toJson: _isPhaseToJson)
-  final bool isPhase;
+  @JsonKey(name: 'type')
+  final TaskType type;
+  bool get isPhase => type == TaskType.phase;
 
   Duration? get duration {
     if (startDateTime != null && dueDate != null) {
@@ -112,10 +115,6 @@ class TaskModel implements IHasId {
 
   static dynamic _durationToJson(int? value) => value;
 
-  static bool _isPhaseFromJson(dynamic value) => value == 1;
-
-  static dynamic _isPhaseToJson(bool value) => value ? 1 : 0;
-
   TaskModel({
     String? id,
     required this.name,
@@ -132,10 +131,9 @@ class TaskModel implements IHasId {
     this.startDateTime,
     this.parentTaskId,
     this.blockedByTaskId,
-    required this.isPhase,
+    required this.type,
   })  : id = id ?? uuid.v4(),
         assert(dueDate != null || reminderOffsetMinutes == null);
-
 
   TaskModel copyWith({
     String? id,
@@ -174,13 +172,13 @@ class TaskModel implements IHasId {
       startDateTime: startDateTime ?? this.startDateTime,
       parentTaskId: parentTaskId ?? this.parentTaskId,
       blockedByTaskId: blockedByTaskId ?? this.blockedByTaskId,
-      isPhase: isPhase,
+      type: type,
     );
   }
 
   factory TaskModel.fromJson(Map<String, dynamic> json) =>
       _$TaskModelFromJson(json);
-  
+
   @override
   Map<String, dynamic> toJson() => _$TaskModelToJson(this);
 
