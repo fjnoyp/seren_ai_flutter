@@ -1,8 +1,8 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:seren_ai_flutter/services/data/orgs/providers/cur_selected_org_id_notifier.dart';
 import 'package:seren_ai_flutter/services/data/tasks/models/task_user_assignment_model.dart';
 import 'package:seren_ai_flutter/services/data/tasks/repositories/task_user_assignments_repository.dart';
 import 'package:seren_ai_flutter/services/data/users/models/user_model.dart';
-import 'package:seren_ai_flutter/services/data/users/providers/search_users_by_name_service_provider.dart';
 import 'package:seren_ai_flutter/services/data/users/repositories/users_repository.dart';
 
 final taskAssignmentsServiceProvider =
@@ -13,19 +13,23 @@ class TaskAssignmentsService {
 
   TaskAssignmentsService(this.ref);
 
-  // userSearchQuery will be mapped to user first or last name when finding a match
+  // Try to assign users found from <userSearchQuery> to the task
   Future<List<SearchUserResult>> tryAssignUsersByName(
       String taskId, List<String> userSearchQuery) async {
     if (userSearchQuery.isEmpty) return [];
 
     final userAssignmentResults = <SearchUserResult>[];
 
+    final orgId = ref.read(curSelectedOrgIdNotifierProvider);
+    if (orgId == null) return [];
+
     // TODO p4: show modal asking user to confirm assignment
     // And possibly choose between similar matches
     for (var userName in userSearchQuery) {
-      final users = await ref
-          .read(searchUsersByNameServiceProvider)
-          .searchUsers(userName);
+      final users = await ref.read(usersRepositoryProvider).searchUsersByName(
+            searchQuery: userName,
+            orgId: orgId,
+          );
       if (users.isNotEmpty) {
         userAssignmentResults.add(users.first);
         await _addAssignee(taskId, users.first.id);
