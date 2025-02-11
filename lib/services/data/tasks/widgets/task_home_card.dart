@@ -16,6 +16,10 @@ class TaskHomeCard extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     return BaseHomeCard(
       title: AppLocalizations.of(context)!.todaysTasks,
+      cornerButton: IconButton(
+        onPressed: () => ref.read(taskNavigationServiceProvider).openNewTask(),
+        icon: const Icon(Icons.add),
+      ),
       child: AsyncValueHandlerWidget(
         value: ref.watch(curUserSortedTasksStreamProvider),
         data: (watchedTasks) {
