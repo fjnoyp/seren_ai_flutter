@@ -8,3 +8,10 @@ final tasksByProjectStreamProvider =
       .watch(tasksRepositoryProvider)
       .watchTasksByProject(projectId: projectId),
 );
+
+final parentTasksByProjectStreamProvider =
+    StreamProvider.family.autoDispose<List<TaskModel>?, String>(
+  (ref, projectId) => ref
+      .watch(tasksRepositoryProvider)
+      .watchParentTasksByProject(projectId: projectId),
+);

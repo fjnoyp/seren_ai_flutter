@@ -2,6 +2,7 @@ import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:seren_ai_flutter/services/data/common/status_enum.dart';
+import 'package:seren_ai_flutter/services/data/projects/providers/cur_selected_project_providers.dart';
 import 'package:seren_ai_flutter/services/data/tasks/models/task_model.dart';
 import 'package:seren_ai_flutter/services/data/tasks/providers/task_by_id_stream_provider.dart';
 import 'package:seren_ai_flutter/services/data/tasks/providers/task_navigation_service.dart';
@@ -11,6 +12,7 @@ import 'package:seren_ai_flutter/services/data/common/widgets/priority_view.dart
 import 'package:seren_ai_flutter/services/data/common/widgets/status_view.dart';
 import 'package:seren_ai_flutter/services/data/tasks/widgets/gantt/experimental/gantt_task_visual_state_provider.dart';
 import 'package:seren_ai_flutter/services/data/tasks/widgets/task_assignees_avatars.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 class GanttStaticColumnView extends ConsumerWidget {
   static const Map<TaskFieldEnum, double> columnWidths = {
@@ -210,6 +212,46 @@ class _StaticPhaseRow extends ConsumerWidget {
                       ),
                       const SizedBox(width: 4),
                       Text(task.name),
+                      const Expanded(child: SizedBox.shrink()),
+                      TextButton.icon(
+                        onPressed: () async => await ref
+                            .read(taskNavigationServiceProvider)
+                            .openNewTask(
+                              isPhase: true,
+                              initialProjectId: ref
+                                  .read(curSelectedProjectIdNotifierProvider),
+                            ),
+                        icon: Icon(
+                          Icons.add,
+                          color: Theme.of(context).colorScheme.outline,
+                        ),
+                        label: Text(AppLocalizations.of(context)!.phase),
+                        style: TextButton.styleFrom(
+                          visualDensity: VisualDensity.compact,
+                          foregroundColor:
+                              Theme.of(context).colorScheme.outline,
+                        ),
+                      ),
+                      const SizedBox(width: 4),
+                      TextButton.icon(
+                        onPressed: () async => await ref
+                            .read(taskNavigationServiceProvider)
+                            .openNewTask(
+                              initialProjectId: ref
+                                  .read(curSelectedProjectIdNotifierProvider),
+                              initialParentTaskId: task.id,
+                            ),
+                        icon: Icon(
+                          Icons.add,
+                          color: Theme.of(context).colorScheme.outline,
+                        ),
+                        label: Text(AppLocalizations.of(context)!.task),
+                        style: TextButton.styleFrom(
+                          visualDensity: VisualDensity.compact,
+                          foregroundColor:
+                              Theme.of(context).colorScheme.outline,
+                        ),
+                      ),
                     ],
                   ),
                 ),

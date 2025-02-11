@@ -46,6 +46,8 @@ enum PriorityEnum {
       };
 }
 
+enum TaskType { phase, task }
+
 @JsonSerializable()
 class TaskModel implements IHasId {
   @override
@@ -92,6 +94,10 @@ class TaskModel implements IHasId {
   @JsonKey(name: 'blocked_by_task_id')
   final String? blockedByTaskId;
 
+  @JsonKey(name: 'type')
+  final TaskType type;
+  bool get isPhase => type == TaskType.phase;
+
   Duration? get duration {
     if (startDateTime != null && dueDate != null) {
       return dueDate!.difference(startDateTime!);
@@ -125,31 +131,9 @@ class TaskModel implements IHasId {
     this.startDateTime,
     this.parentTaskId,
     this.blockedByTaskId,
+    required this.type,
   })  : id = id ?? uuid.v4(),
         assert(dueDate != null || reminderOffsetMinutes == null);
-
-  // Factory constructor for creating a TaskModel with default values
-  factory TaskModel.empty() {
-    final now = DateTime.now().toUtc();
-    return TaskModel(
-      name: 'New Task',
-      description: null,
-      status: StatusEnum.open,
-      priority: PriorityEnum.normal,
-      dueDate: null,
-      createdAt: now,
-      updatedAt: now,
-      authorUserId:
-          '', // This should be set to the current user's ID in practice
-      parentProjectId:
-          '', // This should be set to a valid project ID in practice
-      estimatedDurationMinutes: null,
-      reminderOffsetMinutes: 0,
-      startDateTime: null,
-      parentTaskId: null,
-      blockedByTaskId: null,
-    );
-  }
 
   TaskModel copyWith({
     String? id,
@@ -188,11 +172,14 @@ class TaskModel implements IHasId {
       startDateTime: startDateTime ?? this.startDateTime,
       parentTaskId: parentTaskId ?? this.parentTaskId,
       blockedByTaskId: blockedByTaskId ?? this.blockedByTaskId,
+      type: type,
     );
   }
 
   factory TaskModel.fromJson(Map<String, dynamic> json) =>
       _$TaskModelFromJson(json);
+
+  @override
   Map<String, dynamic> toJson() => _$TaskModelToJson(this);
 
   Map<String, dynamic> toAiReadableMap(

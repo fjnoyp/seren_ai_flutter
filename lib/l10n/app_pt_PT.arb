@@ -1,6 +1,7 @@
 {
     "@_": {"description": "General/Common"},
     "timeGreeting": "{period, select, morning{Bom dia} afternoon{Boa tarde} evening{Boa noite} other{Olá}},\n{userName}!",
+    "addNew": "Nova",
     "save": "Guardar",
     "saving": "Salvando...",
     "errorSaving": "𐄂 Erro ao guardar",
@@ -253,6 +254,7 @@
     "@_": {"description": "Tasks"},
     "task": "Tarefa",
     "tasks": "Tarefas",
+    "phase": "Etapa",
     "board": "Quadro",
     "list": "Lista",
     "ganttChart": "Cronograma",
@@ -261,7 +263,6 @@
     "deleteTask": "Eliminar Tarefa",
     "comments": "Comentários",
     "addComment": "Adicionar Comentário",
-
     "lastUpdatedDate": "Última atualização: {date}",
     "dueDateWithDate": "Prazo: {date}",
     "chooseDueDate": "Escolher uma Data de Vencimento",
@@ -275,7 +276,7 @@
     "chooseAssignees": "Escolher Responsáveis",
     "chooseStartDate": "Escolher Data de Início",
     "selectATask": "Selecionar uma Tarefa",
-    "parentTask": "Tarefa Pai",
+    "choosePhase": "Escolher Etapa",
     "blockedByTask": "Bloqueado por",
     "noEstimatedDurationSet": "Sem duração estimada",
     "noEstimatedDuration": "Sem duração estimada",

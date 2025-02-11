@@ -135,7 +135,7 @@ class AppState extends ConsumerState<App> {
                     args?['title'] ?? AppLocalizations.of(context)!.task,
                     TaskPage(mode: args?['mode'] ?? EditablePageMode.edit),
                     actions: args?['actions'],
-                    webBody: WebTaskPage(mode: args?['mode']),
+                    webBody: const WebTaskPage(),
                     showAppBar: !isWebVersion,
                   ),
               AppRoutes.aiChats.name: (context) => _GuardScaffold(

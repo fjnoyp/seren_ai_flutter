@@ -70,6 +70,13 @@ class TasksRepository extends BaseRepository<TaskModel> {
     );
   }
 
+  Stream<List<TaskModel>> watchChildTasks({required String parentTaskId}) {
+    return watch(
+      TaskQueries.getTasksByParentIdQuery,
+      {'parent_task_id': parentTaskId},
+    );
+  }
+
   Future<List<TaskModel>> getChildTasks({
     required String parentTaskId,
   }) {
@@ -93,6 +100,19 @@ class TasksRepository extends BaseRepository<TaskModel> {
     );
   }
 
+  Stream<List<TaskModel>> watchParentTasksByProject({required String projectId}) {
+    return watch(
+      TaskQueries.getParentTasksByProjectIdQuery,
+      {'project_id': projectId},
+    );
+  }
+
+  Future<List<TaskModel>> getParentTasksByProject({required String projectId}) async {
+    return get(
+      TaskQueries.getParentTasksByProjectIdQuery,
+      {'project_id': projectId},
+    );
+  }
   Future<void> updateTaskName(String taskId, String? name) async {
     if (name == null) return;
 
