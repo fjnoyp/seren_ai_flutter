@@ -2,15 +2,17 @@ import 'package:flutter/material.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:seren_ai_flutter/services/ai_interaction/widgets/ai_assistant_button.dart';
+import 'package:seren_ai_flutter/services/data/projects/providers/cur_selected_project_providers.dart';
 import 'package:seren_ai_flutter/services/data/projects/widgets/project_overview/sub_lists/project_tasks_board_view.dart';
 import 'package:seren_ai_flutter/services/data/projects/widgets/project_overview/sub_lists/project_tasks_filters.dart';
 import 'package:seren_ai_flutter/services/data/projects/widgets/project_overview/sub_lists/project_tasks_sectioned_list_view.dart';
 import 'package:seren_ai_flutter/services/data/projects/widgets/project_overview/task_search_modal.dart';
+import 'package:seren_ai_flutter/services/data/tasks/widgets/gantt/gantt_task_page.dart';
 
 enum ProjectTasksSectionViewMode {
   list,
   board,
-  // TODO p2: add gantt view here once we implement filtering and sorting
+  gantt,
 }
 
 class ProjectTasksSection extends StatelessWidget {
@@ -34,6 +36,11 @@ class ProjectTasksSectionWeb extends HookConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    final curProjectId = ref.watch(curSelectedProjectIdNotifierProvider);
+    if (curProjectId == null && viewMode == ProjectTasksSectionViewMode.gantt) {
+      return const SizedBox.shrink();
+    }
+
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -50,6 +57,8 @@ class ProjectTasksSectionWeb extends HookConsumerWidget {
             ProjectTasksSectionViewMode.list =>
               const ProjectTasksSectionedListView(),
             ProjectTasksSectionViewMode.board => const ProjectTasksBoardView(),
+            ProjectTasksSectionViewMode.gantt =>
+              GanttChart(projectId: curProjectId),
           },
         ),
       ],
