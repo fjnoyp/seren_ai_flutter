@@ -2,11 +2,11 @@
 class BuildInfo {
   // Core build info
   static const String version = '1.0.0';
-  static const String buildDate = '2025-02-11 10:08:12';
+  static const String buildDate = '2025-02-11 17:30:05';
   
   // Git info
-  static const String commitHash = '1fff87f';
-  static const String branch = 'feat/add-tasks-and-notes-from-home';
+  static const String commitHash = 'be04b0a';
+  static const String branch = 'feat/gantt-filtering-and-sorting';
   static const String lastTag = 'no tag';
   
   // Author of last commit
@@ -16,12 +16,36 @@ class BuildInfo {
   // Recent commits (last 5)
   static const List<Map<String, String>> recentCommits = [
     {
+      "hash": "be04b0a",
+      "author": "renata-sisilio",
+      "email": "renata@seren-ai.co", 
+      "message": "fix(projects): partially fixed sort/filter removals",
+      "date": "2025-02-11",
+      "relativeDate": "2 hours ago"
+    },
+    {
+      "hash": "08062ce",
+      "author": "renata-sisilio",
+      "email": "renata@seren-ai.co", 
+      "message": "feat(gantt): add filter and sort for gantt chart",
+      "date": "2025-02-11",
+      "relativeDate": "2 hours ago"
+    },
+    {
+      "hash": "db499f8",
+      "author": "renata-sisilio",
+      "email": "renata@seren-ai.co", 
+      "message": "feat(home): quick adding tasks and notes from home page",
+      "date": "2025-02-11",
+      "relativeDate": "7 hours ago"
+    },
+    {
       "hash": "1fff87f",
       "author": "renata-sisilio",
       "email": "renata@seren-ai.co", 
       "message": "feat(tasks): create phase page",
       "date": "2025-02-11",
-      "relativeDate": "8 minutes ago"
+      "relativeDate": "8 hours ago"
     },
     {
       "hash": "23f0860",
@@ -29,35 +53,11 @@ class BuildInfo {
       "email": "kylcheng@gmail.com", 
       "message": "chore(task): create task action now assigns project",
       "date": "2025-02-10",
-      "relativeDate": "19 hours ago"
-    },
-    {
-      "hash": "04dafee",
-      "author": "renata-sisilio",
-      "email": "renata@seren-ai.co", 
-      "message": "fix(workflow): integrate with current pre-commit hook",
-      "date": "2025-02-07",
-      "relativeDate": "4 days ago"
-    },
-    {
-      "hash": "9798fe2",
-      "author": "renata-sisilio",
-      "email": "renata@seren-ai.co", 
-      "message": "feat(gantt): show gantt chart at project overview page (web only)",
-      "date": "2025-02-05",
-      "relativeDate": "6 days ago"
-    },
-    {
-      "hash": "f106783",
-      "author": "Kyle",
-      "email": "kylcheng@gmail.com", 
-      "message": "fix: ui context for ai + task edit highlights",
-      "date": "2025-02-05",
-      "relativeDate": "6 days ago"
+      "relativeDate": "26 hours ago"
     },
   ];
 
   // Stats
-  static const String totalCommits = '317';
+  static const String totalCommits = '320';
   static const String contributors = '0';
 }
