@@ -16,6 +16,10 @@ class NoteHomeCard extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     return BaseHomeCard(
       title: AppLocalizations.of(context)!.notes,
+      cornerButton: IconButton(
+        onPressed: () => ref.read(notesNavigationServiceProvider).openNewNote(),
+        icon: const Icon(Icons.add),
+      ),
       child: Center(
         child: AsyncValueHandlerWidget(
           value: ref

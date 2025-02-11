@@ -4,12 +4,15 @@ class BaseHomeCard extends StatelessWidget {
   final Widget child;
   // final Color color;
   final String title;
+  final IconButton? cornerButton;
 
-  const BaseHomeCard(
-      {super.key,
-      required this.child,
-      // required this.color,
-      required this.title});
+  const BaseHomeCard({
+    super.key,
+    required this.child,
+    // required this.color,
+    required this.title,
+    this.cornerButton,
+  });
 
   @override
   Widget build(BuildContext context) {
