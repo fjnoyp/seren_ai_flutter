@@ -3,7 +3,6 @@ import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:seren_ai_flutter/services/data/common/status_enum.dart';
 import 'package:seren_ai_flutter/services/data/projects/providers/cur_selected_project_providers.dart';
-import 'package:seren_ai_flutter/services/data/tasks/models/task_model.dart';
 import 'package:seren_ai_flutter/services/data/tasks/providers/task_navigation_service.dart';
 import 'package:seren_ai_flutter/services/data/tasks/providers/tasks_by_project_stream_provider.dart';
 import 'package:seren_ai_flutter/services/data/tasks/widgets/task_list/task_list_item_view.dart';
@@ -17,6 +16,9 @@ class ProjectTasksBoardView extends ConsumerWidget {
     final projectId = ref.watch(curSelectedProjectIdNotifierProvider);
     if (projectId == null) return const SizedBox.shrink();
 
+    // We should ideally separate out the common sort/filter logic
+    // for the sectioned view and board view as well since we're duplicating that
+    // between both those views at the moment.
     final filterState = ref.watch(taskFilterStateProvider);
 
     final tasks = ref
