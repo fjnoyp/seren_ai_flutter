@@ -80,4 +80,10 @@ abstract class TaskQueries {
   static const String getTasksByProjectIdQuery = '''
     SELECT * FROM tasks WHERE parent_project_id = :project_id;
   ''';
+
+  /// Params:
+  /// - project_id: String
+  static const String getParentTasksByProjectIdQuery = '''
+    SELECT * FROM tasks WHERE parent_project_id = :project_id AND type = 'phase';
+  ''';
 }

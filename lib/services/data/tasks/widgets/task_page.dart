@@ -5,7 +5,6 @@ import 'package:seren_ai_flutter/common/navigation_service_provider.dart';
 import 'package:seren_ai_flutter/services/data/common/widgets/editable_page_mode_enum.dart';
 import 'package:seren_ai_flutter/services/data/tasks/providers/cur_selected_task_id_notifier_provider.dart';
 import 'package:seren_ai_flutter/services/data/tasks/providers/task_by_id_stream_provider.dart';
-import 'package:seren_ai_flutter/services/data/tasks/repositories/tasks_repository.dart';
 import 'package:seren_ai_flutter/services/data/tasks/widgets/form/task_selection_fields.dart';
 import 'package:seren_ai_flutter/services/data/tasks/widgets/task_comments/task_comment_section.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
@@ -49,6 +48,7 @@ class TaskPage extends HookConsumerWidget {
     }
 
     final curTask = ref.watch(taskByIdStreamProvider(curTaskId));
+    final isPhase = curTask.value?.isPhase ?? false;
 
     return SingleChildScrollView(
       child: Padding(
@@ -74,6 +74,12 @@ class TaskPage extends HookConsumerWidget {
 
             const SizedBox(height: 8),
             TaskProjectSelectionField(taskId: curTaskId),
+            if (!isPhase)
+              TaskPhaseSelectionField(
+                context: context,
+                taskId: curTaskId,
+                projectId: curTask.value?.parentProjectId ?? '',
+              ),
             TaskNameField(taskId: curTaskId),
             const SizedBox(height: 8),
 
@@ -91,69 +97,40 @@ class TaskPage extends HookConsumerWidget {
                   const Divider(),
                   TaskPrioritySelectionField(taskId: curTaskId),
                   const Divider(),
-                  TaskStatusSelectionField(taskId: curTaskId),
+                  if (!isPhase) TaskStatusSelectionField(taskId: curTaskId),
                   const Divider(),
                   TaskStartDateSelectionField(taskId: curTaskId),
                   TaskDueDateSelectionField(taskId: curTaskId),
                   const Divider(),
-                  ReminderMinuteOffsetFromDueDateSelectionField(
-                    context: context,
-                    taskId: curTaskId,
-                    enabled: curTask.value?.dueDate != null,
-                  ),
+                  if (!isPhase)
+                    ReminderMinuteOffsetFromDueDateSelectionField(
+                      context: context,
+                      taskId: curTaskId,
+                      enabled: curTask.value?.dueDate != null,
+                    ),
                   const Divider(),
-                  TaskParentTaskSelectionField(
-                    context: context,
-                    taskId: curTaskId,
-                    projectId: curTask.value?.parentProjectId ?? '',
-                  ),
-                  const Divider(),
-                  TaskBlockedByTaskSelectionField(
-                    context: context,
-                    taskId: curTaskId,
-                    projectId: curTask.value?.parentProjectId ?? '',
-                  ),
+                  if (!isPhase)
+                    TaskBlockedByTaskSelectionField(
+                      context: context,
+                      taskId: curTaskId,
+                      projectId: curTask.value?.parentProjectId ?? '',
+                    ),
                   const Divider(),
                   TaskEstimatedDurationSelectionField(
                     context: context,
                     taskId: curTaskId,
                   ),
                   const Divider(),
-                  TaskAssigneesSelectionField(taskId: curTaskId),
+                  TaskAssigneesSelectionField(
+                    context: context,
+                    taskId: curTaskId,
+                  ),
                 ],
               ),
             ),
 
             const SizedBox(height: 24),
             TaskCommentSection(curTask.value?.id ?? ''),
-            const SizedBox(height: 24),
-
-            if (mode == EditablePageMode.create)
-              PopScope(
-                onPopInvokedWithResult: (_, result) async {
-                  if (result != true) {
-                    final curTaskId =
-                        ref.read(curSelectedTaskIdNotifierProvider)!;
-                    ref
-                        .read(curSelectedTaskIdNotifierProvider.notifier)
-                        .clearTaskId();
-                    ref.read(tasksRepositoryProvider).deleteItem(curTaskId);
-                  }
-                },
-                child: SizedBox(
-                  width: double.infinity,
-                  child: ElevatedButton(
-                    onPressed: () =>
-                        ref.read(navigationServiceProvider).pop(true),
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor: theme.colorScheme.secondary,
-                      foregroundColor: theme.colorScheme.onSecondary,
-                    ),
-                    child: Text(AppLocalizations.of(context)!.createTask),
-                  ),
-                ),
-              ),
-
             const SizedBox(height: 32),
           ],
         ),

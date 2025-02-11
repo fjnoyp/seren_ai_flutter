@@ -142,14 +142,14 @@ Future<void> logout() async {
 */
 
 class PowerSyncDatabaseFactory {
-
   static bool _isLoggedIn() {
     return Supabase.instance.client.auth.currentSession?.accessToken != null;
   }
 
   static Future<String> _getDatabasePath() async {
     //final dir = await getApplicationSupportDirectory();
-    final path = await PathProvider.getPathProviderFactory().getApplicationSupportPath();
+    final path =
+        await PathProvider.getPathProviderFactory().getApplicationSupportPath();
     return join(path, 'powersync-demo.db');
   }
 
@@ -158,6 +158,9 @@ class PowerSyncDatabaseFactory {
     final PowerSyncDatabase db = PowerSyncDatabase(
         schema: schema, path: await _getDatabasePath(), logger: attachedLogger);
     await db.initialize();
+
+    // FYI: If you have issues with powersync schema not updating, you can refresh it
+    //await db.database.refreshSchema();
 
     await loadSupabase();
 
@@ -186,11 +189,10 @@ class PowerSyncDatabaseFactory {
       }
     });
 
-    return db; 
+    return db;
 
     // Demo using SQLite Full-Text Search with PowerSync.
     // See https://docs.powersync.com/usage-examples/full-text-search for more details
     //await configureFts(db);
   }
-
 }

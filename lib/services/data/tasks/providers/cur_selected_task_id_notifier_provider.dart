@@ -19,7 +19,7 @@ class CurSelectedTaskIdNotifier extends Notifier<String?> {
 
   void clearTaskId() => state = null;
 
-  Future<void> createNewTask() async {
+  Future<void> createNewTask({bool isPhase = false}) async {
     try {
       final curUser = ref.read(curUserProvider).value;
       if (curUser == null) throw Exception('No current user');
@@ -29,11 +29,12 @@ class CurSelectedTaskIdNotifier extends Notifier<String?> {
           .getSelectedProjectOrDefault();
 
       final newTask = TaskModel(
-        name: 'New Task',
+        name: isPhase ? 'New Phase':'New Task',
         description: '',
         status: StatusEnum.open,
         authorUserId: curUser.id,
         parentProjectId: selectedProjectId,
+        type: isPhase ? TaskType.phase : TaskType.task,
       );
 
       await ref.read(tasksRepositoryProvider).upsertItem(newTask);

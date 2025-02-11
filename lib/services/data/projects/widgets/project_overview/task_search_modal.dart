@@ -3,10 +3,12 @@ import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 
 import 'package:seren_ai_flutter/services/ai_interaction/widgets/ai_assistant_button.dart';
+import 'package:seren_ai_flutter/services/data/projects/providers/cur_selected_project_providers.dart';
 import 'package:seren_ai_flutter/services/data/projects/widgets/project_overview/project_tasks_section.dart';
 import 'package:seren_ai_flutter/services/data/projects/widgets/project_overview/sub_lists/project_tasks_filters.dart';
-import 'package:seren_ai_flutter/services/data/projects/widgets/project_overview/sub_lists/project_tasks_list_view.dart';
 import 'package:seren_ai_flutter/services/data/tasks/providers/task_filter_state_provider.dart';
+import 'package:seren_ai_flutter/services/data/tasks/providers/tasks_by_project_stream_provider.dart';
+import 'package:seren_ai_flutter/services/data/tasks/widgets/task_list/tasks_list_tiles_view.dart';
 
 // TODO p3: add sort
 // TODO p4: add multi type searching - this should search on notes, shifts, etc. in the future
@@ -17,6 +19,11 @@ class TaskSearchModal extends HookConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final filterState = ref.watch(taskFilterStateProvider);
     final filterNotifier = ref.read(taskFilterStateProvider.notifier);
+
+    final projectId = ref.watch(curSelectedProjectIdNotifierProvider);
+    if (projectId == null) {
+      return const SizedBox.shrink();
+    }
 
     return DraggableScrollableSheet(
       initialChildSize: 1,
@@ -58,7 +65,9 @@ class TaskSearchModal extends HookConsumerWidget {
               useHorizontalScroll: true,
             ),
             Expanded(
-              child: ProjectTasksListView(
+              child: TasksListTilesView(
+                watchedTasks:
+                    ref.watch(tasksByProjectStreamProvider(projectId)),
                 filterCondition: filterState.filterCondition,
                 // TODO p3: add sort
                 //sort: filterState.sortComparator,

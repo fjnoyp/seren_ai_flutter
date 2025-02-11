@@ -13,6 +13,7 @@
             }
         }
     },
+    "addNew": "New",
     "save": "Save",
     "saving": "Saving...",
     "errorSaving": "𐄂 Error saving",
@@ -413,6 +414,7 @@
     "@_": {"description": "Tasks"},
     "tasks": "Tasks",
     "task": "Task",
+    "phase": "Phase",
     "board": "Board",
     "list": "List",
     "ganttChart": "Gantt Chart",
@@ -444,7 +446,7 @@
     "chooseAssignees": "Choose Assignees",
     "chooseStartDate": "Choose a Start Date",
     "selectATask": "Select a Task",
-    "parentTask": "Parent Task",
+    "choosePhase": "Choose Phase",
     "blockedByTask": "Blocked by Task",
     "noEstimatedDurationSet": "No estimated duration set",
     "noEstimatedDuration": "No estimated duration",

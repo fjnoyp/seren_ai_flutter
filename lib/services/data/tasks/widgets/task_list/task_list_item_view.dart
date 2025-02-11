@@ -4,8 +4,10 @@ import 'package:seren_ai_flutter/common/universal_platform/universal_platform.da
 import 'package:seren_ai_flutter/services/data/projects/providers/project_by_id_stream_provider.dart';
 import 'package:seren_ai_flutter/services/data/tasks/models/task_model.dart';
 import 'package:intl/intl.dart';
+import 'package:seren_ai_flutter/services/data/tasks/providers/task_by_id_stream_provider.dart';
 import 'package:seren_ai_flutter/services/data/tasks/providers/task_navigation_service.dart';
 import 'package:seren_ai_flutter/services/data/common/widgets/priority_view.dart';
+import 'package:seren_ai_flutter/services/data/tasks/widgets/task_tag.dart';
 import 'package:seren_ai_flutter/services/data/tasks/widgets/ui_constants.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:seren_ai_flutter/services/data/users/providers/task_assigned_users_stream_provider.dart';
@@ -61,6 +63,17 @@ class TaskListItemView extends ConsumerWidget {
                       style: theme.textTheme.labelSmall?.copyWith(
                           color: theme.colorScheme.onSurface.withAlpha(180)),
                     ),
+                  if (task.parentTaskId != null)
+                    ref.watch(taskByIdStreamProvider(task.parentTaskId!)).when(
+                          data: (parentTask) => TaskTag.custom(
+                              text: parentTask?.name ?? '',
+                              color: Theme.of(context)
+                                  .colorScheme
+                                  .primary
+                                  .withAlpha(150)),
+                          error: (error, stack) => const SizedBox.shrink(),
+                          loading: () => const SizedBox.shrink(),
+                        ),
                 ],
               ),
               Padding(
