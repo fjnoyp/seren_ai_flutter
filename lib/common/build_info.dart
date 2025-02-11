@@ -2,11 +2,11 @@
 class BuildInfo {
   // Core build info
   static const String version = '1.0.0';
-  static const String buildDate = '2025-02-11 10:08:12';
+  static const String buildDate = '2025-02-11 15:35:42';
   
   // Git info
-  static const String commitHash = '1fff87f';
-  static const String branch = 'feat/add-tasks-and-notes-from-home';
+  static const String commitHash = 'db499f8';
+  static const String branch = 'feat/gantt-filtering-and-sorting';
   static const String lastTag = 'no tag';
   
   // Author of last commit
@@ -16,12 +16,20 @@ class BuildInfo {
   // Recent commits (last 5)
   static const List<Map<String, String>> recentCommits = [
     {
+      "hash": "db499f8",
+      "author": "renata-sisilio",
+      "email": "renata@seren-ai.co", 
+      "message": "feat(home): quick adding tasks and notes from home page",
+      "date": "2025-02-11",
+      "relativeDate": "5 hours ago"
+    },
+    {
       "hash": "1fff87f",
       "author": "renata-sisilio",
       "email": "renata@seren-ai.co", 
       "message": "feat(tasks): create phase page",
       "date": "2025-02-11",
-      "relativeDate": "8 minutes ago"
+      "relativeDate": "6 hours ago"
     },
     {
       "hash": "23f0860",
@@ -29,7 +37,7 @@ class BuildInfo {
       "email": "kylcheng@gmail.com", 
       "message": "chore(task): create task action now assigns project",
       "date": "2025-02-10",
-      "relativeDate": "19 hours ago"
+      "relativeDate": "24 hours ago"
     },
     {
       "hash": "04dafee",
@@ -47,17 +55,9 @@ class BuildInfo {
       "date": "2025-02-05",
       "relativeDate": "6 days ago"
     },
-    {
-      "hash": "f106783",
-      "author": "Kyle",
-      "email": "kylcheng@gmail.com", 
-      "message": "fix: ui context for ai + task edit highlights",
-      "date": "2025-02-05",
-      "relativeDate": "6 days ago"
-    },
   ];
 
   // Stats
-  static const String totalCommits = '317';
+  static const String totalCommits = '318';
   static const String contributors = '0';
 }

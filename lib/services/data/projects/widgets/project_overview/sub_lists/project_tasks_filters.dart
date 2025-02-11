@@ -67,7 +67,7 @@ class ProjectTasksFilters extends ConsumerWidget {
               ),
         if (showExtraViewControls) ...[
           const SizedBox(width: 8),
-          const NewTaskFromCurrentProjectButton(),
+          const _NewTaskFromCurrentProjectButton(),
         ],
       ],
     );
@@ -173,9 +173,8 @@ class ProjectTasksFilters extends ConsumerWidget {
   }
 }
 
-// TODO p2: make it private once `ProjectTasksFilters` is used by `_ProjectGanttSection`
-class NewTaskFromCurrentProjectButton extends ConsumerWidget {
-  const NewTaskFromCurrentProjectButton({super.key});
+class _NewTaskFromCurrentProjectButton extends ConsumerWidget {
+  const _NewTaskFromCurrentProjectButton();
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {

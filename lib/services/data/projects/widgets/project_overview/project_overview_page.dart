@@ -8,13 +8,11 @@ import 'package:seren_ai_flutter/services/data/notes/widgets/notes_list_page.dar
 import 'package:seren_ai_flutter/services/data/projects/providers/cur_selected_project_providers.dart';
 import 'package:seren_ai_flutter/services/data/projects/widgets/action_buttons/edit_project_button.dart';
 import 'package:seren_ai_flutter/services/data/projects/widgets/action_buttons/update_project_assignees_button.dart';
-import 'package:seren_ai_flutter/services/data/projects/widgets/project_overview/sub_lists/project_tasks_filters.dart';
 import 'package:seren_ai_flutter/services/data/projects/widgets/project_page.dart';
 import 'package:seren_ai_flutter/services/data/projects/widgets/project_overview/project_tasks_section.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:seren_ai_flutter/services/data/tasks/providers/cur_user_viewable_tasks_stream_provider.dart';
 import 'package:seren_ai_flutter/services/data/common/widgets/async_value_handler_widget.dart';
-import 'package:seren_ai_flutter/services/data/tasks/widgets/gantt/gantt_task_page.dart';
 
 class ProjectTasksPage extends HookConsumerWidget {
   const ProjectTasksPage({super.key});
@@ -36,7 +34,7 @@ class ProjectTasksPage extends HookConsumerWidget {
         (
           name: AppLocalizations.of(context)!.ganttChart,
           icon: Icons.segment,
-          child: const _ProjectGanttSection()
+          child: const ProjectTasksSectionWeb(ProjectTasksSectionViewMode.gantt)
         ),
       ] else ...[
         (
@@ -220,25 +218,6 @@ class _ProjectNotesSection extends ConsumerWidget {
                     parentProjectId: curProjectId,
                   ),
         ),
-      ],
-    );
-  }
-}
-
-class _ProjectGanttSection extends ConsumerWidget {
-  const _ProjectGanttSection();
-
-  @override
-  Widget build(BuildContext context, WidgetRef ref) {
-    final curProjectId = ref.watch(curSelectedProjectIdNotifierProvider);
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.end,
-      children: [
-        const Padding(
-          padding: EdgeInsets.all(8.0),
-          child: NewTaskFromCurrentProjectButton(),
-        ),
-        Expanded(child: GanttChart(projectId: curProjectId)),
       ],
     );
   }

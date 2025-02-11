@@ -2,6 +2,7 @@ import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:seren_ai_flutter/services/data/projects/providers/cur_selected_project_providers.dart';
 import 'package:seren_ai_flutter/services/data/tasks/providers/cur_user_viewable_tasks_stream_provider.dart';
 import 'package:seren_ai_flutter/services/data/tasks/providers/tasks_by_project_stream_provider.dart';
+import 'package:seren_ai_flutter/services/data/tasks/providers/task_filter_state_provider.dart';
 
 class TaskHierarchyInfo {
   final String taskId;
@@ -71,6 +72,7 @@ final taskParentChainIdsProvider =
 final _curProjectTasksHierarchyProvider =
     Provider<Map<String, TaskHierarchyInfo>>((ref) {
   final projectId = ref.watch(curSelectedProjectIdNotifierProvider);
+  final filterState = ref.watch(taskFilterStateProvider);
   final tasks = ref
           .watch(projectId == null
               ? curUserViewableTasksStreamProvider
@@ -79,8 +81,32 @@ final _curProjectTasksHierarchyProvider =
       [];
 
   // Build hierarchy map for O(1) lookups
+  // First identify tasks that pass the filter
+  final filteredTasks = tasks.where(filterState.filterCondition).toList();
+
+  // Create a set of all task IDs we need to include (filtered tasks + their ancestors)
+  final Set<String> tasksToInclude = {};
+
+  // Add filtered tasks and their ancestors
+  for (final task in filteredTasks) {
+    tasksToInclude.add(task.id);
+
+    // Add all ancestors
+    var currentTask = task;
+    while (currentTask.parentTaskId != null) {
+      final parent = tasks.firstWhere((t) => t.id == currentTask.parentTaskId);
+      tasksToInclude.add(parent.id);
+      currentTask = parent;
+    }
+  }
+
+  // Remove tasks that don't pass the filter
+  tasks.removeWhere((t) => !tasksToInclude.contains(t.id));
+
+  // Build hierarchy map including all necessary tasks
   final hierarchyMap = <String, TaskHierarchyInfo>{};
 
+  // Add all required tasks to the hierarchy map
   for (final task in tasks) {
     hierarchyMap[task.id] = TaskHierarchyInfo(
       taskId: task.id,
@@ -90,7 +116,7 @@ final _curProjectTasksHierarchyProvider =
     );
   }
 
-  // Second pass to build relationships
+  // Build relationships
   for (final task in tasks) {
     if (task.parentTaskId != null) {
       hierarchyMap[task.parentTaskId]?.childrenIds.add(task.id);
@@ -105,8 +131,56 @@ final _curProjectTasksHierarchyProvider =
     }
   }
 
-  // Calculate depths starting from root tasks
-  for (final task in tasks.where((t) => t.parentTaskId == null)) {
+  // Sort both root tasks and children lists according to the sort preference
+  if (filterState.sortComparator != null) {
+    // Sort children for each parent
+    for (final info in hierarchyMap.values) {
+      info.childrenIds.sort((a, b) {
+        final taskA = tasks.firstWhere((t) => t.id == a);
+        final taskB = tasks.firstWhere((t) => t.id == b);
+        return filterState.sortComparator!(taskA, taskB);
+      });
+    }
+
+    // Sort root tasks
+    final rootTasks = tasks
+        .where((t) => t.parentTaskId == null && tasksToInclude.contains(t.id))
+        .toList();
+    rootTasks.sort((a, b) {
+      // First, group by type (tasks before phases)
+      if (a.isPhase != b.isPhase) {
+        return a.isPhase
+            ? 1
+            : -1; // Non-phases (false) come before phases (true)
+      }
+      // Within each group, sort by priority using the existing comparator
+      return filterState.sortComparator!(a, b);
+    });
+
+    // Rebuild the map in the correct order
+    final sortedMap = <String, TaskHierarchyInfo>{};
+
+    // Add root tasks first in sorted order
+    for (final task in rootTasks) {
+      sortedMap[task.id] = hierarchyMap[task.id]!;
+    }
+
+    // Add remaining tasks
+    for (final entry in hierarchyMap.entries) {
+      if (!sortedMap.containsKey(entry.key)) {
+        sortedMap[entry.key] = entry.value;
+      }
+    }
+
+    // Update depths based on the sorted order
+    for (final task in rootTasks) {
+      calculateDepth(task.id, 0);
+    }
+
+    return sortedMap;
+  }
+
+  for (final task in tasks) {
     calculateDepth(task.id, 0);
   }
 
