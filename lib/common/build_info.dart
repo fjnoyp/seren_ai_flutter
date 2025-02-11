@@ -2,26 +2,34 @@
 class BuildInfo {
   // Core build info
   static const String version = '1.0.0';
-  static const String buildDate = '2025-02-10 12:14:47';
+  static const String buildDate = '2025-02-11 08:44:44';
   
   // Git info
-  static const String commitHash = 'b61da38';
+  static const String commitHash = 'b87c608';
   static const String branch = 'feat/create-phase-page';
   static const String lastTag = 'no tag';
   
   // Author of last commit
-  static const String lastCommitAuthor = 'renata-sisilio';
-  static const String lastCommitEmail = 'renata@seren-ai.co';
+  static const String lastCommitAuthor = 'Kyle';
+  static const String lastCommitEmail = 'kylcheng@gmail.com';
   
   // Recent commits (last 5)
   static const List<Map<String, String>> recentCommits = [
+    {
+      "hash": "b87c608",
+      "author": "Kyle",
+      "email": "kylcheng@gmail.com", 
+      "message": "chore: helpful tip - powersync schema refresh",
+      "date": "2025-02-10",
+      "relativeDate": "16 hours ago"
+    },
     {
       "hash": "b61da38",
       "author": "renata-sisilio",
       "email": "renata@seren-ai.co", 
       "message": "fix(tasks): rebase from main - update ProjectTasksListView reference",
       "date": "2025-02-10",
-      "relativeDate": "2 hours ago"
+      "relativeDate": "17 hours ago"
     },
     {
       "hash": "18e2392",
@@ -29,7 +37,7 @@ class BuildInfo {
       "email": "renata@seren-ai.co", 
       "message": "pr comments",
       "date": "2025-02-10",
-      "relativeDate": "6 hours ago"
+      "relativeDate": "22 hours ago"
     },
     {
       "hash": "ceafbb9",
@@ -37,7 +45,7 @@ class BuildInfo {
       "email": "renata@seren-ai.co", 
       "message": "fix(tasks): handle tag text overflow",
       "date": "2025-02-10",
-      "relativeDate": "6 hours ago"
+      "relativeDate": "22 hours ago"
     },
     {
       "hash": "1706ce3",
@@ -45,19 +53,11 @@ class BuildInfo {
       "email": "renata@seren-ai.co", 
       "message": "feat(tasks): add phase tag to task list item view",
       "date": "2025-02-10",
-      "relativeDate": "6 hours ago"
-    },
-    {
-      "hash": "3687cfa",
-      "author": "renata-sisilio",
-      "email": "renata@seren-ai.co", 
-      "message": "feat(tasks): create phase page",
-      "date": "2025-02-10",
-      "relativeDate": "7 hours ago"
+      "relativeDate": "22 hours ago"
     },
   ];
 
   // Stats
-  static const String totalCommits = '321';
-  static const String contributors = '       0';
+  static const String totalCommits = '322';
+  static const String contributors = '0';
 }

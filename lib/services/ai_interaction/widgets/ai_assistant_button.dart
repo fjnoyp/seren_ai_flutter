@@ -21,17 +21,19 @@ class AiAssistantButton extends ConsumerWidget {
     return Tooltip(
       message: AppLocalizations.of(context)!.aiAssistant,
       child: GestureDetector(
-        onTap: () {
-          onPreClick?.call();
-          ref.read(isAiModalVisibleProvider.notifier).state = true;
-        },
-        child: Hero(
-            tag: 'ai-button',
-            child: SizedBox(
-                height: size,
-                width: size,
-                child: SvgPicture.asset('assets/images/AI button.svg'))),
-      ),
+          onTap: () {
+            onPreClick?.call();
+            ref.read(isAiModalVisibleProvider.notifier).state = true;
+          },
+          child:
+              // Hero(
+              // tag: 'ai-button',
+              // child:
+              SizedBox(
+                  height: size,
+                  width: size,
+                  child: SvgPicture.asset('assets/images/AI button.svg'))),
+      // ),
     );
   }
 }
