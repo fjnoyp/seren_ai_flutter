@@ -35,20 +35,24 @@ enum TaskFilterOption {
                 .watch(usersInProjectProvider(
                     ref.watch(curSelectedProjectStreamProvider).value!.id))
                 .value
-                ?.map((e) => (
-                      value: e.id,
-                      name: '${e.firstName} ${e.lastName}',
-                      filter: (TaskModel task) {
-                        final assignees = ref
-                                .watch(taskAssignedUsersStreamProvider(task.id))
-                                .valueOrNull ??
-                            [];
-                        // TODO p5: check why this is returning different ids for the same user
-                        return assignees
-                            .any((assignee) => assignee.email == e.email);
-                      }
-                    ))
-                .toList() ??
+                ?.map((e) {
+              // Create a new function that captures only what it needs
+              final userId = e.id;
+              bool filterFunction(TaskModel task) {
+                final assignees = ref
+                        .read(taskAssignedUsersStreamProvider(
+                            task.id)) // Use read instead of watch
+                        .valueOrNull ??
+                    [];
+                return assignees.any((assignee) => assignee.id == userId);
+              }
+
+              return (
+                value: e.id,
+                name: '${e.firstName} ${e.lastName}',
+                filter: filterFunction
+              );
+            }).toList() ??
             [];
 
       case TaskFilterOption.dueDate:

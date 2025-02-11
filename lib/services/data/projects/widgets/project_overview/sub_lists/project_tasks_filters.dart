@@ -35,10 +35,17 @@ class ProjectTasksFilters extends ConsumerWidget {
 
     final filterWidgets = [
       ...TaskFilterOption.values.map(
-        (filter) =>
-            _buildFilterChip(ref, context, filter, filterState, filterNotifier),
+        (filter) => _FilterChip(
+          filter: filter,
+          filterState: filterState,
+          filterNotifier: filterNotifier,
+          onShowCustomDateRangePicker: onShowCustomDateRangePicker,
+        ),
       ),
-      _buildSortChip(context, filterState, filterNotifier),
+      _SortChip(
+        filterState: filterState,
+        filterNotifier: filterNotifier,
+      ),
     ];
 
     return Row(
@@ -72,24 +79,34 @@ class ProjectTasksFilters extends ConsumerWidget {
       ],
     );
   }
+}
 
-  Widget _buildFilterChip(
-    WidgetRef ref,
-    BuildContext context,
-    TaskFilterOption filter,
-    TaskFilterState filterState,
-    TaskFilterStateNotifier filterNotifier,
-  ) {
+class _FilterChip extends ConsumerWidget {
+  const _FilterChip({
+    required this.filter,
+    required this.filterState,
+    required this.filterNotifier,
+    required this.onShowCustomDateRangePicker,
+  });
+
+  final TaskFilterOption filter;
+  final TaskFilterState filterState;
+  final TaskFilterStateNotifier filterNotifier;
+  final Future<DateTimeRange?> Function(BuildContext)
+      onShowCustomDateRangePicker;
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
     final index = TaskFilterOption.values.indexOf(filter);
     return MenuAnchor(
       builder: (context, controller, child) {
         return FilterChip(
-          selected: filterState.filterBy[index] != null,
+          selected: filterState.activeFilters[index] != null,
           avatar: const Icon(Icons.filter_list_outlined),
-          label: filterState.filterBy[index] != null
-              ? Text(filterState.filterBy[index]!.name!)
+          label: filterState.activeFilters[index] != null
+              ? Text(filterState.activeFilters[index]!.name!)
               : Text(filter.getDisplayName(context)),
-          onDeleted: filterState.filterBy[index] != null
+          onDeleted: filterState.activeFilters[index] != null
               ? () => filterNotifier.updateFilter(index, null)
               : null,
           shape: RoundedRectangleBorder(
@@ -135,12 +152,19 @@ class ProjectTasksFilters extends ConsumerWidget {
           .toList(),
     );
   }
+}
 
-  Widget _buildSortChip(
-    BuildContext context,
-    TaskFilterState filterState,
-    TaskFilterStateNotifier filterNotifier,
-  ) {
+class _SortChip extends ConsumerWidget {
+  const _SortChip({
+    required this.filterState,
+    required this.filterNotifier,
+  });
+
+  final TaskFilterState filterState;
+  final TaskFilterStateNotifier filterNotifier;
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
     return MenuAnchor(
       builder: (context, controller, child) {
         return FilterChip(
