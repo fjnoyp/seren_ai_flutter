@@ -48,10 +48,17 @@ class TaskNavigationService extends BaseNavigationService {
   Future<void> openNewTask({
     String? initialProjectId,
     StatusEnum? initialStatus,
+    String? initialParentTaskId,
+    bool isPhase = false,
   }) async {
+    assert(
+      initialParentTaskId == null || isPhase == false,
+      'initialParentTaskId can only be set if isPhase is false',
+    );
+
     final taskIdNotifier = ref.read(curSelectedTaskIdNotifierProvider.notifier);
 
-    await taskIdNotifier.createNewTask();
+    await taskIdNotifier.createNewTask(isPhase: isPhase);
 
     final curTaskId = ref.read(curSelectedTaskIdNotifierProvider);
     if (curTaskId == null) return;
@@ -66,6 +73,12 @@ class TaskNavigationService extends BaseNavigationService {
       await ref
           .read(tasksRepositoryProvider)
           .updateTaskStatus(curTaskId, initialStatus);
+    }
+
+    if (initialParentTaskId != null) {
+      await ref
+          .read(tasksRepositoryProvider)
+          .updateTaskParentTaskId(curTaskId, initialParentTaskId);
     }
 
     await _navigateToTaskPage(mode: EditablePageMode.create, taskId: curTaskId)

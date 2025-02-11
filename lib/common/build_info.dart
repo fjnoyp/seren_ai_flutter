@@ -2,62 +2,62 @@
 class BuildInfo {
   // Core build info
   static const String version = '1.0.0';
-  static const String buildDate = '2025-02-10 15:10:26';
+  static const String buildDate = '2025-02-11 08:52:08';
   
   // Git info
-  static const String commitHash = '12b2258';
-  static const String branch = 'fix/ai_task_interactions';
+  static const String commitHash = 'ab5a4d0';
+  static const String branch = 'feat/create-phase-page';
   static const String lastTag = 'no tag';
   
   // Author of last commit
-  static const String lastCommitAuthor = 'Kyle';
-  static const String lastCommitEmail = 'kylcheng@gmail.com';
+  static const String lastCommitAuthor = 'renata-sisilio';
+  static const String lastCommitEmail = 'renata@seren-ai.co';
   
   // Recent commits (last 5)
   static const List<Map<String, String>> recentCommits = [
     {
-      "hash": "12b2258",
-      "author": "Kyle",
-      "email": "kylcheng@gmail.com", 
-      "message": "chore(tasks): switch task filters to provider",
-      "date": "2025-02-10",
-      "relativeDate": "4 hours ago"
-    },
-    {
-      "hash": "318265b",
-      "author": "Kyle",
-      "email": "kylcheng@gmail.com", 
-      "message": "chore(task): create task action now assigns project",
-      "date": "2025-02-10",
-      "relativeDate": "7 hours ago"
-    },
-    {
-      "hash": "04dafee",
+      "hash": "ab5a4d0",
       "author": "renata-sisilio",
       "email": "renata@seren-ai.co", 
-      "message": "fix(workflow): integrate with current pre-commit hook",
-      "date": "2025-02-07",
-      "relativeDate": "3 days ago"
+      "message": "fix(ai_button): multiple heroes that share the same tag",
+      "date": "2025-02-11",
+      "relativeDate": "7 minutes ago"
     },
     {
-      "hash": "9798fe2",
-      "author": "renata-sisilio",
-      "email": "renata@seren-ai.co", 
-      "message": "feat(gantt): show gantt chart at project overview page (web only)",
-      "date": "2025-02-05",
-      "relativeDate": "5 days ago"
-    },
-    {
-      "hash": "f106783",
+      "hash": "b87c608",
       "author": "Kyle",
       "email": "kylcheng@gmail.com", 
-      "message": "fix: ui context for ai + task edit highlights",
-      "date": "2025-02-05",
-      "relativeDate": "5 days ago"
+      "message": "chore: helpful tip - powersync schema refresh",
+      "date": "2025-02-10",
+      "relativeDate": "16 hours ago"
+    },
+    {
+      "hash": "b61da38",
+      "author": "renata-sisilio",
+      "email": "renata@seren-ai.co", 
+      "message": "fix(tasks): rebase from main - update ProjectTasksListView reference",
+      "date": "2025-02-10",
+      "relativeDate": "17 hours ago"
+    },
+    {
+      "hash": "18e2392",
+      "author": "renata-sisilio",
+      "email": "renata@seren-ai.co", 
+      "message": "pr comments",
+      "date": "2025-02-10",
+      "relativeDate": "22 hours ago"
+    },
+    {
+      "hash": "ceafbb9",
+      "author": "renata-sisilio",
+      "email": "renata@seren-ai.co", 
+      "message": "fix(tasks): handle tag text overflow",
+      "date": "2025-02-10",
+      "relativeDate": "22 hours ago"
     },
   ];
 
   // Stats
-  static const String totalCommits = '317';
+  static const String totalCommits = '323';
   static const String contributors = '0';
 }

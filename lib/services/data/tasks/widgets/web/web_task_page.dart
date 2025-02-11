@@ -2,27 +2,29 @@ import 'package:flutter/material.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:logging/logging.dart';
 import 'package:seren_ai_flutter/common/navigation_service_provider.dart';
-import 'package:seren_ai_flutter/services/data/common/widgets/editable_page_mode_enum.dart';
 import 'package:seren_ai_flutter/services/data/tasks/providers/cur_selected_task_id_notifier_provider.dart';
 import 'package:seren_ai_flutter/services/data/tasks/providers/task_by_id_stream_provider.dart';
+import 'package:seren_ai_flutter/services/data/tasks/providers/tasks_by_parent_stream_provider.dart';
 import 'package:seren_ai_flutter/services/data/tasks/widgets/action_buttons/delete_task_button.dart';
 import 'package:seren_ai_flutter/services/data/tasks/widgets/budget/task_budget_section.dart';
 import 'package:seren_ai_flutter/services/data/tasks/widgets/form/task_selection_fields.dart';
 import 'package:seren_ai_flutter/services/data/tasks/widgets/task_comments/task_comment_section.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+import 'package:seren_ai_flutter/services/data/tasks/widgets/task_list/tasks_list_tiles_view.dart';
+import 'package:seren_ai_flutter/services/data/tasks/widgets/task_tag.dart';
 import 'package:seren_ai_flutter/widgets/common/debug_mode_provider.dart';
 
 final log = Logger('TaskPage');
 
 /// For creating / editing a task
 class WebTaskPage extends ConsumerWidget {
-  final EditablePageMode mode;
-
-  const WebTaskPage({super.key, required this.mode});
+  const WebTaskPage({super.key});
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final curTaskId = ref.watch(curSelectedTaskIdNotifierProvider) ?? '';
+    final isPhase =
+        ref.watch(taskByIdStreamProvider(curTaskId)).value?.isPhase ?? false;
 
     final isDebugMode = ref.watch(isDebugModeSNP);
 
@@ -39,6 +41,7 @@ class WebTaskPage extends ConsumerWidget {
               children: [
                 TabBar(
                   tabs: [
+                    if (isPhase) Tab(text: AppLocalizations.of(context)?.tasks),
                     Tab(text: AppLocalizations.of(context)?.comments),
                     if (isDebugMode) const Tab(text: 'Budget'),
                   ],
@@ -48,6 +51,7 @@ class WebTaskPage extends ConsumerWidget {
                     padding: const EdgeInsets.all(16),
                     child: TabBarView(
                       children: [
+                        if (isPhase) _TasksFromPhaseSection(phaseId: curTaskId),
                         TaskCommentSection(curTaskId),
                         if (isDebugMode) TaskBudgetSection(curTaskId),
                       ],
@@ -63,6 +67,18 @@ class WebTaskPage extends ConsumerWidget {
   }
 }
 
+class _TasksFromPhaseSection extends ConsumerWidget {
+  const _TasksFromPhaseSection({required this.phaseId});
+
+  final String phaseId;
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final tasks = ref.watch(tasksByParentStreamProvider(phaseId));
+    return TasksListTilesView(watchedTasks: tasks, filterCondition: null);
+  }
+}
+
 class _TaskInfoDisplay extends ConsumerWidget {
   const _TaskInfoDisplay({required this.taskId});
 
@@ -73,16 +89,21 @@ class _TaskInfoDisplay extends ConsumerWidget {
     final theme = Theme.of(context);
 
     final task = ref.watch(taskByIdStreamProvider(taskId));
+    if (task.value == null) {
+      return const Center(child: CircularProgressIndicator());
+    }
+
+    final isPhase = task.value?.isPhase ?? false;
 
     return SingleChildScrollView(
-      child: Padding(
-        padding: const EdgeInsets.all(16),
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          mainAxisAlignment: MainAxisAlignment.start,
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Row(
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
+        mainAxisAlignment: MainAxisAlignment.start,
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Padding(
+            padding: const EdgeInsets.only(top: 16, left: 16),
+            child: Row(
               children: [
                 IconButton(
                   onPressed: () =>
@@ -100,71 +121,85 @@ class _TaskInfoDisplay extends ConsumerWidget {
                     color: theme.colorScheme.outline,
                   ),
                 ),
+                const Expanded(child: SizedBox.shrink()),
+                isPhase ? TaskTag.phase() : TaskTag.task(),
               ],
             ),
-
-            const SizedBox(height: 8),
-            TaskProjectSelectionField(taskId: taskId),
-            TaskNameField(taskId: taskId),
-            const SizedBox(height: 8),
-
-            // ======================
-            // ====== SUBITEMS ======
-            // ======================
-            Padding(
-              padding: const EdgeInsets.only(left: 16),
-              child: Row(
-                children: [
-                  Expanded(
-                    child: Column(
-                      mainAxisSize: MainAxisSize.min,
-                      children: [
-                        TaskPrioritySelectionField(taskId: taskId),
-                        TaskStatusSelectionField(taskId: taskId),
-                        TaskStartDateSelectionField(taskId: taskId),
-                        TaskDueDateSelectionField(taskId: taskId),
-                        ReminderMinuteOffsetFromDueDateSelectionField(
-                          context: context,
-                          taskId: taskId,
-                          enabled: task.value?.dueDate != null,
-                        ),
-                      ],
-                    ),
+          ),
+          Padding(
+            padding: const EdgeInsets.all(16),
+            child: Column(
+              children: [
+                TaskProjectSelectionField(taskId: taskId),
+                if (!isPhase)
+                  TaskPhaseSelectionField(
+                    context: context,
+                    taskId: taskId,
+                    projectId: task.value?.parentProjectId ?? '',
                   ),
-                  const SizedBox(width: 16),
-                  Expanded(
-                    child: Column(
-                      mainAxisSize: MainAxisSize.min,
-                      children: [
-                        TaskParentTaskSelectionField(
-                          context: context,
-                          taskId: taskId,
-                          projectId: task.value?.parentProjectId ?? '',
+                TaskNameField(taskId: taskId),
+                const SizedBox(height: 8),
+
+                // ======================
+                // ====== SUBITEMS ======
+                // ======================
+                Padding(
+                  padding: const EdgeInsets.only(left: 16),
+                  child: Row(
+                    children: [
+                      Expanded(
+                        child: Column(
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            TaskPrioritySelectionField(taskId: taskId),
+                            TaskStartDateSelectionField(taskId: taskId),
+                            TaskDueDateSelectionField(taskId: taskId),
+                            if (!isPhase)
+                              ReminderMinuteOffsetFromDueDateSelectionField(
+                                context: context,
+                                taskId: taskId,
+                                enabled: task.value?.dueDate != null,
+                              ),
+                          ],
                         ),
-                        TaskBlockedByTaskSelectionField(
-                          context: context,
-                          taskId: taskId,
-                          projectId: task.value?.parentProjectId ?? '',
+                      ),
+                      const SizedBox(width: 16),
+                      Expanded(
+                        child: Column(
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            if (!isPhase)
+                              TaskStatusSelectionField(taskId: taskId),
+                            if (!isPhase)
+                              TaskBlockedByTaskSelectionField(
+                                context: context,
+                                taskId: taskId,
+                                projectId: task.value?.parentProjectId ?? '',
+                              ),
+                            TaskEstimatedDurationSelectionField(
+                              context: context,
+                              taskId: taskId,
+                            ),
+                            TaskAssigneesSelectionField(
+                              context: context,
+                              taskId: taskId,
+                            ),
+                          ],
                         ),
-                        TaskEstimatedDurationSelectionField(
-                          context: context,
-                          taskId: taskId,
-                        ),
-                        TaskAssigneesSelectionField(taskId: taskId),
-                      ],
-                    ),
+                      ),
+                    ],
                   ),
-                ],
-              ),
+                ),
+
+                const SizedBox(height: 16),
+                TaskDescriptionSelectionField(taskId: taskId, context: context),
+                const SizedBox(height: 16),
+
+                DeleteTaskButton(taskId, showLabelText: true),
+              ],
             ),
-
-            const SizedBox(height: 16),
-            TaskDescriptionSelectionField(taskId: taskId, context: context),
-            const SizedBox(height: 16),
-
-            DeleteTaskButton(taskId, showLabelText: true),
-          ],
-        ),
+          ),
+        ],
       ),
     );
   }
