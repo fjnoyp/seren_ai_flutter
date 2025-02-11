@@ -17,6 +17,9 @@ class ProjectTasksSectionedListView extends ConsumerWidget {
     final projectId = ref.watch(curSelectedProjectIdNotifierProvider);
     if (projectId == null) return const SizedBox.shrink();
 
+    // We should ideally separate out the common sort/filter logic
+    // for the sectioned view and board view as well since we're duplicating that
+    // between both those views at the moment.
     final filterState = ref.watch(taskFilterStateProvider);
 
     return AsyncValueHandlerWidget(
