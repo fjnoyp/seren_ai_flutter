@@ -2,19 +2,27 @@
 class BuildInfo {
   // Core build info
   static const String version = '1.0.0';
-  static const String buildDate = '2025-02-11 08:44:44';
+  static const String buildDate = '2025-02-11 08:52:08';
   
   // Git info
-  static const String commitHash = 'b87c608';
+  static const String commitHash = 'ab5a4d0';
   static const String branch = 'feat/create-phase-page';
   static const String lastTag = 'no tag';
   
   // Author of last commit
-  static const String lastCommitAuthor = 'Kyle';
-  static const String lastCommitEmail = 'kylcheng@gmail.com';
+  static const String lastCommitAuthor = 'renata-sisilio';
+  static const String lastCommitEmail = 'renata@seren-ai.co';
   
   // Recent commits (last 5)
   static const List<Map<String, String>> recentCommits = [
+    {
+      "hash": "ab5a4d0",
+      "author": "renata-sisilio",
+      "email": "renata@seren-ai.co", 
+      "message": "fix(ai_button): multiple heroes that share the same tag",
+      "date": "2025-02-11",
+      "relativeDate": "7 minutes ago"
+    },
     {
       "hash": "b87c608",
       "author": "Kyle",
@@ -47,17 +55,9 @@ class BuildInfo {
       "date": "2025-02-10",
       "relativeDate": "22 hours ago"
     },
-    {
-      "hash": "1706ce3",
-      "author": "renata-sisilio",
-      "email": "renata@seren-ai.co", 
-      "message": "feat(tasks): add phase tag to task list item view",
-      "date": "2025-02-10",
-      "relativeDate": "22 hours ago"
-    },
   ];
 
   // Stats
-  static const String totalCommits = '322';
+  static const String totalCommits = '323';
   static const String contributors = '0';
 }

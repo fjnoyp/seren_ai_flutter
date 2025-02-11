@@ -69,7 +69,7 @@ class BaseTaskSelectionField extends ConsumerWidget {
                 onValueChanged: (ref, task) => updateTask(ref, task),
                 isValueRequired: false,
               )
-            : Text(task?.name ?? '');
+            : Text(task?.name ?? emptyValueString);
       },
     );
   }

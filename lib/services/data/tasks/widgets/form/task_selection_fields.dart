@@ -227,7 +227,7 @@ class TaskPhaseSelectionField extends BaseTaskSelectionField {
               parentTasksByProjectStreamProvider(projectId),
           updateTask: (ref, task) => ref
               .read(tasksRepositoryProvider)
-              .updateTaskParentTaskId(taskId, task!.id),
+              .updateTaskParentTaskId(taskId, task?.id),
           label: AppLocalizations.of(context)!.phase,
           emptyValueString: AppLocalizations.of(context)!.choosePhase,
         );
