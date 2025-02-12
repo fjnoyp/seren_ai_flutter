@@ -70,11 +70,11 @@ class _TaskCardItem extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    return GestureDetector(
-      onTap: () async => await ref
-          .read(taskNavigationServiceProvider)
-          .openTask(initialTaskId: task.id),
-      child: BaseHomeInnerCard.outlined(
+    return BaseHomeInnerCard.outlined(
+      child: InkWell(
+        onTap: () async => await ref
+            .read(taskNavigationServiceProvider)
+            .openTask(initialTaskId: task.id),
         child: SizedBox(
           width: double.infinity,
           child: Padding(

@@ -47,11 +47,14 @@ class BaseTextBlockEditSelectionField extends HookConsumerWidget {
                   hintText:
                       hintText ?? AppLocalizations.of(context)!.enterTextHere,
                   prefixIcon: labelWidget,
-                  filled: false,
+                   // if we set filled to false, hover color will not work
+                  fillColor: Colors.transparent,
                   enabledBorder: InputBorder.none,
                   disabledBorder: InputBorder.none,
                   focusedBorder: InputBorder.none,
                   border: InputBorder.none,
+                  hoverColor:
+                      Theme.of(context).colorScheme.primary.withAlpha(25),
                 ),
                 onFieldSubmitted: (value) async {
                   await updateDescription(ref, value);

@@ -25,19 +25,19 @@ class TaskListItemView extends ConsumerWidget {
         ref.watch(projectByIdStreamProvider(task.parentProjectId));
     final taskAssignees = ref.watch(taskAssignedUsersStreamProvider(task.id));
 
-    return GestureDetector(
-      onTap: () async {
-        await ref
-            .read(taskNavigationServiceProvider)
-            .openTask(initialTaskId: task.id);
-      },
-      child: Card(
-        color: theme.cardColor,
-        margin: const EdgeInsets.symmetric(vertical: 8.0, horizontal: 2.0),
-        elevation: 3.0,
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(6.0),
-        ),
+    return Card(
+      color: theme.cardColor,
+      margin: const EdgeInsets.symmetric(vertical: 8.0, horizontal: 2.0),
+      elevation: 3.0,
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(6.0),
+      ),
+      child: InkWell(
+        onTap: () async {
+          await ref
+              .read(taskNavigationServiceProvider)
+              .openTask(initialTaskId: task.id);
+        },
         child: Padding(
           padding: const EdgeInsets.fromLTRB(10.0, 12.0, 4.0, 12.0),
           child: Column(

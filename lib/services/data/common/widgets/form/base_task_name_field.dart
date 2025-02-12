@@ -79,11 +79,13 @@ class BaseNameField extends HookConsumerWidget {
           decoration: InputDecoration(
             hintText: 'Enter name',
             errorText: curName.isEmpty ? 'Name is required' : null,
-            filled: false,
+            // if we set filled to false, hover color will not work
+            fillColor: Colors.transparent,
             enabledBorder: InputBorder.none,
             disabledBorder: InputBorder.none,
             focusedBorder: InputBorder.none,
             border: InputBorder.none,
+            hoverColor: Theme.of(context).colorScheme.primary.withAlpha(25),
           ),
           style: (textStyle ?? Theme.of(context).textTheme.headlineMedium)
               ?.copyWith(
