@@ -101,10 +101,6 @@ class SpeechStateControlButtonWidget extends ConsumerWidget {
           label = 'Loading...';
           leftButton = null;
           rightButton = null;
-          break;
-        default:
-          centerWidget = Text(AppLocalizations.of(context)!
-              .unknownState(statusState.speechState.toString()));
       }
 
       return Column(

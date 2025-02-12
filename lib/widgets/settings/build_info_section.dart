@@ -10,9 +10,9 @@ class BuildInfoSection extends StatelessWidget {
     return ListTile(
       dense: true,
       leading: const Icon(Icons.info_outline),
-      title: Text(
+      title: const Text(
         'v${BuildInfo.version} (${BuildInfo.commitHash}) - Warning last commit is NOT shown',
-        style: const TextStyle(fontWeight: FontWeight.bold),
+        style: TextStyle(fontWeight: FontWeight.bold),
       ),
       subtitle: Text(
         '${BuildInfo.lastCommitAuthor}: ${BuildInfo.recentCommits[0]["message"]}',
