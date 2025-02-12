@@ -34,6 +34,8 @@ class BaseHomeCard extends StatelessWidget {
                   title,
                   style: Theme.of(context).textTheme.titleMedium,
                 ),
+                const Spacer(),
+                if (cornerButton != null) cornerButton!,
               ],
             ),
             Expanded(
