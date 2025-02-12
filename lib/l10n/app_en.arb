@@ -426,6 +426,7 @@
     "addTasks": "Add Tasks",
     "phaseTasks": "Phase Tasks",
     "newTask": "New Task",
+    "type": "Type",
     "lastUpdatedDate": "Last updated: {date}",
     "@lastUpdatedDate": {
         "placeholders": {

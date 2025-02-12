@@ -2,11 +2,11 @@
 class BuildInfo {
   // Core build info
   static const String version = '1.0.0';
-  static const String buildDate = '2025-02-12 11:01:11';
+  static const String buildDate = '2025-02-12 16:20:00';
   
   // Git info
-  static const String commitHash = 'bc898e8';
-  static const String branch = 'main';
+  static const String commitHash = 'eb06708';
+  static const String branch = 'feat/filter-to-show-only-tasks-or-phases';
   static const String lastTag = 'no tag';
   
   // Author of last commit
@@ -16,12 +16,20 @@ class BuildInfo {
   // Recent commits (last 5)
   static const List<Map<String, String>> recentCommits = [
     {
+      "hash": "eb06708",
+      "author": "Kyle",
+      "email": "kylcheng@gmail.com", 
+      "message": "fix(tasks): fix broken ai chat due to task type field",
+      "date": "2025-02-12",
+      "relativeDate": "19 minutes ago"
+    },
+    {
       "hash": "bc898e8",
       "author": "Kyle",
       "email": "kylcheng@gmail.com", 
       "message": "chore: remove docked quick create button",
       "date": "2025-02-12",
-      "relativeDate": "17 minutes ago"
+      "relativeDate": "36 minutes ago"
     },
     {
       "hash": "7bceeb8",
@@ -47,17 +55,9 @@ class BuildInfo {
       "date": "2025-02-12",
       "relativeDate": "4 hours ago"
     },
-    {
-      "hash": "40590cf",
-      "author": "renata-sisilio",
-      "email": "renata@seren-ai.co", 
-      "message": "feat(gantt): add expand button to phase display",
-      "date": "2025-02-12",
-      "relativeDate": "4 hours ago"
-    },
   ];
 
   // Stats
-  static const String totalCommits = '325';
-  static const String contributors = '       0';
+  static const String totalCommits = '326';
+  static const String contributors = '0';
 }

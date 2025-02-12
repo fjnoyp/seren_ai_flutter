@@ -8,6 +8,7 @@ import 'package:seren_ai_flutter/services/data/users/providers/user_in_project_p
 import 'package:seren_ai_flutter/services/data/users/providers/task_assigned_users_stream_provider.dart';
 
 enum TaskFilterOption {
+  type,
   assignees,
   dueDate,
   priority,
@@ -23,6 +24,8 @@ enum TaskFilterOption {
         return AppLocalizations.of(context)!.priority;
       case TaskFilterOption.creationDate:
         return AppLocalizations.of(context)!.createdAt;
+      case TaskFilterOption.type:
+        return AppLocalizations.of(context)!.type;
     }
   }
 
@@ -119,6 +122,15 @@ enum TaskFilterOption {
             filter: null
           ),
         ];
+
+      case TaskFilterOption.type:
+        return TaskType.values
+            .map((e) => (
+                  value: e.name,
+                  name: e.toHumanReadable(context),
+                  filter: (task) => task.type == e
+                ))
+            .toList();
     }
   }
 
@@ -133,5 +145,6 @@ enum TaskFilterOption {
             ? (task.createdAt?.isAfter(dateRange.start) ?? false) &&
                 (task.createdAt?.isBefore(dateRange.end) ?? false)
             : true,
+        TaskFilterOption.type => (task, _) => true,
       };
 }
