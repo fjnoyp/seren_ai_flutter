@@ -9,10 +9,14 @@ class TasksListTilesView extends StatelessWidget {
     super.key,
     required this.watchedTasks,
     required this.filterCondition,
+    this.onTapOption,
   });
 
   final AsyncValue<List<TaskModel>?> watchedTasks;
   final bool Function(TaskModel p1)? filterCondition;
+
+  /// If this is null, tapping on a task will open the task page
+  final void Function(String taskId)? onTapOption;
 
   @override
   Widget build(BuildContext context) {
@@ -33,8 +37,10 @@ class TasksListTilesView extends StatelessWidget {
         return ListView.separated(
           shrinkWrap: true,
           itemCount: filteredTasks.length,
-          itemBuilder: (context, index) =>
-              TaskListTileItemView(filteredTasks[index]),
+          itemBuilder: (context, index) => TaskListTileItemView(
+            filteredTasks[index],
+            onTap: onTapOption,
+          ),
           separatorBuilder: (context, index) => const Divider(height: 1),
         );
       },
