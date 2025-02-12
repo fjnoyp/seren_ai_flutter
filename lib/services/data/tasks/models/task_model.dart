@@ -94,7 +94,7 @@ class TaskModel implements IHasId {
   @JsonKey(name: 'blocked_by_task_id')
   final String? blockedByTaskId;
 
-  @JsonKey(name: 'type')
+  @JsonKey(defaultValue: TaskType.task)
   final TaskType type;
   bool get isPhase => type == TaskType.phase;
 
@@ -197,4 +197,23 @@ class TaskModel implements IHasId {
       'assignees': assignees?.map((user) => user.email).toList() ?? [],
     };
   }
+}
+
+class TaskTypeConverter implements JsonConverter<TaskType, String> {
+  const TaskTypeConverter();
+
+  @override
+  TaskType fromJson(String json) {
+    try {
+      return TaskType.values.firstWhere(
+        (e) => e.toString().split('.').last == json,
+        orElse: () => TaskType.task, // Fallback value
+      );
+    } catch (_) {
+      return TaskType.task; // Fallback for any errors
+    }
+  }
+
+  @override
+  String toJson(TaskType type) => type.toString().split('.').last;
 }
