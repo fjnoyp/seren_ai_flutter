@@ -290,35 +290,36 @@ class _QuickActionsBottomAppBar extends ConsumerWidget {
                 .navigateToAndRemoveUntil(
                     AppRoutes.home.name, (route) => false),
           ),
-          IconButton(
-            tooltip: AppLocalizations.of(context)!.createNewTask,
-            icon: const Icon(Icons.add_box_outlined),
-            onPressed: () {
-              // Show a bottom modal with buttons to create items (only tasks for now)
-              showModalBottomSheet(
-                context: context,
-                builder: (BuildContext context) {
-                  return Padding(
-                    padding: const EdgeInsets.all(20.0),
-                    child: Column(
-                      mainAxisSize: MainAxisSize.min,
-                      children: [
-                        ElevatedButton(
-                          onPressed: () async {
-                            ref
-                                .read(taskNavigationServiceProvider)
-                                .openNewTask();
-                          },
-                          child: Text(AppLocalizations.of(context)!.createTask),
-                        ),
-                      ],
-                    ),
-                  );
-                },
-              );
-            },
-          ),
-          const SizedBox.shrink(),
+          // Remove icon for quick create for now
+          // IconButton(
+          //   tooltip: AppLocalizations.of(context)!.createNewTask,
+          //   icon: const Icon(Icons.add_box_outlined),
+          //   onPressed: () {
+          //     // Show a bottom modal with buttons to create items (only tasks for now)
+          //     showModalBottomSheet(
+          //       context: context,
+          //       builder: (BuildContext context) {
+          //         return Padding(
+          //           padding: const EdgeInsets.all(20.0),
+          //           child: Column(
+          //             mainAxisSize: MainAxisSize.min,
+          //             children: [
+          //               ElevatedButton(
+          //                 onPressed: () async {
+          //                   ref
+          //                       .read(taskNavigationServiceProvider)
+          //                       .openNewTask();
+          //                 },
+          //                 child: Text(AppLocalizations.of(context)!.createTask),
+          //               ),
+          //             ],
+          //           ),
+          //         );
+          //       },
+          //     );
+          //   },
+          // ),
+          // const SizedBox.shrink(),
           const SizedBox.shrink(),
           IconButton(
             tooltip: AppLocalizations.of(context)!.chat,
