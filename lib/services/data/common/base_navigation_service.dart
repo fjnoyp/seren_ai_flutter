@@ -13,7 +13,7 @@ abstract class BaseNavigationService {
 
   static BaseNavigationService? fromAppRoute(AppRoutes route, WidgetRef ref) {
     return switch (route) {
-      AppRoutes.projectDetails => ref.read(projectNavigationServiceProvider),
+      AppRoutes.projectOverview => ref.read(projectNavigationServiceProvider),
       AppRoutes.taskPage => ref.read(taskNavigationServiceProvider),
       AppRoutes.notePage => ref.read(notesNavigationServiceProvider),
       _ => null,
