@@ -3,6 +3,7 @@ import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:logging/logging.dart';
 import 'package:seren_ai_flutter/common/navigation_service_provider.dart';
 import 'package:seren_ai_flutter/services/data/projects/providers/cur_selected_project_providers.dart';
+import 'package:seren_ai_flutter/services/data/projects/widgets/project_overview/task_search_modal.dart';
 import 'package:seren_ai_flutter/services/data/tasks/providers/cur_selected_task_id_notifier_provider.dart';
 import 'package:seren_ai_flutter/services/data/tasks/providers/task_by_id_stream_provider.dart';
 import 'package:seren_ai_flutter/services/data/tasks/providers/task_navigation_service.dart';
@@ -11,7 +12,6 @@ import 'package:seren_ai_flutter/services/data/tasks/repositories/tasks_reposito
 import 'package:seren_ai_flutter/services/data/tasks/widgets/action_buttons/delete_task_button.dart';
 import 'package:seren_ai_flutter/services/data/tasks/widgets/budget/task_budget_section.dart';
 import 'package:seren_ai_flutter/services/data/tasks/widgets/form/task_selection_fields.dart';
-import 'package:seren_ai_flutter/services/data/tasks/widgets/project_tasks_search_anchor.dart';
 import 'package:seren_ai_flutter/services/data/tasks/widgets/task_comments/task_comment_section.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:seren_ai_flutter/services/data/tasks/widgets/task_list/tasks_list_tiles_view.dart';
@@ -93,14 +93,11 @@ class _TasksFromPhaseSection extends ConsumerWidget {
             style: labelStyle,
           ),
         ),
-        // const Expanded(child: TaskSearchModal()),
-        ProjectTasksSearchAnchor(
-          onTapOption: (taskId) => ref
-              .read(tasksRepositoryProvider)
-              .updateTaskParentTaskId(taskId, phaseId),
-          hidePhases: true,
-          tasksFilter: (task) => task.parentTaskId != phaseId,
-        ),
+        Expanded(
+            child: TaskSearchModal(
+                onTapOption: (taskId) => ref
+                    .read(tasksRepositoryProvider)
+                    .updateTaskParentTaskId(taskId, phaseId))),
         const SizedBox(height: 32),
         Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
