@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
+import 'package:seren_ai_flutter/services/data/common/generate_color_from_id.dart';
 import 'package:seren_ai_flutter/services/data/tasks/widgets/gantt/experimental/cur_project_tasks_hierarchy_provider.dart';
 
 class GanttTaskVisualState {
@@ -60,7 +61,7 @@ class GanttTaskVisualStateNotifier extends StateNotifier<GanttTaskVisualState> {
 
   GanttTaskVisualStateNotifier(this.ref, this.taskId)
       : super(GanttTaskVisualState(
-          baseColor: _generateColorFromId(taskId), // Default initial color
+          baseColor: generateColorFromId(taskId), // Default initial color
           canExpand: false,
         )) {
     // Initialize and listen to dependencies
@@ -74,7 +75,7 @@ class GanttTaskVisualStateNotifier extends StateNotifier<GanttTaskVisualState> {
   void _updateVisualState() {
     final parentChain = ref.read(taskParentChainIdsProvider(taskId));
     final rootParentId = parentChain.isEmpty ? taskId : parentChain.last;
-    final newColor = _generateColorFromId(rootParentId);
+    final newColor = generateColorFromId(rootParentId);
 
     final canExpand =
         ref.read(taskHierarchyInfoProvider(taskId))?.childrenIds.isNotEmpty ??
@@ -108,13 +109,6 @@ class GanttTaskVisualStateNotifier extends StateNotifier<GanttTaskVisualState> {
       highlightIntensity: 0.0,
     );
   }
-}
-
-// Helper function moved from color provider
-Color _generateColorFromId(String id) {
-  final hash = id.hashCode;
-  final hue = (hash % 360).abs().toDouble();
-  return HSLColor.fromAHSL(1.0, hue, 0.6, 0.6).toColor();
 }
 
 // Computed visibility can still be separate since it depends on parent state
