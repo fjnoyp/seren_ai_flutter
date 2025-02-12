@@ -423,6 +423,9 @@
     "deleteTask": "Delete Task",
     "comments": "Comments",
     "addComment": "Add Comment",
+    "addTasks": "Add Tasks",
+    "phaseTasks": "Phase Tasks",
+    "newTask": "New Task",
     "lastUpdatedDate": "Last updated: {date}",
     "@lastUpdatedDate": {
         "placeholders": {
