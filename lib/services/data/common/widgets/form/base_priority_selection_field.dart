@@ -9,7 +9,7 @@ class BasePrioritySelectionField extends ConsumerWidget {
   final bool enabled;
   final ProviderListenable<PriorityEnum?> priorityProvider;
   final Function(WidgetRef, PriorityEnum?) updatePriority;
-  final bool? showLabelWidget; // Nullable boolean to show/hide the labelWidget
+  final bool showLabelWidget; // show/hide the labelWidget
 
   const BasePrioritySelectionField({
     super.key,
@@ -32,7 +32,10 @@ class BasePrioritySelectionField extends ConsumerWidget {
       valueToString: (priority) =>
           priority?.toHumanReadable(context) ??
           AppLocalizations.of(context)!.selectPriority,
-      valueToWidget: (priority) => PriorityView(priority: priority),
+      valueToWidget: (priority) => PriorityView(
+        priority: priority,
+        outline: showLabelWidget, // current implementation will outline when showLabelWidget is true
+      ),
       enabled: enabled,
       value: curTaskPriority,
       options: PriorityEnum.values,
