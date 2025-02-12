@@ -211,7 +211,7 @@ class _StaticPhaseRow extends ConsumerWidget {
                     ),
                     const SizedBox(width: 4),
                     Expanded(
-                      child: GestureDetector(
+                      child: InkWell(
                         onTapDown: (details) => showMenu(
                           context: context,
                           position: RelativeRect.fromLTRB(
@@ -414,10 +414,9 @@ class _StaticCellContent extends ConsumerWidget {
     if (task == null) return const SizedBox.shrink();
     switch (fieldType) {
       case TaskFieldEnum.name:
-        // We needed to move GestureDetector to prevent the parent's onTap
+        // We needed to move InkWell to prevent the parent's onTap
         // from blocking the menu from being shown for status/priority fields.
-        return GestureDetector(
-          behavior: HitTestBehavior.deferToChild,
+        return InkWell(
           onTapDown: (details) => showMenu(
             context: context,
             position: RelativeRect.fromLTRB(

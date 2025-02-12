@@ -67,10 +67,10 @@ class _NoteCardItem extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    return GestureDetector(
-      onTap: () =>
-          ref.read(notesNavigationServiceProvider).openNote(noteId: note.id),
-      child: BaseHomeInnerCard.outlined(
+    return BaseHomeInnerCard.outlined(
+      child: InkWell(
+        onTap: () =>
+            ref.read(notesNavigationServiceProvider).openNote(noteId: note.id),
         child: SizedBox(
           width: double.infinity,
           child: Padding(
