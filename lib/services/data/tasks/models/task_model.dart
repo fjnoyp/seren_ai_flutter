@@ -46,7 +46,15 @@ enum PriorityEnum {
       };
 }
 
-enum TaskType { phase, task }
+enum TaskType {
+  phase,
+  task;
+
+  String toHumanReadable(BuildContext context) => switch (this) {
+        TaskType.task => AppLocalizations.of(context)!.task,
+        TaskType.phase => AppLocalizations.of(context)!.phase,
+      };
+}
 
 @JsonSerializable()
 class TaskModel implements IHasId {
