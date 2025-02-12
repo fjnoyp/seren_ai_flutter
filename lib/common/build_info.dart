@@ -2,26 +2,42 @@
 class BuildInfo {
   // Core build info
   static const String version = '1.0.0';
-  static const String buildDate = '2025-02-12 11:01:11';
+  static const String buildDate = '2025-02-12 17:49:00';
   
   // Git info
-  static const String commitHash = 'bc898e8';
+  static const String commitHash = '0a70c1f';
   static const String branch = 'main';
   static const String lastTag = 'no tag';
   
   // Author of last commit
-  static const String lastCommitAuthor = 'Kyle';
-  static const String lastCommitEmail = 'kylcheng@gmail.com';
+  static const String lastCommitAuthor = 'renata-sisilio';
+  static const String lastCommitEmail = 'renata@seren-ai.co';
   
   // Recent commits (last 5)
   static const List<Map<String, String>> recentCommits = [
+    {
+      "hash": "0a70c1f",
+      "author": "renata-sisilio",
+      "email": "renata@seren-ai.co", 
+      "message": "feat(projects): add filter to show only tasks or phases",
+      "date": "2025-02-12",
+      "relativeDate": "89 minutes ago"
+    },
+    {
+      "hash": "eb06708",
+      "author": "Kyle",
+      "email": "kylcheng@gmail.com", 
+      "message": "fix(tasks): fix broken ai chat due to task type field",
+      "date": "2025-02-12",
+      "relativeDate": "2 hours ago"
+    },
     {
       "hash": "bc898e8",
       "author": "Kyle",
       "email": "kylcheng@gmail.com", 
       "message": "chore: remove docked quick create button",
       "date": "2025-02-12",
-      "relativeDate": "17 minutes ago"
+      "relativeDate": "2 hours ago"
     },
     {
       "hash": "7bceeb8",
@@ -29,7 +45,7 @@ class BuildInfo {
       "email": "renata@seren-ai.co", 
       "message": "fix(projects/mobile): remove duplicated ui elements from project page",
       "date": "2025-02-12",
-      "relativeDate": "2 hours ago"
+      "relativeDate": "3 hours ago"
     },
     {
       "hash": "ab2fd31",
@@ -37,27 +53,11 @@ class BuildInfo {
       "email": "renata@seren-ai.co", 
       "message": "feat(tasks): update phase tasks section to include directly adding tasks to it",
       "date": "2025-02-12",
-      "relativeDate": "4 hours ago"
-    },
-    {
-      "hash": "51d3b1d",
-      "author": "renata-sisilio",
-      "email": "renata@seren-ai.co", 
-      "message": "feat(gantt): allow update task priority/status directly from gantt view",
-      "date": "2025-02-12",
-      "relativeDate": "4 hours ago"
-    },
-    {
-      "hash": "40590cf",
-      "author": "renata-sisilio",
-      "email": "renata@seren-ai.co", 
-      "message": "feat(gantt): add expand button to phase display",
-      "date": "2025-02-12",
-      "relativeDate": "4 hours ago"
+      "relativeDate": "6 hours ago"
     },
   ];
 
   // Stats
-  static const String totalCommits = '325';
-  static const String contributors = '       0';
+  static const String totalCommits = '327';
+  static const String contributors = '0';
 }

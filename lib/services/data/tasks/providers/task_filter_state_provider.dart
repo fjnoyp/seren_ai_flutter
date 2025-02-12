@@ -1,4 +1,7 @@
+import 'package:flutter/widgets.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:seren_ai_flutter/common/navigation_service_provider.dart';
+import 'package:seren_ai_flutter/services/data/projects/task_filter_option_enum.dart';
 import 'package:seren_ai_flutter/services/data/projects/task_sort_option_enum.dart';
 import 'package:seren_ai_flutter/services/data/tasks/models/task_model.dart';
 
@@ -61,7 +64,21 @@ class TaskFilterState {
 }
 
 class TaskFilterStateNotifier extends StateNotifier<TaskFilterState> {
-  TaskFilterStateNotifier() : super(const TaskFilterState(activeFilters: {}));
+  // TODO p2: find a better way to initialize the filters
+  // We want the type filter to be active for "tasks" by default
+  TaskFilterStateNotifier(BuildContext context)
+      : super(
+          TaskFilterState(
+            activeFilters: {
+              0: (
+                value: '${TaskFilterOption.type.name}_${TaskType.task.name}',
+                name:
+                    '${TaskFilterOption.type.getDisplayName(context)}: ${TaskType.task.toHumanReadable(context)}',
+                filter: (task) => task.type == TaskType.task
+              )
+            },
+          ),
+        );
 
   void updateSearchQuery(String query) {
     state = state.copyWith(searchQuery: query);
@@ -109,4 +126,8 @@ class TaskFilterStateNotifier extends StateNotifier<TaskFilterState> {
 
 final taskFilterStateProvider =
     StateNotifierProvider.autoDispose<TaskFilterStateNotifier, TaskFilterState>(
-        (ref) => TaskFilterStateNotifier());
+        (ref) {
+  final context =
+      ref.read(navigationServiceProvider).navigatorKey.currentContext!;
+  return TaskFilterStateNotifier(context);
+});
