@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:seren_ai_flutter/common/universal_platform/universal_platform.dart';
+import 'package:seren_ai_flutter/services/data/common/generate_color_from_id.dart';
 import 'package:seren_ai_flutter/services/data/projects/providers/project_by_id_stream_provider.dart';
 import 'package:seren_ai_flutter/services/data/tasks/models/task_model.dart';
 import 'package:intl/intl.dart';
@@ -67,10 +68,7 @@ class TaskListItemView extends ConsumerWidget {
                     ref.watch(taskByIdStreamProvider(task.parentTaskId!)).when(
                           data: (parentTask) => TaskTag.custom(
                               text: parentTask?.name ?? '',
-                              color: Theme.of(context)
-                                  .colorScheme
-                                  .primary
-                                  .withAlpha(150)),
+                              color: generateColorFromId(parentTask!.id)),
                           error: (error, stack) => const SizedBox.shrink(),
                           loading: () => const SizedBox.shrink(),
                         ),

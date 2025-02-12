@@ -2,11 +2,11 @@
 class BuildInfo {
   // Core build info
   static const String version = '1.0.0';
-  static const String buildDate = '2025-02-12 17:49:00';
+  static const String buildDate = '2025-02-12 17:57:19';
   
   // Git info
-  static const String commitHash = '0a70c1f';
-  static const String branch = 'main';
+  static const String commitHash = 'c024629';
+  static const String branch = 'feat/use-phase-color-on-task-tags';
   static const String lastTag = 'no tag';
   
   // Author of last commit
@@ -16,12 +16,20 @@ class BuildInfo {
   // Recent commits (last 5)
   static const List<Map<String, String>> recentCommits = [
     {
-      "hash": "0a70c1f",
+      "hash": "c024629",
+      "author": "renata-sisilio",
+      "email": "renata@seren-ai.co", 
+      "message": "chore: make all clickable ui elements highlight on hover",
+      "date": "2025-02-12",
+      "relativeDate": "2 hours ago"
+    },
+    {
+      "hash": "337389d",
       "author": "renata-sisilio",
       "email": "renata@seren-ai.co", 
       "message": "feat(projects): add filter to show only tasks or phases",
       "date": "2025-02-12",
-      "relativeDate": "89 minutes ago"
+      "relativeDate": "2 hours ago"
     },
     {
       "hash": "eb06708",
@@ -45,19 +53,11 @@ class BuildInfo {
       "email": "renata@seren-ai.co", 
       "message": "fix(projects/mobile): remove duplicated ui elements from project page",
       "date": "2025-02-12",
-      "relativeDate": "3 hours ago"
-    },
-    {
-      "hash": "ab2fd31",
-      "author": "renata-sisilio",
-      "email": "renata@seren-ai.co", 
-      "message": "feat(tasks): update phase tasks section to include directly adding tasks to it",
-      "date": "2025-02-12",
-      "relativeDate": "6 hours ago"
+      "relativeDate": "4 hours ago"
     },
   ];
 
   // Stats
-  static const String totalCommits = '327';
+  static const String totalCommits = '328';
   static const String contributors = '0';
 }
