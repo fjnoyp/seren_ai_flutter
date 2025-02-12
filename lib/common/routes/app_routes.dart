@@ -2,6 +2,7 @@ enum AppRoutes {
   signInUp('/signInUp'),
   chooseOrg('/chooseOrg'),
   projects('/projects'),
+  projectOverview('/projectOverview'),
   projectDetails('/projectDetails'),
   organization('/organization'),
   manageOrgUsers('/manageOrgUsers'),
