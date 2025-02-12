@@ -265,6 +265,7 @@
     "addTasks": "Adicionar Tarefas",
     "phaseTasks": "Tarefas da Etapa",
     "newTask": "Nova Tarefa",
+    "type": "Tipo",
     "lastUpdatedDate": "Última atualização: {date}",
     "dueDateWithDate": "Prazo: {date}",
     "chooseDueDate": "Escolher uma Data de Vencimento",
