@@ -12,9 +12,9 @@ import 'package:seren_ai_flutter/services/data/projects/providers/cur_selected_p
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:seren_ai_flutter/services/data/projects/repositories/projects_repository.dart';
 import 'package:seren_ai_flutter/services/data/projects/widgets/action_buttons/delete_project_button.dart';
-import 'package:seren_ai_flutter/services/data/projects/widgets/action_buttons/project_info_button.dart';
+import 'package:seren_ai_flutter/services/data/projects/widgets/action_buttons/open_project_info_button.dart';
 import 'package:seren_ai_flutter/services/data/projects/widgets/action_buttons/update_project_assignees_button.dart';
-import 'package:seren_ai_flutter/services/data/projects/widgets/project_page.dart';
+import 'package:seren_ai_flutter/services/data/projects/widgets/project_deatils_page.dart';
 
 final projectNavigationServiceProvider =
     Provider<ProjectNavigationService>((ref) {
@@ -66,17 +66,10 @@ class ProjectNavigationService extends BaseNavigationService {
       EditablePageMode.create => AppLocalizations.of(context)!.createProject,
     };
 
-    if (mode != EditablePageMode.readOnly && isWebVersion) {
-      _showProjectDialog(mode, projectId!, title);
+    if (mode == EditablePageMode.readOnly) {
+      _navigateToProjectOverviewPage(title);
     } else {
-      if (projectId != null) {
-        _navigateToProjectPage(mode, projectId, title);
-      } else {
-        // If the initial projectId is null, it means we're in create mode
-        // and the projectId was set in the createNewProject method.
-        final projectId = ref.read(curEditingProjectIdNotifierProvider);
-        _navigateToProjectPage(mode, projectId!, title);
-      }
+      _openProjectDetailsPage(mode, title);
     }
   }
 
@@ -86,59 +79,57 @@ class ProjectNavigationService extends BaseNavigationService {
     return project?.name;
   }
 
-  Future<void> _showProjectDialog(
-    EditablePageMode mode,
-    String projectId,
-    String title,
-  ) async {
-    ref.read(navigationServiceProvider).showPopupDialog(
-          AlertDialog(
-            title: Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                Text(title),
-                if (mode == EditablePageMode.edit)
-                  DeleteProjectButton(projectId)
-              ],
-            ),
-            content: ProjectPage(mode: mode),
-          ),
-        );
-  }
-
-  Future<void> _navigateToProjectPage(
-    EditablePageMode mode,
-    String projectId,
-    String title,
-  ) async {
+  Future<void> _navigateToProjectOverviewPage(String title) async {
     final curUserOrgRole = ref.read(curUserOrgRoleProvider).value;
+    final projectId = ref.read(curSelectedProjectIdNotifierProvider);
+    if (projectId == null) return;
 
     final actions =
         (curUserOrgRole == OrgRole.admin || curUserOrgRole == OrgRole.editor)
-            ? switch (mode) {
-                EditablePageMode.edit => [
-                    UpdateProjectAssigneesButton(projectId),
-                    DeleteProjectButton(projectId),
-                  ],
-                EditablePageMode.readOnly => [
-                    ProjectInfoButton(projectId),
-                  ],
-                _ => null,
-              }
+            ? [
+                OpenProjectInfoPageButton(projectId),
+              ]
             : null;
 
-    if (mode != EditablePageMode.readOnly && !isWebVersion) {
-      await ref.read(navigationServiceProvider).navigateTo(
-        AppRoutes.projectPage.name,
-        arguments: {'title': title, 'mode': mode, 'actions': actions},
-      );
+    await ref.read(navigationServiceProvider).navigateToAndRemoveUntil(
+      '${AppRoutes.projectOverview.name}/$projectId',
+      // Remove previous ProjectOverviewPage to avoid duplicate pages (if any)
+      (route) =>
+          route.settings.name?.startsWith(AppRoutes.projectOverview.name) !=
+          true,
+      arguments: {'title': title, 'actions': actions},
+    );
+  }
+
+  Future<void> _openProjectDetailsPage(
+    EditablePageMode mode,
+    String title,
+  ) async {
+    final curUserOrgRole = ref.read(curUserOrgRoleProvider).value;
+    final projectId = ref.read(curEditingProjectIdNotifierProvider);
+    if (projectId == null) return;
+
+    final actions =
+        (curUserOrgRole == OrgRole.admin || curUserOrgRole == OrgRole.editor)
+            ? [
+                UpdateProjectAssigneesButton(projectId),
+                DeleteProjectButton(projectId),
+              ]
+            : null;
+
+    if (isWebVersion) {
+      ref.read(navigationServiceProvider).showPopupDialog(
+            AlertDialog(
+              title: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [Text(title), DeleteProjectButton(projectId)],
+              ),
+              content: ProjectDetailsPage(mode: mode),
+            ),
+          );
     } else {
-      await ref.read(navigationServiceProvider).navigateToAndRemoveUntil(
-        '${AppRoutes.projectOverview.name}/$projectId',
-        // Remove previous ProjectOverviewPage to avoid duplicate pages (if any)
-        (route) =>
-            route.settings.name?.startsWith(AppRoutes.projectOverview.name) !=
-            true,
+      await ref.read(navigationServiceProvider).navigateTo(
+        AppRoutes.projectDetails.name,
         arguments: {'title': title, 'mode': mode, 'actions': actions},
       );
     }

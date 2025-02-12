@@ -25,7 +25,7 @@ import 'package:seren_ai_flutter/services/data/orgs/widgets/org_guard.dart';
 import 'package:seren_ai_flutter/services/data/orgs/widgets/web/web_manage_org_users_page.dart';
 import 'package:seren_ai_flutter/services/data/projects/widgets/project_list_page.dart';
 import 'package:seren_ai_flutter/services/data/projects/widgets/project_overview/project_overview_page.dart';
-import 'package:seren_ai_flutter/services/data/projects/widgets/project_page.dart';
+import 'package:seren_ai_flutter/services/data/projects/widgets/project_deatils_page.dart';
 import 'package:seren_ai_flutter/services/data/shifts/providers/cur_shift_state_provider.dart';
 import 'package:seren_ai_flutter/services/data/shifts/widgets/shifts_page.dart';
 import 'package:seren_ai_flutter/services/data/tasks/providers/task_schedule_notifications_service.dart';
@@ -126,9 +126,9 @@ class AppState extends ConsumerState<App> {
                     actions: args?['actions'],
                     showAppBar: !isWebVersion,
                   ),
-              AppRoutes.projectPage.name: (context) => _GuardScaffold(
+              AppRoutes.projectDetails.name: (context) => _GuardScaffold(
                     args?['title'] ?? AppLocalizations.of(context)!.project,
-                    ProjectPage(
+                    ProjectDetailsPage(
                       mode: args?['mode'] ?? EditablePageMode.readOnly,
                     ),
                     actions: args?['actions'],

@@ -2,19 +2,21 @@ import 'package:flutter/material.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:seren_ai_flutter/common/navigation_service_provider.dart';
 import 'package:seren_ai_flutter/common/routes/app_routes.dart';
+import 'package:seren_ai_flutter/common/universal_platform/universal_platform.dart';
 import 'package:seren_ai_flutter/services/data/common/widgets/async_value_handler_widget.dart';
 import 'package:seren_ai_flutter/services/data/common/widgets/editable_page_mode_enum.dart';
 import 'package:seren_ai_flutter/services/data/projects/providers/cur_editing_project_id_notifier_provider.dart';
 import 'package:seren_ai_flutter/services/data/projects/providers/cur_selected_project_providers.dart';
+import 'package:seren_ai_flutter/services/data/projects/providers/project_by_id_stream_provider.dart';
 import 'package:seren_ai_flutter/services/data/projects/widgets/form/project_selection_fields.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:seren_ai_flutter/services/data/users/providers/user_in_project_provider.dart';
 import 'package:seren_ai_flutter/services/data/users/widgets/user_avatar.dart';
 
-class ProjectPage extends HookConsumerWidget {
+class ProjectDetailsPage extends HookConsumerWidget {
   final EditablePageMode mode;
 
-  const ProjectPage({super.key, required this.mode});
+  const ProjectDetailsPage({super.key, required this.mode});
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -42,6 +44,9 @@ class ProjectPage extends HookConsumerWidget {
     final curEditingProjectId =
         ref.watch(curEditingProjectIdNotifierProvider) ?? '';
 
+    final curProject =
+        ref.watch(projectByIdStreamProvider(curEditingProjectId));
+
     return SingleChildScrollView(
       child: Padding(
         padding: const EdgeInsets.all(16.0),
@@ -49,6 +54,21 @@ class ProjectPage extends HookConsumerWidget {
           crossAxisAlignment: CrossAxisAlignment.start,
           mainAxisSize: MainAxisSize.min,
           children: [
+            Row(
+              children: [
+                const Expanded(child: SizedBox.shrink()),
+                Text(
+                  curProject.isReloading
+                      ? AppLocalizations.of(context)!.saving
+                      : curProject.hasError
+                          ? AppLocalizations.of(context)!.errorSaving
+                          : AppLocalizations.of(context)!.allChangesSaved,
+                  style: Theme.of(context).textTheme.labelMedium?.copyWith(
+                        color: Theme.of(context).colorScheme.outline,
+                      ),
+                ),
+              ],
+            ),
             ProjectNameField(curEditingProjectId),
             const SizedBox(height: 8),
             const Divider(),
@@ -64,8 +84,9 @@ class ProjectPage extends HookConsumerWidget {
               ),
             ),
             const SizedBox(height: 16),
-            ProjectAssigneesList(
-                ref.watch(curSelectedProjectIdNotifierProvider) ?? ''),
+            if (!isWebVersion)
+              ProjectAssigneesList(
+                  ref.watch(curSelectedProjectIdNotifierProvider) ?? ''),
           ],
         ),
       ),

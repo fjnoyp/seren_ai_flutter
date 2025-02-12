@@ -3,7 +3,7 @@ enum AppRoutes {
   chooseOrg('/chooseOrg'),
   projects('/projects'),
   projectOverview('/projectOverview'),
-  projectPage('/projectPage'),
+  projectDetails('/projectDetails'),
   organization('/organization'),
   manageOrgUsers('/manageOrgUsers'),
   manageTeamUsers('/manageTeamUsers'),

@@ -4,8 +4,8 @@ import 'package:seren_ai_flutter/services/data/common/widgets/editable_page_mode
 import 'package:seren_ai_flutter/services/data/projects/providers/project_navigation_service.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
-class ProjectInfoButton extends ConsumerWidget {
-  const ProjectInfoButton(this.projectId, {super.key});
+class OpenProjectInfoPageButton extends ConsumerWidget {
+  const OpenProjectInfoPageButton(this.projectId, {super.key});
 
   final String projectId;
 

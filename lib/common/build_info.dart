@@ -2,11 +2,11 @@
 class BuildInfo {
   // Core build info
   static const String version = '1.0.0';
-  static const String buildDate = '2025-02-12 12:12:07';
+  static const String buildDate = '2025-02-12 12:34:51';
   
   // Git info
-  static const String commitHash = '9a18220';
-  static const String branch = 'main';
+  static const String commitHash = '3e76589';
+  static const String branch = 'fix/project-overview-ui-for-mobile';
   static const String lastTag = 'no tag';
   
   // Author of last commit
@@ -16,48 +16,48 @@ class BuildInfo {
   // Recent commits (last 5)
   static const List<Map<String, String>> recentCommits = [
     {
-      "hash": "9a18220",
+      "hash": "3e76589",
       "author": "renata-sisilio",
       "email": "renata@seren-ai.co", 
-      "message": "* feat(gantt): add filter and sort for gantt chart",
-      "date": "2025-02-11",
-      "relativeDate": "19 hours ago"
+      "message": "fix(projects/mobile): remove duplicated ui elements from project page (keep them in app bar)",
+      "date": "2025-02-12",
+      "relativeDate": "2 hours ago"
     },
     {
-      "hash": "db499f8",
+      "hash": "ab2fd31",
       "author": "renata-sisilio",
       "email": "renata@seren-ai.co", 
-      "message": "feat(home): quick adding tasks and notes from home page",
-      "date": "2025-02-11",
-      "relativeDate": "26 hours ago"
+      "message": "feat(tasks): update phase tasks section to include directly adding tasks to it",
+      "date": "2025-02-12",
+      "relativeDate": "17 minutes ago"
     },
     {
-      "hash": "1fff87f",
+      "hash": "51d3b1d",
       "author": "renata-sisilio",
       "email": "renata@seren-ai.co", 
-      "message": "feat(tasks): create phase page",
-      "date": "2025-02-11",
-      "relativeDate": "26 hours ago"
+      "message": "feat(gantt): allow update task priority/status directly from gantt view",
+      "date": "2025-02-12",
+      "relativeDate": "19 minutes ago"
     },
     {
-      "hash": "23f0860",
-      "author": "kc",
-      "email": "kylcheng@gmail.com", 
-      "message": "chore(task): create task action now assigns project",
-      "date": "2025-02-10",
-      "relativeDate": "2 days ago"
-    },
-    {
-      "hash": "04dafee",
+      "hash": "40590cf",
       "author": "renata-sisilio",
       "email": "renata@seren-ai.co", 
-      "message": "fix(workflow): integrate with current pre-commit hook",
-      "date": "2025-02-07",
-      "relativeDate": "5 days ago"
+      "message": "feat(gantt): add expand button to phase display",
+      "date": "2025-02-12",
+      "relativeDate": "21 minutes ago"
+    },
+    {
+      "hash": "353511a",
+      "author": "renata-sisilio",
+      "email": "renata@seren-ai.co", 
+      "message": "fix(home): get home card corner buttons back",
+      "date": "2025-02-12",
+      "relativeDate": "23 minutes ago"
     },
   ];
 
   // Stats
-  static const String totalCommits = '319';
+  static const String totalCommits = '324';
   static const String contributors = '0';
 }
