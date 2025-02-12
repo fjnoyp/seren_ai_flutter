@@ -20,7 +20,7 @@ class AiAssistantButton extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     return Tooltip(
       message: AppLocalizations.of(context)!.aiAssistant,
-      child: GestureDetector(
+      child: InkWell(
           onTap: () {
             onPreClick?.call();
             ref.read(isAiModalVisibleProvider.notifier).state = true;
