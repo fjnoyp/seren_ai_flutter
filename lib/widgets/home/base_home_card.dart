@@ -16,6 +16,7 @@ class BaseHomeCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final titleStyle = Theme.of(context).textTheme.titleMedium!;
     return Card.filled(
       color: Theme.of(context).colorScheme.surfaceContainerHighest,
       shape: OutlineInputBorder(
@@ -30,12 +31,22 @@ class BaseHomeCard extends StatelessWidget {
           children: [
             Row(
               children: [
-                Text(
-                  title,
-                  style: Theme.of(context).textTheme.titleMedium,
+                Expanded(
+                  child: Text(
+                    title,
+                    style: titleStyle,
+                    overflow: TextOverflow.ellipsis,
+                  ),
                 ),
-                const Spacer(),
-                if (cornerButton != null) cornerButton!,
+                if (cornerButton != null)
+                  SizedBox.square(
+                    dimension: (titleStyle.fontSize ?? 16) *
+                        (titleStyle.height ?? 1),
+                    child: FittedBox(
+                      fit: BoxFit.scaleDown,
+                      child: cornerButton!,
+                    ),
+                  ),
               ],
             ),
             Expanded(
