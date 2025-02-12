@@ -9,7 +9,7 @@ class BaseStatusSelectionField extends ConsumerWidget {
   final bool enabled;
   final ProviderListenable<StatusEnum?> statusProvider;
   final Function(WidgetRef, StatusEnum?) updateStatus;
-  final bool? showLabelWidget; // Nullable boolean to show/hide the labelWidget
+  final bool showLabelWidget; // show/hide the labelWidget
 
   const BaseStatusSelectionField({
     super.key,
@@ -32,7 +32,11 @@ class BaseStatusSelectionField extends ConsumerWidget {
       valueToString: (status) =>
           status?.toHumanReadable(context) ??
           AppLocalizations.of(context)!.selectStatus,
-      valueToWidget: (status) => StatusView(status: status),
+      valueToWidget: (status) => StatusView(
+        status: status,
+        outline:
+            showLabelWidget, // current implementation will outline when showLabelWidget is true
+      ),
       enabled: enabled,
       value: curTaskStatus,
       options: StatusEnum.values,
