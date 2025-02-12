@@ -140,9 +140,12 @@ class TaskListItemView extends ConsumerWidget {
 }
 
 class TaskListTileItemView extends ConsumerWidget {
-  const TaskListTileItemView(this.task, {super.key});
+  const TaskListTileItemView(this.task, {super.key, this.onTap});
 
   final TaskModel task;
+
+  /// If this is null, tapping on a task will open the task page
+  final void Function(String taskId)? onTap;
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -151,9 +154,11 @@ class TaskListTileItemView extends ConsumerWidget {
 
     return ListTile(
       dense: true,
-      onTap: () => ref
-          .read(taskNavigationServiceProvider)
-          .openTask(initialTaskId: task.id),
+      onTap: onTap != null
+          ? () => onTap!(task.id)
+          : () => ref
+              .read(taskNavigationServiceProvider)
+              .openTask(initialTaskId: task.id),
       leading: const SizedBox.shrink(),
       title: Text(task.name),
       trailing: Row(

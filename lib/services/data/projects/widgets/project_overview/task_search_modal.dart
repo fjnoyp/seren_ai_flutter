@@ -13,7 +13,10 @@ import 'package:seren_ai_flutter/services/data/tasks/widgets/task_list/tasks_lis
 // TODO p3: add sort
 // TODO p4: add multi type searching - this should search on notes, shifts, etc. in the future
 class TaskSearchModal extends HookConsumerWidget {
-  const TaskSearchModal({super.key});
+  const TaskSearchModal({super.key, this.onTapOption});
+
+  /// If this is null, tapping on a task will open the task page
+  final void Function(String taskId)? onTapOption;
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -71,6 +74,7 @@ class TaskSearchModal extends HookConsumerWidget {
                 filterCondition: filterState.filterCondition,
                 // TODO p3: add sort
                 //sort: filterState.sortComparator,
+                onTapOption: onTapOption,
               ),
             ),
           ],
