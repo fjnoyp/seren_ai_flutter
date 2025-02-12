@@ -40,7 +40,7 @@ class ProjectTasksPage extends HookConsumerWidget {
         (
           name: AppLocalizations.of(context)!.tasks,
           icon: Icons.task,
-          child: const ProjectTasksSection()
+          child: const ProjectTasksSectionMobile()
         ),
       ],
       (
@@ -82,19 +82,20 @@ class ProjectTasksPage extends HookConsumerWidget {
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        Row(
-                          children: [
-                            Text(
-                              selectedProject?.name ?? '',
-                              style: Theme.of(context).textTheme.headlineMedium,
-                            ),
-                            IconButton(
-                              onPressed: () => isProjectInfoView.value = true,
-                              color: Theme.of(context).colorScheme.secondary,
-                              iconSize: 18,
-                              icon: const Icon(Icons.settings),
-                            ),
-                            if (isLargeScreen) ...[
+                        if (isWebVersion)
+                          Row(
+                            children: [
+                              Text(
+                                selectedProject?.name ?? '',
+                                style:
+                                    Theme.of(context).textTheme.headlineMedium,
+                              ),
+                              IconButton(
+                                onPressed: () => isProjectInfoView.value = true,
+                                color: Theme.of(context).colorScheme.secondary,
+                                iconSize: 18,
+                                icon: const Icon(Icons.settings),
+                              ),
                               const SizedBox(width: 32),
                               SizedBox(
                                 width: 480,
@@ -108,8 +109,7 @@ class ProjectTasksPage extends HookConsumerWidget {
                                 ),
                               ),
                             ],
-                          ],
-                        ),
+                          ),
                         SizedBox(height: isLargeScreen ? 8 : 3),
                         const _CurrentProjectReadinessBar(),
                         if (!isLargeScreen) ...[

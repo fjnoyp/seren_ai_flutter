@@ -25,6 +25,7 @@ import 'package:seren_ai_flutter/services/data/orgs/widgets/org_guard.dart';
 import 'package:seren_ai_flutter/services/data/orgs/widgets/web/web_manage_org_users_page.dart';
 import 'package:seren_ai_flutter/services/data/projects/widgets/project_list_page.dart';
 import 'package:seren_ai_flutter/services/data/projects/widgets/project_overview/project_overview_page.dart';
+import 'package:seren_ai_flutter/services/data/projects/widgets/project_page.dart';
 import 'package:seren_ai_flutter/services/data/shifts/providers/cur_shift_state_provider.dart';
 import 'package:seren_ai_flutter/services/data/shifts/widgets/shifts_page.dart';
 import 'package:seren_ai_flutter/services/data/tasks/providers/task_schedule_notifications_service.dart';
@@ -119,15 +120,18 @@ class AppState extends ConsumerState<App> {
               AppRoutes.projects.name: (context) => _GuardScaffold(
                   AppLocalizations.of(context)!.projects,
                   const ProjectListPage()),
-              AppRoutes.projectDetails.name: (context) => _GuardScaffold(
+              AppRoutes.projectOverview.name: (context) => _GuardScaffold(
                     args?['title'] ?? AppLocalizations.of(context)!.project,
                     const ProjectTasksPage(),
-                    // ProjectPage(
-                    //   mode: args?['mode'] ?? EditablePageMode.readOnly,
-                    // ),
-                    //webBody: const WebProjectPage(),
                     actions: args?['actions'],
                     showAppBar: !isWebVersion,
+                  ),
+              AppRoutes.projectPage.name: (context) => _GuardScaffold(
+                    args?['title'] ?? AppLocalizations.of(context)!.project,
+                    ProjectPage(
+                      mode: args?['mode'] ?? EditablePageMode.readOnly,
+                    ),
+                    actions: args?['actions'],
                   ),
               AppRoutes.tasks.name: (context) => _GuardScaffold(
                   AppLocalizations.of(context)!.tasks, const TasksListPage()),

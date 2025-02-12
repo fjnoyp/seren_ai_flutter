@@ -6,7 +6,6 @@ import 'package:seren_ai_flutter/services/data/common/widgets/async_value_handle
 import 'package:seren_ai_flutter/services/data/common/widgets/editable_page_mode_enum.dart';
 import 'package:seren_ai_flutter/services/data/projects/providers/cur_editing_project_id_notifier_provider.dart';
 import 'package:seren_ai_flutter/services/data/projects/providers/cur_selected_project_providers.dart';
-import 'package:seren_ai_flutter/services/data/projects/repositories/projects_repository.dart';
 import 'package:seren_ai_flutter/services/data/projects/widgets/form/project_selection_fields.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:seren_ai_flutter/services/data/users/providers/user_in_project_provider.dart';
@@ -33,7 +32,7 @@ class ProjectPage extends HookConsumerWidget {
           ref.read(navigationServiceProvider).pop();
           // Remove all project details routes (in case of dialog, we'd need to pop again)
           ref.read(navigationServiceProvider).popUntil((route) =>
-              !(route.settings.name?.contains(AppRoutes.projectDetails.name) ??
+              !(route.settings.name?.contains(AppRoutes.projectOverview.name) ??
                   false));
         });
         return const SizedBox.shrink();
@@ -50,53 +49,23 @@ class ProjectPage extends HookConsumerWidget {
           crossAxisAlignment: CrossAxisAlignment.start,
           mainAxisSize: MainAxisSize.min,
           children: [
-            if (mode == EditablePageMode.readOnly) ...[
-              const ProjectInfoHeader(),
-              const SizedBox(height: 16),
-              ProjectAssigneesList(
-                  ref.watch(curSelectedProjectIdNotifierProvider) ?? '')
-            ] else ...[
-              ProjectNameField(curEditingProjectId),
-              const SizedBox(height: 8),
-              const Divider(),
-              Padding(
-                padding: const EdgeInsets.only(left: 16),
-                child: Column(
-                  children: [
-                    ProjectDescriptionSelectionField(
-                        curEditingProjectId, context),
-                    const Divider(),
-                    ProjectAddressField(curEditingProjectId, context),
-                  ],
-                ),
+            ProjectNameField(curEditingProjectId),
+            const SizedBox(height: 8),
+            const Divider(),
+            Padding(
+              padding: const EdgeInsets.only(left: 16),
+              child: Column(
+                children: [
+                  ProjectDescriptionSelectionField(
+                      curEditingProjectId, context),
+                  const Divider(),
+                  ProjectAddressField(curEditingProjectId, context),
+                ],
               ),
-              const SizedBox(height: 24),
-              if (mode == EditablePageMode.create)
-                PopScope(
-                  onPopInvokedWithResult: (_, result) async {
-                    if (result != true) {
-                      final projectIdToDelete = curEditingProjectId;
-                      ref
-                          .read(curEditingProjectIdNotifierProvider.notifier)
-                          .clearProjectId();
-                      await ref
-                          .read(projectsRepositoryProvider)
-                          .deleteItem(projectIdToDelete);
-                    }
-                  },
-                  child: Padding(
-                    padding: const EdgeInsets.only(top: 24, bottom: 32),
-                    child: SizedBox(
-                      width: double.infinity,
-                      child: FilledButton.tonal(
-                        onPressed: () =>
-                            ref.read(navigationServiceProvider).pop(true),
-                        child: Text(AppLocalizations.of(context)!.save),
-                      ),
-                    ),
-                  ),
-                ),
-            ]
+            ),
+            const SizedBox(height: 16),
+            ProjectAssigneesList(
+                ref.watch(curSelectedProjectIdNotifierProvider) ?? ''),
           ],
         ),
       ),
@@ -167,75 +136,3 @@ class ProjectAssigneesList extends ConsumerWidget {
     );
   }
 }
-
-// Future<void> openProjectPage(
-//   WidgetRef ref,
-//   BuildContext context, {
-//   String? projectId,
-//   EditablePageMode mode = EditablePageMode.readOnly,
-// }) async {
-//   assert(projectId != null || mode != EditablePageMode.readOnly);
-
-//   switch (mode) {
-//     case EditablePageMode.readOnly:
-//       ref
-//           .read(curSelectedProjectIdNotifierProvider.notifier)
-//           .setProjectId(projectId!);
-//       break;
-//     case EditablePageMode.edit:
-//       ref
-//           .read(curEditingProjectIdNotifierProvider.notifier)
-//           .setProjectId(projectId!);
-//       break;
-//     case EditablePageMode.create:
-//       ref.read(curEditingProjectIdNotifierProvider.notifier).createNewProject();
-//       break;
-//   }
-
-//   final title = switch (mode) {
-//     EditablePageMode.readOnly => AppLocalizations.of(context)!.project,
-//     EditablePageMode.edit => AppLocalizations.of(context)!.updateProject,
-//     EditablePageMode.create => AppLocalizations.of(context)!.createProject,
-//   };
-
-//   final curUserOrgRole = ref.read(curUserOrgRoleProvider).value;
-
-//   final actions =
-//       (curUserOrgRole == OrgRole.admin || curUserOrgRole == OrgRole.editor)
-//           ? switch (mode) {
-//               EditablePageMode.edit => [
-//                   DeleteProjectButton(projectId!),
-//                 ],
-//               EditablePageMode.readOnly => [
-//                   UpdateProjectAssigneesButton(projectId!),
-//                   EditProjectButton(projectId),
-//                 ],
-//               _ => null,
-//             }
-//           : null;
-
-//   if (isWebVersion && mode != EditablePageMode.readOnly) {
-//     showDialog(
-//       context: context,
-//       builder: (context) => AlertDialog(
-//         title: Row(
-//           mainAxisAlignment: MainAxisAlignment.spaceBetween,
-//           children: [
-//             Text(title),
-//             if (mode == EditablePageMode.edit) DeleteProjectButton(projectId!)
-//           ],
-//         ),
-//         content: ProjectPage(mode: mode),
-//       ),
-//     );
-//   } else {
-//     ref.read(navigationServiceProvider).navigateTo(
-//       AppRoutes.projectDetails.name,
-//       arguments: {'title': title, 'mode': mode, 'actions': actions},
-//     );
-//   }
-// }
-
-// Future<void> openCreateProjectPage(WidgetRef ref, BuildContext context) async {
-//   openProjectPage(ref, context, mode: EditablePageMode.create);
-// }

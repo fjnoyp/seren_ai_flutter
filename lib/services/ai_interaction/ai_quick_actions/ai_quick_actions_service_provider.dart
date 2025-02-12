@@ -36,8 +36,8 @@ class AiQuickActionsService extends Notifier<List<AiQuickAction>> {
       final context = ref.read(navigationServiceProvider).context;
 
       switch (appRoute) {
-        case AppRoutes.projectDetails:
-        // TODO p3: Add quick actions for project details page
+        case AppRoutes.projectOverview:
+        // TODO p3: Add quick actions for project overview page
         // We don't use break here so that we also use project page quick actions
         case AppRoutes.projects:
           state = [
