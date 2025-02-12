@@ -548,42 +548,59 @@ class GanttBody extends ConsumerWidget {
     return SingleChildScrollView(
       controller: mainHorizontalController,
       scrollDirection: Axis.horizontal,
-      child: SizedBox(
-        width: totalWidth - staticHeadersWidth,
-        child: ListView.separated(
-          controller: mainVerticalController,
-          itemCount: projectTaskIds.length,
-          itemBuilder: (context, index) {
-            final taskId = projectTaskIds[index];
-            final isVisible = ref.watch(ganttTaskVisibilityProvider(taskId));
+      child: LayoutBuilder(builder: (context, constraints) {
+        return SizedBox(
+          width: totalWidth - staticHeadersWidth,
+          height: constraints.maxHeight,
+          child: Stack(
+            alignment: Alignment.center,
+            children: [
+              ListView.separated(
+                controller: mainVerticalController,
+                itemCount: projectTaskIds.length,
+                itemBuilder: (context, index) {
+                  final taskId = projectTaskIds[index];
+                  final isVisible =
+                      ref.watch(ganttTaskVisibilityProvider(taskId));
 
-            return isVisible
-                ? Stack(
-                    children: [
-                      SizedBox(height: cellHeight),
-                      //Task visualization
-                      GanttTaskDataItemBarView(
-                        taskId: taskId,
-                        cellWidth: cellWidth,
-                        cellHeight: cellHeight,
-                        columnStart: columnRange.value.$1,
-                        cellDurationType: viewType == GanttViewType.day
-                            ? GanttCellDurationType.hours
-                            : GanttCellDurationType.days,
-                      ),
-                    ],
-                  )
-                : const SizedBox.shrink();
-          },
-          separatorBuilder: (context, index) {
-            final isTaskVisible =
-                ref.watch(ganttTaskVisibilityProvider(projectTaskIds[index]));
-            return isTaskVisible
-                ? const Divider(height: 1)
-                : const SizedBox.shrink();
-          },
-        ),
-      ),
+                  return isVisible
+                      ? Stack(
+                          children: [
+                            SizedBox(height: cellHeight),
+                            //Task visualization
+                            GanttTaskDataItemBarView(
+                              taskId: taskId,
+                              cellWidth: cellWidth,
+                              cellHeight: cellHeight,
+                              columnStart: columnRange.value.$1,
+                              cellDurationType: viewType == GanttViewType.day
+                                  ? GanttCellDurationType.hours
+                                  : GanttCellDurationType.days,
+                            ),
+                          ],
+                        )
+                      : const SizedBox.shrink();
+                },
+                separatorBuilder: (context, index) {
+                  final isTaskVisible = ref.watch(
+                      ganttTaskVisibilityProvider(projectTaskIds[index]));
+                  return isTaskVisible
+                      ? const Divider(height: 1)
+                      : const SizedBox.shrink();
+                },
+              ),
+              Positioned(
+                left: cellWidth * -columnRange.value.$1,
+                child: Container(
+                  height: constraints.maxHeight,
+                  width: 1,
+                  color: Theme.of(context).colorScheme.primary,
+                ),
+              ),
+            ],
+          ),
+        );
+      }),
     );
   }
 }
