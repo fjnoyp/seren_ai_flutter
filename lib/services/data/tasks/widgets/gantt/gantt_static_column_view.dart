@@ -1,15 +1,13 @@
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:seren_ai_flutter/services/data/common/status_enum.dart';
 import 'package:seren_ai_flutter/services/data/projects/providers/cur_selected_project_providers.dart';
 import 'package:seren_ai_flutter/services/data/tasks/models/task_model.dart';
 import 'package:seren_ai_flutter/services/data/tasks/providers/task_by_id_stream_provider.dart';
 import 'package:seren_ai_flutter/services/data/tasks/providers/task_navigation_service.dart';
 import 'package:seren_ai_flutter/services/data/tasks/task_field_enum.dart';
+import 'package:seren_ai_flutter/services/data/tasks/widgets/form/task_selection_fields.dart';
 import 'package:seren_ai_flutter/services/data/tasks/widgets/gantt/experimental/cur_project_tasks_hierarchy_provider.dart';
-import 'package:seren_ai_flutter/services/data/common/widgets/priority_view.dart';
-import 'package:seren_ai_flutter/services/data/common/widgets/status_view.dart';
 import 'package:seren_ai_flutter/services/data/tasks/widgets/gantt/experimental/gantt_task_visual_state_provider.dart';
 import 'package:seren_ai_flutter/services/data/tasks/widgets/task_assignees_avatars.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
@@ -307,30 +305,13 @@ class _StaticTaskRow extends ConsumerWidget {
     return task.when(
       data: (task) => task != null
           ? RepaintBoundary(
-              child: GestureDetector(
-                onTapDown: (details) => showMenu(
-                  context: context,
-                  position: RelativeRect.fromLTRB(
-                    details.globalPosition.dx,
-                    details.globalPosition.dy,
-                    details.globalPosition.dx + 1,
-                    details.globalPosition.dy + 1,
-                  ),
-                  items: [
-                    PopupMenuItem(
-                      enabled: false,
-                      child: _TaskDetailsPopup(task),
-                    )
-                  ],
-                ),
-                child: Row(
-                  children: List.generate(
-                    staticColumnHeaders.length,
-                    (columnIndex) => _StaticCell(
-                      taskId: taskId,
-                      cellHeight: cellHeight,
-                      fieldType: staticColumnHeaders[columnIndex],
-                    ),
+              child: Row(
+                children: List.generate(
+                  staticColumnHeaders.length,
+                  (columnIndex) => _StaticCell(
+                    taskId: taskId,
+                    cellHeight: cellHeight,
+                    fieldType: staticColumnHeaders[columnIndex],
                   ),
                 ),
               ),
@@ -430,22 +411,43 @@ class _StaticCellContent extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final task = ref.watch(taskByIdStreamProvider(taskId)).value;
+    if (task == null) return const SizedBox.shrink();
     switch (fieldType) {
       case TaskFieldEnum.name:
-        return Text(
-          task?.name ?? '',
-          maxLines: 2,
-          overflow: TextOverflow.ellipsis,
+        // We needed to move GestureDetector to prevent the parent's onTap
+        // from blocking the menu from being shown for status/priority fields.
+        return GestureDetector(
+          behavior: HitTestBehavior.deferToChild,
+          onTapDown: (details) => showMenu(
+            context: context,
+            position: RelativeRect.fromLTRB(
+              details.globalPosition.dx,
+              details.globalPosition.dy,
+              details.globalPosition.dx + 1,
+              details.globalPosition.dy + 1,
+            ),
+            items: [
+              PopupMenuItem(
+                enabled: false,
+                child: _TaskDetailsPopup(task),
+              )
+            ],
+          ),
+          child: Text(
+            task.name,
+            maxLines: 2,
+            overflow: TextOverflow.ellipsis,
+          ),
         );
       case TaskFieldEnum.status:
-        return StatusView(
-          status: task?.status ?? StatusEnum.open,
-          outline: false,
+        return TaskStatusSelectionField(
+          taskId: taskId,
+          showLabelWidget: false,
         );
       case TaskFieldEnum.priority:
-        return PriorityView(
-          priority: task?.priority ?? PriorityEnum.normal,
-          outline: false,
+        return TaskPrioritySelectionField(
+          taskId: taskId,
+          showLabelWidget: false,
         );
       case TaskFieldEnum.assignees:
         return TaskAssigneesAvatars(taskId);
