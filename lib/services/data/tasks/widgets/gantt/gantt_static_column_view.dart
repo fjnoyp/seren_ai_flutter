@@ -198,62 +198,82 @@ class _StaticPhaseRow extends ConsumerWidget {
     return task.when(
       data: (task) => task != null
           ? RepaintBoundary(
-              child: InkWell(
-                onTap: () => ref
-                    .read(ganttTaskVisualStateProvider(taskId).notifier)
-                    .toggleExpanded(),
-                child: SizedBox(
-                  height: cellHeight,
-                  child: Row(
-                    children: [
-                      Icon(
+              child: SizedBox(
+                height: cellHeight,
+                child: Row(
+                  children: [
+                    IconButton(
+                      onPressed: () => ref
+                          .read(ganttTaskVisualStateProvider(taskId).notifier)
+                          .toggleExpanded(),
+                      icon: Icon(
                         isExpanded ? Icons.expand_less : Icons.expand_more,
                         color: Theme.of(context).colorScheme.outline,
                       ),
-                      const SizedBox(width: 4),
-                      Text(task.name),
-                      const Expanded(child: SizedBox.shrink()),
-                      TextButton.icon(
-                        onPressed: () async => await ref
-                            .read(taskNavigationServiceProvider)
-                            .openNewTask(
-                              isPhase: true,
-                              initialProjectId: ref
-                                  .read(curSelectedProjectIdNotifierProvider),
-                            ),
-                        icon: Icon(
-                          Icons.add,
-                          color: Theme.of(context).colorScheme.outline,
+                    ),
+                    const SizedBox(width: 4),
+                    Expanded(
+                      child: GestureDetector(
+                        onTapDown: (details) => showMenu(
+                          context: context,
+                          position: RelativeRect.fromLTRB(
+                            details.globalPosition.dx,
+                            details.globalPosition.dy,
+                            details.globalPosition.dx + 1,
+                            details.globalPosition.dy + 1,
+                          ),
+                          items: [
+                            PopupMenuItem(
+                              enabled: false,
+                              child: _TaskDetailsPopup(task),
+                            )
+                          ],
                         ),
-                        label: Text(AppLocalizations.of(context)!.phase),
-                        style: TextButton.styleFrom(
-                          visualDensity: VisualDensity.compact,
-                          foregroundColor:
-                              Theme.of(context).colorScheme.outline,
-                        ),
-                      ),
-                      const SizedBox(width: 4),
-                      TextButton.icon(
-                        onPressed: () async => await ref
-                            .read(taskNavigationServiceProvider)
-                            .openNewTask(
-                              initialProjectId: ref
-                                  .read(curSelectedProjectIdNotifierProvider),
-                              initialParentTaskId: task.id,
-                            ),
-                        icon: Icon(
-                          Icons.add,
-                          color: Theme.of(context).colorScheme.outline,
-                        ),
-                        label: Text(AppLocalizations.of(context)!.task),
-                        style: TextButton.styleFrom(
-                          visualDensity: VisualDensity.compact,
-                          foregroundColor:
-                              Theme.of(context).colorScheme.outline,
+                        child: Text(
+                          task.name,
+                          maxLines: 1,
+                          overflow: TextOverflow.ellipsis,
                         ),
                       ),
-                    ],
-                  ),
+                    ),
+                    TextButton.icon(
+                      onPressed: () async => await ref
+                          .read(taskNavigationServiceProvider)
+                          .openNewTask(
+                            isPhase: true,
+                            initialProjectId:
+                                ref.read(curSelectedProjectIdNotifierProvider),
+                          ),
+                      icon: Icon(
+                        Icons.add,
+                        color: Theme.of(context).colorScheme.outline,
+                      ),
+                      label: Text(AppLocalizations.of(context)!.phase),
+                      style: TextButton.styleFrom(
+                        visualDensity: VisualDensity.compact,
+                        foregroundColor: Theme.of(context).colorScheme.outline,
+                      ),
+                    ),
+                    const SizedBox(width: 4),
+                    TextButton.icon(
+                      onPressed: () async => await ref
+                          .read(taskNavigationServiceProvider)
+                          .openNewTask(
+                            initialProjectId:
+                                ref.read(curSelectedProjectIdNotifierProvider),
+                            initialParentTaskId: task.id,
+                          ),
+                      icon: Icon(
+                        Icons.add,
+                        color: Theme.of(context).colorScheme.outline,
+                      ),
+                      label: Text(AppLocalizations.of(context)!.task),
+                      style: TextButton.styleFrom(
+                        visualDensity: VisualDensity.compact,
+                        foregroundColor: Theme.of(context).colorScheme.outline,
+                      ),
+                    ),
+                  ],
                 ),
               ),
             )
