@@ -2,26 +2,34 @@
 class BuildInfo {
   // Core build info
   static const String version = '1.0.0';
-  static const String buildDate = '2025-02-12 10:44:28';
+  static const String buildDate = '2025-02-12 11:01:11';
   
   // Git info
-  static const String commitHash = '7bceeb8';
+  static const String commitHash = 'bc898e8';
   static const String branch = 'main';
   static const String lastTag = 'no tag';
   
   // Author of last commit
-  static const String lastCommitAuthor = 'renata-sisilio';
-  static const String lastCommitEmail = 'renata@seren-ai.co';
+  static const String lastCommitAuthor = 'Kyle';
+  static const String lastCommitEmail = 'kylcheng@gmail.com';
   
   // Recent commits (last 5)
   static const List<Map<String, String>> recentCommits = [
+    {
+      "hash": "bc898e8",
+      "author": "Kyle",
+      "email": "kylcheng@gmail.com", 
+      "message": "chore: remove docked quick create button",
+      "date": "2025-02-12",
+      "relativeDate": "17 minutes ago"
+    },
     {
       "hash": "7bceeb8",
       "author": "renata-sisilio",
       "email": "renata@seren-ai.co", 
       "message": "fix(projects/mobile): remove duplicated ui elements from project page",
       "date": "2025-02-12",
-      "relativeDate": "83 minutes ago"
+      "relativeDate": "2 hours ago"
     },
     {
       "hash": "ab2fd31",
@@ -29,7 +37,7 @@ class BuildInfo {
       "email": "renata@seren-ai.co", 
       "message": "feat(tasks): update phase tasks section to include directly adding tasks to it",
       "date": "2025-02-12",
-      "relativeDate": "3 hours ago"
+      "relativeDate": "4 hours ago"
     },
     {
       "hash": "51d3b1d",
@@ -37,7 +45,7 @@ class BuildInfo {
       "email": "renata@seren-ai.co", 
       "message": "feat(gantt): allow update task priority/status directly from gantt view",
       "date": "2025-02-12",
-      "relativeDate": "3 hours ago"
+      "relativeDate": "4 hours ago"
     },
     {
       "hash": "40590cf",
@@ -47,17 +55,9 @@ class BuildInfo {
       "date": "2025-02-12",
       "relativeDate": "4 hours ago"
     },
-    {
-      "hash": "353511a",
-      "author": "renata-sisilio",
-      "email": "renata@seren-ai.co", 
-      "message": "fix(home): get home card corner buttons back",
-      "date": "2025-02-12",
-      "relativeDate": "4 hours ago"
-    },
   ];
 
   // Stats
-  static const String totalCommits = '324';
+  static const String totalCommits = '325';
   static const String contributors = '       0';
 }

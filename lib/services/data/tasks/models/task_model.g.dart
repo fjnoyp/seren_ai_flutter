@@ -31,7 +31,8 @@ TaskModel _$TaskModelFromJson(Map<String, dynamic> json) => TaskModel(
           : DateTime.parse(json['start_date_time'] as String),
       parentTaskId: json['parent_task_id'] as String?,
       blockedByTaskId: json['blocked_by_task_id'] as String?,
-      type: $enumDecode(_$TaskTypeEnumMap, json['type']),
+      type:
+          $enumDecodeNullable(_$TaskTypeEnumMap, json['type']) ?? TaskType.task,
     );
 
 Map<String, dynamic> _$TaskModelToJson(TaskModel instance) => <String, dynamic>{
