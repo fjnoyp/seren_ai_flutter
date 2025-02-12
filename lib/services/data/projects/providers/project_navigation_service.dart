@@ -14,7 +14,7 @@ import 'package:seren_ai_flutter/services/data/projects/repositories/projects_re
 import 'package:seren_ai_flutter/services/data/projects/widgets/action_buttons/delete_project_button.dart';
 import 'package:seren_ai_flutter/services/data/projects/widgets/action_buttons/open_project_info_button.dart';
 import 'package:seren_ai_flutter/services/data/projects/widgets/action_buttons/update_project_assignees_button.dart';
-import 'package:seren_ai_flutter/services/data/projects/widgets/project_deatils_page.dart';
+import 'package:seren_ai_flutter/services/data/projects/widgets/project_details_page.dart';
 
 final projectNavigationServiceProvider =
     Provider<ProjectNavigationService>((ref) {

@@ -8,7 +8,7 @@ import 'package:seren_ai_flutter/services/data/notes/widgets/notes_list_page.dar
 import 'package:seren_ai_flutter/services/data/projects/providers/cur_selected_project_providers.dart';
 import 'package:seren_ai_flutter/services/data/projects/widgets/action_buttons/edit_project_button.dart';
 import 'package:seren_ai_flutter/services/data/projects/widgets/action_buttons/update_project_assignees_button.dart';
-import 'package:seren_ai_flutter/services/data/projects/widgets/project_deatils_page.dart';
+import 'package:seren_ai_flutter/services/data/projects/widgets/project_details_page.dart';
 import 'package:seren_ai_flutter/services/data/projects/widgets/project_overview/project_tasks_section.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:seren_ai_flutter/services/data/tasks/providers/cur_user_viewable_tasks_stream_provider.dart';
