@@ -19,27 +19,39 @@ class CurSelectedTaskIdNotifier extends Notifier<String?> {
 
   void clearTaskId() => state = null;
 
-  Future<void> createNewTask({bool isPhase = false}) async {
+  Future<String> createNewTask({
+    bool isPhase = false,
+    String? initialProjectId,
+    String? initialParentTaskId,
+    StatusEnum? initialStatus,
+    bool updateState = true,
+  }) async {
+    assert(!isPhase || initialParentTaskId == null,
+        'Error: initialParentTaskId cannot be set for phase tasks');
     try {
       final curUser = ref.read(curUserProvider).value;
       if (curUser == null) throw Exception('No current user');
 
-      final selectedProjectId = await ref
-          .read(curSelectedProjectIdNotifierProvider.notifier)
-          .getSelectedProjectOrDefault();
+      final parentProjectId = initialProjectId ??
+          await ref
+              .read(curSelectedProjectIdNotifierProvider.notifier)
+              .getSelectedProjectOrDefault();
 
       final newTask = TaskModel(
-        name: isPhase ? 'New Phase':'New Task',
+        name: isPhase ? 'New Phase' : 'New Task',
         description: '',
-        status: StatusEnum.open,
+        status: initialStatus ?? StatusEnum.open,
         authorUserId: curUser.id,
-        parentProjectId: selectedProjectId,
+        parentProjectId: parentProjectId,
+        parentTaskId: initialParentTaskId,
         type: isPhase ? TaskType.phase : TaskType.task,
       );
 
       await ref.read(tasksRepositoryProvider).upsertItem(newTask);
 
-      state = newTask.id;
+      if (updateState) state = newTask.id;
+
+      return newTask.id;
     } catch (e, __) {
       throw Exception('Failed to create new task: $e');
     }

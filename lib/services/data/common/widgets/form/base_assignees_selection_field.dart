@@ -18,6 +18,7 @@ class BaseAssigneesSelectionField extends HookConsumerWidget {
   final ProviderListenable<String?> projectIdProvider;
   final Function(WidgetRef, List<UserModel>?) updateAssignees;
   final Widget Function(List<UserModel>)? assigneesWidget;
+  final bool showLabelWidget; // show/hide the labelWidget
   //final ProviderListenable<List<UserModel>> selectableUsersProvider;
   const BaseAssigneesSelectionField({
     super.key,
@@ -26,6 +27,7 @@ class BaseAssigneesSelectionField extends HookConsumerWidget {
     required this.projectIdProvider,
     required this.updateAssignees,
     this.assigneesWidget,
+    this.showLabelWidget = true,
     //required this.selectableUsersProvider,
   });
 
@@ -35,7 +37,8 @@ class BaseAssigneesSelectionField extends HookConsumerWidget {
     final curProjectId = ref.watch(projectIdProvider);
 
     return AnimatedSelectionField<List<UserModel>>(
-      labelWidget: const Icon(Icons.person),
+      labelWidget:
+          showLabelWidget ? const Icon(Icons.person) : const SizedBox.shrink(),
       // validator: (assignees) => assignees == null || assignees.isEmpty
       //     ? 'Assignees are required'
       //     : null,
