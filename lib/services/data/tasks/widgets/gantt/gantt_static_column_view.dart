@@ -450,6 +450,9 @@ class _StaticCellContent extends ConsumerWidget {
         );
       case TaskFieldEnum.assignees:
         return TaskAssigneesAvatars(taskId);
+      default:
+        // TaskFieldEnum values that are not included in the static column view
+        return const SizedBox.shrink();
     }
   }
 }
