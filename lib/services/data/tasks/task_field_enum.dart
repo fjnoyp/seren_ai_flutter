@@ -6,6 +6,7 @@ enum TaskFieldEnum {
   name,
   status,
   priority,
+  dueDate,
   assignees;
 
   String toHumanReadable(BuildContext context) => switch (this) {
@@ -13,5 +14,6 @@ enum TaskFieldEnum {
         TaskFieldEnum.status => AppLocalizations.of(context)!.status,
         TaskFieldEnum.priority => AppLocalizations.of(context)!.priority,
         TaskFieldEnum.assignees => AppLocalizations.of(context)!.assignees,
+        TaskFieldEnum.dueDate => AppLocalizations.of(context)!.dueDate,
       };
 }

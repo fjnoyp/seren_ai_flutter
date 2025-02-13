@@ -58,28 +58,12 @@ class TaskNavigationService extends BaseNavigationService {
 
     final taskIdNotifier = ref.read(curSelectedTaskIdNotifierProvider.notifier);
 
-    await taskIdNotifier.createNewTask(isPhase: isPhase);
-
-    final curTaskId = ref.read(curSelectedTaskIdNotifierProvider);
-    if (curTaskId == null) return;
-
-    if (initialProjectId != null) {
-      await ref
-          .read(tasksRepositoryProvider)
-          .updateTaskParentProjectId(curTaskId, initialProjectId);
-    }
-
-    if (initialStatus != null) {
-      await ref
-          .read(tasksRepositoryProvider)
-          .updateTaskStatus(curTaskId, initialStatus);
-    }
-
-    if (initialParentTaskId != null) {
-      await ref
-          .read(tasksRepositoryProvider)
-          .updateTaskParentTaskId(curTaskId, initialParentTaskId);
-    }
+    final curTaskId = await taskIdNotifier.createNewTask(
+      isPhase: isPhase,
+      initialProjectId: initialProjectId,
+      initialParentTaskId: initialParentTaskId,
+      initialStatus: initialStatus,
+    );
 
     await _navigateToTaskPage(mode: EditablePageMode.create, taskId: curTaskId)
         .then((_) {
