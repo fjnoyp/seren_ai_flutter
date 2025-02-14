@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
@@ -28,6 +29,7 @@ class InlineTaskCreationWidget extends HookConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final isEditing = useState(false);
     final newTaskId = ref.watch(curInlineCreatingTaskIdProvider);
+    final nameFieldFocusNode = useFocusNode();
 
     if (newTaskId == null) isEditing.value = false;
 
@@ -37,9 +39,26 @@ class InlineTaskCreationWidget extends HookConsumerWidget {
               ref.read(curInlineCreatingTaskIdProvider.notifier).state = null;
             },
             child: ListTile(
-              title: TaskNameField(
-                taskId: newTaskId!,
-                textStyle: Theme.of(context).textTheme.bodyMedium,
+              title: KeyboardListener(
+                focusNode: useFocusNode(),
+                onKeyEvent: (event) async {
+                  if (event.logicalKey == LogicalKeyboardKey.enter) {
+                    ref.read(curInlineCreatingTaskIdProvider.notifier).state =
+                        await ref
+                            .read(curSelectedTaskIdNotifierProvider.notifier)
+                            .createNewTask(
+                              updateState: false,
+                              initialParentTaskId: initialParentTaskId,
+                              initialStatus: initialStatus,
+                            );
+                    nameFieldFocusNode.requestFocus();
+                  }
+                },
+                child: TaskNameField(
+                  focusNode: nameFieldFocusNode,
+                  taskId: newTaskId!,
+                  textStyle: Theme.of(context).textTheme.bodyMedium,
+                ),
               ),
               trailing: IntrinsicWidth(
                 child: Row(
@@ -56,7 +75,15 @@ class InlineTaskCreationWidget extends HookConsumerWidget {
                             ),
                           ),
                         ),
-                    DeleteTaskButton(newTaskId),
+                    DeleteTaskButton(
+                      newTaskId,
+                      colored: true,
+                      onDelete: () {
+                        ref
+                            .read(curInlineCreatingTaskIdProvider.notifier)
+                            .state = null;
+                      },
+                    ),
                   ],
                 ),
               ),
@@ -73,9 +100,15 @@ class InlineTaskCreationWidget extends HookConsumerWidget {
                         initialStatus: initialStatus,
                       );
               isEditing.value = true;
+              nameFieldFocusNode.requestFocus();
             },
             icon: const Icon(Icons.add),
             label: Text(AppLocalizations.of(context)!.createTask),
+            style: TextButton.styleFrom(
+              alignment: Alignment.centerLeft,
+              foregroundColor: Theme.of(context).colorScheme.outline,
+              iconColor: Theme.of(context).colorScheme.outline,
+            ),
           );
   }
 }

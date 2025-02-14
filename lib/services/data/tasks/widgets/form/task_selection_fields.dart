@@ -114,6 +114,7 @@ class TaskNameField extends BaseNameField {
     super.key,
     required this.taskId,
     super.textStyle,
+    super.focusNode,
   }) : super(
           isEditable: true,
           nameProvider: taskByIdStreamProvider(taskId)
