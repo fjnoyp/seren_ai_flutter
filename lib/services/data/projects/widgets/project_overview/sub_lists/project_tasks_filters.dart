@@ -5,28 +5,28 @@ import 'package:intl/intl.dart';
 import 'package:seren_ai_flutter/services/data/projects/providers/cur_selected_project_providers.dart';
 import 'package:seren_ai_flutter/services/data/projects/task_filter_option_enum.dart';
 import 'package:seren_ai_flutter/services/data/projects/task_sort_option_enum.dart';
-import 'package:seren_ai_flutter/services/data/projects/widgets/project_overview/project_tasks_section.dart';
 import 'package:seren_ai_flutter/services/data/tasks/providers/task_navigation_service.dart';
 import 'package:seren_ai_flutter/services/data/tasks/providers/task_filter_state_provider.dart';
 
 class ProjectTasksFilters extends ConsumerWidget {
   const ProjectTasksFilters({
     super.key,
-    required this.viewMode,
     required this.onShowCustomDateRangePicker,
-
-    /// Whether to show extra view controls in the UI.
-    /// This can include additional filtering options or settings
-    /// that enhance the user experience when managing tasks.
     this.showExtraViewControls = true,
     required this.useHorizontalScroll,
+    this.hiddenFilters,
   });
 
-  final ProjectTasksSectionViewMode viewMode;
   final Future<DateTimeRange?> Function(BuildContext)
       onShowCustomDateRangePicker;
+
+  /// Whether to show extra view controls in the UI.
+  /// This can include additional filtering options or settings
+  /// that enhance the user experience when managing tasks.
   final bool showExtraViewControls;
+
   final bool useHorizontalScroll;
+  final List<TaskFilterOption>? hiddenFilters;
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -34,14 +34,16 @@ class ProjectTasksFilters extends ConsumerWidget {
     final filterNotifier = ref.read(taskFilterStateProvider.notifier);
 
     final filterWidgets = [
-      ...TaskFilterOption.values.map(
-        (filter) => _FilterChip(
-          filter: filter,
-          filterState: filterState,
-          filterNotifier: filterNotifier,
-          onShowCustomDateRangePicker: onShowCustomDateRangePicker,
-        ),
-      ),
+      ...TaskFilterOption.values
+          .where((filter) => !(hiddenFilters?.contains(filter) ?? false))
+          .map(
+            (filter) => _FilterChip(
+              filter: filter,
+              filterState: filterState,
+              filterNotifier: filterNotifier,
+              onShowCustomDateRangePicker: onShowCustomDateRangePicker,
+            ),
+          ),
       _SortChip(
         filterState: filterState,
         filterNotifier: filterNotifier,
