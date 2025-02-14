@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
+import 'package:seren_ai_flutter/common/navigation_service_provider.dart';
 import 'package:seren_ai_flutter/common/universal_platform/universal_platform.dart';
 import 'package:seren_ai_flutter/services/data/common/status_enum.dart';
 import 'package:seren_ai_flutter/services/data/notes/providers/notes_navigation_service.dart';
@@ -14,11 +15,24 @@ import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:seren_ai_flutter/services/data/tasks/providers/cur_user_viewable_tasks_stream_provider.dart';
 import 'package:seren_ai_flutter/services/data/common/widgets/async_value_handler_widget.dart';
 
-class ProjectTasksPage extends HookConsumerWidget {
-  const ProjectTasksPage({super.key});
+class ProjectOverviewPage extends HookConsumerWidget {
+  const ProjectOverviewPage({super.key});
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    final curSelectedProject = ref.watch(curSelectedProjectStreamProvider);
+    if (curSelectedProject.isLoading) {
+      return const Center(child: CircularProgressIndicator());
+    }
+
+    if (curSelectedProject.hasError || curSelectedProject.value == null) {
+      // Handle project deletion by other users
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        ref.read(navigationServiceProvider).pop();
+      });
+      return const SizedBox.shrink();
+    }
+
     final tabs = [
       if (isWebVersion) ...[
         (
@@ -56,7 +70,7 @@ class ProjectTasksPage extends HookConsumerWidget {
       builder: (context, constraints) {
         final isLargeScreen = constraints.maxWidth > 800;
         return AsyncValueHandlerWidget(
-          value: ref.watch(curSelectedProjectStreamProvider),
+          value: curSelectedProject,
           data: (selectedProject) => Padding(
             padding: isLargeScreen
                 ? const EdgeInsets.all(16)

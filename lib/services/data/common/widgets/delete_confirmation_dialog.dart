@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -13,7 +15,7 @@ class DeleteConfirmationDialog extends ConsumerWidget {
   });
 
   final String itemName;
-  final VoidCallback onDelete;
+  final FutureOr<void> Function() onDelete;
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -32,8 +34,8 @@ class DeleteConfirmationDialog extends ConsumerWidget {
         FilledButton(
             style: FilledButton.styleFrom(
                 backgroundColor: Theme.of(context).colorScheme.error),
-            onPressed: () {
-              onDelete();
+            onPressed: () async {
+              await onDelete();
               ref.read(navigationServiceProvider).pop(false);
             },
             child: Text(AppLocalizations.of(context)!.delete)),
