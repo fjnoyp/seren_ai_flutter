@@ -47,7 +47,6 @@ class ProjectTasksSectionWeb extends HookConsumerWidget {
         Padding(
           padding: const EdgeInsets.all(8),
           child: ProjectTasksFilters(
-            viewMode: viewMode,
             onShowCustomDateRangePicker: _showCustomDateRangePicker,
             useHorizontalScroll: false,
           ),
