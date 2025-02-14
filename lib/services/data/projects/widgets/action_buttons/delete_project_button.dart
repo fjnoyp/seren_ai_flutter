@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:seren_ai_flutter/common/navigation_service_provider.dart';
-import 'package:seren_ai_flutter/common/routes/app_routes.dart';
 import 'package:seren_ai_flutter/common/universal_platform/universal_platform.dart';
 import 'package:seren_ai_flutter/services/data/common/widgets/delete_confirmation_dialog.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
@@ -29,7 +28,7 @@ class DeleteProjectButton extends ConsumerWidget {
 
             return DeleteConfirmationDialog(
               itemName: projectName,
-              onDelete: () {
+              onDelete: () async {
                 final projectsRepository =
                     ref.watch(projectsRepositoryProvider);
                 projectsRepository
@@ -40,8 +39,7 @@ class DeleteProjectButton extends ConsumerWidget {
                   ref.invalidate(curSelectedProjectIdNotifierProvider);
                 }
                 if (isWebVersion) {
-                  ref.read(navigationServiceProvider).navigateToAndRemoveUntil(
-                      AppRoutes.home.name, (_) => false);
+                  await ref.read(navigationServiceProvider).pop();
                 }
               },
             );
