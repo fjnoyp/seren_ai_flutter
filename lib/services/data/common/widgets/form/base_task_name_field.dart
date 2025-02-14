@@ -10,17 +10,20 @@ class BaseNameField extends HookConsumerWidget {
     required this.nameProvider,
     required this.updateName,
     this.textStyle,
+    this.focusNode,
   });
 
   final bool isEditable;
   final ProviderListenable<String> nameProvider;
   final Function(WidgetRef, String) updateName;
   final TextStyle? textStyle;
+  final FocusNode? focusNode;
+
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final curName = ref.watch(nameProvider);
     final nameController = useTextEditingController(text: curName);
-    final focusNode = useFocusNode();
+    final focusNode = this.focusNode ?? useFocusNode();
 
     final colorAnimation = useAiActionColorAnimation(
       context,
