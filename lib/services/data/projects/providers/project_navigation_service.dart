@@ -68,9 +68,9 @@ class ProjectNavigationService extends BaseNavigationService {
     };
 
     if (mode == EditablePageMode.readOnly) {
-      _navigateToProjectOverviewPage(title);
+      await _navigateToProjectOverviewPage(title);
     } else {
-      _openProjectDetailsPage(mode, title);
+      await _openProjectDetailsPage(mode, title);
     }
   }
 

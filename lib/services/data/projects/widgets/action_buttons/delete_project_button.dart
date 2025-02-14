@@ -28,7 +28,7 @@ class DeleteProjectButton extends ConsumerWidget {
 
             return DeleteConfirmationDialog(
               itemName: projectName,
-              onDelete: () {
+              onDelete: () async {
                 final projectsRepository =
                     ref.watch(projectsRepositoryProvider);
                 projectsRepository
@@ -39,7 +39,7 @@ class DeleteProjectButton extends ConsumerWidget {
                   ref.invalidate(curSelectedProjectIdNotifierProvider);
                 }
                 if (isWebVersion) {
-                  ref.read(navigationServiceProvider).pop();
+                  await ref.read(navigationServiceProvider).pop();
                 }
               },
             );
