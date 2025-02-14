@@ -1,9 +1,10 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:seren_ai_flutter/common/current_route_provider.dart';
 import 'package:seren_ai_flutter/common/routes/app_routes.dart';
-import 'package:seren_ai_flutter/common/universal_platform/universal_platform.dart';
 import 'package:seren_ai_flutter/services/data/common/base_navigation_service.dart';
 import 'package:seren_ai_flutter/services/data/common/status_enum.dart';
 import 'package:seren_ai_flutter/services/data/common/widgets/editable_page_mode_enum.dart';
+import 'package:seren_ai_flutter/services/data/projects/providers/cur_selected_project_providers.dart';
 import 'package:seren_ai_flutter/services/data/projects/providers/project_navigation_service.dart';
 import 'package:seren_ai_flutter/services/data/tasks/providers/cur_selected_task_id_notifier_provider.dart';
 import 'package:seren_ai_flutter/common/navigation_service_provider.dart';
@@ -36,12 +37,6 @@ class TaskNavigationService extends BaseNavigationService {
     await _navigateToTaskPage(
       mode: EditablePageMode.edit,
       taskId: curTaskId,
-    ).then(
-      (_) {
-        if (isWebVersion) {
-          _handleProjectRedirect();
-        }
-      },
     );
   }
 
@@ -65,10 +60,7 @@ class TaskNavigationService extends BaseNavigationService {
       initialStatus: initialStatus,
     );
 
-    await _navigateToTaskPage(mode: EditablePageMode.create, taskId: curTaskId)
-        .then((_) {
-      _handleProjectRedirect();
-    });
+    await _navigateToTaskPage(mode: EditablePageMode.create, taskId: curTaskId);
   }
 
   Future<void> _navigateToTaskPage({
@@ -83,6 +75,16 @@ class TaskNavigationService extends BaseNavigationService {
         ? AppLocalizations.of(context)!.createTask
         : AppLocalizations.of(context)!.updateTask;
 
+    final curRoute = ref.read(currentRouteProvider);
+
+    // If we're not opening the task from project page, we open project page first
+    if (!curRoute.startsWith(AppRoutes.projectOverview.name)) {
+      final curProjectId = ref.read(curSelectedProjectIdNotifierProvider);
+
+      ref.read(projectNavigationServiceProvider).openProjectPage(
+          mode: EditablePageMode.readOnly, projectId: curProjectId);
+    }
+
     await ref.read(navigationServiceProvider).navigateTo(
       '${AppRoutes.taskPage.name}/$taskId',
       arguments: {
@@ -91,27 +93,5 @@ class TaskNavigationService extends BaseNavigationService {
         'mode': mode,
       },
     );
-  }
-
-  // Future<String> _getTaskTitle(String taskId) async {
-  //   return await ref
-  //       .read(tasksRepositoryProvider)
-  //       .getById(taskId)
-  //       .then((task) => task?.name ?? '');
-  // }
-
-  Future<void> _handleProjectRedirect() async {
-    final curTaskId = ref.read(curSelectedTaskIdNotifierProvider);
-    if (curTaskId == null) return;
-
-    final curProjectId = await ref
-        .read(tasksRepositoryProvider)
-        .getById(curTaskId)
-        .then((task) => task?.parentProjectId);
-
-    if (curProjectId != null) {
-      await ref.read(projectNavigationServiceProvider).openProjectPage(
-          mode: EditablePageMode.readOnly, projectId: curProjectId);
-    }
   }
 }

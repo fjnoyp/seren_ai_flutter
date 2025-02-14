@@ -1,4 +1,5 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:seren_ai_flutter/common/current_route_provider.dart';
 import 'package:seren_ai_flutter/common/navigation_service_provider.dart';
 import 'package:seren_ai_flutter/common/routes/app_routes.dart';
 import 'package:seren_ai_flutter/services/data/common/base_navigation_service.dart';
@@ -25,10 +26,6 @@ class NotesNavigationService extends BaseNavigationService {
   }
 
   Future<void> openNote({required String noteId}) async {
-    ref
-        .read(navigationServiceProvider)
-        .popUntil((route) => route.settings.name != AppRoutes.notePage.name);
-
     ref.read(curSelectedNoteIdNotifierProvider.notifier).setNoteId(noteId);
 
     ref
@@ -43,10 +40,6 @@ class NotesNavigationService extends BaseNavigationService {
   }
 
   Future<void> openNewNote({String? parentProjectId}) async {
-    ref
-        .read(navigationServiceProvider)
-        .popUntil((route) => route.settings.name != AppRoutes.notePage.name);
-
     await ref
         .read(curSelectedNoteIdNotifierProvider.notifier)
         .createNewNote(parentProjectId: parentProjectId);
@@ -73,12 +66,11 @@ class NotesNavigationService extends BaseNavigationService {
         : AppLocalizations.of(context)!.updateNote;
 
     ref.read(navigationServiceProvider).navigateTo(
-      '${AppRoutes.notePage.name}/$noteId',
-      arguments: {
-        'mode': mode,
-        'actions': actions,
-        'title': title,
-      },
-    );
+          '${AppRoutes.notePage.name}/$noteId',
+          arguments: {'mode': mode, 'actions': actions, 'title': title},
+          withReplacement: ref
+              .read(currentRouteProvider)
+              .startsWith(AppRoutes.notePage.name),
+        );
   }
 }

@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:seren_ai_flutter/common/current_route_provider.dart';
 import 'package:seren_ai_flutter/common/navigation_service_provider.dart';
 import 'package:seren_ai_flutter/common/routes/app_routes.dart';
 import 'package:seren_ai_flutter/common/universal_platform/universal_platform.dart';
@@ -91,14 +92,13 @@ class ProjectNavigationService extends BaseNavigationService {
               ]
             : null;
 
-    await ref.read(navigationServiceProvider).navigateToAndRemoveUntil(
-      '${AppRoutes.projectOverview.name}/$projectId',
-      // Remove previous ProjectOverviewPage to avoid duplicate pages (if any)
-      (route) =>
-          route.settings.name?.startsWith(AppRoutes.projectOverview.name) !=
-          true,
-      arguments: {'title': title, 'actions': actions},
-    );
+    await ref.read(navigationServiceProvider).navigateTo(
+          '${AppRoutes.projectOverview.name}/$projectId',
+          arguments: {'title': title, 'actions': actions},
+          withReplacement: ref
+              .read(currentRouteProvider)
+              .startsWith(AppRoutes.projectOverview.name),
+        );
   }
 
   Future<void> _openProjectDetailsPage(

@@ -9,26 +9,30 @@ class NavigationService {
 
   NavigationService(this.ref);
 
-  Future<dynamic> navigateTo(String routeName, {Object? arguments}) {
+  Future<dynamic> navigateTo(
+    String routeName, {
+    Object? arguments,
+
+    /// If true, the current route will be replaced with the new route
+    bool withReplacement = false,
+
+    /// If true, the stack will be cleared before navigating to the new route
+    /// This is useful for auth cases, for example
+    bool clearStack = false,
+  }) {
+    if (clearStack) {
+      return navigatorKey.currentState!.pushNamedAndRemoveUntil(
+        routeName,
+        (route) => false,
+        arguments: arguments,
+      );
+    }
+    if (withReplacement) {
+      return navigatorKey.currentState!
+          .pushReplacementNamed(routeName, arguments: arguments);
+    }
     return navigatorKey.currentState!
         .pushNamed(routeName, arguments: arguments);
-  }
-
-  Future<dynamic> navigateToWithReplacement(String routeName,
-      {Object? arguments}) {
-    return navigatorKey.currentState!
-        .pushReplacementNamed(routeName, arguments: arguments);
-  }
-
-  Future<dynamic> navigateToAndRemoveUntil(
-      String routeName, bool Function(Route<dynamic>) predicate,
-      {Object? arguments}) {
-    return navigatorKey.currentState!
-        .pushNamedAndRemoveUntil(routeName, predicate, arguments: arguments);
-  }
-
-  void popUntil(bool Function(Route<dynamic>) predicate) {
-    navigatorKey.currentState!.popUntil(predicate);
   }
 
   bool get canPop => navigatorKey.currentState!.canPop();
