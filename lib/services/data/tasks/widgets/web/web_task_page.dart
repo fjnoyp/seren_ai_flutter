@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:logging/logging.dart';
 import 'package:seren_ai_flutter/common/navigation_service_provider.dart';
+import 'package:seren_ai_flutter/services/data/projects/task_filter_option_enum.dart';
 import 'package:seren_ai_flutter/services/data/projects/widgets/project_overview/task_search_modal.dart';
 import 'package:seren_ai_flutter/services/data/tasks/providers/cur_selected_task_id_notifier_provider.dart';
 import 'package:seren_ai_flutter/services/data/tasks/providers/task_by_id_stream_provider.dart';
@@ -98,10 +99,16 @@ class _TasksFromPhaseSection extends ConsumerWidget {
           ),
         ),
         Expanded(
-            child: TaskSearchModal(
-                onTapOption: (taskId) => ref
-                    .read(tasksRepositoryProvider)
-                    .updateTaskParentTaskId(taskId, phaseId))),
+          child: TaskSearchModal(
+            autoFocus: false,
+            onTapOption: (taskId) => ref
+                .read(tasksRepositoryProvider)
+                .updateTaskParentTaskId(taskId, phaseId),
+            hiddenFilters: const [TaskFilterOption.type],
+            additionalFilter: (task) =>
+                task.isPhase == false && task.parentTaskId == null,
+          ),
+        ),
         const SizedBox(height: 32),
         Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
