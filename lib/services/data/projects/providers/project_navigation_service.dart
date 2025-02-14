@@ -68,9 +68,9 @@ class ProjectNavigationService extends BaseNavigationService {
     };
 
     if (mode == EditablePageMode.readOnly) {
-      await _navigateToProjectOverviewPage(title);
+      _navigateToProjectOverviewPage(title);
     } else {
-      await _openProjectDetailsPage(mode, title);
+      _openProjectDetailsPage(mode, title);
     }
   }
 
@@ -92,7 +92,7 @@ class ProjectNavigationService extends BaseNavigationService {
               ]
             : null;
 
-    await ref.read(navigationServiceProvider).navigateTo(
+    return ref.read(navigationServiceProvider).navigateTo(
           '${AppRoutes.projectOverview.name}/$projectId',
           arguments: {'title': title, 'actions': actions},
           withReplacement: ref

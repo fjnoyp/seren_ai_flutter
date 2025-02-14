@@ -8,7 +8,6 @@ import 'package:seren_ai_flutter/services/data/projects/providers/cur_selected_p
 import 'package:seren_ai_flutter/services/data/projects/providers/project_navigation_service.dart';
 import 'package:seren_ai_flutter/services/data/tasks/providers/cur_selected_task_id_notifier_provider.dart';
 import 'package:seren_ai_flutter/common/navigation_service_provider.dart';
-import 'package:seren_ai_flutter/services/data/tasks/repositories/tasks_repository.dart';
 import 'package:seren_ai_flutter/services/data/tasks/widgets/action_buttons/delete_task_button.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
@@ -76,12 +75,11 @@ class TaskNavigationService extends BaseNavigationService {
         : AppLocalizations.of(context)!.updateTask;
 
     final curRoute = ref.read(currentRouteProvider);
-
-    // If we're not opening the task from project page, we open project page first
+    // If we're not already on a project page, we open project page first
     if (!curRoute.startsWith(AppRoutes.projectOverview.name)) {
       final curProjectId = ref.read(curSelectedProjectIdNotifierProvider);
 
-      ref.read(projectNavigationServiceProvider).openProjectPage(
+      await ref.read(projectNavigationServiceProvider).openProjectPage(
           mode: EditablePageMode.readOnly, projectId: curProjectId);
     }
 

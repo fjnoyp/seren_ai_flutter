@@ -32,7 +32,8 @@ class NavigationService {
           .pushReplacementNamed(routeName, arguments: arguments);
     }
     return navigatorKey.currentState!
-        .pushNamed(routeName, arguments: arguments);
+        .pushNamed(routeName, arguments: arguments)
+        .then((_) => null); // Don't await the Future, just return it
   }
 
   bool get canPop => navigatorKey.currentState!.canPop();
