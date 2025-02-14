@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
+import 'package:seren_ai_flutter/common/current_route_provider.dart';
 import 'package:seren_ai_flutter/common/navigation_service_provider.dart';
 import 'package:seren_ai_flutter/common/routes/app_routes.dart';
 import 'package:seren_ai_flutter/common/universal_platform/universal_platform.dart';
@@ -32,10 +33,12 @@ class ProjectDetailsPage extends HookConsumerWidget {
         WidgetsBinding.instance.addPostFrameCallback((_) {
           // Pop the current project page (route or dialog)
           ref.read(navigationServiceProvider).pop();
-          // Remove all project details routes (in case of dialog, we'd need to pop again)
-          ref.read(navigationServiceProvider).popUntil((route) =>
-              !(route.settings.name?.contains(AppRoutes.projectOverview.name) ??
-                  false));
+          // If we're still in the project overview page (dialog case), pop again to remove the previous page
+          if (ref
+              .read(currentRouteProvider)
+              .startsWith(AppRoutes.projectOverview.name)) {
+            ref.read(navigationServiceProvider).pop();
+          }
         });
         return const SizedBox.shrink();
       }

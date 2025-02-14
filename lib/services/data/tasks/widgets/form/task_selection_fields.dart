@@ -9,6 +9,7 @@ import 'package:seren_ai_flutter/services/data/common/widgets/form/base_priority
 import 'package:seren_ai_flutter/services/data/common/widgets/form/base_project_selection_field.dart';
 import 'package:seren_ai_flutter/services/data/common/widgets/form/base_status_selection_field.dart';
 import 'package:seren_ai_flutter/services/data/common/widgets/form/base_task_name_field.dart';
+import 'package:seren_ai_flutter/services/data/projects/providers/cur_selected_project_providers.dart';
 import 'package:seren_ai_flutter/services/data/projects/providers/cur_user_viewable_projects_provider.dart';
 import 'package:seren_ai_flutter/services/data/tasks/providers/task_assignments_service_provider.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
@@ -67,9 +68,14 @@ class TaskProjectSelectionField extends BaseProjectSelectionField {
           projectIdProvider: taskByIdStreamProvider(taskId)
               .select((task) => task.value?.parentProjectId),
           selectableProjectsProvider: curUserViewableProjectsProvider,
-          updateProject: (ref, project) => ref
-              .read(tasksRepositoryProvider)
-              .updateTaskParentProjectId(taskId, project!.id),
+          updateProject: (ref, project) {
+            ref
+                .read(curSelectedProjectIdNotifierProvider.notifier)
+                .setProjectId(project!.id);
+            ref
+                .read(tasksRepositoryProvider)
+                .updateTaskParentProjectId(taskId, project.id);
+          },
         );
 }
 

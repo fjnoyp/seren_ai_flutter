@@ -8,7 +8,6 @@ import 'package:seren_ai_flutter/services/ai_interaction/widgets/ai_assistant_bu
 import 'package:seren_ai_flutter/services/ai_interaction/widgets/user_input_display_widget.dart';
 import 'package:seren_ai_flutter/services/ai_interaction/widgets/web_ai_assistant_modal.dart';
 import 'package:seren_ai_flutter/services/data/db_setup/app_config.dart';
-import 'package:seren_ai_flutter/services/data/tasks/providers/task_navigation_service.dart';
 import 'package:seren_ai_flutter/services/data/users/models/invite_model.dart';
 import 'package:seren_ai_flutter/services/data/users/providers/cur_user_invites_service_provider.dart';
 import 'package:seren_ai_flutter/widgets/common/debug_mode_provider.dart';
@@ -287,8 +286,7 @@ class _QuickActionsBottomAppBar extends ConsumerWidget {
             icon: const Icon(Icons.grid_view),
             onPressed: () => ref
                 .read(navigationServiceProvider)
-                .navigateToAndRemoveUntil(
-                    AppRoutes.home.name, (route) => false),
+                .navigateTo(AppRoutes.home.name),
           ),
           // Remove icon for quick create for now
           // IconButton(
