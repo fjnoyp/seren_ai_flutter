@@ -221,7 +221,13 @@ class AppState extends ConsumerState<App> {
               });
             }
 
-            return MaterialPageRoute(settings: settings, builder: builder);
+            // Replace MaterialPageRoute with PageRouteBuilder
+            return PageRouteBuilder(
+              settings: settings,
+              pageBuilder: (context, _, __) => builder(context),
+              transitionDuration: Duration.zero,
+              reverseTransitionDuration: Duration.zero,
+            );
           },
           locale: Locale(languageCode, countryCode),
           localizationsDelegates: AppLocalizations.localizationsDelegates,
