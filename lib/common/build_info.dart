@@ -2,11 +2,11 @@
 class BuildInfo {
   // Core build info
   static const String version = '1.0.0';
-  static const String buildDate = '2025-02-12 17:57:19';
+  static const String buildDate = '2025-02-14 06:04:55';
   
   // Git info
-  static const String commitHash = 'c024629';
-  static const String branch = 'feat/use-phase-color-on-task-tags';
+  static const String commitHash = 'a69aaa2';
+  static const String branch = 'main';
   static const String lastTag = 'no tag';
   
   // Author of last commit
@@ -16,12 +16,28 @@ class BuildInfo {
   // Recent commits (last 5)
   static const List<Map<String, String>> recentCommits = [
     {
+      "hash": "a69aaa2",
+      "author": "renata-sisilio",
+      "email": "renata@seren-ai.co", 
+      "message": "feat(gantt): current date vertical line on gantt chart",
+      "date": "2025-02-12",
+      "relativeDate": "2 days ago"
+    },
+    {
+      "hash": "a6e583a",
+      "author": "renata-sisilio",
+      "email": "renata@seren-ai.co", 
+      "message": "feat(tasks): use phase color on tags",
+      "date": "2025-02-12",
+      "relativeDate": "2 days ago"
+    },
+    {
       "hash": "c024629",
       "author": "renata-sisilio",
       "email": "renata@seren-ai.co", 
       "message": "chore: make all clickable ui elements highlight on hover",
       "date": "2025-02-12",
-      "relativeDate": "2 hours ago"
+      "relativeDate": "2 days ago"
     },
     {
       "hash": "337389d",
@@ -29,7 +45,7 @@ class BuildInfo {
       "email": "renata@seren-ai.co", 
       "message": "feat(projects): add filter to show only tasks or phases",
       "date": "2025-02-12",
-      "relativeDate": "2 hours ago"
+      "relativeDate": "2 days ago"
     },
     {
       "hash": "eb06708",
@@ -37,27 +53,11 @@ class BuildInfo {
       "email": "kylcheng@gmail.com", 
       "message": "fix(tasks): fix broken ai chat due to task type field",
       "date": "2025-02-12",
-      "relativeDate": "2 hours ago"
-    },
-    {
-      "hash": "bc898e8",
-      "author": "Kyle",
-      "email": "kylcheng@gmail.com", 
-      "message": "chore: remove docked quick create button",
-      "date": "2025-02-12",
-      "relativeDate": "2 hours ago"
-    },
-    {
-      "hash": "7bceeb8",
-      "author": "renata-sisilio",
-      "email": "renata@seren-ai.co", 
-      "message": "fix(projects/mobile): remove duplicated ui elements from project page",
-      "date": "2025-02-12",
-      "relativeDate": "4 hours ago"
+      "relativeDate": "2 days ago"
     },
   ];
 
   // Stats
-  static const String totalCommits = '328';
-  static const String contributors = '0';
+  static const String totalCommits = '330';
+  static const String contributors = '       0';
 }
