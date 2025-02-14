@@ -122,7 +122,7 @@ class AppState extends ConsumerState<App> {
                   const ProjectListPage()),
               AppRoutes.projectOverview.name: (context) => _GuardScaffold(
                     args?['title'] ?? AppLocalizations.of(context)!.project,
-                    const ProjectTasksPage(),
+                    const ProjectOverviewPage(),
                     actions: args?['actions'],
                     showAppBar: !isWebVersion,
                   ),

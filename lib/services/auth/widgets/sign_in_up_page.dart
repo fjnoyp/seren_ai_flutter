@@ -25,7 +25,7 @@ class SignInUpPage extends ConsumerWidget {
               onSignInComplete: (response) {
                 ref
                     .read(navigationServiceProvider)
-                    .navigateToWithReplacement(AppRoutes.home.name);
+                    .navigateTo(AppRoutes.home.name, clearStack: true);
               },
               onSignUpComplete: (response) async {
                 if (response.user != null && response.user!.email != null) {
@@ -73,7 +73,7 @@ class SignInUpPage extends ConsumerWidget {
 
                   ref
                       .read(navigationServiceProvider)
-                      .navigateToWithReplacement(AppRoutes.home.name);
+                      .navigateTo(AppRoutes.home.name, clearStack: true);
                 }
               },
               metadataFields: [

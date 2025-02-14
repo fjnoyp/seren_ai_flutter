@@ -27,8 +27,10 @@ class _NavigateToSignInUp extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     WidgetsBinding.instance.addPostFrameCallback((_) {
-      ref.read(navigationServiceProvider)
-          .navigateToAndRemoveUntil(AppRoutes.signInUp.name, (route) => false);
+      ref.read(navigationServiceProvider).navigateTo(
+            AppRoutes.signInUp.name,
+            clearStack: true,
+          );
     });
     return const SizedBox.shrink();
   }
