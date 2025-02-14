@@ -2,16 +2,16 @@ import 'package:flutter/material.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:logging/logging.dart';
 import 'package:seren_ai_flutter/common/navigation_service_provider.dart';
-import 'package:seren_ai_flutter/services/data/projects/providers/cur_selected_project_providers.dart';
 import 'package:seren_ai_flutter/services/data/projects/widgets/project_overview/task_search_modal.dart';
 import 'package:seren_ai_flutter/services/data/tasks/providers/cur_selected_task_id_notifier_provider.dart';
 import 'package:seren_ai_flutter/services/data/tasks/providers/task_by_id_stream_provider.dart';
-import 'package:seren_ai_flutter/services/data/tasks/providers/task_navigation_service.dart';
 import 'package:seren_ai_flutter/services/data/tasks/providers/tasks_by_parent_stream_provider.dart';
 import 'package:seren_ai_flutter/services/data/tasks/repositories/tasks_repository.dart';
+import 'package:seren_ai_flutter/services/data/tasks/task_field_enum.dart';
 import 'package:seren_ai_flutter/services/data/tasks/widgets/action_buttons/delete_task_button.dart';
 import 'package:seren_ai_flutter/services/data/tasks/widgets/budget/task_budget_section.dart';
 import 'package:seren_ai_flutter/services/data/tasks/widgets/form/task_selection_fields.dart';
+import 'package:seren_ai_flutter/services/data/tasks/widgets/inline_task_creation_widget.dart';
 import 'package:seren_ai_flutter/services/data/tasks/widgets/task_comments/task_comment_section.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:seren_ai_flutter/services/data/tasks/widgets/task_list/tasks_list_tiles_view.dart';
@@ -78,7 +78,11 @@ class _TasksFromPhaseSection extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final tasks = ref.watch(tasksByParentStreamProvider(phaseId));
+    final curInlineCreatingTaskId = ref.watch(curInlineCreatingTaskIdProvider);
+    final tasks = ref.watch(tasksByParentStreamProvider(phaseId)).whenData(
+        (tasks) => tasks
+            ?.where((task) => task.id != curInlineCreatingTaskId)
+            .toList());
     final labelStyle = Theme.of(context).textTheme.bodyMedium?.copyWith(
           fontWeight: FontWeight.bold,
         );
@@ -109,23 +113,27 @@ class _TasksFromPhaseSection extends ConsumerWidget {
                 style: labelStyle,
               ),
             ),
-            FilledButton.tonal(
-              onPressed: () async =>
-                  await ref.read(taskNavigationServiceProvider).openNewTask(
-                        initialProjectId:
-                            ref.read(curSelectedProjectIdNotifierProvider),
-                        initialParentTaskId: phaseId,
-                      ),
-              style:
-                  FilledButton.styleFrom(visualDensity: VisualDensity.compact),
-              child: Text(AppLocalizations.of(context)?.newTask ?? 'New Task'),
-            ),
           ],
         ),
         Expanded(
-          child: TasksListTilesView(
-            watchedTasks: tasks,
-            filterCondition: null,
+          child: Column(
+            children: [
+              Flexible(
+                child: SingleChildScrollView(
+                  child: TasksListTilesView(
+                    watchedTasks: tasks,
+                    filterCondition: null,
+                  ),
+                ),
+              ),
+              SizedBox(
+                width: double.infinity,
+                child: InlineTaskCreationWidget(
+                  additionalFields: const [TaskFieldEnum.assignees],
+                  initialParentTaskId: phaseId,
+                ),
+              ),
+            ],
           ),
         ),
       ],
