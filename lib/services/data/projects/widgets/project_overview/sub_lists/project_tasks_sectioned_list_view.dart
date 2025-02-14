@@ -5,7 +5,7 @@ import 'package:seren_ai_flutter/services/data/common/widgets/async_value_handle
 import 'package:seren_ai_flutter/services/data/projects/providers/cur_selected_project_providers.dart';
 import 'package:seren_ai_flutter/services/data/tasks/providers/tasks_by_project_stream_provider.dart';
 import 'package:seren_ai_flutter/services/data/tasks/task_field_enum.dart';
-import 'package:seren_ai_flutter/services/data/tasks/widgets/inline_task_creation_row.dart';
+import 'package:seren_ai_flutter/services/data/tasks/widgets/inline_task_creation_widget.dart';
 import 'package:seren_ai_flutter/services/data/tasks/widgets/task_list/task_list_item_view.dart';
 import 'package:seren_ai_flutter/services/data/tasks/providers/task_filter_state_provider.dart';
 
@@ -57,7 +57,7 @@ class ProjectTasksSectionedListView extends ConsumerWidget {
                         itemCount: filteredTasks.length,
                         itemBuilder: (context, index) =>
                             filteredTasks[index].id == curInlineCreatingTaskId
-                                ? null
+                                ? const SizedBox.shrink()
                                 : TaskListTileItemView(filteredTasks[index]),
                         separatorBuilder: (context, index) =>
                             const Divider(height: 1),
