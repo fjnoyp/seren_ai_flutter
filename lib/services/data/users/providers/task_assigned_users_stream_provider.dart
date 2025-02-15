@@ -3,7 +3,7 @@ import 'package:seren_ai_flutter/services/data/users/repositories/users_reposito
 import 'package:seren_ai_flutter/services/data/users/models/user_model.dart';
 
 final taskAssignedUsersStreamProvider =
-    StreamProvider.autoDispose.family<List<UserModel>, String>(
+    StreamProvider.family<List<UserModel>, String>(
   (ref, taskId) =>
       ref.watch(usersRepositoryProvider).watchTaskAssignedUsers(taskId: taskId),
 );
