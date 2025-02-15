@@ -2,11 +2,11 @@
 class BuildInfo {
   // Core build info
   static const String version = '1.0.0';
-  static const String buildDate = '2025-02-14 15:01:56';
+  static const String buildDate = '2025-02-15 10:23:46';
   
   // Git info
-  static const String commitHash = '33d3ad3';
-  static const String branch = 'fix/remove-phase-filter-from-add-tasks-to-phase-section';
+  static const String commitHash = 'ba74360';
+  static const String branch = 'fix/filter-removal-is-breaking-the-screen';
   static const String lastTag = 'no tag';
   
   // Author of last commit
@@ -16,12 +16,28 @@ class BuildInfo {
   // Recent commits (last 5)
   static const List<Map<String, String>> recentCommits = [
     {
+      "hash": "ba74360",
+      "author": "renata-sisilio",
+      "email": "renata@seren-ai.co", 
+      "message": "chore(navigation): remove navigation predicates + fix pop from task page",
+      "date": "2025-02-14",
+      "relativeDate": "19 hours ago"
+    },
+    {
+      "hash": "5357da1",
+      "author": "renata-sisilio",
+      "email": "renata@seren-ai.co", 
+      "message": "fix(tasks): prevent adding parent task ids to phases",
+      "date": "2025-02-14",
+      "relativeDate": "19 hours ago"
+    },
+    {
       "hash": "33d3ad3",
       "author": "renata-sisilio",
       "email": "renata@seren-ai.co", 
       "message": "feat(tasks): add inline task creation to phase tasks section",
       "date": "2025-02-14",
-      "relativeDate": "5 hours ago"
+      "relativeDate": "24 hours ago"
     },
     {
       "hash": "9e9cb02",
@@ -29,7 +45,7 @@ class BuildInfo {
       "email": "renata@seren-ai.co", 
       "message": "feat(tasks): batch task creation - go to next task when pressing enter key",
       "date": "2025-02-14",
-      "relativeDate": "6 hours ago"
+      "relativeDate": "25 hours ago"
     },
     {
       "hash": "5030051",
@@ -37,27 +53,11 @@ class BuildInfo {
       "email": "renata@seren-ai.co", 
       "message": "feat(tasks): create inline task widget and apply it to project tasks sectioned list view",
       "date": "2025-02-13",
-      "relativeDate": "28 hours ago"
-    },
-    {
-      "hash": "aeff483",
-      "author": "Kyle",
-      "email": "kylcheng@gmail.com", 
-      "message": "fix: switch flutter versions in xcode cloud build",
-      "date": "2025-02-14",
-      "relativeDate": "4 hours ago"
-    },
-    {
-      "hash": "a69aaa2",
-      "author": "renata-sisilio",
-      "email": "renata@seren-ai.co", 
-      "message": "feat(gantt): current date vertical line on gantt chart",
-      "date": "2025-02-12",
       "relativeDate": "2 days ago"
     },
   ];
 
   // Stats
-  static const String totalCommits = '334';
+  static const String totalCommits = '336';
   static const String contributors = '0';
 }
