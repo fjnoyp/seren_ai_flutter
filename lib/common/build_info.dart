@@ -2,19 +2,27 @@
 class BuildInfo {
   // Core build info
   static const String version = '1.0.0';
-  static const String buildDate = '2025-02-16 05:00:10';
+  static const String buildDate = '2025-02-16 07:56:03';
   
   // Git info
-  static const String commitHash = 'a69aaa2';
+  static const String commitHash = 'fcf17bd';
   static const String branch = 'feat/fcm_test';
   static const String lastTag = 'no tag';
   
   // Author of last commit
-  static const String lastCommitAuthor = 'renata-sisilio';
-  static const String lastCommitEmail = 'renata@seren-ai.co';
+  static const String lastCommitAuthor = 'Kyle';
+  static const String lastCommitEmail = 'kylcheng@gmail.com';
   
   // Recent commits (last 5)
   static const List<Map<String, String>> recentCommits = [
+    {
+      "hash": "fcf17bd",
+      "author": "Kyle",
+      "email": "kylcheng@gmail.com", 
+      "message": "feat(push): basic push notifications",
+      "date": "2025-02-16",
+      "relativeDate": "3 hours ago"
+    },
     {
       "hash": "a69aaa2",
       "author": "renata-sisilio",
@@ -47,17 +55,9 @@ class BuildInfo {
       "date": "2025-02-12",
       "relativeDate": "4 days ago"
     },
-    {
-      "hash": "eb06708",
-      "author": "Kyle",
-      "email": "kylcheng@gmail.com", 
-      "message": "fix(tasks): fix broken ai chat due to task type field",
-      "date": "2025-02-12",
-      "relativeDate": "4 days ago"
-    },
   ];
 
   // Stats
-  static const String totalCommits = '330';
+  static const String totalCommits = '331';
   static const String contributors = '       0';
 }
