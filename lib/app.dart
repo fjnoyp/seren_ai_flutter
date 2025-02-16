@@ -33,6 +33,7 @@ import 'package:seren_ai_flutter/services/data/tasks/widgets/gantt/gantt_task_pa
 import 'package:seren_ai_flutter/services/data/tasks/widgets/task_page.dart';
 import 'package:seren_ai_flutter/services/ai_interaction/stt_orchestrator_provider.dart.dart';
 import 'package:seren_ai_flutter/services/data/tasks/widgets/web/web_task_page.dart';
+import 'package:seren_ai_flutter/services/notifications/fcm_push_notification_service_provider.dart';
 import 'package:seren_ai_flutter/widgets/home/home_page.dart';
 import 'package:seren_ai_flutter/widgets/common/main_scaffold.dart';
 import 'package:seren_ai_flutter/services/data/tasks/widgets/task_list/tasks_list_page.dart';
@@ -59,6 +60,9 @@ class AppState extends ConsumerState<App> {
     _routeObserver =
         CurrentRouteObserver(ref.read(currentRouteProvider.notifier));
     _initDeepLinkListener(ref);
+
+    final fcmService = ref.read(fcmPushNotificationServiceProvider);
+    fcmService.initialize();
   }
 
   @override
