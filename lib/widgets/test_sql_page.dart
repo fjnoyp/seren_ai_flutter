@@ -37,7 +37,8 @@ class TestSQLPage extends HookConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final sqlResult = useState<String>('');
     final fcmService = ref.watch(fcmPushNotificationServiceProvider);
-    final token = fcmService.currentToken;
+
+    final fcmToken = useState<String>('');
 
     return Scaffold(
       appBar: AppBar(
@@ -48,10 +49,12 @@ class TestSQLPage extends HookConsumerWidget {
         child: Column(
           children: [
             // === DISPLAY FCM TOKEN ===
-            SelectableText('FCM Token: ${token ?? "No token available"}'),
+            SelectableText(
+                'FCM Token: ${fcmToken.value ?? "No token available"}'),
             ElevatedButton(
               onPressed: () async {
                 await fcmService.initialize();
+                fcmToken.value = fcmService.currentToken;
               },
               child: Text('Refresh Token'),
             ),
