@@ -1,17 +1,26 @@
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:supabase_flutter/supabase_flutter.dart';
+import 'package:seren_ai_flutter/services/auth/cur_auth_state_provider.dart';
+import './helpers/token_manager.dart';
+import './helpers/device_info_helper.dart';
+import './repositories/device_tokens_repository.dart';
 
 final fcmPushNotificationServiceProvider =
     Provider<FCMPushNotificationService>((ref) {
-  return FCMPushNotificationService();
+  return FCMPushNotificationService(ref);
 });
 
 class FCMPushNotificationService {
-  // TODO p2: switch to private - made public to show in android testing
-  String? currentToken;
+  final FCMTokenManager _tokenManager = FCMTokenManager();
+  final Ref ref;
+
   bool _initialized = false;
+
+  // Temp to help with debugging - displaying current token
+  String currentToken = '';
+
+  FCMPushNotificationService(this.ref);
 
   Future<void> initialize() async {
     if (_initialized) return;
@@ -26,118 +35,56 @@ class FCMPushNotificationService {
 
   Future<void> _initializeToken() async {
     // Set up refresh listener
-    FirebaseMessaging.instance.onTokenRefresh.listen((newToken) {
-      _onTokenUpdate(newToken);
-    }).onError((error) {
-      debugPrint('FCM token refresh error: $error');
-    });
+    _tokenManager.setupTokenRefreshListener(_onTokenUpdate);
 
     // Get initial token
-    final token = await _getCurrentToken();
+    final token = await _tokenManager.getCurrentToken();
     if (token != null) {
+      currentToken = token;
       await _onTokenUpdate(token);
     }
   }
 
-  Future<String?> _getCurrentToken() async {
-    try {
-      if (defaultTargetPlatform == TargetPlatform.iOS) {
-        return _getIOSToken();
-      } else if (kIsWeb) {
-        return _getWebToken();
-      } else {
-        return _getDefaultToken();
-      }
-    } catch (error) {
-      debugPrint('Error getting FCM token: $error');
-      return null;
-    }
-  }
-
-  Future<String?> _getIOSToken() async {
-    final settings = await FirebaseMessaging.instance.requestPermission(
-      provisional: true,
-      alert: true,
-      badge: true,
-      sound: true,
-    );
-    debugPrint('iOS notification settings: ${settings.authorizationStatus}');
-
-    final apnsToken = await FirebaseMessaging.instance.getAPNSToken();
-    if (apnsToken == null) {
-      debugPrint('APNS token not available');
-      return null;
-    }
-
-    return FirebaseMessaging.instance.getToken();
-  }
-
-  Future<String?> _getWebToken() async {
-    return FirebaseMessaging.instance.getToken(
-      vapidKey:
-          "BG-JKknk5IjnB9-HV___PxKpxXgVX0-jK8KbAZRk3aWOqfmUoNwZTeRBmdNAPasiG57KZYMY61uMi-RXAlc7-LQ", // Replace with your VAPID key
-    );
-  }
-
-  Future<String?> _getDefaultToken() async {
-    final settings = await FirebaseMessaging.instance.requestPermission(
-      alert: true,
-      badge: true,
-      sound: true,
-    );
-    debugPrint('Notification settings: ${settings.authorizationStatus}');
-
-    return FirebaseMessaging.instance.getToken();
-  }
-
+  // TODO p0: save token or update existing token row last used date
+  // TODO p0: handle outdated tokens
   Future<void> _onTokenUpdate(String token) async {
-    if (token == currentToken) return;
-    currentToken = token;
-
     debugPrint('FCM token updated: $token');
     try {
-      final supabase = Supabase.instance.client;
-      await supabase.from('user_push_tokens').upsert({
-        'user_id': supabase.auth.currentUser?.id,
-        'token': token,
-        'updated_at': DateTime.now().toIso8601String(),
-      });
+      final curUser = ref.read(curUserProvider).value;
+      if (curUser == null) throw Exception('No current user');
+
+      final deviceInfo = await DeviceInfoHelper.getDeviceInfo();
+
+      // final userId = _repository.getCurrentUserId();
+      // if (userId == null) {
+      //   debugPrint('No user logged in, skipping token update');
+      //   return;
+      // }
+
+      // await _repository.upsertToken({
+      //   'user_id': userId,
+      //   'device_id': deviceInfo['device_id'],
+      //   'fcm_token': token,
+      //   'device_name': deviceInfo['device_name'],
+      //   'device_model': deviceInfo['device_model'],
+      //   'platform': deviceInfo['platform'],
+      //   'app_version': deviceInfo['app_version'],
+      //   'last_used_at': DateTime.now().toIso8601String(),
+      //   'is_active': true,
+      // });
     } catch (e) {
       debugPrint('Failed to save token to server: $e');
     }
   }
 
   Future<void> _setupMessageHandlers() async {
+    // TODO p0: check if this is working and how it might be used ...
     final initialMessage = await FirebaseMessaging.instance.getInitialMessage();
     if (initialMessage != null) {
-      _handleMessage(initialMessage);
-    }
-
-    // Opened from background
-    FirebaseMessaging.onMessageOpenedApp.listen(_handleMessage);
-
-    // Opened from foreground
-    FirebaseMessaging.onMessage.listen((RemoteMessage message) {
-      debugPrint('Foreground message received: ${message.data}');
-      if (message.notification != null) {
-        debugPrint('Notification: ${message.notification}');
-      }
-    });
-  }
-
-  void _handleMessage(RemoteMessage message) {
-    debugPrint('Handling FCM message: ${message.data}');
-    if (message.data['type'] != null) {
-      switch (message.data['type']) {
-        case 'chat':
-          // Navigate to chat screen
-          break;
-        case 'task':
-          // Navigate to task screen
-          break;
-        default:
-          debugPrint('Unknown message type: ${message.data['type']}');
-      }
+      //_handleMessage(initialMessage);
+      debugPrint('Initial message: ${initialMessage.data}');
     }
   }
+
+  // ATTENTION - YOU CANNOT RUN ANY FCM MESSAGE LISTENER IN A PROVDIER THAT IS INITIALIZED IN APP AND NOT IN MAIN.DART
 }
