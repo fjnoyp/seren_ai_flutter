@@ -2,11 +2,11 @@
 class BuildInfo {
   // Core build info
   static const String version = '1.0.0';
-  static const String buildDate = '2025-02-15 10:23:46';
+  static const String buildDate = '2025-02-16 05:00:10';
   
   // Git info
-  static const String commitHash = 'ba74360';
-  static const String branch = 'fix/filter-removal-is-breaking-the-screen';
+  static const String commitHash = 'a69aaa2';
+  static const String branch = 'feat/fcm_test';
   static const String lastTag = 'no tag';
   
   // Author of last commit
@@ -16,48 +16,48 @@ class BuildInfo {
   // Recent commits (last 5)
   static const List<Map<String, String>> recentCommits = [
     {
-      "hash": "ba74360",
+      "hash": "a69aaa2",
       "author": "renata-sisilio",
       "email": "renata@seren-ai.co", 
-      "message": "chore(navigation): remove navigation predicates + fix pop from task page",
-      "date": "2025-02-14",
-      "relativeDate": "19 hours ago"
+      "message": "feat(gantt): current date vertical line on gantt chart",
+      "date": "2025-02-12",
+      "relativeDate": "4 days ago"
     },
     {
-      "hash": "5357da1",
+      "hash": "a6e583a",
       "author": "renata-sisilio",
       "email": "renata@seren-ai.co", 
-      "message": "fix(tasks): prevent adding parent task ids to phases",
-      "date": "2025-02-14",
-      "relativeDate": "19 hours ago"
+      "message": "feat(tasks): use phase color on tags",
+      "date": "2025-02-12",
+      "relativeDate": "4 days ago"
     },
     {
-      "hash": "33d3ad3",
+      "hash": "c024629",
       "author": "renata-sisilio",
       "email": "renata@seren-ai.co", 
-      "message": "feat(tasks): add inline task creation to phase tasks section",
-      "date": "2025-02-14",
-      "relativeDate": "24 hours ago"
+      "message": "chore: make all clickable ui elements highlight on hover",
+      "date": "2025-02-12",
+      "relativeDate": "4 days ago"
     },
     {
-      "hash": "9e9cb02",
+      "hash": "337389d",
       "author": "renata-sisilio",
       "email": "renata@seren-ai.co", 
-      "message": "feat(tasks): batch task creation - go to next task when pressing enter key",
-      "date": "2025-02-14",
-      "relativeDate": "25 hours ago"
+      "message": "feat(projects): add filter to show only tasks or phases",
+      "date": "2025-02-12",
+      "relativeDate": "4 days ago"
     },
     {
-      "hash": "5030051",
-      "author": "renata-sisilio",
-      "email": "renata@seren-ai.co", 
-      "message": "feat(tasks): create inline task widget and apply it to project tasks sectioned list view",
-      "date": "2025-02-13",
-      "relativeDate": "2 days ago"
+      "hash": "eb06708",
+      "author": "Kyle",
+      "email": "kylcheng@gmail.com", 
+      "message": "fix(tasks): fix broken ai chat due to task type field",
+      "date": "2025-02-12",
+      "relativeDate": "4 days ago"
     },
   ];
 
   // Stats
-  static const String totalCommits = '336';
-  static const String contributors = '0';
+  static const String totalCommits = '330';
+  static const String contributors = '       0';
 }
