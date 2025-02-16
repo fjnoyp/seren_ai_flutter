@@ -51,6 +51,8 @@ dependencies:
   uuid: ^4.4.2
 
   # speech to text 
+  # DO NOT UPGRADE TO 7 or 4 - this will cause powersync web to break silently 
+  # TODO p3: we should investigate switching to API calls here to improve quality (need to check speed though) 
   speech_to_text: ^6.6.1
   flutter_tts: ^3.8.5
 
@@ -87,6 +89,9 @@ dependencies:
   # for stream combining (combine2) 
   rxdart: ^0.28.0
   flutter_launcher_icons: ^0.14.3
+
+  # for push notifications 
+  firebase_messaging: ^15.2.2
 
 dev_dependencies:
   flutter_test:
