@@ -67,7 +67,22 @@
       console.log('Error object: ' + JSON.stringify(error));
       return false;
     };
-  </script>
+  </script>  
+  <script>
+    // This is all based on: 
+    // https://firebase.flutter.dev/docs/messaging/usage/#background-messages
+    if ('serviceWorker' in navigator) {
+       // Service workers are supported. Use them.
+       window.addEventListener('load', function () {
+         // ADD THIS LINE
+         navigator.serviceWorker.register('/firebase-messaging-sw.js');
+         // Wait for registration to finish before dropping the <script> tag.
+         // Otherwise, the browser will load the script multiple times,
+         // potentially different versions.
+         var serviceWorkerUrl = 'flutter_service_worker.js?v=' + serviceWorkerVersion;
+       });
+   }
+</script>
 </body>
 
 </html>

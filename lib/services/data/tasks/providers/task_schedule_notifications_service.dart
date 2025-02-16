@@ -8,6 +8,8 @@ import 'package:seren_ai_flutter/services/data/tasks/repositories/tasks_reposito
 import 'package:seren_ai_flutter/services/notifications/notification_service.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
+// For all tasks assigned to this user
+// If there is a reminder offset, schedule a notification
 final taskScheduleNotificationsServiceProvider = Provider((ref) {
   List<TaskModel>? previousScheduledTasks;
   // Add this flag to track if we've already set up the listener
