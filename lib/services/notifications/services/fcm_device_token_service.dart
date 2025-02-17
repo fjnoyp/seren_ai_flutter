@@ -5,6 +5,7 @@ import 'package:seren_ai_flutter/services/notifications/models/user_device_token
 import 'package:seren_ai_flutter/services/notifications/repositories/user_device_tokens_repository.dart';
 import 'package:seren_ai_flutter/services/notifications/helpers/token_manager.dart';
 import 'package:seren_ai_flutter/services/auth/cur_auth_state_provider.dart';
+import 'package:supabase_flutter/supabase_flutter.dart';
 
 final fcmDeviceTokenServiceProvider = Provider<FCMDeviceTokenService>((ref) {
   return FCMDeviceTokenService(ref);
@@ -46,9 +47,19 @@ class FCMDeviceTokenService {
   Future<void> deInitialize() async {
     if (!_initialized) return;
 
-    final curUser = ref.read(curUserProvider).value;
-    if (curUser != null) {
-      await removeCurrentDeviceToken();
+    try {
+      // Get device info before the user session ends
+      final deviceInfo = await DeviceInfoHelper.getDeviceInfo();
+      final deviceId = deviceInfo.deviceId;
+
+      // Call edge function to remove device token
+      // This way we bypass RLS since the edge function can have its own security context
+      await Supabase.instance.client.functions.invoke(
+        'remove-device-token',
+        body: {'device_id': deviceId},
+      );
+    } catch (e) {
+      debugPrint('Failed to remove device token during logout: $e');
     }
 
     _initialized = false;
@@ -96,33 +107,6 @@ class FCMDeviceTokenService {
       }
     } catch (e) {
       debugPrint('Failed to add device token: $e');
-      rethrow;
-    }
-  }
-
-  /// Remove the current device's FCM token for the current user
-  Future<void> removeCurrentDeviceToken() async {
-    try {
-      final curUser = ref.read(curUserProvider).value;
-      if (curUser == null) throw Exception('No current user');
-
-      final deviceInfo = await DeviceInfoHelper.getDeviceInfo();
-      final deviceId = deviceInfo.deviceId;
-
-      final existingToken = await ref
-          .read(userDeviceTokensRepositoryProvider)
-          .getDeviceTokenByDeviceIdAndUserId(
-            deviceId: deviceId,
-            userId: curUser.id,
-          );
-
-      if (existingToken != null) {
-        await ref
-            .read(userDeviceTokensRepositoryProvider)
-            .deleteItem(existingToken.id);
-      }
-    } catch (e) {
-      debugPrint('Failed to remove device token: $e');
       rethrow;
     }
   }
