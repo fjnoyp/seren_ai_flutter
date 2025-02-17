@@ -2,11 +2,11 @@
 class BuildInfo {
   // Core build info
   static const String version = '1.0.0';
-  static const String buildDate = '2025-02-17 03:33:27';
+  static const String buildDate = '2025-02-17 03:36:21';
   
   // Git info
-  static const String commitHash = '1a6c2a9';
-  static const String branch = 'feat/fcm_test';
+  static const String commitHash = '84e7d7f';
+  static const String branch = 'HEAD';
   static const String lastTag = 'no tag';
   
   // Author of last commit
@@ -15,6 +15,22 @@ class BuildInfo {
   
   // Recent commits (last 5)
   static const List<Map<String, String>> recentCommits = [
+    {
+      "hash": "84e7d7f",
+      "author": "Kyle",
+      "email": "kylcheng@gmail.com", 
+      "message": "fix: local android login broken",
+      "date": "2025-02-17",
+      "relativeDate": "3 minutes ago"
+    },
+    {
+      "hash": "5cd1669",
+      "author": "Kyle",
+      "email": "kylcheng@gmail.com", 
+      "message": "feat(push): auto upload user device token",
+      "date": "2025-02-17",
+      "relativeDate": "3 minutes ago"
+    },
     {
       "hash": "1a6c2a9",
       "author": "Kyle",
@@ -39,25 +55,9 @@ class BuildInfo {
       "date": "2025-02-12",
       "relativeDate": "5 days ago"
     },
-    {
-      "hash": "a6e583a",
-      "author": "renata-sisilio",
-      "email": "renata@seren-ai.co", 
-      "message": "feat(tasks): use phase color on tags",
-      "date": "2025-02-12",
-      "relativeDate": "5 days ago"
-    },
-    {
-      "hash": "c024629",
-      "author": "renata-sisilio",
-      "email": "renata@seren-ai.co", 
-      "message": "chore: make all clickable ui elements highlight on hover",
-      "date": "2025-02-12",
-      "relativeDate": "5 days ago"
-    },
   ];
 
   // Stats
-  static const String totalCommits = '332';
+  static const String totalCommits = '334';
   static const String contributors = '       0';
 }
