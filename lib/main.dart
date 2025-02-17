@@ -12,46 +12,13 @@ import 'package:seren_ai_flutter/firebase_options.dart';
 import 'package:seren_ai_flutter/services/data/db_setup/powersync.dart';
 import 'package:seren_ai_flutter/services/data/db_setup/db_provider.dart';
 import 'package:seren_ai_flutter/services/notifications/notification_service.dart';
+import 'package:seren_ai_flutter/services/notifications/helpers/fcm_message_handler.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:seren_ai_flutter/services/notifications/fcm_push_notification_service_provider.dart';
 
-// Called when FCM message is received in background (NOT CLICKED)
-@pragma('vm:entry-point')
-Future<void> firebaseMessagingBackgroundHandler(RemoteMessage message) async {
-  // Must initialize Firebase here because this runs in isolated context
-  await Firebase.initializeApp();
-
-  debugPrint('Firebase Messaging Background Handler');
-  debugPrint('Message: ${message}');
-
-  // Can only do background tasks - no UI or state access
-  //await saveMessageToLocalStorage(message);
-}
-
-// Handle app in background and message is click
-void _handleMessage(RemoteMessage message) {
-  debugPrint('Handling FCM message: ${message.data}');
-  if (message.data['type'] != null) {
-    switch (message.data['type']) {
-      case 'chat':
-        // Navigate to chat screen
-        break;
-      case 'task':
-        // Navigate to task screen
-        break;
-      default:
-        debugPrint('Unknown message type: ${message.data['type']}');
-    }
-  }
-}
-
-// Handle foreground message
-void _handleForegroundMessage(RemoteMessage message) {
-  debugPrint('Foreground message received: ${message.data}');
-  if (message.notification != null) {
-    debugPrint('Notification: ${message.notification}');
-  }
-}
+// For showing notifications in the foreground
+final GlobalKey<ScaffoldMessengerState> scaffoldMessengerKey =
+    GlobalKey<ScaffoldMessengerState>();
 
 void main() async {
   try {
@@ -76,10 +43,10 @@ void main() async {
     );
     debugPrint('Firebase Web initialization successful');
 
-    // Register the Firebase Background Handler
-    FirebaseMessaging.onBackgroundMessage(firebaseMessagingBackgroundHandler);
-    FirebaseMessaging.onMessageOpenedApp.listen(_handleMessage);
-    FirebaseMessaging.onMessage.listen(_handleForegroundMessage);
+    // Initialize FCM message handler
+    final fcmHandler =
+        FCMMessageHandler(scaffoldMessengerKey: scaffoldMessengerKey);
+    FCMMessageHandler.initializeHandlers(fcmHandler);
 
     // Log each async component initialization
     debugPrint('Initializing SharedPreferences...');
