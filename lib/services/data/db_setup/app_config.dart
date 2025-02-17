@@ -4,7 +4,7 @@ import 'package:flutter/foundation.dart' show kIsWeb;
 import 'dart:io' show Platform;
 
 class AppConfig {
-  static const bool isProdMode = false; // Set to false to use local config
+  static const bool isProdMode = true; // Set to false to use local config
 
   // Simple platform check that works for web and mobile
   static bool get isAndroid {

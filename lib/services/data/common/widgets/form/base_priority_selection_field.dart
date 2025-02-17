@@ -34,13 +34,16 @@ class BasePrioritySelectionField extends ConsumerWidget {
           AppLocalizations.of(context)!.selectPriority,
       valueToWidget: (priority) => PriorityView(
         priority: priority,
-        outline: showLabelWidget, // current implementation will outline when showLabelWidget is true
+        outline:
+            showLabelWidget, // current implementation will outline when showLabelWidget is true
       ),
       enabled: enabled,
       value: curTaskPriority,
       options: PriorityEnum.values,
       onValueChanged: (ref, priority) {
-        updatePriority(ref, priority);
+        if (priority != curTaskPriority) {
+          updatePriority(ref, priority);
+        }
       },
     );
   }
