@@ -4,13 +4,17 @@ import 'package:seren_ai_flutter/services/data/db_setup/db_provider.dart';
 import 'package:seren_ai_flutter/services/data/tasks/models/task_model.dart';
 import 'package:seren_ai_flutter/services/data/common/base_repository.dart';
 import 'package:seren_ai_flutter/services/data/tasks/repositories/task_queries.dart';
+import 'package:seren_ai_flutter/services/notifications/task_notification_service.dart';
+import 'package:seren_ai_flutter/services/data/tasks/task_field_enum.dart';
 
 final tasksRepositoryProvider = Provider<TasksRepository>((ref) {
-  return TasksRepository(ref.watch(dbProvider));
+  return TasksRepository(ref.watch(dbProvider), ref);
 });
 
 class TasksRepository extends BaseRepository<TaskModel> {
-  const TasksRepository(super.db, {super.primaryTable = 'tasks'});
+  final Ref ref;
+
+  const TasksRepository(super.db, this.ref, {super.primaryTable = 'tasks'});
 
   @override
   TaskModel fromJson(Map<String, dynamic> json) {
@@ -119,11 +123,18 @@ class TasksRepository extends BaseRepository<TaskModel> {
   Future<void> updateTaskName(String taskId, String? name) async {
     if (name == null) return;
 
-    await updateField(
-      taskId,
-      'name',
-      name,
-    );
+    final task = await getById(taskId);
+    if (task == null) return;
+
+    final oldName = task.name;
+    await updateField(taskId, 'name', name);
+
+    await ref.read(taskNotificationServiceProvider).handleTaskFieldUpdate(
+          taskId: taskId,
+          field: TaskFieldEnum.name,
+          oldValue: oldName,
+          newValue: name,
+        );
   }
 
   Future<void> updateTaskDescription(String taskId, String? description) async {
@@ -137,21 +148,35 @@ class TasksRepository extends BaseRepository<TaskModel> {
   Future<void> updateTaskStatus(String taskId, StatusEnum? status) async {
     if (status == null) return;
 
-    await updateField(
-      taskId,
-      'status',
-      status.name,
-    );
+    final task = await getById(taskId);
+    if (task == null) return;
+
+    final oldStatus = task.status;
+    await updateField(taskId, 'status', status.name);
+
+    await ref.read(taskNotificationServiceProvider).handleTaskFieldUpdate(
+          taskId: taskId,
+          field: TaskFieldEnum.status,
+          oldValue: oldStatus,
+          newValue: status,
+        );
   }
 
   Future<void> updateTaskPriority(String taskId, PriorityEnum? priority) async {
     if (priority == null) return;
 
-    await updateField(
-      taskId,
-      'priority',
-      priority.name,
-    );
+    final task = await getById(taskId);
+    if (task == null) return;
+
+    final oldPriority = task.priority;
+    await updateField(taskId, 'priority', priority.name);
+
+    await ref.read(taskNotificationServiceProvider).handleTaskFieldUpdate(
+          taskId: taskId,
+          field: TaskFieldEnum.priority,
+          oldValue: oldPriority,
+          newValue: priority,
+        );
   }
 
   Future<void> updateTaskDueDate(String taskId, DateTime? dueDate) async {

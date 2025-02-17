@@ -4,15 +4,16 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:seren_ai_flutter/common/shared_preferences_service_provider.dart';
-import 'notification_handlers.dart';
+import 'local_notification_handlers.dart';
 import 'package:timezone/timezone.dart' as tz;
 import 'package:timezone/data/latest.dart' as tz;
 
-final notificationServiceProvider = Provider<NotificationService>((ref) {
+final localNotificationServiceProvider =
+    Provider<LocalNotificationService>((ref) {
   throw UnimplementedError('NotificationService not overridden');
 });
 
-class NotificationService {
+class LocalNotificationService {
   final _notificationsPlugin = FlutterLocalNotificationsPlugin();
 
   Future<void> initialize() async {
@@ -60,7 +61,8 @@ class NotificationService {
           ],
         ),
       ),
-      onDidReceiveBackgroundNotificationResponse: notificationTapBackground,
+      onDidReceiveBackgroundNotificationResponse:
+          localNotificationTapBackground,
     );
 
     // TODO p2: support local notifications on web

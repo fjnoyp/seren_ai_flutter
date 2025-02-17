@@ -5,7 +5,7 @@ import 'package:seren_ai_flutter/common/navigation_service_provider.dart';
 import 'package:seren_ai_flutter/services/auth/cur_auth_dependency_provider.dart';
 import 'package:seren_ai_flutter/services/data/tasks/models/task_model.dart';
 import 'package:seren_ai_flutter/services/data/tasks/repositories/tasks_repository.dart';
-import 'package:seren_ai_flutter/services/notifications/notification_service.dart';
+import 'package:seren_ai_flutter/services/notifications/local_notification_service.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 // For all tasks assigned to this user
@@ -28,7 +28,7 @@ final taskScheduleNotificationsServiceProvider = Provider((ref) {
       log('Previous tasks: ${previousScheduledTasks?.map((task) => task.id).join(', ')}');
       log('Current tasks: ${currentTasks.map((task) => task.id).join(', ')}');
 
-      final notificationService = ref.read(notificationServiceProvider);
+      final notificationService = ref.read(localNotificationServiceProvider);
 
       final tasksToSchedule = currentTasks
           .where((task) =>
