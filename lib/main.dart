@@ -11,7 +11,7 @@ import 'package:seren_ai_flutter/common/shared_preferences_service_provider.dart
 import 'package:seren_ai_flutter/firebase_options.dart';
 import 'package:seren_ai_flutter/services/data/db_setup/powersync.dart';
 import 'package:seren_ai_flutter/services/data/db_setup/db_provider.dart';
-import 'package:seren_ai_flutter/services/notifications/notification_service.dart';
+import 'package:seren_ai_flutter/services/notifications/local_notification_service.dart';
 import 'package:seren_ai_flutter/services/notifications/helpers/fcm_message_handler.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:seren_ai_flutter/services/notifications/fcm_push_notification_service_provider.dart';
@@ -54,7 +54,7 @@ void main() async {
     debugPrint('SharedPreferences initialized');
 
     debugPrint('Creating notification services...');
-    final notificationService = NotificationService();
+    final notificationService = LocalNotificationService();
     //final pushNotificationService = FCMPushNotificationService();
     debugPrint('Notification services created');
 
@@ -79,7 +79,8 @@ void main() async {
         overrides: [
           dbProvider.overrideWithValue(db),
           sharedPreferencesProvider.overrideWithValue(prefs),
-          notificationServiceProvider.overrideWithValue(notificationService),
+          localNotificationServiceProvider
+              .overrideWithValue(notificationService),
           //fcmPushNotificationServiceProvider
           //.overrideWithValue(pushNotificationService),
         ],
