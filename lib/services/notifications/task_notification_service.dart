@@ -1,4 +1,5 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:logging/logging.dart';
 import 'package:seren_ai_flutter/services/data/common/status_enum.dart';
 import 'package:seren_ai_flutter/services/data/tasks/models/task_model.dart';
 import 'package:seren_ai_flutter/services/data/tasks/repositories/task_user_assignments_repository.dart';
@@ -7,6 +8,8 @@ import 'package:seren_ai_flutter/services/data/tasks/task_field_enum.dart';
 import 'package:seren_ai_flutter/services/data/tasks/repositories/tasks_repository.dart';
 import 'package:seren_ai_flutter/services/auth/cur_auth_state_provider.dart';
 import 'package:seren_ai_flutter/services/data/tasks/models/task_comment_model.dart';
+
+final log = Logger('TaskNotificationService');
 
 final taskNotificationServiceProvider =
     Provider<TaskNotificationService>((ref) {
@@ -50,8 +53,9 @@ class TaskNotificationService {
         final oldName = oldValue as String?;
         title = 'Task Name Updated';
         body = 'Task name changed from "${oldName ?? ''}" to "${task.name}"';
-      case TaskFieldEnum.assignees:
-        return; // Handled by handleTaskAssignmentChange
+      default:
+        log.severe('Unknown task field update: $field');
+        return;
     }
 
     // Get all task assignees
