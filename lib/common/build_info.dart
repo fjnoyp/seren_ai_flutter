@@ -2,11 +2,11 @@
 class BuildInfo {
   // Core build info
   static const String version = '1.0.0';
-  static const String buildDate = '2025-02-17 03:36:21';
+  static const String buildDate = '2025-02-17 05:58:52';
   
   // Git info
-  static const String commitHash = '84e7d7f';
-  static const String branch = 'HEAD';
+  static const String commitHash = '77eba37';
+  static const String branch = 'feat/fcm_test';
   static const String lastTag = 'no tag';
   
   // Author of last commit
@@ -16,12 +16,12 @@ class BuildInfo {
   // Recent commits (last 5)
   static const List<Map<String, String>> recentCommits = [
     {
-      "hash": "84e7d7f",
+      "hash": "77eba37",
       "author": "Kyle",
       "email": "kylcheng@gmail.com", 
-      "message": "fix: local android login broken",
+      "message": "fix: local android login broken (NOTE - first time glitched app first load on local android and web not resolved)",
       "date": "2025-02-17",
-      "relativeDate": "3 minutes ago"
+      "relativeDate": "2 hours ago"
     },
     {
       "hash": "5cd1669",
@@ -29,7 +29,7 @@ class BuildInfo {
       "email": "kylcheng@gmail.com", 
       "message": "feat(push): auto upload user device token",
       "date": "2025-02-17",
-      "relativeDate": "3 minutes ago"
+      "relativeDate": "2 hours ago"
     },
     {
       "hash": "1a6c2a9",
@@ -37,7 +37,7 @@ class BuildInfo {
       "email": "kylcheng@gmail.com", 
       "message": "feat(push): refactor push initialization + add initial token models",
       "date": "2025-02-16",
-      "relativeDate": "20 hours ago"
+      "relativeDate": "22 hours ago"
     },
     {
       "hash": "fcf17bd",
@@ -45,7 +45,7 @@ class BuildInfo {
       "email": "kylcheng@gmail.com", 
       "message": "feat(push): basic push notifications",
       "date": "2025-02-16",
-      "relativeDate": "23 hours ago"
+      "relativeDate": "25 hours ago"
     },
     {
       "hash": "a69aaa2",
