@@ -57,6 +57,7 @@ class FCMMessageHandler {
       int durationInSeconds = (titleLength + bodyLength) ~/ 10 +
           2; // Show for longer based on length
 
+      // TODO p2: Add click handling ... to allow user to open relevant page for the notificaiton
       scaffoldMessengerKey.currentState?.showSnackBar(
         SnackBar(
           content: Column(

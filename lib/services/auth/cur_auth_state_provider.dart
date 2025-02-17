@@ -24,8 +24,6 @@ class CurUserNotifier extends Notifier<AsyncValue<UserModel?>> {
     Supabase.instance.client.auth.onAuthStateChange.listen((data) async {
       await updateUser(data.session?.user);
 
-      // REMOVING THIS DOESN't FIX THE ANDROID STARTUP ISSUE
-
       // Only handle FCM token refresh/save/updates when user is signed in - since tokens are associated with a user
       if (data.session != null) {
         ref.read(fcmDeviceTokenServiceProvider).initialize();

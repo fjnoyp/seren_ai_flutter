@@ -103,6 +103,8 @@ class TaskNotificationService {
     // 2. The task author (if different from current user)
     final recipients = <String>[affectedUserId];
 
+    // TODO p2: create separate notification for task author to know who is being assigned/unassigned to their task!
+
     // // Add task author if not the current user
     // final curUser = ref.read(curUserProvider).value;
     // if (curUser != null && task.authorUserId != curUser.id) {
