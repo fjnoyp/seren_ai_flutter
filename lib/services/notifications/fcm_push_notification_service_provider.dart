@@ -2,9 +2,10 @@ import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:seren_ai_flutter/services/auth/cur_auth_state_provider.dart';
+import 'package:seren_ai_flutter/services/notifications/models/user_device_token_model.dart';
 import './helpers/token_manager.dart';
 import './helpers/device_info_helper.dart';
-import './repositories/device_tokens_repository.dart';
+import 'repositories/user_device_tokens_repository.dart';
 
 final fcmPushNotificationServiceProvider =
     Provider<FCMPushNotificationService>((ref) {
@@ -12,7 +13,7 @@ final fcmPushNotificationServiceProvider =
 });
 
 class FCMPushNotificationService {
-  final FCMTokenManager _tokenManager = FCMTokenManager();
+  final FCMTokenManager _fcmTokenManager = FCMTokenManager();
   final Ref ref;
 
   bool _initialized = false;
@@ -23,61 +24,80 @@ class FCMPushNotificationService {
   FCMPushNotificationService(this.ref);
 
   Future<void> initialize() async {
+    /// User must be logged in - otherwise we cannot initialize the service
+    final curUser = ref.read(curUserProvider).value;
+    if (curUser == null) {
+      debugPrint('User is not logged in');
+      return;
+    }
     if (_initialized) return;
+
     _initialized = true;
 
     // Set up token handling
-    await _initializeToken();
-
-    // Set up message handlers
-    await _setupMessageHandlers();
-  }
-
-  Future<void> _initializeToken() async {
-    // Set up refresh listener
-    _tokenManager.setupTokenRefreshListener(_onTokenUpdate);
+    _fcmTokenManager.setupTokenRefreshListener(_onTokenUpdate);
 
     // Get initial token
-    final token = await _tokenManager.getCurrentToken();
+    final token = await _fcmTokenManager.getCurrentToken();
     if (token != null) {
       currentToken = token;
       await _onTokenUpdate(token);
     }
+
+    // Set up message handlers
+    await _handleInitialMessage();
+  }
+
+  // TODO p0: handle token deletion when user signs out
+  Future<void> deInitialize() async {
+    _initialized = false;
+
+    _fcmTokenManager.clearTokenRefreshListener();
   }
 
   // TODO p0: save token or update existing token row last used date
   // TODO p0: handle outdated tokens
-  Future<void> _onTokenUpdate(String token) async {
-    debugPrint('FCM token updated: $token');
+  Future<void> _onTokenUpdate(String fcmToken) async {
+    debugPrint('FCM token updated: $fcmToken');
     try {
       final curUser = ref.read(curUserProvider).value;
       if (curUser == null) throw Exception('No current user');
 
       final deviceInfo = await DeviceInfoHelper.getDeviceInfo();
 
-      // final userId = _repository.getCurrentUserId();
-      // if (userId == null) {
-      //   debugPrint('No user logged in, skipping token update');
-      //   return;
-      // }
+      final deviceId = deviceInfo.deviceId;
+      final curUserId = curUser.id;
 
-      // await _repository.upsertToken({
-      //   'user_id': userId,
-      //   'device_id': deviceInfo['device_id'],
-      //   'fcm_token': token,
-      //   'device_name': deviceInfo['device_name'],
-      //   'device_model': deviceInfo['device_model'],
-      //   'platform': deviceInfo['platform'],
-      //   'app_version': deviceInfo['app_version'],
-      //   'last_used_at': DateTime.now().toIso8601String(),
-      //   'is_active': true,
-      // });
+      final deviceToken = await ref
+          .read(userDeviceTokensRepositoryProvider)
+          .getDeviceTokenByDeviceIdAndUserId(
+              deviceId: deviceId, userId: curUserId);
+
+      if (deviceToken != null) {
+        // Update fcm token if updated
+        if (deviceToken.fcmToken != fcmToken) {
+          await ref
+              .read(userDeviceTokensRepositoryProvider)
+              .updateItem(deviceToken.copyWith(fcmToken: fcmToken));
+        }
+      }
+      // Create new device token if not exists
+      else {
+        await ref.read(userDeviceTokensRepositoryProvider).insertItem(
+            UserDeviceTokenModel(
+                deviceId: deviceId,
+                userId: curUserId,
+                fcmToken: fcmToken,
+                platform: deviceInfo.platform,
+                createdAt: DateTime.now(),
+                updatedAt: DateTime.now()));
+      }
     } catch (e) {
       debugPrint('Failed to save token to server: $e');
     }
   }
 
-  Future<void> _setupMessageHandlers() async {
+  Future<void> _handleInitialMessage() async {
     // TODO p0: check if this is working and how it might be used ...
     final initialMessage = await FirebaseMessaging.instance.getInitialMessage();
     if (initialMessage != null) {
@@ -86,5 +106,5 @@ class FCMPushNotificationService {
     }
   }
 
-  // ATTENTION - YOU CANNOT RUN ANY FCM MESSAGE LISTENER IN A PROVDIER THAT IS INITIALIZED IN APP AND NOT IN MAIN.DART
+  // ATTENTION - YOU CANNOT RUN ANY FCM MESSAGE LISTENER IN A PROVIDER THAT IS INITIALIZED IN APP AND NOT IN MAIN.DART
 }
