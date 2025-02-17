@@ -27,6 +27,9 @@ class TaskNotificationService {
     final task = await ref.read(tasksRepositoryProvider).getById(taskId);
     if (task == null) return;
 
+    // if old and new value same, do not send notification
+    if (oldValue == newValue) return;
+
     String title;
     String body;
 

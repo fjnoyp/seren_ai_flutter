@@ -2,10 +2,10 @@
 class BuildInfo {
   // Core build info
   static const String version = '1.0.0';
-  static const String buildDate = '2025-02-17 08:32:04';
+  static const String buildDate = '2025-02-17 09:27:30';
   
   // Git info
-  static const String commitHash = '19cf042';
+  static const String commitHash = 'fbec6e0';
   static const String branch = 'feat/fcm_test';
   static const String lastTag = 'no tag';
   
@@ -15,6 +15,14 @@ class BuildInfo {
   
   // Recent commits (last 5)
   static const List<Map<String, String>> recentCommits = [
+    {
+      "hash": "fbec6e0",
+      "author": "Kyle",
+      "email": "kylcheng@gmail.com", 
+      "message": "feat(push): notifications for task change, assignment, comment",
+      "date": "2025-02-17",
+      "relativeDate": "55 minutes ago"
+    },
     {
       "hash": "19cf042",
       "author": "Kyle",
@@ -29,7 +37,7 @@ class BuildInfo {
       "email": "kylcheng@gmail.com", 
       "message": "fix: local android login broken (NOTE - first time glitched app first load on local android and web not resolved)",
       "date": "2025-02-17",
-      "relativeDate": "5 hours ago"
+      "relativeDate": "6 hours ago"
     },
     {
       "hash": "5cd1669",
@@ -37,7 +45,7 @@ class BuildInfo {
       "email": "kylcheng@gmail.com", 
       "message": "feat(push): auto upload user device token",
       "date": "2025-02-17",
-      "relativeDate": "5 hours ago"
+      "relativeDate": "6 hours ago"
     },
     {
       "hash": "1a6c2a9",
@@ -45,19 +53,11 @@ class BuildInfo {
       "email": "kylcheng@gmail.com", 
       "message": "feat(push): refactor push initialization + add initial token models",
       "date": "2025-02-16",
-      "relativeDate": "25 hours ago"
-    },
-    {
-      "hash": "fcf17bd",
-      "author": "Kyle",
-      "email": "kylcheng@gmail.com", 
-      "message": "feat(push): basic push notifications",
-      "date": "2025-02-16",
-      "relativeDate": "28 hours ago"
+      "relativeDate": "26 hours ago"
     },
   ];
 
   // Stats
-  static const String totalCommits = '335';
+  static const String totalCommits = '336';
   static const String contributors = '       0';
 }
