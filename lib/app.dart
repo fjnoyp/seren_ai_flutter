@@ -9,6 +9,7 @@ import 'package:seren_ai_flutter/common/language_provider.dart';
 import 'package:seren_ai_flutter/common/navigation_service_provider.dart';
 import 'package:seren_ai_flutter/common/routes/app_routes.dart';
 import 'package:seren_ai_flutter/common/universal_platform/universal_platform.dart';
+import 'package:seren_ai_flutter/main.dart';
 import 'package:seren_ai_flutter/services/auth/widgets/auth_guard.dart';
 import 'package:seren_ai_flutter/services/auth/widgets/reset_password/reset_password_page.dart';
 import 'package:seren_ai_flutter/services/auth/widgets/sign_in_up_page.dart';
@@ -84,6 +85,7 @@ class AppState extends ConsumerState<App> {
         final countryCode = parts.length > 1 ? parts[1] : null;
 
         return MaterialApp(
+          scaffoldMessengerKey: scaffoldMessengerKey,
           theme: lightTheme,
           darkTheme: darkTheme,
           themeMode: themeMode,

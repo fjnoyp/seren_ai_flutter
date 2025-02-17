@@ -6,6 +6,7 @@ import 'package:seren_ai_flutter/services/notifications/models/user_device_token
 import './helpers/token_manager.dart';
 import './helpers/device_info_helper.dart';
 import 'repositories/user_device_tokens_repository.dart';
+import 'package:supabase_flutter/supabase_flutter.dart';
 
 final fcmPushNotificationServiceProvider =
     Provider<FCMPushNotificationService>((ref) {
@@ -103,6 +104,54 @@ class FCMPushNotificationService {
     if (initialMessage != null) {
       //_handleMessage(initialMessage);
       debugPrint('Initial message: ${initialMessage.data}');
+    }
+  }
+
+  /// Sends a notification to specified users using the Supabase Edge Function
+  ///
+  /// [userIds] - List of user IDs to send the notification to
+  /// [title] - The title of the notification
+  /// [body] - The body text of the notification
+  /// [data] - Optional map of additional data to send with the notification
+  ///
+  /// Returns a Map containing the success status and any error message
+  Future<Map<String, dynamic>> sendNotification({
+    required List<String> userIds,
+    required String title,
+    required String body,
+    Map<String, dynamic>? data,
+  }) async {
+    try {
+      final response = await Supabase.instance.client.functions.invoke(
+        'send-notification',
+        body: {
+          'user_ids': userIds,
+          'notification': {
+            'title': title,
+            'body': body,
+          },
+          if (data != null) 'data': data,
+        },
+      );
+
+      if (response.status != 200) {
+        debugPrint('Failed to send notification: ${response.data}');
+        return {
+          'success': false,
+          'error': 'Failed to send notification: ${response.data}',
+        };
+      }
+
+      return {
+        'success': true,
+        'data': response.data,
+      };
+    } catch (e) {
+      debugPrint('Error sending notification: $e');
+      return {
+        'success': false,
+        'error': 'Error sending notification: $e',
+      };
     }
   }
 

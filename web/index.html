@@ -54,6 +54,22 @@
       console.error('Unhandled promise rejection:', event.reason);
     };
   </script>
+  <script>
+    // TODO p2: This is ai generated code - we haven't tested it yet ...
+    
+    // Add this to handle messages from service worker
+    window.addEventListener('message', (event) => {
+      if (event.data && event.data.type === 'NOTIFICATION_CLICK') {
+        console.log('Received notification click data:', event.data.payload);
+        // Store this data or trigger any client-side handling
+        localStorage.setItem('lastNotificationClick', JSON.stringify(event.data.payload));
+        // You can dispatch a custom event that your Flutter app can listen to
+        window.dispatchEvent(new CustomEvent('notificationClick', { 
+          detail: event.data.payload 
+        }));
+      }
+    });
+  </script>
 </head>
 
 <body>
