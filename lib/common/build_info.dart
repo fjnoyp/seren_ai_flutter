@@ -2,10 +2,10 @@
 class BuildInfo {
   // Core build info
   static const String version = '1.0.0';
-  static const String buildDate = '2025-02-16 07:56:03';
+  static const String buildDate = '2025-02-17 03:33:27';
   
   // Git info
-  static const String commitHash = 'fcf17bd';
+  static const String commitHash = '1a6c2a9';
   static const String branch = 'feat/fcm_test';
   static const String lastTag = 'no tag';
   
@@ -16,12 +16,20 @@ class BuildInfo {
   // Recent commits (last 5)
   static const List<Map<String, String>> recentCommits = [
     {
+      "hash": "1a6c2a9",
+      "author": "Kyle",
+      "email": "kylcheng@gmail.com", 
+      "message": "feat(push): refactor push initialization + add initial token models",
+      "date": "2025-02-16",
+      "relativeDate": "20 hours ago"
+    },
+    {
       "hash": "fcf17bd",
       "author": "Kyle",
       "email": "kylcheng@gmail.com", 
       "message": "feat(push): basic push notifications",
       "date": "2025-02-16",
-      "relativeDate": "3 hours ago"
+      "relativeDate": "23 hours ago"
     },
     {
       "hash": "a69aaa2",
@@ -29,7 +37,7 @@ class BuildInfo {
       "email": "renata@seren-ai.co", 
       "message": "feat(gantt): current date vertical line on gantt chart",
       "date": "2025-02-12",
-      "relativeDate": "4 days ago"
+      "relativeDate": "5 days ago"
     },
     {
       "hash": "a6e583a",
@@ -37,7 +45,7 @@ class BuildInfo {
       "email": "renata@seren-ai.co", 
       "message": "feat(tasks): use phase color on tags",
       "date": "2025-02-12",
-      "relativeDate": "4 days ago"
+      "relativeDate": "5 days ago"
     },
     {
       "hash": "c024629",
@@ -45,19 +53,11 @@ class BuildInfo {
       "email": "renata@seren-ai.co", 
       "message": "chore: make all clickable ui elements highlight on hover",
       "date": "2025-02-12",
-      "relativeDate": "4 days ago"
-    },
-    {
-      "hash": "337389d",
-      "author": "renata-sisilio",
-      "email": "renata@seren-ai.co", 
-      "message": "feat(projects): add filter to show only tasks or phases",
-      "date": "2025-02-12",
-      "relativeDate": "4 days ago"
+      "relativeDate": "5 days ago"
     },
   ];
 
   // Stats
-  static const String totalCommits = '331';
+  static const String totalCommits = '332';
   static const String contributors = '       0';
 }
