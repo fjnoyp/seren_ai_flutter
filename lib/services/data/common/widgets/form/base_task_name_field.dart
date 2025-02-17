@@ -21,6 +21,7 @@ class BaseNameField extends HookConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    // TODO p3: bug - nameProvider is returning '' all the time for task ...
     final curName = ref.watch(nameProvider);
     final nameController = useTextEditingController(text: curName);
     final focusNode = this.focusNode ?? useFocusNode();
@@ -51,7 +52,9 @@ class BaseNameField extends HookConsumerWidget {
     useEffect(() {
       void onFocusChange() {
         if (!focusNode.hasFocus && nameController.text != curName) {
-          updateName(ref, nameController.text);
+          if (nameController.text != curName) {
+            updateName(ref, nameController.text);
+          }
           FocusScope.of(context).unfocus();
         }
       }
@@ -72,11 +75,15 @@ class BaseNameField extends HookConsumerWidget {
           enabled: isEditable,
           textInputAction: TextInputAction.done,
           onEditingComplete: () {
-            updateName(ref, nameController.text);
+            if (nameController.text != curName) {
+              updateName(ref, nameController.text);
+            }
             FocusScope.of(context).unfocus(); // Hide the keyboard
           },
           onTapOutside: (event) {
-            updateName(ref, nameController.text);
+            if (nameController.text != curName) {
+              updateName(ref, nameController.text);
+            }
             FocusScope.of(context).unfocus(); // Hide the keyboard
           },
           decoration: InputDecoration(
