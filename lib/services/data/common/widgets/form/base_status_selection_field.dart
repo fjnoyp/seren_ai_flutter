@@ -41,7 +41,9 @@ class BaseStatusSelectionField extends ConsumerWidget {
       value: curTaskStatus,
       options: StatusEnum.values,
       onValueChanged: (ref, status) {
-        updateStatus(ref, status);
+        if (status != curTaskStatus) {
+          updateStatus(ref, status);
+        }
       },
     );
   }
