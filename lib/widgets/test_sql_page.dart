@@ -8,6 +8,7 @@ import 'package:seren_ai_flutter/services/data/users/models/user_model.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:seren_ai_flutter/services/data/users/repositories/users_repository.dart';
 import 'package:seren_ai_flutter/services/notifications/fcm_push_notification_service_provider.dart';
+import 'package:seren_ai_flutter/services/notifications/services/fcm_device_token_service.dart';
 
 class TasksNotifier extends Notifier<List<UserModel>> {
   // We initialize the list of tasks to an empty list
@@ -36,8 +37,6 @@ class TestSQLPage extends HookConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final sqlResult = useState<String>('');
-    final fcmService = ref.watch(fcmPushNotificationServiceProvider);
-
     final fcmToken = useState<String>('');
 
     return Scaffold(
@@ -53,8 +52,9 @@ class TestSQLPage extends HookConsumerWidget {
                 'FCM Token: ${fcmToken.value ?? "No token available"}'),
             ElevatedButton(
               onPressed: () async {
-                await fcmService.initialize();
-                fcmToken.value = fcmService.currentToken;
+                await ref.read(fcmDeviceTokenServiceProvider).initialize();
+                fcmToken.value =
+                    ref.read(fcmDeviceTokenServiceProvider).currentToken;
               },
               child: Text('Refresh Token'),
             ),
