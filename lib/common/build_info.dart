@@ -2,11 +2,11 @@
 class BuildInfo {
   // Core build info
   static const String version = '1.0.0';
-  static const String buildDate = '2025-02-17 09:41:39';
+  static const String buildDate = '2025-02-17 09:54:23';
   
   // Git info
-  static const String commitHash = '7609667';
-  static const String branch = 'feat/fcm_test';
+  static const String commitHash = 'a4eae01';
+  static const String branch = 'feat/initial_fcm';
   static const String lastTag = 'no tag';
   
   // Author of last commit
@@ -16,23 +16,31 @@ class BuildInfo {
   // Recent commits (last 5)
   static const List<Map<String, String>> recentCommits = [
     {
-      "hash": "7609667",
+      "hash": "a4eae01",
+      "author": "Kyle",
+      "email": "kylcheng@gmail.com", 
+      "message": "chore(push): handle token deletion on logout (tested)",
+      "date": "2025-02-17",
+      "relativeDate": "13 minutes ago"
+    },
+    {
+      "hash": "deadb54",
       "author": "Kyle",
       "email": "kylcheng@gmail.com", 
       "message": "chore(push): add dedup logic for task update notifications",
       "date": "2025-02-17",
-      "relativeDate": "14 minutes ago"
+      "relativeDate": "27 minutes ago"
     },
     {
-      "hash": "fbec6e0",
+      "hash": "69f4d7d",
       "author": "Kyle",
       "email": "kylcheng@gmail.com", 
       "message": "feat(push): notifications for task change, assignment, comment",
       "date": "2025-02-17",
-      "relativeDate": "70 minutes ago"
+      "relativeDate": "82 minutes ago"
     },
     {
-      "hash": "19cf042",
+      "hash": "170fc55",
       "author": "Kyle",
       "email": "kylcheng@gmail.com", 
       "message": "chore(push): initial push notification send method",
@@ -40,24 +48,16 @@ class BuildInfo {
       "relativeDate": "4 hours ago"
     },
     {
-      "hash": "77eba37",
+      "hash": "355a6a8",
       "author": "Kyle",
       "email": "kylcheng@gmail.com", 
       "message": "fix: local android login broken (NOTE - first time glitched app first load on local android and web not resolved)",
       "date": "2025-02-17",
       "relativeDate": "6 hours ago"
     },
-    {
-      "hash": "5cd1669",
-      "author": "Kyle",
-      "email": "kylcheng@gmail.com", 
-      "message": "feat(push): auto upload user device token",
-      "date": "2025-02-17",
-      "relativeDate": "6 hours ago"
-    },
   ];
 
   // Stats
-  static const String totalCommits = '337';
+  static const String totalCommits = '345';
   static const String contributors = '       0';
 }
