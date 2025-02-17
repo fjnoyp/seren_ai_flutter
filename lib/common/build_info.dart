@@ -2,10 +2,10 @@
 class BuildInfo {
   // Core build info
   static const String version = '1.0.0';
-  static const String buildDate = '2025-02-17 09:27:30';
+  static const String buildDate = '2025-02-17 09:41:39';
   
   // Git info
-  static const String commitHash = 'fbec6e0';
+  static const String commitHash = '7609667';
   static const String branch = 'feat/fcm_test';
   static const String lastTag = 'no tag';
   
@@ -16,12 +16,20 @@ class BuildInfo {
   // Recent commits (last 5)
   static const List<Map<String, String>> recentCommits = [
     {
+      "hash": "7609667",
+      "author": "Kyle",
+      "email": "kylcheng@gmail.com", 
+      "message": "chore(push): add dedup logic for task update notifications",
+      "date": "2025-02-17",
+      "relativeDate": "14 minutes ago"
+    },
+    {
       "hash": "fbec6e0",
       "author": "Kyle",
       "email": "kylcheng@gmail.com", 
       "message": "feat(push): notifications for task change, assignment, comment",
       "date": "2025-02-17",
-      "relativeDate": "55 minutes ago"
+      "relativeDate": "70 minutes ago"
     },
     {
       "hash": "19cf042",
@@ -29,7 +37,7 @@ class BuildInfo {
       "email": "kylcheng@gmail.com", 
       "message": "chore(push): initial push notification send method",
       "date": "2025-02-17",
-      "relativeDate": "3 hours ago"
+      "relativeDate": "4 hours ago"
     },
     {
       "hash": "77eba37",
@@ -47,17 +55,9 @@ class BuildInfo {
       "date": "2025-02-17",
       "relativeDate": "6 hours ago"
     },
-    {
-      "hash": "1a6c2a9",
-      "author": "Kyle",
-      "email": "kylcheng@gmail.com", 
-      "message": "feat(push): refactor push initialization + add initial token models",
-      "date": "2025-02-16",
-      "relativeDate": "26 hours ago"
-    },
   ];
 
   // Stats
-  static const String totalCommits = '336';
+  static const String totalCommits = '337';
   static const String contributors = '       0';
 }
