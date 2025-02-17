@@ -60,4 +60,8 @@ class FCMTokenManager {
   void setupTokenRefreshListener(Function(String) onTokenRefresh) {
     _messaging.onTokenRefresh.listen(onTokenRefresh);
   }
+
+  void clearTokenRefreshListener() {
+    _messaging.onTokenRefresh.drain();
+  }
 }
