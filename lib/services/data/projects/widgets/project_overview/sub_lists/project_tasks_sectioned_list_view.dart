@@ -3,6 +3,8 @@ import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:seren_ai_flutter/services/data/common/status_enum.dart';
 import 'package:seren_ai_flutter/services/data/common/widgets/async_value_handler_widget.dart';
 import 'package:seren_ai_flutter/services/data/projects/providers/cur_selected_project_providers.dart';
+import 'package:seren_ai_flutter/services/data/projects/widgets/project_overview/sub_lists/create_task_button.dart';
+import 'package:seren_ai_flutter/services/data/tasks/providers/task_navigation_service.dart';
 import 'package:seren_ai_flutter/services/data/tasks/providers/tasks_by_project_stream_provider.dart';
 import 'package:seren_ai_flutter/services/data/tasks/task_field_enum.dart';
 import 'package:seren_ai_flutter/services/data/tasks/widgets/inline_task_creation_widget.dart';
@@ -26,8 +28,12 @@ class ProjectTasksSectionedListView extends ConsumerWidget {
       value: ref.watch(tasksByProjectStreamProvider(projectId)),
       data: (tasks) {
         return SingleChildScrollView(
-          child: Column(
-            children: StatusEnum.values.map(
+          child: Column(children: [
+            CreateTaskButton(
+              initialProjectId: projectId,
+              initialStatus: StatusEnum.open,
+            ),
+            ...StatusEnum.values.map(
               (status) {
                 final filteredTasks = tasks
                         ?.where((task) =>
@@ -91,7 +97,7 @@ class ProjectTasksSectionedListView extends ConsumerWidget {
                 );
               },
             ).toList(),
-          ),
+          ]),
         );
       },
     );

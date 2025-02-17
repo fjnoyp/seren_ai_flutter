@@ -3,6 +3,7 @@ import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:seren_ai_flutter/services/data/common/status_enum.dart';
 import 'package:seren_ai_flutter/services/data/projects/providers/cur_selected_project_providers.dart';
+import 'package:seren_ai_flutter/services/data/projects/widgets/project_overview/sub_lists/create_task_button.dart';
 import 'package:seren_ai_flutter/services/data/tasks/providers/task_navigation_service.dart';
 import 'package:seren_ai_flutter/services/data/tasks/providers/tasks_by_project_stream_provider.dart';
 import 'package:seren_ai_flutter/services/data/tasks/widgets/task_list/task_list_item_view.dart';
@@ -65,24 +66,9 @@ class ProjectTasksBoardView extends ConsumerWidget {
                     ),
                   ),
                   const Divider(height: 1),
-                  SizedBox(
-                    width: double.infinity,
-                    child: TextButton(
-                      style: TextButton.styleFrom(
-                        padding: const EdgeInsets.all(20),
-                        alignment: Alignment.centerLeft,
-                        overlayColor: Colors.transparent,
-                      ),
-                      onPressed: () async => await ref
-                          .read(taskNavigationServiceProvider)
-                          .openNewTask(
-                            initialProjectId: projectId,
-                            initialStatus: status,
-                          ),
-                      child: Text(
-                        AppLocalizations.of(context)!.createNewTask,
-                      ),
-                    ),
+                  CreateTaskButton(
+                    initialProjectId: projectId,
+                    initialStatus: status,
                   ),
                 ],
               ),
