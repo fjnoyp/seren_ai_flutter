@@ -75,8 +75,6 @@ const tasksSchemas = [
     Column.text('status'),
     Column.text('priority'),
     Column.text('due_date'),
-    Column.text('created_date'),
-    Column.text('last_updated_date'),
     Column.text('author_user_id'),
     Column.text('parent_project_id'),
     Column.text('estimated_duration_minutes'),
@@ -189,7 +187,17 @@ const noteSchemas = [
   ]),
 ];
 
-// Go through all the tables and add a Column.text('created_at') and Column.text('updated_at') to each table
+const userDeviceTokensTable = 'user_device_tokens';
+
+const pushNotificationSchemas = [
+  Table(userDeviceTokensTable, [
+    Column.text('user_id'),
+    Column.text('device_id'),
+    Column.text('fcm_token'),
+    Column.text('device_model'),
+    Column.text('platform'),
+  ]),
+];
 
 const allTables = [
   ...permissionSchemas,
@@ -197,6 +205,7 @@ const allTables = [
   ...aiChatSchemas,
   ...shiftSchemas,
   ...noteSchemas,
+  ...pushNotificationSchemas,
 ];
 
 // Create a function to add timestamp columns
