@@ -8,6 +8,8 @@ import 'package:seren_ai_flutter/services/ai_interaction/widgets/ai_assistant_bu
 import 'package:seren_ai_flutter/services/ai_interaction/widgets/user_input_display_widget.dart';
 import 'package:seren_ai_flutter/services/ai_interaction/widgets/web_ai_assistant_modal.dart';
 import 'package:seren_ai_flutter/services/data/db_setup/app_config.dart';
+import 'package:seren_ai_flutter/services/data/notes/providers/notes_navigation_service.dart';
+import 'package:seren_ai_flutter/services/data/tasks/providers/task_navigation_service.dart';
 import 'package:seren_ai_flutter/services/data/users/models/invite_model.dart';
 import 'package:seren_ai_flutter/services/data/users/providers/cur_user_invites_service_provider.dart';
 import 'package:seren_ai_flutter/widgets/common/debug_mode_provider.dart';
@@ -192,20 +194,6 @@ class MainScaffold extends ConsumerWidget {
                 padding: const EdgeInsets.all(0),
                 child: body,
               ),
-
-              /*
-        floatingActionButton: enableAiBar ? Consumer(
-          builder: (context, ref, child) {
-            return FloatingActionButton(
-              onPressed: () {
-                ref.read(aiOrchestratorProvider).testMove(context);
-              },
-              child: Icon(Icons.pets),
-            );
-          },
-        ) : null,
-        */
-
               bottomNavigationBar: showAiAssistant
                   ? isAiAssistantExpanded
                       ? const UserInputDisplayWidget()
@@ -276,6 +264,7 @@ class _DebugButton extends ConsumerWidget {
 class _QuickActionsBottomAppBar extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    final theme = Theme.of(context);
     return Container(
       decoration: BoxDecoration(
         boxShadow: [
@@ -287,28 +276,95 @@ class _QuickActionsBottomAppBar extends ConsumerWidget {
         ],
       ),
       child: BottomAppBar(
-        height: 65, // Set explicit height
-        padding: EdgeInsets.zero, // Remove default padding
+        height: 65,
+        padding: EdgeInsets.zero,
         notchMargin: 0,
         child: Row(
-          mainAxisAlignment: MainAxisAlignment.spaceAround,
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
-            _buildNavItem(
-              context,
-              Icons.grid_view,
-              AppLocalizations.of(context)!.home,
-              () => ref
-                  .read(navigationServiceProvider)
-                  .navigateTo(AppRoutes.home.name),
+            Expanded(
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  _buildNavItem(
+                    context,
+                    Icons.grid_view,
+                    AppLocalizations.of(context)!.home,
+                    () => ref
+                        .read(navigationServiceProvider)
+                        .navigateTo(AppRoutes.home.name),
+                  ),
+                ],
+              ),
             ),
-            const SizedBox.shrink(),
-            _buildNavItem(
-              context,
-              Icons.chat_bubble_outline,
-              AppLocalizations.of(context)!.chat,
-              () => ref
-                  .read(navigationServiceProvider)
-                  .navigateTo(AppRoutes.aiChats.name),
+            Expanded(
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  PopupMenuButton<String>(
+                    offset: const Offset(0, -120),
+                    child: _buildNavItem(
+                      context,
+                      Icons.add_circle_sharp,
+                      AppLocalizations.of(context)!.addNew,
+                      null,
+                    ),
+                    itemBuilder: (context) => [
+                      PopupMenuItem(
+                        value: 'task',
+                        child: Row(
+                          children: [
+                            Icon(Icons.task_alt, color: theme.iconTheme.color),
+                            const SizedBox(width: 8),
+                            Text(AppLocalizations.of(context)!.task),
+                          ],
+                        ),
+                      ),
+                      PopupMenuItem(
+                        value: 'note',
+                        child: Row(
+                          children: [
+                            Icon(Icons.note_add, color: theme.iconTheme.color),
+                            const SizedBox(width: 8),
+                            Text(AppLocalizations.of(context)!.note),
+                          ],
+                        ),
+                      ),
+                    ],
+                    onSelected: (value) {
+                      switch (value) {
+                        case 'task':
+                          ref.read(taskNavigationServiceProvider).openNewTask();
+                          break;
+                        case 'note':
+                          ref
+                              .read(notesNavigationServiceProvider)
+                              .openNewNote();
+                          break;
+                      }
+                    },
+                  ),
+                ],
+              ),
+            ),
+            const Spacer(), // Space for FAB
+            const Spacer(), // Space for FAB
+            const Spacer(), // Space for FAB
+
+            Expanded(
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  _buildNavItem(
+                    context,
+                    Icons.chat_bubble_outline,
+                    AppLocalizations.of(context)!.chat,
+                    () => ref
+                        .read(navigationServiceProvider)
+                        .navigateTo(AppRoutes.aiChats.name),
+                  ),
+                ],
+              ),
             ),
           ],
         ),
@@ -317,24 +373,25 @@ class _QuickActionsBottomAppBar extends ConsumerWidget {
   }
 
   Widget _buildNavItem(BuildContext context, IconData icon, String label,
-      VoidCallback onPressed) {
+      VoidCallback? onPressed) {
+    final theme = Theme.of(context);
     return Column(
       mainAxisSize: MainAxisSize.min,
       mainAxisAlignment: MainAxisAlignment.center,
       children: [
         IconButton(
           padding: EdgeInsets.zero,
-          visualDensity: VisualDensity.compact, // Make the button more compact
+          visualDensity: VisualDensity.compact,
           constraints: const BoxConstraints(
             minWidth: 32,
             minHeight: 32,
-          ), // Set smaller explicit constraints
-          icon: Icon(icon),
+          ),
+          icon: Icon(icon, color: theme.iconTheme.color),
           onPressed: onPressed,
         ),
         Text(
           label,
-          style: Theme.of(context).textTheme.labelSmall,
+          style: theme.textTheme.labelSmall,
         ),
       ],
     );
