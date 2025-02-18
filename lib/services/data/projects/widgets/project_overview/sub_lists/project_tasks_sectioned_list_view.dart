@@ -7,7 +7,6 @@ import 'package:seren_ai_flutter/services/data/projects/widgets/project_overview
 import 'package:seren_ai_flutter/services/data/tasks/providers/tasks_by_project_stream_provider.dart';
 import 'package:seren_ai_flutter/services/data/tasks/task_field_enum.dart';
 import 'package:seren_ai_flutter/services/data/tasks/widgets/inline_task_creation_widget.dart';
-import 'package:seren_ai_flutter/services/data/tasks/widgets/task_list/task_list_item_view.dart';
 import 'package:seren_ai_flutter/services/data/tasks/providers/task_filter_state_provider.dart';
 import 'package:seren_ai_flutter/services/data/tasks/widgets/task_list/task_list_tile_item_view.dart';
 
@@ -96,7 +95,7 @@ class ProjectTasksSectionedListView extends ConsumerWidget {
                   ),
                 );
               },
-            ).toList(),
+            ),
           ]),
         );
       },
