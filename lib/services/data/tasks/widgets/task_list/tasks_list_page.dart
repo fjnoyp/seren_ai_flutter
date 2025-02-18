@@ -28,11 +28,17 @@ class TasksListPage extends ConsumerWidget {
               child: TabBarView(
                 children: [
                   TasksListView(
-                      filter: (task) => task.status == StatusEnum.open),
+                    filter: (task) => task.status == StatusEnum.open,
+                    autoUpdateStatusOnDrag: true,
+                  ),
                   TasksListView(
-                      filter: (task) => task.status == StatusEnum.inProgress),
+                    filter: (task) => task.status == StatusEnum.inProgress,
+                    autoUpdateStatusOnDrag: true,
+                  ),
                   TasksListView(
-                      filter: (task) => task.status == StatusEnum.finished),
+                    filter: (task) => task.status == StatusEnum.finished,
+                    autoUpdateStatusOnDrag: true,
+                  ),
                 ],
               ),
             ),
