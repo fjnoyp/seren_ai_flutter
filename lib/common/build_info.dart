@@ -2,10 +2,10 @@
 class BuildInfo {
   // Core build info
   static const String version = '1.0.0';
-  static const String buildDate = '2025-02-18 09:32:21';
+  static const String buildDate = '2025-02-18 09:37:36';
   
   // Git info
-  static const String commitHash = 'a6aea78';
+  static const String commitHash = 'ec4e03c';
   static const String branch = 'feat/home_screen_revamp';
   static const String lastTag = 'no tag';
   
@@ -16,12 +16,20 @@ class BuildInfo {
   // Recent commits (last 5)
   static const List<Map<String, String>> recentCommits = [
     {
+      "hash": "ec4e03c",
+      "author": "Kyle",
+      "email": "kylcheng@gmail.com", 
+      "message": "chore(home): re-add mobile quick create button",
+      "date": "2025-02-18",
+      "relativeDate": "5 minutes ago"
+    },
+    {
       "hash": "a6aea78",
       "author": "Kyle",
       "email": "kylcheng@gmail.com", 
       "message": "feat(home): complete home screen redo",
       "date": "2025-02-18",
-      "relativeDate": "13 minutes ago"
+      "relativeDate": "19 minutes ago"
     },
     {
       "hash": "e68ccb3",
@@ -29,7 +37,7 @@ class BuildInfo {
       "email": "renata@seren-ai.co", 
       "message": "feat(tasks): task and phase inline creation from gantt chart",
       "date": "2025-02-18",
-      "relativeDate": "86 minutes ago"
+      "relativeDate": "2 hours ago"
     },
     {
       "hash": "17053f2",
@@ -47,17 +55,9 @@ class BuildInfo {
       "date": "2025-02-18",
       "relativeDate": "3 hours ago"
     },
-    {
-      "hash": "10c4e81",
-      "author": "Kyle",
-      "email": "kylcheng@gmail.com", 
-      "message": "fix: try fix xcode cloud build - set sign cert on macos proj",
-      "date": "2025-02-18",
-      "relativeDate": "6 hours ago"
-    },
   ];
 
   // Stats
-  static const String totalCommits = '352';
+  static const String totalCommits = '353';
   static const String contributors = '       0';
 }
