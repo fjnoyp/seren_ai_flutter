@@ -31,7 +31,10 @@ class InlineTaskCreationWidget extends HookConsumerWidget {
     final newTaskId = ref.watch(curInlineCreatingTaskIdProvider);
     final nameFieldFocusNode = useFocusNode();
 
-    if (newTaskId == null) isEditing.value = false;
+    useEffect(() {
+      isEditing.value = ref.watch(curInlineCreatingTaskIdProvider) != null;
+      return null;
+    }, [ref.watch(curInlineCreatingTaskIdProvider)]);
 
     return isEditing.value
         ? TapRegion(
@@ -47,15 +50,14 @@ class InlineTaskCreationWidget extends HookConsumerWidget {
                         await ref
                             .read(curSelectedTaskIdNotifierProvider.notifier)
                             .createNewTask(
-                              updateState: false,
                               initialParentTaskId: initialParentTaskId,
                               initialStatus: initialStatus,
+                              isPhase: isPhase,
                             );
-                    nameFieldFocusNode.requestFocus();
                   }
                 },
                 child: TaskNameField(
-                  focusNode: nameFieldFocusNode,
+                  focusNode: nameFieldFocusNode..requestFocus(),
                   taskId: newTaskId!,
                   textStyle: Theme.of(context).textTheme.bodyMedium,
                 ),
@@ -90,18 +92,14 @@ class InlineTaskCreationWidget extends HookConsumerWidget {
             ),
           )
         : TextButton.icon(
-            onPressed: () async {
-              ref.read(curInlineCreatingTaskIdProvider.notifier).state =
-                  await ref
-                      .read(curSelectedTaskIdNotifierProvider.notifier)
-                      .createNewTask(
-                        updateState: false,
-                        initialParentTaskId: initialParentTaskId,
-                        initialStatus: initialStatus,
-                      );
-              isEditing.value = true;
-              nameFieldFocusNode.requestFocus();
-            },
+            onPressed: () async =>
+                ref.read(curInlineCreatingTaskIdProvider.notifier).state =
+                    await ref
+                        .read(curSelectedTaskIdNotifierProvider.notifier)
+                        .createNewTask(
+                          initialParentTaskId: initialParentTaskId,
+                          initialStatus: initialStatus,
+                        ),
             icon: const Icon(Icons.add),
             label: Text(AppLocalizations.of(context)!.createTask),
             style: TextButton.styleFrom(
