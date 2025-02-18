@@ -1,5 +1,8 @@
 import 'package:flutter/material.dart';
 
+// Feb 18 2025
+// Not used right now
+
 class BaseHomeCard extends StatelessWidget {
   final Widget child;
   // final Color color;
@@ -40,8 +43,8 @@ class BaseHomeCard extends StatelessWidget {
                 ),
                 if (cornerButton != null)
                   SizedBox.square(
-                    dimension: (titleStyle.fontSize ?? 16) *
-                        (titleStyle.height ?? 1),
+                    dimension:
+                        (titleStyle.fontSize ?? 16) * (titleStyle.height ?? 1),
                     child: FittedBox(
                       fit: BoxFit.scaleDown,
                       child: cornerButton!,
