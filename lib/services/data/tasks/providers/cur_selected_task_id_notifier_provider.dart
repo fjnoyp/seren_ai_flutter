@@ -24,7 +24,7 @@ class CurSelectedTaskIdNotifier extends Notifier<String?> {
     String? initialProjectId,
     String? initialParentTaskId,
     StatusEnum? initialStatus,
-    bool updateState = true,
+    bool updateState = false,
   }) async {
     assert(!isPhase || initialParentTaskId == null,
         'Error: initialParentTaskId cannot be set for phase tasks');

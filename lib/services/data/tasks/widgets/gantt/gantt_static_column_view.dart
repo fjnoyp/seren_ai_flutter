@@ -1,14 +1,15 @@
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:seren_ai_flutter/services/data/projects/providers/cur_selected_project_providers.dart';
 import 'package:seren_ai_flutter/services/data/tasks/models/task_model.dart';
+import 'package:seren_ai_flutter/services/data/tasks/providers/cur_selected_task_id_notifier_provider.dart';
 import 'package:seren_ai_flutter/services/data/tasks/providers/task_by_id_stream_provider.dart';
 import 'package:seren_ai_flutter/services/data/tasks/providers/task_navigation_service.dart';
 import 'package:seren_ai_flutter/services/data/tasks/task_field_enum.dart';
 import 'package:seren_ai_flutter/services/data/tasks/widgets/form/task_selection_fields.dart';
 import 'package:seren_ai_flutter/services/data/tasks/widgets/gantt/experimental/cur_project_tasks_hierarchy_provider.dart';
 import 'package:seren_ai_flutter/services/data/tasks/widgets/gantt/experimental/gantt_task_visual_state_provider.dart';
+import 'package:seren_ai_flutter/services/data/tasks/widgets/inline_task_creation_widget.dart';
 import 'package:seren_ai_flutter/services/data/tasks/widgets/task_assignees_avatars.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
@@ -147,10 +148,20 @@ class _StaticRowValues extends ConsumerWidget {
             addRepaintBoundaries: true,
             itemBuilder: (context, rowIndex) {
               final taskId = taskIds[rowIndex];
+              final task = ref.watch(taskByIdStreamProvider(taskId)).value;
+
+              if (ref.watch(curInlineCreatingTaskIdProvider) == taskId) {
+                return InlineTaskCreationWidget(
+                  additionalFields: const [TaskFieldEnum.assignees],
+                  initialParentTaskId: task?.parentTaskId,
+                  isPhase: task?.isPhase ?? false,
+                );
+              }
+
               final visualState =
                   ref.watch(ganttTaskVisualStateProvider(taskId));
               final isVisible = ref.watch(ganttTaskVisibilityProvider(taskId));
-              return visualState.canExpand
+              return task != null && task.isPhase
                   ? _StaticPhaseRow(
                       taskId: taskId,
                       cellHeight: cellHeight,
@@ -235,13 +246,12 @@ class _StaticPhaseRow extends ConsumerWidget {
                       ),
                     ),
                     TextButton.icon(
-                      onPressed: () async => await ref
-                          .read(taskNavigationServiceProvider)
-                          .openNewTask(
-                            isPhase: true,
-                            initialProjectId:
-                                ref.read(curSelectedProjectIdNotifierProvider),
-                          ),
+                      onPressed: () async => ref
+                              .read(curInlineCreatingTaskIdProvider.notifier)
+                              .state =
+                          await ref
+                              .read(curSelectedTaskIdNotifierProvider.notifier)
+                              .createNewTask(isPhase: true),
                       icon: Icon(
                         Icons.add,
                         color: Theme.of(context).colorScheme.outline,
@@ -254,13 +264,12 @@ class _StaticPhaseRow extends ConsumerWidget {
                     ),
                     const SizedBox(width: 4),
                     TextButton.icon(
-                      onPressed: () async => await ref
-                          .read(taskNavigationServiceProvider)
-                          .openNewTask(
-                            initialProjectId:
-                                ref.read(curSelectedProjectIdNotifierProvider),
-                            initialParentTaskId: task.id,
-                          ),
+                      onPressed: () async => ref
+                              .read(curInlineCreatingTaskIdProvider.notifier)
+                              .state =
+                          await ref
+                              .read(curSelectedTaskIdNotifierProvider.notifier)
+                              .createNewTask(initialParentTaskId: taskId),
                       icon: Icon(
                         Icons.add,
                         color: Theme.of(context).colorScheme.outline,
