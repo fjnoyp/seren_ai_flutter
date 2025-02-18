@@ -59,18 +59,35 @@ class TasksRepository extends BaseRepository<TaskModel> {
   }
 
   // Watch assigned tasks for a user (tasks where they are assigned to the task directly)
-  Stream<List<TaskModel>> watchUserAssignedTasks({required String userId}) {
+  Stream<List<TaskModel>> watchUserAssignedTasks({
+    required String userId,
+    required String orgId,
+  }) {
     return watch(
       TaskQueries.userAssignedTasksQuery,
-      {'user_id': userId},
+      {
+        'user_id': userId,
+        'org_id': orgId,
+      },
+      triggerOnTables: {
+        'tasks',
+        'task_user_assignments',
+        'projects',
+      },
     );
   }
 
   // Get assigned tasks for a user (tasks where they are assigned to the task directly)
-  Future<List<TaskModel>> getUserAssignedTasks({required String userId}) async {
+  Future<List<TaskModel>> getUserAssignedTasks({
+    required String userId,
+    required String orgId,
+  }) async {
     return get(
       TaskQueries.userAssignedTasksQuery,
-      {'user_id': userId},
+      {
+        'user_id': userId,
+        'org_id': orgId,
+      },
     );
   }
 
@@ -261,6 +278,29 @@ class TasksRepository extends BaseRepository<TaskModel> {
       taskId,
       'blocked_by_task_id',
       blockedByTaskId,
+    );
+  }
+
+  Stream<List<TaskModel>> watchRecentlyUpdatedTasks({
+    required String userId,
+    required String orgId,
+    int limit = 20,
+  }) {
+    return watch(
+      TaskQueries.recentlyUpdatedTasksQuery,
+      {
+        'user_id': userId,
+        'org_id': orgId,
+        'limit': limit,
+      },
+      triggerOnTables: {
+        'tasks',
+        'user_project_assignments',
+        'team_project_assignments',
+        'user_team_assignments',
+        'projects',
+        'user_org_roles',
+      },
     );
   }
 }

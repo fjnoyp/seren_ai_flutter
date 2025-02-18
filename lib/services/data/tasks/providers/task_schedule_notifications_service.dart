@@ -3,10 +3,13 @@ import 'dart:developer';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:seren_ai_flutter/common/navigation_service_provider.dart';
 import 'package:seren_ai_flutter/services/auth/cur_auth_dependency_provider.dart';
+import 'package:seren_ai_flutter/services/data/orgs/providers/cur_selected_org_id_notifier.dart';
 import 'package:seren_ai_flutter/services/data/tasks/models/task_model.dart';
 import 'package:seren_ai_flutter/services/data/tasks/repositories/tasks_repository.dart';
 import 'package:seren_ai_flutter/services/notifications/local_notification_service.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+
+// TODO p1: remove and replace with push notifications system
 
 // For all tasks assigned to this user
 // If there is a reminder offset, schedule a notification
@@ -18,12 +21,14 @@ final taskScheduleNotificationsServiceProvider = Provider((ref) {
   // Only set up the listener once
   if (!isListenerInitialized) {
     isListenerInitialized = true;
+    final orgId = ref.watch(curSelectedOrgIdNotifierProvider);
+    if (orgId == null) return;
 
     CurAuthDependencyProvider.watchStream(
       ref: ref,
       builder: (userId) => ref
           .read(tasksRepositoryProvider)
-          .watchUserAssignedTasks(userId: userId),
+          .watchUserAssignedTasks(userId: userId, orgId: orgId),
     ).distinct().listen((currentTasks) async {
       log('Previous tasks: ${previousScheduledTasks?.map((task) => task.id).join(', ')}');
       log('Current tasks: ${currentTasks.map((task) => task.id).join(', ')}');

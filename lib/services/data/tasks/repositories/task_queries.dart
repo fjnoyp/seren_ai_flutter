@@ -17,7 +17,15 @@ abstract class TaskQueries {
   AND (
     pua.user_id IS NOT NULL
     OR uor.user_id IS NOT NULL
-  );
+  )
+  ORDER BY 
+    CASE 
+      WHEN t.due_date IS NULL THEN 1 
+      ELSE 0 
+    END,
+    t.due_date ASC,
+    t.priority DESC,
+    t.created_at DESC;
 ''';
 
   // Suddenly stopped working
@@ -38,14 +46,26 @@ abstract class TaskQueries {
 
   /// Params:
   /// - user_id: String
+  /// - org_id: String
   ///
-  /// Used to fetch tasks where the user is assigned to the task directly
+  /// Used to fetch tasks where the user is directly assigned to the task
+  /// and the task belongs to the specified organization
   static const String userAssignedTasksQuery = '''
     SELECT DISTINCT t.*
     FROM tasks t
-    LEFT JOIN task_user_assignments tua ON t.id = tua.task_id
-    WHERE tua.user_id = :user_id;
-    ''';
+    INNER JOIN projects p ON t.parent_project_id = p.id
+    INNER JOIN task_user_assignments tua ON t.id = tua.task_id
+    WHERE tua.user_id = :user_id
+    AND p.parent_org_id = :org_id
+    ORDER BY 
+      CASE 
+        WHEN t.due_date IS NULL THEN 1 
+        ELSE 0 
+      END,
+      t.due_date ASC,
+      t.priority DESC,
+      t.created_at DESC;
+  ''';
 
   /// Params:
   /// - task_id: String
@@ -85,5 +105,21 @@ abstract class TaskQueries {
   /// - project_id: String
   static const String getParentTasksByProjectIdQuery = '''
     SELECT * FROM tasks WHERE parent_project_id = :project_id AND type = 'phase';
+  ''';
+
+  static const recentlyUpdatedTasksQuery = '''
+    SELECT DISTINCT t.*
+    FROM tasks t
+    INNER JOIN projects p ON t.parent_project_id = p.id
+    LEFT JOIN user_project_assignments pua ON t.parent_project_id = pua.project_id AND pua.user_id = :user_id
+    LEFT JOIN user_org_roles uor ON uor.org_id = p.parent_org_id AND uor.user_id = :user_id AND uor.org_role = 'admin'
+    WHERE p.parent_org_id = :org_id
+    AND (
+      pua.user_id IS NOT NULL
+      OR uor.user_id IS NOT NULL
+      OR t.author_user_id = :user_id
+    )
+    ORDER BY t.updated_at DESC
+    LIMIT :limit
   ''';
 }
