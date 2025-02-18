@@ -2,11 +2,11 @@
 class BuildInfo {
   // Core build info
   static const String version = '1.0.0';
-  static const String buildDate = '2025-02-18 02:44:23';
+  static const String buildDate = '2025-02-18 03:40:00';
   
   // Git info
-  static const String commitHash = 'e862a70';
-  static const String branch = 'feat/initial_fcm';
+  static const String commitHash = '3709674';
+  static const String branch = 'main';
   static const String lastTag = 'no tag';
   
   // Author of last commit
@@ -16,48 +16,48 @@ class BuildInfo {
   // Recent commits (last 5)
   static const List<Map<String, String>> recentCommits = [
     {
-      "hash": "e862a70",
+      "hash": "3709674",
+      "author": "Kyle",
+      "email": "kylcheng@gmail.com", 
+      "message": "fix: try fix xcode cloud build - set sign cert on macos proj",
+      "date": "2025-02-18",
+      "relativeDate": "17 minutes ago"
+    },
+    {
+      "hash": "0ed2985",
+      "author": "Kyle",
+      "email": "kylcheng@gmail.com", 
+      "message": "feat(push): clickable push notifications",
+      "date": "2025-02-18",
+      "relativeDate": "56 minutes ago"
+    },
+    {
+      "hash": "7fac154",
       "author": "Kyle",
       "email": "kylcheng@gmail.com", 
       "message": "chore(push): PR review",
       "date": "2025-02-17",
-      "relativeDate": "17 hours ago"
+      "relativeDate": "18 hours ago"
     },
     {
-      "hash": "a4eae01",
+      "hash": "e9f17f7",
       "author": "Kyle",
       "email": "kylcheng@gmail.com", 
       "message": "chore(push): handle token deletion on logout (tested)",
       "date": "2025-02-17",
-      "relativeDate": "17 hours ago"
+      "relativeDate": "18 hours ago"
     },
     {
-      "hash": "deadb54",
+      "hash": "87c6500",
       "author": "Kyle",
       "email": "kylcheng@gmail.com", 
       "message": "chore(push): add dedup logic for task update notifications",
       "date": "2025-02-17",
-      "relativeDate": "17 hours ago"
-    },
-    {
-      "hash": "69f4d7d",
-      "author": "Kyle",
-      "email": "kylcheng@gmail.com", 
-      "message": "feat(push): notifications for task change, assignment, comment",
-      "date": "2025-02-17",
       "relativeDate": "18 hours ago"
-    },
-    {
-      "hash": "170fc55",
-      "author": "Kyle",
-      "email": "kylcheng@gmail.com", 
-      "message": "chore(push): initial push notification send method",
-      "date": "2025-02-17",
-      "relativeDate": "21 hours ago"
     },
   ];
 
   // Stats
-  static const String totalCommits = '346';
+  static const String totalCommits = '348';
   static const String contributors = '       0';
 }
