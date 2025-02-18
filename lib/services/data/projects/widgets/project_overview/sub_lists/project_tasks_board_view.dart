@@ -1,11 +1,10 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:seren_ai_flutter/services/data/common/status_enum.dart';
 import 'package:seren_ai_flutter/services/data/projects/providers/cur_selected_project_providers.dart';
-import 'package:seren_ai_flutter/services/data/projects/widgets/project_overview/sub_lists/create_task_button.dart';
-import 'package:seren_ai_flutter/services/data/tasks/providers/task_navigation_service.dart';
 import 'package:seren_ai_flutter/services/data/tasks/providers/tasks_by_project_stream_provider.dart';
+import 'package:seren_ai_flutter/services/data/tasks/task_field_enum.dart';
+import 'package:seren_ai_flutter/services/data/tasks/widgets/inline_task_creation_widget.dart';
 import 'package:seren_ai_flutter/services/data/tasks/widgets/task_list/task_list_item_view.dart';
 import 'package:seren_ai_flutter/services/data/tasks/providers/task_filter_state_provider.dart';
 
@@ -33,14 +32,18 @@ class ProjectTasksBoardView extends ConsumerWidget {
       tasks.sort(filterState.sortComparator);
     }
 
+    final curInlineCreatingTaskId = ref.watch(curInlineCreatingTaskIdProvider);
+
     return Row(
       children: StatusEnum.values
           .where((status) =>
               status != StatusEnum.cancelled && status != StatusEnum.archived)
           .map(
         (status) {
-          final filteredTasks =
-              tasks.where((task) => task.status == status).toList();
+          final filteredTasks = tasks
+              .where((task) =>
+                  task.status == status && task.id != curInlineCreatingTaskId)
+              .toList();
           return Expanded(
             child: Card(
               child: Column(
@@ -66,9 +69,12 @@ class ProjectTasksBoardView extends ConsumerWidget {
                     ),
                   ),
                   const Divider(height: 1),
-                  CreateTaskButton(
-                    initialProjectId: projectId,
-                    initialStatus: status,
+                  SizedBox(
+                    width: double.infinity,
+                    child: InlineTaskCreationWidget(
+                      additionalFields: const [TaskFieldEnum.assignees],
+                      initialStatus: status,
+                    ),
                   ),
                 ],
               ),
