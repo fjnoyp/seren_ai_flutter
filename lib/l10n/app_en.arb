@@ -44,6 +44,8 @@
     "menu": "Menu",
     "moreOptions": "More Options",
     "home": "Home",
+    "recent": "Recent",
+    "myTasks": "My Tasks",
     "notAvailable": "N/A",
     "unknownError": "Unknown error",
     "app": "App",
