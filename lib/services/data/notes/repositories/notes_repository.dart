@@ -103,4 +103,21 @@ class NotesRepository extends BaseRepository<NoteModel> {
       projectId,
     );
   }
+
+  Stream<List<NoteModel>> watchRecentlyUpdatedNotes({
+    required String userId,
+    int limit = 20,
+  }) {
+    return watch(
+      NoteQueries.recentlyUpdatedNotesQuery,
+      {
+        'user_id': userId,
+        'limit': limit,
+      },
+      triggerOnTables: {
+        'notes',
+        'projects',
+      },
+    );
+  }
 }

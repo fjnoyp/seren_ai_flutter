@@ -2,42 +2,26 @@
 class BuildInfo {
   // Core build info
   static const String version = '1.0.0';
-  static const String buildDate = '2025-02-18 14:32:11';
+  static const String buildDate = '2025-02-18 09:19:03';
   
   // Git info
-  static const String commitHash = 'e68ccb3';
-  static const String branch = 'feat/translate-notification-messages-with-sender-language';
+  static const String commitHash = 'ec840db';
+  static const String branch = 'feat/home_screen_revamp';
   static const String lastTag = 'no tag';
   
   // Author of last commit
-  static const String lastCommitAuthor = 'renata-sisilio';
-  static const String lastCommitEmail = 'renata@seren-ai.co';
+  static const String lastCommitAuthor = 'Kyle';
+  static const String lastCommitEmail = 'kylcheng@gmail.com';
   
   // Recent commits (last 5)
   static const List<Map<String, String>> recentCommits = [
-    {
-      "hash": "e68ccb3",
-      "author": "renata-sisilio",
-      "email": "renata@seren-ai.co", 
-      "message": "feat(tasks): task and phase inline creation from gantt chart",
-      "date": "2025-02-18",
-      "relativeDate": "86 minutes ago"
-    },
-    {
-      "hash": "17053f2",
-      "author": "renata-sisilio",
-      "email": "renata@seren-ai.co", 
-      "message": "feat(tasks): inline task creation from board view",
-      "date": "2025-02-18",
-      "relativeDate": "4 hours ago"
-    },
     {
       "hash": "ec840db",
       "author": "Kyle",
       "email": "kylcheng@gmail.com", 
       "message": "fix(project): ref disposed error",
       "date": "2025-02-18",
-      "relativeDate": "3 hours ago"
+      "relativeDate": "2 hours ago"
     },
     {
       "hash": "10c4e81",
@@ -55,9 +39,25 @@ class BuildInfo {
       "date": "2025-02-18",
       "relativeDate": "7 hours ago"
     },
+    {
+      "hash": "7fac154",
+      "author": "Kyle",
+      "email": "kylcheng@gmail.com", 
+      "message": "chore(push): PR review",
+      "date": "2025-02-17",
+      "relativeDate": "23 hours ago"
+    },
+    {
+      "hash": "e9f17f7",
+      "author": "Kyle",
+      "email": "kylcheng@gmail.com", 
+      "message": "chore(push): handle token deletion on logout (tested)",
+      "date": "2025-02-17",
+      "relativeDate": "24 hours ago"
+    },
   ];
 
   // Stats
-  static const String totalCommits = '351';
-  static const String contributors = '0';
+  static const String totalCommits = '349';
+  static const String contributors = '       0';
 }
