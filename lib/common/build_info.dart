@@ -2,19 +2,27 @@
 class BuildInfo {
   // Core build info
   static const String version = '1.0.0';
-  static const String buildDate = '2025-02-18 17:38:37';
+  static const String buildDate = '2025-02-18 17:46:02';
   
   // Git info
-  static const String commitHash = '378983a';
+  static const String commitHash = 'f686231';
   static const String branch = 'feat/drag-and-drop-tasks-on-project-board-view';
   static const String lastTag = 'no tag';
   
   // Author of last commit
-  static const String lastCommitAuthor = 'Kyle';
-  static const String lastCommitEmail = 'kylcheng@gmail.com';
+  static const String lastCommitAuthor = 'renata-sisilio';
+  static const String lastCommitEmail = 'renata@seren-ai.co';
   
   // Recent commits (last 5)
   static const List<Map<String, String>> recentCommits = [
+    {
+      "hash": "f686231",
+      "author": "renata-sisilio",
+      "email": "renata@seren-ai.co", 
+      "message": "feat(tasks): drag and dro tasks on project board view",
+      "date": "2025-02-18",
+      "relativeDate": "7 minutes ago"
+    },
     {
       "hash": "378983a",
       "author": "Kyle",
@@ -47,17 +55,9 @@ class BuildInfo {
       "date": "2025-02-18",
       "relativeDate": "3 hours ago"
     },
-    {
-      "hash": "e68ccb3",
-      "author": "renata-sisilio",
-      "email": "renata@seren-ai.co", 
-      "message": "feat(tasks): task and phase inline creation from gantt chart",
-      "date": "2025-02-18",
-      "relativeDate": "5 hours ago"
-    },
   ];
 
   // Stats
-  static const String totalCommits = '355';
+  static const String totalCommits = '356';
   static const String contributors = '0';
 }
