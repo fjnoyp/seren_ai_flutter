@@ -7,7 +7,6 @@ import 'package:seren_ai_flutter/services/data/projects/repositories/projects_re
 import 'package:seren_ai_flutter/services/data/users/models/user_model.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:seren_ai_flutter/services/data/users/repositories/users_repository.dart';
-import 'package:seren_ai_flutter/services/notifications/services/fcm_push_notification_service_provider.dart';
 import 'package:seren_ai_flutter/services/notifications/services/fcm_device_token_service.dart';
 
 class TasksNotifier extends Notifier<List<UserModel>> {

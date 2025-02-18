@@ -1,16 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
-import 'package:seren_ai_flutter/common/universal_platform/universal_platform.dart';
 import 'package:seren_ai_flutter/services/data/common/generate_color_from_id.dart';
 import 'package:seren_ai_flutter/services/data/projects/providers/project_by_id_stream_provider.dart';
 import 'package:seren_ai_flutter/services/data/tasks/models/task_model.dart';
 import 'package:intl/intl.dart';
-import 'package:seren_ai_flutter/services/data/tasks/providers/task_by_id_stream_provider.dart';
 import 'package:seren_ai_flutter/services/data/tasks/providers/task_navigation_service.dart';
 import 'package:seren_ai_flutter/services/data/common/widgets/priority_view.dart';
-import 'package:seren_ai_flutter/services/data/tasks/widgets/task_tag.dart';
-import 'package:seren_ai_flutter/services/data/tasks/widgets/ui_constants.dart';
-import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:seren_ai_flutter/services/data/users/providers/task_assigned_users_stream_provider.dart';
 import 'package:seren_ai_flutter/services/data/users/widgets/user_avatar.dart';
 import 'package:seren_ai_flutter/services/data/common/status_enum.dart';
@@ -29,26 +24,6 @@ class TaskListItemView extends ConsumerWidget {
   final bool showStatus;
   final bool showProject;
   final void Function(String taskId)? onTap;
-
-  Widget _buildProjectIndicator(BuildContext context, WidgetRef ref) {
-    return Consumer(
-      builder: (context, ref, _) {
-        if (!showProject) return const SizedBox.shrink();
-
-        final taskProject =
-            ref.watch(projectByIdStreamProvider(task.parentProjectId));
-        if (taskProject.valueOrNull == null) return const SizedBox.shrink();
-
-        return Text(
-          taskProject.valueOrNull!.name,
-          style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                color: generateColorFromId(task.parentProjectId),
-                fontSize: 11,
-              ),
-        );
-      },
-    );
-  }
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -80,7 +55,7 @@ class TaskListItemView extends ConsumerWidget {
       subtitle: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          _buildProjectIndicator(context, ref),
+          _ProjectIndicator(task, showProject: showProject),
           if (task.description?.isNotEmpty == true)
             Text(
               task.description!,
@@ -123,6 +98,34 @@ class TaskListItemView extends ConsumerWidget {
           : () => ref
               .read(taskNavigationServiceProvider)
               .openTask(initialTaskId: task.id),
+    );
+  }
+}
+
+class _ProjectIndicator extends ConsumerWidget {
+  const _ProjectIndicator(this.task, {required this.showProject});
+
+  final TaskModel task;
+  final bool showProject;
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    return Consumer(
+      builder: (context, ref, _) {
+        if (!showProject) return const SizedBox.shrink();
+
+        final taskProject =
+            ref.watch(projectByIdStreamProvider(task.parentProjectId));
+        if (taskProject.valueOrNull == null) return const SizedBox.shrink();
+
+        return Text(
+          taskProject.valueOrNull!.name,
+          style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                color: generateColorFromId(task.parentProjectId),
+                fontSize: 11,
+              ),
+        );
+      },
     );
   }
 }

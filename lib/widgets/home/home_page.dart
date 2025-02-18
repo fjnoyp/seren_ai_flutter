@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
-import 'package:seren_ai_flutter/services/data/notes/widgets/note_page.dart';
 import 'package:seren_ai_flutter/services/data/notes/widgets/notes_list_page.dart';
 import 'package:seren_ai_flutter/services/data/projects/widgets/project_overview/task_search_modal.dart';
 import 'package:seren_ai_flutter/services/data/shifts/widgets/shifts_page.dart';
