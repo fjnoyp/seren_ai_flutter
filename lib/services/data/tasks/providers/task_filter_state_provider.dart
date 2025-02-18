@@ -125,8 +125,7 @@ class TaskFilterStateNotifier extends StateNotifier<TaskFilterState> {
 }
 
 final taskFilterStateProvider =
-    StateNotifierProvider.autoDispose<TaskFilterStateNotifier, TaskFilterState>(
-        (ref) {
+    StateNotifierProvider<TaskFilterStateNotifier, TaskFilterState>((ref) {
   final context =
       ref.read(navigationServiceProvider).navigatorKey.currentContext!;
   return TaskFilterStateNotifier(context);

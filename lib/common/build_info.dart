@@ -2,10 +2,10 @@
 class BuildInfo {
   // Core build info
   static const String version = '1.0.0';
-  static const String buildDate = '2025-02-18 03:40:00';
+  static const String buildDate = '2025-02-18 06:57:50';
   
   // Git info
-  static const String commitHash = '3709674';
+  static const String commitHash = '10c4e81';
   static const String branch = 'main';
   static const String lastTag = 'no tag';
   
@@ -16,12 +16,12 @@ class BuildInfo {
   // Recent commits (last 5)
   static const List<Map<String, String>> recentCommits = [
     {
-      "hash": "3709674",
+      "hash": "10c4e81",
       "author": "Kyle",
       "email": "kylcheng@gmail.com", 
       "message": "fix: try fix xcode cloud build - set sign cert on macos proj",
       "date": "2025-02-18",
-      "relativeDate": "17 minutes ago"
+      "relativeDate": "4 hours ago"
     },
     {
       "hash": "0ed2985",
@@ -29,7 +29,7 @@ class BuildInfo {
       "email": "kylcheng@gmail.com", 
       "message": "feat(push): clickable push notifications",
       "date": "2025-02-18",
-      "relativeDate": "56 minutes ago"
+      "relativeDate": "4 hours ago"
     },
     {
       "hash": "7fac154",
@@ -37,7 +37,7 @@ class BuildInfo {
       "email": "kylcheng@gmail.com", 
       "message": "chore(push): PR review",
       "date": "2025-02-17",
-      "relativeDate": "18 hours ago"
+      "relativeDate": "21 hours ago"
     },
     {
       "hash": "e9f17f7",
@@ -45,7 +45,7 @@ class BuildInfo {
       "email": "kylcheng@gmail.com", 
       "message": "chore(push): handle token deletion on logout (tested)",
       "date": "2025-02-17",
-      "relativeDate": "18 hours ago"
+      "relativeDate": "21 hours ago"
     },
     {
       "hash": "87c6500",
@@ -53,7 +53,7 @@ class BuildInfo {
       "email": "kylcheng@gmail.com", 
       "message": "chore(push): add dedup logic for task update notifications",
       "date": "2025-02-17",
-      "relativeDate": "18 hours ago"
+      "relativeDate": "22 hours ago"
     },
   ];
 
