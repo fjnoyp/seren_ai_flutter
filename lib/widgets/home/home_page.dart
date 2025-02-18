@@ -74,8 +74,8 @@ class _HomePageState extends ConsumerState<HomePage>
           TabBar(
             controller: _tabController,
             tabs: [
-              Tab(text: 'Recent'),
-              Tab(text: 'My Tasks'),
+              Tab(text: AppLocalizations.of(context)?.recent ?? 'Recent'),
+              Tab(text: AppLocalizations.of(context)?.myTasks ?? 'My Tasks'),
               Tab(text: AppLocalizations.of(context)?.notes ?? 'Notes'),
               Tab(text: AppLocalizations.of(context)?.shifts ?? 'Shifts'),
             ],
