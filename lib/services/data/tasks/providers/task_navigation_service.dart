@@ -57,6 +57,7 @@ class TaskNavigationService extends BaseNavigationService {
       initialProjectId: initialProjectId,
       initialParentTaskId: initialParentTaskId,
       initialStatus: initialStatus,
+      updateState: true,
     );
 
     await _navigateToTaskPage(mode: EditablePageMode.create, taskId: curTaskId);

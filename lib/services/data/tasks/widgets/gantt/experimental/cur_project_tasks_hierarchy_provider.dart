@@ -3,6 +3,7 @@ import 'package:seren_ai_flutter/services/data/projects/providers/cur_selected_p
 import 'package:seren_ai_flutter/services/data/tasks/providers/cur_user_viewable_tasks_stream_provider.dart';
 import 'package:seren_ai_flutter/services/data/tasks/providers/tasks_by_project_stream_provider.dart';
 import 'package:seren_ai_flutter/services/data/tasks/providers/task_filter_state_provider.dart';
+import 'package:seren_ai_flutter/services/data/tasks/widgets/inline_task_creation_widget.dart';
 
 class TaskHierarchyInfo {
   final String taskId;
@@ -86,6 +87,10 @@ final _curProjectTasksHierarchyProvider =
 
   // Create a set of all task IDs we need to include (filtered tasks + their ancestors)
   final Set<String> tasksToInclude = {};
+
+  if (ref.watch(curInlineCreatingTaskIdProvider) case String taskId) {
+    tasksToInclude.add(taskId);
+  }
 
   // Add filtered tasks and their ancestors
   for (final task in filteredTasks) {
