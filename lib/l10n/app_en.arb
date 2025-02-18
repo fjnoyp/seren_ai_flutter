@@ -510,6 +510,48 @@
         }
     },
 
+    "@_": {"description": "Task notifications"},
+    "newTaskAssignment": "New Task Assignment",
+    "newTaskAssignmentBody": "You have been assigned to task \"{taskName}\"",
+    "@newTaskAssignmentBody": {
+        "placeholders": {
+            "taskName": {"type": "String"}
+        }
+    },
+    "taskUnassignment": "Task Unassignment",
+    "taskUnassignmentBody": "You have been removed from task \"{taskName}\"",
+    "@taskUnassignmentBody": {
+        "placeholders": {
+            "taskName": {"type": "String"}
+        }
+    },
+    "taskStatusUpdated": "Task Status Updated",
+    "taskStatusUpdatedBody": "Task \"{taskName}\" was updated from {oldStatus} to {newStatus}",
+    "@taskStatusUpdatedBody": {
+        "placeholders": {
+            "taskName": {"type": "String"},
+            "oldStatus": {"type": "String"},
+            "newStatus": {"type": "String"}
+        }
+    },
+    "taskPriorityUpdated": "Task Priority Updated",
+    "taskPriorityUpdatedBody": "Task \"{taskName}\" priority changed from {oldPriority} to {newPriority}",
+    "@taskPriorityUpdatedBody": {
+        "placeholders": {
+            "taskName": {"type": "String"},
+            "oldPriority": {"type": "String"},
+            "newPriority": {"type": "String"}
+        }
+    },
+    "taskNameUpdated": "Task Name Updated",
+    "taskNameUpdatedBody": "Task \"{taskName}\" was renamed to \"{newName}\"",
+    "@taskNameUpdatedBody": {
+        "placeholders": {
+            "taskName": {"type": "String"},
+            "newName": {"type": "String"}
+        }
+    },
+
     "@_": {"description": "Test SQL Page"},
     "testSQLPage": "Test SQL Page",
     "enterSQLQuery": "Enter SQL query",
