@@ -276,58 +276,67 @@ class _DebugButton extends ConsumerWidget {
 class _QuickActionsBottomAppBar extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    return BottomAppBar(
-      notchMargin: 0,
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.spaceAround,
-        children: [
-          IconButton(
-            tooltip: AppLocalizations.of(context)!.home,
-            icon: const Icon(Icons.grid_view),
-            onPressed: () => ref
-                .read(navigationServiceProvider)
-                .navigateTo(AppRoutes.home.name),
-          ),
-          // Remove icon for quick create for now
-          // IconButton(
-          //   tooltip: AppLocalizations.of(context)!.createNewTask,
-          //   icon: const Icon(Icons.add_box_outlined),
-          //   onPressed: () {
-          //     // Show a bottom modal with buttons to create items (only tasks for now)
-          //     showModalBottomSheet(
-          //       context: context,
-          //       builder: (BuildContext context) {
-          //         return Padding(
-          //           padding: const EdgeInsets.all(20.0),
-          //           child: Column(
-          //             mainAxisSize: MainAxisSize.min,
-          //             children: [
-          //               ElevatedButton(
-          //                 onPressed: () async {
-          //                   ref
-          //                       .read(taskNavigationServiceProvider)
-          //                       .openNewTask();
-          //                 },
-          //                 child: Text(AppLocalizations.of(context)!.createTask),
-          //               ),
-          //             ],
-          //           ),
-          //         );
-          //       },
-          //     );
-          //   },
-          // ),
-          // const SizedBox.shrink(),
-          const SizedBox.shrink(),
-          IconButton(
-            tooltip: AppLocalizations.of(context)!.chat,
-            icon: const Icon(Icons.chat_bubble_outline),
-            onPressed: () => ref
-                .read(navigationServiceProvider)
-                .navigateTo(AppRoutes.aiChats.name),
+    return Container(
+      decoration: BoxDecoration(
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withOpacity(0.2),
+            offset: const Offset(0, -2),
+            blurRadius: 4.0,
           ),
         ],
       ),
+      child: BottomAppBar(
+        height: 65, // Set explicit height
+        padding: EdgeInsets.zero, // Remove default padding
+        notchMargin: 0,
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.spaceAround,
+          children: [
+            _buildNavItem(
+              context,
+              Icons.grid_view,
+              AppLocalizations.of(context)!.home,
+              () => ref
+                  .read(navigationServiceProvider)
+                  .navigateTo(AppRoutes.home.name),
+            ),
+            const SizedBox.shrink(),
+            _buildNavItem(
+              context,
+              Icons.chat_bubble_outline,
+              AppLocalizations.of(context)!.chat,
+              () => ref
+                  .read(navigationServiceProvider)
+                  .navigateTo(AppRoutes.aiChats.name),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _buildNavItem(BuildContext context, IconData icon, String label,
+      VoidCallback onPressed) {
+    return Column(
+      mainAxisSize: MainAxisSize.min,
+      mainAxisAlignment: MainAxisAlignment.center,
+      children: [
+        IconButton(
+          padding: EdgeInsets.zero,
+          visualDensity: VisualDensity.compact, // Make the button more compact
+          constraints: const BoxConstraints(
+            minWidth: 32,
+            minHeight: 32,
+          ), // Set smaller explicit constraints
+          icon: Icon(icon),
+          onPressed: onPressed,
+        ),
+        Text(
+          label,
+          style: Theme.of(context).textTheme.labelSmall,
+        ),
+      ],
     );
   }
 }

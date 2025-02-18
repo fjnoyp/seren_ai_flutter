@@ -39,6 +39,7 @@ class TaskSearchModal extends HookConsumerWidget {
     final filterState = ref.watch(taskFilterStateProvider);
     final filterNotifier = ref.read(taskFilterStateProvider.notifier);
 
+    // TODO p0: project selection needs to be a filter ... and NOT be hardcoded
     final projectId = ref.watch(curSelectedProjectIdNotifierProvider);
     if (projectId == null) {
       return const SizedBox.shrink();

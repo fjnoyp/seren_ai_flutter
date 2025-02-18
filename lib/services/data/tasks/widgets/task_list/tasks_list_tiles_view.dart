@@ -3,6 +3,7 @@ import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:seren_ai_flutter/services/data/common/widgets/async_value_handler_widget.dart';
 import 'package:seren_ai_flutter/services/data/tasks/models/task_model.dart';
 import 'package:seren_ai_flutter/services/data/tasks/widgets/task_list/task_list_item_view.dart';
+import 'package:seren_ai_flutter/services/data/tasks/widgets/task_list/task_list_tile_item_view.dart';
 
 class TasksListTilesView extends StatelessWidget {
   const TasksListTilesView({
@@ -28,12 +29,12 @@ class TasksListTilesView extends StatelessWidget {
                     (task) => filterCondition == null || filterCondition!(task))
                 .toList() ??
             [];
-    
+
         // Sort by most recently updated
         filteredTasks.sort((a, b) => (b.updatedAt ??
                 DateTime.fromMillisecondsSinceEpoch(0))
             .compareTo(a.updatedAt ?? DateTime.fromMillisecondsSinceEpoch(0)));
-    
+
         return ListView.separated(
           shrinkWrap: true,
           itemCount: filteredTasks.length,
