@@ -1,7 +1,7 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:seren_ai_flutter/services/data/db_setup/db_provider.dart';
 import 'package:seren_ai_flutter/services/data/users/models/user_model.dart';
-import 'package:seren_ai_flutter/services/notifications/fcm_push_notification_service_provider.dart';
+import 'package:seren_ai_flutter/services/notifications/services/fcm_push_notification_service_provider.dart';
 import 'package:seren_ai_flutter/services/notifications/services/fcm_device_token_service.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 

@@ -12,9 +12,8 @@ import 'package:seren_ai_flutter/firebase_options.dart';
 import 'package:seren_ai_flutter/services/data/db_setup/powersync.dart';
 import 'package:seren_ai_flutter/services/data/db_setup/db_provider.dart';
 import 'package:seren_ai_flutter/services/notifications/local_notification_service.dart';
-import 'package:seren_ai_flutter/services/notifications/helpers/fcm_message_handler.dart';
+import 'package:seren_ai_flutter/services/notifications/helpers/fcm_push_notification_handler.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import 'package:seren_ai_flutter/services/notifications/fcm_push_notification_service_provider.dart';
 
 // For showing notifications in the foreground
 final GlobalKey<ScaffoldMessengerState> scaffoldMessengerKey =
@@ -43,10 +42,9 @@ void main() async {
     );
     debugPrint('Firebase Web initialization successful');
 
-    // Initialize FCM message handler
-    final fcmHandler =
-        FCMMessageHandler(scaffoldMessengerKey: scaffoldMessengerKey);
-    FCMMessageHandler.initializeHandlers(fcmHandler);
+    // Register FCM message listeners
+    FCMPushNotificationHandler.instance
+        .registerMessageListeners(scaffoldMessengerKey);
 
     // Log each async component initialization
     debugPrint('Initializing SharedPreferences...');
@@ -55,13 +53,11 @@ void main() async {
 
     debugPrint('Creating notification services...');
     final notificationService = LocalNotificationService();
-    //final pushNotificationService = FCMPushNotificationService();
     debugPrint('Notification services created');
 
     if (!kIsWeb) {
       debugPrint('Initializing mobile notification services...');
       await notificationService.initialize();
-      //await pushNotificationService.initialize();
       debugPrint('Mobile notification services initialized');
     }
 
@@ -81,8 +77,6 @@ void main() async {
           sharedPreferencesProvider.overrideWithValue(prefs),
           localNotificationServiceProvider
               .overrideWithValue(notificationService),
-          //fcmPushNotificationServiceProvider
-          //.overrideWithValue(pushNotificationService),
         ],
         child: const App(),
       ),
