@@ -4,7 +4,6 @@ import 'package:seren_ai_flutter/services/data/tasks/models/task_comment_model.d
 import 'package:seren_ai_flutter/services/data/common/base_repository.dart';
 import 'package:seren_ai_flutter/services/data/tasks/repositories/task_queries.dart';
 import 'package:seren_ai_flutter/services/notifications/task_notification_service.dart';
-import 'package:seren_ai_flutter/services/data/tasks/repositories/tasks_repository.dart';
 
 final taskCommentsRepositoryProvider = Provider<TaskCommentsRepository>((ref) {
   return TaskCommentsRepository(ref.watch(dbProvider), ref);

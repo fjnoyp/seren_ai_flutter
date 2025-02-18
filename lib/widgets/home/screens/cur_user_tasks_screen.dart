@@ -8,10 +8,7 @@ import 'package:seren_ai_flutter/services/data/tasks/providers/cur_user_grouped_
 import 'package:seren_ai_flutter/services/data/tasks/widgets/task_list/task_list_item_view.dart';
 
 class _DateHeader extends StatelessWidget {
-  const _DateHeader({
-    required this.group,
-    Key? key,
-  }) : super(key: key);
+  const _DateHeader({required this.group});
 
   final DateGroupedItems group;
 
@@ -48,7 +45,7 @@ class _DateHeader extends StatelessWidget {
             const SizedBox(width: 12),
             Expanded(
               child: Divider(
-                color: Theme.of(context).colorScheme.primary.withOpacity(0.5),
+                color: Theme.of(context).colorScheme.primary.withAlpha(128),
                 thickness: 1,
               ),
             ),
@@ -61,38 +58,19 @@ class _DateHeader extends StatelessWidget {
 }
 
 class _TasksList extends StatelessWidget {
-  const _TasksList({
-    required this.tasks,
-    Key? key,
-  }) : super(key: key);
+  const _TasksList({required this.tasks});
 
   final List<TaskModel> tasks;
 
   @override
   Widget build(BuildContext context) {
-    return Column(
-      children: tasks.asMap().entries.map((entry) {
-        final task = entry.value;
-        final isLast = entry.key == tasks.length - 1;
-
-        return Column(
-          children: [
-            TaskListItemView(
-              task: task,
-              showStatus: true,
-              showProject: true,
-            ),
-            if (!isLast)
-              Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 8),
-                child: Divider(
-                  color: Theme.of(context).dividerColor.withOpacity(0.15),
-                  height: 1,
-                ),
-              ),
-          ],
-        );
-      }).toList(),
+    return ListView.separated(
+      shrinkWrap: true,
+      itemCount: tasks.length,
+      itemBuilder: (context, index) => TaskListItemView(task: tasks[index]),
+      separatorBuilder: (context, index) => Divider(
+        color: Theme.of(context).dividerColor.withAlpha(38),
+      ),
     );
   }
 }
