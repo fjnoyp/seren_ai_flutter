@@ -2,11 +2,11 @@
 class BuildInfo {
   // Core build info
   static const String version = '1.0.0';
-  static const String buildDate = '2025-02-18 09:37:36';
+  static const String buildDate = '2025-02-18 17:38:37';
   
   // Git info
-  static const String commitHash = 'ec4e03c';
-  static const String branch = 'feat/home_screen_revamp';
+  static const String commitHash = '378983a';
+  static const String branch = 'feat/drag-and-drop-tasks-on-project-board-view';
   static const String lastTag = 'no tag';
   
   // Author of last commit
@@ -16,20 +16,36 @@ class BuildInfo {
   // Recent commits (last 5)
   static const List<Map<String, String>> recentCommits = [
     {
-      "hash": "ec4e03c",
+      "hash": "378983a",
+      "author": "Kyle",
+      "email": "kylcheng@gmail.com", 
+      "message": "chore(home): add missing translations",
+      "date": "2025-02-18",
+      "relativeDate": "3 hours ago"
+    },
+    {
+      "hash": "9235bd2",
       "author": "Kyle",
       "email": "kylcheng@gmail.com", 
       "message": "chore(home): re-add mobile quick create button",
       "date": "2025-02-18",
-      "relativeDate": "5 minutes ago"
+      "relativeDate": "3 hours ago"
     },
     {
-      "hash": "a6aea78",
+      "hash": "1f1f8df",
       "author": "Kyle",
       "email": "kylcheng@gmail.com", 
       "message": "feat(home): complete home screen redo",
       "date": "2025-02-18",
-      "relativeDate": "19 minutes ago"
+      "relativeDate": "3 hours ago"
+    },
+    {
+      "hash": "5d27666",
+      "author": "renata-sisilio",
+      "email": "renata@seren-ai.co", 
+      "message": "feat(notifications): use localized task notification title and body",
+      "date": "2025-02-18",
+      "relativeDate": "3 hours ago"
     },
     {
       "hash": "e68ccb3",
@@ -37,27 +53,11 @@ class BuildInfo {
       "email": "renata@seren-ai.co", 
       "message": "feat(tasks): task and phase inline creation from gantt chart",
       "date": "2025-02-18",
-      "relativeDate": "2 hours ago"
-    },
-    {
-      "hash": "17053f2",
-      "author": "renata-sisilio",
-      "email": "renata@seren-ai.co", 
-      "message": "feat(tasks): inline task creation from board view",
-      "date": "2025-02-18",
-      "relativeDate": "4 hours ago"
-    },
-    {
-      "hash": "ec840db",
-      "author": "Kyle",
-      "email": "kylcheng@gmail.com", 
-      "message": "fix(project): ref disposed error",
-      "date": "2025-02-18",
-      "relativeDate": "3 hours ago"
+      "relativeDate": "5 hours ago"
     },
   ];
 
   // Stats
-  static const String totalCommits = '353';
-  static const String contributors = '       0';
+  static const String totalCommits = '355';
+  static const String contributors = '0';
 }

@@ -1,11 +1,8 @@
 // Show the debug state of the app
 
 import 'package:flutter/material.dart';
-import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
-import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:seren_ai_flutter/services/data/projects/providers/cur_selected_project_providers.dart';
-import 'package:seren_ai_flutter/services/data/projects/providers/project_by_id_stream_provider.dart';
 
 class DebugStateModal extends HookConsumerWidget {
   const DebugStateModal({super.key});

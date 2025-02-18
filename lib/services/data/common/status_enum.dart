@@ -27,4 +27,26 @@ enum StatusEnum {
       return StatusEnum.open;
     }
   }
+
+  StatusEnum get nextStatus {
+    return switch (this) {
+      StatusEnum.open => StatusEnum.inProgress,
+      StatusEnum.inProgress => StatusEnum.finished,
+      StatusEnum.cancelled ||
+      StatusEnum.finished ||
+      StatusEnum.archived =>
+        this,
+    };
+  }
+
+  StatusEnum get previousStatus {
+    return switch (this) {
+      StatusEnum.finished => StatusEnum.inProgress,
+      StatusEnum.inProgress => StatusEnum.open,
+      StatusEnum.cancelled ||
+      StatusEnum.open ||
+      StatusEnum.archived =>
+        this,
+    };
+  }
 }
