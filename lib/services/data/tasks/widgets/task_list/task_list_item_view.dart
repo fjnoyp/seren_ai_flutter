@@ -13,172 +13,116 @@ import 'package:seren_ai_flutter/services/data/tasks/widgets/ui_constants.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:seren_ai_flutter/services/data/users/providers/task_assigned_users_stream_provider.dart';
 import 'package:seren_ai_flutter/services/data/users/widgets/user_avatar.dart';
+import 'package:seren_ai_flutter/services/data/common/status_enum.dart';
+import 'package:seren_ai_flutter/services/data/common/widgets/status_view.dart';
 
 class TaskListItemView extends ConsumerWidget {
+  const TaskListItemView({
+    required this.task,
+    super.key,
+    this.onTap,
+    this.showStatus = false,
+    this.showProject = false,
+  });
+
   final TaskModel task;
-  const TaskListItemView({super.key, required this.task});
+  final bool showStatus;
+  final bool showProject;
+  final void Function(String taskId)? onTap;
+
+  Widget _buildProjectIndicator(BuildContext context, WidgetRef ref) {
+    return Consumer(
+      builder: (context, ref, _) {
+        if (!showProject) return const SizedBox.shrink();
+
+        final taskProject =
+            ref.watch(projectByIdStreamProvider(task.parentProjectId));
+        if (taskProject.valueOrNull == null) return const SizedBox.shrink();
+
+        return Text(
+          taskProject.valueOrNull!.name,
+          style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                color: generateColorFromId(task.parentProjectId),
+                fontSize: 11,
+              ),
+        );
+      },
+    );
+  }
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final theme = Theme.of(context);
-    final dueDateColor = getDueDateColor(task.dueDate);
-    final taskProject =
-        ref.watch(projectByIdStreamProvider(task.parentProjectId));
-    final taskAssignees = ref.watch(taskAssignedUsersStreamProvider(task.id));
+    final dueDateColor =
+        task.dueDate != null && task.dueDate!.isBefore(DateTime.now())
+            ? Colors.red
+            : Colors.grey;
 
-    return Card(
-      color: theme.cardColor,
-      margin: const EdgeInsets.symmetric(vertical: 8.0, horizontal: 2.0),
-      elevation: 3.0,
-      shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(6.0),
-      ),
-      child: InkWell(
-        onTap: () async {
-          await ref
-              .read(taskNavigationServiceProvider)
-              .openTask(initialTaskId: task.id);
-        },
-        child: Padding(
-          padding: const EdgeInsets.fromLTRB(10.0, 12.0, 4.0, 12.0),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  Flexible(
-                    child: Text(
-                      task.name,
-                      style: theme.textTheme.titleMedium,
-                      overflow: TextOverflow.ellipsis,
-                    ),
-                  ),
-                  if (!isWebVersion)
-                    Text(
-                      taskProject.when(
-                          loading: () => '...',
-                          error: (err, stack) => 'Error: $err',
-                          data: (project) => project!.name),
-                      style: theme.textTheme.labelSmall?.copyWith(
-                          color: theme.colorScheme.onSurface.withAlpha(180)),
-                    ),
-                  if (task.parentTaskId != null)
-                    ref.watch(taskByIdStreamProvider(task.parentTaskId!)).when(
-                          data: (parentTask) => TaskTag.custom(
-                              text: parentTask?.name ?? '',
-                              color: generateColorFromId(parentTask!.id)),
-                          error: (error, stack) => const SizedBox.shrink(),
-                          loading: () => const SizedBox.shrink(),
-                        ),
-                ],
-              ),
-              Padding(
-                padding: const EdgeInsets.only(left: 8),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    const SizedBox(height: 2),
-                    Row(
-                      mainAxisSize: MainAxisSize.min,
-                      children: (taskAssignees.valueOrNull ?? [])
-                          .map((e) => CircleAvatar(
-                                radius: 8,
-                                child: Text(
-                                  e.firstName.substring(0, 1),
-                                  style: Theme.of(context).textTheme.labelSmall,
-                                ),
-                              ))
-                          .toList(),
-                    ),
-                    const SizedBox(height: 4),
-                    PriorityView(
-                        priority: task.priority ?? PriorityEnum.normal),
-                    const SizedBox(height: 4),
-                    if (task.dueDate != null)
-                      Row(
-                        children: [
-                          Icon(Icons.calendar_today,
-                              size: 16, color: dueDateColor),
-                          const SizedBox(width: 4),
-                          Text(
-                            AppLocalizations.of(context)!.dueDateWithDate(task
-                                        .dueDate !=
-                                    null
-                                ? DateFormat.MMMd(AppLocalizations.of(context)!
-                                        .localeName)
-                                    .format(task.dueDate!.toLocal())
-                                : AppLocalizations.of(context)!.notAvailable),
-                            style: theme.textTheme.labelSmall!.copyWith(
-                              color: dueDateColor,
-                            ),
-                          ),
-                        ],
-                      ),
-                    const SizedBox(height: 5),
-                    if (task.description != null &&
-                        task.description!.isNotEmpty)
-                      Text(
-                        task.description!,
-                        maxLines: 3,
-                        style: theme.textTheme.bodySmall,
-                        overflow: TextOverflow.ellipsis,
-                      ),
-                    const SizedBox(height: 5),
-                  ],
-                ),
-              ),
-            ],
-          ),
-        ),
-      ),
-    );
-  }
-}
-
-class TaskListTileItemView extends ConsumerWidget {
-  const TaskListTileItemView(this.task, {super.key, this.onTap});
-
-  final TaskModel task;
-
-  /// If this is null, tapping on a task will open the task page
-  final void Function(String taskId)? onTap;
-
-  @override
-  Widget build(BuildContext context, WidgetRef ref) {
-    final dueDateColor = getDueDateColor(task.dueDate);
     final taskAssignees = ref.watch(taskAssignedUsersStreamProvider(task.id));
 
     return ListTile(
-      dense: true,
+      contentPadding: showStatus
+          ? null // Use default padding when showing status
+          : const EdgeInsets.only(
+              right: 16), // Remove left padding when not showing status
+      leading: showStatus
+          ? Icon(
+              getStatusIcon(task.status ?? StatusEnum.open),
+              color: getStatusColor(task.status ?? StatusEnum.open),
+              size: 24,
+            )
+          : null, // Set to null instead of SizedBox.shrink()
+      title: Text(
+        task.name,
+        style: theme.textTheme.titleMedium,
+        overflow: TextOverflow.ellipsis,
+      ),
+      subtitle: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          _buildProjectIndicator(context, ref),
+          if (task.description?.isNotEmpty == true)
+            Text(
+              task.description!,
+              maxLines: 2,
+              overflow: TextOverflow.ellipsis,
+              style: Theme.of(context).textTheme.bodySmall,
+            ),
+          const SizedBox(height: 4),
+          Row(
+            children: [
+              if (task.priority != null) ...[
+                PriorityView(priority: task.priority!),
+                const SizedBox(width: 8),
+              ],
+              if (task.dueDate != null) ...[
+                Icon(Icons.calendar_today, size: 14, color: dueDateColor),
+                const SizedBox(width: 4),
+                Text(
+                  DateFormat.yMMMd().format(task.dueDate!),
+                  style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                        color: dueDateColor,
+                      ),
+                ),
+              ],
+            ],
+          ),
+        ],
+      ),
+      trailing: Row(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          ...(taskAssignees.valueOrNull ?? []).map((e) => Padding(
+                padding: const EdgeInsets.only(left: 4),
+                child: UserAvatar(e, radius: 14),
+              )),
+        ],
+      ),
       onTap: onTap != null
           ? () => onTap!(task.id)
           : () => ref
               .read(taskNavigationServiceProvider)
               .openTask(initialTaskId: task.id),
-      leading: const SizedBox.shrink(),
-      title: Text(task.name),
-      trailing: Row(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          ...(taskAssignees.valueOrNull ?? [])
-              .map((e) => UserAvatar(e, radius: 8)),
-          if (task.priority != null) ...[
-            const SizedBox(width: 8),
-            PriorityView(priority: task.priority!),
-          ],
-          if (task.dueDate != null) ...[
-            const SizedBox(width: 8),
-            Icon(Icons.calendar_today, size: 16, color: dueDateColor),
-            const SizedBox(width: 4),
-            Text(
-              DateFormat.MMMd().format(task.dueDate!.toLocal()),
-              style: TextStyle(color: dueDateColor),
-            ),
-          ],
-        ],
-      ),
     );
   }
 }
