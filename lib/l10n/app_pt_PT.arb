@@ -304,6 +304,18 @@
     "deletedTask": "Tarefa excluída com sucesso: \"{taskName}\"",
     "taskDeletionCancelledByUser": "Exclusão de tarefa cancelada pelo usuário para \"{taskName}\"",
 
+    "@_": {"description": "Task notifications"},
+    "newTaskAssignment": "Nova Atribuição de Tarefa",
+    "newTaskAssignmentBody": "A tarefa \"{taskName}\" foi atribuída a você",
+    "taskUnassignment": "Remoção de Atribuição de Tarefa",
+    "taskUnassignmentBody": "Você foi removido da tarefa \"{taskName}\"",
+    "taskStatusUpdated": "Novo Status de Tarefa",
+    "taskStatusUpdatedBody": "Tarefa \"{taskName}\" foi atualizada de {oldStatus} para {newStatus}",
+    "taskPriorityUpdated": "Nova Prioridade de Tarefa",
+    "taskPriorityUpdatedBody": "Tarefa \"{taskName}\" foi alterada de {oldPriority} para {newPriority}",
+    "taskNameUpdated": "Tarefa Renomeada",
+    "taskNameUpdatedBody": "Tarefa \"{taskName}\" foi renomeada para \"{newName}\"",
+
     "@_": {"description": "Speech Recognition"},
     "unknownState": "Estado desconhecido: {state}",
     "initError": "Erro de inicialização: {error}",

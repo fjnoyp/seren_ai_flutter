@@ -1,5 +1,6 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:logging/logging.dart';
+import 'package:seren_ai_flutter/common/navigation_service_provider.dart';
 import 'package:seren_ai_flutter/services/data/common/status_enum.dart';
 import 'package:seren_ai_flutter/services/data/tasks/models/task_model.dart';
 import 'package:seren_ai_flutter/services/data/tasks/repositories/task_user_assignments_repository.dart';
@@ -9,6 +10,7 @@ import 'package:seren_ai_flutter/services/data/tasks/repositories/tasks_reposito
 import 'package:seren_ai_flutter/services/auth/cur_auth_state_provider.dart';
 import 'package:seren_ai_flutter/services/data/tasks/models/task_comment_model.dart';
 import 'package:seren_ai_flutter/services/notifications/models/notification_data.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 final log = Logger('TaskNotificationService');
 
@@ -37,23 +39,33 @@ class TaskNotificationService {
     String title;
     String body;
 
+    final context = ref.read(navigationServiceProvider).context;
+
     switch (field) {
       case TaskFieldEnum.status:
         final oldStatus = oldValue as StatusEnum?;
         final newStatus = newValue as StatusEnum?;
-        title = 'Task Status Updated';
-        body =
-            'Task "${task.name}" was updated from ${oldStatus?.name ?? 'none'} to ${newStatus?.name ?? 'none'}';
+        title = AppLocalizations.of(context)!.taskStatusUpdated;
+        body = AppLocalizations.of(context)!.taskStatusUpdatedBody(
+              task.name,
+              oldStatus?.toHumanReadable(context) ?? 'none',
+              newStatus?.toHumanReadable(context) ?? 'none',
+            );
       case TaskFieldEnum.priority:
         final oldPriority = oldValue as PriorityEnum?;
         final newPriority = newValue as PriorityEnum?;
-        title = 'Task Priority Updated';
-        body =
-            'Task "${task.name}" priority changed from ${oldPriority?.name ?? 'none'} to ${newPriority?.name ?? 'none'}';
+        title = AppLocalizations.of(context)!.taskPriorityUpdated;
+        body = AppLocalizations.of(context)!.taskPriorityUpdatedBody(
+              task.name,
+              oldPriority?.toHumanReadable(context) ?? 'none',
+              newPriority?.toHumanReadable(context) ?? 'none',
+            );
       case TaskFieldEnum.name:
-        final oldName = oldValue as String?;
-        title = 'Task Name Updated';
-        body = 'Task name changed from "${oldName ?? ''}" to "${task.name}"';
+        title = AppLocalizations.of(context)!.taskNameUpdated;
+        body = AppLocalizations.of(context)!.taskNameUpdatedBody(
+              oldValue ?? '',
+              task.name,
+            );
       default:
         log.severe('Unknown task field update: $field');
         return;
@@ -113,10 +125,14 @@ class TaskNotificationService {
 
     if (recipients.isEmpty) return;
 
-    final title = isAssignment ? 'New Task Assignment' : 'Task Unassignment';
+    final context = ref.read(navigationServiceProvider).context;
+
+    final title = isAssignment
+        ? AppLocalizations.of(context)!.newTaskAssignment
+        : AppLocalizations.of(context)!.taskUnassignment;
     final body = isAssignment
-        ? 'You have been assigned to task "${task.name}"'
-        : 'You have been removed from task "${task.name}"';
+        ? AppLocalizations.of(context)!.newTaskAssignmentBody(task.name)
+        : AppLocalizations.of(context)!.taskUnassignmentBody(task.name);
 
     await ref.read(fcmPushNotificationServiceProvider).sendNotification(
           userIds: recipients,
