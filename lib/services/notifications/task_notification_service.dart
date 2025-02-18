@@ -8,6 +8,7 @@ import 'package:seren_ai_flutter/services/data/tasks/task_field_enum.dart';
 import 'package:seren_ai_flutter/services/data/tasks/repositories/tasks_repository.dart';
 import 'package:seren_ai_flutter/services/auth/cur_auth_state_provider.dart';
 import 'package:seren_ai_flutter/services/data/tasks/models/task_comment_model.dart';
+import 'package:seren_ai_flutter/services/notifications/models/notification_data.dart';
 
 final log = Logger('TaskNotificationService');
 
@@ -79,15 +80,14 @@ class TaskNotificationService {
     if (recipients.isEmpty) return;
 
     await ref.read(fcmPushNotificationServiceProvider).sendNotification(
-      userIds: recipients,
-      title: title,
-      body: body,
-      data: {
-        'type': 'task_update',
-        'task_id': taskId,
-        'update_type': field.name,
-      },
-    );
+          userIds: recipients,
+          title: title,
+          body: body,
+          data: TaskUpdateNotificationData(
+            taskId: taskId,
+            updateType: field,
+          ),
+        );
   }
 
   Future<void> handleTaskAssignmentChange({
@@ -119,15 +119,14 @@ class TaskNotificationService {
         : 'You have been removed from task "${task.name}"';
 
     await ref.read(fcmPushNotificationServiceProvider).sendNotification(
-      userIds: recipients,
-      title: title,
-      body: body,
-      data: {
-        'type': 'task_assignment',
-        'task_id': taskId,
-        'is_assignment': isAssignment.toString(),
-      },
-    );
+          userIds: recipients,
+          title: title,
+          body: body,
+          data: TaskAssignmentNotificationData(
+            taskId: taskId,
+            isAssignment: isAssignment,
+          ),
+        );
   }
 
   Future<void> handleNewComment({
@@ -160,13 +159,12 @@ class TaskNotificationService {
     final body = 'New comment on task "${task.name}": ${comment.content}';
 
     await ref.read(fcmPushNotificationServiceProvider).sendNotification(
-      userIds: recipients,
-      title: title,
-      body: body,
-      data: {
-        'type': 'task_comment',
-        'task_id': taskId,
-      },
-    );
+          userIds: recipients,
+          title: title,
+          body: body,
+          data: TaskCommentNotificationData(
+            taskId: taskId,
+          ),
+        );
   }
 }
