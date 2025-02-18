@@ -34,7 +34,8 @@ import 'package:seren_ai_flutter/services/data/tasks/widgets/gantt/gantt_task_pa
 import 'package:seren_ai_flutter/services/data/tasks/widgets/task_page.dart';
 import 'package:seren_ai_flutter/services/ai_interaction/stt_orchestrator_provider.dart.dart';
 import 'package:seren_ai_flutter/services/data/tasks/widgets/web/web_task_page.dart';
-import 'package:seren_ai_flutter/services/notifications/fcm_push_notification_service_provider.dart';
+import 'package:seren_ai_flutter/services/notifications/services/fcm_push_notification_service_provider.dart';
+import 'package:seren_ai_flutter/services/notifications/helpers/fcm_push_notification_handler.dart';
 import 'package:seren_ai_flutter/services/notifications/services/fcm_device_token_service.dart';
 import 'package:seren_ai_flutter/widgets/home/home_page.dart';
 import 'package:seren_ai_flutter/widgets/common/main_scaffold.dart';
@@ -65,6 +66,9 @@ class AppState extends ConsumerState<App> {
 
     final fcmTokenService = ref.read(fcmDeviceTokenServiceProvider);
     fcmTokenService.initialize();
+
+    // Set up FCM navigation after provider scope is ready
+    FCMPushNotificationHandler.instance.setupNavigation(ref);
   }
 
   @override

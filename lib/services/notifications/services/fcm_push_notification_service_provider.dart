@@ -2,9 +2,9 @@ import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:seren_ai_flutter/services/auth/cur_auth_state_provider.dart';
+import '../helpers/token_manager.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import 'package:seren_ai_flutter/services/notifications/services/fcm_device_token_service.dart';
-import 'package:seren_ai_flutter/services/notifications/models/notification_data.dart';
 
 final fcmPushNotificationServiceProvider =
     Provider<FCMPushNotificationService>((ref) {
@@ -30,14 +30,14 @@ class FCMPushNotificationService {
   /// [userIds] - List of user IDs to send the notification to
   /// [title] - The title of the notification
   /// [body] - The body text of the notification
-  /// [data] - Typed notification data to send with the notification
+  /// [data] - Optional map of additional data to send with the notification
   ///
   /// Returns a Map containing the success status and any error message
   Future<Map<String, dynamic>> sendNotification({
     required List<String> userIds,
     required String title,
     required String body,
-    required NotificationData data,
+    Map<String, String>? data,
   }) async {
     try {
       final response = await Supabase.instance.client.functions.invoke(
@@ -48,7 +48,7 @@ class FCMPushNotificationService {
             'title': title,
             'body': body,
           },
-          'data': data.toJson(),
+          if (data != null) 'data': data,
         },
       );
 
