@@ -4,7 +4,7 @@ import 'package:seren_ai_flutter/services/data/common/status_enum.dart';
 import 'package:seren_ai_flutter/services/data/projects/providers/cur_selected_project_providers.dart';
 import 'package:seren_ai_flutter/services/data/tasks/providers/tasks_by_project_stream_provider.dart';
 import 'package:seren_ai_flutter/services/data/tasks/repositories/tasks_repository.dart';
-import 'package:seren_ai_flutter/services/data/tasks/widgets/inline_task_creation_widget.dart';
+import 'package:seren_ai_flutter/services/data/tasks/widgets/inline_creation/inline_task_creation_button.dart';
 import 'package:seren_ai_flutter/services/data/tasks/widgets/task_list/task_list_item_view.dart';
 import 'package:seren_ai_flutter/services/data/tasks/providers/task_filter_state_provider.dart';
 import 'package:seren_ai_flutter/services/data/tasks/models/task_model.dart';

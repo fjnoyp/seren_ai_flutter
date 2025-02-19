@@ -4,7 +4,7 @@ import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:seren_ai_flutter/services/data/tasks/widgets/gantt/gantt_task_snp.dart';
 import 'package:seren_ai_flutter/services/data/tasks/widgets/gantt/gantt_view.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
-import 'package:seren_ai_flutter/services/data/tasks/widgets/inline_task_creation_widget.dart';
+import 'package:seren_ai_flutter/services/data/tasks/widgets/inline_creation/inline_task_creation_button.dart';
 
 class GanttTaskPage extends ConsumerWidget {
   const GanttTaskPage({super.key});

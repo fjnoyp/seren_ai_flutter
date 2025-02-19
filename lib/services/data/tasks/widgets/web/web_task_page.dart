@@ -11,7 +11,7 @@ import 'package:seren_ai_flutter/services/data/tasks/repositories/tasks_reposito
 import 'package:seren_ai_flutter/services/data/tasks/widgets/action_buttons/delete_task_button.dart';
 import 'package:seren_ai_flutter/services/data/tasks/widgets/budget/task_budget_section.dart';
 import 'package:seren_ai_flutter/services/data/tasks/widgets/form/task_selection_fields.dart';
-import 'package:seren_ai_flutter/services/data/tasks/widgets/inline_task_creation_widget.dart';
+import 'package:seren_ai_flutter/services/data/tasks/widgets/inline_creation/inline_task_creation_button.dart';
 import 'package:seren_ai_flutter/services/data/tasks/widgets/task_comments/task_comment_section.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:seren_ai_flutter/services/data/tasks/widgets/task_list/tasks_list_tiles_view.dart';
