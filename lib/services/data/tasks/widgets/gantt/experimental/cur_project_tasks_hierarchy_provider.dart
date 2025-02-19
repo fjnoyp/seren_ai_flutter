@@ -1,5 +1,6 @@
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:seren_ai_flutter/services/data/projects/providers/cur_selected_project_providers.dart';
+import 'package:seren_ai_flutter/services/data/tasks/models/task_model.dart';
 import 'package:seren_ai_flutter/services/data/tasks/providers/cur_user_viewable_tasks_stream_provider.dart';
 import 'package:seren_ai_flutter/services/data/tasks/providers/tasks_by_project_stream_provider.dart';
 import 'package:seren_ai_flutter/services/data/tasks/providers/task_filter_state_provider.dart';
@@ -136,14 +137,23 @@ final _curProjectTasksHierarchyProvider =
     }
   }
 
-  // Sort both root tasks and children lists according to the sort preference
-  if (filterState.sortComparator != null) {
+  Map<String, TaskHierarchyInfo> sortTasks(
+      int Function(TaskModel, TaskModel) sortComparator) {
+    final curInlineCreatingTaskId = ref.watch(curInlineCreatingTaskIdProvider);
+
     // Sort children for each parent
     for (final info in hierarchyMap.values) {
       info.childrenIds.sort((a, b) {
+        // If we are creating a new task, move it to the top
+        if (a == curInlineCreatingTaskId) {
+          return -1;
+        }
+        if (b == curInlineCreatingTaskId) {
+          return 1;
+        }
         final taskA = tasks.firstWhere((t) => t.id == a);
         final taskB = tasks.firstWhere((t) => t.id == b);
-        return filterState.sortComparator!(taskA, taskB);
+        return sortComparator(taskA, taskB);
       });
     }
 
@@ -152,6 +162,13 @@ final _curProjectTasksHierarchyProvider =
         .where((t) => t.parentTaskId == null && tasksToInclude.contains(t.id))
         .toList();
     rootTasks.sort((a, b) {
+      // If we are creating a new task or phase, move it to the top
+      if (a.id == curInlineCreatingTaskId) {
+        return -1;
+      }
+      if (b.id == curInlineCreatingTaskId) {
+        return 1;
+      }
       // First, group by type (tasks before phases)
       if (a.isPhase != b.isPhase) {
         return a.isPhase
@@ -159,7 +176,7 @@ final _curProjectTasksHierarchyProvider =
             : -1; // Non-phases (false) come before phases (true)
       }
       // Within each group, sort by priority using the existing comparator
-      return filterState.sortComparator!(a, b);
+      return sortComparator(a, b);
     });
 
     // Rebuild the map in the correct order
@@ -185,11 +202,14 @@ final _curProjectTasksHierarchyProvider =
     return sortedMap;
   }
 
-  for (final task in tasks) {
-    calculateDepth(task.id, 0);
+  // Sort both root tasks and children lists according to the sort preference
+  if (filterState.sortComparator != null) {
+    return sortTasks(filterState.sortComparator!);
+  } else {
+    // If no sort comparator is set, sort by updatedAt
+    return sortTasks(
+        (a, b) => b.updatedAt?.compareTo(a.updatedAt ?? DateTime.now()) ?? 0);
   }
-
-  return hierarchyMap;
 });
 
 // dark modern

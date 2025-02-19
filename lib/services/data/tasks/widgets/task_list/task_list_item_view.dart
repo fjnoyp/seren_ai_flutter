@@ -6,6 +6,7 @@ import 'package:seren_ai_flutter/services/data/tasks/models/task_model.dart';
 import 'package:intl/intl.dart';
 import 'package:seren_ai_flutter/services/data/tasks/providers/task_navigation_service.dart';
 import 'package:seren_ai_flutter/services/data/common/widgets/priority_view.dart';
+import 'package:seren_ai_flutter/services/data/tasks/widgets/inline_task_creation_widget.dart';
 import 'package:seren_ai_flutter/services/data/users/providers/task_assigned_users_stream_provider.dart';
 import 'package:seren_ai_flutter/services/data/users/widgets/user_avatar.dart';
 import 'package:seren_ai_flutter/services/data/common/status_enum.dart';
@@ -47,11 +48,18 @@ class TaskListItemView extends ConsumerWidget {
               size: 24,
             )
           : null, // Set to null instead of SizedBox.shrink()
-      title: Text(
-        task.name,
-        style: theme.textTheme.titleMedium,
-        overflow: TextOverflow.ellipsis,
-      ),
+      title: task.id == ref.watch(curInlineCreatingTaskIdProvider)
+          ? InlineTaskNameField(
+              taskId: task.id,
+              isPhase: task.isPhase,
+              initialStatus: task.status,
+              initialParentTaskId: task.parentTaskId,
+            )
+          : Text(
+              task.name,
+              style: theme.textTheme.titleMedium,
+              overflow: TextOverflow.ellipsis,
+            ),
       subtitle: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [

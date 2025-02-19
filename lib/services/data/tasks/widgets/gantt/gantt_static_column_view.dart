@@ -2,7 +2,6 @@ import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:seren_ai_flutter/services/data/tasks/models/task_model.dart';
-import 'package:seren_ai_flutter/services/data/tasks/providers/cur_selected_task_id_notifier_provider.dart';
 import 'package:seren_ai_flutter/services/data/tasks/providers/task_by_id_stream_provider.dart';
 import 'package:seren_ai_flutter/services/data/tasks/providers/task_navigation_service.dart';
 import 'package:seren_ai_flutter/services/data/tasks/task_field_enum.dart';
@@ -11,7 +10,6 @@ import 'package:seren_ai_flutter/services/data/tasks/widgets/gantt/experimental/
 import 'package:seren_ai_flutter/services/data/tasks/widgets/gantt/experimental/gantt_task_visual_state_provider.dart';
 import 'package:seren_ai_flutter/services/data/tasks/widgets/inline_task_creation_widget.dart';
 import 'package:seren_ai_flutter/services/data/tasks/widgets/task_assignees_avatars.dart';
-import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 class GanttStaticColumnView extends ConsumerWidget {
   static const Map<TaskFieldEnum, double> columnWidths = {
@@ -150,14 +148,6 @@ class _StaticRowValues extends ConsumerWidget {
               final taskId = taskIds[rowIndex];
               final task = ref.watch(taskByIdStreamProvider(taskId)).value;
 
-              if (ref.watch(curInlineCreatingTaskIdProvider) == taskId) {
-                return InlineTaskCreationWidget(
-                  additionalFields: const [TaskFieldEnum.assignees],
-                  initialParentTaskId: task?.parentTaskId,
-                  isPhase: task?.isPhase ?? false,
-                );
-              }
-
               final visualState =
                   ref.watch(ganttTaskVisualStateProvider(taskId));
               final isVisible = ref.watch(ganttTaskVisibilityProvider(taskId));
@@ -222,64 +212,36 @@ class _StaticPhaseRow extends ConsumerWidget {
                     ),
                     const SizedBox(width: 4),
                     Expanded(
-                      child: InkWell(
-                        onTapDown: (details) => showMenu(
-                          context: context,
-                          position: RelativeRect.fromLTRB(
-                            details.globalPosition.dx,
-                            details.globalPosition.dy,
-                            details.globalPosition.dx + 1,
-                            details.globalPosition.dy + 1,
-                          ),
-                          items: [
-                            PopupMenuItem(
-                              enabled: false,
-                              child: _TaskDetailsPopup(task),
-                            )
-                          ],
-                        ),
-                        child: Text(
-                          task.name,
-                          maxLines: 1,
-                          overflow: TextOverflow.ellipsis,
-                        ),
-                      ),
+                      child:
+                          task.id == ref.watch(curInlineCreatingTaskIdProvider)
+                              ? InlineTaskNameField(
+                                  taskId: taskId,
+                                  isPhase: true,
+                                )
+                              : InkWell(
+                                  onTapDown: (details) => showMenu(
+                                    context: context,
+                                    position: RelativeRect.fromLTRB(
+                                      details.globalPosition.dx,
+                                      details.globalPosition.dy,
+                                      details.globalPosition.dx + 1,
+                                      details.globalPosition.dy + 1,
+                                    ),
+                                    items: [
+                                      PopupMenuItem(
+                                        enabled: false,
+                                        child: _TaskDetailsPopup(task),
+                                      )
+                                    ],
+                                  ),
+                                  child: Text(
+                                    task.name,
+                                    maxLines: 1,
+                                    overflow: TextOverflow.ellipsis,
+                                  ),
+                                ),
                     ),
-                    TextButton.icon(
-                      onPressed: () async => ref
-                              .read(curInlineCreatingTaskIdProvider.notifier)
-                              .state =
-                          await ref
-                              .read(curSelectedTaskIdNotifierProvider.notifier)
-                              .createNewTask(isPhase: true),
-                      icon: Icon(
-                        Icons.add,
-                        color: Theme.of(context).colorScheme.outline,
-                      ),
-                      label: Text(AppLocalizations.of(context)!.phase),
-                      style: TextButton.styleFrom(
-                        visualDensity: VisualDensity.compact,
-                        foregroundColor: Theme.of(context).colorScheme.outline,
-                      ),
-                    ),
-                    const SizedBox(width: 4),
-                    TextButton.icon(
-                      onPressed: () async => ref
-                              .read(curInlineCreatingTaskIdProvider.notifier)
-                              .state =
-                          await ref
-                              .read(curSelectedTaskIdNotifierProvider.notifier)
-                              .createNewTask(initialParentTaskId: taskId),
-                      icon: Icon(
-                        Icons.add,
-                        color: Theme.of(context).colorScheme.outline,
-                      ),
-                      label: Text(AppLocalizations.of(context)!.task),
-                      style: TextButton.styleFrom(
-                        visualDensity: VisualDensity.compact,
-                        foregroundColor: Theme.of(context).colorScheme.outline,
-                      ),
-                    ),
+                    InlineTaskCreationButton(initialParentTaskId: taskId),
                   ],
                 ),
               ),
@@ -423,28 +385,39 @@ class _StaticCellContent extends ConsumerWidget {
     if (task == null) return const SizedBox.shrink();
     switch (fieldType) {
       case TaskFieldEnum.name:
+        if (task.id == ref.watch(curInlineCreatingTaskIdProvider)) {
+          return InlineTaskNameField(
+            taskId: taskId,
+            initialParentTaskId: task.parentTaskId,
+          );
+        }
         // We needed to move InkWell to prevent the parent's onTap
         // from blocking the menu from being shown for status/priority fields.
-        return InkWell(
-          onTapDown: (details) => showMenu(
-            context: context,
-            position: RelativeRect.fromLTRB(
-              details.globalPosition.dx,
-              details.globalPosition.dy,
-              details.globalPosition.dx + 1,
-              details.globalPosition.dy + 1,
-            ),
-            items: [
-              PopupMenuItem(
-                enabled: false,
-                child: _TaskDetailsPopup(task),
-              )
-            ],
+        return Padding(
+          padding: EdgeInsets.only(
+            left: task.parentTaskId == null ? 0 : 16,
           ),
-          child: Text(
-            task.name,
-            maxLines: 2,
-            overflow: TextOverflow.ellipsis,
+          child: InkWell(
+            onTapDown: (details) => showMenu(
+              context: context,
+              position: RelativeRect.fromLTRB(
+                details.globalPosition.dx,
+                details.globalPosition.dy,
+                details.globalPosition.dx + 1,
+                details.globalPosition.dy + 1,
+              ),
+              items: [
+                PopupMenuItem(
+                  enabled: false,
+                  child: _TaskDetailsPopup(task),
+                )
+              ],
+            ),
+            child: Text(
+              task.name,
+              maxLines: 2,
+              overflow: TextOverflow.ellipsis,
+            ),
           ),
         );
       case TaskFieldEnum.status:

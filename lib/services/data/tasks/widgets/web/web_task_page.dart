@@ -8,7 +8,6 @@ import 'package:seren_ai_flutter/services/data/tasks/providers/cur_selected_task
 import 'package:seren_ai_flutter/services/data/tasks/providers/task_by_id_stream_provider.dart';
 import 'package:seren_ai_flutter/services/data/tasks/providers/tasks_by_parent_stream_provider.dart';
 import 'package:seren_ai_flutter/services/data/tasks/repositories/tasks_repository.dart';
-import 'package:seren_ai_flutter/services/data/tasks/task_field_enum.dart';
 import 'package:seren_ai_flutter/services/data/tasks/widgets/action_buttons/delete_task_button.dart';
 import 'package:seren_ai_flutter/services/data/tasks/widgets/budget/task_budget_section.dart';
 import 'package:seren_ai_flutter/services/data/tasks/widgets/form/task_selection_fields.dart';
@@ -79,11 +78,7 @@ class _TasksFromPhaseSection extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final curInlineCreatingTaskId = ref.watch(curInlineCreatingTaskIdProvider);
-    final tasks = ref.watch(tasksByParentStreamProvider(phaseId)).whenData(
-        (tasks) => tasks
-            ?.where((task) => task.id != curInlineCreatingTaskId)
-            .toList());
+    final tasks = ref.watch(tasksByParentStreamProvider(phaseId));
     final labelStyle = Theme.of(context).textTheme.bodyMedium?.copyWith(
           fontWeight: FontWeight.bold,
         );
@@ -135,8 +130,8 @@ class _TasksFromPhaseSection extends ConsumerWidget {
               ),
               SizedBox(
                 width: double.infinity,
-                child: InlineTaskCreationWidget(
-                  additionalFields: const [TaskFieldEnum.assignees],
+                child: InlineTaskCreationButton(
+                  // additionalFields: const [TaskFieldEnum.assignees],
                   initialParentTaskId: phaseId,
                 ),
               ),

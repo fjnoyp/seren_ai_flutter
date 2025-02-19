@@ -4,6 +4,7 @@ import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:seren_ai_flutter/services/data/tasks/widgets/gantt/gantt_task_snp.dart';
 import 'package:seren_ai_flutter/services/data/tasks/widgets/gantt/gantt_view.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+import 'package:seren_ai_flutter/services/data/tasks/widgets/inline_task_creation_widget.dart';
 
 class GanttTaskPage extends ConsumerWidget {
   const GanttTaskPage({super.key});
@@ -97,6 +98,10 @@ class GanttChart extends HookConsumerWidget {
 
     return Column(
       children: [
+        const Align(
+          alignment: Alignment.centerLeft,
+          child: InlineTaskCreationButton(isPhase: true),
+        ),
         Expanded(
           child: GanttView(
             staticHeadersValues: ['Task Name'],
