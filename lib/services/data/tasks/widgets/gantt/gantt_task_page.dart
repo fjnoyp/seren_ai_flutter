@@ -40,6 +40,7 @@ class GanttChart extends HookConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final viewType = useState(GanttViewType.week);
     final horizontalScrollController = useState<ScrollController?>(null);
+    final verticalScrollController = useState<ScrollController?>(null);
 
     // Initialize the controller
     useEffect(() {
@@ -60,6 +61,12 @@ class GanttChart extends HookConsumerWidget {
       });
       return null;
     }, [viewType.value]);
+
+    // Initialize the controller
+    useEffect(() {
+      verticalScrollController.value = ScrollController();
+      return () => verticalScrollController.value?.dispose();
+    }, []);
 
     final ganttTasks = ref.watch(ganttTaskProvider(projectId)).tasks;
 
@@ -98,9 +105,28 @@ class GanttChart extends HookConsumerWidget {
 
     return Column(
       children: [
-        const Align(
-          alignment: Alignment.centerLeft,
-          child: InlineTaskCreationButton(isPhase: true),
+        Row(
+          mainAxisAlignment: MainAxisAlignment.start,
+          children: [
+            // Inline phase creation
+            InlineTaskCreationButton(
+              isPhase: true,
+              onPressed: () => Future.microtask(() {
+                  if (verticalScrollController.value != null) {
+                    verticalScrollController.value!.jumpTo(0);
+                  }
+                }),
+            ),
+            const SizedBox(width: 8),
+            // Inline task creation
+            InlineTaskCreationButton(
+              onPressed: () => Future.microtask(() {
+                  if (verticalScrollController.value != null) {
+                    verticalScrollController.value!.jumpTo(0);
+                  }
+                }),
+            ),
+          ],
         ),
         Expanded(
           child: GanttView(
@@ -109,6 +135,7 @@ class GanttChart extends HookConsumerWidget {
             events: ganttEvents,
             viewType: viewType.value,
             horizontalScrollController: horizontalScrollController.value,
+            verticalScrollController: verticalScrollController.value,
           ),
         ),
         Padding(

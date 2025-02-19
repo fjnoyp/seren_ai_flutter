@@ -92,12 +92,19 @@ class TaskListItemView extends ConsumerWidget {
         ],
       ),
       trailing: task.id == ref.watch(curInlineCreatingTaskIdProvider)
-          ? TaskAssigneesSelectionField(
-              taskId: task.id,
-              context: context,
-              showLabelWidget: false,
+          ? SizedBox(
+              width: 92,
+              child: TaskAssigneesSelectionField(
+                taskId: task.id,
+                context: context,
+                showLabelWidget: false,
+              ),
             )
-          : TaskAssigneesAvatars(task.id),
+          : SizedBox(
+              width: 84,
+              child: TaskAssigneesAvatars(task.id),
+            ),
+
       onTap: onTap != null
           ? () => onTap!(task.id)
           : () => ref

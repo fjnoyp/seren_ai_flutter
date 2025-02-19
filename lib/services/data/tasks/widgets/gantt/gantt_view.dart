@@ -50,6 +50,7 @@ class GanttView extends HookConsumerWidget {
   final GanttViewType viewType;
 
   final ScrollController? horizontalScrollController;
+  final ScrollController? verticalScrollController;
 
   const GanttView({
     super.key,
@@ -58,6 +59,7 @@ class GanttView extends HookConsumerWidget {
     required this.events,
     required this.viewType,
     this.horizontalScrollController,
+    this.verticalScrollController,
   });
 
   static const double cellHeight = 50.0;
@@ -74,7 +76,8 @@ class GanttView extends HookConsumerWidget {
 
     final mainHorizontalController =
         horizontalScrollController ?? useScrollController();
-    final mainVerticalController = useScrollController();
+    final mainVerticalController =
+        verticalScrollController ?? useScrollController();
     final headerController = useScrollController();
     final leftController = useScrollController();
 

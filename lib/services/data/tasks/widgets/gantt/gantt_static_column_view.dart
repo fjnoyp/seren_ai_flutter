@@ -243,7 +243,8 @@ class _StaticPhaseRow extends ConsumerWidget {
                                   ),
                                 ),
                     ),
-                    InlineTaskCreationButton(initialParentTaskId: taskId),
+                    if (task.id != ref.watch(curInlineCreatingTaskIdProvider))
+                      InlineTaskCreationButton(initialParentTaskId: taskId),
                   ],
                 ),
               ),

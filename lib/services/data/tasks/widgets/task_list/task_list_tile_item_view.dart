@@ -24,7 +24,8 @@ class TaskListTileItemView extends ConsumerWidget {
     final dueDateColor = getDueDateColor(task.dueDate);
     final taskAssignees = ref.watch(taskAssignedUsersStreamProvider(task.id));
 
-    final isCreatingTask = task.id == ref.watch(curInlineCreatingTaskIdProvider);
+    final isCreatingTask =
+        task.id == ref.watch(curInlineCreatingTaskIdProvider);
 
     return ListTile(
       dense: true,
@@ -46,10 +47,13 @@ class TaskListTileItemView extends ConsumerWidget {
         mainAxisSize: MainAxisSize.min,
         children: [
           if (isCreatingTask)
-            TaskAssigneesSelectionField(
-              taskId: task.id,
-              context: context,
-              showLabelWidget: false,
+            SizedBox(
+              width: 92,
+              child: TaskAssigneesSelectionField(
+                taskId: task.id,
+                context: context,
+                showLabelWidget: false,
+              ),
             )
           else
             ...(taskAssignees.valueOrNull ?? [])
