@@ -49,24 +49,32 @@ class BaseNameField extends HookConsumerWidget {
     */
 
     // Add focus listener using useEffect to properly handle tap outside for web
-    useEffect(() {
-      void onFocusChange() {
-        if (!focusNode.hasFocus && nameController.text != curName) {
-          if (nameController.text != curName) {
-            updateName(ref, nameController.text);
-          }
-          FocusScope.of(context).unfocus();
-        }
-      }
+    // useEffect(() {
+    //   void onFocusChange() {
+    //     if (!focusNode.hasFocus && nameController.text != curName) {
+    //       if (nameController.text != curName) {
+    //         updateName(ref, nameController.text);
+    //       }
+    //       FocusScope.of(context).unfocus();
+    //     }
+    //   }
 
-      focusNode.addListener(onFocusChange);
-      return () => focusNode.removeListener(onFocusChange);
-    }, [focusNode]);
+    //   focusNode.addListener(onFocusChange);
+    //   return () => focusNode.removeListener(onFocusChange);
+    // }, [focusNode]);
+
+    // Update the task name only when editing is complete or when tapping outside
+    void updateTaskName() {
+      if (nameController.text != curName) {
+        updateName(ref, nameController.text);
+      }
+      FocusScope.of(context).unfocus(); // Hide the keyboard
+    }
 
     return AnimatedBuilder(
       animation: colorAnimation.colorTween,
       builder: (context, child) {
-        nameController.text = curName;
+        // nameController.text = curName;
         return TextField(
           minLines: 1,
           maxLines: null,
@@ -74,17 +82,9 @@ class BaseNameField extends HookConsumerWidget {
           controller: nameController,
           enabled: isEditable,
           textInputAction: TextInputAction.done,
-          onEditingComplete: () {
-            if (nameController.text != curName) {
-              updateName(ref, nameController.text);
-            }
-            FocusScope.of(context).unfocus(); // Hide the keyboard
-          },
-          onTapOutside: (event) {
-            if (nameController.text != curName) {
-              updateName(ref, nameController.text);
-            }
-            FocusScope.of(context).unfocus(); // Hide the keyboard
+          onEditingComplete: updateTaskName, // Update on editing complete
+          onTapOutside: (_) {
+            updateTaskName(); // Update on tap outside
           },
           decoration: InputDecoration(
             hintText: 'Enter name',
