@@ -4,6 +4,7 @@ import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:seren_ai_flutter/services/data/tasks/widgets/gantt/gantt_task_snp.dart';
 import 'package:seren_ai_flutter/services/data/tasks/widgets/gantt/gantt_view.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+import 'package:seren_ai_flutter/services/data/tasks/widgets/inline_creation/inline_task_creation_button.dart';
 
 class GanttTaskPage extends ConsumerWidget {
   const GanttTaskPage({super.key});
@@ -39,6 +40,7 @@ class GanttChart extends HookConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final viewType = useState(GanttViewType.week);
     final horizontalScrollController = useState<ScrollController?>(null);
+    final verticalScrollController = useState<ScrollController?>(null);
 
     // Initialize the controller
     useEffect(() {
@@ -59,6 +61,12 @@ class GanttChart extends HookConsumerWidget {
       });
       return null;
     }, [viewType.value]);
+
+    // Initialize the controller
+    useEffect(() {
+      verticalScrollController.value = ScrollController();
+      return () => verticalScrollController.value?.dispose();
+    }, []);
 
     final ganttTasks = ref.watch(ganttTaskProvider(projectId)).tasks;
 
@@ -97,6 +105,29 @@ class GanttChart extends HookConsumerWidget {
 
     return Column(
       children: [
+        Row(
+          mainAxisAlignment: MainAxisAlignment.start,
+          children: [
+            // Inline phase creation
+            InlineTaskCreationButton(
+              isPhase: true,
+              onPressed: () => Future.microtask(() {
+                  if (verticalScrollController.value != null) {
+                    verticalScrollController.value!.jumpTo(0);
+                  }
+                }),
+            ),
+            const SizedBox(width: 8),
+            // Inline task creation
+            InlineTaskCreationButton(
+              onPressed: () => Future.microtask(() {
+                  if (verticalScrollController.value != null) {
+                    verticalScrollController.value!.jumpTo(0);
+                  }
+                }),
+            ),
+          ],
+        ),
         Expanded(
           child: GanttView(
             staticHeadersValues: ['Task Name'],
@@ -104,6 +135,7 @@ class GanttChart extends HookConsumerWidget {
             events: ganttEvents,
             viewType: viewType.value,
             horizontalScrollController: horizontalScrollController.value,
+            verticalScrollController: verticalScrollController.value,
           ),
         ),
         Padding(
