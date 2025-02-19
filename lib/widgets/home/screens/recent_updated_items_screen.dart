@@ -46,7 +46,7 @@ class RecentUpdatedItemsScreen extends ConsumerWidget {
                 color: Theme.of(context)
                     .colorScheme
                     .primary
-                    .withValues(alpha: 0.5),
+                    .withAlpha(128),
                 thickness: 1,
               ),
             ),
@@ -73,7 +73,7 @@ class RecentUpdatedItemsScreen extends ConsumerWidget {
               Padding(
                 padding: const EdgeInsets.symmetric(horizontal: 8),
                 child: Divider(
-                  color: Theme.of(context).dividerColor.withValues(alpha: 0.15),
+                  color: Theme.of(context).dividerColor.withAlpha(38),
                   height: 1,
                 ),
               ),
