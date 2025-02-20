@@ -8,6 +8,8 @@ import 'package:seren_ai_flutter/services/data/tasks/widgets/gantt/experimental/
 
 enum GanttCellDurationType { days, hours }
 
+const _dragBordersHandleWidth = 20.0;
+
 class GanttTaskDataItemBarView extends ConsumerWidget {
   final String taskId;
   final double cellWidth;
@@ -37,7 +39,8 @@ class GanttTaskDataItemBarView extends ConsumerWidget {
     return cellWidth *
         (cellDurationType == GanttCellDurationType.days
             ? differenceFromStart.inDays
-            : differenceFromStart.inHours);
+            : differenceFromStart.inHours) -
+        _dragBordersHandleWidth;
   }
 
   @override
@@ -340,7 +343,7 @@ class _TaskContainer extends HookWidget {
               hoverColor: Colors.white,
               child: Tooltip(
                 message: "Change start date",
-                child: SizedBox(width: 6, height: cellHeight),
+                child: SizedBox(width: _dragBordersHandleWidth, height: cellHeight),
               ),
             ),
           ),
@@ -376,7 +379,7 @@ class _TaskContainer extends HookWidget {
                 dragType.value = _DragType.all;
               },
               child: Container(
-                width: (width ?? cellWidth * 0.3) - 12,
+                width: (width ?? cellWidth * 0.3),
                 height: cellHeight - 10,
                 decoration: BoxDecoration(
                   color: color,
@@ -400,7 +403,7 @@ class _TaskContainer extends HookWidget {
               hoverColor: Colors.white,
               child: Tooltip(
                 message: "Change end date",
-                child: SizedBox(width: 6, height: cellHeight),
+                child: SizedBox(width: _dragBordersHandleWidth, height: cellHeight),
               ),
             ),
           ),

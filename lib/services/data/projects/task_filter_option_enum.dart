@@ -29,56 +29,66 @@ enum TaskFilterOption {
     }
   }
 
-  List<({String value, String name, bool Function(TaskModel)? filter})>
+  List<({String value, String name, bool Function(TaskModel, WidgetRef ref)? filter})>
       getSubOptions(BuildContext context, WidgetRef ref) {
     switch (this) {
       case TaskFilterOption.assignees:
-        // TODO p3: add "not assigned" option
-        return ref
-                .watch(usersInProjectProvider(
-                    ref.watch(curSelectedProjectStreamProvider).value!.id))
-                .value
-                ?.map((e) {
-              // Create a new function that captures only what it needs
-              final userId = e.id;
-              bool filterFunction(TaskModel task) {
-                final assignees = ref
-                        .read(taskAssignedUsersStreamProvider(
-                            task.id)) // Use read instead of watch
-                        .valueOrNull ??
-                    [];
-                return assignees.any((assignee) => assignee.id == userId);
-              }
+        final projectId = ref.watch(curSelectedProjectStreamProvider).value?.id;
+        if (projectId == null) return []; // Handle null projectId
 
-              return (
-                value: e.id,
-                name: '${e.firstName} ${e.lastName}',
-                filter: filterFunction
-              );
-            }).toList() ??
-            [];
+        return [
+          ...(ref.watch(usersInProjectProvider(projectId)).value?.map((e) {
+                // Create a new function that captures only what it needs
+                final userId = e.id;
+                bool filterFunction(task, ref) {
+                  final assignees = ref
+                          .read(taskAssignedUsersStreamProvider(
+                              task.id)) // Use read instead of watch
+                          .value ??
+                      [];
+                  return assignees.any((assignee) => assignee.id == userId);
+                }
+
+                return (
+                  value: e.id,
+                  name: '${e.firstName} ${e.lastName}',
+                  filter: filterFunction
+                );
+              }) ??
+              []),
+          (
+            value: 'notAssigned',
+            name: AppLocalizations.of(context)!.notAssigned,
+            filter: (task, ref) =>
+                ref
+                    .read(taskAssignedUsersStreamProvider(task.id))
+                    .value
+                    ?.isEmpty ??
+                true
+          )
+        ];
 
       case TaskFilterOption.dueDate:
         return [
           (
             value: 'overdue',
             name: AppLocalizations.of(context)!.overdue,
-            filter: (task) => task.dueDate?.isBefore(DateTime.now()) ?? false
+            filter: (task, ref) => task.dueDate?.isBefore(DateTime.now()) ?? false
           ),
           (
             value: 'today',
             name: AppLocalizations.of(context)!.today,
-            filter: (task) => task.dueDate?.isSameDate(DateTime.now()) ?? false
+            filter: (task, ref) => task.dueDate?.isSameDate(DateTime.now()) ?? false
           ),
           (
             value: 'thisWeek',
             name: AppLocalizations.of(context)!.thisWeek,
-            filter: (task) => task.dueDate?.isSameWeek(DateTime.now()) ?? false
+            filter: (task, ref) => task.dueDate?.isSameWeek(DateTime.now()) ?? false
           ),
           (
             value: 'thisMonth',
             name: AppLocalizations.of(context)!.thisMonth,
-            filter: (task) => task.dueDate?.isSameMonth(DateTime.now()) ?? false
+            filter: (task, ref) => task.dueDate?.isSameMonth(DateTime.now()) ?? false
           ),
           (
             value: 'customDateRange',
@@ -92,7 +102,7 @@ enum TaskFilterOption {
             .map((e) => (
                   value: e.name,
                   name: e.toHumanReadable(context),
-                  filter: (task) => task.priority == e
+                  filter: (task, ref) => task.priority == e
                 ))
             .toList();
 
@@ -101,19 +111,19 @@ enum TaskFilterOption {
           (
             value: 'today',
             name: AppLocalizations.of(context)!.today,
-            filter: (task) =>
+            filter: (task, ref) =>
                 task.createdAt?.isSameDate(DateTime.now()) ?? false
           ),
           (
             value: 'thisWeek',
             name: AppLocalizations.of(context)!.thisWeek,
-            filter: (task) =>
+            filter: (task, ref) =>
                 task.createdAt?.isSameWeek(DateTime.now()) ?? false
           ),
           (
             value: 'thisMonth',
             name: AppLocalizations.of(context)!.thisMonth,
-            filter: (task) =>
+            filter: (task, ref) =>
                 task.createdAt?.isSameMonth(DateTime.now()) ?? false
           ),
           (
@@ -128,7 +138,7 @@ enum TaskFilterOption {
             .map((e) => (
                   value: e.name,
                   name: e.toHumanReadable(context),
-                  filter: (task) => task.type == e
+                  filter: (task, ref) => task.type == e
                 ))
             .toList();
     }

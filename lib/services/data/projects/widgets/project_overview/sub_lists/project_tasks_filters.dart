@@ -133,8 +133,8 @@ class _FilterChip extends ConsumerWidget {
                         value: '${filter.name}_${option.value}',
                         name:
                             '${filter.getDisplayName(context)}: ${DateFormat.MMMd().format(value.start)} - ${DateFormat.Md().format(value.end)}',
-                        filter: (task) =>
-                            option.filter?.call(task) ??
+                        filter: (task, ref) =>
+                            option.filter?.call(task, ref) ??
                             filter.filterFunction(task, value)
                       ));
                     }
@@ -143,8 +143,8 @@ class _FilterChip extends ConsumerWidget {
                   filterNotifier.updateFilter(index, (
                     value: '${filter.name}_${option.value}',
                     name: '${filter.getDisplayName(context)}: ${option.name}',
-                    filter: (task) =>
-                        option.filter?.call(task) ??
+                    filter: (task, ref) =>
+                        option.filter?.call(task, ref) ??
                         filter.filterFunction(task, null)
                   ));
                 }

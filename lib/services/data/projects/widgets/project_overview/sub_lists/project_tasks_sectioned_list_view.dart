@@ -5,6 +5,7 @@ import 'package:seren_ai_flutter/services/data/common/widgets/async_value_handle
 import 'package:seren_ai_flutter/services/data/projects/providers/cur_selected_project_providers.dart';
 import 'package:seren_ai_flutter/services/data/projects/widgets/project_overview/sub_lists/create_task_button.dart';
 import 'package:seren_ai_flutter/services/data/tasks/providers/tasks_by_project_stream_provider.dart';
+import 'package:seren_ai_flutter/services/data/tasks/widgets/inline_creation/cur_inline_creating_task_id_provider.dart';
 import 'package:seren_ai_flutter/services/data/tasks/widgets/inline_creation/inline_task_creation_button.dart';
 import 'package:seren_ai_flutter/services/data/tasks/providers/task_filter_state_provider.dart';
 import 'package:seren_ai_flutter/services/data/tasks/widgets/task_list/task_list_tile_item_view.dart';
@@ -22,6 +23,8 @@ class ProjectTasksSectionedListView extends ConsumerWidget {
     // between both those views at the moment.
     final filterState = ref.watch(taskFilterStateProvider);
 
+    final curInlineCreatingTaskId = ref.watch(curInlineCreatingTaskIdProvider);
+
     return AsyncValueHandlerWidget(
       value: ref.watch(tasksByProjectStreamProvider(projectId)),
       data: (tasks) {
@@ -36,7 +39,8 @@ class ProjectTasksSectionedListView extends ConsumerWidget {
                 final filteredTasks = tasks
                         ?.where((task) =>
                             task.status == status &&
-                            filterState.filterCondition(task))
+                                filterState.filterCondition(task, ref) ||
+                            task.id == curInlineCreatingTaskId)
                         .toList() ??
                     [];
 

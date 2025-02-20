@@ -13,7 +13,7 @@ class TaskFilterState {
       ({
         String? value,
         String? name,
-        bool Function(TaskModel)? filter,
+        bool Function(TaskModel, WidgetRef)? filter,
       })> activeFilters;
 
   const TaskFilterState({
@@ -30,7 +30,7 @@ class TaskFilterState {
             ({
               String? value,
               String? name,
-              bool Function(TaskModel)? filter,
+              bool Function(TaskModel, WidgetRef)? filter,
             })>?
         activeFilters,
   }) {
@@ -41,7 +41,7 @@ class TaskFilterState {
     );
   }
 
-  bool Function(TaskModel) get filterCondition => (task) {
+  bool Function(TaskModel, WidgetRef) get filterCondition => (task, ref) {
         // Apply search filter
         if (searchQuery.isNotEmpty) {
           final searchResult =
@@ -52,7 +52,7 @@ class TaskFilterState {
         // Apply other filters
         for (var entry in activeFilters.entries) {
           if (entry.value.filter != null) {
-            final result = entry.value.filter!(task);
+            final result = entry.value.filter!(task, ref);
             if (!result) return false;
           }
         }
@@ -74,7 +74,7 @@ class TaskFilterStateNotifier extends StateNotifier<TaskFilterState> {
                 value: '${TaskFilterOption.type.name}_${TaskType.task.name}',
                 name:
                     '${TaskFilterOption.type.getDisplayName(context)}: ${TaskType.task.toHumanReadable(context)}',
-                filter: (task) => task.type == TaskType.task
+                filter: (task, ref) => task.type == TaskType.task
               )
             },
           ),
@@ -102,14 +102,14 @@ class TaskFilterStateNotifier extends StateNotifier<TaskFilterState> {
       ({
         String? value,
         String? name,
-        bool Function(TaskModel)? filter,
+        bool Function(TaskModel, WidgetRef)? filter,
       })? filter) {
     final newFilters = Map<
         int,
         ({
           String? value,
           String? name,
-          bool Function(TaskModel)? filter,
+          bool Function(TaskModel, WidgetRef)? filter,
         })>.from(state.activeFilters);
 
     if (filter != null) {

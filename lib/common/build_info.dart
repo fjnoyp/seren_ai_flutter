@@ -2,11 +2,11 @@
 class BuildInfo {
   // Core build info
   static const String version = '1.0.0';
-  static const String buildDate = '2025-02-18 17:46:02';
+  static const String buildDate = '2025-02-20 10:58:14';
   
   // Git info
-  static const String commitHash = 'f686231';
-  static const String branch = 'feat/drag-and-drop-tasks-on-project-board-view';
+  static const String commitHash = '3fe3e20';
+  static const String branch = 'fix/gantt-chart-and-filter-bugs';
   static const String lastTag = 'no tag';
   
   // Author of last commit
@@ -16,48 +16,48 @@ class BuildInfo {
   // Recent commits (last 5)
   static const List<Map<String, String>> recentCommits = [
     {
-      "hash": "f686231",
+      "hash": "3fe3e20",
       "author": "renata-sisilio",
       "email": "renata@seren-ai.co", 
-      "message": "feat(tasks): drag and dro tasks on project board view",
-      "date": "2025-02-18",
-      "relativeDate": "7 minutes ago"
+      "message": "fix(task_filters): bad state on using ref after widget was disposed",
+      "date": "2025-02-20",
+      "relativeDate": "12 minutes ago"
     },
     {
-      "hash": "378983a",
-      "author": "Kyle",
-      "email": "kylcheng@gmail.com", 
-      "message": "chore(home): add missing translations",
-      "date": "2025-02-18",
-      "relativeDate": "3 hours ago"
-    },
-    {
-      "hash": "9235bd2",
-      "author": "Kyle",
-      "email": "kylcheng@gmail.com", 
-      "message": "chore(home): re-add mobile quick create button",
-      "date": "2025-02-18",
-      "relativeDate": "3 hours ago"
-    },
-    {
-      "hash": "1f1f8df",
-      "author": "Kyle",
-      "email": "kylcheng@gmail.com", 
-      "message": "feat(home): complete home screen redo",
-      "date": "2025-02-18",
-      "relativeDate": "3 hours ago"
-    },
-    {
-      "hash": "5d27666",
+      "hash": "66c9fa0",
       "author": "renata-sisilio",
       "email": "renata@seren-ai.co", 
-      "message": "feat(notifications): use localized task notification title and body",
-      "date": "2025-02-18",
-      "relativeDate": "3 hours ago"
+      "message": "chore: use plain navigation (no animated transitions)",
+      "date": "2025-02-14",
+      "relativeDate": "6 days ago"
+    },
+    {
+      "hash": "3c837fa",
+      "author": "renata-sisilio",
+      "email": "renata@seren-ai.co", 
+      "message": "fix(tasks): task inline creation bugs + task project implicit navigation",
+      "date": "2025-02-19",
+      "relativeDate": "18 hours ago"
+    },
+    {
+      "hash": "6f316a3",
+      "author": "renata-sisilio",
+      "email": "renata@seren-ai.co", 
+      "message": "fix: The method 'withValues' isn't defined for the class 'Color' error",
+      "date": "2025-02-19",
+      "relativeDate": "25 hours ago"
+    },
+    {
+      "hash": "91a6e4f",
+      "author": "renata-sisilio",
+      "email": "renata@seren-ai.co", 
+      "message": "fix(android): google services + kotlin versions compatibility",
+      "date": "2025-02-19",
+      "relativeDate": "25 hours ago"
     },
   ];
 
   // Stats
-  static const String totalCommits = '356';
+  static const String totalCommits = '362';
   static const String contributors = '0';
 }

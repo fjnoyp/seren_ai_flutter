@@ -91,7 +91,7 @@ class TaskSearchModal extends HookConsumerWidget {
                     .whenData((tasks) => additionalFilter != null
                         ? tasks?.where(additionalFilter!).toList()
                         : tasks),
-                filterCondition: filterState.filterCondition,
+                filterCondition: (task) => filterState.filterCondition(task, ref),
                 // TODO p3: add sort
                 //sort: filterState.sortComparator,
                 onTapOption: onTapOption,
