@@ -2,10 +2,10 @@
 class BuildInfo {
   // Core build info
   static const String version = '1.0.0';
-  static const String buildDate = '2025-02-20 10:58:14';
+  static const String buildDate = '2025-02-20 11:37:22';
   
   // Git info
-  static const String commitHash = '3fe3e20';
+  static const String commitHash = '2b36f3c';
   static const String branch = 'fix/gantt-chart-and-filter-bugs';
   static const String lastTag = 'no tag';
   
@@ -16,12 +16,12 @@ class BuildInfo {
   // Recent commits (last 5)
   static const List<Map<String, String>> recentCommits = [
     {
-      "hash": "3fe3e20",
+      "hash": "2b36f3c",
       "author": "renata-sisilio",
       "email": "renata@seren-ai.co", 
       "message": "fix(task_filters): bad state on using ref after widget was disposed",
       "date": "2025-02-20",
-      "relativeDate": "12 minutes ago"
+      "relativeDate": "52 minutes ago"
     },
     {
       "hash": "66c9fa0",
@@ -37,7 +37,7 @@ class BuildInfo {
       "email": "renata@seren-ai.co", 
       "message": "fix(tasks): task inline creation bugs + task project implicit navigation",
       "date": "2025-02-19",
-      "relativeDate": "18 hours ago"
+      "relativeDate": "19 hours ago"
     },
     {
       "hash": "6f316a3",
@@ -45,7 +45,7 @@ class BuildInfo {
       "email": "renata@seren-ai.co", 
       "message": "fix: The method 'withValues' isn't defined for the class 'Color' error",
       "date": "2025-02-19",
-      "relativeDate": "25 hours ago"
+      "relativeDate": "26 hours ago"
     },
     {
       "hash": "91a6e4f",
@@ -53,7 +53,7 @@ class BuildInfo {
       "email": "renata@seren-ai.co", 
       "message": "fix(android): google services + kotlin versions compatibility",
       "date": "2025-02-19",
-      "relativeDate": "25 hours ago"
+      "relativeDate": "26 hours ago"
     },
   ];
 

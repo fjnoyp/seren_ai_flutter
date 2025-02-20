@@ -88,10 +88,6 @@ final _curProjectTasksHierarchyProvider =
   if (ganttChartWidgetRef == null) return {};
 
   // Build hierarchy map for O(1) lookups
-  // First identify tasks that pass the filter
-  final filteredTasks = tasks
-      .where((task) => filterState.filterCondition(task, ganttChartWidgetRef))
-      .toList();
 
   // Create a set of all task IDs we need to include (filtered tasks + their ancestors)
   final Set<String> tasksToInclude = {};
@@ -101,26 +97,30 @@ final _curProjectTasksHierarchyProvider =
   }
 
   // Add filtered tasks and their ancestors
-  for (final task in filteredTasks) {
-    tasksToInclude.add(task.id);
+  for (final task in tasks) {
+    if (filterState.filterCondition(task, ganttChartWidgetRef)) {
+      tasksToInclude.add(task.id);
 
-    // Add all ancestors
-    var currentTask = task;
-    while (currentTask.parentTaskId != null) {
-      final parent = tasks.firstWhere((t) => t.id == currentTask.parentTaskId);
-      tasksToInclude.add(parent.id);
-      currentTask = parent;
+      // Add all ancestors
+      var currentTask = task;
+      while (currentTask.parentTaskId != null) {
+        final parent =
+            tasks.firstWhere((t) => t.id == currentTask.parentTaskId);
+        tasksToInclude.add(parent.id);
+        currentTask = parent;
+      }
     }
   }
 
-  // Remove tasks that don't pass the filter
-  tasks.removeWhere((t) => !tasksToInclude.contains(t.id));
+  // Create a filtered list of tasks that pass the filter
+  final filteredTasks =
+      tasks.where((task) => tasksToInclude.contains(task.id)).toList();
 
   // Build hierarchy map including all necessary tasks
   final hierarchyMap = <String, TaskHierarchyInfo>{};
 
   // Add all required tasks to the hierarchy map
-  for (final task in tasks) {
+  for (final task in filteredTasks) {
     hierarchyMap[task.id] = TaskHierarchyInfo(
       taskId: task.id,
       parentId: task.parentTaskId,
@@ -130,7 +130,7 @@ final _curProjectTasksHierarchyProvider =
   }
 
   // Build relationships
-  for (final task in tasks) {
+  for (final task in filteredTasks) {
     if (task.parentTaskId != null) {
       hierarchyMap[task.parentTaskId]?.childrenIds.add(task.id);
     }
@@ -158,16 +158,15 @@ final _curProjectTasksHierarchyProvider =
         if (b == curInlineCreatingTaskId) {
           return 1;
         }
-        final taskA = tasks.firstWhere((t) => t.id == a);
-        final taskB = tasks.firstWhere((t) => t.id == b);
+        final taskA = filteredTasks.firstWhere((t) => t.id == a);
+        final taskB = filteredTasks.firstWhere((t) => t.id == b);
         return sortComparator(taskA, taskB);
       });
     }
 
     // Sort root tasks
-    final rootTasks = tasks
-        .where((t) => t.parentTaskId == null && tasksToInclude.contains(t.id))
-        .toList();
+    final rootTasks =
+        filteredTasks.where((t) => t.parentTaskId == null).toList();
     rootTasks.sort((a, b) {
       // If we are creating a new task or phase, move it to the top
       if (a.id == curInlineCreatingTaskId) {
