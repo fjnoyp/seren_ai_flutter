@@ -27,9 +27,6 @@ class GanttTaskPage extends ConsumerWidget {
     ));
   }
 }
-
-final ganttChartWidgetRefProvider = StateProvider<WidgetRef?>((ref) => null);
-
 class GanttChart extends HookConsumerWidget {
   const GanttChart({super.key, required this.projectId});
 
@@ -40,10 +37,6 @@ class GanttChart extends HookConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    Future.microtask(() {
-      ref.read(ganttChartWidgetRefProvider.notifier).state = ref;
-    });
-
     final viewType = useState(GanttViewType.week);
     final horizontalScrollController = useState<ScrollController?>(null);
     final verticalScrollController = useState<ScrollController?>(null);

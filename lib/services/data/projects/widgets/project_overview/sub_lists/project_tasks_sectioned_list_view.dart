@@ -39,7 +39,7 @@ class ProjectTasksSectionedListView extends ConsumerWidget {
                 final filteredTasks = tasks
                         ?.where((task) =>
                             task.status == status &&
-                                filterState.filterCondition(task, ref) ||
+                                filterState.filterCondition(task) ||
                             task.id == curInlineCreatingTaskId)
                         .toList() ??
                     [];

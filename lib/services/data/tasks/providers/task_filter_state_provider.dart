@@ -28,7 +28,7 @@ class TaskFilterState {
     );
   }
 
-  bool Function(TaskModel, WidgetRef) get filterCondition => (task, ref) {
+  bool Function(TaskModel) get filterCondition => (task) {
         // Apply search filter
         if (searchQuery.isNotEmpty) {
           final searchResult =

@@ -4,7 +4,6 @@ import 'package:seren_ai_flutter/services/data/tasks/models/task_model.dart';
 import 'package:seren_ai_flutter/services/data/tasks/providers/cur_user_viewable_tasks_stream_provider.dart';
 import 'package:seren_ai_flutter/services/data/tasks/providers/tasks_by_project_stream_provider.dart';
 import 'package:seren_ai_flutter/services/data/tasks/providers/task_filter_state_provider.dart';
-import 'package:seren_ai_flutter/services/data/tasks/widgets/gantt/gantt_task_page.dart';
 import 'package:seren_ai_flutter/services/data/tasks/widgets/inline_creation/cur_inline_creating_task_id_provider.dart';
 
 class TaskHierarchyInfo {
@@ -83,10 +82,6 @@ final _curProjectTasksHierarchyProvider =
           .value ??
       [];
 
-  // We need a WidgetRef to use the filter conditions without getting ancestor related errors
-  final ganttChartWidgetRef = ref.watch(ganttChartWidgetRefProvider);
-  if (ganttChartWidgetRef == null) return {};
-
   // Build hierarchy map for O(1) lookups
 
   // Create a set of all task IDs we need to include (filtered tasks + their ancestors)
@@ -98,7 +93,7 @@ final _curProjectTasksHierarchyProvider =
 
   // Add filtered tasks and their ancestors
   for (final task in tasks) {
-    if (filterState.filterCondition(task, ganttChartWidgetRef)) {
+    if (filterState.filterCondition(task)) {
       tasksToInclude.add(task.id);
 
       // Add all ancestors

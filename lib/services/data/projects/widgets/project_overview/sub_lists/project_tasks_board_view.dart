@@ -100,7 +100,7 @@ class ProjectTasksBoardView extends ConsumerWidget {
             .watch(tasksByProjectStreamProvider(projectId))
             .valueOrNull
             ?.where((task) =>
-                filterState.filterCondition(task, ref) ||
+                filterState.filterCondition(task) ||
                 task.id == curInlineCreatingTaskId)
             .toList() ??
         [];

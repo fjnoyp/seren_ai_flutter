@@ -2,10 +2,10 @@
 class BuildInfo {
   // Core build info
   static const String version = '1.0.0';
-  static const String buildDate = '2025-02-20 17:44:17';
+  static const String buildDate = '2025-02-20 17:52:42';
   
   // Git info
-  static const String commitHash = 'b3a7ecf';
+  static const String commitHash = '382da0b';
   static const String branch = 'fix/gantt-chart-and-filter-bugs';
   static const String lastTag = 'no tag';
   
@@ -16,12 +16,12 @@ class BuildInfo {
   // Recent commits (last 5)
   static const List<Map<String, String>> recentCommits = [
     {
-      "hash": "b3a7ecf",
+      "hash": "382da0b",
       "author": "renata-sisilio",
       "email": "renata@seren-ai.co", 
       "message": "refactor(task_filters): simplify task filter/sort logic",
       "date": "2025-02-20",
-      "relativeDate": "38 minutes ago"
+      "relativeDate": "46 minutes ago"
     },
     {
       "hash": "ecb5519",
