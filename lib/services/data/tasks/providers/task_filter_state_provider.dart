@@ -1,20 +1,14 @@
 import 'package:flutter/widgets.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:seren_ai_flutter/common/navigation_service_provider.dart';
-import 'package:seren_ai_flutter/services/data/projects/task_filter_option_enum.dart';
-import 'package:seren_ai_flutter/services/data/projects/task_sort_option_enum.dart';
+import 'package:seren_ai_flutter/services/data/tasks/task_filter.dart';
 import 'package:seren_ai_flutter/services/data/tasks/models/task_model.dart';
+import 'package:seren_ai_flutter/services/data/tasks/task_field_enum.dart';
 
 class TaskFilterState {
   final String searchQuery;
-  final TaskSortOption? sortBy;
-  final Map<
-      int,
-      ({
-        String? value,
-        String? name,
-        bool Function(TaskModel, WidgetRef)? filter,
-      })> activeFilters;
+  final TaskFieldEnum? sortBy;
+  final List<TaskFilter> activeFilters;
 
   const TaskFilterState({
     this.searchQuery = '',
@@ -24,15 +18,8 @@ class TaskFilterState {
 
   TaskFilterState copyWith({
     String? searchQuery,
-    TaskSortOption? sortBy,
-    Map<
-            int,
-            ({
-              String? value,
-              String? name,
-              bool Function(TaskModel, WidgetRef)? filter,
-            })>?
-        activeFilters,
+    TaskFieldEnum? sortBy,
+    List<TaskFilter>? activeFilters,
   }) {
     return TaskFilterState(
       searchQuery: searchQuery ?? this.searchQuery,
@@ -50,9 +37,9 @@ class TaskFilterState {
         }
 
         // Apply other filters
-        for (var entry in activeFilters.entries) {
-          if (entry.value.filter != null) {
-            final result = entry.value.filter!(task, ref);
+        for (var filter in activeFilters) {
+          if (filter.condition != null) {
+            final result = filter.condition!(task);
             if (!result) return false;
           }
         }
@@ -69,14 +56,13 @@ class TaskFilterStateNotifier extends StateNotifier<TaskFilterState> {
   TaskFilterStateNotifier(BuildContext context)
       : super(
           TaskFilterState(
-            activeFilters: {
-              0: (
-                value: '${TaskFilterOption.type.name}_${TaskType.task.name}',
-                name:
-                    '${TaskFilterOption.type.getDisplayName(context)}: ${TaskType.task.toHumanReadable(context)}',
-                filter: (task, ref) => task.type == TaskType.task
-              )
-            },
+            activeFilters: [
+              TaskFilter(
+                  field: TaskFieldEnum.type,
+                  value: TaskType.task.name,
+                  readableName: TaskType.task.toHumanReadable(context),
+                  condition: (task) => task.type == TaskType.task)
+            ],
           ),
         );
 
@@ -84,7 +70,7 @@ class TaskFilterStateNotifier extends StateNotifier<TaskFilterState> {
     state = state.copyWith(searchQuery: query);
   }
 
-  void updateSortOption(TaskSortOption? option) {
+  void updateSortOption(TaskFieldEnum? option) {
     if (option == null) {
       final curState = state;
       state = TaskFilterState(
@@ -97,31 +83,30 @@ class TaskFilterStateNotifier extends StateNotifier<TaskFilterState> {
     }
   }
 
-  void updateFilter(
-      int index,
-      ({
-        String? value,
-        String? name,
-        bool Function(TaskModel, WidgetRef)? filter,
-      })? filter) {
-    final newFilters = Map<
-        int,
-        ({
-          String? value,
-          String? name,
-          bool Function(TaskModel, WidgetRef)? filter,
-        })>.from(state.activeFilters);
-
-    if (filter != null) {
-      newFilters[index] = filter; // Add or update filter
-    } else {
-      newFilters.remove(index); // Remove filter if null
+  /// Updates the filter state with a new filter
+  /// If the filter already exists, it will be updated
+  /// Otherwise, it will be added
+  /// 
+  /// We should switch to add filters of the same type in future, to allow multiple selection
+  void updateFilter(TaskFilter newFilter) {
+    // If the filter already exists, update it
+    if (state.activeFilters.any((f) => f.field == newFilter.field)) {
+      final newFilters = state.activeFilters
+          .map((f) => f.field == newFilter.field ? newFilter : f)
+          .toList();
+      state = state.copyWith(activeFilters: newFilters);
+      return;
     }
 
-    state = state.copyWith(activeFilters: newFilters);
+    // Otherwise, add the filter
+    state = state.copyWith(activeFilters: [...state.activeFilters, newFilter]);
   }
 
-  void clearFilters() => state = const TaskFilterState(activeFilters: {});
+  void removeFilter(TaskFieldEnum field) {
+    final newFilters =
+        state.activeFilters.where((f) => f.field != field).toList();
+    state = state.copyWith(activeFilters: newFilters);
+  }
 }
 
 final taskFilterStateProvider =

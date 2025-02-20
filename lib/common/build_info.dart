@@ -2,10 +2,10 @@
 class BuildInfo {
   // Core build info
   static const String version = '1.0.0';
-  static const String buildDate = '2025-02-20 11:37:22';
+  static const String buildDate = '2025-02-20 17:44:17';
   
   // Git info
-  static const String commitHash = '2b36f3c';
+  static const String commitHash = 'b3a7ecf';
   static const String branch = 'fix/gantt-chart-and-filter-bugs';
   static const String lastTag = 'no tag';
   
@@ -16,12 +16,28 @@ class BuildInfo {
   // Recent commits (last 5)
   static const List<Map<String, String>> recentCommits = [
     {
+      "hash": "b3a7ecf",
+      "author": "renata-sisilio",
+      "email": "renata@seren-ai.co", 
+      "message": "refactor(task_filters): simplify task filter/sort logic",
+      "date": "2025-02-20",
+      "relativeDate": "38 minutes ago"
+    },
+    {
+      "hash": "ecb5519",
+      "author": "renata-sisilio",
+      "email": "renata@seren-ai.co", 
+      "message": "fix(gantt): filter removals on gantt chart",
+      "date": "2025-02-20",
+      "relativeDate": "6 hours ago"
+    },
+    {
       "hash": "2b36f3c",
       "author": "renata-sisilio",
       "email": "renata@seren-ai.co", 
       "message": "fix(task_filters): bad state on using ref after widget was disposed",
       "date": "2025-02-20",
-      "relativeDate": "52 minutes ago"
+      "relativeDate": "7 hours ago"
     },
     {
       "hash": "66c9fa0",
@@ -37,27 +53,11 @@ class BuildInfo {
       "email": "renata@seren-ai.co", 
       "message": "fix(tasks): task inline creation bugs + task project implicit navigation",
       "date": "2025-02-19",
-      "relativeDate": "19 hours ago"
-    },
-    {
-      "hash": "6f316a3",
-      "author": "renata-sisilio",
-      "email": "renata@seren-ai.co", 
-      "message": "fix: The method 'withValues' isn't defined for the class 'Color' error",
-      "date": "2025-02-19",
-      "relativeDate": "26 hours ago"
-    },
-    {
-      "hash": "91a6e4f",
-      "author": "renata-sisilio",
-      "email": "renata@seren-ai.co", 
-      "message": "fix(android): google services + kotlin versions compatibility",
-      "date": "2025-02-19",
-      "relativeDate": "26 hours ago"
+      "relativeDate": "25 hours ago"
     },
   ];
 
   // Stats
-  static const String totalCommits = '362';
+  static const String totalCommits = '364';
   static const String contributors = '0';
 }

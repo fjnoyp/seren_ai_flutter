@@ -1,14 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
-
 import 'package:seren_ai_flutter/services/ai_interaction/widgets/ai_assistant_button.dart';
 import 'package:seren_ai_flutter/services/data/projects/providers/cur_selected_project_providers.dart';
-import 'package:seren_ai_flutter/services/data/projects/task_filter_option_enum.dart';
 import 'package:seren_ai_flutter/services/data/projects/widgets/project_overview/sub_lists/project_tasks_filters.dart';
 import 'package:seren_ai_flutter/services/data/tasks/models/task_model.dart';
 import 'package:seren_ai_flutter/services/data/tasks/providers/task_filter_state_provider.dart';
 import 'package:seren_ai_flutter/services/data/tasks/providers/tasks_by_project_stream_provider.dart';
+import 'package:seren_ai_flutter/services/data/tasks/task_field_enum.dart';
 import 'package:seren_ai_flutter/services/data/tasks/widgets/task_list/tasks_list_tiles_view.dart';
 
 // TODO p3: add sort
@@ -26,7 +25,7 @@ class TaskSearchModal extends HookConsumerWidget {
   final void Function(String taskId)? onTapOption;
 
   /// Filters to hide from the filter list
-  final List<TaskFilterOption>? hiddenFilters;
+  final List<TaskFieldEnum>? hiddenFilters;
 
   /// Additional filter to apply to the tasks (e.g. only show tasks from a certain phase)
   final bool Function(TaskModel)? additionalFilter;
