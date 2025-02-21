@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
-import 'package:seren_ai_flutter/services/ai_interaction/ai_chat_service_provider.dart';
-import 'package:seren_ai_flutter/services/ai_interaction/langgraph/langgraph_service.dart';
-import 'package:seren_ai_flutter/services/ai_interaction/langgraph/models/lg_config_model.dart';
+import 'package:seren_ai_flutter/services/ai/ai_chat_service_provider.dart';
+import 'package:seren_ai_flutter/services/ai/langgraph/langgraph_service.dart';
+import 'package:seren_ai_flutter/services/ai/langgraph/models/lg_config_model.dart';
 import 'package:seren_ai_flutter/services/auth/cur_auth_state_provider.dart';
 import 'package:seren_ai_flutter/services/data/orgs/providers/cur_selected_org_id_notifier.dart';
 

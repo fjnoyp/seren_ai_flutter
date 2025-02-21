@@ -1,13 +1,9 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:seren_ai_flutter/services/ai_interaction/ai_chat_service_provider.dart';
+import 'package:seren_ai_flutter/services/ai/ai_chat_service_provider.dart';
 import 'speech_to_text_service_provider.dart';
 
-
-
-
-final speechToTextListenStateProvider =
-    StateNotifierProvider<SpeechToTextListenStateNotifier, SpeechToTextListenState>(
-        (ref) {
+final speechToTextListenStateProvider = StateNotifierProvider<
+    SpeechToTextListenStateNotifier, SpeechToTextListenState>((ref) {
   final speechService = ref.read(speechToTextServiceProvider);
   return SpeechToTextListenStateNotifier(speechService);
 });

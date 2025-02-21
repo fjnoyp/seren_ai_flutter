@@ -2,10 +2,10 @@
 class BuildInfo {
   // Core build info
   static const String version = '1.0.0';
-  static const String buildDate = '2025-02-21 10:33:07';
+  static const String buildDate = '2025-02-21 10:40:59';
   
   // Git info
-  static const String commitHash = '9277227';
+  static const String commitHash = 'bb70bde';
   static const String branch = 'feat/ai_summary_integrations';
   static const String lastTag = 'no tag';
   
@@ -16,12 +16,28 @@ class BuildInfo {
   // Recent commits (last 5)
   static const List<Map<String, String>> recentCommits = [
     {
+      "hash": "bb70bde",
+      "author": "Kyle",
+      "email": "kylcheng@gmail.com", 
+      "message": "chore(ai): update imports",
+      "date": "2025-02-21",
+      "relativeDate": "6 minutes ago"
+    },
+    {
+      "hash": "da2838b",
+      "author": "Kyle",
+      "email": "kylcheng@gmail.com", 
+      "message": "chore(ai): rename ai_interactions to ai",
+      "date": "2025-02-21",
+      "relativeDate": "8 minutes ago"
+    },
+    {
       "hash": "9277227",
       "author": "Kyle",
       "email": "kylcheng@gmail.com", 
       "message": "chore(ai): move ai chats into ai_interactions folder",
       "date": "2025-02-21",
-      "relativeDate": "37 seconds ago"
+      "relativeDate": "8 minutes ago"
     },
     {
       "hash": "32c6693",
@@ -29,7 +45,7 @@ class BuildInfo {
       "email": "kylcheng@gmail.com", 
       "message": "feat(ai): basic single call ai system with langgraph",
       "date": "2025-02-21",
-      "relativeDate": "5 minutes ago"
+      "relativeDate": "13 minutes ago"
     },
     {
       "hash": "76603ff",
@@ -39,25 +55,9 @@ class BuildInfo {
       "date": "2025-02-21",
       "relativeDate": "6 hours ago"
     },
-    {
-      "hash": "5fef38c",
-      "author": "renata-sisilio",
-      "email": "renata@seren-ai.co", 
-      "message": "fix: gantt chart and filter bugs (#159)",
-      "date": "2025-02-21",
-      "relativeDate": "6 hours ago"
-    },
-    {
-      "hash": "66c9fa0",
-      "author": "renata-sisilio",
-      "email": "renata@seren-ai.co", 
-      "message": "chore: use plain navigation (no animated transitions)",
-      "date": "2025-02-14",
-      "relativeDate": "7 days ago"
-    },
   ];
 
   // Stats
-  static const String totalCommits = '365';
+  static const String totalCommits = '367';
   static const String contributors = '       0';
 }

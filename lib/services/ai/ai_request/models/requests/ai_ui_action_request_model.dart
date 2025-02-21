@@ -1,4 +1,4 @@
-import 'package:seren_ai_flutter/services/ai_interaction/ai_request/models/requests/ai_request_model.dart';
+import 'package:seren_ai_flutter/services/ai/ai_request/models/requests/ai_request_model.dart';
 
 /// Subtypes of UI Action Type
 enum AiUIActionRequestType {
