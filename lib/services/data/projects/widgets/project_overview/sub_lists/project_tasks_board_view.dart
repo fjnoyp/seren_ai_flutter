@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:seren_ai_flutter/services/data/common/status_enum.dart';
 import 'package:seren_ai_flutter/services/data/projects/providers/cur_selected_project_providers.dart';
-import 'package:seren_ai_flutter/services/data/tasks/providers/tasks_by_project_stream_provider.dart';
 import 'package:seren_ai_flutter/services/data/tasks/repositories/tasks_repository.dart';
 import 'package:seren_ai_flutter/services/data/tasks/widgets/inline_creation/inline_task_creation_button.dart';
 import 'package:seren_ai_flutter/services/data/tasks/widgets/task_list/task_list_item_view.dart';
@@ -91,18 +90,7 @@ class ProjectTasksBoardView extends ConsumerWidget {
     final projectId = ref.watch(curSelectedProjectIdNotifierProvider);
     if (projectId == null) return const SizedBox.shrink();
 
-    final filterState = ref.watch(taskFilterStateProvider);
-
-    final tasks = ref
-            .watch(tasksByProjectStreamProvider(projectId))
-            .valueOrNull
-            ?.where(filterState.filterCondition)
-            .toList() ??
-        [];
-
-    if (filterState.sortComparator != null) {
-      tasks.sort(filterState.sortComparator);
-    }
+    final tasks = ref.watch(filteredTasksProvider(projectId));
 
     return Row(
       children: StatusEnum.values

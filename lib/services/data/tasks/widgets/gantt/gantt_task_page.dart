@@ -27,7 +27,6 @@ class GanttTaskPage extends ConsumerWidget {
     ));
   }
 }
-
 class GanttChart extends HookConsumerWidget {
   const GanttChart({super.key, required this.projectId});
 
@@ -112,19 +111,19 @@ class GanttChart extends HookConsumerWidget {
             InlineTaskCreationButton(
               isPhase: true,
               onPressed: () => Future.microtask(() {
-                  if (verticalScrollController.value != null) {
-                    verticalScrollController.value!.jumpTo(0);
-                  }
-                }),
+                if (verticalScrollController.value != null) {
+                  verticalScrollController.value!.jumpTo(0);
+                }
+              }),
             ),
             const SizedBox(width: 8),
             // Inline task creation
             InlineTaskCreationButton(
               onPressed: () => Future.microtask(() {
-                  if (verticalScrollController.value != null) {
-                    verticalScrollController.value!.jumpTo(0);
-                  }
-                }),
+                if (verticalScrollController.value != null) {
+                  verticalScrollController.value!.jumpTo(0);
+                }
+              }),
             ),
           ],
         ),

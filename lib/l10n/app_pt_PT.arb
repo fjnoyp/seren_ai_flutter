@@ -280,6 +280,7 @@
     "tasksListFinished": "Concluída",
     "createNewTask": "Criar Nova Tarefa",
     "chooseAssignees": "Escolher Responsáveis",
+    "notAssigned": "Não Atribuída",
     "chooseStartDate": "Escolher Data de Início",
     "selectATask": "Selecionar uma Tarefa",
     "choosePhase": "Escolher Etapa",
