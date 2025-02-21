@@ -6,7 +6,7 @@ import 'package:seren_ai_flutter/common/universal_platform/universal_platform.da
 import 'package:seren_ai_flutter/services/ai_interaction/ai_chat_service_provider.dart';
 import 'package:seren_ai_flutter/services/ai_interaction/widgets/ai_chat_text_field.dart';
 import 'package:seren_ai_flutter/services/data/ai_chats/models/ai_chat_thread_model.dart';
-import 'package:seren_ai_flutter/services/ai_interaction/widgets/testing/ai_debug_page.dart';
+import 'package:seren_ai_flutter/services/ai_interaction/widgets/testing/test_ai_page.dart';
 import 'package:seren_ai_flutter/services/data/ai_chats/providers/cur_user_ai_chat_messages_provider.dart';
 import 'package:seren_ai_flutter/services/data/ai_chats/providers/cur_user_ai_chat_thread_provider.dart';
 import 'package:seren_ai_flutter/services/data/ai_chats/widgets/ai_chat_message_view_card.dart';
@@ -53,7 +53,7 @@ class AIChatsPage extends HookConsumerWidget {
             ),
           Expanded(
             child: showDebugTest.value
-                ? const AiDebugPage()
+                ? const TestAiPage()
                 : const Column(
                     children: [
                       ChatThreadDisplay(),
@@ -190,7 +190,7 @@ class ChatMessagesDisplay extends HookConsumerWidget {
   }
 }
 
-// TODO p4: fix pagination, must fix the provider first 
+// TODO p4: fix pagination, must fix the provider first
 // class PaginatedChatMessagesDisplay extends HookConsumerWidget {
 //   const PaginatedChatMessagesDisplay({super.key});
 

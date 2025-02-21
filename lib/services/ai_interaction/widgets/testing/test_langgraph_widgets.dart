@@ -29,10 +29,10 @@ class TestLanggraphWidget extends HookConsumerWidget {
                   await langgraphService.langgraphApi.createAssistant(
                 name: 'Test Assistant',
                 lgConfig: LgConfigSchemaModel(
-                  userId: curUser!.id,
-                  orgId: curOrg!,
+                  //userId: curUser!.id,
+                  //orgId: curOrg!,
                   timezoneOffsetMinutes: 30,
-                  language: 'pt',
+                  //language: 'pt',
                 ),
               );
 
