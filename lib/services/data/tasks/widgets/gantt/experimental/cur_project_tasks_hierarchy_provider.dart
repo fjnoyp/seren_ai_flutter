@@ -1,8 +1,6 @@
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:seren_ai_flutter/services/data/projects/providers/cur_selected_project_providers.dart';
 import 'package:seren_ai_flutter/services/data/tasks/models/task_model.dart';
-import 'package:seren_ai_flutter/services/data/tasks/providers/cur_user_viewable_tasks_stream_provider.dart';
-import 'package:seren_ai_flutter/services/data/tasks/providers/tasks_by_project_stream_provider.dart';
 import 'package:seren_ai_flutter/services/data/tasks/providers/task_filter_state_provider.dart';
 import 'package:seren_ai_flutter/services/data/tasks/widgets/inline_creation/cur_inline_creating_task_id_provider.dart';
 
@@ -74,46 +72,13 @@ final taskParentChainIdsProvider =
 final _curProjectTasksHierarchyProvider =
     Provider<Map<String, TaskHierarchyInfo>>((ref) {
   final projectId = ref.watch(curSelectedProjectIdNotifierProvider);
-  final filterState = ref.watch(taskFilterStateProvider);
-  final tasks = ref
-          .watch(projectId == null
-              ? curUserViewableTasksStreamProvider
-              : tasksByProjectStreamProvider(projectId))
-          .value ??
-      [];
-
-  // Build hierarchy map for O(1) lookups
-  // First identify tasks that pass the filter
-  final filteredTasks = tasks.where(filterState.filterCondition).toList();
-
-  // Create a set of all task IDs we need to include (filtered tasks + their ancestors)
-  final Set<String> tasksToInclude = {};
-
-  if (ref.watch(curInlineCreatingTaskIdProvider) case String taskId) {
-    tasksToInclude.add(taskId);
-  }
-
-  // Add filtered tasks and their ancestors
-  for (final task in filteredTasks) {
-    tasksToInclude.add(task.id);
-
-    // Add all ancestors
-    var currentTask = task;
-    while (currentTask.parentTaskId != null) {
-      final parent = tasks.firstWhere((t) => t.id == currentTask.parentTaskId);
-      tasksToInclude.add(parent.id);
-      currentTask = parent;
-    }
-  }
-
-  // Remove tasks that don't pass the filter
-  tasks.removeWhere((t) => !tasksToInclude.contains(t.id));
+  final filteredTasks = ref.watch(filteredTasksAndParentsProvider(projectId));
 
   // Build hierarchy map including all necessary tasks
   final hierarchyMap = <String, TaskHierarchyInfo>{};
 
   // Add all required tasks to the hierarchy map
-  for (final task in tasks) {
+  for (final task in filteredTasks) {
     hierarchyMap[task.id] = TaskHierarchyInfo(
       taskId: task.id,
       parentId: task.parentTaskId,
@@ -123,7 +88,7 @@ final _curProjectTasksHierarchyProvider =
   }
 
   // Build relationships
-  for (final task in tasks) {
+  for (final task in filteredTasks) {
     if (task.parentTaskId != null) {
       hierarchyMap[task.parentTaskId]?.childrenIds.add(task.id);
     }
@@ -151,16 +116,15 @@ final _curProjectTasksHierarchyProvider =
         if (b == curInlineCreatingTaskId) {
           return 1;
         }
-        final taskA = tasks.firstWhere((t) => t.id == a);
-        final taskB = tasks.firstWhere((t) => t.id == b);
+        final taskA = filteredTasks.firstWhere((t) => t.id == a);
+        final taskB = filteredTasks.firstWhere((t) => t.id == b);
         return sortComparator(taskA, taskB);
       });
     }
 
     // Sort root tasks
-    final rootTasks = tasks
-        .where((t) => t.parentTaskId == null && tasksToInclude.contains(t.id))
-        .toList();
+    final rootTasks =
+        filteredTasks.where((t) => t.parentTaskId == null).toList();
     rootTasks.sort((a, b) {
       // If we are creating a new task or phase, move it to the top
       if (a.id == curInlineCreatingTaskId) {
@@ -201,6 +165,8 @@ final _curProjectTasksHierarchyProvider =
 
     return sortedMap;
   }
+
+  final filterState = ref.watch(taskFilterStateProvider);
 
   // Sort both root tasks and children lists according to the sort preference
   if (filterState.sortComparator != null) {
