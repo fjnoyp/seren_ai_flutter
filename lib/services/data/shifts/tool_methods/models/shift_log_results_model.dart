@@ -1,4 +1,4 @@
-import 'package:seren_ai_flutter/services/ai_interaction/ai_request/models/results/ai_request_result_model.dart';
+import 'package:seren_ai_flutter/services/ai/ai_request/models/results/ai_request_result_model.dart';
 import 'package:seren_ai_flutter/services/data/shifts/models/shift_log_model.dart';
 
 class ShiftLogsResultModel extends AiRequestResultModel {
@@ -26,8 +26,8 @@ class ShiftLogsResultModel extends AiRequestResultModel {
       resultForAi: json['result_for_ai'],
       showOnly: json['show_only'],
       curShiftMinutes: json['ongoing_shift_duration'],
-      totalLogMinutes: json['total_duration_logs'] ??
-          0, // Support old data format
+      totalLogMinutes:
+          json['total_duration_logs'] ?? 0, // Support old data format
     );
   }
 

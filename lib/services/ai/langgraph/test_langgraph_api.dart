@@ -1,11 +1,7 @@
-
-
-import 'package:seren_ai_flutter/services/ai_interaction/langgraph/langgraph_api.dart';
-import 'package:seren_ai_flutter/services/ai_interaction/langgraph/models/lg_ai_base_message_model.dart';
-import 'package:seren_ai_flutter/services/ai_interaction/langgraph/models/lg_ai_chat_message_role.dart';
-import 'package:seren_ai_flutter/services/ai_interaction/langgraph/models/lg_input_model.dart';
-
-
+import 'package:seren_ai_flutter/services/ai/langgraph/langgraph_api.dart';
+import 'package:seren_ai_flutter/services/ai/langgraph/models/lg_ai_base_message_model.dart';
+import 'package:seren_ai_flutter/services/ai/langgraph/models/lg_ai_chat_message_role.dart';
+import 'package:seren_ai_flutter/services/ai/langgraph/models/lg_input_model.dart';
 
 /*
 
@@ -41,41 +37,39 @@ Future<void> testLanggraphClientMethods() async {
   // await testGetThreadState(client, threadId);
 }
 
-
-
 LanggraphApi createLanggraphClient() {
   return LanggraphApi(
-    apiKey: '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', // Replace with your actual API key
+    apiKey:
+        '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', // Replace with your actual API key
     baseUrl: 'http://localhost:8123', // Replace with your actual base URL
   );
 }
 
-Future<void> streamRunExample(String content, LanggraphApi client, String threadId, String assistantId) async {  
+Future<void> streamRunExample(String content, LanggraphApi client,
+    String threadId, String assistantId) async {
   try {
-  Stream<LgAiBaseMessageModel> messageStream = client.streamRun(
-    threadId: threadId, 
-    assistantId: assistantId, 
-    streamMode: "updates",    
-    input: LgAgentStateModel(
-      messages: [
-        LgInputMessageModel(role: LgAiChatMessageRole.user, content: content)
-      ]
-    )
-  );
-  
-  await for (final message in messageStream) {
-    // Handle each message as it comes in
-    print("message: ${message.toString()}");
+    Stream<LgAiBaseMessageModel> messageStream = client.streamRun(
+        threadId: threadId,
+        assistantId: assistantId,
+        streamMode: "updates",
+        input: LgAgentStateModel(messages: [
+          LgInputMessageModel(role: LgAiChatMessageRole.user, content: content)
+        ]));
+
+    await for (final message in messageStream) {
+      // Handle each message as it comes in
+      print("message: ${message.toString()}");
+    }
+  } catch (e) {
+    // This will catch both stream errors and timeout exceptions
+    print('Stream error: $e');
   }
-} catch (e) {
-  // This will catch both stream errors and timeout exceptions
-  print('Stream error: $e');
-}
 }
 
 Future<void> testGetThreadRuns(LanggraphApi client) async {
   try {
-    final runs = await client.getThreadRuns('3ea75a49-76fe-45b3-b31d-43b22f40f613');
+    final runs =
+        await client.getThreadRuns('3ea75a49-76fe-45b3-b31d-43b22f40f613');
     print('Thread runs: $runs');
   } catch (e) {
     print('Error getting thread runs: $e');

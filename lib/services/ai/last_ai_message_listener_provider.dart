@@ -1,10 +1,10 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:seren_ai_flutter/services/data/ai_chats/models/ai_chat_message_model.dart';
+import 'package:seren_ai_flutter/services/ai/ai_chats/models/ai_chat_message_model.dart';
 import 'dart:async';
 
-final lastAiMessageListenerProvider = NotifierProvider<LastAiMessageListenerNotifier, List<AiChatMessageModel>>(
-  LastAiMessageListenerNotifier.new
-);
+final lastAiMessageListenerProvider =
+    NotifierProvider<LastAiMessageListenerNotifier, List<AiChatMessageModel>>(
+        LastAiMessageListenerNotifier.new);
 
 class LastAiMessageListenerNotifier extends Notifier<List<AiChatMessageModel>> {
   Timer? _timer;
@@ -18,7 +18,7 @@ class LastAiMessageListenerNotifier extends Notifier<List<AiChatMessageModel>> {
     //     if (lastMessage.type == AiChatMessageType.ai) {
     //       state = List.from([lastMessage]);
 
-    //       // base on message length determine timeout seconds 
+    //       // base on message length determine timeout seconds
     //       final timeoutSeconds = (lastMessage.content.length ~/ 10).clamp(3, double.infinity).toInt();
     //       _startTimer(seconds: timeoutSeconds);
     //     }
@@ -38,7 +38,7 @@ class LastAiMessageListenerNotifier extends Notifier<List<AiChatMessageModel>> {
     final timeoutSeconds = message.content.isNotEmpty
         ? (message.content.length ~/ 10).clamp(5, double.infinity).toInt()
         : 5;
-    
+
     _startTimer(seconds: timeoutSeconds);
   }
 
@@ -48,12 +48,12 @@ class LastAiMessageListenerNotifier extends Notifier<List<AiChatMessageModel>> {
   //     state = List.from(state)..add(result);
 
   //   _timer?.cancel();
-    
+
   //   // For ToolResponseResult, use content length for timeout if available
   //   final timeoutSeconds = result.resultForAi.isNotEmpty
   //       ? (result.resultForAi.length ~/ 10).clamp(5, double.infinity).toInt()
   //       : 5;
-    
+
   //   _startTimer(seconds: timeoutSeconds);
   // }
 

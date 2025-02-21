@@ -1,11 +1,11 @@
 // What are the methods needed
 // What methods are they calling
 
-import 'package:seren_ai_flutter/services/ai_interaction/langgraph/langgraph_api.dart';
-import 'package:seren_ai_flutter/services/ai_interaction/langgraph/models/lg_ai_base_message_model.dart';
-import 'package:seren_ai_flutter/services/ai_interaction/langgraph/models/lg_ai_chat_message_role.dart';
-import 'package:seren_ai_flutter/services/ai_interaction/langgraph/models/lg_config_model.dart';
-import 'package:seren_ai_flutter/services/ai_interaction/langgraph/models/lg_input_model.dart';
+import 'package:seren_ai_flutter/services/ai/langgraph/langgraph_api.dart';
+import 'package:seren_ai_flutter/services/ai/langgraph/models/lg_ai_base_message_model.dart';
+import 'package:seren_ai_flutter/services/ai/langgraph/models/lg_ai_chat_message_role.dart';
+import 'package:seren_ai_flutter/services/ai/langgraph/models/lg_config_model.dart';
+import 'package:seren_ai_flutter/services/ai/langgraph/models/lg_input_model.dart';
 import 'package:seren_ai_flutter/services/data/db_setup/app_config.dart';
 
 import 'package:flutter_riverpod/flutter_riverpod.dart';

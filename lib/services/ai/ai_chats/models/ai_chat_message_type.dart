@@ -1,4 +1,4 @@
-import 'package:seren_ai_flutter/services/ai_interaction/langgraph/models/lg_ai_chat_message_role.dart';
+import 'package:seren_ai_flutter/services/ai/langgraph/models/lg_ai_chat_message_role.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 

@@ -1,6 +1,6 @@
 import 'dart:convert';
 
-import 'package:seren_ai_flutter/services/ai_interaction/langgraph/models/lg_ai_chat_message_role.dart';
+import 'package:seren_ai_flutter/services/ai/langgraph/models/lg_ai_chat_message_role.dart';
 
 /// The base message model returned by the Langgraph API
 class LgAiBaseMessageModel {
@@ -25,8 +25,8 @@ class LgAiBaseMessageModel {
 
   factory LgAiBaseMessageModel.fromJson(Map<String, dynamic> json) {
     final additionalFields = Map<String, dynamic>.from(json);
-    additionalFields.removeWhere(
-        (key, value) => ['content', 'type', 'id'].contains(key));
+    additionalFields
+        .removeWhere((key, value) => ['content', 'type', 'id'].contains(key));
 
     return LgAiBaseMessageModel(
       messageContent: json['content'],

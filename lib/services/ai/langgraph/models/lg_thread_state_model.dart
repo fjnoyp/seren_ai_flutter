@@ -1,6 +1,6 @@
 // Model to represent thread state with focus on messages
 
-import 'package:seren_ai_flutter/services/ai_interaction/langgraph/models/lg_ai_base_message_model.dart';
+import 'package:seren_ai_flutter/services/ai/langgraph/models/lg_ai_base_message_model.dart';
 
 class LgThreadStateModel {
   final List<LgAiBaseMessageModel> messages;
@@ -8,7 +8,7 @@ class LgThreadStateModel {
 
   LgThreadStateModel({
     required this.messages,
-     this.otherValues,
+    this.otherValues,
   });
 
   factory LgThreadStateModel.fromJson(Map<String, dynamic> json) {
@@ -16,7 +16,7 @@ class LgThreadStateModel {
     final messagesList = values['messages'] as List;
 
 //     print('\n\n\n');
-    
+
 // final jsonString = JsonEncoder.withIndent('  ').convert(json);
 //     const int chunkSize = 1000;
 //     print('\n=== START JSON ===\n');
@@ -28,16 +28,16 @@ class LgThreadStateModel {
 
     return LgThreadStateModel(
       messages: messagesList
-          .map((msg) => LgAiBaseMessageModel.fromJson(msg as Map<String, dynamic>))
+          .map((msg) =>
+              LgAiBaseMessageModel.fromJson(msg as Map<String, dynamic>))
           .toList(),
       otherValues: Map<String, dynamic>.from(values)..remove('messages'),
     );
   }
 
   Map<String, dynamic> toJson() => {
-
-        'values': {          
-          'messages': messages.map((m) => m.toJson()).toList(),          
+        'values': {
+          'messages': messages.map((m) => m.toJson()).toList(),
         },
         //..addAll(otherValues),
       };
