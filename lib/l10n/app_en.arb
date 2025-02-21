@@ -450,6 +450,7 @@
     "tasksListFinished": "Finished",
     "createNewTask": "Create New Task",
     "chooseAssignees": "Choose Assignees",
+    "notAssigned": "Not Assigned",
     "chooseStartDate": "Choose a Start Date",
     "selectATask": "Select a Task",
     "choosePhase": "Choose Phase",

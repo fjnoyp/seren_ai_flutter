@@ -53,6 +53,10 @@ class TaskSelectionField extends ConsumerWidget {
         ),
       TaskFieldEnum.name => TaskNameField(taskId: taskId),
       TaskFieldEnum.dueDate => TaskDueDateSelectionField(taskId: taskId),
+
+      // the fields below are not editable
+      TaskFieldEnum.type => const SizedBox.shrink(),
+      TaskFieldEnum.createdAt => const SizedBox.shrink(),
     };
   }
 }

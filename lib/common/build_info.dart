@@ -2,11 +2,11 @@
 class BuildInfo {
   // Core build info
   static const String version = '1.0.0';
-  static const String buildDate = '2025-02-18 17:46:02';
+  static const String buildDate = '2025-02-21 08:30:03';
   
   // Git info
-  static const String commitHash = 'f686231';
-  static const String branch = 'feat/drag-and-drop-tasks-on-project-board-view';
+  static const String commitHash = '62beb87';
+  static const String branch = 'fix/gantt-chart-and-filter-bugs';
   static const String lastTag = 'no tag';
   
   // Author of last commit
@@ -16,48 +16,48 @@ class BuildInfo {
   // Recent commits (last 5)
   static const List<Map<String, String>> recentCommits = [
     {
-      "hash": "f686231",
+      "hash": "62beb87",
       "author": "renata-sisilio",
       "email": "renata@seren-ai.co", 
-      "message": "feat(tasks): drag and dro tasks on project board view",
-      "date": "2025-02-18",
-      "relativeDate": "7 minutes ago"
+      "message": "clean unnecessary ref parameters and gantt WidgetRef provider",
+      "date": "2025-02-20",
+      "relativeDate": "15 hours ago"
     },
     {
-      "hash": "378983a",
-      "author": "Kyle",
-      "email": "kylcheng@gmail.com", 
-      "message": "chore(home): add missing translations",
-      "date": "2025-02-18",
-      "relativeDate": "3 hours ago"
-    },
-    {
-      "hash": "9235bd2",
-      "author": "Kyle",
-      "email": "kylcheng@gmail.com", 
-      "message": "chore(home): re-add mobile quick create button",
-      "date": "2025-02-18",
-      "relativeDate": "3 hours ago"
-    },
-    {
-      "hash": "1f1f8df",
-      "author": "Kyle",
-      "email": "kylcheng@gmail.com", 
-      "message": "feat(home): complete home screen redo",
-      "date": "2025-02-18",
-      "relativeDate": "3 hours ago"
-    },
-    {
-      "hash": "5d27666",
+      "hash": "382da0b",
       "author": "renata-sisilio",
       "email": "renata@seren-ai.co", 
-      "message": "feat(notifications): use localized task notification title and body",
-      "date": "2025-02-18",
-      "relativeDate": "3 hours ago"
+      "message": "refactor(task_filters): simplify task filter/sort logic",
+      "date": "2025-02-20",
+      "relativeDate": "15 hours ago"
+    },
+    {
+      "hash": "ecb5519",
+      "author": "renata-sisilio",
+      "email": "renata@seren-ai.co", 
+      "message": "fix(gantt): filter removals on gantt chart",
+      "date": "2025-02-20",
+      "relativeDate": "21 hours ago"
+    },
+    {
+      "hash": "2b36f3c",
+      "author": "renata-sisilio",
+      "email": "renata@seren-ai.co", 
+      "message": "fix(task_filters): bad state on using ref after widget was disposed",
+      "date": "2025-02-20",
+      "relativeDate": "22 hours ago"
+    },
+    {
+      "hash": "66c9fa0",
+      "author": "renata-sisilio",
+      "email": "renata@seren-ai.co", 
+      "message": "chore: use plain navigation (no animated transitions)",
+      "date": "2025-02-14",
+      "relativeDate": "7 days ago"
     },
   ];
 
   // Stats
-  static const String totalCommits = '356';
+  static const String totalCommits = '365';
   static const String contributors = '0';
 }
