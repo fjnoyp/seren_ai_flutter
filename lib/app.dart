@@ -10,6 +10,7 @@ import 'package:seren_ai_flutter/common/navigation_service_provider.dart';
 import 'package:seren_ai_flutter/common/routes/app_routes.dart';
 import 'package:seren_ai_flutter/common/universal_platform/universal_platform.dart';
 import 'package:seren_ai_flutter/main.dart';
+import 'package:seren_ai_flutter/services/ai_interaction/widgets/testing/test_ai_page.dart';
 import 'package:seren_ai_flutter/services/auth/widgets/auth_guard.dart';
 import 'package:seren_ai_flutter/services/auth/widgets/reset_password/reset_password_page.dart';
 import 'package:seren_ai_flutter/services/auth/widgets/sign_in_up_page.dart';
@@ -162,6 +163,8 @@ class AppState extends ConsumerState<App> {
                   AppLocalizations.of(context)!.shifts, const ShiftsPage()),
               AppRoutes.testSQLPage.name: (context) => _GuardScaffold(
                   AppLocalizations.of(context)!.testSQL, TestSQLPage()),
+              AppRoutes.testAiPage.name: (context) =>
+                  _GuardScaffold("Test AI", const TestAiPage()),
               AppRoutes.noteList.name: (context) => _GuardScaffold(
                   AppLocalizations.of(context)!.notes, const NoteListPage()),
               AppRoutes.notePage.name: (context) => _GuardScaffold(

@@ -115,6 +115,49 @@ class LanggraphService {
     // return [];
   }
 
+  Future<List<LgAiBaseMessageModel>> runSingleCallAi({
+    required String systemMessage,
+    required String userMessage,
+  }) async {
+    final timezoneOffsetMinutes = DateTime.now().timeZoneOffset.inMinutes;
+
+    final lgConfig = LgConfigSchemaModel(
+      timezoneOffsetMinutes: timezoneOffsetMinutes,
+    );
+
+    final assistants = await langgraphApi.searchAssistants(
+      metadata: lgConfig.toJson(),
+    );
+
+    var lgAssistantId = '';
+    if (assistants.isEmpty) {
+      lgAssistantId = await langgraphApi.createAssistant(
+        name: 'Single Call Assistant',
+        lgConfig: lgConfig,
+      );
+    } else {
+      lgAssistantId = assistants.first.assistantId;
+    }
+
+    final messages = <LgAiBaseMessageModel>[];
+
+    await for (final message in langgraphApi.streamStatelessRun(
+      assistantId: lgAssistantId,
+      streamMode: 'updates',
+      input: LgAgentStateModel(
+        messages: [
+          LgInputMessageModel(
+              role: LgAiChatMessageRole.user, content: userMessage)
+        ],
+        aiBehaviorMode: AiBehaviorMode.singleCall,
+      ),
+    )) {
+      messages.add(message);
+    }
+
+    return messages;
+  }
+
   Future<List<LgAiBaseMessageModel>> _runAi({
     required String lgThreadId,
     required String lgAssistantId,
@@ -123,6 +166,7 @@ class LanggraphService {
     // Collect all messages from the stream
     final messages = <LgAiBaseMessageModel>[];
 
+    // TODO p4 - we can support streaming here ...
     await for (final message in langgraphApi.streamRun(
       threadId: lgThreadId,
       assistantId: lgAssistantId,
@@ -161,16 +205,26 @@ class LanggraphService {
     }
   }
 
-  // TODO p2: search for matching assistant before creating a new one ...
   Future<(String, String)> createNewThread({
     required String name,
     required LgConfigSchemaModel lgConfig,
   }) async {
     final newLgThreadId = await langgraphApi.createThread();
-    final newLgAssistantId = await langgraphApi.createAssistant(
-      name: name,
-      lgConfig: lgConfig,
+
+    final existingAssistants = await langgraphApi.searchAssistants(
+      metadata: lgConfig.toJson(),
     );
+
+    var newLgAssistantId = '';
+    if (existingAssistants.isEmpty) {
+      newLgAssistantId = await langgraphApi.createAssistant(
+        name: "Default Assistant V1",
+        lgConfig: lgConfig,
+      );
+    } else {
+      newLgAssistantId = existingAssistants.first.assistantId;
+    }
+
     return (newLgThreadId, newLgAssistantId);
   }
 }
