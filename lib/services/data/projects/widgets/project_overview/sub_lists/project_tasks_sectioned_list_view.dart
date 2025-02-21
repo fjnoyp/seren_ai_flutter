@@ -48,27 +48,9 @@ class ProjectTasksSectionedListView extends ConsumerWidget {
                   const Divider(height: 1),
                   ListTile(
                     title: InlineTaskCreationButton(
-                      // additionalFields: const [
-                      //   TaskFieldEnum.assignees,
-                      //   TaskFieldEnum.priority,
-                      // ],
                       initialStatus: status,
                     ),
                   ),
-                  // ListTile(
-                  //   dense: true,
-                  //   onTap: () =>
-                  //       ref.read(taskNavigationServiceProvider).openNewTask(
-                  //             initialProjectId: projectId,
-                  //             initialStatus: status,
-                  //           ),
-                  //   leading: const SizedBox.shrink(),
-                  //   title: Text(
-                  //     AppLocalizations.of(context)!.createNewTask,
-                  //     style: TextStyle(
-                  //         color: Theme.of(context).colorScheme.outline),
-                  //   ),
-                  // ),
                 ],
               ),
             );

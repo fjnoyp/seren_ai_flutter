@@ -131,7 +131,6 @@ class _TasksFromPhaseSection extends ConsumerWidget {
               SizedBox(
                 width: double.infinity,
                 child: InlineTaskCreationButton(
-                  // additionalFields: const [TaskFieldEnum.assignees],
                   initialParentTaskId: phaseId,
                 ),
               ),
