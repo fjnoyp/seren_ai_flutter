@@ -17,6 +17,7 @@ enum AppRoutes {
   noteList('/noteList'),
   notePage('/notePage'),
   testSQLPage('/testSQLPage'),
+  testAiPage('/testAiPage'),
   termsAndConditions('/termsAndConditions'),
   settings('/settings'),
   resetPassword('/resetPassword');

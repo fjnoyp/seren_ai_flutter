@@ -112,12 +112,20 @@ class DrawerView extends ConsumerWidget {
                 //    isSelected: curRoute == AppRoutes.tasks.name,
                 //   ),
                 _DebugModeListTile(
-                  icon: Icons.square,
+                  icon: Icons.code,
                   title: AppLocalizations.of(context)!.testSQL,
                   onTap: () => ref
                       .read(navigationServiceProvider)
                       .navigateTo(AppRoutes.testSQLPage.name),
                   selected: curRoute == AppRoutes.testSQLPage.name,
+                ),
+                _DebugModeListTile(
+                  icon: Icons.air,
+                  title: "Test AI",
+                  onTap: () => ref
+                      .read(navigationServiceProvider)
+                      .navigateTo(AppRoutes.testAiPage.name),
+                  selected: curRoute == AppRoutes.testAiPage.name,
                 ),
                 _DrawerListTile(
                   icon: Icons.chat,

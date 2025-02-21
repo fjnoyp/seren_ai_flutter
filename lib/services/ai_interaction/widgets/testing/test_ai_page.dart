@@ -1,21 +1,22 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
+import 'package:seren_ai_flutter/services/ai_interaction/ai_chat_service_provider.dart';
 import 'package:seren_ai_flutter/services/ai_interaction/langgraph/langgraph_service.dart';
 import 'package:seren_ai_flutter/services/ai_interaction/langgraph/models/lg_config_model.dart';
 import 'package:seren_ai_flutter/services/auth/cur_auth_state_provider.dart';
 import 'package:seren_ai_flutter/services/data/orgs/providers/cur_selected_org_id_notifier.dart';
 
-class AiDebugPage extends HookConsumerWidget {
-  const AiDebugPage({super.key});
+class TestAiPage extends HookConsumerWidget {
+  const TestAiPage({super.key});
 
   Future<String> createAssistant(String curUserId, String curOrgId,
       LanggraphService langgraphService) async {
     final config = LgConfigSchemaModel(
-      userId: curUserId,
-      orgId: curOrgId,
+      //userId: curUserId,
+      //orgId: curOrgId,
       timezoneOffsetMinutes: 30,
-      language: 'pt',
+      //language: 'pt',
     );
 
     final assistantId = await langgraphService.langgraphApi.createAssistant(
@@ -29,10 +30,10 @@ class AiDebugPage extends HookConsumerWidget {
   Future<String> getAssistants(String curUserId, String curOrgId,
       LanggraphService langgraphService) async {
     final config = LgConfigSchemaModel(
-      userId: curUserId,
-      orgId: curOrgId,
+      //userId: curUserId,
+      //orgId: curOrgId,
       timezoneOffsetMinutes: 30,
-      language: 'pt',
+      //language: 'pt',
     );
 
     final assistants = await langgraphService.langgraphApi.searchAssistants(
@@ -75,7 +76,9 @@ class AiDebugPage extends HookConsumerWidget {
     final curUserId = ref.read(curUserProvider).value!.id;
     final curOrgId = ref.read(curSelectedOrgIdNotifierProvider)!;
 
-    Widget buildDebugButton({
+    final aiChatService = ref.watch(aiChatServiceProvider);
+
+    Widget _buildDebugButton({
       required String label,
       required Future<void> Function() onPressed,
       String? successMessage,
@@ -102,7 +105,17 @@ class AiDebugPage extends HookConsumerWidget {
     return Column(
       children: [
         const Text('Debug Page'),
-        buildDebugButton(
+        _buildDebugButton(
+          label: 'Test Single Call',
+          onPressed: () async {
+            final messages = await aiChatService.sendSingleCallMessageToAi(
+              systemMessage: 'Respond in French only',
+              userMessage: 'Pourquoi est-il difficile de parler français?',
+            );
+            responseState.value = 'Messages: $messages';
+          },
+        ),
+        _buildDebugButton(
           label: 'Test Create Assistant',
           onPressed: () async {
             final assistantId =
@@ -110,7 +123,7 @@ class AiDebugPage extends HookConsumerWidget {
             responseState.value = 'Created Assistant: $assistantId';
           },
         ),
-        buildDebugButton(
+        _buildDebugButton(
           label: 'Test Get Assistants',
           onPressed: () async {
             final assistantIds =
@@ -118,19 +131,19 @@ class AiDebugPage extends HookConsumerWidget {
             responseState.value = 'Found Assistants: $assistantIds';
           },
         ),
-        buildDebugButton(
+        _buildDebugButton(
           label: 'Test Delete All Assistants',
           onPressed: () => deleteAllAssistants(langgraphService),
           successMessage: 'Deleted All Assistants',
         ),
-        buildDebugButton(
+        _buildDebugButton(
           label: 'Test Get Threads',
           onPressed: () async {
             final threads = await getThreads(langgraphService);
             responseState.value = 'Found Threads: $threads';
           },
         ),
-        buildDebugButton(
+        _buildDebugButton(
           label: 'Test Delete All Threads',
           onPressed: () => deleteAllThreads(langgraphService),
           successMessage: 'Deleted All Threads',
