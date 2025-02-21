@@ -1,4 +1,3 @@
-
 import 'package:dio/dio.dart';
 import 'package:seren_ai_flutter/services/ai_interaction/langgraph/models/lg_ai_base_message_model.dart';
 import 'package:seren_ai_flutter/services/ai_interaction/langgraph/models/lg_assistant_model.dart';
@@ -13,7 +12,6 @@ import 'package:seren_ai_flutter/services/ai_interaction/langgraph/models/lg_thr
 import 'package:seren_ai_flutter/services/ai_interaction/langgraph/models/lg_thread_state_model.dart';
 
 // TODO p0: create assistant with metadata to be findable again ....
-
 
 /// Implementation of https://langchain-ai.github.io/langgraph/cloud/reference/api/api_ref.html
 class LanggraphApi {
@@ -47,11 +45,10 @@ class LanggraphApi {
     required LgConfigSchemaModel lgConfig,
     String ifExists = "raise",
   }) async {
-
-    final config = {            
+    final config = {
       'configurable': lgConfig.toJson(),
     };
-    
+
     final response = await _dio.post(
       '$baseUrl/assistants',
       data: {
@@ -60,7 +57,7 @@ class LanggraphApi {
         'config': config,
         'metadata': lgConfig.toJson(),
         'if_exists': ifExists,
-      },      
+      },
     );
     return response.data['assistant_id'];
   }
@@ -72,6 +69,25 @@ class LanggraphApi {
     return (response.data as List)
         .map((run) => LgRunModel.fromJson(run as Map<String, dynamic>))
         .toList();
+  }
+
+  Stream<LgAiBaseMessageModel> streamStatelessRun({
+    required String assistantId,
+    required String streamMode,
+    LgAgentStateModel? input,
+    Duration timeout = const Duration(minutes: 5),
+  }) async* {
+    final requestData = {
+      'assistant_id': assistantId,
+      'stream_mode': streamMode,
+      'input': input?.toJson(),
+    };
+
+    yield* _handleStreamResponse(
+      '$baseUrl/runs/stream',
+      requestData,
+      timeout,
+    );
   }
 
   Stream<LgAiBaseMessageModel> streamRun({
@@ -87,9 +103,21 @@ class LanggraphApi {
       'input': input?.toJson(),
     };
 
+    yield* _handleStreamResponse(
+      '$baseUrl/threads/$threadId/runs/stream',
+      requestData,
+      timeout,
+    );
+  }
+
+  Stream<LgAiBaseMessageModel> _handleStreamResponse(
+    String url,
+    Map<String, dynamic> requestData,
+    Duration timeout,
+  ) async* {
     try {
       final response = await _dio.post(
-        '$baseUrl/threads/$threadId/runs/stream',
+        url,
         data: requestData,
         options: Options(
           responseType: ResponseType.stream,
@@ -121,7 +149,6 @@ class LanggraphApi {
         try {
           final decodedData = utf8.decode(data);
 
-          // Skip heartbeat messages
           if (decodedData.trim() == ': heartbeat') {
             print('skipping heartbeat message');
             print(decodedData);
@@ -133,18 +160,19 @@ class LanggraphApi {
           if (responseModel.event == "updates") {
             final responseJson = json.decode(responseModel.data);
 
+            // NOTE: In Langgraph Cloud - the name of the node added via add_node will be returned as the key here ...
             if (responseJson.containsKey("chatbot")) {
-              // this is a list of messages
               final messagesJson = responseJson["chatbot"]["messages"];
-
               for (final messageJson in messagesJson) {
                 yield LgAiBaseMessageModel.fromJson(messageJson);
               }
             } else if (responseJson.containsKey("tools")) {
-              // tools.messages
-
               final messagesJson = responseJson["tools"]["messages"];
-
+              for (final messageJson in messagesJson) {
+                yield LgAiBaseMessageModel.fromJson(messageJson);
+              }
+            } else if (responseJson.containsKey("single_call")) {
+              final messagesJson = responseJson["single_call"]["messages"];
               for (final messageJson in messagesJson) {
                 yield LgAiBaseMessageModel.fromJson(messageJson);
               }
@@ -153,16 +181,15 @@ class LanggraphApi {
             }
           }
         } catch (e) {
-          // Instead of just printing and continuing, we propagate the error
           yield* Stream.error(
             'Error processing stream data: $e' '\n \n $data \n\n',
             StackTrace.current,
           );
-          break; // Exit the stream after error
+          break;
         }
       }
     } catch (e, stackTrace) {
-      print('Error in streamRun: $e');
+      print('Error in stream: $e');
       yield* Stream.error(e, stackTrace);
     }
   }
@@ -266,7 +293,8 @@ curl --request POST \
 
     if (response.statusCode == 200) {
       return (response.data as List)
-          .map((thread) => LgThreadModel.fromJson(thread as Map<String, dynamic>))
+          .map((thread) =>
+              LgThreadModel.fromJson(thread as Map<String, dynamic>))
           .toList();
     } else {
       throw Exception('Failed to search threads: ${response.data}');
@@ -277,7 +305,7 @@ curl --request POST \
     final response = await _dio.delete(
       '$baseUrl/assistants/$assistantId',
     );
-    
+
     if (response.statusCode != 204) {
       throw Exception('Failed to delete assistant: ${response.data}');
     }

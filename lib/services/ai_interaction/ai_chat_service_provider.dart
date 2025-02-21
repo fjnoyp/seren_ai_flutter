@@ -9,6 +9,7 @@ import 'package:seren_ai_flutter/common/universal_platform/universal_platform.da
 import 'package:seren_ai_flutter/services/ai_interaction/ai_request/ai_request_executor.dart';
 import 'package:seren_ai_flutter/services/ai_interaction/ai_request/models/requests/ai_request_model.dart';
 import 'package:seren_ai_flutter/services/ai_interaction/langgraph/langgraph_service.dart';
+import 'package:seren_ai_flutter/services/ai_interaction/langgraph/models/lg_ai_base_message_model.dart';
 import 'package:seren_ai_flutter/services/ai_interaction/langgraph/models/lg_config_model.dart';
 import 'package:seren_ai_flutter/services/ai_interaction/last_ai_message_listener_provider.dart';
 import 'package:seren_ai_flutter/services/auth/cur_auth_state_provider.dart';
@@ -44,6 +45,21 @@ class AIChatService {
   final Ref ref;
 
   AIChatService(this.ref);
+
+// TODO p2: raw lg message types should not be leaked to rest of code
+// We should be handling types here instead ...
+  Future<List<LgAiBaseMessageModel>> sendSingleCallMessageToAi({
+    required String systemMessage,
+    required String userMessage,
+  }) async {
+    final langgraphService = ref.read(langgraphServiceProvider);
+    final lgBaseMessages = await langgraphService.runSingleCallAi(
+      systemMessage: systemMessage,
+      userMessage: userMessage,
+    );
+
+    return lgBaseMessages;
+  }
 
   Future<void> sendMessageToAi(String message) async {
     final isAiRespondingNotifier = ref.read(isAiRespondingProvider.notifier);
@@ -269,12 +285,14 @@ class AIChatService {
       return existingThread;
     }
 
+    // TODO p3 - this logic should be moved to langgraph service
+
     // TODO p3: get org name for assistant name
     final name = '${curUser!.email} - $curOrgId';
 
     // Get timezone offset string
     final timezoneOffsetMinutes = DateTime.now().timeZoneOffset.inMinutes;
-    final language = ref.read(languageSNP);
+    //final language = ref.read(languageServiceProvider).language;
 
     // Create new thread and assistant
     final (newLgThreadId, newLgAssistantId) =
@@ -282,9 +300,9 @@ class AIChatService {
       name: name,
       lgConfig: LgConfigSchemaModel(
         timezoneOffsetMinutes: timezoneOffsetMinutes,
-        language: language,
-        orgId: orgId,
-        userId: userId,
+        //language: language,
+        //orgId: orgId,
+        //userId: userId,
       ),
     );
 
