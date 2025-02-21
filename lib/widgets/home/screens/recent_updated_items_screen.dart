@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:intl/intl.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+import 'package:seren_ai_flutter/services/ai/ai_context_helper/widgets/ai_context_view.dart';
 import 'package:seren_ai_flutter/services/data/common/recent_updated_items/date_grouped_items.dart';
 import 'package:seren_ai_flutter/services/data/common/recent_updated_items/recent_updated_items_provider.dart';
 import 'package:seren_ai_flutter/services/data/notes/models/note_model.dart';
@@ -43,10 +44,7 @@ class RecentUpdatedItemsScreen extends ConsumerWidget {
             const SizedBox(width: 12),
             Expanded(
               child: Divider(
-                color: Theme.of(context)
-                    .colorScheme
-                    .primary
-                    .withAlpha(128),
+                color: Theme.of(context).colorScheme.primary.withAlpha(128),
                 thickness: 1,
               ),
             ),
@@ -59,27 +57,31 @@ class RecentUpdatedItemsScreen extends ConsumerWidget {
 
   Widget _buildItemsList(BuildContext context, List<dynamic> items) {
     return Column(
-      children: items.asMap().entries.map((entry) {
-        final item = entry.value;
-        final isLast = entry.key == items.length - 1;
+      children: [
+        AIContextTaskList(tasks: items.whereType<TaskModel>().toList()),
+        ...items.asMap().entries.map((entry) {
+          final item = entry.value;
+          final isLast = entry.key == items.length - 1;
 
-        return Column(
-          children: [
-            if (item is TaskModel)
-              TaskListItemView(task: item, showStatus: true, showProject: true)
-            else if (item is NoteModel)
-              NoteListItemView(item, showStatus: true),
-            if (!isLast) // Don't add divider after last item
-              Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 8),
-                child: Divider(
-                  color: Theme.of(context).dividerColor.withAlpha(38),
-                  height: 1,
+          return Column(
+            children: [
+              if (item is TaskModel)
+                TaskListItemView(
+                    task: item, showStatus: true, showProject: true)
+              else if (item is NoteModel)
+                NoteListItemView(item, showStatus: true),
+              if (!isLast) // Don't add divider after last item
+                Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 8),
+                  child: Divider(
+                    color: Theme.of(context).dividerColor.withAlpha(38),
+                    height: 1,
+                  ),
                 ),
-              ),
-          ],
-        );
-      }).toList(),
+            ],
+          );
+        }).toList(),
+      ],
     );
   }
 
