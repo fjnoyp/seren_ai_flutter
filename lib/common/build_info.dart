@@ -2,10 +2,10 @@
 class BuildInfo {
   // Core build info
   static const String version = '1.0.0';
-  static const String buildDate = '2025-02-21 11:56:37';
+  static const String buildDate = '2025-02-21 12:28:04';
   
   // Git info
-  static const String commitHash = '87fa8fb';
+  static const String commitHash = 'fee79d5';
   static const String branch = 'feat/ai_summary_integrations';
   static const String lastTag = 'no tag';
   
@@ -16,12 +16,28 @@ class BuildInfo {
   // Recent commits (last 5)
   static const List<Map<String, String>> recentCommits = [
     {
+      "hash": "fee79d5",
+      "author": "Kyle",
+      "email": "kylcheng@gmail.com", 
+      "message": "chore(ai): add ai context cache to avoid excess ai calls",
+      "date": "2025-02-21",
+      "relativeDate": "6 minutes ago"
+    },
+    {
+      "hash": "8526969",
+      "author": "Kyle",
+      "email": "kylcheng@gmail.com", 
+      "message": "feat(ai): use ai context helper for task and task list views",
+      "date": "2025-02-21",
+      "relativeDate": "31 minutes ago"
+    },
+    {
       "hash": "87fa8fb",
       "author": "Kyle",
       "email": "kylcheng@gmail.com", 
       "message": "feat(ai): add ai context helper",
       "date": "2025-02-21",
-      "relativeDate": "13 seconds ago"
+      "relativeDate": "32 minutes ago"
     },
     {
       "hash": "1d99e29",
@@ -29,7 +45,7 @@ class BuildInfo {
       "email": "kylcheng@gmail.com", 
       "message": "chore(ai): update imports",
       "date": "2025-02-21",
-      "relativeDate": "82 minutes ago"
+      "relativeDate": "2 hours ago"
     },
     {
       "hash": "da2838b",
@@ -37,27 +53,11 @@ class BuildInfo {
       "email": "kylcheng@gmail.com", 
       "message": "chore(ai): rename ai_interactions to ai",
       "date": "2025-02-21",
-      "relativeDate": "84 minutes ago"
-    },
-    {
-      "hash": "9277227",
-      "author": "Kyle",
-      "email": "kylcheng@gmail.com", 
-      "message": "chore(ai): move ai chats into ai_interactions folder",
-      "date": "2025-02-21",
-      "relativeDate": "84 minutes ago"
-    },
-    {
-      "hash": "32c6693",
-      "author": "Kyle",
-      "email": "kylcheng@gmail.com", 
-      "message": "feat(ai): basic single call ai system with langgraph",
-      "date": "2025-02-21",
-      "relativeDate": "89 minutes ago"
+      "relativeDate": "2 hours ago"
     },
   ];
 
   // Stats
-  static const String totalCommits = '368';
+  static const String totalCommits = '370';
   static const String contributors = '       0';
 }
