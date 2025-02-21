@@ -2,10 +2,10 @@
 class BuildInfo {
   // Core build info
   static const String version = '1.0.0';
-  static const String buildDate = '2025-02-21 10:40:59';
+  static const String buildDate = '2025-02-21 11:56:24';
   
   // Git info
-  static const String commitHash = 'bb70bde';
+  static const String commitHash = '1d99e29';
   static const String branch = 'feat/ai_summary_integrations';
   static const String lastTag = 'no tag';
   
@@ -16,12 +16,12 @@ class BuildInfo {
   // Recent commits (last 5)
   static const List<Map<String, String>> recentCommits = [
     {
-      "hash": "bb70bde",
+      "hash": "1d99e29",
       "author": "Kyle",
       "email": "kylcheng@gmail.com", 
       "message": "chore(ai): update imports",
       "date": "2025-02-21",
-      "relativeDate": "6 minutes ago"
+      "relativeDate": "82 minutes ago"
     },
     {
       "hash": "da2838b",
@@ -29,7 +29,7 @@ class BuildInfo {
       "email": "kylcheng@gmail.com", 
       "message": "chore(ai): rename ai_interactions to ai",
       "date": "2025-02-21",
-      "relativeDate": "8 minutes ago"
+      "relativeDate": "83 minutes ago"
     },
     {
       "hash": "9277227",
@@ -37,7 +37,7 @@ class BuildInfo {
       "email": "kylcheng@gmail.com", 
       "message": "chore(ai): move ai chats into ai_interactions folder",
       "date": "2025-02-21",
-      "relativeDate": "8 minutes ago"
+      "relativeDate": "84 minutes ago"
     },
     {
       "hash": "32c6693",
@@ -45,7 +45,7 @@ class BuildInfo {
       "email": "kylcheng@gmail.com", 
       "message": "feat(ai): basic single call ai system with langgraph",
       "date": "2025-02-21",
-      "relativeDate": "13 minutes ago"
+      "relativeDate": "88 minutes ago"
     },
     {
       "hash": "76603ff",
@@ -53,7 +53,7 @@ class BuildInfo {
       "email": "renata@seren-ai.co", 
       "message": "fix(tasks): auto scroll to inline task on project board view",
       "date": "2025-02-21",
-      "relativeDate": "6 hours ago"
+      "relativeDate": "8 hours ago"
     },
   ];
 
