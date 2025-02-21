@@ -3,10 +3,10 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:seren_ai_flutter/common/navigation_service_provider.dart';
 import 'package:seren_ai_flutter/common/routes/app_routes.dart';
-import 'package:seren_ai_flutter/services/ai_interaction/ai_chat_service_provider.dart';
-import 'package:seren_ai_flutter/services/ai_interaction/is_ai_modal_visible_provider.dart';
+import 'package:seren_ai_flutter/services/ai/ai_chat_service_provider.dart';
+import 'package:seren_ai_flutter/services/ai/is_ai_modal_visible_provider.dart';
 
-import 'package:seren_ai_flutter/services/ai_interaction/widgets/ai_results_widget.dart';
+import 'package:seren_ai_flutter/services/ai/widgets/ai_results_widget.dart';
 import 'package:seren_ai_flutter/services/speech_to_text/widgets/speech_state_control_button_widget.dart';
 import 'package:seren_ai_flutter/services/speech_to_text/widgets/speech_transcribed_widget.dart';
 import 'package:seren_ai_flutter/services/text_to_speech/text_to_speech_notifier.dart';
@@ -57,8 +57,7 @@ class UserInputDisplayWidget extends ConsumerWidget {
                           },
                         ),
                   // TODO p4: maybe we should make this a persistent choice
-                  if (textToSpeechState ==
-                      TextToSpeechStateEnum.speaking)
+                  if (textToSpeechState == TextToSpeechStateEnum.speaking)
                     IconButton(
                       onPressed: () => textToSpeechService.stop(),
                       icon: const Icon(Icons.volume_off),
@@ -69,12 +68,16 @@ class UserInputDisplayWidget extends ConsumerWidget {
                   IconButton(
                     onPressed: () {
                       ref.read(isAiModalVisibleProvider.notifier).state = false;
-                      ref.read(navigationServiceProvider).navigateTo(AppRoutes.aiChats.name);
+                      ref
+                          .read(navigationServiceProvider)
+                          .navigateTo(AppRoutes.aiChats.name);
                     },
                     icon: const Icon(Icons.open_in_new),
                   ),
                   IconButton(
-                    onPressed: () => ref.read(isAiModalVisibleProvider.notifier).state = false,
+                    onPressed: () => ref
+                        .read(isAiModalVisibleProvider.notifier)
+                        .state = false,
                     icon: const Icon(Icons.close),
                   ),
                 ],

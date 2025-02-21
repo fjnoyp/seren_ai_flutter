@@ -1,15 +1,15 @@
 import 'package:dio/dio.dart';
-import 'package:seren_ai_flutter/services/ai_interaction/langgraph/models/lg_ai_base_message_model.dart';
-import 'package:seren_ai_flutter/services/ai_interaction/langgraph/models/lg_assistant_model.dart';
-import 'package:seren_ai_flutter/services/ai_interaction/langgraph/models/lg_config_model.dart';
-import 'package:seren_ai_flutter/services/ai_interaction/langgraph/models/lg_input_model.dart';
+import 'package:seren_ai_flutter/services/ai/langgraph/models/lg_ai_base_message_model.dart';
+import 'package:seren_ai_flutter/services/ai/langgraph/models/lg_assistant_model.dart';
+import 'package:seren_ai_flutter/services/ai/langgraph/models/lg_config_model.dart';
+import 'package:seren_ai_flutter/services/ai/langgraph/models/lg_input_model.dart';
 import 'dart:convert';
 import 'dart:async';
 
-import 'package:seren_ai_flutter/services/ai_interaction/langgraph/models/lg_run_model.dart';
-import 'package:seren_ai_flutter/services/ai_interaction/langgraph/models/lg_run_stream_response_model.dart';
-import 'package:seren_ai_flutter/services/ai_interaction/langgraph/models/lg_thread_model.dart';
-import 'package:seren_ai_flutter/services/ai_interaction/langgraph/models/lg_thread_state_model.dart';
+import 'package:seren_ai_flutter/services/ai/langgraph/models/lg_run_model.dart';
+import 'package:seren_ai_flutter/services/ai/langgraph/models/lg_run_stream_response_model.dart';
+import 'package:seren_ai_flutter/services/ai/langgraph/models/lg_thread_model.dart';
+import 'package:seren_ai_flutter/services/ai/langgraph/models/lg_thread_state_model.dart';
 
 // TODO p0: create assistant with metadata to be findable again ....
 

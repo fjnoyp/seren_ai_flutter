@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:seren_ai_flutter/common/universal_platform/universal_platform.dart';
-import 'package:seren_ai_flutter/services/ai_interaction/ai_chat_service_provider.dart';
-import 'package:seren_ai_flutter/services/ai_interaction/ai_quick_actions/models/ai_quick_action.dart';
-import 'package:seren_ai_flutter/services/ai_interaction/is_ai_modal_visible_provider.dart';
-import 'package:seren_ai_flutter/services/ai_interaction/widgets/ai_chat_text_field.dart';
+import 'package:seren_ai_flutter/services/ai/ai_chat_service_provider.dart';
+import 'package:seren_ai_flutter/services/ai/ai_quick_actions/models/ai_quick_action.dart';
+import 'package:seren_ai_flutter/services/ai/is_ai_modal_visible_provider.dart';
+import 'package:seren_ai_flutter/services/ai/widgets/ai_chat_text_field.dart';
 
 class AiQuickActionWidget extends ConsumerWidget {
   const AiQuickActionWidget(this.action, {super.key});
@@ -22,7 +22,8 @@ class AiQuickActionWidget extends ConsumerWidget {
           if (action.userInputHint.contains('[') &&
               action.userInputHint.contains(']')) {
             final startSelection = action.userInputHint.indexOf('[');
-            final endSelection = action.userInputHint.indexOf(']') - 1; // -1 to handle brackets removal
+            final endSelection = action.userInputHint.indexOf(']') -
+                1; // -1 to handle brackets removal
             textController.text =
                 action.userInputHint.replaceAll('[', '').replaceAll(']', '');
 
