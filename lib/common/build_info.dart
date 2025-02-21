@@ -2,19 +2,27 @@
 class BuildInfo {
   // Core build info
   static const String version = '1.0.0';
-  static const String buildDate = '2025-02-21 10:28:06';
+  static const String buildDate = '2025-02-21 10:32:30';
   
   // Git info
-  static const String commitHash = '76603ff';
+  static const String commitHash = '32c6693';
   static const String branch = 'feat/ai_summary_integrations';
   static const String lastTag = 'no tag';
   
   // Author of last commit
-  static const String lastCommitAuthor = 'renata-sisilio';
-  static const String lastCommitEmail = 'renata@seren-ai.co';
+  static const String lastCommitAuthor = 'Kyle';
+  static const String lastCommitEmail = 'kylcheng@gmail.com';
   
   // Recent commits (last 5)
   static const List<Map<String, String>> recentCommits = [
+    {
+      "hash": "32c6693",
+      "author": "Kyle",
+      "email": "kylcheng@gmail.com", 
+      "message": "feat(ai): basic single call ai system with langgraph",
+      "date": "2025-02-21",
+      "relativeDate": "4 minutes ago"
+    },
     {
       "hash": "76603ff",
       "author": "renata-sisilio",
@@ -47,17 +55,9 @@ class BuildInfo {
       "date": "2025-02-19",
       "relativeDate": "2 days ago"
     },
-    {
-      "hash": "6f316a3",
-      "author": "renata-sisilio",
-      "email": "renata@seren-ai.co", 
-      "message": "fix: The method 'withValues' isn't defined for the class 'Color' error",
-      "date": "2025-02-19",
-      "relativeDate": "2 days ago"
-    },
   ];
 
   // Stats
-  static const String totalCommits = '363';
+  static const String totalCommits = '364';
   static const String contributors = '       0';
 }
