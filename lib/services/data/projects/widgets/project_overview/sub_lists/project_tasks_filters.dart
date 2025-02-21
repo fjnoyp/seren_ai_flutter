@@ -8,7 +8,6 @@ import 'package:seren_ai_flutter/services/data/tasks/task_filter.dart';
 import 'package:seren_ai_flutter/services/data/tasks/providers/task_navigation_service.dart';
 import 'package:seren_ai_flutter/services/data/tasks/providers/task_filter_state_provider.dart';
 import 'package:seren_ai_flutter/services/data/tasks/task_field_enum.dart';
-import 'package:seren_ai_flutter/services/data/users/providers/user_in_project_provider.dart';
 
 class ProjectTasksFilters extends ConsumerWidget {
   const ProjectTasksFilters({
@@ -39,8 +38,8 @@ class ProjectTasksFilters extends ConsumerWidget {
       // We need to remove the assignees filter everytime a new project is selected
       // to avoid inconsistencies in the UI
 
-      // This should be applied only if the assignees filter is active and the user is not in the new selected project
-      // but it's not currently working as expected
+      // We should ideally do this only if the user is not in the new selected project
+      // but the commented code below not currently working as expected
       // if (filterState.activeFilters
       //         .firstWhere((filter) => filter.field == TaskFieldEnum.assignees)
       //     case TaskFilter activeFilter) {

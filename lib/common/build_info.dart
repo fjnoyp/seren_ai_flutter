@@ -2,10 +2,10 @@
 class BuildInfo {
   // Core build info
   static const String version = '1.0.0';
-  static const String buildDate = '2025-02-20 17:52:42';
+  static const String buildDate = '2025-02-21 08:30:03';
   
   // Git info
-  static const String commitHash = '382da0b';
+  static const String commitHash = '62beb87';
   static const String branch = 'fix/gantt-chart-and-filter-bugs';
   static const String lastTag = 'no tag';
   
@@ -16,12 +16,20 @@ class BuildInfo {
   // Recent commits (last 5)
   static const List<Map<String, String>> recentCommits = [
     {
+      "hash": "62beb87",
+      "author": "renata-sisilio",
+      "email": "renata@seren-ai.co", 
+      "message": "clean unnecessary ref parameters and gantt WidgetRef provider",
+      "date": "2025-02-20",
+      "relativeDate": "15 hours ago"
+    },
+    {
       "hash": "382da0b",
       "author": "renata-sisilio",
       "email": "renata@seren-ai.co", 
       "message": "refactor(task_filters): simplify task filter/sort logic",
       "date": "2025-02-20",
-      "relativeDate": "46 minutes ago"
+      "relativeDate": "15 hours ago"
     },
     {
       "hash": "ecb5519",
@@ -29,7 +37,7 @@ class BuildInfo {
       "email": "renata@seren-ai.co", 
       "message": "fix(gantt): filter removals on gantt chart",
       "date": "2025-02-20",
-      "relativeDate": "6 hours ago"
+      "relativeDate": "21 hours ago"
     },
     {
       "hash": "2b36f3c",
@@ -37,7 +45,7 @@ class BuildInfo {
       "email": "renata@seren-ai.co", 
       "message": "fix(task_filters): bad state on using ref after widget was disposed",
       "date": "2025-02-20",
-      "relativeDate": "7 hours ago"
+      "relativeDate": "22 hours ago"
     },
     {
       "hash": "66c9fa0",
@@ -45,19 +53,11 @@ class BuildInfo {
       "email": "renata@seren-ai.co", 
       "message": "chore: use plain navigation (no animated transitions)",
       "date": "2025-02-14",
-      "relativeDate": "6 days ago"
-    },
-    {
-      "hash": "3c837fa",
-      "author": "renata-sisilio",
-      "email": "renata@seren-ai.co", 
-      "message": "fix(tasks): task inline creation bugs + task project implicit navigation",
-      "date": "2025-02-19",
-      "relativeDate": "25 hours ago"
+      "relativeDate": "7 days ago"
     },
   ];
 
   // Stats
-  static const String totalCommits = '364';
+  static const String totalCommits = '365';
   static const String contributors = '0';
 }
