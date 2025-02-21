@@ -3,10 +3,11 @@ import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:intl/intl.dart';
 import 'package:seren_ai_flutter/services/data/projects/providers/cur_selected_project_providers.dart';
-import 'package:seren_ai_flutter/services/data/projects/task_filter_option_enum.dart';
-import 'package:seren_ai_flutter/services/data/projects/task_sort_option_enum.dart';
+import 'package:seren_ai_flutter/services/data/tasks/providers/task_filter_options_provider.dart';
+import 'package:seren_ai_flutter/services/data/tasks/task_filter.dart';
 import 'package:seren_ai_flutter/services/data/tasks/providers/task_navigation_service.dart';
 import 'package:seren_ai_flutter/services/data/tasks/providers/task_filter_state_provider.dart';
+import 'package:seren_ai_flutter/services/data/tasks/task_field_enum.dart';
 
 class ProjectTasksFilters extends ConsumerWidget {
   const ProjectTasksFilters({
@@ -26,24 +27,51 @@ class ProjectTasksFilters extends ConsumerWidget {
   final bool showExtraViewControls;
 
   final bool useHorizontalScroll;
-  final List<TaskFilterOption>? hiddenFilters;
+  final List<TaskFieldEnum>? hiddenFilters;
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final filterState = ref.watch(taskFilterStateProvider);
     final filterNotifier = ref.read(taskFilterStateProvider.notifier);
 
+    ref.listen(curSelectedProjectIdNotifierProvider, (_, next) {
+      // We need to remove the assignees filter everytime a new project is selected
+      // to avoid inconsistencies in the UI
+
+      // We should ideally do this only if the user is not in the new selected project
+      // but the commented code below not currently working as expected
+      // if (filterState.activeFilters
+      //         .firstWhere((filter) => filter.field == TaskFieldEnum.assignees)
+      //     case TaskFilter activeFilter) {
+      //   final activeFilteredAssigneeId = activeFilter.value;
+
+      //   final projectAssigneesIds = ref
+      //           .watch(usersInProjectProvider(next.value!.id))
+      //           .value
+      //           ?.map((user) => user.id)
+      //           .toList() ??
+      //       [];
+
+      //   if (!projectAssigneesIds.contains(activeFilteredAssigneeId)) {
+      ref.read(taskFilterStateProvider.notifier).removeFilter(
+            TaskFieldEnum.assignees,
+          );
+      // }
+      // }
+    });
+
     final filterWidgets = [
-      ...TaskFilterOption.values
-          .where((filter) => !(hiddenFilters?.contains(filter) ?? false))
-          .map(
-            (filter) => _FilterChip(
-              filter: filter,
-              filterState: filterState,
-              filterNotifier: filterNotifier,
-              onShowCustomDateRangePicker: onShowCustomDateRangePicker,
-            ),
-          ),
+      ...ref
+          .watch(taskFilterOptionsProvider)
+          .entries
+          .where((entry) => !(hiddenFilters?.contains(entry.key) ?? false))
+          .map((entry) => _FilterChip(
+                field: entry.key,
+                options: entry.value,
+                filterState: filterState,
+                filterNotifier: filterNotifier,
+                onShowCustomDateRangePicker: onShowCustomDateRangePicker,
+              )),
       _SortChip(
         filterState: filterState,
         filterNotifier: filterNotifier,
@@ -83,15 +111,18 @@ class ProjectTasksFilters extends ConsumerWidget {
   }
 }
 
+// TODO: refactor to use a single filter anchor for all options + chips for active filters
 class _FilterChip extends ConsumerWidget {
   const _FilterChip({
-    required this.filter,
+    required this.field,
+    required this.options,
     required this.filterState,
     required this.filterNotifier,
     required this.onShowCustomDateRangePicker,
   });
 
-  final TaskFilterOption filter;
+  final TaskFieldEnum field;
+  final List<TaskFilter> options;
   final TaskFilterState filterState;
   final TaskFilterStateNotifier filterNotifier;
   final Future<DateTimeRange?> Function(BuildContext)
@@ -99,18 +130,22 @@ class _FilterChip extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final index = TaskFilterOption.values.indexOf(filter);
     return MenuAnchor(
       builder: (context, controller, child) {
         return FilterChip(
-          selected: filterState.activeFilters[index] != null,
+          selected:
+              filterState.activeFilters.any((filter) => filter.field == field),
           avatar: const Icon(Icons.filter_list_outlined),
-          label: filterState.activeFilters[index] != null
-              ? Text(filterState.activeFilters[index]!.name!)
-              : Text(filter.getDisplayName(context)),
-          onDeleted: filterState.activeFilters[index] != null
-              ? () => filterNotifier.updateFilter(index, null)
-              : null,
+          label:
+              filterState.activeFilters.any((filter) => filter.field == field)
+                  ? Text(filterState.activeFilters
+                      .firstWhere((filter) => filter.field == field)
+                      .readableName)
+                  : Text(field.toHumanReadable(context)),
+          onDeleted:
+              filterState.activeFilters.any((filter) => filter.field == field)
+                  ? () => filterNotifier.removeFilter(field)
+                  : null,
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(32),
           ),
@@ -120,33 +155,24 @@ class _FilterChip extends ConsumerWidget {
           },
         );
       },
-      menuChildren: filter
-          .getSubOptions(context, ref)
+      menuChildren: options
           .map(
             (option) => MenuItemButton(
-              child: Text(option.name),
+              child: Text(option.readableName),
               onPressed: () {
                 if (option.value == 'customDateRange') {
                   onShowCustomDateRangePicker(context).then((value) {
                     if (value != null) {
-                      filterNotifier.updateFilter(index, (
-                        value: '${filter.name}_${option.value}',
-                        name:
-                            '${filter.getDisplayName(context)}: ${DateFormat.MMMd().format(value.start)} - ${DateFormat.Md().format(value.end)}',
-                        filter: (task) =>
-                            option.filter?.call(task) ??
-                            filter.filterFunction(task, value)
-                      ));
+                      filterNotifier.updateFilter(
+                        option.copyWith(
+                          readableName:
+                              '${option.readableName}: ${DateFormat.MMMd().format(value.start)} - ${DateFormat.Md().format(value.end)}',
+                        ),
+                      );
                     }
                   });
                 } else {
-                  filterNotifier.updateFilter(index, (
-                    value: '${filter.name}_${option.value}',
-                    name: '${filter.getDisplayName(context)}: ${option.name}',
-                    filter: (task) =>
-                        option.filter?.call(task) ??
-                        filter.filterFunction(task, null)
-                  ));
+                  filterNotifier.updateFilter(option);
                 }
               },
             ),
@@ -187,7 +213,8 @@ class _SortChip extends ConsumerWidget {
           showCheckmark: false,
         );
       },
-      menuChildren: TaskSortOption.values
+      menuChildren: TaskFieldEnum.values
+          .where((field) => field.comparator != null)
           .map(
             (option) => MenuItemButton(
               child: Text(option.name),
