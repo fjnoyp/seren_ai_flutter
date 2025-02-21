@@ -2,10 +2,10 @@
 class BuildInfo {
   // Core build info
   static const String version = '1.0.0';
-  static const String buildDate = '2025-02-21 11:56:24';
+  static const String buildDate = '2025-02-21 11:56:37';
   
   // Git info
-  static const String commitHash = '1d99e29';
+  static const String commitHash = '87fa8fb';
   static const String branch = 'feat/ai_summary_integrations';
   static const String lastTag = 'no tag';
   
@@ -15,6 +15,14 @@ class BuildInfo {
   
   // Recent commits (last 5)
   static const List<Map<String, String>> recentCommits = [
+    {
+      "hash": "87fa8fb",
+      "author": "Kyle",
+      "email": "kylcheng@gmail.com", 
+      "message": "feat(ai): add ai context helper",
+      "date": "2025-02-21",
+      "relativeDate": "13 seconds ago"
+    },
     {
       "hash": "1d99e29",
       "author": "Kyle",
@@ -29,7 +37,7 @@ class BuildInfo {
       "email": "kylcheng@gmail.com", 
       "message": "chore(ai): rename ai_interactions to ai",
       "date": "2025-02-21",
-      "relativeDate": "83 minutes ago"
+      "relativeDate": "84 minutes ago"
     },
     {
       "hash": "9277227",
@@ -45,19 +53,11 @@ class BuildInfo {
       "email": "kylcheng@gmail.com", 
       "message": "feat(ai): basic single call ai system with langgraph",
       "date": "2025-02-21",
-      "relativeDate": "88 minutes ago"
-    },
-    {
-      "hash": "76603ff",
-      "author": "renata-sisilio",
-      "email": "renata@seren-ai.co", 
-      "message": "fix(tasks): auto scroll to inline task on project board view",
-      "date": "2025-02-21",
-      "relativeDate": "8 hours ago"
+      "relativeDate": "89 minutes ago"
     },
   ];
 
   // Stats
-  static const String totalCommits = '367';
+  static const String totalCommits = '368';
   static const String contributors = '       0';
 }

@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
+import 'package:seren_ai_flutter/services/ai/ai_context_helper/widgets/ai_context_view.dart';
 import 'package:seren_ai_flutter/services/data/common/status_enum.dart';
 import 'package:seren_ai_flutter/services/data/projects/providers/cur_selected_project_providers.dart';
 import 'package:seren_ai_flutter/services/data/tasks/repositories/tasks_repository.dart';
@@ -119,6 +120,9 @@ class ProjectTasksBoardView extends HookConsumerWidget {
                       style: Theme.of(context).textTheme.titleSmall,
                     ),
                   ),
+                  filteredTasks.isNotEmpty
+                      ? AIContextTaskList(tasks: filteredTasks)
+                      : const SizedBox.shrink(),
                   const Divider(height: 1),
                   Expanded(
                     child: Padding(
