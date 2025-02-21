@@ -2,11 +2,11 @@
 class BuildInfo {
   // Core build info
   static const String version = '1.0.0';
-  static const String buildDate = '2025-02-21 12:28:04';
+  static const String buildDate = '2025-02-21 13:07:32';
   
   // Git info
-  static const String commitHash = 'fee79d5';
-  static const String branch = 'feat/ai_summary_integrations';
+  static const String commitHash = 'd12d12c';
+  static const String branch = 'main';
   static const String lastTag = 'no tag';
   
   // Author of last commit
@@ -16,44 +16,44 @@ class BuildInfo {
   // Recent commits (last 5)
   static const List<Map<String, String>> recentCommits = [
     {
-      "hash": "fee79d5",
+      "hash": "d12d12c",
       "author": "Kyle",
       "email": "kylcheng@gmail.com", 
       "message": "chore(ai): add ai context cache to avoid excess ai calls",
       "date": "2025-02-21",
-      "relativeDate": "6 minutes ago"
+      "relativeDate": "46 minutes ago"
     },
     {
-      "hash": "8526969",
+      "hash": "abdcf52",
       "author": "Kyle",
       "email": "kylcheng@gmail.com", 
       "message": "feat(ai): use ai context helper for task and task list views",
       "date": "2025-02-21",
-      "relativeDate": "31 minutes ago"
+      "relativeDate": "71 minutes ago"
     },
     {
-      "hash": "87fa8fb",
+      "hash": "858d8be",
       "author": "Kyle",
       "email": "kylcheng@gmail.com", 
       "message": "feat(ai): add ai context helper",
       "date": "2025-02-21",
-      "relativeDate": "32 minutes ago"
+      "relativeDate": "71 minutes ago"
     },
     {
-      "hash": "1d99e29",
+      "hash": "25ff01c",
       "author": "Kyle",
       "email": "kylcheng@gmail.com", 
       "message": "chore(ai): update imports",
       "date": "2025-02-21",
-      "relativeDate": "2 hours ago"
+      "relativeDate": "3 hours ago"
     },
     {
-      "hash": "da2838b",
+      "hash": "d77041e",
       "author": "Kyle",
       "email": "kylcheng@gmail.com", 
       "message": "chore(ai): rename ai_interactions to ai",
       "date": "2025-02-21",
-      "relativeDate": "2 hours ago"
+      "relativeDate": "3 hours ago"
     },
   ];
 

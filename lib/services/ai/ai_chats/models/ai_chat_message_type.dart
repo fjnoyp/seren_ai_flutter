@@ -19,6 +19,9 @@ extension AiChatMessageTypeExtension on AiChatMessageType {
         return AiChatMessageType.user;
       case LgAiChatMessageRole.tool:
         return AiChatMessageType.tool;
+      // TODO p4: mapping system to ai message - since we should never receive system message from ai calls ...
+      case LgAiChatMessageRole.system:
+        return AiChatMessageType.ai;
     }
   }
 }
