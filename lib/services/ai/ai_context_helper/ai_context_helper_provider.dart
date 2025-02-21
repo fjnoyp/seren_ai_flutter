@@ -3,6 +3,7 @@
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:seren_ai_flutter/common/language_provider.dart';
 import 'package:seren_ai_flutter/services/ai/ai_chat_service_provider.dart';
+import 'package:seren_ai_flutter/services/ai/ai_context_helper/ai_summary_cache_provider.dart';
 import 'package:seren_ai_flutter/services/ai/ai_request/models/requests/ai_action_request_model.dart';
 import 'package:seren_ai_flutter/services/ai/ai_request/models/requests/ai_info_request_model.dart';
 import 'package:seren_ai_flutter/services/data/tasks/models/task_model.dart';
@@ -62,6 +63,20 @@ $baseMessage${additionalInstructions != null ? '\n$additionalInstructions' : ''}
     // Get task comments
     final comments = await commentsRepo.getTaskComments(taskId: taskId);
 
+    // Generate cache key
+    final cacheKey = generateTaskOverviewCacheKey(
+      taskId,
+      task.updatedAt,
+      comments.map((c) => c.updatedAt).toList(),
+    );
+
+    // Check cache
+    final cachedSummary =
+        ref.read(aiSummaryCacheProvider(cacheKey).notifier).get();
+    if (cachedSummary != null) {
+      return cachedSummary;
+    }
+
     // Get task assignees
     final assignees = await usersRepo.getTaskAssignedUsers(taskId: taskId);
 
@@ -76,7 +91,7 @@ $baseMessage${additionalInstructions != null ? '\n$additionalInstructions' : ''}
         'createdAt': task.createdAt?.toIso8601String(),
       },
       'assignees':
-          assignees.map((u) => '${u.firstName} ${u.lastName})').toList(),
+          assignees.map((u) => '${u.firstName} ${u.lastName}').toList(),
       'comments': comments
           .map((c) => {
                 'content': c.content,
@@ -85,17 +100,33 @@ $baseMessage${additionalInstructions != null ? '\n$additionalInstructions' : ''}
           .toList(),
     };
 
-    return _sendAiRequest(
+    // Generate new summary
+    final summary = await _sendAiRequest(
       systemBaseMessage:
           'Generate a very concise and compact summary to be displayed in a small UI card for users to quickly understand important details about the task and its current status. Only provide summary no other text.',
       userMessage: 'Summarize: ${formattedData}',
       additionalInstructions: additionalInstructions,
     );
+
+    // Cache the result
+    ref.read(aiSummaryCacheProvider(cacheKey).notifier).set(summary);
+
+    return summary;
   }
 
   Future<String> getTaskListHighlightsSummary(List<TaskModel> tasks,
       {String? additionalInstructions}) async {
     final usersRepo = ref.read(usersRepositoryProvider);
+
+    // Generate cache key
+    final cacheKey = generateTaskListCacheKey(tasks);
+
+    // Check cache
+    final cachedSummary =
+        ref.read(aiSummaryCacheProvider(cacheKey).notifier).get();
+    if (cachedSummary != null) {
+      return cachedSummary;
+    }
 
     // Format tasks for AI, only including relevant fields
     final formattedTasks = await Future.wait(tasks.map((task) async {
@@ -109,11 +140,17 @@ $baseMessage${additionalInstructions != null ? '\n$additionalInstructions' : ''}
       };
     }));
 
-    return _sendAiRequest(
+    // Generate new summary
+    final summary = await _sendAiRequest(
       systemBaseMessage:
           'Generate a very concise and compact summary to be displayed in a small UI card for users to quickly understand important details about the list of tasks and the current status. Focus on highlighting key patterns, urgent items, and overall progress. Only provide summary no other text.',
       userMessage: 'Summarize: ${formattedTasks}',
       additionalInstructions: additionalInstructions,
     );
+
+    // Cache the result
+    ref.read(aiSummaryCacheProvider(cacheKey).notifier).set(summary);
+
+    return summary;
   }
 }
