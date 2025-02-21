@@ -1,4 +1,4 @@
-import 'package:seren_ai_flutter/services/ai_interaction/ai_request/models/results/ai_request_result_model.dart';
+import 'package:seren_ai_flutter/services/ai/ai_request/models/results/ai_request_result_model.dart';
 
 class ShiftClockInOutResultModel extends AiRequestResultModel {
   final bool clockedIn;
@@ -19,8 +19,9 @@ class ShiftClockInOutResultModel extends AiRequestResultModel {
 
   @override
   Map<String, dynamic> toJson() {
-    return super.toJson()..addAll({
-      'clocked_in': clockedIn,
-    });
+    return super.toJson()
+      ..addAll({
+        'clocked_in': clockedIn,
+      });
   }
 }

@@ -1,5 +1,5 @@
-import 'package:seren_ai_flutter/services/ai_interaction/ai_request/models/requests/ai_action_request_model.dart';
-import 'package:seren_ai_flutter/services/ai_interaction/ai_request/models/requests/ai_info_request_model.dart';
+import 'package:seren_ai_flutter/services/ai/ai_request/models/requests/ai_action_request_model.dart';
+import 'package:seren_ai_flutter/services/ai/ai_request/models/requests/ai_info_request_model.dart';
 
 // Dart class representation of python task_tool.py generated requests
 
