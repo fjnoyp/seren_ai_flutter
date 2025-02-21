@@ -139,7 +139,8 @@ final filteredTasksProvider = StateProvider.autoDispose
 
   final curInlineCreatingTaskId = ref.watch(curInlineCreatingTaskIdProvider);
 
-  if (curInlineCreatingTaskId != null) {
+  if (curInlineCreatingTaskId != null &&
+      !filteredTasks.any((t) => t.id == curInlineCreatingTaskId)) {
     filteredTasks.add(tasks.firstWhere((t) => t.id == curInlineCreatingTaskId));
   }
 

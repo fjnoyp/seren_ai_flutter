@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:seren_ai_flutter/services/data/common/status_enum.dart';
 import 'package:seren_ai_flutter/services/data/projects/providers/cur_selected_project_providers.dart';
@@ -12,6 +13,7 @@ class _TasksList extends StatelessWidget {
   const _TasksList({
     required this.tasks,
     this.horizontalDragOffsetToChangeStatus,
+    required this.scrollController,
   });
 
   final List<TaskModel> tasks;
@@ -22,9 +24,12 @@ class _TasksList extends StatelessWidget {
   /// If this value is null, the task item will not be draggable.
   final double? horizontalDragOffsetToChangeStatus;
 
+  final ScrollController scrollController;
+
   @override
   Widget build(BuildContext context) {
     return ListView.separated(
+      controller: scrollController,
       itemCount: tasks.length,
       itemBuilder: (context, index) => horizontalDragOffsetToChangeStatus ==
               null
@@ -82,7 +87,7 @@ class _TasksList extends StatelessWidget {
   }
 }
 
-class ProjectTasksBoardView extends ConsumerWidget {
+class ProjectTasksBoardView extends HookConsumerWidget {
   const ProjectTasksBoardView({super.key});
 
   @override
@@ -98,6 +103,8 @@ class ProjectTasksBoardView extends ConsumerWidget {
               status != StatusEnum.cancelled && status != StatusEnum.archived)
           .map(
         (status) {
+          final scrollController = useScrollController();
+
           final filteredTasks =
               tasks.where((task) => task.status == status).toList();
           return Expanded(
@@ -122,6 +129,7 @@ class ProjectTasksBoardView extends ConsumerWidget {
                             tasks: filteredTasks,
                             horizontalDragOffsetToChangeStatus:
                                 constraints.maxWidth,
+                            scrollController: scrollController,
                           );
                         },
                       ),
@@ -131,8 +139,10 @@ class ProjectTasksBoardView extends ConsumerWidget {
                   SizedBox(
                     width: double.infinity,
                     child: InlineTaskCreationButton(
-                      // additionalFields: const [TaskFieldEnum.assignees],
                       initialStatus: status,
+                      onPressed: () => scrollController.jumpTo(
+                        scrollController.position.maxScrollExtent,
+                      ),
                     ),
                   ),
                 ],
