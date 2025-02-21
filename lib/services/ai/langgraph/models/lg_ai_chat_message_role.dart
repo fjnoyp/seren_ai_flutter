@@ -3,4 +3,5 @@ enum LgAiChatMessageRole {
   ai,
   user,
   tool,
+  system,
 }

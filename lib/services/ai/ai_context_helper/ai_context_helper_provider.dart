@@ -103,7 +103,7 @@ $baseMessage${additionalInstructions != null ? '\n$additionalInstructions' : ''}
     // Generate new summary
     final summary = await _sendAiRequest(
       systemBaseMessage:
-          'Generate a very concise and compact summary to be displayed in a small UI card for users to quickly understand important details about the task and its current status. Only provide summary no other text.',
+          'Generate a concise and compact summary to be displayed in a small UI card for users to quickly understand important details about the task and its current status. Only provide summary no other text. The users can see the task list below in the UI so you do not need to restate obvious details. Generate a max of 4-6 sentences preferably 1-2.',
       userMessage: 'Summarize: ${formattedData}',
       additionalInstructions: additionalInstructions,
     );
@@ -143,7 +143,7 @@ $baseMessage${additionalInstructions != null ? '\n$additionalInstructions' : ''}
     // Generate new summary
     final summary = await _sendAiRequest(
       systemBaseMessage:
-          'Generate a very concise and compact summary to be displayed in a small UI card for users to quickly understand important details about the list of tasks and the current status. Focus on highlighting key patterns, urgent items, and overall progress. Only provide summary no other text.',
+          'Generate a concise and compact summary to be displayed in a small UI card for users to quickly understand important details about the list of tasks and the current status. Focus on highlighting key patterns, urgent items, and overall progress. Only provide summary no other text. The users can see the task list below in the UI so you do not need to restate obvious details. Generate a max of 4-6 sentences preferably 1-2.',
       userMessage: 'Summarize: ${formattedTasks}',
       additionalInstructions: additionalInstructions,
     );

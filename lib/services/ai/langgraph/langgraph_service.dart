@@ -147,6 +147,8 @@ class LanggraphService {
       input: LgAgentStateModel(
         messages: [
           LgInputMessageModel(
+              role: LgAiChatMessageRole.system, content: systemMessage),
+          LgInputMessageModel(
               role: LgAiChatMessageRole.user, content: userMessage)
         ],
         aiBehaviorMode: AiBehaviorMode.singleCall,
