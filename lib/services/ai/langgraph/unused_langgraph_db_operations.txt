@@ -3,7 +3,7 @@
 import 'dart:convert';
 
 import 'package:powersync/powersync.dart';
-import 'package:seren_ai_flutter/services/ai_interaction/ai_request/ai_request_executor.dart';
+import 'package:seren_ai_flutter/services/ai/ai_request/ai_request_executor.dart';
 import 'package:seren_ai_flutter/services/ai_interaction/langgraph/langgraph_api.dart';
 import 'package:seren_ai_flutter/services/ai_interaction/langgraph/models/lg_ai_base_message_model.dart';
 import 'package:seren_ai_flutter/services/ai_interaction/langgraph/models/lg_ai_chat_message_role.dart';
