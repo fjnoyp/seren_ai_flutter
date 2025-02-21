@@ -2,10 +2,10 @@
 class BuildInfo {
   // Core build info
   static const String version = '1.0.0';
-  static const String buildDate = '2025-02-21 10:32:30';
+  static const String buildDate = '2025-02-21 10:33:07';
   
   // Git info
-  static const String commitHash = '32c6693';
+  static const String commitHash = '9277227';
   static const String branch = 'feat/ai_summary_integrations';
   static const String lastTag = 'no tag';
   
@@ -16,12 +16,20 @@ class BuildInfo {
   // Recent commits (last 5)
   static const List<Map<String, String>> recentCommits = [
     {
+      "hash": "9277227",
+      "author": "Kyle",
+      "email": "kylcheng@gmail.com", 
+      "message": "chore(ai): move ai chats into ai_interactions folder",
+      "date": "2025-02-21",
+      "relativeDate": "37 seconds ago"
+    },
+    {
       "hash": "32c6693",
       "author": "Kyle",
       "email": "kylcheng@gmail.com", 
       "message": "feat(ai): basic single call ai system with langgraph",
       "date": "2025-02-21",
-      "relativeDate": "4 minutes ago"
+      "relativeDate": "5 minutes ago"
     },
     {
       "hash": "76603ff",
@@ -47,17 +55,9 @@ class BuildInfo {
       "date": "2025-02-14",
       "relativeDate": "7 days ago"
     },
-    {
-      "hash": "3c837fa",
-      "author": "renata-sisilio",
-      "email": "renata@seren-ai.co", 
-      "message": "fix(tasks): task inline creation bugs + task project implicit navigation",
-      "date": "2025-02-19",
-      "relativeDate": "2 days ago"
-    },
   ];
 
   // Stats
-  static const String totalCommits = '364';
+  static const String totalCommits = '365';
   static const String contributors = '       0';
 }
