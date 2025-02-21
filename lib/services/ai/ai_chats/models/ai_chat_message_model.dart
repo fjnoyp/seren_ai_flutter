@@ -1,8 +1,8 @@
 import 'package:flutter/widgets.dart';
 import 'package:json_annotation/json_annotation.dart';
-import 'package:seren_ai_flutter/services/ai_interaction/ai_request/models/results/ai_request_result_model.dart';
-import 'package:seren_ai_flutter/services/ai_interaction/ai_request/models/requests/ai_request_model.dart';
-import 'package:seren_ai_flutter/services/data/ai_chats/models/ai_chat_message_type.dart';
+import 'package:seren_ai_flutter/services/ai/ai_request/models/results/ai_request_result_model.dart';
+import 'package:seren_ai_flutter/services/ai/ai_request/models/requests/ai_request_model.dart';
+import 'package:seren_ai_flutter/services/ai/ai_chats/models/ai_chat_message_type.dart';
 import 'package:seren_ai_flutter/services/data/common/i_has_id.dart';
 import 'package:seren_ai_flutter/services/data/common/uuid.dart';
 import 'dart:convert';
@@ -21,10 +21,13 @@ enum AiChatMessageDisplayType {
   String toHumanReadable(BuildContext context) => switch (this) {
         AiChatMessageDisplayType.user => AppLocalizations.of(context)!.user,
         AiChatMessageDisplayType.ai => AppLocalizations.of(context)!.ai,
-        AiChatMessageDisplayType.aiWithToolCall => AppLocalizations.of(context)!.aiWithToolCall,
+        AiChatMessageDisplayType.aiWithToolCall =>
+          AppLocalizations.of(context)!.aiWithToolCall,
         AiChatMessageDisplayType.tool => AppLocalizations.of(context)!.tool,
-        AiChatMessageDisplayType.toolAiRequest => AppLocalizations.of(context)!.toolAiRequest,
-        AiChatMessageDisplayType.toolAiResult => AppLocalizations.of(context)!.toolAiResult,
+        AiChatMessageDisplayType.toolAiRequest =>
+          AppLocalizations.of(context)!.toolAiRequest,
+        AiChatMessageDisplayType.toolAiResult =>
+          AppLocalizations.of(context)!.toolAiResult,
       };
 }
 

@@ -1,9 +1,9 @@
 //import 'dart:developer';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:seren_ai_flutter/services/data/ai_chats/models/ai_chat_message_model.dart';
-import 'package:seren_ai_flutter/services/data/ai_chats/providers/cur_ai_chat_thread_dependency_provider.dart';
+import 'package:seren_ai_flutter/services/ai/ai_chats/models/ai_chat_message_model.dart';
+import 'package:seren_ai_flutter/services/ai/ai_chats/providers/cur_ai_chat_thread_dependency_provider.dart';
 //import 'package:seren_ai_flutter/services/data/ai_chats/providers/cur_user_ai_chat_thread_provider.dart';
-import 'package:seren_ai_flutter/services/data/ai_chats/repositories/ai_chat_messages_repository.dart';
+import 'package:seren_ai_flutter/services/ai/ai_chats/repositories/ai_chat_messages_repository.dart';
 
 final curUserAiChatMessagesStreamProvider =
     StreamProvider.autoDispose<List<AiChatMessageModel>>((ref) {

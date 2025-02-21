@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
-import 'package:seren_ai_flutter/services/ai_interaction/ai_chat_service_provider.dart';
+import 'package:seren_ai_flutter/services/ai/ai_chat_service_provider.dart';
 
 final aiChatTextEditingControllerProvider =
     Provider<TextEditingController>((_) => TextEditingController());

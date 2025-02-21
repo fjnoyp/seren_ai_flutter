@@ -2,7 +2,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:seren_ai_flutter/common/current_route_provider.dart';
 import 'package:seren_ai_flutter/common/navigation_service_provider.dart';
 import 'package:seren_ai_flutter/common/routes/app_routes.dart';
-import 'package:seren_ai_flutter/services/ai_interaction/ai_quick_actions/models/ai_quick_action.dart';
+import 'package:seren_ai_flutter/services/ai/ai_quick_actions/models/ai_quick_action.dart';
 
 final aiQuickActionsServiceProvider =
     NotifierProvider<AiQuickActionsService, List<AiQuickAction>>(

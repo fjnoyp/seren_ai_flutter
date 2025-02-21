@@ -1,4 +1,4 @@
-import 'package:seren_ai_flutter/services/ai_interaction/ai_request/models/requests/ai_request_model.dart';
+import 'package:seren_ai_flutter/services/ai/ai_request/models/requests/ai_request_model.dart';
 import 'package:seren_ai_flutter/services/data/tasks/tool_methods/models/task_request_models.dart';
 
 /// Subtypes of Action Request Type
