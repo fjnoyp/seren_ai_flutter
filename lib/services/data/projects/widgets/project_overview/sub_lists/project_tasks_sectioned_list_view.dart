@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
+import 'package:seren_ai_flutter/services/ai/ai_context_helper/widgets/ai_context_view.dart';
 import 'package:seren_ai_flutter/services/data/common/status_enum.dart';
 import 'package:seren_ai_flutter/services/data/projects/providers/cur_selected_project_providers.dart';
 import 'package:seren_ai_flutter/services/data/projects/widgets/project_overview/sub_lists/create_task_button.dart';
@@ -19,6 +20,9 @@ class ProjectTasksSectionedListView extends ConsumerWidget {
 
     return SingleChildScrollView(
       child: Column(children: [
+        tasks.isNotEmpty
+            ? AIContextTaskList(tasks: tasks)
+            : const SizedBox.shrink(),
         CreateTaskButton(
           initialProjectId: projectId,
           initialStatus: StatusEnum.open,
