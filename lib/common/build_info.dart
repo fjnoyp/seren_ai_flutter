@@ -2,11 +2,11 @@
 class BuildInfo {
   // Core build info
   static const String version = '1.0.0';
-  static const String buildDate = '2025-02-21 08:30:03';
+  static const String buildDate = '2025-02-21 09:29:05';
   
   // Git info
-  static const String commitHash = '62beb87';
-  static const String branch = 'fix/gantt-chart-and-filter-bugs';
+  static const String commitHash = '29d2bb8';
+  static const String branch = 'feat/auto-scroll-to-inline-task-on-board';
   static const String lastTag = 'no tag';
   
   // Author of last commit
@@ -16,36 +16,20 @@ class BuildInfo {
   // Recent commits (last 5)
   static const List<Map<String, String>> recentCommits = [
     {
-      "hash": "62beb87",
+      "hash": "29d2bb8",
       "author": "renata-sisilio",
       "email": "renata@seren-ai.co", 
-      "message": "clean unnecessary ref parameters and gantt WidgetRef provider",
-      "date": "2025-02-20",
-      "relativeDate": "15 hours ago"
+      "message": "fix(tasks): auto scroll to inline task on project board view",
+      "date": "2025-02-21",
+      "relativeDate": "13 minutes ago"
     },
     {
-      "hash": "382da0b",
+      "hash": "5fef38c",
       "author": "renata-sisilio",
       "email": "renata@seren-ai.co", 
-      "message": "refactor(task_filters): simplify task filter/sort logic",
-      "date": "2025-02-20",
-      "relativeDate": "15 hours ago"
-    },
-    {
-      "hash": "ecb5519",
-      "author": "renata-sisilio",
-      "email": "renata@seren-ai.co", 
-      "message": "fix(gantt): filter removals on gantt chart",
-      "date": "2025-02-20",
-      "relativeDate": "21 hours ago"
-    },
-    {
-      "hash": "2b36f3c",
-      "author": "renata-sisilio",
-      "email": "renata@seren-ai.co", 
-      "message": "fix(task_filters): bad state on using ref after widget was disposed",
-      "date": "2025-02-20",
-      "relativeDate": "22 hours ago"
+      "message": "fix: gantt chart and filter bugs (#159)",
+      "date": "2025-02-21",
+      "relativeDate": "14 minutes ago"
     },
     {
       "hash": "66c9fa0",
@@ -55,9 +39,25 @@ class BuildInfo {
       "date": "2025-02-14",
       "relativeDate": "7 days ago"
     },
+    {
+      "hash": "3c837fa",
+      "author": "renata-sisilio",
+      "email": "renata@seren-ai.co", 
+      "message": "fix(tasks): task inline creation bugs + task project implicit navigation",
+      "date": "2025-02-19",
+      "relativeDate": "2 days ago"
+    },
+    {
+      "hash": "6f316a3",
+      "author": "renata-sisilio",
+      "email": "renata@seren-ai.co", 
+      "message": "fix: The method 'withValues' isn't defined for the class 'Color' error",
+      "date": "2025-02-19",
+      "relativeDate": "2 days ago"
+    },
   ];
 
   // Stats
-  static const String totalCommits = '365';
+  static const String totalCommits = '363';
   static const String contributors = '0';
 }
