@@ -2,19 +2,27 @@
 class BuildInfo {
   // Core build info
   static const String version = '1.0.0';
-  static const String buildDate = '2025-02-24 16:01:15';
+  static const String buildDate = '2025-02-24 17:07:26';
   
   // Git info
-  static const String commitHash = 'a3add9f';
+  static const String commitHash = '1c11b4b';
   static const String branch = 'chore/use-push-notifications-for-task-reminders';
   static const String lastTag = 'no tag';
   
   // Author of last commit
-  static const String lastCommitAuthor = 'Kyle';
-  static const String lastCommitEmail = 'kylcheng@gmail.com';
+  static const String lastCommitAuthor = 'renata-sisilio';
+  static const String lastCommitEmail = 'renata@seren-ai.co';
   
   // Recent commits (last 5)
   static const List<Map<String, String>> recentCommits = [
+    {
+      "hash": "1c11b4b",
+      "author": "renata-sisilio",
+      "email": "renata@seren-ai.co", 
+      "message": "chore(task_reminders): remove local notifications code (and duplicated code and some unused imports)",
+      "date": "2025-02-24",
+      "relativeDate": "66 minutes ago"
+    },
     {
       "hash": "a3add9f",
       "author": "Kyle",
@@ -47,17 +55,9 @@ class BuildInfo {
       "date": "2025-02-21",
       "relativeDate": "3 days ago"
     },
-    {
-      "hash": "25ff01c",
-      "author": "Kyle",
-      "email": "kylcheng@gmail.com", 
-      "message": "chore(ai): update imports",
-      "date": "2025-02-21",
-      "relativeDate": "3 days ago"
-    },
   ];
 
   // Stats
-  static const String totalCommits = '371';
+  static const String totalCommits = '372';
   static const String contributors = '0';
 }

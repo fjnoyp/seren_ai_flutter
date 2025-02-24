@@ -87,6 +87,11 @@ abstract class BaseRepository<T extends IHasId> {
     return fromJson(results.first);
   }
 
+  Future<T?> getSingleOrNull(String query, Map<String, dynamic> params) async {
+    final results = await db.execute(query, params.values.toList());
+    return results.isNotEmpty ? fromJson(results.first) : null;
+  }
+
   Future<void> insertItem(T item) async {
     final Map<String, dynamic> json = toJson(item);
     final columns = json.keys.join(', ');
