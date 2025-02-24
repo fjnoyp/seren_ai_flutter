@@ -2,11 +2,11 @@
 class BuildInfo {
   // Core build info
   static const String version = '1.0.0';
-  static const String buildDate = '2025-02-21 13:07:32';
+  static const String buildDate = '2025-02-24 16:01:15';
   
   // Git info
-  static const String commitHash = 'd12d12c';
-  static const String branch = 'main';
+  static const String commitHash = 'a3add9f';
+  static const String branch = 'chore/use-push-notifications-for-task-reminders';
   static const String lastTag = 'no tag';
   
   // Author of last commit
@@ -16,12 +16,20 @@ class BuildInfo {
   // Recent commits (last 5)
   static const List<Map<String, String>> recentCommits = [
     {
+      "hash": "a3add9f",
+      "author": "Kyle",
+      "email": "kylcheng@gmail.com", 
+      "message": "fix(ai): ai chat summaries use system message",
+      "date": "2025-02-21",
+      "relativeDate": "3 days ago"
+    },
+    {
       "hash": "d12d12c",
       "author": "Kyle",
       "email": "kylcheng@gmail.com", 
       "message": "chore(ai): add ai context cache to avoid excess ai calls",
       "date": "2025-02-21",
-      "relativeDate": "46 minutes ago"
+      "relativeDate": "3 days ago"
     },
     {
       "hash": "abdcf52",
@@ -29,7 +37,7 @@ class BuildInfo {
       "email": "kylcheng@gmail.com", 
       "message": "feat(ai): use ai context helper for task and task list views",
       "date": "2025-02-21",
-      "relativeDate": "71 minutes ago"
+      "relativeDate": "3 days ago"
     },
     {
       "hash": "858d8be",
@@ -37,7 +45,7 @@ class BuildInfo {
       "email": "kylcheng@gmail.com", 
       "message": "feat(ai): add ai context helper",
       "date": "2025-02-21",
-      "relativeDate": "71 minutes ago"
+      "relativeDate": "3 days ago"
     },
     {
       "hash": "25ff01c",
@@ -45,19 +53,11 @@ class BuildInfo {
       "email": "kylcheng@gmail.com", 
       "message": "chore(ai): update imports",
       "date": "2025-02-21",
-      "relativeDate": "3 hours ago"
-    },
-    {
-      "hash": "d77041e",
-      "author": "Kyle",
-      "email": "kylcheng@gmail.com", 
-      "message": "chore(ai): rename ai_interactions to ai",
-      "date": "2025-02-21",
-      "relativeDate": "3 hours ago"
+      "relativeDate": "3 days ago"
     },
   ];
 
   // Stats
-  static const String totalCommits = '370';
-  static const String contributors = '       0';
+  static const String totalCommits = '371';
+  static const String contributors = '0';
 }
