@@ -2,10 +2,10 @@
 class BuildInfo {
   // Core build info
   static const String version = '1.0.0';
-  static const String buildDate = '2025-02-25 15:12:42';
+  static const String buildDate = '2025-02-25 15:26:58';
   
   // Git info
-  static const String commitHash = '1dd6175';
+  static const String commitHash = '18600ff';
   static const String branch = 'chore/use-push-notifications-for-task-reminders';
   static const String lastTag = 'no tag';
   
@@ -16,12 +16,20 @@ class BuildInfo {
   // Recent commits (last 5)
   static const List<Map<String, String>> recentCommits = [
     {
+      "hash": "18600ff",
+      "author": "renata-sisilio",
+      "email": "renata@seren-ai.co", 
+      "message": "refactor(notifications): immediately insert the notification before trying to send it + fit new edge function body structure",
+      "date": "2025-02-25",
+      "relativeDate": "14 minutes ago"
+    },
+    {
       "hash": "1dd6175",
       "author": "renata-sisilio",
       "email": "renata@seren-ai.co", 
       "message": "refactor: reuse type parameters and simplify handler logic with class inheritance",
       "date": "2025-02-25",
-      "relativeDate": "4 hours ago"
+      "relativeDate": "5 hours ago"
     },
     {
       "hash": "b188a2e",
@@ -47,17 +55,9 @@ class BuildInfo {
       "date": "2025-02-24",
       "relativeDate": "23 hours ago"
     },
-    {
-      "hash": "a3add9f",
-      "author": "Kyle",
-      "email": "kylcheng@gmail.com", 
-      "message": "fix(ai): ai chat summaries use system message",
-      "date": "2025-02-21",
-      "relativeDate": "4 days ago"
-    },
   ];
 
   // Stats
-  static const String totalCommits = '375';
+  static const String totalCommits = '376';
   static const String contributors = '0';
 }
