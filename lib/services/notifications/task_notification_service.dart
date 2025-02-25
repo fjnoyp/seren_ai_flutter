@@ -93,17 +93,19 @@ class TaskNotificationService {
 
     if (recipients.isEmpty) return;
 
+    final notificationData = TaskUpdateNotificationData(
+      taskId: taskId,
+      updateType: field,
+    );
+
     final pushNotification = PushNotificationModel(
       userIds: recipients,
       referenceId: taskId,
-      referenceType: 'task_field_update',
+      referenceType: notificationData.type,
       notificationTitle: title,
       notificationBody: body,
       sendAt: DateTime.now(),
-      data: TaskUpdateNotificationData(
-        taskId: taskId,
-        updateType: field,
-      ),
+      data: notificationData,
     );
 
     await ref
@@ -147,17 +149,19 @@ class TaskNotificationService {
         ? AppLocalizations.of(context)!.newTaskAssignmentBody(task.name)
         : AppLocalizations.of(context)!.taskUnassignmentBody(task.name);
 
+    final notificationData = TaskAssignmentNotificationData(
+      taskId: taskId,
+      isAssignment: isAssignment,
+    );
+
     final pushNotification = PushNotificationModel(
       userIds: recipients,
       referenceId: taskId,
-      referenceType: 'task_assignment_change',
+      referenceType: notificationData.type,
       notificationTitle: title,
       notificationBody: body,
       sendAt: DateTime.now(),
-      data: TaskAssignmentNotificationData(
-        taskId: taskId,
-        isAssignment: isAssignment,
-      ),
+      data: notificationData,
     );
 
     await ref
@@ -205,16 +209,18 @@ class TaskNotificationService {
       comment.content ?? '',
     );
 
+    final notificationData = TaskCommentNotificationData(
+      taskId: taskId,
+    );
+
     final pushNotification = PushNotificationModel(
       userIds: recipients,
       referenceId: comment.id,
-      referenceType: 'task_new_comment',
+      referenceType: notificationData.type,
       notificationTitle: title,
       notificationBody: body,
       sendAt: DateTime.now(),
-      data: TaskCommentNotificationData(
-        taskId: taskId,
-      ),
+      data: notificationData,
     );
 
     await ref
@@ -247,7 +253,8 @@ class TaskNotificationService {
       {
         'reference_id': taskId,
         'reference_type': 'task_reminder',
-        'is_sent': false, // we should not delete the notification if it is already sent
+        'is_sent':
+            false, // we should not delete the notification if it is already sent
       },
     );
 
@@ -258,12 +265,16 @@ class TaskNotificationService {
 
     final context = ref.read(navigationServiceProvider).context;
 
+    final notificationData = TaskReminderNotificationData(
+      taskId: taskId,
+    );
+
     if (task.dueDate != null && task.reminderOffsetMinutes != null) {
       await pushNotificationsRepository.insertItem(
         PushNotificationModel(
           userIds: recipients,
           referenceId: taskId,
-          referenceType: 'task_reminder',
+          referenceType: notificationData.type,
           notificationTitle: AppLocalizations.of(context)!.taskReminder,
           notificationBody: AppLocalizations.of(context)!.taskReminderBody(
             task.name,
@@ -271,6 +282,7 @@ class TaskNotificationService {
           ),
           sendAt: task.dueDate!
               .subtract(Duration(minutes: task.reminderOffsetMinutes!)),
+          data: notificationData,
         ),
       );
     }

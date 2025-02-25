@@ -15,18 +15,28 @@ abstract class NotificationData {
       'task_update' => TaskUpdateNotificationData.fromJson(json),
       'task_assignment' => TaskAssignmentNotificationData.fromJson(json),
       'task_comment' => TaskCommentNotificationData.fromJson(json),
+      'task_reminder' => TaskReminderNotificationData.fromJson(json),
       _ => null,
     };
   }
 }
 
-/// Data for task update notifications
-class TaskUpdateNotificationData extends NotificationData {
+/// Base class for all task notification data
+abstract class TaskNotificationData extends NotificationData {
   final String taskId;
+
+  const TaskNotificationData({
+    required this.taskId,
+    required super.type,
+  });
+}
+
+/// Data for task update notifications
+class TaskUpdateNotificationData extends TaskNotificationData {
   final TaskFieldEnum updateType;
 
   const TaskUpdateNotificationData({
-    required this.taskId,
+    required super.taskId,
     required this.updateType,
   }) : super(type: 'task_update');
 
@@ -46,12 +56,11 @@ class TaskUpdateNotificationData extends NotificationData {
 }
 
 /// Data for task assignment notifications
-class TaskAssignmentNotificationData extends NotificationData {
-  final String taskId;
+class TaskAssignmentNotificationData extends TaskNotificationData {
   final bool isAssignment;
 
   const TaskAssignmentNotificationData({
-    required this.taskId,
+    required super.taskId,
     required this.isAssignment,
   }) : super(type: 'task_assignment');
 
@@ -71,11 +80,9 @@ class TaskAssignmentNotificationData extends NotificationData {
 }
 
 /// Data for task comment notifications
-class TaskCommentNotificationData extends NotificationData {
-  final String taskId;
-
+class TaskCommentNotificationData extends TaskNotificationData {
   const TaskCommentNotificationData({
-    required this.taskId,
+    required super.taskId,
   }) : super(type: 'task_comment');
 
   @override
@@ -86,6 +93,25 @@ class TaskCommentNotificationData extends NotificationData {
 
   factory TaskCommentNotificationData.fromJson(Map<String, dynamic> json) {
     return TaskCommentNotificationData(
+      taskId: json['task_id'] as String,
+    );
+  }
+}
+
+/// Data for task reminder notifications
+class TaskReminderNotificationData extends TaskNotificationData {
+  const TaskReminderNotificationData({
+    required super.taskId,
+  }) : super(type: 'task_reminder');
+
+  @override
+  Map<String, String> toJson() => {
+        'type': type,
+        'task_id': taskId,
+      };
+
+  factory TaskReminderNotificationData.fromJson(Map<String, dynamic> json) {
+    return TaskReminderNotificationData(
       taskId: json['task_id'] as String,
     );
   }
