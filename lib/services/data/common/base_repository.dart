@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:logging/logging.dart';
 import 'package:powersync/powersync.dart';
 import 'package:seren_ai_flutter/services/data/common/i_has_id.dart';
+import 'package:supabase_flutter/supabase_flutter.dart';
 
 final Logger log = Logger('base-repository');
 
@@ -87,6 +88,11 @@ abstract class BaseRepository<T extends IHasId> {
     return fromJson(results.first);
   }
 
+  Future<T?> getSingleOrNull(String query, Map<String, dynamic> params) async {
+    final results = await db.execute(query, params.values.toList());
+    return results.isNotEmpty ? fromJson(results.first) : null;
+  }
+
   Future<void> insertItem(T item) async {
     final Map<String, dynamic> json = toJson(item);
     final columns = json.keys.join(', ');
@@ -129,6 +135,16 @@ abstract class BaseRepository<T extends IHasId> {
     for (final item in items) {
       await upsertItem(item);
     }
+  }
+
+  Future<String> insertImmediately(T item) async {
+    final response = await Supabase.instance.client
+        .from(primaryTable)
+        .insert(toJson(item))
+        .select()
+        .single();
+
+    return response['id'];
   }
 
   Future<void> updateItem(T item) async {

@@ -1,14 +1,13 @@
 import 'package:firebase_core/firebase_core.dart';
 
-import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:powersync/powersync.dart';
 import 'package:seren_ai_flutter/app.dart';
 import 'package:seren_ai_flutter/common/shared_preferences_service_provider.dart';
 import 'package:seren_ai_flutter/firebase_options.dart';
 import 'package:seren_ai_flutter/services/data/db_setup/powersync.dart';
 import 'package:seren_ai_flutter/services/data/db_setup/db_provider.dart';
-import 'package:seren_ai_flutter/services/notifications/local_notification_service.dart';
 import 'package:seren_ai_flutter/services/notifications/helpers/fcm_push_notification_handler.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -23,7 +22,7 @@ void main() async {
     debugPrint('Flutter binding initialized');
 
     debugPrint('Initializing PowerSync Database...');
-    var db;
+    PowerSyncDatabase db;
     try {
       db = await PowerSyncDatabaseFactory.openDatabase();
       debugPrint('PowerSync Database initialized');
@@ -48,16 +47,6 @@ void main() async {
     final prefs = await SharedPreferences.getInstance();
     debugPrint('SharedPreferences initialized');
 
-    debugPrint('Creating notification services...');
-    final notificationService = LocalNotificationService();
-    debugPrint('Notification services created');
-
-    if (!kIsWeb) {
-      debugPrint('Initializing mobile notification services...');
-      await notificationService.initialize();
-      debugPrint('Mobile notification services initialized');
-    }
-
     debugPrint('Setting up error handlers...');
     FlutterError.onError = (FlutterErrorDetails details) {
       FlutterError.presentError(details);
@@ -72,8 +61,6 @@ void main() async {
         overrides: [
           dbProvider.overrideWithValue(db),
           sharedPreferencesProvider.overrideWithValue(prefs),
-          localNotificationServiceProvider
-              .overrideWithValue(notificationService),
         ],
         child: const App(),
       ),

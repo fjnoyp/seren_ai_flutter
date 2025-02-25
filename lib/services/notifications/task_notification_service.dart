@@ -4,13 +4,15 @@ import 'package:seren_ai_flutter/common/navigation_service_provider.dart';
 import 'package:seren_ai_flutter/services/data/common/status_enum.dart';
 import 'package:seren_ai_flutter/services/data/tasks/models/task_model.dart';
 import 'package:seren_ai_flutter/services/data/tasks/repositories/task_user_assignments_repository.dart';
-import 'package:seren_ai_flutter/services/notifications/fcm_push_notification_service_provider.dart';
 import 'package:seren_ai_flutter/services/data/tasks/task_field_enum.dart';
 import 'package:seren_ai_flutter/services/data/tasks/repositories/tasks_repository.dart';
 import 'package:seren_ai_flutter/services/auth/cur_auth_state_provider.dart';
 import 'package:seren_ai_flutter/services/data/tasks/models/task_comment_model.dart';
 import 'package:seren_ai_flutter/services/notifications/models/notification_data.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+import 'package:seren_ai_flutter/services/notifications/models/push_notification_model.dart';
+import 'package:seren_ai_flutter/services/notifications/repositories/push_notifications_repository.dart';
+import 'package:seren_ai_flutter/services/notifications/services/fcm_push_notification_service_provider.dart';
 
 final log = Logger('TaskNotificationService');
 
@@ -47,25 +49,25 @@ class TaskNotificationService {
         final newStatus = newValue as StatusEnum?;
         title = AppLocalizations.of(context)!.taskStatusUpdated;
         body = AppLocalizations.of(context)!.taskStatusUpdatedBody(
-              task.name,
-              oldStatus?.toHumanReadable(context) ?? 'none',
-              newStatus?.toHumanReadable(context) ?? 'none',
-            );
+          task.name,
+          oldStatus?.toHumanReadable(context) ?? 'none',
+          newStatus?.toHumanReadable(context) ?? 'none',
+        );
       case TaskFieldEnum.priority:
         final oldPriority = oldValue as PriorityEnum?;
         final newPriority = newValue as PriorityEnum?;
         title = AppLocalizations.of(context)!.taskPriorityUpdated;
         body = AppLocalizations.of(context)!.taskPriorityUpdatedBody(
-              task.name,
-              oldPriority?.toHumanReadable(context) ?? 'none',
-              newPriority?.toHumanReadable(context) ?? 'none',
-            );
+          task.name,
+          oldPriority?.toHumanReadable(context) ?? 'none',
+          newPriority?.toHumanReadable(context) ?? 'none',
+        );
       case TaskFieldEnum.name:
         title = AppLocalizations.of(context)!.taskNameUpdated;
         body = AppLocalizations.of(context)!.taskNameUpdatedBody(
-              oldValue ?? '',
-              task.name,
-            );
+          oldValue ?? '',
+          task.name,
+        );
       default:
         log.severe('Unknown task field update: $field');
         return;
@@ -91,15 +93,28 @@ class TaskNotificationService {
 
     if (recipients.isEmpty) return;
 
-    await ref.read(fcmPushNotificationServiceProvider).sendNotification(
-          userIds: recipients,
-          title: title,
-          body: body,
-          data: TaskUpdateNotificationData(
-            taskId: taskId,
-            updateType: field,
-          ),
-        );
+    final notificationData = TaskUpdateNotificationData(
+      taskId: taskId,
+      updateType: field,
+    );
+
+    final pushNotification = PushNotificationModel(
+      userIds: recipients,
+      referenceId: taskId,
+      referenceType: notificationData.type,
+      notificationTitle: title,
+      notificationBody: body,
+      sendAt: DateTime.now(),
+      data: notificationData,
+    );
+
+    final pushNotificationId = await ref
+        .read(pushNotificationsRepositoryProvider)
+        .insertImmediately(pushNotification);
+
+    await ref
+        .read(fcmPushNotificationServiceProvider)
+        .sendNotification(pushNotificationId);
   }
 
   Future<void> handleTaskAssignmentChange({
@@ -134,15 +149,30 @@ class TaskNotificationService {
         ? AppLocalizations.of(context)!.newTaskAssignmentBody(task.name)
         : AppLocalizations.of(context)!.taskUnassignmentBody(task.name);
 
-    await ref.read(fcmPushNotificationServiceProvider).sendNotification(
-          userIds: recipients,
-          title: title,
-          body: body,
-          data: TaskAssignmentNotificationData(
-            taskId: taskId,
-            isAssignment: isAssignment,
-          ),
-        );
+    final notificationData = TaskAssignmentNotificationData(
+      taskId: taskId,
+      isAssignment: isAssignment,
+    );
+
+    final pushNotification = PushNotificationModel(
+      userIds: recipients,
+      referenceId: taskId,
+      referenceType: notificationData.type,
+      notificationTitle: title,
+      notificationBody: body,
+      sendAt: DateTime.now(),
+      data: notificationData,
+    );
+
+    final pushNotificationId = await ref
+        .read(pushNotificationsRepositoryProvider)
+        .insertImmediately(pushNotification);
+
+    await ref
+        .read(fcmPushNotificationServiceProvider)
+        .sendNotification(pushNotificationId);
+
+    await handleTaskReminder(taskId: taskId);
   }
 
   Future<void> handleNewComment({
@@ -171,16 +201,90 @@ class TaskNotificationService {
 
     if (recipients.isEmpty) return;
 
-    final title = 'New Comment on Task';
-    final body = 'New comment on task "${task.name}": ${comment.content}';
+    final context = ref.read(navigationServiceProvider).context;
 
-    await ref.read(fcmPushNotificationServiceProvider).sendNotification(
+    final title = AppLocalizations.of(context)!.taskNewComment;
+    final body = AppLocalizations.of(context)!.taskNewCommentBody(
+      task.name,
+      comment.content ?? '',
+    );
+
+    final notificationData = TaskCommentNotificationData(
+      taskId: taskId,
+    );
+
+    final pushNotification = PushNotificationModel(
+      userIds: recipients,
+      referenceId: comment.id,
+      referenceType: notificationData.type,
+      notificationTitle: title,
+      notificationBody: body,
+      sendAt: DateTime.now(),
+      data: notificationData,
+    );
+
+    final pushNotificationId = await ref
+        .read(pushNotificationsRepositoryProvider)
+        .insertImmediately(pushNotification);
+
+    await ref
+        .read(fcmPushNotificationServiceProvider)
+        .sendNotification(pushNotificationId);
+  }
+
+  Future<void> handleTaskReminder({
+    required String taskId,
+  }) async {
+    final task = await ref.read(tasksRepositoryProvider).getById(taskId);
+    if (task == null) return;
+
+    final recipients = (await ref
+            .read(taskUserAssignmentsRepositoryProvider)
+            .getTaskAssignments(taskId: taskId))
+        .map((a) => a.userId)
+        .toList();
+
+    final pushNotificationsRepository =
+        ref.read(pushNotificationsRepositoryProvider);
+
+    final currentReminderNotification =
+        await pushNotificationsRepository.getSingleOrNull(
+      'SELECT * FROM push_notifications WHERE reference_id = ? AND reference_type = ? AND is_sent = ?',
+      {
+        'reference_id': taskId,
+        'reference_type': 'task_reminder',
+        'is_sent':
+            false, // we should not delete the notification if it is already sent
+      },
+    );
+
+    if (currentReminderNotification != null) {
+      await pushNotificationsRepository
+          .deleteItem(currentReminderNotification.id);
+    }
+
+    final context = ref.read(navigationServiceProvider).context;
+
+    final notificationData = TaskReminderNotificationData(
+      taskId: taskId,
+    );
+
+    if (task.dueDate != null && task.reminderOffsetMinutes != null) {
+      await pushNotificationsRepository.insertItem(
+        PushNotificationModel(
           userIds: recipients,
-          title: title,
-          body: body,
-          data: TaskCommentNotificationData(
-            taskId: taskId,
+          referenceId: taskId,
+          referenceType: notificationData.type,
+          notificationTitle: AppLocalizations.of(context)!.taskReminder,
+          notificationBody: AppLocalizations.of(context)!.taskReminderBody(
+            task.name,
+            task.dueDate!.toLocal().toString(),
           ),
-        );
+          sendAt: task.dueDate!
+              .subtract(Duration(minutes: task.reminderOffsetMinutes!)),
+          data: notificationData,
+        ),
+      );
+    }
   }
 }
