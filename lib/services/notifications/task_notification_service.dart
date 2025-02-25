@@ -270,7 +270,10 @@ class TaskNotificationService {
     );
 
     if (task.dueDate != null && task.reminderOffsetMinutes != null) {
-      await pushNotificationsRepository.insertItem(
+      // We're using insertImmediately because the insertItem method is not properly working
+      // it seems to be not recognizing referenceId as a String:
+      // DartError: Exception: Failed to insert item into push_notifications: Remote error: Invalid argument (params[2]): Allowed parameters must either be null or bool, int, num, String or List<int>.: Instance of 'minified:v<dynamic>'
+      await pushNotificationsRepository.insertImmediately(
         PushNotificationModel(
           userIds: recipients,
           referenceId: taskId,
@@ -280,7 +283,7 @@ class TaskNotificationService {
             task.name,
             task.dueDate!.toLocal().toString(),
           ),
-          sendAt: task.dueDate!
+          sendAt: task.dueDate!.toUtc()
               .subtract(Duration(minutes: task.reminderOffsetMinutes!)),
           data: notificationData,
         ),

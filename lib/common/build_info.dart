@@ -2,10 +2,10 @@
 class BuildInfo {
   // Core build info
   static const String version = '1.0.0';
-  static const String buildDate = '2025-02-25 16:32:29';
+  static const String buildDate = '2025-02-25 17:55:33';
   
   // Git info
-  static const String commitHash = 'cef3123';
+  static const String commitHash = 'eadc33a';
   static const String branch = 'main';
   static const String lastTag = 'no tag';
   
@@ -16,12 +16,20 @@ class BuildInfo {
   // Recent commits (last 5)
   static const List<Map<String, String>> recentCommits = [
     {
-      "hash": "cef3123",
+      "hash": "eadc33a",
+      "author": "renata-sisilio",
+      "email": "renata@seren-ai.co", 
+      "message": "fix(task_reminders): temporarily using immediate insertion due to data type issues with insertItem method",
+      "date": "2025-02-25",
+      "relativeDate": "18 minutes ago"
+    },
+    {
+      "hash": "cfa5243",
       "author": "renata-sisilio",
       "email": "renata@seren-ai.co", 
       "message": "feat(notifications): use push notifications for task reminders (#162)",
       "date": "2025-02-25",
-      "relativeDate": "9 minutes ago"
+      "relativeDate": "2 hours ago"
     },
     {
       "hash": "a3add9f",
@@ -47,17 +55,9 @@ class BuildInfo {
       "date": "2025-02-21",
       "relativeDate": "4 days ago"
     },
-    {
-      "hash": "858d8be",
-      "author": "Kyle",
-      "email": "kylcheng@gmail.com", 
-      "message": "feat(ai): add ai context helper",
-      "date": "2025-02-21",
-      "relativeDate": "4 days ago"
-    },
   ];
 
   // Stats
-  static const String totalCommits = '372';
+  static const String totalCommits = '373';
   static const String contributors = '0';
 }
