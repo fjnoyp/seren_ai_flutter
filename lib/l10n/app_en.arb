@@ -468,14 +468,6 @@
         }
     },
     "noReminder": "No reminder",
-    "taskReminder": "Task Reminder",
-    "taskReminderBody": "Task {taskName} is due in {reminderOffsetMinutes} minutes",
-    "@taskReminderBody": {
-        "placeholders": {
-            "taskName": {"type": "String"},
-            "reminderOffsetMinutes": {"type": "int"}
-        }
-    },
     "createdNewTask": "Created new task \"{taskName}\"",
     "@createdNewTask": {
         "placeholders": {
@@ -552,6 +544,22 @@
         "placeholders": {
             "taskName": {"type": "String"},
             "newName": {"type": "String"}
+        }
+    },
+    "taskNewComment": "New Comment on Task",
+    "taskNewCommentBody": "New comment on task \"{taskName}\": {comment}",
+    "@taskNewCommentBody": {
+        "placeholders": {
+            "taskName": {"type": "String"},
+            "comment": {"type": "String"}
+        }
+    },
+    "taskReminder": "Task Reminder",
+    "taskReminderBody": "The task \"{taskName}\" is due on {dueDate}",
+    "@taskReminderBody": {
+        "placeholders": {
+            "taskName": {"type": "String"},
+            "dueDate": {"type": "String"}
         }
     },
 

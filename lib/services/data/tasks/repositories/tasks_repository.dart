@@ -211,6 +211,10 @@ class TasksRepository extends BaseRepository<TaskModel> {
         null,
       );
     }
+
+    await ref
+        .read(taskNotificationServiceProvider)
+        .handleTaskReminder(taskId: taskId);
   }
 
   Future<void> updateTaskParentProjectId(
@@ -235,6 +239,10 @@ class TasksRepository extends BaseRepository<TaskModel> {
       'reminder_offset_minutes',
       reminderOffsetMinutes,
     );
+
+    await ref
+        .read(taskNotificationServiceProvider)
+        .handleTaskReminder(taskId: taskId);
   }
 
   Future<void> updateTaskEstimatedDurationMinutes(

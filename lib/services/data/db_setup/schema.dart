@@ -188,6 +188,7 @@ const noteSchemas = [
 ];
 
 const userDeviceTokensTable = 'user_device_tokens';
+const pushNotificationsTable = 'push_notifications';
 
 const pushNotificationSchemas = [
   Table(userDeviceTokensTable, [
@@ -196,6 +197,16 @@ const pushNotificationSchemas = [
     Column.text('fcm_token'),
     Column.text('device_model'),
     Column.text('platform'),
+  ]),
+  Table(pushNotificationsTable, [
+    Column.text('user_ids'),
+    Column.text('reference_id'),
+    Column.text('reference_type'),
+    Column.text('notification_title'),
+    Column.text('notification_body'),
+    Column.text('send_at'),
+    Column.text('data'),
+    Column.integer('is_sent'),
   ]),
 ];
 
