@@ -2,10 +2,10 @@
 class BuildInfo {
   // Core build info
   static const String version = '1.0.0';
-  static const String buildDate = '2025-02-25 10:54:47';
+  static const String buildDate = '2025-02-25 15:12:42';
   
   // Git info
-  static const String commitHash = 'b188a2e';
+  static const String commitHash = '1dd6175';
   static const String branch = 'chore/use-push-notifications-for-task-reminders';
   static const String lastTag = 'no tag';
   
@@ -16,12 +16,20 @@ class BuildInfo {
   // Recent commits (last 5)
   static const List<Map<String, String>> recentCommits = [
     {
+      "hash": "1dd6175",
+      "author": "renata-sisilio",
+      "email": "renata@seren-ai.co", 
+      "message": "refactor: reuse type parameters and simplify handler logic with class inheritance",
+      "date": "2025-02-25",
+      "relativeDate": "4 hours ago"
+    },
+    {
       "hash": "b188a2e",
       "author": "renata-sisilio",
       "email": "renata@seren-ai.co", 
       "message": "pr comment + schema update + refactor to use existing models",
       "date": "2025-02-25",
-      "relativeDate": "17 minutes ago"
+      "relativeDate": "5 hours ago"
     },
     {
       "hash": "a7e9a1a",
@@ -29,7 +37,7 @@ class BuildInfo {
       "email": "renata@seren-ai.co", 
       "message": "chore(task_reminders): trigger notifications table updates for task reminders",
       "date": "2025-02-24",
-      "relativeDate": "18 hours ago"
+      "relativeDate": "22 hours ago"
     },
     {
       "hash": "1c11b4b",
@@ -37,7 +45,7 @@ class BuildInfo {
       "email": "renata@seren-ai.co", 
       "message": "chore(task_reminders): remove local notifications code (and duplicated code and some unused imports)",
       "date": "2025-02-24",
-      "relativeDate": "19 hours ago"
+      "relativeDate": "23 hours ago"
     },
     {
       "hash": "a3add9f",
@@ -47,17 +55,9 @@ class BuildInfo {
       "date": "2025-02-21",
       "relativeDate": "4 days ago"
     },
-    {
-      "hash": "d12d12c",
-      "author": "Kyle",
-      "email": "kylcheng@gmail.com", 
-      "message": "chore(ai): add ai context cache to avoid excess ai calls",
-      "date": "2025-02-21",
-      "relativeDate": "4 days ago"
-    },
   ];
 
   // Stats
-  static const String totalCommits = '374';
+  static const String totalCommits = '375';
   static const String contributors = '0';
 }

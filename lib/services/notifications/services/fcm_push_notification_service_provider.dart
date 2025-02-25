@@ -1,7 +1,6 @@
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:seren_ai_flutter/services/notifications/models/push_notification_model.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
 final fcmPushNotificationServiceProvider =
@@ -32,19 +31,11 @@ class FCMPushNotificationService {
   ///
   /// Returns a Map containing the success status and any error message
   Future<Map<String, dynamic>> sendNotification(
-      PushNotificationModel pushNotification) async {
+      String pushNotificationId) async {
     try {
       final response = await Supabase.instance.client.functions.invoke(
         'send-notification',
-        body: {
-          'notification_id': pushNotification.id,
-          'user_ids': pushNotification.userIds,
-          'notification': {
-            'title': pushNotification.notificationTitle,
-            'body': pushNotification.notificationBody,
-          },
-          'data': pushNotification.data?.toJson(),
-        },
+        body: {'notification_id': pushNotificationId},
       );
 
       if (response.status != 200) {

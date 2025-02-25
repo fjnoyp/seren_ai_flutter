@@ -108,13 +108,13 @@ class TaskNotificationService {
       data: notificationData,
     );
 
-    await ref
+    final pushNotificationId = await ref
         .read(pushNotificationsRepositoryProvider)
-        .insertItem(pushNotification);
+        .insertImmediately(pushNotification);
 
     await ref
         .read(fcmPushNotificationServiceProvider)
-        .sendNotification(pushNotification);
+        .sendNotification(pushNotificationId);
   }
 
   Future<void> handleTaskAssignmentChange({
@@ -164,13 +164,13 @@ class TaskNotificationService {
       data: notificationData,
     );
 
-    await ref
+    final pushNotificationId = await ref
         .read(pushNotificationsRepositoryProvider)
-        .insertItem(pushNotification);
+        .insertImmediately(pushNotification);
 
     await ref
         .read(fcmPushNotificationServiceProvider)
-        .sendNotification(pushNotification);
+        .sendNotification(pushNotificationId);
 
     await handleTaskReminder(taskId: taskId);
   }
@@ -223,13 +223,13 @@ class TaskNotificationService {
       data: notificationData,
     );
 
-    await ref
+    final pushNotificationId = await ref
         .read(pushNotificationsRepositoryProvider)
-        .insertItem(pushNotification);
+        .insertImmediately(pushNotification);
 
     await ref
         .read(fcmPushNotificationServiceProvider)
-        .sendNotification(pushNotification);
+        .sendNotification(pushNotificationId);
   }
 
   Future<void> handleTaskReminder({
