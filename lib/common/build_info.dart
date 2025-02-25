@@ -2,10 +2,10 @@
 class BuildInfo {
   // Core build info
   static const String version = '1.0.0';
-  static const String buildDate = '2025-02-24 17:07:26';
+  static const String buildDate = '2025-02-25 10:37:41';
   
   // Git info
-  static const String commitHash = '1c11b4b';
+  static const String commitHash = 'a7e9a1a';
   static const String branch = 'chore/use-push-notifications-for-task-reminders';
   static const String lastTag = 'no tag';
   
@@ -16,12 +16,20 @@ class BuildInfo {
   // Recent commits (last 5)
   static const List<Map<String, String>> recentCommits = [
     {
+      "hash": "a7e9a1a",
+      "author": "renata-sisilio",
+      "email": "renata@seren-ai.co", 
+      "message": "chore(task_reminders): trigger notifications table updates for task reminders",
+      "date": "2025-02-24",
+      "relativeDate": "18 hours ago"
+    },
+    {
       "hash": "1c11b4b",
       "author": "renata-sisilio",
       "email": "renata@seren-ai.co", 
       "message": "chore(task_reminders): remove local notifications code (and duplicated code and some unused imports)",
       "date": "2025-02-24",
-      "relativeDate": "66 minutes ago"
+      "relativeDate": "19 hours ago"
     },
     {
       "hash": "a3add9f",
@@ -29,7 +37,7 @@ class BuildInfo {
       "email": "kylcheng@gmail.com", 
       "message": "fix(ai): ai chat summaries use system message",
       "date": "2025-02-21",
-      "relativeDate": "3 days ago"
+      "relativeDate": "4 days ago"
     },
     {
       "hash": "d12d12c",
@@ -37,7 +45,7 @@ class BuildInfo {
       "email": "kylcheng@gmail.com", 
       "message": "chore(ai): add ai context cache to avoid excess ai calls",
       "date": "2025-02-21",
-      "relativeDate": "3 days ago"
+      "relativeDate": "4 days ago"
     },
     {
       "hash": "abdcf52",
@@ -45,19 +53,11 @@ class BuildInfo {
       "email": "kylcheng@gmail.com", 
       "message": "feat(ai): use ai context helper for task and task list views",
       "date": "2025-02-21",
-      "relativeDate": "3 days ago"
-    },
-    {
-      "hash": "858d8be",
-      "author": "Kyle",
-      "email": "kylcheng@gmail.com", 
-      "message": "feat(ai): add ai context helper",
-      "date": "2025-02-21",
-      "relativeDate": "3 days ago"
+      "relativeDate": "4 days ago"
     },
   ];
 
   // Stats
-  static const String totalCommits = '372';
+  static const String totalCommits = '373';
   static const String contributors = '0';
 }

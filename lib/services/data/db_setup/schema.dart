@@ -205,6 +205,7 @@ const pushNotificationSchemas = [
     Column.text('notification_title'),
     Column.text('notification_body'),
     Column.text('send_at'),
+    Column.integer('is_sent'),
   ]),
 ];
 

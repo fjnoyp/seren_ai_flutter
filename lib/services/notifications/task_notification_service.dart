@@ -93,30 +93,26 @@ class TaskNotificationService {
 
     if (recipients.isEmpty) return;
 
-    await ref.read(pushNotificationsRepositoryProvider).insertItem(
-          PushNotificationModel(
-            userIds: recipients,
-            referenceId: taskId,
-            referenceType: 'task_field_update',
-            notificationTitle: title,
-            notificationBody: body,
-            sendAt: DateTime.now(),
-            data: TaskUpdateNotificationData(
-              taskId: taskId,
-              updateType: field,
-            ).toJson(),
-          ),
-        );
+    final pushNotification = PushNotificationModel(
+      userIds: recipients,
+      referenceId: taskId,
+      referenceType: 'task_field_update',
+      notificationTitle: title,
+      notificationBody: body,
+      sendAt: DateTime.now(),
+      data: TaskUpdateNotificationData(
+        taskId: taskId,
+        updateType: field,
+      ),
+    );
 
-    await ref.read(fcmPushNotificationServiceProvider).sendNotification(
-          userIds: recipients,
-          title: title,
-          body: body,
-          data: TaskUpdateNotificationData(
-            taskId: taskId,
-            updateType: field,
-          ),
-        );
+    await ref
+        .read(pushNotificationsRepositoryProvider)
+        .insertItem(pushNotification);
+
+    await ref
+        .read(fcmPushNotificationServiceProvider)
+        .sendNotification(pushNotification);
   }
 
   Future<void> handleTaskAssignmentChange({
@@ -151,30 +147,26 @@ class TaskNotificationService {
         ? AppLocalizations.of(context)!.newTaskAssignmentBody(task.name)
         : AppLocalizations.of(context)!.taskUnassignmentBody(task.name);
 
-    await ref.read(pushNotificationsRepositoryProvider).insertItem(
-          PushNotificationModel(
-            userIds: recipients,
-            referenceId: taskId,
-            referenceType: 'task_assignment_change',
-            notificationTitle: title,
-            notificationBody: body,
-            sendAt: DateTime.now(),
-            data: TaskAssignmentNotificationData(
-              taskId: taskId,
-              isAssignment: isAssignment,
-            ).toJson(),
-          ),
-        );
+    final pushNotification = PushNotificationModel(
+      userIds: recipients,
+      referenceId: taskId,
+      referenceType: 'task_assignment_change',
+      notificationTitle: title,
+      notificationBody: body,
+      sendAt: DateTime.now(),
+      data: TaskAssignmentNotificationData(
+        taskId: taskId,
+        isAssignment: isAssignment,
+      ),
+    );
 
-    await ref.read(fcmPushNotificationServiceProvider).sendNotification(
-          userIds: recipients,
-          title: title,
-          body: body,
-          data: TaskAssignmentNotificationData(
-            taskId: taskId,
-            isAssignment: isAssignment,
-          ),
-        );
+    await ref
+        .read(pushNotificationsRepositoryProvider)
+        .insertItem(pushNotification);
+
+    await ref
+        .read(fcmPushNotificationServiceProvider)
+        .sendNotification(pushNotification);
 
     await handleTaskReminder(taskId: taskId);
   }
@@ -213,28 +205,25 @@ class TaskNotificationService {
       comment.content ?? '',
     );
 
-    await ref.read(pushNotificationsRepositoryProvider).insertItem(
-          PushNotificationModel(
-            userIds: recipients,
-            referenceId: taskId,
-            referenceType: 'task_new_comment',
-            notificationTitle: title,
-            notificationBody: body,
-            sendAt: DateTime.now(),
-            data: TaskCommentNotificationData(
-              taskId: taskId,
-            ).toJson(),
-          ),
-        );
+    final pushNotification = PushNotificationModel(
+      userIds: recipients,
+      referenceId: comment.id,
+      referenceType: 'task_new_comment',
+      notificationTitle: title,
+      notificationBody: body,
+      sendAt: DateTime.now(),
+      data: TaskCommentNotificationData(
+        taskId: taskId,
+      ),
+    );
 
-    await ref.read(fcmPushNotificationServiceProvider).sendNotification(
-          userIds: recipients,
-          title: title,
-          body: body,
-          data: TaskCommentNotificationData(
-            taskId: taskId,
-          ),
-        );
+    await ref
+        .read(pushNotificationsRepositoryProvider)
+        .insertItem(pushNotification);
+
+    await ref
+        .read(fcmPushNotificationServiceProvider)
+        .sendNotification(pushNotification);
   }
 
   Future<void> handleTaskReminder({
@@ -249,26 +238,28 @@ class TaskNotificationService {
         .map((a) => a.userId)
         .toList();
 
-    final notificationsRepository =
+    final pushNotificationsRepository =
         ref.read(pushNotificationsRepositoryProvider);
 
     final currentReminderNotification =
-        await notificationsRepository.getSingleOrNull(
-      'SELECT * FROM push_notifications WHERE reference_id = ? AND reference_type = ?',
+        await pushNotificationsRepository.getSingleOrNull(
+      'SELECT * FROM push_notifications WHERE reference_id = ? AND reference_type = ? AND is_sent = ?',
       {
         'reference_id': taskId,
         'reference_type': 'task_reminder',
+        'is_sent': false, // we should not delete the notification if it is already sent
       },
     );
 
     if (currentReminderNotification != null) {
-      await notificationsRepository.deleteItem(currentReminderNotification.id);
+      await pushNotificationsRepository
+          .deleteItem(currentReminderNotification.id);
     }
 
     final context = ref.read(navigationServiceProvider).context;
 
     if (task.dueDate != null && task.reminderOffsetMinutes != null) {
-      await notificationsRepository.insertItem(
+      await pushNotificationsRepository.insertItem(
         PushNotificationModel(
           userIds: recipients,
           referenceId: taskId,

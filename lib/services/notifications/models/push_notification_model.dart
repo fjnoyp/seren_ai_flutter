@@ -2,6 +2,7 @@ import 'package:json_annotation/json_annotation.dart';
 
 import 'package:seren_ai_flutter/services/data/common/i_has_id.dart';
 import 'package:seren_ai_flutter/services/data/common/uuid.dart';
+import 'package:seren_ai_flutter/services/notifications/models/notification_data.dart';
 
 part 'push_notification_model.g.dart';
 
@@ -25,10 +26,20 @@ class PushNotificationModel extends IHasId {
   @JsonKey(name: 'notification_body')
   final String notificationBody;
 
-  final Map<String, String>? data;
+  @JsonKey(fromJson: _dataFromJson, toJson: _dataToJson)
+  final NotificationData? data;
+
+  static NotificationData? _dataFromJson(Map<String, dynamic> json) =>
+      NotificationData.fromJson(json);
+
+  static Map<String, dynamic> _dataToJson(NotificationData? data) =>
+      data?.toJson() ?? {};
 
   @JsonKey(name: 'send_at')
   final DateTime sendAt;
+
+  @JsonKey(name: 'is_sent')
+  final bool isSent;
 
   @JsonKey(name: 'created_at')
   final DateTime? createdAt;
@@ -45,6 +56,7 @@ class PushNotificationModel extends IHasId {
     required this.notificationBody,
     this.data,
     required DateTime sendAt,
+    this.isSent = false,
     DateTime? createdAt,
     DateTime? updatedAt,
   })  : id = id ?? uuid.v4(),
