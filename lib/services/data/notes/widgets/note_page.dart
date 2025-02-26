@@ -12,6 +12,7 @@ import 'package:seren_ai_flutter/services/data/notes/widgets/delete_note_button.
 import 'package:seren_ai_flutter/services/data/notes/widgets/form/new_note_selection_fields.dart';
 import 'package:seren_ai_flutter/services/data/notes/widgets/note_attachments/note_attachment_section.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+import 'package:seren_ai_flutter/services/data/projects/providers/project_by_id_stream_provider.dart';
 
 final log = Logger('NotePage');
 
@@ -47,6 +48,9 @@ class NotePage extends HookConsumerWidget {
     return SingleChildScrollView(
       child: Column(
         children: [
+          // Project name display
+          if (note.value?.parentProjectId != null)
+            _buildProjectNameDisplay(ref, note.value?.parentProjectId),
           NewNoteTitleField(
             noteId: noteId,
             focusNode: titleFocusNode,
@@ -62,6 +66,39 @@ class NotePage extends HookConsumerWidget {
           ),
         ],
       ),
+    );
+  }
+
+  Widget _buildProjectNameDisplay(WidgetRef ref, String? projectId) {
+    if (projectId == null) return const SizedBox.shrink();
+
+    return Consumer(
+      builder: (context, ref, _) {
+        final projectAsync = ref.watch(projectByIdStreamProvider(projectId));
+
+        return projectAsync.when(
+          data: (project) {
+            if (project == null) return const SizedBox.shrink();
+
+            return Padding(
+              padding: const EdgeInsets.fromLTRB(16, 8, 16, 0),
+              child: Align(
+                alignment: Alignment.topLeft,
+                child: Text(
+                  project.name,
+                  style: TextStyle(
+                    fontSize: 12,
+                    color: Colors.grey[600],
+                    fontWeight: FontWeight.w500,
+                  ),
+                ),
+              ),
+            );
+          },
+          loading: () => const SizedBox.shrink(),
+          error: (_, __) => const SizedBox.shrink(),
+        );
+      },
     );
   }
 }

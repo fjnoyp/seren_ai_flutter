@@ -104,6 +104,8 @@ class NotesRepository extends BaseRepository<NoteModel> {
     );
   }
 
+  /// Stream of recently updated notes across all projects the user has access to.
+  /// This gives the user a unified view of their most recent activity.
   Stream<List<NoteModel>> watchRecentlyUpdatedNotes({
     required String userId,
     int limit = 20,
