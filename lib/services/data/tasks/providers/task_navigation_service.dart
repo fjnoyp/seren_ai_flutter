@@ -3,8 +3,10 @@ import 'package:seren_ai_flutter/common/routes/app_routes.dart';
 import 'package:seren_ai_flutter/services/data/common/base_navigation_service.dart';
 import 'package:seren_ai_flutter/services/data/common/status_enum.dart';
 import 'package:seren_ai_flutter/services/data/common/widgets/editable_page_mode_enum.dart';
+import 'package:seren_ai_flutter/services/data/orgs/providers/cur_selected_org_id_notifier.dart';
 import 'package:seren_ai_flutter/services/data/tasks/providers/cur_selected_task_id_notifier_provider.dart';
 import 'package:seren_ai_flutter/common/navigation_service_provider.dart';
+import 'package:seren_ai_flutter/services/data/tasks/providers/task_by_id_stream_provider.dart';
 import 'package:seren_ai_flutter/services/data/tasks/widgets/action_buttons/delete_task_button.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
@@ -29,6 +31,8 @@ class TaskNavigationService extends BaseNavigationService {
 
     final curTaskId = ref.read(curSelectedTaskIdNotifierProvider);
     if (curTaskId == null) return;
+
+    await _ensureTaskOrgIsSelected(curTaskId);
 
     await _navigateToTaskPage(
       mode: EditablePageMode.edit,
@@ -58,6 +62,22 @@ class TaskNavigationService extends BaseNavigationService {
     );
 
     await _navigateToTaskPage(mode: EditablePageMode.create, taskId: curTaskId);
+  }
+
+  Future<void> _ensureTaskOrgIsSelected(String taskId) async {
+    final task = await ref.read(taskByIdStreamProvider(taskId).future);
+    if (task == null) {
+      throw Exception('Task not found');
+    }
+
+    // If the task org is not the current org, we need to select the task org
+    final curSelectedOrgId = ref.read(curSelectedOrgIdNotifierProvider);
+
+    if (task.parentOrgId != curSelectedOrgId) {
+      await ref
+          .read(curSelectedOrgIdNotifierProvider.notifier)
+          .setDesiredOrgId(task.parentOrgId);
+    }
   }
 
   Future<void> _navigateToTaskPage({
