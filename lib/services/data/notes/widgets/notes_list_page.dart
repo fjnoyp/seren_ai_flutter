@@ -16,8 +16,29 @@ class NoteListPage extends HookConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final curUser = ref.read(curUserProvider).value;
-    final curProjectId = useState<String?>(curUser?.defaultProjectId);
+    final curUser = ref.watch(curUserProvider).value;
+    final curProjectId = useState<String?>(null);
+
+    // Watch viewable projects to handle default project selection
+    final viewableProjects = ref.watch(curUserViewableProjectsProvider);
+
+    // Effect to handle default project selection
+    useEffect(() {
+      if (viewableProjects.hasValue) {
+        final projects = viewableProjects.value!;
+        final defaultProjectId = curUser?.defaultProjectId;
+
+        // If default project exists and is in viewable projects, select it
+        if (defaultProjectId != null &&
+            projects.any((p) => p.id == defaultProjectId)) {
+          curProjectId.value = defaultProjectId;
+        } else {
+          // Fallback to personal project (null) if default not found
+          curProjectId.value = null;
+        }
+      }
+      return null;
+    }, [viewableProjects, curUser]);
 
     return Column(
       children: [
@@ -124,9 +145,7 @@ class _NoteItem extends ConsumerWidget {
         style: const TextStyle(fontSize: 12),
       ),
       onTap: () {
-        ref
-            .read(notesNavigationServiceProvider)
-            .openNote(noteId: note.id);
+        ref.read(notesNavigationServiceProvider).openNote(noteId: note.id);
       },
     );
   }
