@@ -7,10 +7,12 @@ import 'package:seren_ai_flutter/common/universal_platform/universal_platform.da
 import 'package:seren_ai_flutter/services/data/common/base_navigation_service.dart';
 import 'package:seren_ai_flutter/services/data/common/widgets/editable_page_mode_enum.dart';
 import 'package:seren_ai_flutter/services/data/orgs/models/user_org_role_model.dart';
+import 'package:seren_ai_flutter/services/data/orgs/providers/cur_selected_org_id_notifier.dart';
 import 'package:seren_ai_flutter/services/data/orgs/providers/cur_user_org_role_provider.dart';
 import 'package:seren_ai_flutter/services/data/projects/providers/cur_editing_project_id_notifier_provider.dart';
 import 'package:seren_ai_flutter/services/data/projects/providers/cur_selected_project_providers.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+import 'package:seren_ai_flutter/services/data/projects/providers/project_by_id_stream_provider.dart';
 import 'package:seren_ai_flutter/services/data/projects/repositories/projects_repository.dart';
 import 'package:seren_ai_flutter/services/data/projects/widgets/action_buttons/delete_project_button.dart';
 import 'package:seren_ai_flutter/services/data/projects/widgets/action_buttons/open_project_info_button.dart';
@@ -38,7 +40,7 @@ class ProjectNavigationService extends BaseNavigationService {
     String? projectId,
     EditablePageMode mode = EditablePageMode.readOnly,
   }) async {
-    assert(projectId != null || mode != EditablePageMode.readOnly);
+    assert(projectId != null || mode != EditablePageMode.create);
 
     switch (mode) {
       case EditablePageMode.readOnly:
@@ -67,10 +69,27 @@ class ProjectNavigationService extends BaseNavigationService {
       EditablePageMode.create => AppLocalizations.of(context)!.createProject,
     };
 
+    // If the project is already created, ensure its org is selected
+    if (projectId != null) await _ensureProjectOrgIsSelected(projectId);
+
     if (mode == EditablePageMode.readOnly) {
       _navigateToProjectOverviewPage(title);
     } else {
       _openProjectDetailsPage(mode, title);
+    }
+  }
+
+  Future<void> _ensureProjectOrgIsSelected(String projectId) async {
+    final project = await ref.read(projectByIdStreamProvider(projectId).future);
+    if (project == null) {
+      throw Exception('Project not found');
+    }
+
+    final curSelectedOrgId = ref.read(curSelectedOrgIdNotifierProvider);
+    if (project.parentOrgId != curSelectedOrgId) {
+      await ref
+          .read(curSelectedOrgIdNotifierProvider.notifier)
+          .setDesiredOrgId(project.parentOrgId);
     }
   }
 
