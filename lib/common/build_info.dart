@@ -2,10 +2,10 @@
 class BuildInfo {
   // Core build info
   static const String version = '1.0.0';
-  static const String buildDate = '2025-02-26 07:48:30';
+  static const String buildDate = '2025-02-26 08:27:46';
   
   // Git info
-  static const String commitHash = '634a936';
+  static const String commitHash = '00d0993';
   static const String branch = 'chore/add_drawer_view_to_web_narrow';
   static const String lastTag = 'no tag';
   
@@ -16,12 +16,20 @@ class BuildInfo {
   // Recent commits (last 5)
   static const List<Map<String, String>> recentCommits = [
     {
+      "hash": "00d0993",
+      "author": "Kyle",
+      "email": "kylcheng@gmail.com", 
+      "message": "chore: remove old home cards",
+      "date": "2025-02-26",
+      "relativeDate": "39 minutes ago"
+    },
+    {
       "hash": "634a936",
       "author": "Kyle",
       "email": "kylcheng@gmail.com", 
       "message": "chore: add drawer view to web - refactor scaffold",
       "date": "2025-02-26",
-      "relativeDate": "2 hours ago"
+      "relativeDate": "3 hours ago"
     },
     {
       "hash": "52449e9",
@@ -29,7 +37,7 @@ class BuildInfo {
       "email": "renata@seren-ai.co", 
       "message": "fix(task_reminders): temporarily using immediate insertion due to data type issues with insertItem method",
       "date": "2025-02-25",
-      "relativeDate": "19 hours ago"
+      "relativeDate": "20 hours ago"
     },
     {
       "hash": "cfa5243",
@@ -37,7 +45,7 @@ class BuildInfo {
       "email": "renata@seren-ai.co", 
       "message": "feat(notifications): use push notifications for task reminders (#162)",
       "date": "2025-02-25",
-      "relativeDate": "20 hours ago"
+      "relativeDate": "21 hours ago"
     },
     {
       "hash": "a3add9f",
@@ -47,17 +55,9 @@ class BuildInfo {
       "date": "2025-02-21",
       "relativeDate": "5 days ago"
     },
-    {
-      "hash": "d12d12c",
-      "author": "Kyle",
-      "email": "kylcheng@gmail.com", 
-      "message": "chore(ai): add ai context cache to avoid excess ai calls",
-      "date": "2025-02-21",
-      "relativeDate": "5 days ago"
-    },
   ];
 
   // Stats
-  static const String totalCommits = '374';
+  static const String totalCommits = '375';
   static const String contributors = '       0';
 }
