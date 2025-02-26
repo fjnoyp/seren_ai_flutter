@@ -2,11 +2,11 @@
 class BuildInfo {
   // Core build info
   static const String version = '1.0.0';
-  static const String buildDate = '2025-02-25 17:55:33';
+  static const String buildDate = '2025-02-26 05:26:49';
   
   // Git info
-  static const String commitHash = 'eadc33a';
-  static const String branch = 'main';
+  static const String commitHash = '52449e9';
+  static const String branch = 'chore/add_drawer_view_to_web_narrow';
   static const String lastTag = 'no tag';
   
   // Author of last commit
@@ -16,12 +16,12 @@ class BuildInfo {
   // Recent commits (last 5)
   static const List<Map<String, String>> recentCommits = [
     {
-      "hash": "eadc33a",
+      "hash": "52449e9",
       "author": "renata-sisilio",
       "email": "renata@seren-ai.co", 
       "message": "fix(task_reminders): temporarily using immediate insertion due to data type issues with insertItem method",
       "date": "2025-02-25",
-      "relativeDate": "18 minutes ago"
+      "relativeDate": "17 hours ago"
     },
     {
       "hash": "cfa5243",
@@ -29,7 +29,7 @@ class BuildInfo {
       "email": "renata@seren-ai.co", 
       "message": "feat(notifications): use push notifications for task reminders (#162)",
       "date": "2025-02-25",
-      "relativeDate": "2 hours ago"
+      "relativeDate": "18 hours ago"
     },
     {
       "hash": "a3add9f",
@@ -37,7 +37,7 @@ class BuildInfo {
       "email": "kylcheng@gmail.com", 
       "message": "fix(ai): ai chat summaries use system message",
       "date": "2025-02-21",
-      "relativeDate": "4 days ago"
+      "relativeDate": "5 days ago"
     },
     {
       "hash": "d12d12c",
@@ -45,7 +45,7 @@ class BuildInfo {
       "email": "kylcheng@gmail.com", 
       "message": "chore(ai): add ai context cache to avoid excess ai calls",
       "date": "2025-02-21",
-      "relativeDate": "4 days ago"
+      "relativeDate": "5 days ago"
     },
     {
       "hash": "abdcf52",
@@ -53,11 +53,11 @@ class BuildInfo {
       "email": "kylcheng@gmail.com", 
       "message": "feat(ai): use ai context helper for task and task list views",
       "date": "2025-02-21",
-      "relativeDate": "4 days ago"
+      "relativeDate": "5 days ago"
     },
   ];
 
   // Stats
   static const String totalCommits = '373';
-  static const String contributors = '0';
+  static const String contributors = '       0';
 }
