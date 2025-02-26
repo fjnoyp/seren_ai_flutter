@@ -5,6 +5,7 @@ import 'package:seren_ai_flutter/common/navigation_service_provider.dart';
 import 'package:seren_ai_flutter/common/universal_platform/universal_platform.dart';
 import 'package:seren_ai_flutter/services/data/common/status_enum.dart';
 import 'package:seren_ai_flutter/services/data/notes/providers/notes_navigation_service.dart';
+import 'package:seren_ai_flutter/services/data/notes/widgets/project_notes_list.dart';
 import 'package:seren_ai_flutter/services/data/notes/widgets/notes_list_page.dart';
 import 'package:seren_ai_flutter/services/data/projects/providers/cur_selected_project_providers.dart';
 import 'package:seren_ai_flutter/services/data/projects/widgets/action_buttons/edit_project_button.dart';
@@ -223,7 +224,7 @@ class _ProjectNotesSection extends ConsumerWidget {
     final curProjectId = ref.watch(curSelectedProjectIdNotifierProvider);
     return Column(
       children: [
-        NoteListByProjectId(curProjectId),
+        ProjectNotesList(curProjectId),
         OutlinedButton.icon(
           icon: const Icon(Icons.add),
           label: Text(AppLocalizations.of(context)!.createNewNote),
