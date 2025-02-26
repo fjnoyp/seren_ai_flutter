@@ -10,6 +10,7 @@ import 'package:seren_ai_flutter/services/data/notes/models/note_model.dart';
 import 'package:seren_ai_flutter/services/data/notes/providers/notes_by_project_stream_provider.dart';
 import 'package:seren_ai_flutter/services/data/notes/providers/notes_navigation_service.dart';
 import 'package:seren_ai_flutter/services/data/projects/providers/cur_user_viewable_projects_provider.dart';
+import 'package:seren_ai_flutter/services/data/notes/widgets/project_notes_list.dart';
 
 class NoteListPage extends HookConsumerWidget {
   const NoteListPage({super.key});
@@ -43,7 +44,7 @@ class NoteListPage extends HookConsumerWidget {
     return Column(
       children: [
         _SelectProjectWidget(curProjectId),
-        Expanded(child: NoteListByProjectId(curProjectId.value)),
+        Expanded(child: ProjectNotesList(curProjectId.value)),
         CreateItemBottomButton(
           onPressed: () {
             ref
@@ -97,56 +98,6 @@ class _SelectProjectWidget extends ConsumerWidget {
                 ],
               ),
             ),
-    );
-  }
-}
-
-class NoteListByProjectId extends ConsumerWidget {
-  const NoteListByProjectId(this.projectId, {super.key});
-
-  final String? projectId;
-
-  @override
-  Widget build(BuildContext context, WidgetRef ref) {
-    return AsyncValueHandlerWidget(
-      value: ref.watch(notesByProjectStreamProvider(projectId)),
-      data: (notes) => notes.isEmpty
-          ? Center(
-              child: Text(AppLocalizations.of(context)!.thisProjectHasNoNotes))
-          : ListView.builder(
-              shrinkWrap: true,
-              itemCount: notes.length,
-              itemBuilder: (context, index) => _NoteItem(notes[index]),
-            ),
-    );
-  }
-}
-
-class _NoteItem extends ConsumerWidget {
-  const _NoteItem(this.note);
-
-  final NoteModel note;
-
-  @override
-  Widget build(BuildContext context, WidgetRef ref) {
-    return ListTile(
-      title: Text(note.name),
-      subtitle: Text(
-        note.description ?? '',
-        maxLines: 3,
-        overflow: TextOverflow.ellipsis,
-      ),
-      trailing: Text(
-        note.createdAt != null
-            ? DateFormat.yMd(AppLocalizations.of(context)!.localeName)
-                .add_jm()
-                .format(note.date!.toLocal())
-            : '',
-        style: const TextStyle(fontSize: 12),
-      ),
-      onTap: () {
-        ref.read(notesNavigationServiceProvider).openNote(noteId: note.id);
-      },
     );
   }
 }
