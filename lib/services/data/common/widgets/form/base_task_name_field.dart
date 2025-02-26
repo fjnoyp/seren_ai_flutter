@@ -32,36 +32,10 @@ class BaseNameField extends HookConsumerWidget {
       triggerValue: curName,
     );
 
-    // HACK to get textController to sync with curTaskProvider
-    // The onSubmitted event is never called
-    // And updating state onChanged will reset the TextField
-
-    // TODO: p2 - should remove hack and find better solution
-    // Current approach will NOT work with keyboards and button is pressed, as submit event is never triggered
-
-    /*
-    focusNode.addListener(() {
-      if (!focusNode.hasFocus && nameController.text != curTaskName) {
-        ref.read(curTaskProvider.notifier).updateTaskName(nameController.text);
-        FocusScope.of(context).unfocus(); // Hide the keyboard
-      }
-    });
-    */
-
-    // Add focus listener using useEffect to properly handle tap outside for web
-    // useEffect(() {
-    //   void onFocusChange() {
-    //     if (!focusNode.hasFocus && nameController.text != curName) {
-    //       if (nameController.text != curName) {
-    //         updateName(ref, nameController.text);
-    //       }
-    //       FocusScope.of(context).unfocus();
-    //     }
-    //   }
-
-    //   focusNode.addListener(onFocusChange);
-    //   return () => focusNode.removeListener(onFocusChange);
-    // }, [focusNode]);
+    useEffect(() {
+      nameController.text = curName;
+      return null;
+    }, [curName]);
 
     // Update the task name only when editing is complete or when tapping outside
     void updateTaskName() {
