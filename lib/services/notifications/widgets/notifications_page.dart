@@ -3,7 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:seren_ai_flutter/services/data/common/widgets/async_value_handler_widget.dart';
 import 'package:seren_ai_flutter/services/notifications/models/push_notification_model.dart';
 import 'package:seren_ai_flutter/services/notifications/notification_history/providers/cur_user_sent_notifications.dart';
-import 'package:seren_ai_flutter/services/notifications/services/fcm_remote_message_handler.dart';
+import 'package:seren_ai_flutter/services/notifications/services/notification_data_handler.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 class NotificationsPage extends ConsumerWidget {
