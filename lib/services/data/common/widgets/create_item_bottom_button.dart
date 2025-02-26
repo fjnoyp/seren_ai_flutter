@@ -14,12 +14,14 @@ class CreateItemBottomButton extends StatelessWidget {
   Widget build(BuildContext context) {
     return Padding(
       padding: const EdgeInsets.only(left: 20.0, right: 20.0, bottom: 30.0),
-      child: SizedBox(
-        width: double.infinity,
-        child: FilledButton(
-          onPressed: onPressed,
-          child: Text(buttonText),
-        ),
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          FilledButton(
+            onPressed: onPressed,
+            child: Text(buttonText),
+          ),
+        ],
       ),
     );
   }
