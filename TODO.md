@@ -1,14 +1,11 @@
 
-# TODO Feb 21 2025 
 
-For now, the client will gather all the information and send it to the Langgraph Server API ... 
-- Need to have control over the system message ... and the human messages template ...
+# TODO Feb 26 2025 
 
-We will create ai summary systems for the various UI screens summarizing CURRENT status (but with no historical data change context) 
-This can be shared in a provider for now - so it will be regenerated on every app open ... 
+Enhancing notes experience to be a viable tool for tracking daily work notes or any other notes by voice 
 
-In future, updates should only occur when updates are made to the underlying data ... 
 
+1. Default project should be auto selected 
 
 
 
