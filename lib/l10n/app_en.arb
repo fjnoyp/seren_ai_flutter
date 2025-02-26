@@ -692,5 +692,9 @@
         "placeholders": {
             "orgName": {"type": "String"}
         }
-    }
+    },
+
+    "@_": {"description": "Notifications"},
+    "notifications": "Notifications",
+    "noNotificationsFound": "No notifications found"
 }

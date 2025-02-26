@@ -386,5 +386,9 @@
     "followUpProjectDescription": "Sobre o que é o projeto?",
     "followUpProjectLocation": "Onde está localizado o projeto?",
     "inviteSomeone": "Convidar um novo utilizador",
-    "inviteSomeoneHint": "Convidar [user@example.com] como membro para ${orgName}"
+    "inviteSomeoneHint": "Convidar [user@example.com] como membro para ${orgName}",
+
+    "@_": {"description": "Notifications"},
+    "notifications": "Notificações",
+    "noNotificationsFound": "Nenhuma notificação encontrada"
 }

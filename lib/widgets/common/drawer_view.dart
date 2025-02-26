@@ -159,6 +159,14 @@ class DrawerView extends ConsumerWidget {
                         .navigateTo(AppRoutes.noteList.name),
                     isSelected: curRoute == AppRoutes.noteList.name,
                   ),
+                _DrawerListTile(
+                  icon: Icons.notifications,
+                  title: AppLocalizations.of(context)!.notifications,
+                  onTap: () => ref
+                      .read(navigationServiceProvider)
+                      .navigateTo(AppRoutes.notifications.name),
+                  isSelected: curRoute == AppRoutes.notifications.name,
+                ),
               ],
             ),
           ),
