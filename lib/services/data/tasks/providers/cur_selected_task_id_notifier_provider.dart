@@ -1,6 +1,7 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:seren_ai_flutter/services/auth/cur_auth_state_provider.dart';
 import 'package:seren_ai_flutter/services/data/common/status_enum.dart';
+import 'package:seren_ai_flutter/services/data/orgs/providers/cur_selected_org_id_notifier.dart';
 import 'package:seren_ai_flutter/services/data/projects/providers/cur_selected_project_providers.dart';
 import 'package:seren_ai_flutter/services/data/tasks/models/task_model.dart';
 import 'package:seren_ai_flutter/services/data/tasks/repositories/tasks_repository.dart';
@@ -37,6 +38,13 @@ class CurSelectedTaskIdNotifier extends Notifier<String?> {
               .read(curSelectedProjectIdNotifierProvider.notifier)
               .getSelectedProjectOrDefault();
 
+      final parentOrgId = ref
+          .read(curSelectedOrgIdNotifierProvider);
+
+      if (parentOrgId == null) {
+        throw Exception('Cannot create task without org selected');
+      }
+
       final newTask = TaskModel(
         name: isPhase ? 'New Phase' : 'New Task',
         description: '',
@@ -45,6 +53,7 @@ class CurSelectedTaskIdNotifier extends Notifier<String?> {
         parentProjectId: parentProjectId,
         parentTaskId: initialParentTaskId,
         type: isPhase ? TaskType.phase : TaskType.task,
+        parentOrgId: parentOrgId,
       );
 
       await ref.read(tasksRepositoryProvider).upsertItem(newTask);

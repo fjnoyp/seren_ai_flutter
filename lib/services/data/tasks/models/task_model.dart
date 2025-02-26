@@ -106,6 +106,9 @@ class TaskModel implements IHasId {
   final TaskType type;
   bool get isPhase => type == TaskType.phase;
 
+  @JsonKey(name: 'parent_org_id')
+  final String parentOrgId;
+
   Duration? get duration {
     if (startDateTime != null && dueDate != null) {
       return dueDate!.difference(startDateTime!);
@@ -140,6 +143,7 @@ class TaskModel implements IHasId {
     this.parentTaskId,
     this.blockedByTaskId,
     required this.type,
+    required this.parentOrgId,
   })  : id = id ?? uuid.v4(),
         assert(dueDate != null || reminderOffsetMinutes == null);
 
@@ -160,6 +164,7 @@ class TaskModel implements IHasId {
     String? parentTaskId,
     String? blockedByTaskId,
     bool removeReminder = false,
+    String? parentOrgId,
   }) {
     return TaskModel(
       id: id ?? this.id,
@@ -181,6 +186,7 @@ class TaskModel implements IHasId {
       parentTaskId: parentTaskId ?? this.parentTaskId,
       blockedByTaskId: blockedByTaskId ?? this.blockedByTaskId,
       type: type,
+      parentOrgId: parentOrgId ?? this.parentOrgId,
     );
   }
 
