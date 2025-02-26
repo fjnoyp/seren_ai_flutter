@@ -20,7 +20,8 @@ enum AppRoutes {
   testAiPage('/testAiPage'),
   termsAndConditions('/termsAndConditions'),
   settings('/settings'),
-  resetPassword('/resetPassword');
+  resetPassword('/resetPassword'),
+  notifications('/notifications');
 
   final String _path;
   const AppRoutes(this._path);

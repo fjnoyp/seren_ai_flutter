@@ -249,12 +249,9 @@ class TaskNotificationService {
 
     final currentReminderNotification =
         await pushNotificationsRepository.getSingleOrNull(
-      'SELECT * FROM push_notifications WHERE reference_id = ? AND reference_type = ? AND is_sent = ?',
+      "SELECT * FROM push_notifications WHERE reference_id = '$taskId' AND reference_type = ? AND is_sent = 0", // we should not delete the notification if it is already sent
       {
-        'reference_id': taskId,
         'reference_type': 'task_reminder',
-        'is_sent':
-            false, // we should not delete the notification if it is already sent
       },
     );
 
@@ -283,7 +280,8 @@ class TaskNotificationService {
             task.name,
             task.dueDate!.toLocal().toString(),
           ),
-          sendAt: task.dueDate!.toUtc()
+          sendAt: task.dueDate!
+              .toUtc()
               .subtract(Duration(minutes: task.reminderOffsetMinutes!)),
           data: notificationData,
         ),

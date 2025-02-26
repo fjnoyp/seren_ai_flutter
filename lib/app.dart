@@ -35,6 +35,7 @@ import 'package:seren_ai_flutter/services/ai/stt_orchestrator_provider.dart.dart
 import 'package:seren_ai_flutter/services/data/tasks/widgets/web/web_task_page.dart';
 import 'package:seren_ai_flutter/services/notifications/helpers/fcm_push_notification_handler.dart';
 import 'package:seren_ai_flutter/services/notifications/services/fcm_device_token_service.dart';
+import 'package:seren_ai_flutter/services/notifications/widgets/notifications_page.dart';
 import 'package:seren_ai_flutter/widgets/home/home_page.dart';
 import 'package:seren_ai_flutter/widgets/common/main_scaffold.dart';
 import 'package:seren_ai_flutter/services/data/tasks/widgets/task_list/tasks_list_page.dart';
@@ -186,6 +187,10 @@ class AppState extends ConsumerState<App> {
                     body: ResetPasswordPage((ModalRoute.of(context)!
                         .settings
                         .arguments as Map<String, dynamic>)['accessToken']),
+                  ),
+              AppRoutes.notifications.name: (context) => _GuardScaffold(
+                    AppLocalizations.of(context)!.notifications,
+                    const NotificationsPage(),
                   ),
             };
 
