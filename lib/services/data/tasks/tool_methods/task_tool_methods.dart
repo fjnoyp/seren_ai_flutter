@@ -221,12 +221,6 @@ class TaskToolMethods {
     }
     // === END SELECT PROJECT ===
 
-    final curSelectedOrgId = ref.read(curSelectedOrgIdNotifierProvider);
-    // We should not create a task until an org is selected
-    if (curSelectedOrgId == null) {
-      throw Exception('No org selected');
-    }
-
     // Create a new task with fields from the request
     final newTask = TaskModel(
       name: actionRequest.taskName,
@@ -245,7 +239,6 @@ class TaskToolMethods {
       // TODO p4: add `actionRequest.parentProjectId` instead of always using defaultProjectId
       parentProjectId: selectedProjectId,
       type: TaskType.task,
-      parentOrgId: curSelectedOrgId,
     );
 
     // Save the task in the current task service
