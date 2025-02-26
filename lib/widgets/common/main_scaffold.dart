@@ -42,19 +42,14 @@ class MainScaffold extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    // final enableAiBar = true;
     final isAiAssistantExpanded = ref.watch(isAiModalVisibleProvider);
-
-    final theme = Theme.of(context);
-
     final curUserPendingInvites = ref.watch(curUserInvitesServiceProvider);
+
     WidgetsBinding.instance.addPostFrameCallback((_) {
       for (final invite in curUserPendingInvites) {
         _showInviteDialog(context, ref, invite);
       }
     });
-
-    final isDebugMode = ref.watch(isDebugModeSNP);
 
     return PopScope(
       canPop: ref.read(navigationServiceProvider).canPop,
@@ -65,147 +60,20 @@ class MainScaffold extends ConsumerWidget {
         }
       },
       child: isWebVersion
-          ? Scaffold(
-              backgroundColor: theme.scaffoldBackgroundColor,
-              body: LayoutBuilder(builder: (context, constraints) {
-                final isNarrow =
-                    constraints.maxWidth < 1200; // Adjust threshold as needed
-
-                return Row(
-                  children: [
-                    if (!isNarrow)
-                      const SizedBox(
-                        width: 200,
-                        child: DrawerView(),
-                      ),
-                    Expanded(
-                      flex: 4,
-                      child: Scaffold(
-                        appBar: showAppBar
-                            ? AppBar(
-                                backgroundColor:
-                                    theme.appBarTheme.backgroundColor,
-                                automaticallyImplyLeading: isNarrow,
-                                leading: isNarrow
-                                    ? Builder(
-                                        builder: (context) => IconButton(
-                                          icon: Icon(Icons.menu,
-                                              color: theme.iconTheme.color),
-                                          onPressed: () =>
-                                              Scaffold.of(context).openDrawer(),
-                                          tooltip: AppLocalizations.of(context)!
-                                              .menu,
-                                        ),
-                                      )
-                                    : null,
-                                elevation: 0,
-                                title: Padding(
-                                  padding: const EdgeInsets.all(8.0),
-                                  child: Text(
-                                    title,
-                                    style: theme.appBarTheme.titleTextStyle,
-                                  ),
-                                ),
-                                actions: [
-                                  if (!AppConfig.isProdMode)
-                                    const Text(
-                                      'DevConfig',
-                                      style: TextStyle(
-                                          color: Colors.red,
-                                          fontWeight: FontWeight.bold),
-                                    ),
-                                  if (isDebugMode) _DebugButton(),
-                                  ...actions ?? [],
-                                ],
-                              )
-                            : null,
-                        drawer: isNarrow ? const DrawerView() : null,
-                        body: Stack(
-                          alignment: Alignment.centerRight,
-                          children: [
-                            body,
-                            if (showAiAssistant && isAiAssistantExpanded)
-                              const WebAiAssistantView(),
-                          ],
-                        ),
-                      ),
-                    ),
-                  ],
-                );
-              }),
-              floatingActionButton: (showAiAssistant && !isAiAssistantExpanded)
-                  ? const WebAiAssistantButtonWithQuickActions()
-                  : null,
+          ? _WebScaffold(
+              title: title,
+              body: body,
+              showAiAssistant: showAiAssistant,
+              actions: actions,
+              showAppBar: showAppBar,
+              isAiAssistantExpanded: isAiAssistantExpanded,
             )
-          : Scaffold(
-              backgroundColor: theme.scaffoldBackgroundColor,
-              appBar: AppBar(
-                backgroundColor: theme.appBarTheme.backgroundColor,
-                elevation: 0,
-                leading: Builder(
-                  builder: (BuildContext context) {
-                    return Row(
-                      children: [
-                        IconButton(
-                          icon: Icon(Icons.menu, color: theme.iconTheme.color),
-                          onPressed: () {
-                            Scaffold.of(context).openDrawer();
-                          },
-                          tooltip: AppLocalizations.of(context)!.menu,
-                        ),
-                        // TODO p2: back button is in a weird location. we should only conditionally show back button
-                        if (ref.read(navigationServiceProvider).canPop)
-                          IconButton(
-                            icon: Icon(Icons.arrow_back,
-                                color: theme.iconTheme.color),
-                            onPressed:
-                                () => // moved logic to navigation service
-                                    ref.read(navigationServiceProvider).pop(),
-                            tooltip: AppLocalizations.of(context)!.back,
-                          ),
-                      ],
-                    );
-                  },
-                ),
-                leadingWidth: ref.read(navigationServiceProvider).canPop
-                    ? 96
-                    : 48, // Adjust width based on whether back button is shown
-
-                title: Padding(
-                  padding: const EdgeInsets.all(8.0),
-                  child: Text(
-                    title,
-                    style: theme.appBarTheme.titleTextStyle,
-                  ),
-                ),
-                actions: [
-                  if (!AppConfig.isProdMode)
-                    const Text(
-                      'Dev',
-                      style: TextStyle(
-                          color: Colors.red, fontWeight: FontWeight.bold),
-                    ),
-                  if (isDebugMode) _DebugButton(),
-                  ...actions ?? [],
-                ],
-              ),
-              drawer: const DrawerView(),
-              body: Padding(
-                padding: const EdgeInsets.all(0),
-                child: body,
-              ),
-              bottomNavigationBar: showAiAssistant
-                  ? isAiAssistantExpanded
-                      ? const UserInputDisplayWidget()
-                      : _QuickActionsBottomAppBar()
-                  : null,
-              floatingActionButtonLocation:
-                  FloatingActionButtonLocation.centerDocked,
-              floatingActionButton: showAiAssistant
-                  ? isAiAssistantExpanded
-                      ? null
-                      : const AiAssistantButton()
-                  : null,
+          : _MobileScaffold(
+              title: title,
+              body: body,
+              showAiAssistant: showAiAssistant,
+              actions: actions,
+              isAiAssistantExpanded: isAiAssistantExpanded,
             ),
     );
   }
@@ -240,6 +108,203 @@ class MainScaffold extends ConsumerWidget {
           ),
         ],
       ),
+    );
+  }
+}
+
+class _WebScaffold extends ConsumerWidget {
+  final String title;
+  final Widget body;
+  final bool showAiAssistant;
+  final List<Widget>? actions;
+  final bool showAppBar;
+  final bool isAiAssistantExpanded;
+
+  const _WebScaffold({
+    required this.title,
+    required this.body,
+    required this.showAiAssistant,
+    required this.actions,
+    required this.showAppBar,
+    required this.isAiAssistantExpanded,
+  });
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final theme = Theme.of(context);
+    final isDebugMode = ref.watch(isDebugModeSNP);
+
+    return Scaffold(
+      backgroundColor: theme.scaffoldBackgroundColor,
+      body: LayoutBuilder(builder: (context, constraints) {
+        final isNarrow = constraints.maxWidth < 1200;
+
+        return Row(
+          children: [
+            if (!isNarrow)
+              const SizedBox(
+                width: 200,
+                child: DrawerView(),
+              ),
+            Expanded(
+              flex: 4,
+              child: Scaffold(
+                appBar: PreferredSize(
+                  preferredSize: const Size.fromHeight(kToolbarHeight),
+                  child: showAppBar
+                      ? _buildFullAppBar(context, theme, isNarrow, isDebugMode)
+                      : _buildMinimalAppBar(context, theme, isNarrow),
+                ),
+                drawer: isNarrow ? const DrawerView() : null,
+                body: Stack(
+                  alignment: Alignment.centerRight,
+                  children: [
+                    body,
+                    if (showAiAssistant && isAiAssistantExpanded)
+                      const WebAiAssistantView(),
+                  ],
+                ),
+              ),
+            ),
+          ],
+        );
+      }),
+      floatingActionButton: (showAiAssistant && !isAiAssistantExpanded)
+          ? const WebAiAssistantButtonWithQuickActions()
+          : null,
+    );
+  }
+
+  AppBar _buildFullAppBar(
+      BuildContext context, ThemeData theme, bool isNarrow, bool isDebugMode) {
+    return AppBar(
+      backgroundColor: theme.appBarTheme.backgroundColor,
+      leading: _buildMenuButton(context, theme),
+      elevation: 0,
+      title: Padding(
+        padding: const EdgeInsets.all(8.0),
+        child: Text(
+          title,
+          style: theme.appBarTheme.titleTextStyle,
+        ),
+      ),
+      actions: [
+        if (!AppConfig.isProdMode)
+          const Text(
+            'DevConfig',
+            style: TextStyle(color: Colors.red, fontWeight: FontWeight.bold),
+          ),
+        if (isDebugMode) _DebugButton(),
+        ...actions ?? [],
+      ],
+    );
+  }
+
+  AppBar _buildMinimalAppBar(
+      BuildContext context, ThemeData theme, bool isNarrow) {
+    return AppBar(
+      backgroundColor: Colors.transparent,
+      elevation: 0,
+      leading: isNarrow ? _buildMenuButton(context, theme) : null,
+    );
+  }
+
+  Widget _buildMenuButton(BuildContext context, ThemeData theme) {
+    return Builder(
+      builder: (context) => IconButton(
+        icon: Icon(Icons.menu, color: theme.iconTheme.color),
+        onPressed: () => Scaffold.of(context).openDrawer(),
+        tooltip: AppLocalizations.of(context)!.menu,
+      ),
+    );
+  }
+}
+
+class _MobileScaffold extends ConsumerWidget {
+  final String title;
+  final Widget body;
+  final bool showAiAssistant;
+  final List<Widget>? actions;
+  final bool isAiAssistantExpanded;
+
+  const _MobileScaffold({
+    required this.title,
+    required this.body,
+    required this.showAiAssistant,
+    required this.actions,
+    required this.isAiAssistantExpanded,
+  });
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final theme = Theme.of(context);
+    final isDebugMode = ref.watch(isDebugModeSNP);
+
+    return Scaffold(
+      backgroundColor: theme.scaffoldBackgroundColor,
+      appBar: AppBar(
+        backgroundColor: theme.appBarTheme.backgroundColor,
+        elevation: 0,
+        leading: _buildLeadingButtons(context, ref, theme),
+        leadingWidth: ref.read(navigationServiceProvider).canPop ? 96 : 48,
+        title: Padding(
+          padding: const EdgeInsets.all(8.0),
+          child: Text(
+            title,
+            style: theme.appBarTheme.titleTextStyle,
+          ),
+        ),
+        actions: [
+          if (!AppConfig.isProdMode)
+            const Text(
+              'Dev',
+              style: TextStyle(color: Colors.red, fontWeight: FontWeight.bold),
+            ),
+          if (isDebugMode) _DebugButton(),
+          ...actions ?? [],
+        ],
+      ),
+      drawer: const DrawerView(),
+      body: Padding(
+        padding: const EdgeInsets.all(0),
+        child: body,
+      ),
+      bottomNavigationBar: showAiAssistant
+          ? isAiAssistantExpanded
+              ? const UserInputDisplayWidget()
+              : _QuickActionsBottomAppBar()
+          : null,
+      floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
+      floatingActionButton: showAiAssistant
+          ? isAiAssistantExpanded
+              ? null
+              : const AiAssistantButton()
+          : null,
+    );
+  }
+
+  Widget _buildLeadingButtons(
+      BuildContext context, WidgetRef ref, ThemeData theme) {
+    return Builder(
+      builder: (BuildContext context) {
+        return Row(
+          children: [
+            IconButton(
+              icon: Icon(Icons.menu, color: theme.iconTheme.color),
+              onPressed: () {
+                Scaffold.of(context).openDrawer();
+              },
+              tooltip: AppLocalizations.of(context)!.menu,
+            ),
+            if (ref.read(navigationServiceProvider).canPop)
+              IconButton(
+                icon: Icon(Icons.arrow_back, color: theme.iconTheme.color),
+                onPressed: () => ref.read(navigationServiceProvider).pop(),
+                tooltip: AppLocalizations.of(context)!.back,
+              ),
+          ],
+        );
+      },
     );
   }
 }
@@ -301,56 +366,13 @@ class _QuickActionsBottomAppBar extends ConsumerWidget {
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  PopupMenuButton<String>(
-                    offset: const Offset(0, -120),
-                    child: _buildNavItem(
-                      context,
-                      Icons.add_circle_sharp,
-                      AppLocalizations.of(context)!.addNew,
-                      null,
-                    ),
-                    itemBuilder: (context) => [
-                      PopupMenuItem(
-                        value: 'task',
-                        child: Row(
-                          children: [
-                            Icon(Icons.task_alt, color: theme.iconTheme.color),
-                            const SizedBox(width: 8),
-                            Text(AppLocalizations.of(context)!.task),
-                          ],
-                        ),
-                      ),
-                      PopupMenuItem(
-                        value: 'note',
-                        child: Row(
-                          children: [
-                            Icon(Icons.note_add, color: theme.iconTheme.color),
-                            const SizedBox(width: 8),
-                            Text(AppLocalizations.of(context)!.note),
-                          ],
-                        ),
-                      ),
-                    ],
-                    onSelected: (value) {
-                      switch (value) {
-                        case 'task':
-                          ref.read(taskNavigationServiceProvider).openNewTask();
-                          break;
-                        case 'note':
-                          ref
-                              .read(notesNavigationServiceProvider)
-                              .openNewNote();
-                          break;
-                      }
-                    },
-                  ),
+                  _buildAddNewButton(context, theme, ref),
                 ],
               ),
             ),
-            const Spacer(), // Space for FAB
-            const Spacer(), // Space for FAB
-            const Spacer(), // Space for FAB
-
+            const Spacer(),
+            const Spacer(),
+            const Spacer(),
             Expanded(
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.center,
@@ -369,6 +391,51 @@ class _QuickActionsBottomAppBar extends ConsumerWidget {
           ],
         ),
       ),
+    );
+  }
+
+  Widget _buildAddNewButton(
+      BuildContext context, ThemeData theme, WidgetRef ref) {
+    return PopupMenuButton<String>(
+      offset: const Offset(0, -120),
+      child: _buildNavItem(
+        context,
+        Icons.add_circle_sharp,
+        AppLocalizations.of(context)!.addNew,
+        null,
+      ),
+      itemBuilder: (context) => [
+        PopupMenuItem(
+          value: 'task',
+          child: Row(
+            children: [
+              Icon(Icons.task_alt, color: theme.iconTheme.color),
+              const SizedBox(width: 8),
+              Text(AppLocalizations.of(context)!.task),
+            ],
+          ),
+        ),
+        PopupMenuItem(
+          value: 'note',
+          child: Row(
+            children: [
+              Icon(Icons.note_add, color: theme.iconTheme.color),
+              const SizedBox(width: 8),
+              Text(AppLocalizations.of(context)!.note),
+            ],
+          ),
+        ),
+      ],
+      onSelected: (value) {
+        switch (value) {
+          case 'task':
+            ref.read(taskNavigationServiceProvider).openNewTask();
+            break;
+          case 'note':
+            ref.read(notesNavigationServiceProvider).openNewNote();
+            break;
+        }
+      },
     );
   }
 
