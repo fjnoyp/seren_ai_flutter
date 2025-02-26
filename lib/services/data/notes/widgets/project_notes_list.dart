@@ -6,94 +6,119 @@ import 'package:seren_ai_flutter/services/data/notes/models/note_model.dart';
 import 'package:seren_ai_flutter/services/data/notes/providers/notes_by_project_stream_provider.dart';
 import 'package:seren_ai_flutter/services/data/notes/providers/notes_navigation_service.dart';
 import 'package:seren_ai_flutter/services/data/common/widgets/async_value_handler_widget.dart';
+import 'package:seren_ai_flutter/services/data/notes/repositories/notes_repository.dart';
 
 /// A notes list widget that groups notes by date ranges like Apple Notes
 class ProjectNotesList extends ConsumerWidget {
   final String? projectId;
+  final List<NoteModel>? providedNotes;
+  final String? emptyMessage;
 
-  const ProjectNotesList(this.projectId, {super.key});
+  /// Create a notes list for a specific project (or personal notes if projectId is null)
+  const ProjectNotesList(
+    this.projectId, {
+    super.key,
+    this.providedNotes,
+    this.emptyMessage,
+  });
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    // If notes are provided directly, use them
+    if (providedNotes != null) {
+      return _renderNotesList(context, ref, providedNotes!,
+          emptyMessage ?? AppLocalizations.of(context)!.thisProjectHasNoNotes);
+    }
+
+    // Otherwise, fetch notes from the provider
     return AsyncValueHandlerWidget(
       value: ref.watch(notesByProjectStreamProvider(projectId)),
       data: (notes) {
-        if (notes.isEmpty) {
-          return Center(
-              child: Text(AppLocalizations.of(context)!.thisProjectHasNoNotes));
-        }
-
-        // Sort notes by updated_at timestamp (most recent first)
-        final sortedNotes = [...notes];
-        sortedNotes.sort((a, b) => (b.updatedAt ?? b.createdAt)!
-            .compareTo(a.updatedAt ?? a.createdAt ?? DateTime(1970)));
-
-        // Group notes by date ranges
-        final now = DateTime.now();
-        final today = DateTime(now.year, now.month, now.day);
-        final yesterday = today.subtract(const Duration(days: 1));
-        final last7Days = today.subtract(const Duration(days: 7));
-        final last30Days = today.subtract(const Duration(days: 30));
-
-        final todayNotes = <NoteModel>[];
-        final yesterdayNotes = <NoteModel>[];
-        final last7DaysNotes = <NoteModel>[];
-        final last30DaysNotes = <NoteModel>[];
-        final earlierNotes = <NoteModel>[];
-
-        for (final note in sortedNotes) {
-          final noteDate = note.updatedAt ?? note.createdAt;
-          if (noteDate == null) {
-            earlierNotes.add(note);
-            continue;
-          }
-
-          final noteDay = DateTime(noteDate.year, noteDate.month, noteDate.day);
-
-          if (noteDay.isAtSameMomentAs(today)) {
-            todayNotes.add(note);
-          } else if (noteDay.isAtSameMomentAs(yesterday)) {
-            yesterdayNotes.add(note);
-          } else if (noteDay.isAfter(last7Days)) {
-            last7DaysNotes.add(note);
-          } else if (noteDay.isAfter(last30Days)) {
-            last30DaysNotes.add(note);
-          } else {
-            earlierNotes.add(note);
-          }
-        }
-
-        // Build sections
-        final sections = <Widget>[];
-
-        if (todayNotes.isNotEmpty) {
-          sections.add(_buildSection(
-              context, ref, AppLocalizations.of(context)!.today, todayNotes));
-        }
-
-        if (yesterdayNotes.isNotEmpty) {
-          sections
-              .add(_buildSection(context, ref, "Yesterday", yesterdayNotes));
-        }
-
-        if (last7DaysNotes.isNotEmpty) {
-          sections.add(
-              _buildSection(context, ref, "Previous 7 Days", last7DaysNotes));
-        }
-
-        if (last30DaysNotes.isNotEmpty) {
-          sections.add(
-              _buildSection(context, ref, "Previous 30 Days", last30DaysNotes));
-        }
-
-        if (earlierNotes.isNotEmpty) {
-          sections.add(_buildSection(context, ref, "Earlier", earlierNotes));
-        }
-
-        return ListView(
-          children: sections,
-        );
+        return _renderNotesList(
+            context,
+            ref,
+            notes,
+            emptyMessage ??
+                AppLocalizations.of(context)!.thisProjectHasNoNotes);
       },
+    );
+  }
+
+  /// Common method to render a list of notes with Apple-style date grouping
+  Widget _renderNotesList(BuildContext context, WidgetRef ref,
+      List<NoteModel> notes, String emptyMessage) {
+    if (notes.isEmpty) {
+      return Center(child: Text(emptyMessage));
+    }
+
+    // Sort notes by updated_at timestamp (most recent first)
+    final sortedNotes = [...notes];
+    sortedNotes.sort((a, b) => (b.updatedAt ?? b.createdAt)!
+        .compareTo(a.updatedAt ?? a.createdAt ?? DateTime(1970)));
+
+    // Group notes by date ranges
+    final now = DateTime.now();
+    final today = DateTime(now.year, now.month, now.day);
+    final yesterday = today.subtract(const Duration(days: 1));
+    final last7Days = today.subtract(const Duration(days: 7));
+    final last30Days = today.subtract(const Duration(days: 30));
+
+    final todayNotes = <NoteModel>[];
+    final yesterdayNotes = <NoteModel>[];
+    final last7DaysNotes = <NoteModel>[];
+    final last30DaysNotes = <NoteModel>[];
+    final earlierNotes = <NoteModel>[];
+
+    for (final note in sortedNotes) {
+      final noteDate = note.updatedAt ?? note.createdAt;
+      if (noteDate == null) {
+        earlierNotes.add(note);
+        continue;
+      }
+
+      final noteDay = DateTime(noteDate.year, noteDate.month, noteDate.day);
+
+      if (noteDay.isAtSameMomentAs(today)) {
+        todayNotes.add(note);
+      } else if (noteDay.isAtSameMomentAs(yesterday)) {
+        yesterdayNotes.add(note);
+      } else if (noteDay.isAfter(last7Days)) {
+        last7DaysNotes.add(note);
+      } else if (noteDay.isAfter(last30Days)) {
+        last30DaysNotes.add(note);
+      } else {
+        earlierNotes.add(note);
+      }
+    }
+
+    // Build sections
+    final sections = <Widget>[];
+
+    if (todayNotes.isNotEmpty) {
+      sections.add(_buildSection(
+          context, ref, AppLocalizations.of(context)!.today, todayNotes));
+    }
+
+    if (yesterdayNotes.isNotEmpty) {
+      sections.add(_buildSection(context, ref, "Yesterday", yesterdayNotes));
+    }
+
+    if (last7DaysNotes.isNotEmpty) {
+      sections
+          .add(_buildSection(context, ref, "Previous 7 Days", last7DaysNotes));
+    }
+
+    if (last30DaysNotes.isNotEmpty) {
+      sections.add(
+          _buildSection(context, ref, "Previous 30 Days", last30DaysNotes));
+    }
+
+    if (earlierNotes.isNotEmpty) {
+      sections.add(_buildSection(context, ref, "Earlier", earlierNotes));
+    }
+
+    return ListView(
+      children: sections,
     );
   }
 
@@ -169,6 +194,43 @@ class _NoteCard extends ConsumerWidget {
                             theme.colorScheme.onSurfaceVariant.withOpacity(0.7),
                       ),
                     ),
+                    // Add the 3-dot menu
+                    PopupMenuButton<String>(
+                      icon: Icon(
+                        Icons.more_vert,
+                        size: 20,
+                        color:
+                            theme.colorScheme.onSurfaceVariant.withOpacity(0.7),
+                      ),
+                      padding: EdgeInsets.zero,
+                      position: PopupMenuPosition.under,
+                      onSelected: (value) {
+                        if (value == 'delete') {
+                          _showDeleteConfirmation(context, ref, note);
+                        }
+                      },
+                      itemBuilder: (BuildContext context) => [
+                        PopupMenuItem<String>(
+                          value: 'delete',
+                          child: Row(
+                            children: [
+                              Icon(
+                                Icons.delete_outline,
+                                color: theme.colorScheme.error,
+                                size: 20,
+                              ),
+                              const SizedBox(width: 8),
+                              Text(
+                                AppLocalizations.of(context)!.delete,
+                                style: TextStyle(
+                                  color: theme.colorScheme.error,
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                      ],
+                    ),
                   ],
                 ),
                 if (note.description != null &&
@@ -189,6 +251,37 @@ class _NoteCard extends ConsumerWidget {
           ),
         ),
       ),
+    );
+  }
+
+  // Show a confirmation dialog before deleting the note
+  void _showDeleteConfirmation(
+      BuildContext context, WidgetRef ref, NoteModel note) {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: Text(AppLocalizations.of(context)!.delete),
+          content: Text('Are you sure you want to delete this note?'),
+          actions: <Widget>[
+            TextButton(
+              onPressed: () => Navigator.of(context).pop(),
+              child: Text(AppLocalizations.of(context)!.cancel),
+            ),
+            TextButton(
+              onPressed: () {
+                Navigator.of(context).pop();
+                // Delete the note
+                ref.read(notesRepositoryProvider).deleteItem(note.id);
+              },
+              child: Text(
+                AppLocalizations.of(context)!.delete,
+                style: TextStyle(color: Theme.of(context).colorScheme.error),
+              ),
+            ),
+          ],
+        );
+      },
     );
   }
 

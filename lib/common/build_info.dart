@@ -2,11 +2,11 @@
 class BuildInfo {
   // Core build info
   static const String version = '1.0.0';
-  static const String buildDate = '2025-02-26 08:37:39';
+  static const String buildDate = '2025-02-26 12:35:38';
   
   // Git info
-  static const String commitHash = 'e7e5598';
-  static const String branch = 'chore/add_drawer_view_to_web_narrow';
+  static const String commitHash = '2a026ab';
+  static const String branch = 'feat/notes_overhaul';
   static const String lastTag = 'no tag';
   
   // Author of last commit
@@ -16,48 +16,48 @@ class BuildInfo {
   // Recent commits (last 5)
   static const List<Map<String, String>> recentCommits = [
     {
-      "hash": "e7e5598",
+      "hash": "2a026ab",
+      "author": "Kyle",
+      "email": "kylcheng@gmail.com", 
+      "message": "chore(notes): allow select all notes, note ui enhancements",
+      "date": "2025-02-26",
+      "relativeDate": "19 minutes ago"
+    },
+    {
+      "hash": "86bb1db",
+      "author": "Kyle",
+      "email": "kylcheng@gmail.com", 
+      "message": "chore(notes): apple style notes list view",
+      "date": "2025-02-26",
+      "relativeDate": "4 hours ago"
+    },
+    {
+      "hash": "d4f9e6c",
       "author": "Kyle",
       "email": "kylcheng@gmail.com", 
       "message": "chore(notes): simplify note page to be like iphone notes",
       "date": "2025-02-26",
-      "relativeDate": "10 minutes ago"
+      "relativeDate": "4 hours ago"
     },
     {
-      "hash": "00d0993",
+      "hash": "7e33265",
       "author": "Kyle",
       "email": "kylcheng@gmail.com", 
       "message": "chore: remove old home cards",
       "date": "2025-02-26",
-      "relativeDate": "49 minutes ago"
+      "relativeDate": "5 hours ago"
     },
     {
-      "hash": "634a936",
-      "author": "Kyle",
-      "email": "kylcheng@gmail.com", 
-      "message": "chore: add drawer view to web - refactor scaffold",
+      "hash": "360f300",
+      "author": "renata-sisilio",
+      "email": "renata@seren-ai.co", 
+      "message": "fix(tasks): remove finished tasks from overdue list at home page",
       "date": "2025-02-26",
       "relativeDate": "3 hours ago"
-    },
-    {
-      "hash": "52449e9",
-      "author": "renata-sisilio",
-      "email": "renata@seren-ai.co", 
-      "message": "fix(task_reminders): temporarily using immediate insertion due to data type issues with insertItem method",
-      "date": "2025-02-25",
-      "relativeDate": "20 hours ago"
-    },
-    {
-      "hash": "cfa5243",
-      "author": "renata-sisilio",
-      "email": "renata@seren-ai.co", 
-      "message": "feat(notifications): use push notifications for task reminders (#162)",
-      "date": "2025-02-25",
-      "relativeDate": "21 hours ago"
     },
   ];
 
   // Stats
-  static const String totalCommits = '376';
+  static const String totalCommits = '381';
   static const String contributors = '       0';
 }
