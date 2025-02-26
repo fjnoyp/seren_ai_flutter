@@ -21,10 +21,10 @@ class PushNotificationsRepository
     return PushNotificationModel.fromJson(json);
   }
 
-  Stream<List<PushNotificationModel>> watchSentPushNotificationsForUser(
+  Stream<List<PushNotificationModel>> watchPushNotificationsForUser(
       String userId) {
     return watch(
-      NotificationsQueries.sentNotificationsByUserQuery,
+      NotificationsQueries.pushNotificationsByUserQuery,
       {
         'user_id': userId,
       },

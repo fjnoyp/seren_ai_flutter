@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:seren_ai_flutter/services/data/common/widgets/async_value_handler_widget.dart';
 import 'package:seren_ai_flutter/services/notifications/models/push_notification_model.dart';
-import 'package:seren_ai_flutter/services/notifications/notification_history/providers/cur_user_sent_notifications.dart';
+import 'package:seren_ai_flutter/services/notifications/notification_history/providers/cur_user_push_notifications_provider.dart';
 import 'package:seren_ai_flutter/services/notifications/services/notification_data_handler.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
@@ -15,7 +15,7 @@ class NotificationsPage extends ConsumerWidget {
       children: [
         Expanded(
           child: AsyncValueHandlerWidget(
-            value: ref.watch(curUserSentPushNotificationsProvider),
+            value: ref.watch(curUserPushNotificationsProvider),
             data: (notifications) => notifications.isEmpty
                 ? Center(child: Text(AppLocalizations.of(context)!.noNotificationsFound))
                 : ListView.builder(

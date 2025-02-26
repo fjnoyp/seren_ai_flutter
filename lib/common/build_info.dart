@@ -2,11 +2,11 @@
 class BuildInfo {
   // Core build info
   static const String version = '1.0.0';
-  static const String buildDate = '2025-02-26 05:26:49';
+  static const String buildDate = '2025-02-26 16:30:50';
   
   // Git info
-  static const String commitHash = '52449e9';
-  static const String branch = 'chore/add_drawer_view_to_web_narrow';
+  static const String commitHash = '7a6545e';
+  static const String branch = 'feat/add-ui-element-for-notifications';
   static const String lastTag = 'no tag';
   
   // Author of last commit
@@ -16,12 +16,36 @@ class BuildInfo {
   // Recent commits (last 5)
   static const List<Map<String, String>> recentCommits = [
     {
+      "hash": "7a6545e",
+      "author": "renata-sisilio",
+      "email": "renata@seren-ai.co", 
+      "message": "rename file to match class name",
+      "date": "2025-02-26",
+      "relativeDate": "5 hours ago"
+    },
+    {
+      "hash": "3224447",
+      "author": "renata-sisilio",
+      "email": "renata@seren-ai.co", 
+      "message": "feat(notifications): create notifications page",
+      "date": "2025-02-26",
+      "relativeDate": "5 hours ago"
+    },
+    {
+      "hash": "807781a",
+      "author": "Kyle",
+      "email": "kylcheng@gmail.com", 
+      "message": "chore: add drawer view to web - refactor scaffold",
+      "date": "2025-02-26",
+      "relativeDate": "6 hours ago"
+    },
+    {
       "hash": "52449e9",
       "author": "renata-sisilio",
       "email": "renata@seren-ai.co", 
       "message": "fix(task_reminders): temporarily using immediate insertion due to data type issues with insertItem method",
       "date": "2025-02-25",
-      "relativeDate": "17 hours ago"
+      "relativeDate": "23 hours ago"
     },
     {
       "hash": "cfa5243",
@@ -29,35 +53,11 @@ class BuildInfo {
       "email": "renata@seren-ai.co", 
       "message": "feat(notifications): use push notifications for task reminders (#162)",
       "date": "2025-02-25",
-      "relativeDate": "18 hours ago"
-    },
-    {
-      "hash": "a3add9f",
-      "author": "Kyle",
-      "email": "kylcheng@gmail.com", 
-      "message": "fix(ai): ai chat summaries use system message",
-      "date": "2025-02-21",
-      "relativeDate": "5 days ago"
-    },
-    {
-      "hash": "d12d12c",
-      "author": "Kyle",
-      "email": "kylcheng@gmail.com", 
-      "message": "chore(ai): add ai context cache to avoid excess ai calls",
-      "date": "2025-02-21",
-      "relativeDate": "5 days ago"
-    },
-    {
-      "hash": "abdcf52",
-      "author": "Kyle",
-      "email": "kylcheng@gmail.com", 
-      "message": "feat(ai): use ai context helper for task and task list views",
-      "date": "2025-02-21",
-      "relativeDate": "5 days ago"
+      "relativeDate": "24 hours ago"
     },
   ];
 
   // Stats
-  static const String totalCommits = '373';
-  static const String contributors = '       0';
+  static const String totalCommits = '376';
+  static const String contributors = '0';
 }

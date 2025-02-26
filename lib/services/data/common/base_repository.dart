@@ -140,11 +140,7 @@ abstract class BaseRepository<T extends IHasId> {
   Future<String> insertImmediately(T item) async {
     final response = await Supabase.instance.client
         .from(primaryTable)
-        .insert(toJson(item)
-          ..addAll({
-            'created_at': DateTime.now().toIso8601String(),
-            'updated_at': DateTime.now().toIso8601String(),
-          }))
+        .insert(toJson(item))
         .select()
         .single();
 
