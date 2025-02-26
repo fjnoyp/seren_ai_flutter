@@ -83,6 +83,7 @@ const tasksSchemas = [
     Column.text('parent_task_id'),
     Column.text('blocked_by_task_id'),
     Column.text('type'), // phase, task
+    Column.text('parent_org_id'),
   ]),
   Table(taskCommentsTable, [
     // Column.text('id'),
@@ -184,6 +185,7 @@ const noteSchemas = [
     Column.text('action_required'),
     Column.text('status'),
     Column.text('parent_project_id'),
+    Column.text('parent_org_id'),
   ]),
 ];
 
