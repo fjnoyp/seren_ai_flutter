@@ -6,6 +6,8 @@ import 'package:seren_ai_flutter/services/data/notes/providers/note_by_id_stream
 import 'package:seren_ai_flutter/services/data/notes/repositories/notes_repository.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
+// TODO p3: This code duplicates the functionality from the base text block and name fields ... We should consider consolidating them to avoid code duplication ...
+
 /// Custom hook to handle field state management and sync logic
 class FieldState {
   final TextEditingController controller;
