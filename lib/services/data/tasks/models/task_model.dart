@@ -106,6 +106,20 @@ class TaskModel implements IHasId {
   final TaskType type;
   bool get isPhase => type == TaskType.phase;
 
+  // This field is required but is not set by the client.
+  // It's automatically assigned in the backend based on its project's org,
+  // via Supabase function.
+  // See: [https://github.com/fjnoyp/seren_ai_supabase/blob/main/migrations/20240706210333_create_parent_org_id_funcs.sql]
+  @JsonKey(name: 'parent_org_id')
+  final String? _parentOrgId;
+
+  String get parentOrgId {
+    if (_parentOrgId != null) return _parentOrgId;
+    // This exception should never happen,
+    // since the parentOrgId is automatically set by the backend.
+    throw Exception('Cannot get parentOrgId for task $id');
+  }
+
   Duration? get duration {
     if (startDateTime != null && dueDate != null) {
       return dueDate!.difference(startDateTime!);
@@ -140,7 +154,8 @@ class TaskModel implements IHasId {
     this.parentTaskId,
     this.blockedByTaskId,
     required this.type,
-  })  : id = id ?? uuid.v4(),
+    String? parentOrgId,
+  })  : _parentOrgId = parentOrgId, id = id ?? uuid.v4(),
         assert(dueDate != null || reminderOffsetMinutes == null);
 
   TaskModel copyWith({
