@@ -18,7 +18,7 @@ class _DateHeader extends StatelessWidget {
     }
     // For overdue tasks (using yesterday's date in the provider)
     if (group.isYesterday) {
-      return 'Overdue';
+      return AppLocalizations.of(context)?.overdue ?? 'Overdue';
     }
     if (group.isLastWeek) {
       return DateFormat.EEEE(AppLocalizations.of(context)?.localeName)
