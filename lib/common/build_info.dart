@@ -2,62 +2,62 @@
 class BuildInfo {
   // Core build info
   static const String version = '1.0.0';
-  static const String buildDate = '2025-02-28 17:08:29';
+  static const String buildDate = '2025-02-26 07:48:30';
   
   // Git info
-  static const String commitHash = 'a458598';
-  static const String branch = 'feat/use-anchor-button-for-ai-summaries';
+  static const String commitHash = '634a936';
+  static const String branch = 'chore/add_drawer_view_to_web_narrow';
   static const String lastTag = 'no tag';
   
   // Author of last commit
-  static const String lastCommitAuthor = 'renata-sisilio';
-  static const String lastCommitEmail = 'renata@seren-ai.co';
+  static const String lastCommitAuthor = 'Kyle';
+  static const String lastCommitEmail = 'kylcheng@gmail.com';
   
   // Recent commits (last 5)
   static const List<Map<String, String>> recentCommits = [
     {
-      "hash": "a458598",
-      "author": "renata-sisilio",
-      "email": "renata@seren-ai.co", 
-      "message": "feat(ai_context): use an anchor button for displaying AI context summaries",
-      "date": "2025-02-28",
-      "relativeDate": "6 minutes ago"
-    },
-    {
-      "hash": "0aad1c1",
-      "author": "renata-sisilio",
-      "email": "renata@seren-ai.co", 
-      "message": "feat(auth): create user onboarding process (#169)",
-      "date": "2025-02-28",
-      "relativeDate": "47 minutes ago"
-    },
-    {
-      "hash": "89edcdc",
-      "author": "renata-sisilio",
-      "email": "renata@seren-ai.co", 
-      "message": "fix(tasks/notes): build_runner error mapping parent_org_id parameter",
-      "date": "2025-02-27",
-      "relativeDate": "32 hours ago"
-    },
-    {
-      "hash": "81869cf",
-      "author": "renata-sisilio",
-      "email": "renata@seren-ai.co", 
-      "message": "chore: ensure the correct org is selected when opening a task/note/project page",
+      "hash": "634a936",
+      "author": "Kyle",
+      "email": "kylcheng@gmail.com", 
+      "message": "chore: add drawer view to web - refactor scaffold",
       "date": "2025-02-26",
-      "relativeDate": "2 days ago"
+      "relativeDate": "2 hours ago"
     },
     {
-      "hash": "360f300",
+      "hash": "52449e9",
       "author": "renata-sisilio",
       "email": "renata@seren-ai.co", 
-      "message": "fix(tasks): remove finished tasks from overdue list at home page",
-      "date": "2025-02-26",
-      "relativeDate": "2 days ago"
+      "message": "fix(task_reminders): temporarily using immediate insertion due to data type issues with insertItem method",
+      "date": "2025-02-25",
+      "relativeDate": "19 hours ago"
+    },
+    {
+      "hash": "cfa5243",
+      "author": "renata-sisilio",
+      "email": "renata@seren-ai.co", 
+      "message": "feat(notifications): use push notifications for task reminders (#162)",
+      "date": "2025-02-25",
+      "relativeDate": "20 hours ago"
+    },
+    {
+      "hash": "a3add9f",
+      "author": "Kyle",
+      "email": "kylcheng@gmail.com", 
+      "message": "fix(ai): ai chat summaries use system message",
+      "date": "2025-02-21",
+      "relativeDate": "5 days ago"
+    },
+    {
+      "hash": "d12d12c",
+      "author": "Kyle",
+      "email": "kylcheng@gmail.com", 
+      "message": "chore(ai): add ai context cache to avoid excess ai calls",
+      "date": "2025-02-21",
+      "relativeDate": "5 days ago"
     },
   ];
 
   // Stats
-  static const String totalCommits = '381';
-  static const String contributors = '0';
+  static const String totalCommits = '374';
+  static const String contributors = '       0';
 }
