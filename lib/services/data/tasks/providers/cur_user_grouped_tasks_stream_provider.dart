@@ -1,5 +1,6 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:seren_ai_flutter/services/data/common/recent_updated_items/date_grouped_items.dart';
+import 'package:seren_ai_flutter/services/data/common/status_enum.dart';
 import 'package:seren_ai_flutter/services/data/tasks/models/task_model.dart';
 import 'package:seren_ai_flutter/services/data/tasks/providers/cur_user_tasks_stream_provider.dart';
 
@@ -21,7 +22,9 @@ List<DateGroupedItems> _groupTasksByDueDate(List<TaskModel> tasks) {
       task.dueDate!.day,
     );
 
-    if (dueDate.isBefore(today)) {
+    if (dueDate.isBefore(today) &&
+        (task.status == StatusEnum.open ||
+            task.status == StatusEnum.inProgress)) {
       overdueTasks.add(task);
     } else if (dueDate.isAtSameMomentAs(today)) {
       todayTasks.add(task);
