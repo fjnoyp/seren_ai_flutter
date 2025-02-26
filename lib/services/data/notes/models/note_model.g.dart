@@ -23,6 +23,7 @@ NoteModel _$NoteModelFromJson(Map<String, dynamic> json) => NoteModel(
       updatedAt: json['updated_at'] == null
           ? null
           : DateTime.parse(json['updated_at'] as String),
+      parentOrgId: json['parentOrgId'] as String?,
     );
 
 Map<String, dynamic> _$NoteModelToJson(NoteModel instance) => <String, dynamic>{
@@ -37,6 +38,7 @@ Map<String, dynamic> _$NoteModelToJson(NoteModel instance) => <String, dynamic>{
       'parent_project_id': instance.parentProjectId,
       'created_at': instance.createdAt?.toIso8601String(),
       'updated_at': instance.updatedAt?.toIso8601String(),
+      'parentOrgId': instance.parentOrgId,
     };
 
 const _$StatusEnumEnumMap = {

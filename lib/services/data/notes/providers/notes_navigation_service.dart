@@ -6,9 +6,11 @@ import 'package:seren_ai_flutter/services/data/common/base_navigation_service.da
 import 'package:seren_ai_flutter/services/data/common/widgets/editable_page_mode_enum.dart';
 import 'package:seren_ai_flutter/services/data/notes/providers/cur_selected_note_id_notifier_provider.dart';
 import 'package:seren_ai_flutter/services/data/notes/providers/note_attachments_service_provider.dart';
+import 'package:seren_ai_flutter/services/data/notes/providers/note_by_id_stream_provider.dart';
 import 'package:seren_ai_flutter/services/data/notes/widgets/delete_note_button.dart';
 import 'package:seren_ai_flutter/services/data/notes/widgets/pdf/share_note_button.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+import 'package:seren_ai_flutter/services/data/orgs/providers/cur_selected_org_id_notifier.dart';
 
 final notesNavigationServiceProvider = Provider<NotesNavigationService>((ref) {
   return NotesNavigationService(ref);
@@ -32,6 +34,8 @@ class NotesNavigationService extends BaseNavigationService {
         .read(noteAttachmentsServiceProvider.notifier)
         .fetchNoteAttachments(noteId: noteId);
 
+    await _ensureNoteOrgIsSelected(noteId);
+
     await _navigateToNotePage(
       mode: EditablePageMode.edit,
       noteId: noteId,
@@ -51,6 +55,20 @@ class NotesNavigationService extends BaseNavigationService {
       noteId: noteId,
     ) // invalidate the note attachments service provider to clear the attachments state
         .then((_) => ref.invalidate(noteAttachmentsServiceProvider));
+  }
+
+  Future<void> _ensureNoteOrgIsSelected(String noteId) async {
+    final note = await ref.read(noteByIdStreamProvider(noteId).future);
+    if (note == null) {
+      throw Exception('Note not found');
+    }
+
+    final curSelectedOrgId = ref.read(curSelectedOrgIdNotifierProvider);
+    if (note.parentOrgId != curSelectedOrgId) {
+      await ref
+          .read(curSelectedOrgIdNotifierProvider.notifier)
+          .setDesiredOrgId(note.parentOrgId);
+    }
   }
 
   Future<void> _navigateToNotePage({

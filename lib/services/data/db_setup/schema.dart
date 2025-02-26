@@ -185,6 +185,7 @@ const noteSchemas = [
     Column.text('action_required'),
     Column.text('status'),
     Column.text('parent_project_id'),
+    Column.text('parent_org_id'),
   ]),
 ];
 
