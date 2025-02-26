@@ -2,6 +2,7 @@ import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:seren_ai_flutter/services/notifications/models/notification_data.dart';
 import 'package:seren_ai_flutter/services/notifications/services/fcm_remote_message_handler.dart';
 
 /// Handles FCM push notifications and their navigation
@@ -106,6 +107,14 @@ class FCMPushNotificationHandler {
 
   /// Process navigation using the notification handler
   Future<void> _processNavigation(RemoteMessage message, WidgetRef ref) async {
-    await FCMRemoteMessageHandler.handleNotificationOpen(message, ref);
+    debugPrint('Handling notification open: ${message.data}');
+
+    final notificationData = NotificationData.fromJson(message.data);
+    if (notificationData == null) {
+      debugPrint('Unknown notification type: ${message.data["type"]}');
+      return;
+    }
+
+    await NotificationDataHandler.handleNotificationOpen(notificationData, ref);
   }
 }
