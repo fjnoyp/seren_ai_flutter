@@ -35,9 +35,9 @@ class NoteModel implements IHasId {
   // It's automatically assigned in the backend based on its project's org,
   // via Supabase function.
   // See: [https://github.com/fjnoyp/seren_ai_supabase/blob/main/migrations/20240706210333_create_parent_org_id_funcs.sql]
-  @JsonKey(name: 'parent_org_id')
   final String? _parentOrgId;
 
+  @JsonKey(name: 'parent_org_id')
   String get parentOrgId {
     if (_parentOrgId != null) return _parentOrgId;
     // This exception should never happen,
