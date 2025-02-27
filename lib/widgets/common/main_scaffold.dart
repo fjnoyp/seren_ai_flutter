@@ -10,8 +10,6 @@ import 'package:seren_ai_flutter/services/ai/widgets/web_ai_assistant_modal.dart
 import 'package:seren_ai_flutter/services/data/db_setup/app_config.dart';
 import 'package:seren_ai_flutter/services/data/notes/providers/notes_navigation_service.dart';
 import 'package:seren_ai_flutter/services/data/tasks/providers/task_navigation_service.dart';
-import 'package:seren_ai_flutter/services/data/users/models/invite_model.dart';
-import 'package:seren_ai_flutter/services/data/users/providers/cur_user_invites_service_provider.dart';
 import 'package:seren_ai_flutter/widgets/common/debug_mode_provider.dart';
 import 'package:seren_ai_flutter/widgets/common/debug_state_modal.dart';
 import 'drawer_view.dart';
@@ -43,13 +41,6 @@ class MainScaffold extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final isAiAssistantExpanded = ref.watch(isAiModalVisibleProvider);
-    final curUserPendingInvites = ref.watch(curUserInvitesServiceProvider);
-
-    WidgetsBinding.instance.addPostFrameCallback((_) {
-      for (final invite in curUserPendingInvites) {
-        _showInviteDialog(context, ref, invite);
-      }
-    });
 
     return PopScope(
       canPop: ref.read(navigationServiceProvider).canPop,
@@ -75,39 +66,6 @@ class MainScaffold extends ConsumerWidget {
               actions: actions,
               isAiAssistantExpanded: isAiAssistantExpanded,
             ),
-    );
-  }
-
-  Future<dynamic> _showInviteDialog(
-      BuildContext context, WidgetRef ref, InviteModel invite) {
-    final curUserInvitesService =
-        ref.read(curUserInvitesServiceProvider.notifier);
-    return showDialog(
-      context: context,
-      barrierDismissible: false,
-      builder: (context) => AlertDialog(
-        title: Text(AppLocalizations.of(context)!.pendingInvite),
-        content: Text(AppLocalizations.of(context)!.pendingInviteBody(
-            invite.authorUserName,
-            invite.orgName,
-            invite.orgRole.toHumanReadable(context))),
-        actions: [
-          TextButton(
-            onPressed: () {
-              curUserInvitesService.declineInvite(invite);
-              Navigator.of(context).pop();
-            },
-            child: Text(AppLocalizations.of(context)!.decline),
-          ),
-          FilledButton(
-            onPressed: () {
-              curUserInvitesService.acceptInvite(invite);
-              Navigator.of(context).pop();
-            },
-            child: Text(AppLocalizations.of(context)!.accept),
-          ),
-        ],
-      ),
     );
   }
 }

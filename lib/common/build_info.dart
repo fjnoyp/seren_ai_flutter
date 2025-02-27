@@ -2,11 +2,11 @@
 class BuildInfo {
   // Core build info
   static const String version = '1.0.0';
-  static const String buildDate = '2025-02-27 09:37:17';
+  static const String buildDate = '2025-02-27 19:59:47';
   
   // Git info
-  static const String commitHash = '81869cf';
-  static const String branch = 'main';
+  static const String commitHash = '89edcdc';
+  static const String branch = 'feat/fix-and-clean-up-user-sign-up-process';
   static const String lastTag = 'no tag';
   
   // Author of last commit
@@ -16,12 +16,20 @@ class BuildInfo {
   // Recent commits (last 5)
   static const List<Map<String, String>> recentCommits = [
     {
+      "hash": "89edcdc",
+      "author": "renata-sisilio",
+      "email": "renata@seren-ai.co", 
+      "message": "fix(tasks/notes): build_runner error mapping parent_org_id parameter",
+      "date": "2025-02-27",
+      "relativeDate": "10 hours ago"
+    },
+    {
       "hash": "81869cf",
       "author": "renata-sisilio",
       "email": "renata@seren-ai.co", 
       "message": "chore: ensure the correct org is selected when opening a task/note/project page",
       "date": "2025-02-26",
-      "relativeDate": "16 hours ago"
+      "relativeDate": "27 hours ago"
     },
     {
       "hash": "360f300",
@@ -29,7 +37,7 @@ class BuildInfo {
       "email": "renata@seren-ai.co", 
       "message": "fix(tasks): remove finished tasks from overdue list at home page",
       "date": "2025-02-26",
-      "relativeDate": "19 hours ago"
+      "relativeDate": "29 hours ago"
     },
     {
       "hash": "352f69c",
@@ -37,7 +45,7 @@ class BuildInfo {
       "email": "renata@seren-ai.co", 
       "message": "fix(tasks/notes): name field cleared on open page",
       "date": "2025-02-26",
-      "relativeDate": "19 hours ago"
+      "relativeDate": "29 hours ago"
     },
     {
       "hash": "23b74ec",
@@ -45,19 +53,11 @@ class BuildInfo {
       "email": "renata@seren-ai.co", 
       "message": "feat(notifications): create notifications page",
       "date": "2025-02-26",
-      "relativeDate": "17 hours ago"
-    },
-    {
-      "hash": "807781a",
-      "author": "Kyle",
-      "email": "kylcheng@gmail.com", 
-      "message": "chore: add drawer view to web - refactor scaffold",
-      "date": "2025-02-26",
-      "relativeDate": "23 hours ago"
+      "relativeDate": "27 hours ago"
     },
   ];
 
   // Stats
-  static const String totalCommits = '378';
+  static const String totalCommits = '379';
   static const String contributors = '0';
 }

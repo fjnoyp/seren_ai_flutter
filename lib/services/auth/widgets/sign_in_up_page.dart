@@ -22,6 +22,7 @@ class SignInUpPage extends ConsumerWidget {
             // TODO p5: maybe add seren logo here on top instead of the app bar
             child: SupaEmailAuth(
               resetPasswordRedirectTo: 'serenai://reset-password',
+              redirectTo: 'serenai://onboarding',
               onSignInComplete: (response) {
                 ref
                     .read(navigationServiceProvider)
@@ -31,26 +32,42 @@ class SignInUpPage extends ConsumerWidget {
                 if (response.user != null && response.user!.email != null) {
                   final user = response.user!;
 
-                  // Use direct Supabase query instead of PowerSync for initial check
-                  final rawQuery = await Supabase.instance.client
-                      .from('invites')
-                      .select()
-                      .eq('email', user.email!)
-                      .eq('status', 'pending');
+                  // // Check if email is verified, if not send verification email
+                  // if (user.emailConfirmedAt == null) {
+                  //   await Supabase.instance.client.auth.resend(
+                  //     type: OtpType.signup,
+                  //     email: user.email,
+                  //   );
 
-                  if (rawQuery.isEmpty) {
-                    // if the user has no pending invites, create initial setup
-                    await Supabase.instance.client
-                        .rpc('create_initial_setup_for_user', params: {
-                      'auth_user_id': user.id,
-                      'email': user.email!,
-                      'first_name':
-                          user.userMetadata?['first_name']?.trim() ?? '',
-                      'last_name':
-                          user.userMetadata?['last_name']?.trim() ?? '',
-                    });
-                  } else {
-                    // if the user has pending invites, just create user
+                    // Show verification message to user
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      SnackBar(
+                        content: Text(
+                            AppLocalizations.of(context)!.pleaseVerifyEmail),
+                      ),
+                    );
+                  // }
+
+                  // Use direct Supabase query instead of PowerSync for initial check
+                  // final rawQuery = await Supabase.instance.client
+                  //     .from('invites')
+                  //     .select()
+                  //     .eq('email', user.email!)
+                  //     .eq('status', 'pending');
+
+                  // if (rawQuery.isEmpty) {
+                  //   // if the user has no pending invites, create initial setup
+                  //   await Supabase.instance.client
+                  //       .rpc('create_initial_setup_for_user', params: {
+                  //     'auth_user_id': user.id,
+                  //     'email': user.email!,
+                  //     'first_name':
+                  //         user.userMetadata?['first_name']?.trim() ?? '',
+                  //     'last_name':
+                  //         user.userMetadata?['last_name']?.trim() ?? '',
+                  //   });
+                  // } else {
+                  //   // if the user has pending invites, just create user
                     await Supabase.instance.client.from('users').insert(
                           UserModel(
                             parentAuthUserId: user.id,
@@ -67,13 +84,13 @@ class SignInUpPage extends ConsumerWidget {
                               },
                             ),
                         );
-                  }
+                  // }
 
                   await ref.read(curUserProvider.notifier).updateUser(user);
 
                   ref
                       .read(navigationServiceProvider)
-                      .navigateTo(AppRoutes.home.name, clearStack: true);
+                      .navigateTo(AppRoutes.onboarding.name, clearStack: true);
                 }
               },
               metadataFields: [

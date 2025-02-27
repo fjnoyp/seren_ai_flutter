@@ -11,6 +11,8 @@ import 'package:seren_ai_flutter/common/universal_platform/universal_platform.da
 import 'package:seren_ai_flutter/main.dart';
 import 'package:seren_ai_flutter/services/ai/widgets/testing/test_ai_page.dart';
 import 'package:seren_ai_flutter/services/auth/widgets/auth_guard.dart';
+import 'package:seren_ai_flutter/services/auth/widgets/onboarding/no_invites_page.dart';
+import 'package:seren_ai_flutter/services/auth/widgets/onboarding/onboarding_page.dart';
 import 'package:seren_ai_flutter/services/auth/widgets/reset_password/reset_password_page.dart';
 import 'package:seren_ai_flutter/services/auth/widgets/sign_in_up_page.dart';
 import 'package:seren_ai_flutter/services/auth/widgets/terms_and_conditions/terms_and_conditions_webview.dart';
@@ -23,6 +25,7 @@ import 'package:seren_ai_flutter/services/data/orgs/widgets/choose_org_page.dart
 import 'package:seren_ai_flutter/services/data/orgs/widgets/cur_org_page.dart';
 import 'package:seren_ai_flutter/services/data/orgs/widgets/manage_org_users_page.dart';
 import 'package:seren_ai_flutter/services/data/orgs/widgets/org_guard.dart';
+import 'package:seren_ai_flutter/services/data/orgs/widgets/org_invite_page.dart';
 import 'package:seren_ai_flutter/services/data/orgs/widgets/web/web_manage_org_users_page.dart';
 import 'package:seren_ai_flutter/services/data/projects/widgets/project_list_page.dart';
 import 'package:seren_ai_flutter/services/data/projects/widgets/project_overview/project_overview_page.dart';
@@ -160,7 +163,7 @@ class AppState extends ConsumerState<App> {
               AppRoutes.testSQLPage.name: (context) => _GuardScaffold(
                   AppLocalizations.of(context)!.testSQL, TestSQLPage()),
               AppRoutes.testAiPage.name: (context) =>
-                  _GuardScaffold("Test AI", const TestAiPage()),
+                  const _GuardScaffold("Test AI", TestAiPage()),
               AppRoutes.noteList.name: (context) => _GuardScaffold(
                   AppLocalizations.of(context)!.notes, const NoteListPage()),
               AppRoutes.notePage.name: (context) => _GuardScaffold(
@@ -191,6 +194,15 @@ class AppState extends ConsumerState<App> {
               AppRoutes.notifications.name: (context) => _GuardScaffold(
                     AppLocalizations.of(context)!.notifications,
                     const NotificationsPage(),
+                  ),
+              AppRoutes.onboarding.name: (context) => const AuthGuard(
+                    child: OnboardingPage(),
+                  ),
+              AppRoutes.noInvites.name: (context) => const AuthGuard(
+                    child: NoInvitesPage(),
+                  ),
+              AppRoutes.orgInvite.name: (context) => AuthGuard(
+                    child: OrgInvitePage(orgId: args?['orgId']),
                   ),
             };
 
@@ -269,6 +281,8 @@ class AppState extends ConsumerState<App> {
       ref.read(navigationServiceProvider).navigateTo(
           AppRoutes.resetPassword.name,
           arguments: {'accessToken': uri.queryParameters['code']});
+    } else if (uri.host == 'onboarding') {
+      ref.read(navigationServiceProvider).navigateTo(AppRoutes.onboarding.name);
     }
     /*
     // Example: Navigate to a specific screen based on the link

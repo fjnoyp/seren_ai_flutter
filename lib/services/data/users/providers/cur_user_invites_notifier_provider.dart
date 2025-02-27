@@ -4,7 +4,7 @@ import 'package:seren_ai_flutter/services/data/users/models/invite_model.dart';
 import 'package:seren_ai_flutter/services/data/users/repositories/user_invites_repository.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
-final curUserInvitesServiceProvider =
+final curUserInvitesNotifierProvider =
     NotifierProvider<CurUserInvitesService, List<InviteModel>>(
         () => CurUserInvitesService());
 
