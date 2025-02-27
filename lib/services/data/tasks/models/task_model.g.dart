@@ -33,7 +33,7 @@ TaskModel _$TaskModelFromJson(Map<String, dynamic> json) => TaskModel(
       blockedByTaskId: json['blocked_by_task_id'] as String?,
       type:
           $enumDecodeNullable(_$TaskTypeEnumMap, json['type']) ?? TaskType.task,
-      parentOrgId: json['parentOrgId'] as String?,
+      parentOrgId: json['parent_org_id'] as String?,
     );
 
 Map<String, dynamic> _$TaskModelToJson(TaskModel instance) => <String, dynamic>{
@@ -54,7 +54,7 @@ Map<String, dynamic> _$TaskModelToJson(TaskModel instance) => <String, dynamic>{
       'parent_task_id': instance.parentTaskId,
       'blocked_by_task_id': instance.blockedByTaskId,
       'type': _$TaskTypeEnumMap[instance.type]!,
-      'parentOrgId': instance.parentOrgId,
+      'parent_org_id': instance.parentOrgId,
     };
 
 const _$StatusEnumEnumMap = {

@@ -2,11 +2,11 @@
 class BuildInfo {
   // Core build info
   static const String version = '1.0.0';
-  static const String buildDate = '2025-02-26 16:30:50';
+  static const String buildDate = '2025-02-27 09:37:17';
   
   // Git info
-  static const String commitHash = '7a6545e';
-  static const String branch = 'feat/add-ui-element-for-notifications';
+  static const String commitHash = '81869cf';
+  static const String branch = 'main';
   static const String lastTag = 'no tag';
   
   // Author of last commit
@@ -16,20 +16,36 @@ class BuildInfo {
   // Recent commits (last 5)
   static const List<Map<String, String>> recentCommits = [
     {
-      "hash": "7a6545e",
+      "hash": "81869cf",
       "author": "renata-sisilio",
       "email": "renata@seren-ai.co", 
-      "message": "rename file to match class name",
+      "message": "chore: ensure the correct org is selected when opening a task/note/project page",
       "date": "2025-02-26",
-      "relativeDate": "5 hours ago"
+      "relativeDate": "16 hours ago"
     },
     {
-      "hash": "3224447",
+      "hash": "360f300",
+      "author": "renata-sisilio",
+      "email": "renata@seren-ai.co", 
+      "message": "fix(tasks): remove finished tasks from overdue list at home page",
+      "date": "2025-02-26",
+      "relativeDate": "19 hours ago"
+    },
+    {
+      "hash": "352f69c",
+      "author": "renata-sisilio",
+      "email": "renata@seren-ai.co", 
+      "message": "fix(tasks/notes): name field cleared on open page",
+      "date": "2025-02-26",
+      "relativeDate": "19 hours ago"
+    },
+    {
+      "hash": "23b74ec",
       "author": "renata-sisilio",
       "email": "renata@seren-ai.co", 
       "message": "feat(notifications): create notifications page",
       "date": "2025-02-26",
-      "relativeDate": "5 hours ago"
+      "relativeDate": "17 hours ago"
     },
     {
       "hash": "807781a",
@@ -37,27 +53,11 @@ class BuildInfo {
       "email": "kylcheng@gmail.com", 
       "message": "chore: add drawer view to web - refactor scaffold",
       "date": "2025-02-26",
-      "relativeDate": "6 hours ago"
-    },
-    {
-      "hash": "52449e9",
-      "author": "renata-sisilio",
-      "email": "renata@seren-ai.co", 
-      "message": "fix(task_reminders): temporarily using immediate insertion due to data type issues with insertItem method",
-      "date": "2025-02-25",
       "relativeDate": "23 hours ago"
-    },
-    {
-      "hash": "cfa5243",
-      "author": "renata-sisilio",
-      "email": "renata@seren-ai.co", 
-      "message": "feat(notifications): use push notifications for task reminders (#162)",
-      "date": "2025-02-25",
-      "relativeDate": "24 hours ago"
     },
   ];
 
   // Stats
-  static const String totalCommits = '376';
+  static const String totalCommits = '378';
   static const String contributors = '0';
 }
