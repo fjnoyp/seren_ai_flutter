@@ -40,11 +40,11 @@ import 'package:seren_ai_flutter/services/notifications/helpers/fcm_push_notific
 import 'package:seren_ai_flutter/services/notifications/services/fcm_device_token_service.dart';
 import 'package:seren_ai_flutter/services/notifications/widgets/notifications_page.dart';
 import 'package:seren_ai_flutter/widgets/home/home_page.dart';
-import 'package:seren_ai_flutter/widgets/common/main_scaffold.dart';
+import 'package:seren_ai_flutter/widgets/scaffold/main_scaffold.dart';
 import 'package:seren_ai_flutter/services/data/tasks/widgets/task_list/unused_tasks_list_page.dart';
 import 'package:seren_ai_flutter/widgets/settings/settings_page.dart';
 import 'package:seren_ai_flutter/widgets/settings/web/web_settings_page.dart';
-import 'package:seren_ai_flutter/widgets/test_sql_page.dart';
+import 'package:seren_ai_flutter/widgets/debug/test_sql_page.dart';
 import 'package:seren_ai_flutter/widgets/common/theme_data.dart';
 
 final log = Logger('App');
