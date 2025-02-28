@@ -2,11 +2,11 @@
 class BuildInfo {
   // Core build info
   static const String version = '1.0.0';
-  static const String buildDate = '2025-02-27 09:37:17';
+  static const String buildDate = '2025-02-28 16:19:09';
   
   // Git info
-  static const String commitHash = '81869cf';
-  static const String branch = 'main';
+  static const String commitHash = '723504c';
+  static const String branch = 'feat/fix-and-clean-up-user-sign-up-process';
   static const String lastTag = 'no tag';
   
   // Author of last commit
@@ -16,48 +16,48 @@ class BuildInfo {
   // Recent commits (last 5)
   static const List<Map<String, String>> recentCommits = [
     {
-      "hash": "81869cf",
+      "hash": "723504c",
       "author": "renata-sisilio",
       "email": "renata@seren-ai.co", 
-      "message": "chore: ensure the correct org is selected when opening a task/note/project page",
-      "date": "2025-02-26",
-      "relativeDate": "16 hours ago"
+      "message": "remove onboarding page animation",
+      "date": "2025-02-28",
+      "relativeDate": "23 minutes ago"
     },
     {
-      "hash": "360f300",
+      "hash": "f077e56",
       "author": "renata-sisilio",
       "email": "renata@seren-ai.co", 
-      "message": "fix(tasks): remove finished tasks from overdue list at home page",
-      "date": "2025-02-26",
-      "relativeDate": "19 hours ago"
+      "message": "await accepted org to be set",
+      "date": "2025-02-28",
+      "relativeDate": "2 hours ago"
     },
     {
-      "hash": "352f69c",
+      "hash": "7a8d9cc",
       "author": "renata-sisilio",
       "email": "renata@seren-ai.co", 
-      "message": "fix(tasks/notes): name field cleared on open page",
-      "date": "2025-02-26",
-      "relativeDate": "19 hours ago"
+      "message": "fetch class and file name",
+      "date": "2025-02-28",
+      "relativeDate": "2 hours ago"
     },
     {
-      "hash": "23b74ec",
+      "hash": "4ea707f",
       "author": "renata-sisilio",
       "email": "renata@seren-ai.co", 
-      "message": "feat(notifications): create notifications page",
-      "date": "2025-02-26",
-      "relativeDate": "17 hours ago"
+      "message": "remove email confirmation deep linking",
+      "date": "2025-02-28",
+      "relativeDate": "2 hours ago"
     },
     {
-      "hash": "807781a",
-      "author": "Kyle",
-      "email": "kylcheng@gmail.com", 
-      "message": "chore: add drawer view to web - refactor scaffold",
-      "date": "2025-02-26",
-      "relativeDate": "23 hours ago"
+      "hash": "9169300",
+      "author": "renata-sisilio",
+      "email": "renata@seren-ai.co", 
+      "message": "fix(invites): handle already answered invite notification",
+      "date": "2025-02-28",
+      "relativeDate": "3 hours ago"
     },
   ];
 
   // Stats
-  static const String totalCommits = '378';
+  static const String totalCommits = '386';
   static const String contributors = '0';
 }

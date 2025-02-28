@@ -21,20 +21,20 @@ class UserInvitesRepository extends BaseRepository<InviteModel> {
     return item.toJson();
   }
 
-  Stream<List<InviteModel>> watchPendingInvitesByEmail({
+  Stream<List<InviteModel>> watchInvitesByEmail({
     required String userEmail,
   }) {
     return watch(
-      UserQueries.pendingInvitesByEmailQuery,
+      UserQueries.invitesByEmailQuery,
       {'user_email': userEmail},
     );
   }
 
-  Future<List<InviteModel>> getPendingInvitesByEmail({
+  Future<List<InviteModel>> getInvitesByEmail({
     required String userEmail,
   }) async {
     return get(
-      UserQueries.pendingInvitesByEmailQuery,
+      UserQueries.invitesByEmailQuery,
       {'user_email': userEmail},
     );
   }

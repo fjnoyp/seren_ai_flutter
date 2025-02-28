@@ -1,10 +1,10 @@
-import 'dart:developer';
-
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:seren_ai_flutter/services/auth/cur_auth_state_provider.dart';
 import 'package:seren_ai_flutter/services/data/orgs/models/user_org_role_model.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
+import 'package:logging/logging.dart';
 
+final log = Logger('OrgInviteService');
 final orgInviteServiceProvider = Provider((ref) => OrgInviteService(ref));
 
 class OrgInviteService {
@@ -20,6 +20,13 @@ class OrgInviteService {
       'p_role': role.name,
       'p_author_user_id': user!.id,
     });
-    log('inviteUser called:\n\temail: $email\n\trole: $role\n\torgId: $orgId\nWith response:\n$response');
+
+    if (response['success'] != true) {
+      log.severe('Failed to invite user: ${response['error']}');
+      throw Exception('Failed to invite user: ${response['error']}');
+    }
+
+    // Notification is now handled by the RPC function
+    log.info('User invited successfully. Invite ID: ${response['invite_id']}');
   }
 }

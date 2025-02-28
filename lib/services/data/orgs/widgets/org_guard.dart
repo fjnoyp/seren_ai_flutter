@@ -52,11 +52,11 @@ class OrgGuard extends ConsumerWidget {
             return;
           }
         }
-        // If still no orgs after retries, proceed with navigation
+        // If still no orgs after retries, navigate to onboarding page
         if (context.mounted) {
           ref
               .read(navigationServiceProvider)
-              .navigateTo(AppRoutes.chooseOrg.name);
+              .navigateTo(AppRoutes.onboarding.name, clearStack: true);
         }
       });
 
