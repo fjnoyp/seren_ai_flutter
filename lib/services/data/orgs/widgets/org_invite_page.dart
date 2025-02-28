@@ -62,7 +62,7 @@ class OrgInvitePage extends ConsumerWidget {
                         await ref
                             .read(curUserInvitesNotifierProvider.notifier)
                             .acceptInvite(invite);
-                        ref
+                        await ref
                             .read(curSelectedOrgIdNotifierProvider.notifier)
                             .setDesiredOrgId(invite.orgId);
                         ref.read(navigationServiceProvider).navigateTo(
