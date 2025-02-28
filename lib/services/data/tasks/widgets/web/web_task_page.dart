@@ -17,7 +17,7 @@ import 'package:seren_ai_flutter/services/data/tasks/widgets/task_comments/task_
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:seren_ai_flutter/services/data/tasks/widgets/task_list/tasks_list_tiles_view.dart';
 import 'package:seren_ai_flutter/services/data/tasks/widgets/task_tag.dart';
-import 'package:seren_ai_flutter/widgets/common/debug_mode_provider.dart';
+import 'package:seren_ai_flutter/widgets/debug/debug_mode_provider.dart';
 
 final log = Logger('TaskPage');
 
