@@ -2,10 +2,10 @@
 class BuildInfo {
   // Core build info
   static const String version = '1.0.0';
-  static const String buildDate = '2025-02-28 13:50:35';
+  static const String buildDate = '2025-02-28 13:52:21';
   
   // Git info
-  static const String commitHash = '9169300';
+  static const String commitHash = '4ea707f';
   static const String branch = 'feat/fix-and-clean-up-user-sign-up-process';
   static const String lastTag = 'no tag';
   
@@ -16,12 +16,20 @@ class BuildInfo {
   // Recent commits (last 5)
   static const List<Map<String, String>> recentCommits = [
     {
+      "hash": "4ea707f",
+      "author": "renata-sisilio",
+      "email": "renata@seren-ai.co", 
+      "message": "remove email confirmation deep linking",
+      "date": "2025-02-28",
+      "relativeDate": "2 minutes ago"
+    },
+    {
       "hash": "9169300",
       "author": "renata-sisilio",
       "email": "renata@seren-ai.co", 
       "message": "fix(invites): handle already answered invite notification",
       "date": "2025-02-28",
-      "relativeDate": "4 minutes ago"
+      "relativeDate": "6 minutes ago"
     },
     {
       "hash": "fee8c3a",
@@ -29,7 +37,7 @@ class BuildInfo {
       "email": "renata@seren-ai.co", 
       "message": "pr comment + handle initial multiple invitations + move setup and invite notification logics to backend",
       "date": "2025-02-28",
-      "relativeDate": "22 minutes ago"
+      "relativeDate": "24 minutes ago"
     },
     {
       "hash": "bdc1681",
@@ -47,17 +55,9 @@ class BuildInfo {
       "date": "2025-02-27",
       "relativeDate": "28 hours ago"
     },
-    {
-      "hash": "81869cf",
-      "author": "renata-sisilio",
-      "email": "renata@seren-ai.co", 
-      "message": "chore: ensure the correct org is selected when opening a task/note/project page",
-      "date": "2025-02-26",
-      "relativeDate": "2 days ago"
-    },
   ];
 
   // Stats
-  static const String totalCommits = '382';
+  static const String totalCommits = '383';
   static const String contributors = '0';
 }
