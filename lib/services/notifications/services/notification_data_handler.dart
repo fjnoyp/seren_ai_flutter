@@ -3,7 +3,6 @@ import 'package:seren_ai_flutter/common/navigation_service_provider.dart';
 import 'package:seren_ai_flutter/common/routes/app_routes.dart';
 import 'package:seren_ai_flutter/services/data/tasks/providers/task_navigation_service.dart';
 import 'package:seren_ai_flutter/services/notifications/models/notification_data.dart';
-import 'package:seren_ai_flutter/services/notifications/user_invite_notification_service.dart';
 
 /// Handles notification clicks and routes them to appropriate screens
 class NotificationDataHandler {

@@ -16,6 +16,7 @@ abstract class NotificationData {
       'task_assignment' => TaskAssignmentNotificationData.fromJson(json),
       'task_comment' => TaskCommentNotificationData.fromJson(json),
       'task_reminder' => TaskReminderNotificationData.fromJson(json),
+      'org_invite' => UserInviteNotificationData.fromJson(json),
       _ => null,
     };
   }
@@ -114,5 +115,40 @@ class TaskReminderNotificationData extends TaskNotificationData {
     return TaskReminderNotificationData(
       taskId: json['task_id'] as String,
     );
+  }
+}
+
+/// Data for user invite notifications
+class UserInviteNotificationData extends NotificationData {
+  final String orgId;
+  final String orgName;
+  final String role;
+  final String authorUserName;
+
+  UserInviteNotificationData({
+    required this.orgId,
+    required this.orgName,
+    required this.role,
+    required this.authorUserName,
+  }) : super(type: 'org_invite');
+
+  factory UserInviteNotificationData.fromJson(Map<String, dynamic> json) {
+    return UserInviteNotificationData(
+      orgId: json['org_id'] as String,
+      orgName: json['org_name'] as String,
+      role: json['role'] as String,
+      authorUserName: json['author_user_name'] as String,
+    );
+  }
+
+  @override
+  Map<String, String> toJson() {
+    return {
+      'type': type,
+      'org_id': orgId,
+      'org_name': orgName,
+      'role': role,
+      'author_user_name': authorUserName,
+    };
   }
 }

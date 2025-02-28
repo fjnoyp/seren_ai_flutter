@@ -14,9 +14,9 @@ class CurUserInvitesService extends Notifier<List<InviteModel>> {
     final userEmail = ref.watch(curUserProvider).valueOrNull?.email ?? '';
     ref
         .read(userInvitesRepositoryProvider)
-        .watchPendingInvitesByEmail(userEmail: userEmail)
-        .listen((pendingInvites) {
-      state = pendingInvites;
+        .watchInvitesByEmail(userEmail: userEmail)
+        .listen((invites) {
+      state = invites;
     });
 
     return [];

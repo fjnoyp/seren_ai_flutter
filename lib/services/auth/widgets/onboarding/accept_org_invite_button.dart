@@ -7,8 +7,8 @@ import 'package:seren_ai_flutter/services/data/orgs/providers/cur_selected_org_i
 import 'package:seren_ai_flutter/services/data/users/models/invite_model.dart';
 import 'package:seren_ai_flutter/services/data/users/providers/cur_user_invites_notifier_provider.dart';
 
-class AcceptInviteButton extends ConsumerWidget {
-  const AcceptInviteButton(this.invite, {super.key});
+class GoToOrgButton extends ConsumerWidget {
+  const GoToOrgButton(this.invite, {super.key});
 
   final InviteModel invite;
 
@@ -16,10 +16,12 @@ class AcceptInviteButton extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     return FilledButton(
       onPressed: () async {
+        if (invite.status == InviteStatus.pending) {
+          await ref
+              .read(curUserInvitesNotifierProvider.notifier)
+              .acceptInvite(invite);
+        }
         await ref
-            .read(curUserInvitesNotifierProvider.notifier)
-            .acceptInvite(invite);
-        ref
             .read(curSelectedOrgIdNotifierProvider.notifier)
             .setDesiredOrgId(invite.orgId);
         ref.read(navigationServiceProvider).navigateTo(

@@ -122,7 +122,7 @@
         }
     },
     "ourBuiltInAI": "Our built-in AI ",
-    "canTeachYouMore": "can teach you more,",
+    "canTeachYouMore": " can teach you more,",
     "controlTheApplicationForYou": "control the application for you,",
     "andSummarizeAllYourInformation": "and summarize all your information.",
     "letStart": "Let's start!",
@@ -132,6 +132,7 @@
             "orgName": {"type": "String"}
         }
     },
+    "youHaveMultipleInvitations": "You have invitations to the following organizations:",
 
     "@_": {"description": "Onboarding - No Invites Page"},
     "welcomeToSerenAi": "Welcome to Seren.ai!",

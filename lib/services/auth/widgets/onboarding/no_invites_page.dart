@@ -6,17 +6,15 @@ import 'package:seren_ai_flutter/common/navigation_service_provider.dart';
 import 'package:seren_ai_flutter/common/routes/app_routes.dart';
 import 'package:seren_ai_flutter/services/auth/cur_auth_state_provider.dart';
 import 'package:seren_ai_flutter/services/auth/widgets/onboarding/accept_org_invite_button.dart';
-import 'package:seren_ai_flutter/services/data/orgs/models/org_model.dart';
-import 'package:seren_ai_flutter/services/data/orgs/models/user_org_role_model.dart';
 import 'package:seren_ai_flutter/services/data/orgs/providers/cur_selected_org_id_notifier.dart';
-import 'package:seren_ai_flutter/services/data/orgs/repositories/orgs_repository.dart';
-import 'package:seren_ai_flutter/services/data/orgs/repositories/user_org_roles_repository.dart';
 import 'package:seren_ai_flutter/services/data/projects/models/project_model.dart';
 import 'package:seren_ai_flutter/services/data/projects/repositories/projects_repository.dart';
+import 'package:seren_ai_flutter/services/data/users/models/invite_model.dart';
 import 'package:seren_ai_flutter/services/data/users/providers/cur_user_invites_notifier_provider.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
+import 'package:supabase_flutter/supabase_flutter.dart';
 
 class NoInvitesPage extends HookConsumerWidget {
   const NoInvitesPage({super.key});
@@ -61,36 +59,28 @@ class NoInvitesPage extends HookConsumerWidget {
         isCreatingOrg.value = true;
 
         try {
-          final newOrg = OrgModel(
-            name: orgNameController.text,
-            address: orgAddressController.text,
+          final orgName = orgNameController.text;
+          final orgAddress = orgAddressController.text;
+          final userId = user?.id ?? '';
+
+          // Call RPC function instead of direct insertions
+          final response = await Supabase.instance.client.rpc(
+            'create_organization_with_admin',
+            params: {
+              'org_name': orgName,
+              'org_address': orgAddress,
+              'user_id': userId,
+            },
           );
 
-          // Something is going wrong here, the org is not being created when RLS is enabled.
-          // This error is being thrown:
-          // powersync-supabase: SEVERE: Data upload error - discarding
-          // CrudEntry<2/2 PUT orgs/3b231aca-5a84-4bb3-b8ab-3fc67d2c81d1
-          // {name: TEST ORG, address: }> PostgrestException(message: new row
-          // violates row-level security policy for table "orgs", code: 42501,
-          // details: , hint: null)
-          // Same for creating the user org role.
-          // TODO p1: fix this.
+          // Extract the org_id from the response
+          final orgId = response['org_id'] as String;
 
-          // TODO p3: add check to see if org already exists
-          await ref.read(orgsRepositoryProvider).insertItem(newOrg);
-
-          // Make the user the admin of the new org
-          await ref.read(userOrgRolesRepositoryProvider).insertItem(
-                UserOrgRoleModel(
-                  userId: user?.id ?? '',
-                  orgId: newOrg.id,
-                  orgRole: OrgRole.admin,
-                ),
-              );
+          if (orgId.isEmpty) throw Exception('No organization ID returned');
 
           ref
               .read(curSelectedOrgIdNotifierProvider.notifier)
-              .setDesiredOrgId(newOrg.id);
+              .setDesiredOrgId(orgId);
 
           isCreatingOrg.value = false;
           currentStep.value = 2;
@@ -160,7 +150,15 @@ class NoInvitesPage extends HookConsumerWidget {
                           },
                           onContinue: () => currentStep.value = 1,
                         )
-                      : AcceptInviteButton(curUserInvites.first),
+                      : Wrap(
+                          spacing: 8.0,
+                          runSpacing: 8.0,
+                          children: curUserInvites
+                              .where((invite) =>
+                                  invite.status != InviteStatus.declined)
+                              .map((invite) => GoToOrgButton(invite))
+                              .toList(),
+                        ),
                 if (currentStep.value == 1)
                   _OrgCreationStep(
                     isNewCompany: isNewCompany.value,
