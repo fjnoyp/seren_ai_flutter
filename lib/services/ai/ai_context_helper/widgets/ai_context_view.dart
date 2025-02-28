@@ -1,8 +1,55 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:seren_ai_flutter/services/ai/ai_context_helper/ai_context_helper_provider.dart';
 import 'package:seren_ai_flutter/services/data/tasks/models/task_model.dart';
+
+class AiContextAnchorButton extends ConsumerWidget {
+  final String uniqueId;
+  final Future<String> Function() summaryGenerator;
+  final String loadingText;
+  final String errorText;
+
+  const AiContextAnchorButton({
+    super.key,
+    required this.uniqueId,
+    required this.summaryGenerator,
+    this.loadingText = 'Generating AI summary...',
+    this.errorText = 'Failed to generate summary',
+  });
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    return MenuAnchor(
+      crossAxisUnconstrained: false,
+      menuChildren: [
+        ConstrainedBox(
+          constraints: const BoxConstraints(maxWidth: 600),
+          child: AiContextView(
+            uniqueId: uniqueId,
+            summaryGenerator: summaryGenerator,
+            loadingText: loadingText,
+            errorText: errorText,
+          ),
+        ),
+      ],
+      builder: (context, controller, child) => OutlinedButton(
+        onPressed: () =>
+            controller.isOpen ? controller.close() : controller.open(),
+        child: Row(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            SvgPicture.asset('assets/images/AI button.svg',
+                width: 24, height: 24),
+            const SizedBox(width: 8),
+            const Text('AI Context'),
+          ],
+        ),
+      ),
+    );
+  }
+}
 
 class AiContextView extends HookConsumerWidget {
   final String uniqueId;
@@ -31,21 +78,12 @@ class AiContextView extends HookConsumerWidget {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                const Text(
-                  'AI Context',
-                  style: TextStyle(
-                    fontSize: 16,
-                    fontWeight: FontWeight.bold,
-                  ),
-                ),
-                IconButton(
-                  icon: const Icon(Icons.refresh),
-                  onPressed: () => refreshCounter.value++,
-                ),
-              ],
+            const Text(
+              'AI Context',
+              style: TextStyle(
+                fontSize: 16,
+                fontWeight: FontWeight.bold,
+              ),
             ),
             const SizedBox(height: 8),
             Builder(
@@ -98,7 +136,7 @@ class AIContextTaskOverview extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    return AiContextView(
+    return AiContextAnchorButton(
       uniqueId: 'task_overview_$taskId',
       summaryGenerator: () => ref
           .read(aiContextHelperProvider)
@@ -119,7 +157,7 @@ class AIContextTaskList extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    return AiContextView(
+    return AiContextAnchorButton(
       uniqueId: 'task_list_${tasks.length}',
       summaryGenerator: () => ref
           .read(aiContextHelperProvider)
