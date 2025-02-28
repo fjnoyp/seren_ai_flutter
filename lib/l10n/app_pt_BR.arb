@@ -176,6 +176,7 @@
     "pendingInviteBody": "{authorUserName} convidou você para participar de {orgName} como {inviteOrgRole}",
     "decline": "Recusar",
     "accept": "Aceitar",
+    "youHaveAlreadyAnsweredThisInvite": "Você já respondeu a este convite",
 
     "@_": {"description": "Projects"},
     "project": "Projeto",

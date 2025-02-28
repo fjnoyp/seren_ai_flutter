@@ -53,7 +53,7 @@ class OrgInvitePage extends ConsumerWidget {
                         ref.read(navigationServiceProvider).pop();
                       },
                       style: TextButton.styleFrom(
-                        backgroundColor: Theme.of(context).colorScheme.error,
+                        foregroundColor: Theme.of(context).colorScheme.error,
                       ),
                       child: Text(AppLocalizations.of(context)!.decline),
                     ),

@@ -243,6 +243,7 @@
     },
     "decline": "Decline",
     "accept": "Accept",
+    "youHaveAlreadyAnsweredThisInvite": "You have already answered this invite",
 
     "@_": {"description": "Projects"},
     "project": "Project",
