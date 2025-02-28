@@ -2,11 +2,11 @@
 class BuildInfo {
   // Core build info
   static const String version = '1.0.0';
-  static const String buildDate = '2025-02-28 16:19:09';
+  static const String buildDate = '2025-02-28 17:02:28';
   
   // Git info
-  static const String commitHash = '723504c';
-  static const String branch = 'feat/fix-and-clean-up-user-sign-up-process';
+  static const String commitHash = '0aad1c1';
+  static const String branch = 'feat/use-anchor-button-for-ai-summaries';
   static const String lastTag = 'no tag';
   
   // Author of last commit
@@ -16,48 +16,48 @@ class BuildInfo {
   // Recent commits (last 5)
   static const List<Map<String, String>> recentCommits = [
     {
-      "hash": "723504c",
+      "hash": "0aad1c1",
       "author": "renata-sisilio",
       "email": "renata@seren-ai.co", 
-      "message": "remove onboarding page animation",
+      "message": "feat(auth): create user onboarding process (#169)",
       "date": "2025-02-28",
-      "relativeDate": "23 minutes ago"
+      "relativeDate": "41 minutes ago"
     },
     {
-      "hash": "f077e56",
+      "hash": "89edcdc",
       "author": "renata-sisilio",
       "email": "renata@seren-ai.co", 
-      "message": "await accepted org to be set",
-      "date": "2025-02-28",
-      "relativeDate": "2 hours ago"
+      "message": "fix(tasks/notes): build_runner error mapping parent_org_id parameter",
+      "date": "2025-02-27",
+      "relativeDate": "31 hours ago"
     },
     {
-      "hash": "7a8d9cc",
+      "hash": "81869cf",
       "author": "renata-sisilio",
       "email": "renata@seren-ai.co", 
-      "message": "fetch class and file name",
-      "date": "2025-02-28",
-      "relativeDate": "2 hours ago"
+      "message": "chore: ensure the correct org is selected when opening a task/note/project page",
+      "date": "2025-02-26",
+      "relativeDate": "2 days ago"
     },
     {
-      "hash": "4ea707f",
+      "hash": "360f300",
       "author": "renata-sisilio",
       "email": "renata@seren-ai.co", 
-      "message": "remove email confirmation deep linking",
-      "date": "2025-02-28",
-      "relativeDate": "2 hours ago"
+      "message": "fix(tasks): remove finished tasks from overdue list at home page",
+      "date": "2025-02-26",
+      "relativeDate": "2 days ago"
     },
     {
-      "hash": "9169300",
+      "hash": "352f69c",
       "author": "renata-sisilio",
       "email": "renata@seren-ai.co", 
-      "message": "fix(invites): handle already answered invite notification",
-      "date": "2025-02-28",
-      "relativeDate": "3 hours ago"
+      "message": "fix(tasks/notes): name field cleared on open page",
+      "date": "2025-02-26",
+      "relativeDate": "2 days ago"
     },
   ];
 
   // Stats
-  static const String totalCommits = '386';
+  static const String totalCommits = '380';
   static const String contributors = '0';
 }
