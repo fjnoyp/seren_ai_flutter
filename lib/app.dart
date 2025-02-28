@@ -281,8 +281,6 @@ class AppState extends ConsumerState<App> {
       ref.read(navigationServiceProvider).navigateTo(
           AppRoutes.resetPassword.name,
           arguments: {'accessToken': uri.queryParameters['code']});
-    } else if (uri.host == 'onboarding') {
-      ref.read(navigationServiceProvider).navigateTo(AppRoutes.onboarding.name);
     }
     /*
     // Example: Navigate to a specific screen based on the link

@@ -57,7 +57,6 @@
                 <category android:name="android.intent.category.DEFAULT" />
                 <category android:name="android.intent.category.BROWSABLE" />
                 <data android:scheme="serenai" android:host="reset-password" android:pathPattern=".*" />
-                <data android:scheme="serenai" android:host="onboarding" android:pathPattern=".*" />
                 <!-- <data android:scheme="sample" /> -->
             </intent-filter>
         </activity>

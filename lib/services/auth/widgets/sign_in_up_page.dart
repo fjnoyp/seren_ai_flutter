@@ -22,7 +22,6 @@ class SignInUpPage extends ConsumerWidget {
             // TODO p5: maybe add seren logo here on top instead of the app bar
             child: SupaEmailAuth(
               resetPasswordRedirectTo: 'serenai://reset-password',
-              redirectTo: 'serenai://onboarding',
               onSignInComplete: (response) {
                 ref
                     .read(navigationServiceProvider)
