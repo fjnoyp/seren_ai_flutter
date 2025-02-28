@@ -11,11 +11,15 @@ import 'package:seren_ai_flutter/services/speech_to_text/widgets/speech_state_co
 import 'package:seren_ai_flutter/services/speech_to_text/widgets/speech_transcribed_widget.dart';
 import 'package:seren_ai_flutter/services/text_to_speech/text_to_speech_notifier.dart';
 import 'package:seren_ai_flutter/services/text_to_speech/text_to_speech_service.dart';
+import 'package:seren_ai_flutter/widgets/scaffold/bottom_app_bar_base.dart';
+
+// This is shown in place of the bottom app bar on mobile when the ai modal is visible ...
 
 // TODO p5: save and retrieve this preference locally
 final textFieldVisibilityProvider = StateProvider<bool>((ref) => false);
 
 /// Class to display user's voice input or manual text input
+/// Adapted to use the consistent BottomAppBarBase for styling
 class UserInputDisplayWidget extends ConsumerWidget {
   const UserInputDisplayWidget({super.key});
 
@@ -28,95 +32,114 @@ class UserInputDisplayWidget extends ConsumerWidget {
     // Get the height of the keyboard
     final keyboardHeight = MediaQuery.of(context).viewInsets.bottom;
 
-    return SafeArea(
-      child: Padding(
-        padding: const EdgeInsets.all(8.0),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.stretch,
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            Align(
-              alignment: Alignment.topRight,
-              child: Row(
+    return BottomAppBarBase(
+      height: isTextFieldVisible ? 200.0 : 65.0,
+      padding: const EdgeInsets.symmetric(horizontal: 8.0, vertical: 4.0),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.stretch,
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          // Top control row - we keep this consistent with the style of _QuickActionsBottomAppBar
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              // Left side controls
+              Row(
                 children: [
-                  isTextFieldVisible
-                      ? IconButton(
-                          icon: const Icon(Icons.mic),
-                          onPressed: () {
-                            ref
-                                .read(textFieldVisibilityProvider.notifier)
-                                .state = false;
-                          },
-                        )
-                      : IconButton(
-                          icon: const Icon(Icons.keyboard),
-                          onPressed: () {
-                            ref
-                                .read(textFieldVisibilityProvider.notifier)
-                                .state = true;
-                          },
-                        ),
-                  // TODO p4: maybe we should make this a persistent choice
+                  // Input mode toggle
+                  IconButton(
+                    icon: Icon(
+                      isTextFieldVisible ? Icons.mic : Icons.keyboard,
+                      size: 22,
+                    ),
+                    visualDensity: VisualDensity.compact,
+                    constraints: const BoxConstraints(
+                      minWidth: 32,
+                      minHeight: 32,
+                    ),
+                    onPressed: () {
+                      ref.read(textFieldVisibilityProvider.notifier).state =
+                          !isTextFieldVisible;
+                    },
+                  ),
+
+                  // TTS toggle button (conditionally displayed)
                   if (textToSpeechState == TextToSpeechStateEnum.speaking)
                     IconButton(
+                      visualDensity: VisualDensity.compact,
+                      constraints: const BoxConstraints(
+                        minWidth: 32,
+                        minHeight: 32,
+                      ),
+                      icon: const Icon(Icons.volume_off, size: 22),
                       onPressed: () => textToSpeechService.stop(),
-                      icon: const Icon(Icons.volume_off),
                     ),
+                ],
+              ),
 
-                  const Expanded(child: SizedBox.shrink()),
-
+              // Right side controls
+              Row(
+                children: [
                   IconButton(
+                    visualDensity: VisualDensity.compact,
+                    constraints: const BoxConstraints(
+                      minWidth: 32,
+                      minHeight: 32,
+                    ),
+                    icon: const Icon(Icons.open_in_new, size: 22),
                     onPressed: () {
                       ref.read(isAiModalVisibleProvider.notifier).state = false;
                       ref
                           .read(navigationServiceProvider)
                           .navigateTo(AppRoutes.aiChats.name);
                     },
-                    icon: const Icon(Icons.open_in_new),
                   ),
                   IconButton(
+                    visualDensity: VisualDensity.compact,
+                    constraints: const BoxConstraints(
+                      minWidth: 32,
+                      minHeight: 32,
+                    ),
+                    icon: const Icon(Icons.close, size: 22),
                     onPressed: () => ref
                         .read(isAiModalVisibleProvider.notifier)
                         .state = false,
-                    icon: const Icon(Icons.close),
                   ),
                 ],
               ),
-            ),
-            Consumer(
-              builder: (context, ref, child) {
-                final isAiResponding = ref.watch(isAiRespondingProvider);
-                return Visibility(
-                  visible: isAiResponding,
-                  child: LinearProgressIndicator(
-                    valueColor: AlwaysStoppedAnimation<Color>(
-                        Theme.of(context).colorScheme.primary),
-                  ),
-                );
-              },
-            ),
-            const AiResultsWidget(),
-            const SpeechTranscribedWidget(),
-            if (isTextFieldVisible) ...[
-              UserInputTextDisplayWidget(),
-              SizedBox(height: keyboardHeight), // Add space for the keyboard
-            ] else
-              const Stack(
-                alignment: Alignment.center,
-                children: [
-                  // Use padding to center the volume wave visualization with the speech control button's topView
-                  // TODO p5: solve behavior issue with volume wave visualization before we use it again
-                  // Padding(
-                  //   padding: EdgeInsets.only(
-                  //       bottom:
-                  //           25), // 80 / 2 (container) - 30 / 2 (wave visualization)
-                  //   child: ListenVolumeWidget(),
-                  // ),
-                  SpeechStateControlButtonWidget(),
-                ],
-              )
-          ],
-        ),
+            ],
+          ),
+
+          // AI responding progress indicator
+          Consumer(
+            builder: (context, ref, child) {
+              final isAiResponding = ref.watch(isAiRespondingProvider);
+              return Visibility(
+                visible: isAiResponding,
+                child: LinearProgressIndicator(
+                  valueColor: AlwaysStoppedAnimation<Color>(
+                      Theme.of(context).colorScheme.primary),
+                ),
+              );
+            },
+          ),
+
+          // AI content areas
+          const AiResultsWidget(),
+          const SpeechTranscribedWidget(),
+
+          // Input controls based on mode
+          if (isTextFieldVisible) ...[
+            UserInputTextDisplayWidget(),
+            SizedBox(height: keyboardHeight), // Add space for the keyboard
+          ] else
+            const Stack(
+              alignment: Alignment.center,
+              children: [
+                SpeechStateControlButtonWidget(),
+              ],
+            )
+        ],
       ),
     );
   }

@@ -14,7 +14,7 @@ import 'package:seren_ai_flutter/services/data/tasks/tool_methods/models/delete_
 import 'package:seren_ai_flutter/services/data/tasks/tool_methods/models/find_tasks_result_model.dart';
 import 'package:seren_ai_flutter/services/data/tasks/tool_methods/models/update_task_fields_result_model.dart';
 import 'package:seren_ai_flutter/services/data/tasks/tool_methods/task_result_widgets.dart';
-import 'package:seren_ai_flutter/widgets/common/debug_mode_provider.dart';
+import 'package:seren_ai_flutter/widgets/debug/debug_mode_provider.dart';
 import 'package:flutter/rendering.dart';
 import 'package:flutter/services.dart';
 
