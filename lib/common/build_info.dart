@@ -2,10 +2,10 @@
 class BuildInfo {
   // Core build info
   static const String version = '1.0.0';
-  static const String buildDate = '2025-02-28 17:02:28';
+  static const String buildDate = '2025-02-28 17:08:29';
   
   // Git info
-  static const String commitHash = '0aad1c1';
+  static const String commitHash = 'a458598';
   static const String branch = 'feat/use-anchor-button-for-ai-summaries';
   static const String lastTag = 'no tag';
   
@@ -16,12 +16,20 @@ class BuildInfo {
   // Recent commits (last 5)
   static const List<Map<String, String>> recentCommits = [
     {
+      "hash": "a458598",
+      "author": "renata-sisilio",
+      "email": "renata@seren-ai.co", 
+      "message": "feat(ai_context): use an anchor button for displaying AI context summaries",
+      "date": "2025-02-28",
+      "relativeDate": "6 minutes ago"
+    },
+    {
       "hash": "0aad1c1",
       "author": "renata-sisilio",
       "email": "renata@seren-ai.co", 
       "message": "feat(auth): create user onboarding process (#169)",
       "date": "2025-02-28",
-      "relativeDate": "41 minutes ago"
+      "relativeDate": "47 minutes ago"
     },
     {
       "hash": "89edcdc",
@@ -29,7 +37,7 @@ class BuildInfo {
       "email": "renata@seren-ai.co", 
       "message": "fix(tasks/notes): build_runner error mapping parent_org_id parameter",
       "date": "2025-02-27",
-      "relativeDate": "31 hours ago"
+      "relativeDate": "32 hours ago"
     },
     {
       "hash": "81869cf",
@@ -47,17 +55,9 @@ class BuildInfo {
       "date": "2025-02-26",
       "relativeDate": "2 days ago"
     },
-    {
-      "hash": "352f69c",
-      "author": "renata-sisilio",
-      "email": "renata@seren-ai.co", 
-      "message": "fix(tasks/notes): name field cleared on open page",
-      "date": "2025-02-26",
-      "relativeDate": "2 days ago"
-    },
   ];
 
   // Stats
-  static const String totalCommits = '380';
+  static const String totalCommits = '381';
   static const String contributors = '0';
 }
