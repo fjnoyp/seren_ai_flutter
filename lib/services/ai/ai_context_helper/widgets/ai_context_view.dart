@@ -89,7 +89,7 @@ class AiContextView extends HookConsumerWidget {
             Builder(
               builder: (context) {
                 if (snapshot.hasData) {
-                  return Text(snapshot.data!);
+                  return SelectableText(snapshot.data!);
                 }
                 if (snapshot.hasError) {
                   return Text(
