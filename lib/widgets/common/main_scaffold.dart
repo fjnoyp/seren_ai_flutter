@@ -4,15 +4,19 @@ import 'package:seren_ai_flutter/common/navigation_service_provider.dart';
 import 'package:seren_ai_flutter/common/routes/app_routes.dart';
 import 'package:seren_ai_flutter/common/universal_platform/universal_platform.dart';
 import 'package:seren_ai_flutter/services/ai/is_ai_modal_visible_provider.dart';
-import 'package:seren_ai_flutter/services/ai/widgets/ai_assistant_button.dart';
+import 'package:seren_ai_flutter/services/ai/widgets/base_ai_assistant_button.dart';
+import 'package:seren_ai_flutter/services/ai/widgets/mobile_ai_assistant_button.dart';
 import 'package:seren_ai_flutter/services/ai/widgets/user_input_display_widget.dart';
 import 'package:seren_ai_flutter/services/ai/widgets/web_ai_assistant_modal.dart';
 import 'package:seren_ai_flutter/services/data/db_setup/app_config.dart';
 import 'package:seren_ai_flutter/services/data/notes/providers/notes_navigation_service.dart';
 import 'package:seren_ai_flutter/services/data/tasks/providers/task_navigation_service.dart';
-import 'package:seren_ai_flutter/widgets/common/debug_mode_provider.dart';
-import 'package:seren_ai_flutter/widgets/common/debug_state_modal.dart';
-import 'drawer_view.dart';
+import 'package:seren_ai_flutter/services/data/users/models/invite_model.dart';
+import 'package:seren_ai_flutter/services/data/users/providers/cur_user_invites_service_provider.dart';
+import 'package:seren_ai_flutter/widgets/debug/debug_mode_provider.dart';
+import 'package:seren_ai_flutter/widgets/debug/debug_state_modal.dart';
+import 'package:seren_ai_flutter/widgets/scaffold/bottom_app_bar_base.dart';
+import '../scaffold/drawer_view.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 class MainScaffold extends ConsumerWidget {
@@ -236,7 +240,7 @@ class _MobileScaffold extends ConsumerWidget {
       floatingActionButton: showAiAssistant
           ? isAiAssistantExpanded
               ? null
-              : const AiAssistantButton()
+              : const MobileAiAssistantButton()
           : null,
     );
   }
@@ -288,66 +292,52 @@ class _QuickActionsBottomAppBar extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final theme = Theme.of(context);
-    return Container(
-      decoration: BoxDecoration(
-        boxShadow: [
-          BoxShadow(
-            color: Colors.black.withOpacity(0.2),
-            offset: const Offset(0, -2),
-            blurRadius: 4.0,
+    return BottomAppBarBase(
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        children: [
+          Expanded(
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                _buildNavItem(
+                  context,
+                  Icons.grid_view,
+                  AppLocalizations.of(context)!.home,
+                  () => ref
+                      .read(navigationServiceProvider)
+                      .navigateTo(AppRoutes.home.name),
+                ),
+              ],
+            ),
+          ),
+          Expanded(
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                _buildAddNewButton(context, theme, ref),
+              ],
+            ),
+          ),
+          const Spacer(),
+          const Spacer(),
+          const Spacer(),
+          Expanded(
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                _buildNavItem(
+                  context,
+                  Icons.chat_bubble_outline,
+                  AppLocalizations.of(context)!.chat,
+                  () => ref
+                      .read(navigationServiceProvider)
+                      .navigateTo(AppRoutes.aiChats.name),
+                ),
+              ],
+            ),
           ),
         ],
-      ),
-      child: BottomAppBar(
-        height: 65,
-        padding: EdgeInsets.zero,
-        notchMargin: 0,
-        child: Row(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          children: [
-            Expanded(
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  _buildNavItem(
-                    context,
-                    Icons.grid_view,
-                    AppLocalizations.of(context)!.home,
-                    () => ref
-                        .read(navigationServiceProvider)
-                        .navigateTo(AppRoutes.home.name),
-                  ),
-                ],
-              ),
-            ),
-            Expanded(
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  _buildAddNewButton(context, theme, ref),
-                ],
-              ),
-            ),
-            const Spacer(),
-            const Spacer(),
-            const Spacer(),
-            Expanded(
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  _buildNavItem(
-                    context,
-                    Icons.chat_bubble_outline,
-                    AppLocalizations.of(context)!.chat,
-                    () => ref
-                        .read(navigationServiceProvider)
-                        .navigateTo(AppRoutes.aiChats.name),
-                  ),
-                ],
-              ),
-            ),
-          ],
-        ),
       ),
     );
   }
@@ -419,6 +409,20 @@ class _QuickActionsBottomAppBar extends ConsumerWidget {
           style: theme.textTheme.labelSmall,
         ),
       ],
+    );
+  }
+}
+
+class WebAiAssistantButtonWithQuickActions extends ConsumerWidget {
+  const WebAiAssistantButtonWithQuickActions({super.key});
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    return BaseAiAssistantButton(
+      onPreClick: () {
+        // The base button already sets isAiModalVisibleProvider to true
+        // We could add additional actions here if needed
+      },
     );
   }
 }
