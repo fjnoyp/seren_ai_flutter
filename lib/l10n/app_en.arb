@@ -112,6 +112,65 @@
     "updatePassword": "Update Password",
     "unexpectedError": "An unexpected error occurred",
     "passwordResetSent": "Password reset email has been sent",
+    "pleaseVerifyEmail": "Please verify your email",
+
+    "@_": {"description": "Onboarding"},
+    "onboardingMessage": "Welcome, {username}!\nSeren.ai helps you organize your work.\nEveryone belongs to an \"Organization\" or company.\nThere are \"Projects\" in each Organization\nwhich contains a list of \"Tasks\" and \"Notes\".",
+    "@onboardingMessage": {
+        "placeholders": {
+            "username": {"type": "String"}
+        }
+    },
+    "ourBuiltInAI": "Our built-in AI ",
+    "canTeachYouMore": " can teach you more,",
+    "controlTheApplicationForYou": "control the application for you,",
+    "andSummarizeAllYourInformation": "and summarize all your information.",
+    "letStart": "Let's start!",
+    "goTo": "Go to {orgName}",
+    "@goTo": {
+        "placeholders": {
+            "orgName": {"type": "String"}
+        }
+    },
+    "youHaveMultipleInvitations": "You have invitations to the following organizations:",
+
+    "@_": {"description": "Onboarding - No Invites Page"},
+    "welcomeToSerenAi": "Welcome to Seren.ai!",
+    "newCompanyCreateOrg": "I am a new company and want to create a new organization to manage my work",
+    "createMyOrganization": "Create My Organization",
+    "workerWithoutInvite": "It looks like you are a worker in an existing organization on Seren.ai but do not have an invite yet.",
+    "askForInviteToEmail": "Please ask them to invite your email address: {email}",
+    "@askForInviteToEmail": {
+        "placeholders": {
+            "email": {"type": "String"}
+        }
+    },
+    "inviteWillBeShown": "Once the invite is sent, it will be shown on this page.",
+    "checkForInvites": "Check for Invites",
+    "createYourOrganization": "Create Your Organization",
+    "organizationName": "Organization Name",
+    "enterCompanyName": "Enter your company name",
+    "pleaseEnterOrgName": "Please enter an organization name",
+    "locationOptional": "Location (Optional)",
+    "enterOrgLocation": "Enter your organization location",
+    "continue_": "Continue",
+    "createYourFirstProject": "Create Your First Project",
+    "projectName": "Project Name",
+    "enterFirstProjectName": "Enter a name for your first project",
+    "pleaseEnterProjectName": "Please enter a project name",
+    "enterProjectDescription": "Enter a description for your project",
+    "enterProjectLocation": "Enter the project location",
+    "createProject": "Create Project",
+    "congratulations": "Congratulations!",
+    "orgAndProjectCreated": "Your organization \"{orgName}\" and project \"{projectName}\" have been created successfully.",
+    "@orgAndProjectCreated": {
+        "placeholders": {
+            "orgName": {"type": "String"},
+            "projectName": {"type": "String"}
+        }
+    },
+    "inviteTeamMembersInstructions": "To invite team members, click on your organization name in the top left corner and select \"Invite Users\".",
+    "goToDashboard": "Go to Dashboard",
 
     "@_": {"description": "AI Chat"},
     "aiAssistant": "AI Assistant",
@@ -184,6 +243,7 @@
     },
     "decline": "Decline",
     "accept": "Accept",
+    "youHaveAlreadyAnsweredThisInvite": "You have already answered this invite",
 
     "@_": {"description": "Projects"},
     "project": "Project",

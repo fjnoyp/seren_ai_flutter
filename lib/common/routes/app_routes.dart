@@ -21,7 +21,10 @@ enum AppRoutes {
   termsAndConditions('/termsAndConditions'),
   settings('/settings'),
   resetPassword('/resetPassword'),
-  notifications('/notifications');
+  notifications('/notifications'),
+  onboarding('/onboarding'),
+  noInvites('/noInvites'),
+  orgInvite('/orgInvite');
 
   final String _path;
   const AppRoutes(this._path);
