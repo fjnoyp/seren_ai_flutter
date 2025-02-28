@@ -16,7 +16,7 @@ import 'package:seren_ai_flutter/services/data/shifts/providers/cur_shift_state_
 import 'package:seren_ai_flutter/services/data/shifts/providers/shift_logs_provider.dart';
 import 'package:seren_ai_flutter/services/data/shifts/providers/shift_time_ranges_providers.dart';
 import 'package:seren_ai_flutter/services/data/shifts/widgets/debug_shifts_full_day_view.dart';
-import 'package:seren_ai_flutter/widgets/common/debug_mode_provider.dart';
+import 'package:seren_ai_flutter/widgets/debug/debug_mode_provider.dart';
 import 'package:table_calendar/table_calendar.dart';
 
 import 'dart:async';

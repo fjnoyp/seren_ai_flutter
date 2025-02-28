@@ -12,7 +12,7 @@ import 'package:seren_ai_flutter/services/ai/ai_chats/providers/cur_user_ai_chat
 import 'package:seren_ai_flutter/services/ai/ai_chats/widgets/ai_chat_message_view_card.dart';
 import 'package:seren_ai_flutter/services/ai/ai_chats/widgets/ai_is_responding_indicator.dart';
 import 'package:seren_ai_flutter/services/data/common/widgets/async_value_handler_widget.dart';
-import 'package:seren_ai_flutter/widgets/common/debug_mode_provider.dart';
+import 'package:seren_ai_flutter/widgets/debug/debug_mode_provider.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 class AIChatsPage extends HookConsumerWidget {
