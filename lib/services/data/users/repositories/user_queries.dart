@@ -24,17 +24,16 @@ abstract class UserQueries {
 
   /// Params:
   /// - user_email: String
-  static const String pendingInvitesByEmailQuery = '''
+  static const String invitesByEmailQuery = '''
     SELECT *
     FROM invites
     WHERE email = :user_email
-    AND status = 'pending'
     ORDER BY created_at DESC;
   ''';
 
   /// Params:
   /// - task_id: String
-  /// 
+  ///
   /// Used to fetch all users that are assigned to a specific task
   static const String getTaskAssignedUsersQuery = '''
     SELECT DISTINCT u.*
