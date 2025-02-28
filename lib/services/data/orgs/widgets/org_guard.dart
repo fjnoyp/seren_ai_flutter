@@ -56,7 +56,7 @@ class OrgGuard extends ConsumerWidget {
         if (context.mounted) {
           ref
               .read(navigationServiceProvider)
-              .navigateTo(AppRoutes.onboarding.name);
+              .navigateTo(AppRoutes.onboarding.name, clearStack: true);
         }
       });
 

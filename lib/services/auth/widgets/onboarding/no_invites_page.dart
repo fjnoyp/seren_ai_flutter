@@ -1,7 +1,6 @@
 import 'dart:developer';
 
 import 'package:flutter/material.dart';
-import 'package:flutter_svg/flutter_svg.dart';
 import 'package:seren_ai_flutter/common/navigation_service_provider.dart';
 import 'package:seren_ai_flutter/common/routes/app_routes.dart';
 import 'package:seren_ai_flutter/services/auth/cur_auth_state_provider.dart';
@@ -134,63 +133,65 @@ class NoInvitesPage extends HookConsumerWidget {
       body: Center(
         child: ConstrainedBox(
           constraints: const BoxConstraints(maxWidth: 800),
-          child: Padding(
-            padding: const EdgeInsets.all(24.0),
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              crossAxisAlignment: CrossAxisAlignment.center,
-              children: [
-                if (currentStep.value == 0)
-                  curUserInvites.isEmpty
-                      ? _InitialStep(
-                          userEmail: userEmail,
-                          isNewCompany: isNewCompany.value,
-                          onNewCompanyChanged: (value) {
-                            isNewCompany.value = value;
-                          },
-                          onContinue: () => currentStep.value = 1,
-                        )
-                      : Wrap(
-                          spacing: 8.0,
-                          runSpacing: 8.0,
-                          children: curUserInvites
-                              .where((invite) =>
-                                  invite.status != InviteStatus.declined)
-                              .map((invite) => GoToOrgButton(invite))
-                              .toList(),
-                        ),
-                if (currentStep.value == 1)
-                  _OrgCreationStep(
-                    isNewCompany: isNewCompany.value,
-                    orgFormKey: orgFormKey,
-                    orgNameController: orgNameController,
-                    orgLocationController: orgAddressController,
-                    isCreatingOrg: isCreatingOrg.value,
-                    onBack: () => currentStep.value = 0,
-                    onCreateOrg: createOrganization,
-                  ),
-                if (currentStep.value == 2)
-                  _ProjectCreationStep(
-                    projectFormKey: projectFormKey,
-                    projectNameController: projectNameController,
-                    projectDescriptionController: projectDescriptionController,
-                    projectAddressController: projectAddressController,
-                    isCreatingProject: isCreatingProject.value,
-                    onBack: () => currentStep.value = 1,
-                    onCreateProject: createProject,
-                  ),
-                if (currentStep.value == 3)
-                  _CompletionStep(
-                    orgName: orgNameController.text,
-                    projectName: projectNameController.text,
-                    onGoToDashboard: () {
-                      ref.read(navigationServiceProvider).navigateTo(
-                            AppRoutes.home.name,
-                            clearStack: true,
-                          );
-                    },
-                  ),
-              ],
+          child: SingleChildScrollView(
+            child: Padding(
+              padding: const EdgeInsets.all(24.0),
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                crossAxisAlignment: CrossAxisAlignment.center,
+                children: [
+                  if (currentStep.value == 0)
+                    curUserInvites.isEmpty
+                        ? _InitialStep(
+                            userEmail: userEmail,
+                            isNewCompany: isNewCompany.value,
+                            onNewCompanyChanged: (value) {
+                              isNewCompany.value = value;
+                            },
+                            onContinue: () => currentStep.value = 1,
+                          )
+                        : Wrap(
+                            spacing: 8.0,
+                            runSpacing: 8.0,
+                            children: curUserInvites
+                                .where((invite) =>
+                                    invite.status != InviteStatus.declined)
+                                .map((invite) => GoToOrgButton(invite))
+                                .toList(),
+                          ),
+                  if (currentStep.value == 1)
+                    _OrgCreationStep(
+                      isNewCompany: isNewCompany.value,
+                      orgFormKey: orgFormKey,
+                      orgNameController: orgNameController,
+                      orgLocationController: orgAddressController,
+                      isCreatingOrg: isCreatingOrg.value,
+                      onBack: () => currentStep.value = 0,
+                      onCreateOrg: createOrganization,
+                    ),
+                  if (currentStep.value == 2)
+                    _ProjectCreationStep(
+                      projectFormKey: projectFormKey,
+                      projectNameController: projectNameController,
+                      projectDescriptionController: projectDescriptionController,
+                      projectAddressController: projectAddressController,
+                      isCreatingProject: isCreatingProject.value,
+                      onBack: () => currentStep.value = 1,
+                      onCreateProject: createProject,
+                    ),
+                  if (currentStep.value == 3)
+                    _CompletionStep(
+                      orgName: orgNameController.text,
+                      projectName: projectNameController.text,
+                      onGoToDashboard: () {
+                        ref.read(navigationServiceProvider).navigateTo(
+                              AppRoutes.home.name,
+                              clearStack: true,
+                            );
+                      },
+                    ),
+                ],
+              ),
             ),
           ),
         ),
@@ -218,11 +219,11 @@ class _InitialStep extends HookConsumerWidget {
 
     return Column(
       children: [
-        SvgPicture.asset(
-          'assets/images/seren_logo.svg',
-          width: 100,
-          height: 100,
-        ),
+        // SvgPicture.asset(
+        //   'assets/images/seren_logo.svg',
+        //   width: 100,
+        //   height: 100,
+        // ),
         Text(
           l10n.welcomeToSerenAi,
           style: const TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
