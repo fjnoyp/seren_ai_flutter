@@ -2,11 +2,11 @@
 class BuildInfo {
   // Core build info
   static const String version = '1.0.0';
-  static const String buildDate = '2025-02-26 12:35:38';
+  static const String buildDate = '2025-03-04 08:20:17';
   
   // Git info
-  static const String commitHash = '2a026ab';
-  static const String branch = 'feat/notes_overhaul';
+  static const String commitHash = '311c2fe';
+  static const String branch = 'main';
   static const String lastTag = 'no tag';
   
   // Author of last commit
@@ -16,48 +16,48 @@ class BuildInfo {
   // Recent commits (last 5)
   static const List<Map<String, String>> recentCommits = [
     {
-      "hash": "2a026ab",
+      "hash": "311c2fe",
       "author": "Kyle",
       "email": "kylcheng@gmail.com", 
       "message": "chore(notes): allow select all notes, note ui enhancements",
       "date": "2025-02-26",
-      "relativeDate": "19 minutes ago"
+      "relativeDate": "6 days ago"
     },
     {
-      "hash": "86bb1db",
+      "hash": "8fd9f61",
       "author": "Kyle",
       "email": "kylcheng@gmail.com", 
       "message": "chore(notes): apple style notes list view",
       "date": "2025-02-26",
-      "relativeDate": "4 hours ago"
+      "relativeDate": "6 days ago"
     },
     {
-      "hash": "d4f9e6c",
+      "hash": "e7a5c77",
       "author": "Kyle",
       "email": "kylcheng@gmail.com", 
       "message": "chore(notes): simplify note page to be like iphone notes",
       "date": "2025-02-26",
-      "relativeDate": "4 hours ago"
+      "relativeDate": "6 days ago"
     },
     {
-      "hash": "7e33265",
+      "hash": "cd7a210",
       "author": "Kyle",
       "email": "kylcheng@gmail.com", 
       "message": "chore: remove old home cards",
       "date": "2025-02-26",
-      "relativeDate": "5 hours ago"
+      "relativeDate": "6 days ago"
     },
     {
-      "hash": "360f300",
+      "hash": "11ccb99",
       "author": "renata-sisilio",
       "email": "renata@seren-ai.co", 
-      "message": "fix(tasks): remove finished tasks from overdue list at home page",
-      "date": "2025-02-26",
-      "relativeDate": "3 hours ago"
+      "message": "feat(ai_context): make ai summary text selectable",
+      "date": "2025-02-28",
+      "relativeDate": "4 days ago"
     },
   ];
 
   // Stats
-  static const String totalCommits = '381';
+  static const String totalCommits = '386';
   static const String contributors = '       0';
 }

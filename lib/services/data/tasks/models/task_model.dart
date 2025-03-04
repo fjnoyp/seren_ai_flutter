@@ -113,12 +113,7 @@ class TaskModel implements IHasId {
   final String? _parentOrgId;
 
   @JsonKey(name: 'parent_org_id')
-  String get parentOrgId {
-    if (_parentOrgId != null) return _parentOrgId;
-    // This exception should never happen,
-    // since the parentOrgId is automatically set by the backend.
-    throw Exception('Cannot get parentOrgId for task $id');
-  }
+  String? get parentOrgId => _parentOrgId;
 
   Duration? get duration {
     if (startDateTime != null && dueDate != null) {
@@ -155,7 +150,8 @@ class TaskModel implements IHasId {
     this.blockedByTaskId,
     required this.type,
     String? parentOrgId,
-  })  : _parentOrgId = parentOrgId, id = id ?? uuid.v4(),
+  })  : _parentOrgId = parentOrgId,
+        id = id ?? uuid.v4(),
         assert(dueDate != null || reminderOffsetMinutes == null);
 
   TaskModel copyWith({
