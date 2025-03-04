@@ -73,10 +73,10 @@ class TaskNavigationService extends BaseNavigationService {
     // If the task org is not the current org, we need to select the task org
     final curSelectedOrgId = ref.read(curSelectedOrgIdNotifierProvider);
 
-    if (task.parentOrgId != curSelectedOrgId) {
+    if (task.parentOrgId != null && task.parentOrgId != curSelectedOrgId) {
       await ref
           .read(curSelectedOrgIdNotifierProvider.notifier)
-          .setDesiredOrgId(task.parentOrgId);
+          .setDesiredOrgId(task.parentOrgId!);
     }
   }
 
