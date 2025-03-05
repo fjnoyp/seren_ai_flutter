@@ -4,6 +4,7 @@ import 'package:flutter_svg/flutter_svg.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:seren_ai_flutter/services/ai/ai_context_helper/ai_context_helper_provider.dart';
 import 'package:seren_ai_flutter/services/data/tasks/models/task_model.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 class AiContextAnchorButton extends ConsumerWidget {
   final String uniqueId;
@@ -43,7 +44,7 @@ class AiContextAnchorButton extends ConsumerWidget {
             SvgPicture.asset('assets/images/AI button.svg',
                 width: 24, height: 24),
             const SizedBox(width: 8),
-            const Text('AI Context'),
+            Text(AppLocalizations.of(context)!.aiContext),
           ],
         ),
       ),
@@ -78,9 +79,9 @@ class AiContextView extends HookConsumerWidget {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            const Text(
-              'AI Context',
-              style: TextStyle(
+            Text(
+              AppLocalizations.of(context)!.aiContext,
+              style: const TextStyle(
                 fontSize: 16,
                 fontWeight: FontWeight.bold,
               ),
