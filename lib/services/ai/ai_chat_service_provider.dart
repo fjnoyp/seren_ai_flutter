@@ -6,6 +6,7 @@ import 'package:seren_ai_flutter/common/current_route_provider.dart';
 import 'package:seren_ai_flutter/common/language_provider.dart';
 import 'package:seren_ai_flutter/common/routes/app_routes.dart';
 import 'package:seren_ai_flutter/common/universal_platform/universal_platform.dart';
+import 'package:seren_ai_flutter/services/ai/ai_is_responding_provider.dart';
 import 'package:seren_ai_flutter/services/ai/ai_request/ai_request_executor.dart';
 import 'package:seren_ai_flutter/services/ai/ai_request/models/requests/ai_request_model.dart';
 import 'package:seren_ai_flutter/services/ai/langgraph/langgraph_service.dart';
@@ -27,8 +28,6 @@ import 'package:seren_ai_flutter/services/data/tasks/tool_methods/models/task_re
 import 'package:seren_ai_flutter/services/text_to_speech/text_to_speech_notifier.dart';
 
 final log = Logger('AIChatService');
-
-final isAiRespondingProvider = StateProvider<bool>((ref) => false);
 
 // final isAiEditingProvider = StateProvider<bool>((ref) => false);
 
