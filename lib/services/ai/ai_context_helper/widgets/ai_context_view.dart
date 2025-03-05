@@ -42,8 +42,8 @@ class AiContextAnchorButton extends ConsumerWidget {
           mainAxisSize: MainAxisSize.min,
           children: [
             SvgPicture.asset('assets/images/AI button.svg',
-                width: 24, height: 24),
-            const SizedBox(width: 8),
+                width: 12, height: 12),
+            const SizedBox(width: 4),
             Text(AppLocalizations.of(context)!.aiContext),
           ],
         ),
