@@ -122,4 +122,24 @@ class NotesRepository extends BaseRepository<NoteModel> {
       },
     );
   }
+
+  /// Gets the parent organization ID for a note
+  /// This is determined by the note's project's organization
+  Future<String?> getNoteParentOrgId(String noteId) async {
+    // For notes with a project, get the org ID from the project
+    final projectQuery = '''
+      SELECT p.parent_org_id
+      FROM notes n
+      JOIN projects p ON n.parent_project_id = p.id
+      WHERE n.id = ?
+    ''';
+
+    final result = await db.execute(projectQuery, [noteId]);
+    if (result.isNotEmpty) {
+      return result.first['parent_org_id'] as String?;
+    }
+
+    // For personal notes (without a project), the org ID is null
+    return null;
+  }
 }
