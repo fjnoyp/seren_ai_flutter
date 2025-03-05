@@ -2,10 +2,10 @@
 class BuildInfo {
   // Core build info
   static const String version = '1.0.0';
-  static const String buildDate = '2025-03-05 15:32:29';
+  static const String buildDate = '2025-03-05 15:40:41';
   
   // Git info
-  static const String commitHash = '68c0cb0';
+  static const String commitHash = 'cfbdb62';
   static const String branch = 'feat/ai_mobile_ui_overhaul';
   static const String lastTag = 'no tag';
   
@@ -16,12 +16,20 @@ class BuildInfo {
   // Recent commits (last 5)
   static const List<Map<String, String>> recentCommits = [
     {
+      "hash": "cfbdb62",
+      "author": "Kyle",
+      "email": "kylcheng@gmail.com", 
+      "message": "chore: minor fixes",
+      "date": "2025-03-05",
+      "relativeDate": "8 minutes ago"
+    },
+    {
       "hash": "68c0cb0",
       "author": "Kyle",
       "email": "kylcheng@gmail.com", 
       "message": "feat(ai): refactor mobile ai assistant button",
       "date": "2025-03-05",
-      "relativeDate": "52 minutes ago"
+      "relativeDate": "60 minutes ago"
     },
     {
       "hash": "bd06114",
@@ -47,17 +55,9 @@ class BuildInfo {
       "date": "2025-03-04",
       "relativeDate": "31 hours ago"
     },
-    {
-      "hash": "311c2fe",
-      "author": "Kyle",
-      "email": "kylcheng@gmail.com", 
-      "message": "chore(notes): allow select all notes, note ui enhancements",
-      "date": "2025-02-26",
-      "relativeDate": "7 days ago"
-    },
   ];
 
   // Stats
-  static const String totalCommits = '390';
+  static const String totalCommits = '391';
   static const String contributors = '       0';
 }

@@ -217,6 +217,20 @@ class TasksRepository extends BaseRepository<TaskModel> {
         .handleTaskReminder(taskId: taskId);
   }
 
+  /// Gets the parent organization ID for a task
+  /// This is determined by the task's project's organization
+  Future<String?> getTaskParentOrgId(String taskId) async {
+    final query = '''
+      SELECT p.parent_org_id
+      FROM tasks t
+      JOIN projects p ON t.parent_project_id = p.id
+      WHERE t.id = :task_id
+    ''';
+
+    final result = await db.execute(query, [taskId]);
+    return result.isEmpty ? null : result.first['parent_org_id'] as String?;
+  }
+
   Future<void> updateTaskParentProjectId(
     String taskId,
     String? parentProjectId,

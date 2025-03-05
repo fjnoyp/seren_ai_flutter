@@ -31,15 +31,6 @@ class NoteModel implements IHasId {
   @JsonKey(name: 'updated_at')
   final DateTime? updatedAt;
 
-  // This field is required but is not set by the client.
-  // It's automatically assigned in the backend based on its project's org,
-  // via Supabase function.
-  // See: [https://github.com/fjnoyp/seren_ai_supabase/blob/main/migrations/20240706210333_create_parent_org_id_funcs.sql]
-  final String? _parentOrgId;
-
-  @JsonKey(name: 'parent_org_id')
-  String? get parentOrgId => _parentOrgId;
-
   NoteModel({
     String? id,
     required this.name,
@@ -52,9 +43,7 @@ class NoteModel implements IHasId {
     this.parentProjectId,
     this.createdAt,
     this.updatedAt,
-    String? parentOrgId,
-  })  : _parentOrgId = parentOrgId,
-        id = id ?? uuid.v4();
+  }) : id = id ?? uuid.v4();
 
   factory NoteModel.defaultNote() {
     final now = DateTime.now().toUtc();
