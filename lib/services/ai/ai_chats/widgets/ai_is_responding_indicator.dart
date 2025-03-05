@@ -66,7 +66,8 @@ class _JumpingDotsIndicator extends HookWidget {
 
     useEffect(() {
       controller.repeat();
-      return controller.dispose;
+      // Flutter Hooks will automatically dispose the controller
+      return null;
     }, [controller]);
 
     return Card(

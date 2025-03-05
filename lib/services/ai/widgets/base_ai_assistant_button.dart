@@ -3,7 +3,7 @@ import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:seren_ai_flutter/services/ai/ai_quick_actions/ai_quick_actions_service_provider.dart';
-import 'package:seren_ai_flutter/services/ai/is_ai_modal_visible_provider.dart';
+import 'package:seren_ai_flutter/services/ai/is_ai_assistant_expanded_provider.dart';
 import 'package:seren_ai_flutter/services/ai/widgets/ai_quick_action_widget.dart';
 
 class BaseAiAssistantButton extends ConsumerWidget {
@@ -23,7 +23,7 @@ class BaseAiAssistantButton extends ConsumerWidget {
       child: InkWell(
           onTap: () {
             onPreClick?.call();
-            ref.read(isAiModalVisibleProvider.notifier).state = true;
+            ref.read(isAiAssistantExpandedProvider.notifier).state = true;
           },
           child:
               // Hero(

@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:seren_ai_flutter/services/ai/widgets/web_ai_assistant_button.dart';
 import 'package:seren_ai_flutter/services/ai/widgets/web_ai_assistant_modal.dart';
 import 'package:seren_ai_flutter/services/data/db_setup/app_config.dart';
-import 'package:seren_ai_flutter/widgets/common/main_scaffold.dart';
 import 'package:seren_ai_flutter/widgets/debug/debug_mode_provider.dart';
 import 'package:seren_ai_flutter/widgets/debug/debug_open_modal_button.dart';
 import 'package:seren_ai_flutter/widgets/scaffold/drawer_view.dart';
@@ -11,7 +11,7 @@ import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 class WebScaffold extends ConsumerWidget {
   final String title;
   final Widget body;
-  final bool showAiAssistant;
+  final bool showBottomBar;
   final List<Widget>? actions;
   final bool showAppBar;
   final bool isAiAssistantExpanded;
@@ -19,7 +19,7 @@ class WebScaffold extends ConsumerWidget {
   const WebScaffold({
     required this.title,
     required this.body,
-    required this.showAiAssistant,
+    required this.showBottomBar,
     required this.actions,
     required this.showAppBar,
     required this.isAiAssistantExpanded,
@@ -56,7 +56,7 @@ class WebScaffold extends ConsumerWidget {
                   alignment: Alignment.centerRight,
                   children: [
                     body,
-                    if (showAiAssistant && isAiAssistantExpanded)
+                    if (showBottomBar && isAiAssistantExpanded)
                       const WebAiAssistantView(),
                   ],
                 ),
@@ -65,7 +65,7 @@ class WebScaffold extends ConsumerWidget {
           ],
         );
       }),
-      floatingActionButton: (showAiAssistant && !isAiAssistantExpanded)
+      floatingActionButton: (showBottomBar && !isAiAssistantExpanded)
           ? const WebAiAssistantButtonWithQuickActions()
           : null,
     );
