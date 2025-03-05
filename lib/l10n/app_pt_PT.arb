@@ -128,6 +128,7 @@
 
     "@_": {"description": "AI Chat"},
     "aiAssistant": "Assistente IA",
+    "aiContext": "Resumo da IA",
     "aiChatThreads": "Conversas IA",
     "chat": "Chat",
     "chatThread": "Thread de Chat",
