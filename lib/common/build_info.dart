@@ -2,11 +2,11 @@
 class BuildInfo {
   // Core build info
   static const String version = '1.0.0';
-  static const String buildDate = '2025-03-05 08:20:50';
+  static const String buildDate = '2025-03-05 14:40:22';
   
   // Git info
-  static const String commitHash = 'e5e7e0c';
-  static const String branch = 'main';
+  static const String commitHash = 'bd06114';
+  static const String branch = 'feat/notes_overhaul';
   static const String lastTag = 'no tag';
   
   // Author of last commit
@@ -16,12 +16,28 @@ class BuildInfo {
   // Recent commits (last 5)
   static const List<Map<String, String>> recentCommits = [
     {
+      "hash": "bd06114",
+      "author": "Kyle",
+      "email": "kylcheng@gmail.com", 
+      "message": "chore: refactor and consolidate scaffold and bottom ai view code",
+      "date": "2025-02-28",
+      "relativeDate": "5 days ago"
+    },
+    {
+      "hash": "d65b6e7",
+      "author": "Kyle",
+      "email": "kylcheng@gmail.com", 
+      "message": "chore: translate ai context",
+      "date": "2025-03-05",
+      "relativeDate": "6 hours ago"
+    },
+    {
       "hash": "e5e7e0c",
       "author": "Kyle",
       "email": "kylcheng@gmail.com", 
       "message": "fix: gracefully handle nullable task parent org",
       "date": "2025-03-04",
-      "relativeDate": "24 hours ago"
+      "relativeDate": "30 hours ago"
     },
     {
       "hash": "311c2fe",
@@ -39,25 +55,9 @@ class BuildInfo {
       "date": "2025-02-26",
       "relativeDate": "7 days ago"
     },
-    {
-      "hash": "e7a5c77",
-      "author": "Kyle",
-      "email": "kylcheng@gmail.com", 
-      "message": "chore(notes): simplify note page to be like iphone notes",
-      "date": "2025-02-26",
-      "relativeDate": "7 days ago"
-    },
-    {
-      "hash": "cd7a210",
-      "author": "Kyle",
-      "email": "kylcheng@gmail.com", 
-      "message": "chore: remove old home cards",
-      "date": "2025-02-26",
-      "relativeDate": "7 days ago"
-    },
   ];
 
   // Stats
-  static const String totalCommits = '387';
+  static const String totalCommits = '389';
   static const String contributors = '       0';
 }

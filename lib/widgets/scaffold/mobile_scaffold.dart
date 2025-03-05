@@ -7,20 +7,20 @@ import 'package:seren_ai_flutter/widgets/scaffold/drawer_view.dart';
 import 'package:seren_ai_flutter/widgets/debug/debug_mode_provider.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart'; // Added import for AppLocalizations
 import 'package:seren_ai_flutter/widgets/scaffold/quick_actions_bottom_bar.dart'; // Added import for _QuickActionsBottomAppBar
-import 'package:seren_ai_flutter/services/ai/widgets/user_input_display_widget.dart'; // Added import for UserInputDisplayWidget
-import 'package:seren_ai_flutter/services/ai/widgets/mobile_ai_assistant_button.dart'; // Added import for MobileAiAssistantButton
+import 'package:seren_ai_flutter/services/ai/widgets/mobile_ai_assistant_button/mobile_ai_assistant_expanded_bottom_bar.dart'; // Added import for UserInputDisplayWidget
+import 'package:seren_ai_flutter/services/ai/widgets/mobile_ai_assistant_button/mobile_ai_assistant_button.dart'; // Added import for MobileAiAssistantButton
 
 class MobileScaffold extends ConsumerWidget {
   final String title;
   final Widget body;
-  final bool showAiAssistant;
+  final bool showBottomBar;
   final List<Widget>? actions;
   final bool isAiAssistantExpanded;
 
   const MobileScaffold({
     required this.title,
     required this.body,
-    required this.showAiAssistant,
+    required this.showBottomBar,
     required this.actions,
     required this.isAiAssistantExpanded,
   });
@@ -59,17 +59,14 @@ class MobileScaffold extends ConsumerWidget {
         padding: const EdgeInsets.all(0),
         child: body,
       ),
-      bottomNavigationBar: showAiAssistant
-          ? isAiAssistantExpanded
-              ? const UserInputDisplayWidget()
-              : QuickActionsBottomAppBar()
+      bottomNavigationBar: showBottomBar
+          ? true //isAiAssistantExpanded
+              ? const MobileAiAssistantExpandedBottomBar()
+              : const QuickActionsBottomAppBar()
           : null,
       floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
-      floatingActionButton: showAiAssistant
-          ? isAiAssistantExpanded
-              ? null
-              : const MobileAiAssistantButton()
-          : null,
+      floatingActionButton:
+          showBottomBar ? const MobileAiAssistantButton() : null,
     );
   }
 

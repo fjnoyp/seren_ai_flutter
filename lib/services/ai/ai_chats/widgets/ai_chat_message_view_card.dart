@@ -52,10 +52,6 @@ class AiChatMessageViewCard extends HookConsumerWidget {
       padding: const EdgeInsets.symmetric(horizontal: 12.0),
       child: isDebugMode
           ? Card(
-              shape: RoundedRectangleBorder(
-                side: BorderSide(width: 1, color: theme.dividerColor),
-                borderRadius: BorderRadius.circular(8),
-              ),
               child: Column(
                 children: [
                   // Debug Mode Toggle - Positioned in top right
@@ -212,16 +208,17 @@ class _AiMessageWidget extends StatelessWidget {
         Padding(
           padding: const EdgeInsets.symmetric(horizontal: 8.0, vertical: 24.0),
           child: SizedBox(
-            width: 24.0, // Adjust width as needed
-            height: 24.0, // Adjust height as needed
+            width: 24.0,
+            height: 24.0,
             child: SvgPicture.asset('assets/images/AI button.svg'),
           ),
         ),
         Expanded(
-          child: Padding(
-            padding:
-                const EdgeInsets.only(bottom: 24, top: 24, right: 24, left: 12),
-            child: _CollapsibleText(message),
+          child: Card(
+            child: Padding(
+              padding: const EdgeInsets.all(16.0),
+              child: _CollapsibleText(message),
+            ),
           ),
         ),
       ],
@@ -292,25 +289,32 @@ class _AiRequestResultWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 8.0, vertical: 12.0),
-      child: switch (result.resultType) {
-        AiRequestResultType.shiftAssignments => ShiftAssignmentsResultWidget(
-            result: result as ShiftAssignmentsResultModel),
-        AiRequestResultType.shiftLogs =>
-          ShiftLogsResultWidget(result: result as ShiftLogsResultModel),
-        AiRequestResultType.shiftClockInOut => ShiftClockInOutResultWidget(
-            result: result as ShiftClockInOutResultModel),
-        AiRequestResultType.findTasks =>
-          FindTasksResultWidget(result: result as FindTasksResultModel),
-        AiRequestResultType.createTask =>
-          CreateTaskResultWidget(result: result as CreateTaskResultModel),
-        AiRequestResultType.error => Text(result.resultForAi),
-        AiRequestResultType.updateTaskFields => UpdateTaskFieldsResultWidget(
-            result: result as UpdateTaskFieldsResultModel),
-        AiRequestResultType.deleteTask =>
-          DeleteTaskResultWidget(result: result as DeleteTaskResultModel),
-      },
+    return Card(
+      shape: RoundedRectangleBorder(
+        side: BorderSide(
+            width: 1, color: Theme.of(context).dividerColor.withOpacity(0.3)),
+        borderRadius: BorderRadius.circular(8),
+      ),
+      child: Padding(
+        padding: const EdgeInsets.all(16.0),
+        child: switch (result.resultType) {
+          AiRequestResultType.shiftAssignments => ShiftAssignmentsResultWidget(
+              result: result as ShiftAssignmentsResultModel),
+          AiRequestResultType.shiftLogs =>
+            ShiftLogsResultWidget(result: result as ShiftLogsResultModel),
+          AiRequestResultType.shiftClockInOut => ShiftClockInOutResultWidget(
+              result: result as ShiftClockInOutResultModel),
+          AiRequestResultType.findTasks =>
+            FindTasksResultWidget(result: result as FindTasksResultModel),
+          AiRequestResultType.createTask =>
+            CreateTaskResultWidget(result: result as CreateTaskResultModel),
+          AiRequestResultType.error => Text(result.resultForAi),
+          AiRequestResultType.updateTaskFields => UpdateTaskFieldsResultWidget(
+              result: result as UpdateTaskFieldsResultModel),
+          AiRequestResultType.deleteTask =>
+            DeleteTaskResultWidget(result: result as DeleteTaskResultModel),
+        },
+      ),
     );
   }
 }

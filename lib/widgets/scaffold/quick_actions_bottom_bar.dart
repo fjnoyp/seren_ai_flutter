@@ -18,44 +18,29 @@ class QuickActionsBottomAppBar extends ConsumerWidget {
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
           Expanded(
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                _buildNavItem(
-                  context,
-                  Icons.grid_view,
-                  AppLocalizations.of(context)!.home,
-                  () => ref
-                      .read(navigationServiceProvider)
-                      .navigateTo(AppRoutes.home.name),
-                ),
-              ],
+            child: _buildNavItem(
+              context,
+              Icons.grid_view,
+              AppLocalizations.of(context)!.home,
+              () => ref
+                  .read(navigationServiceProvider)
+                  .navigateTo(AppRoutes.home.name),
             ),
           ),
           Expanded(
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                _buildAddNewButton(context, theme, ref),
-              ],
-            ),
+            child: _buildAddNewButton(context, theme, ref),
           ),
           const Spacer(),
           const Spacer(),
           const Spacer(),
           Expanded(
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                _buildNavItem(
-                  context,
-                  Icons.chat_bubble_outline,
-                  AppLocalizations.of(context)!.chat,
-                  () => ref
-                      .read(navigationServiceProvider)
-                      .navigateTo(AppRoutes.aiChats.name),
-                ),
-              ],
+            child: _buildNavItem(
+              context,
+              Icons.chat_bubble_outline,
+              AppLocalizations.of(context)!.chat,
+              () => ref
+                  .read(navigationServiceProvider)
+                  .navigateTo(AppRoutes.aiChats.name),
             ),
           ),
         ],
