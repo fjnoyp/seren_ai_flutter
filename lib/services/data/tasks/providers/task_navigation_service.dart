@@ -9,6 +9,7 @@ import 'package:seren_ai_flutter/common/navigation_service_provider.dart';
 import 'package:seren_ai_flutter/services/data/tasks/providers/task_by_id_stream_provider.dart';
 import 'package:seren_ai_flutter/services/data/tasks/widgets/action_buttons/delete_task_button.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+import 'package:seren_ai_flutter/services/data/tasks/repositories/tasks_repository.dart';
 
 final taskNavigationServiceProvider = Provider<TaskNavigationService>((ref) {
   return TaskNavigationService(ref);
@@ -73,10 +74,14 @@ class TaskNavigationService extends BaseNavigationService {
     // If the task org is not the current org, we need to select the task org
     final curSelectedOrgId = ref.read(curSelectedOrgIdNotifierProvider);
 
-    if (task.parentOrgId != null && task.parentOrgId != curSelectedOrgId) {
+    // Get the task's parent org ID from the repository
+    final taskParentOrgId =
+        await ref.read(tasksRepositoryProvider).getTaskParentOrgId(taskId);
+
+    if (taskParentOrgId != null && taskParentOrgId != curSelectedOrgId) {
       await ref
           .read(curSelectedOrgIdNotifierProvider.notifier)
-          .setDesiredOrgId(task.parentOrgId!);
+          .setDesiredOrgId(taskParentOrgId);
     }
   }
 
