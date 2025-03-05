@@ -337,7 +337,7 @@ class _GuardScaffold extends StatelessWidget {
           title: title,
           body: isWebVersion ? webBody ?? body : body,
           actions: actions,
-          showAiAssistant: showBottomBar,
+          showBottomBar: showBottomBar,
           showAppBar: showAppBar,
         ),
       ),

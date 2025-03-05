@@ -13,7 +13,6 @@ final speechToTextServiceProvider = Provider<SpeechToTextService>((ref) {
   return SpeechToTextService();
 });
 
-
 enum SpeechToTextStateEnum {
   startListening,
   startNotListening,
