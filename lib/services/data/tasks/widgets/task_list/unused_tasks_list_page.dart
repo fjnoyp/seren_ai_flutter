@@ -3,7 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:seren_ai_flutter/services/data/common/status_enum.dart';
 import 'package:seren_ai_flutter/services/data/common/widgets/create_item_bottom_button.dart';
 import 'package:seren_ai_flutter/services/data/tasks/providers/task_navigation_service.dart';
-import 'package:seren_ai_flutter/services/data/tasks/widgets/task_list/tasks_list_view.dart';
+import 'package:seren_ai_flutter/services/data/tasks/widgets/task_list/unused_tasks_list_view.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 class TasksListPage extends ConsumerWidget {
