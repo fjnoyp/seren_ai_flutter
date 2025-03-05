@@ -2,10 +2,10 @@
 class BuildInfo {
   // Core build info
   static const String version = '1.0.0';
-  static const String buildDate = '2025-03-04 08:20:17';
+  static const String buildDate = '2025-03-05 08:20:50';
   
   // Git info
-  static const String commitHash = '311c2fe';
+  static const String commitHash = 'e5e7e0c';
   static const String branch = 'main';
   static const String lastTag = 'no tag';
   
@@ -16,12 +16,20 @@ class BuildInfo {
   // Recent commits (last 5)
   static const List<Map<String, String>> recentCommits = [
     {
+      "hash": "e5e7e0c",
+      "author": "Kyle",
+      "email": "kylcheng@gmail.com", 
+      "message": "fix: gracefully handle nullable task parent org",
+      "date": "2025-03-04",
+      "relativeDate": "24 hours ago"
+    },
+    {
       "hash": "311c2fe",
       "author": "Kyle",
       "email": "kylcheng@gmail.com", 
       "message": "chore(notes): allow select all notes, note ui enhancements",
       "date": "2025-02-26",
-      "relativeDate": "6 days ago"
+      "relativeDate": "7 days ago"
     },
     {
       "hash": "8fd9f61",
@@ -29,7 +37,7 @@ class BuildInfo {
       "email": "kylcheng@gmail.com", 
       "message": "chore(notes): apple style notes list view",
       "date": "2025-02-26",
-      "relativeDate": "6 days ago"
+      "relativeDate": "7 days ago"
     },
     {
       "hash": "e7a5c77",
@@ -37,7 +45,7 @@ class BuildInfo {
       "email": "kylcheng@gmail.com", 
       "message": "chore(notes): simplify note page to be like iphone notes",
       "date": "2025-02-26",
-      "relativeDate": "6 days ago"
+      "relativeDate": "7 days ago"
     },
     {
       "hash": "cd7a210",
@@ -45,19 +53,11 @@ class BuildInfo {
       "email": "kylcheng@gmail.com", 
       "message": "chore: remove old home cards",
       "date": "2025-02-26",
-      "relativeDate": "6 days ago"
-    },
-    {
-      "hash": "11ccb99",
-      "author": "renata-sisilio",
-      "email": "renata@seren-ai.co", 
-      "message": "feat(ai_context): make ai summary text selectable",
-      "date": "2025-02-28",
-      "relativeDate": "4 days ago"
+      "relativeDate": "7 days ago"
     },
   ];
 
   // Stats
-  static const String totalCommits = '386';
+  static const String totalCommits = '387';
   static const String contributors = '       0';
 }
