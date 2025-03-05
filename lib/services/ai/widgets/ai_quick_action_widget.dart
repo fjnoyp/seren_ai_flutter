@@ -3,7 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:seren_ai_flutter/common/universal_platform/universal_platform.dart';
 import 'package:seren_ai_flutter/services/ai/ai_chat_service_provider.dart';
 import 'package:seren_ai_flutter/services/ai/ai_quick_actions/models/ai_quick_action.dart';
-import 'package:seren_ai_flutter/services/ai/is_ai_modal_visible_provider.dart';
+import 'package:seren_ai_flutter/services/ai/is_ai_assistant_expanded_provider.dart';
 import 'package:seren_ai_flutter/services/ai/widgets/ai_chat_text_field.dart';
 
 class AiQuickActionWidget extends ConsumerWidget {
@@ -16,7 +16,7 @@ class AiQuickActionWidget extends ConsumerWidget {
     return OutlinedButton.icon(
       onPressed: () {
         if (isWebVersion) {
-          ref.read(isAiModalVisibleProvider.notifier).state = true;
+          ref.read(isAiAssistantExpandedProvider.notifier).state = true;
           final textController = ref.read(aiChatTextEditingControllerProvider);
 
           if (action.userInputHint.contains('[') &&
