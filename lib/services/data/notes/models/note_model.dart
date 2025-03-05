@@ -38,12 +38,7 @@ class NoteModel implements IHasId {
   final String? _parentOrgId;
 
   @JsonKey(name: 'parent_org_id')
-  String get parentOrgId {
-    if (_parentOrgId != null) return _parentOrgId;
-    // This exception should never happen,
-    // since the parentOrgId is automatically set by the backend.
-    throw Exception('Cannot get parentOrgId for note $id');
-  }
+  String? get parentOrgId => _parentOrgId;
 
   NoteModel({
     String? id,

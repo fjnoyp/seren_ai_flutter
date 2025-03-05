@@ -64,10 +64,10 @@ class NotesNavigationService extends BaseNavigationService {
     }
 
     final curSelectedOrgId = ref.read(curSelectedOrgIdNotifierProvider);
-    if (note.parentOrgId != curSelectedOrgId) {
+    if (note.parentOrgId != null && note.parentOrgId != curSelectedOrgId) {
       await ref
           .read(curSelectedOrgIdNotifierProvider.notifier)
-          .setDesiredOrgId(note.parentOrgId);
+          .setDesiredOrgId(note.parentOrgId!);
     }
   }
 
