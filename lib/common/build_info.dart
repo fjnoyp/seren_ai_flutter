@@ -2,11 +2,11 @@
 class BuildInfo {
   // Core build info
   static const String version = '1.0.0';
-  static const String buildDate = '2025-03-05 14:40:22';
+  static const String buildDate = '2025-03-05 15:32:29';
   
   // Git info
-  static const String commitHash = 'bd06114';
-  static const String branch = 'feat/notes_overhaul';
+  static const String commitHash = '68c0cb0';
+  static const String branch = 'feat/ai_mobile_ui_overhaul';
   static const String lastTag = 'no tag';
   
   // Author of last commit
@@ -15,6 +15,14 @@ class BuildInfo {
   
   // Recent commits (last 5)
   static const List<Map<String, String>> recentCommits = [
+    {
+      "hash": "68c0cb0",
+      "author": "Kyle",
+      "email": "kylcheng@gmail.com", 
+      "message": "feat(ai): refactor mobile ai assistant button",
+      "date": "2025-03-05",
+      "relativeDate": "52 minutes ago"
+    },
     {
       "hash": "bd06114",
       "author": "Kyle",
@@ -29,7 +37,7 @@ class BuildInfo {
       "email": "kylcheng@gmail.com", 
       "message": "chore: translate ai context",
       "date": "2025-03-05",
-      "relativeDate": "6 hours ago"
+      "relativeDate": "7 hours ago"
     },
     {
       "hash": "e5e7e0c",
@@ -37,7 +45,7 @@ class BuildInfo {
       "email": "kylcheng@gmail.com", 
       "message": "fix: gracefully handle nullable task parent org",
       "date": "2025-03-04",
-      "relativeDate": "30 hours ago"
+      "relativeDate": "31 hours ago"
     },
     {
       "hash": "311c2fe",
@@ -47,17 +55,9 @@ class BuildInfo {
       "date": "2025-02-26",
       "relativeDate": "7 days ago"
     },
-    {
-      "hash": "8fd9f61",
-      "author": "Kyle",
-      "email": "kylcheng@gmail.com", 
-      "message": "chore(notes): apple style notes list view",
-      "date": "2025-02-26",
-      "relativeDate": "7 days ago"
-    },
   ];
 
   // Stats
-  static const String totalCommits = '389';
+  static const String totalCommits = '390';
   static const String contributors = '       0';
 }
