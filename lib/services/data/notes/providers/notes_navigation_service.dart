@@ -7,6 +7,7 @@ import 'package:seren_ai_flutter/services/data/common/widgets/editable_page_mode
 import 'package:seren_ai_flutter/services/data/notes/providers/cur_selected_note_id_notifier_provider.dart';
 import 'package:seren_ai_flutter/services/data/notes/providers/note_attachments_service_provider.dart';
 import 'package:seren_ai_flutter/services/data/notes/providers/note_by_id_stream_provider.dart';
+import 'package:seren_ai_flutter/services/data/notes/repositories/notes_repository.dart';
 import 'package:seren_ai_flutter/services/data/notes/widgets/delete_note_button.dart';
 import 'package:seren_ai_flutter/services/data/notes/widgets/pdf/share_note_button.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
@@ -64,10 +65,15 @@ class NotesNavigationService extends BaseNavigationService {
     }
 
     final curSelectedOrgId = ref.read(curSelectedOrgIdNotifierProvider);
-    if (note.parentOrgId != null && note.parentOrgId != curSelectedOrgId) {
+
+    // Get the note's parent org ID from the repository
+    final noteParentOrgId =
+        await ref.read(notesRepositoryProvider).getNoteParentOrgId(noteId);
+
+    if (noteParentOrgId != null && noteParentOrgId != curSelectedOrgId) {
       await ref
           .read(curSelectedOrgIdNotifierProvider.notifier)
-          .setDesiredOrgId(note.parentOrgId!);
+          .setDesiredOrgId(noteParentOrgId);
     }
   }
 
