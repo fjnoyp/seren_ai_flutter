@@ -27,7 +27,7 @@ class ProjectTasksSectionedListView extends ConsumerWidget {
           initialProjectId: projectId,
           initialStatus: StatusEnum.open,
         ),
-        ...StatusEnum.values.map(
+        ...[StatusEnum.open, StatusEnum.inProgress, StatusEnum.finished].map(
           (status) {
             final filteredTasks =
                 tasks.where((task) => task.status == status).toList();
@@ -35,7 +35,9 @@ class ProjectTasksSectionedListView extends ConsumerWidget {
             return Card(
               child: ExpansionTile(
                 initiallyExpanded: filteredTasks.isNotEmpty,
-                title: Text(status.toHumanReadable(context)),
+                title: Text(
+                  '${status.toHumanReadable(context)} (${filteredTasks.length})',
+                ),
                 expandedAlignment: Alignment.centerLeft,
                 shape: const Border(),
                 childrenPadding: const EdgeInsets.only(bottom: 24),

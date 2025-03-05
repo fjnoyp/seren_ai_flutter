@@ -135,14 +135,15 @@ class DrawerView extends ConsumerWidget {
                       .navigateTo(AppRoutes.aiChats.name),
                   isSelected: curRoute == AppRoutes.aiChats.name,
                 ),
-                _DrawerListTile(
-                  icon: Icons.punch_clock_outlined,
-                  title: AppLocalizations.of(context)!.shifts,
-                  onTap: () => ref
-                      .read(navigationServiceProvider)
-                      .navigateTo(AppRoutes.shifts.name),
-                  isSelected: curRoute == AppRoutes.shifts.name,
-                ),
+                // Disable shifts for now
+                // _DrawerListTile(
+                //   icon: Icons.punch_clock_outlined,
+                //   title: AppLocalizations.of(context)!.shifts,
+                //   onTap: () => ref
+                //       .read(navigationServiceProvider)
+                //       .navigateTo(AppRoutes.shifts.name),
+                //   isSelected: curRoute == AppRoutes.shifts.name,
+                // ),
                 _DebugModeListTile(
                   icon: Icons.table_chart_outlined,
                   title: 'Gantt Chart',
