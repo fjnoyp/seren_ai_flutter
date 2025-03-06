@@ -40,8 +40,6 @@ class MobileAiAssistantOverlayManager {
         return;
       }
 
-      final screenSize = MediaQuery.of(context).size;
-
       final overlayEntry = OverlayEntry(
         builder: (context) => Positioned(
           bottom: defaultBottomPosition,
