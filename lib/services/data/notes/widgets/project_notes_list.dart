@@ -26,27 +26,34 @@ class ProjectNotesList extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     // If notes are provided directly, use them
     if (providedNotes != null) {
-      return _renderNotesList(context, ref, providedNotes!,
-          emptyMessage ?? AppLocalizations.of(context)!.thisProjectHasNoNotes);
+      return _NotesList(
+          providedNotes!,
+          emptyMessage ??
+              AppLocalizations.of(context)!.thisProjectHasNoNotes);
     }
 
     // Otherwise, fetch notes from the provider
     return AsyncValueHandlerWidget(
       value: ref.watch(notesByProjectStreamProvider(projectId)),
       data: (notes) {
-        return _renderNotesList(
-            context,
-            ref,
+        return _NotesList(
             notes,
             emptyMessage ??
                 AppLocalizations.of(context)!.thisProjectHasNoNotes);
       },
     );
   }
+}
 
-  /// Common method to render a list of notes with Apple-style date grouping
-  Widget _renderNotesList(BuildContext context, WidgetRef ref,
-      List<NoteModel> notes, String emptyMessage) {
+/// Common method to render a list of notes with Apple-style date grouping
+class _NotesList extends ConsumerWidget {
+  final List<NoteModel> notes;
+  final String emptyMessage;
+
+  const _NotesList(this.notes, this.emptyMessage);
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
     if (notes.isEmpty) {
       return Center(child: Text(emptyMessage));
     }
@@ -95,35 +102,39 @@ class ProjectNotesList extends ConsumerWidget {
     final sections = <Widget>[];
 
     if (todayNotes.isNotEmpty) {
-      sections.add(_buildSection(
-          context, ref, AppLocalizations.of(context)!.today, todayNotes));
+      sections.add(_Section(AppLocalizations.of(context)!.today, todayNotes));
     }
 
     if (yesterdayNotes.isNotEmpty) {
-      sections.add(_buildSection(context, ref, "Yesterday", yesterdayNotes));
+      sections.add(_Section("Yesterday", yesterdayNotes));
     }
 
     if (last7DaysNotes.isNotEmpty) {
-      sections
-          .add(_buildSection(context, ref, "Previous 7 Days", last7DaysNotes));
+      sections.add(_Section("Previous 7 Days", last7DaysNotes));
     }
 
     if (last30DaysNotes.isNotEmpty) {
-      sections.add(
-          _buildSection(context, ref, "Previous 30 Days", last30DaysNotes));
+      sections.add(_Section("Previous 30 Days", last30DaysNotes));
     }
 
     if (earlierNotes.isNotEmpty) {
-      sections.add(_buildSection(context, ref, "Earlier", earlierNotes));
+      sections.add(_Section("Earlier", earlierNotes));
     }
 
     return ListView(
       children: sections,
     );
   }
+}
 
-  Widget _buildSection(BuildContext context, WidgetRef ref, String title,
-      List<NoteModel> notes) {
+class _Section extends ConsumerWidget {
+  final String title;
+  final List<NoteModel> notes;
+
+  const _Section(this.title, this.notes);
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -137,7 +148,7 @@ class ProjectNotesList extends ConsumerWidget {
                 ),
           ),
         ),
-        ...notes.map((note) => _NoteCard(note)).toList(),
+        ...notes.map((note) => _NoteCard(note)),
         const SizedBox(height: 8),
       ],
     );
