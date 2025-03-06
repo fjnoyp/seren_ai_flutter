@@ -66,6 +66,7 @@ class _TasksList extends StatelessWidget {
   Widget build(BuildContext context) {
     return ListView.separated(
       shrinkWrap: true,
+      physics: const NeverScrollableScrollPhysics(),
       itemCount: tasks.length,
       itemBuilder: (context, index) => TaskListItemView(task: tasks[index]),
       separatorBuilder: (context, index) => Divider(
