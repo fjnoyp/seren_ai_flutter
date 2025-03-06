@@ -146,7 +146,7 @@ class TaskToolMethods {
 
       // Due date search
       if (dueDatesToGet.isNotEmpty) {
-        final dueDate = task.dueDate?.toLocal();
+        final dueDate = task.dueDate;
 
         if (dueDate == null ||
             !dueDatesToGet.any((dateToGet) => dueDate.isSameDate(dateToGet))) {
@@ -156,7 +156,7 @@ class TaskToolMethods {
 
       // Created date search
       if (createdDatesToGet.isNotEmpty) {
-        final createdDate = task.createdAt?.toLocal();
+        final createdDate = task.createdAt;
 
         if (createdDate == null ||
             !createdDatesToGet

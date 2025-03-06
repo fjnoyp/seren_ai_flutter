@@ -69,13 +69,25 @@ class TaskModel implements IHasId {
   @JsonKey(name: 'priority')
   final PriorityEnum? priority;
 
-  @JsonKey(name: 'due_date')
+  @JsonKey(
+    name: 'due_date',
+    fromJson: _dateTimeFromJson,
+    toJson: _dateTimeToJson,
+  )
   final DateTime? dueDate;
 
-  @JsonKey(name: 'created_at')
+  @JsonKey(
+    name: 'created_at',
+    fromJson: _dateTimeFromJson,
+    toJson: _dateTimeToJson,
+  )
   final DateTime? createdAt;
 
-  @JsonKey(name: 'updated_at')
+  @JsonKey(
+    name: 'updated_at',
+    fromJson: _dateTimeFromJson,
+    toJson: _dateTimeToJson,
+  )
   final DateTime? updatedAt;
 
   @JsonKey(name: 'author_user_id')
@@ -93,7 +105,11 @@ class TaskModel implements IHasId {
   @JsonKey(name: 'reminder_offset_minutes')
   final int? reminderOffsetMinutes;
 
-  @JsonKey(name: 'start_date_time')
+  @JsonKey(
+    name: 'start_date_time',
+    fromJson: _dateTimeFromJson,
+    toJson: _dateTimeToJson,
+  )
   final DateTime? startDateTime;
 
   @JsonKey(name: 'parent_task_id')
@@ -123,25 +139,41 @@ class TaskModel implements IHasId {
 
   static dynamic _durationToJson(int? value) => value;
 
+  static DateTime? _dateTimeFromJson(dynamic value) {
+    if (value == null) return null;
+    if (value is DateTime) return value;
+    if (value is String) return DateTime.parse(value);
+    return null;
+  }
+
+  static dynamic _dateTimeToJson(DateTime? value) =>
+      value?.toUtc().toIso8601String();
+
   TaskModel({
     String? id,
     required this.name,
     required this.description,
     required this.status,
     this.priority,
-    this.dueDate,
-    this.createdAt,
-    this.updatedAt,
+    DateTime? dueDate,
+    DateTime? createdAt,
+    DateTime? updatedAt,
     required this.authorUserId,
     required this.parentProjectId,
     this.estimatedDurationMinutes,
     this.reminderOffsetMinutes,
-    this.startDateTime,
+    DateTime? startDateTime,
     this.parentTaskId,
     this.blockedByTaskId,
     required this.type,
   })  : id = id ?? uuid.v4(),
-        assert(dueDate != null || reminderOffsetMinutes == null);
+        assert(dueDate != null || reminderOffsetMinutes == null),
+        // Convert to local time when creating the task
+        // to ensure that the task is always displayed in the user's local time
+        dueDate = dueDate?.toLocal(),
+        createdAt = createdAt?.toLocal(),
+        updatedAt = updatedAt?.toLocal(),
+        startDateTime = startDateTime?.toLocal();
 
   TaskModel copyWith({
     String? id,
@@ -214,7 +246,7 @@ class TaskTypeConverter implements JsonConverter<TaskType, String> {
   TaskType fromJson(String json) {
     try {
       return TaskType.values.firstWhere(
-        (e) => e.toString().split('.').last == json,
+        (e) => e.name == json,
         orElse: () => TaskType.task, // Fallback value
       );
     } catch (_) {
