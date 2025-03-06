@@ -18,6 +18,7 @@ class MobileScaffold extends ConsumerWidget {
   final bool isAiAssistantExpanded;
 
   const MobileScaffold({
+    super.key,
     required this.title,
     required this.body,
     required this.showBottomBar,
@@ -35,7 +36,7 @@ class MobileScaffold extends ConsumerWidget {
       appBar: AppBar(
         backgroundColor: theme.appBarTheme.backgroundColor,
         elevation: 0,
-        leading: _buildLeadingButtons(context, ref, theme),
+        leading: const _LeadingButtons(),
         leadingWidth: ref.read(navigationServiceProvider).canPop ? 96 : 48,
         title: Padding(
           padding: const EdgeInsets.all(8.0),
@@ -60,7 +61,7 @@ class MobileScaffold extends ConsumerWidget {
         child: body,
       ),
       bottomNavigationBar: showBottomBar
-          ? true //isAiAssistantExpanded
+          ? isAiAssistantExpanded
               ? const MobileAiAssistantExpandedBottomBar()
               : const QuickActionsBottomAppBar()
           : null,
@@ -69,9 +70,15 @@ class MobileScaffold extends ConsumerWidget {
           showBottomBar ? const MobileAiAssistantButton() : null,
     );
   }
+}
 
-  Widget _buildLeadingButtons(
-      BuildContext context, WidgetRef ref, ThemeData theme) {
+class _LeadingButtons extends ConsumerWidget {
+  const _LeadingButtons();
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final theme = Theme.of(context);
+
     return Builder(
       builder: (BuildContext context) {
         return Row(

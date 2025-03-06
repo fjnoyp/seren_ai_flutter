@@ -1,8 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
-import 'package:seren_ai_flutter/services/ai/ai_chats/models/ai_chat_message_type.dart';
-import 'package:seren_ai_flutter/services/ai/ai_is_responding_provider.dart';
+import 'package:seren_ai_flutter/services/ai/is_ai_responding_provider.dart';
 import 'package:seren_ai_flutter/services/ai/last_ai_message_listener_provider.dart';
 import 'package:seren_ai_flutter/services/ai/ai_chats/models/ai_chat_message_model.dart';
 import 'package:seren_ai_flutter/services/ai/ai_chats/widgets/ai_chat_message_view_card.dart';
