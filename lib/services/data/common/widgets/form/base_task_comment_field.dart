@@ -28,6 +28,7 @@ class BaseTaskCommentField extends HookConsumerWidget {
       animation: colorAnimation.colorTween,
       builder: (context, child) {
         return TextField(
+          autofocus: true,
           focusNode: focusNode,
           controller: commentController,
           enabled: enabled,
