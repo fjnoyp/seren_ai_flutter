@@ -45,6 +45,12 @@ class CurSelectedTaskIdNotifier extends Notifier<String?> {
         parentProjectId: parentProjectId,
         parentTaskId: initialParentTaskId,
         type: isPhase ? TaskType.phase : TaskType.task,
+        startDateTime: initialStatus == StatusEnum.inProgress
+            ? DateTime.now()
+            : null,
+        dueDate: initialStatus == StatusEnum.finished
+            ? DateTime.now()
+            : null,
       );
 
       await ref.read(tasksRepositoryProvider).upsertItem(newTask);
