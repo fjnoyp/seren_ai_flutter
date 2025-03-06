@@ -45,18 +45,6 @@ class NoteModel implements IHasId {
     this.updatedAt,
   }) : id = id ?? uuid.v4();
 
-  factory NoteModel.defaultNote() {
-    final now = DateTime.now().toUtc();
-    return NoteModel(
-      name: 'New Note',
-      authorUserId:
-          '', // This should be set to the current user's ID in practice
-      date: now,
-      createdAt: now,
-      updatedAt: now,
-    );
-  }
-
   NoteModel copyWith({
     String? id,
     String? name,
