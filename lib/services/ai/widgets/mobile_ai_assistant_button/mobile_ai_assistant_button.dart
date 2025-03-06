@@ -3,27 +3,21 @@
 // can then choose to use the ai or not ...
 import 'package:flutter/material.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
-import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:seren_ai_flutter/services/ai/ai_chat_service_provider.dart';
-import 'package:seren_ai_flutter/services/ai/ai_is_responding_provider.dart';
-import 'package:seren_ai_flutter/services/ai/ai_quick_actions/ai_quick_actions_service_provider.dart';
+import 'package:seren_ai_flutter/services/ai/is_ai_responding_provider.dart';
 import 'package:seren_ai_flutter/services/ai/is_ai_assistant_expanded_provider.dart';
 import 'package:seren_ai_flutter/services/ai/last_ai_message_listener_provider.dart';
 import 'package:seren_ai_flutter/services/ai/widgets/mobile_ai_assistant_button/mobile_ai_assistant_expanded_bottom_bar.dart';
-import 'package:seren_ai_flutter/services/ai/widgets/ai_quick_action_widget.dart';
 import 'package:seren_ai_flutter/services/ai/widgets/mobile_ai_assistant_button/mobile_ai_results_widget.dart';
-import 'package:seren_ai_flutter/services/ai/widgets/mobile_ai_assistant_button/mobile_overlay_container.dart';
 import 'package:seren_ai_flutter/services/ai/widgets/mobile_ai_assistant_button/mobile_user_input_text_display_widget.dart';
 import 'package:seren_ai_flutter/services/speech_to_text/speech_to_text_listen_state_provider.dart';
 import 'package:seren_ai_flutter/services/speech_to_text/speech_to_text_service_provider.dart';
 import 'package:seren_ai_flutter/services/speech_to_text/speech_to_text_status_provider.dart';
 import 'package:seren_ai_flutter/services/speech_to_text/widgets/speech_transcribed_widget.dart';
-import 'package:seren_ai_flutter/services/speech_to_text/widgets/speech_volume_widget.dart';
 import 'package:seren_ai_flutter/services/text_to_speech/text_to_speech_notifier.dart';
-import 'package:seren_ai_flutter/services/text_to_speech/text_to_speech_service.dart';
 import 'package:seren_ai_flutter/services/ai/widgets/mobile_ai_assistant_button/mobile_ai_assistant_overlay_manager.dart';
 
 class MobileAiAssistantButton extends HookConsumerWidget {
@@ -39,6 +33,7 @@ class MobileAiAssistantButton extends HookConsumerWidget {
     final isListening =
         speechState.speechState == SpeechToTextStateEnum.listening;
     final isTextFieldVisible = ref.watch(textFieldVisibilityProvider);
+    final isPaused = ref.watch(speechToTextListenStateProvider).text.isNotEmpty;
 
     // Watch for AI processing state
     final isAiResponding = ref.watch(isAiRespondingProvider);
@@ -92,11 +87,12 @@ class MobileAiAssistantButton extends HookConsumerWidget {
     // Handle showing/hiding overlays based on state
     useEffect(() {
       // Handle speech transcription visibility
-      if (isListening &&
+      if ((isListening || isPaused) &&
           !MobileAiAssistantOverlayManager.isShowing(
               AiAssistantOverlayType.transcription)) {
         SpeechTranscribedWidget.show(context, buttonKey.value);
       } else if (!isListening &&
+          !isPaused &&
           MobileAiAssistantOverlayManager.isShowing(
               AiAssistantOverlayType.transcription)) {
         SpeechTranscribedWidget.hide();
@@ -118,7 +114,7 @@ class MobileAiAssistantButton extends HookConsumerWidget {
       return () {
         MobileAiAssistantOverlayManager.hideAll();
       };
-    }, [isListening, lastAiResults.length]);
+    }, [isListening, isPaused, lastAiResults.length]);
 
     return Tooltip(
       message: AppLocalizations.of(context)!.aiAssistant,
@@ -146,21 +142,18 @@ class MobileAiAssistantButton extends HookConsumerWidget {
               //right: 0,
               child: Container(
                 alignment: Alignment.center, // Center the text horizontally
-                child: Container(
-                  padding:
-                      const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
-                  decoration: BoxDecoration(
-                    color: Colors.black54,
-                    borderRadius: BorderRadius.circular(8),
-                  ),
-                  child: Text(
-                    isTextFieldVisible
-                        ? "Click to send"
-                        : _mapSpeechStateToText(speechState.speechState),
-                    style: const TextStyle(
-                      color: Colors.white,
-                      fontSize: 12,
-                    ),
+                padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                decoration: BoxDecoration(
+                  color: Colors.black54,
+                  borderRadius: BorderRadius.circular(8),
+                ),
+                child: Text(
+                  isTextFieldVisible || isPaused
+                      ? "Click to send"
+                      : _mapSpeechStateToText(speechState.speechState),
+                  style: const TextStyle(
+                    color: Colors.white,
+                    fontSize: 12,
                   ),
                 ),
               ),
@@ -192,7 +185,7 @@ class MobileAiAssistantButton extends HookConsumerWidget {
                     AnimatedOpacity(
                       opacity: (isListening && !isAiResponding) ? 1.0 : 0.0,
                       duration: const Duration(milliseconds: 200),
-                      child: _buildListeningAnimation(context, ref),
+                      child: _ListeningAnimation(size: size),
                     ),
 
                     // Button layer (on top of animation)
@@ -224,7 +217,7 @@ class MobileAiAssistantButton extends HookConsumerWidget {
                         }
 
                         // Check if already listening
-                        if (isListening) {
+                        if (isListening || isPaused) {
                           // Show loading indicator
                           ref.read(isAiRespondingProvider.notifier).state =
                               true;
@@ -255,6 +248,11 @@ class MobileAiAssistantButton extends HookConsumerWidget {
                               .read(textToSpeechServiceProvider.notifier)
                               .stop();
 
+                          // Remove previous AI results
+                          ref
+                              .read(lastAiMessageListenerProvider.notifier)
+                              .clearState();
+
                           // Start listening
                           final notifier = ref
                               .read(speechToTextListenStateProvider.notifier);
@@ -271,15 +269,15 @@ class MobileAiAssistantButton extends HookConsumerWidget {
                             color: Theme.of(context).colorScheme.primary,
                             boxShadow: [
                               BoxShadow(
-                                color: Colors.black.withOpacity(0.2),
+                                color: Colors.black.withAlpha(51),
                                 blurRadius: 8,
                                 offset: const Offset(0, 2),
                               ),
                             ],
                           ),
                           child: isAiResponding
-                              ? _buildLoadingIndicator(context)
-                              : isTextFieldVisible
+                              ? _PulsatingLoadingIndicator()
+                              : isTextFieldVisible || isPaused
                                   ? const Center(
                                       child: Icon(
                                         Icons.send,
@@ -306,11 +304,9 @@ class MobileAiAssistantButton extends HookConsumerWidget {
                                             ),
                                           ],
                                         )
-                                      : Container(
-                                          child: SvgPicture.asset(
-                                            'assets/images/AI button.svg',
-                                            fit: BoxFit.scaleDown,
-                                          ),
+                                      : SvgPicture.asset(
+                                          'assets/images/AI button.svg',
+                                          fit: BoxFit.scaleDown,
                                         ),
                         ),
                       ),
@@ -339,12 +335,17 @@ class MobileAiAssistantButton extends HookConsumerWidget {
         return "Click to talk with AI.";
       case SpeechToTextStateEnum.available:
         return "Click to talk with AI.";
-      default:
-        return "Unknown state.";
     }
   }
+}
 
-  Widget _buildListeningAnimation(BuildContext context, WidgetRef ref) {
+class _ListeningAnimation extends HookConsumerWidget {
+  const _ListeningAnimation({required this.size});
+
+  final double size;
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
     final theme = Theme.of(context);
     final textState = ref.watch(speechToTextListenStateProvider);
 
@@ -373,9 +374,9 @@ class MobileAiAssistantButton extends HookConsumerWidget {
             shape: BoxShape.circle,
             gradient: SweepGradient(
               colors: [
-                theme.colorScheme.primary.withOpacity(0.1),
-                theme.colorScheme.primary.withOpacity(intensity),
-                theme.colorScheme.primary.withOpacity(0.1),
+                theme.colorScheme.primary.withAlpha(25),
+                theme.colorScheme.primary.withAlpha((intensity * 255).toInt()),
+                theme.colorScheme.primary.withAlpha(25),
               ],
               stops: const [0.0, 0.5, 1.0],
               transform: GradientRotation(animationController.value * 6.28),
@@ -388,10 +389,6 @@ class MobileAiAssistantButton extends HookConsumerWidget {
         );
       },
     );
-  }
-
-  Widget _buildLoadingIndicator(BuildContext context) {
-    return _PulsatingLoadingIndicator();
   }
 }
 
@@ -446,7 +443,8 @@ class _PulsatingLoadingIndicator extends HookWidget {
                 height: 52,
                 decoration: BoxDecoration(
                   shape: BoxShape.circle,
-                  color: Colors.white.withOpacity(opacityAnimation.value),
+                  color: Colors.white
+                      .withAlpha((opacityAnimation.value * 255).toInt()),
                 ),
               ),
             ),
