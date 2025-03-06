@@ -1,9 +1,11 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:seren_ai_flutter/common/navigation_service_provider.dart';
 import 'package:seren_ai_flutter/services/auth/cur_auth_state_provider.dart';
 import 'package:seren_ai_flutter/services/data/notes/models/note_model.dart';
 import 'package:seren_ai_flutter/services/data/notes/repositories/notes_repository.dart';
 import 'package:seren_ai_flutter/services/data/projects/repositories/projects_repository.dart';
 import 'package:seren_ai_flutter/services/data/users/repositories/users_repository.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 final curSelectedNoteIdNotifierProvider =
     NotifierProvider<CurSelectedNoteIdNotifier, String?>(() {
@@ -23,10 +25,14 @@ class CurSelectedNoteIdNotifier extends Notifier<String?> {
       final curUser = ref.read(curUserProvider).value;
       if (curUser == null) throw Exception('No current user');
 
-      final newNote = NoteModel.defaultNote().copyWith(
+      final context =
+          ref.read(navigationServiceProvider).navigatorKey.currentContext!;
+
+      final newNote = NoteModel(
+        name: AppLocalizations.of(context)?.newNoteDefaultName ?? 'New Note',
         authorUserId: curUser.id,
         parentProjectId: parentProjectId,
-        setAsPersonal: parentProjectId == null,
+        date: DateTime.now().toUtc(),
       );
 
       await ref.read(notesRepositoryProvider).upsertItem(newNote);
