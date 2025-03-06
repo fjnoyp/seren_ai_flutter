@@ -37,9 +37,9 @@ class GanttTaskDataItemBarView extends ConsumerWidget {
 
     final differenceFromStart = date.difference(startDateTime);
     return cellWidth *
-        (cellDurationType == GanttCellDurationType.days
-            ? differenceFromStart.inDays
-            : differenceFromStart.inHours) -
+            (cellDurationType == GanttCellDurationType.days
+                ? differenceFromStart.inDays
+                : differenceFromStart.inHours) -
         _dragBordersHandleWidth;
   }
 
@@ -59,6 +59,12 @@ class GanttTaskDataItemBarView extends ConsumerWidget {
         final hasStartDate = task.startDateTime != null;
         final hasEndDate = task.dueDate != null;
         final hasDuration = task.duration != null;
+
+        // If task has neither start nor end date, don't render anything here
+        // The _EmptyTaskDetector in GanttBody will handle this case
+        if (!hasStartDate && !hasEndDate && !hasDuration) {
+          return const SizedBox.shrink();
+        }
 
         Widget taskWidget;
         double leftPosition = 0;
@@ -167,6 +173,7 @@ class GanttTaskDataItemBarView extends ConsumerWidget {
             ),
           );
         } else {
+          // This case should not be reached now, but keeping as fallback
           taskWidget = _TaskContainer(
             width: cellWidth,
             color: Colors.red,
@@ -211,60 +218,59 @@ class _CompleteTaskBar extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-
     int durationInCells = cellDurationType == GanttCellDurationType.days
         ? task.duration!.inDays
         : task.duration!.inHours;
     if (durationInCells == 0) durationInCells = 1;
 
     return _TaskContainer(
-        onDragFromMiddle: (cells) {
-          final offset = _getTimeOffset(cells, cellDurationType);
+      onDragFromMiddle: (cells) {
+        final offset = _getTimeOffset(cells, cellDurationType);
+        ref.read(tasksRepositoryProvider).updateTaskStartDateTime(
+              task.id,
+              task.startDateTime!.add(offset),
+            );
+        ref.read(tasksRepositoryProvider).updateTaskDueDate(
+              task.id,
+              task.dueDate!.add(offset),
+            );
+      },
+      onDragFromStart: (cells) {
+        final timeOffset = _getTimeOffset(cells, cellDurationType);
+        if (task.duration != null && timeOffset < task.duration!) {
           ref.read(tasksRepositoryProvider).updateTaskStartDateTime(
                 task.id,
-                task.startDateTime!.add(offset),
+                task.startDateTime!.add(timeOffset),
               );
+        }
+      },
+      onDragFromEnd: (cells) {
+        final timeOffset = _getTimeOffset(cells, cellDurationType);
+        if (task.duration != null && timeOffset > -task.duration!) {
           ref.read(tasksRepositoryProvider).updateTaskDueDate(
                 task.id,
-                task.dueDate!.add(offset),
+                task.dueDate!.add(timeOffset),
               );
-        },
-        onDragFromStart: (cells) {
-          final timeOffset = _getTimeOffset(cells, cellDurationType);
-          if (task.duration != null && timeOffset < task.duration!) {
-            ref.read(tasksRepositoryProvider).updateTaskStartDateTime(
-                  task.id,
-                  task.startDateTime!.add(timeOffset),
-                );
-          }
-        },
-        onDragFromEnd: (cells) {
-          final timeOffset = _getTimeOffset(cells, cellDurationType);
-          if (task.duration != null && timeOffset > -task.duration!) {
-            ref.read(tasksRepositoryProvider).updateTaskDueDate(
-                  task.id,
-                  task.dueDate!.add(timeOffset),
-                );
-          }
-        },
-        width: task.duration != null ? durationInCells * cellWidth : cellWidth,
-        color: color,
-        cellWidth: cellWidth,
-        cellHeight: cellHeight,
-        borderRadius: BorderRadius.circular(4),
-        child: Row(
-          mainAxisAlignment: MainAxisAlignment.start,
-          children: [
-            const SizedBox(width: 10),
-            Expanded(
-              child: Text(
-                task.name,
-                style: const TextStyle(color: Colors.white),
-                overflow: TextOverflow.ellipsis,
-              ),
+        }
+      },
+      width: task.duration != null ? durationInCells * cellWidth : cellWidth,
+      color: color,
+      cellWidth: cellWidth,
+      cellHeight: cellHeight,
+      borderRadius: BorderRadius.circular(4),
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.start,
+        children: [
+          const SizedBox(width: 10),
+          Expanded(
+            child: Text(
+              task.name,
+              style: const TextStyle(color: Colors.white),
+              overflow: TextOverflow.ellipsis,
             ),
-          ],
-        ),
+          ),
+        ],
+      ),
     );
   }
 }
@@ -343,7 +349,8 @@ class _TaskContainer extends HookWidget {
               hoverColor: Colors.white,
               child: Tooltip(
                 message: "Change start date",
-                child: SizedBox(width: _dragBordersHandleWidth, height: cellHeight),
+                child: SizedBox(
+                    width: _dragBordersHandleWidth, height: cellHeight),
               ),
             ),
           ),
@@ -403,7 +410,8 @@ class _TaskContainer extends HookWidget {
               hoverColor: Colors.white,
               child: Tooltip(
                 message: "Change end date",
-                child: SizedBox(width: _dragBordersHandleWidth, height: cellHeight),
+                child: SizedBox(
+                    width: _dragBordersHandleWidth, height: cellHeight),
               ),
             ),
           ),

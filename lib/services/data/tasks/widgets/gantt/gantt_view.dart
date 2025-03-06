@@ -8,10 +8,13 @@ import 'package:flutter/rendering.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:intl/intl.dart';
+import 'package:seren_ai_flutter/services/data/tasks/providers/task_by_id_stream_provider.dart';
+import 'package:seren_ai_flutter/services/data/tasks/repositories/tasks_repository.dart';
 import 'package:seren_ai_flutter/services/data/tasks/widgets/gantt/experimental/cur_project_tasks_hierarchy_provider.dart';
 import 'package:seren_ai_flutter/services/data/tasks/widgets/gantt/experimental/gantt_task_visual_state_provider.dart';
 import 'package:seren_ai_flutter/services/data/tasks/widgets/gantt/gantt_static_column_view.dart';
 import 'package:seren_ai_flutter/services/data/tasks/widgets/gantt/gantt_task_data_item_bar_view.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 // How are left side values given?
 
@@ -569,6 +572,16 @@ class GanttBody extends ConsumerWidget {
                   return isVisible
                       ? Stack(
                           children: [
+                            // Add a transparent detector for tasks without dates
+                            _EmptyTaskDetector(
+                              taskId: taskId,
+                              cellWidth: cellWidth,
+                              cellHeight: cellHeight,
+                              columnStart: columnRange.value.$1,
+                              cellDurationType: viewType == GanttViewType.day
+                                  ? GanttCellDurationType.hours
+                                  : GanttCellDurationType.days,
+                            ),
                             SizedBox(height: cellHeight),
                             //Task visualization
                             GanttTaskDataItemBarView(
@@ -604,6 +617,136 @@ class GanttBody extends ConsumerWidget {
           ),
         );
       }),
+    );
+  }
+}
+
+// New widget to detect hover and tap for tasks without dates
+class _EmptyTaskDetector extends HookConsumerWidget {
+  final String taskId;
+  final double cellWidth;
+  final double cellHeight;
+  final int columnStart;
+  final GanttCellDurationType cellDurationType;
+
+  const _EmptyTaskDetector({
+    required this.taskId,
+    required this.cellWidth,
+    required this.cellHeight,
+    required this.columnStart,
+    required this.cellDurationType,
+  });
+
+  DateTime _calculateDateFromPosition(double position) {
+    final now = DateTime.now();
+    final startDateTime = DateTime(now.year, now.month, now.day, now.hour).add(
+      Duration(
+        days: cellDurationType == GanttCellDurationType.days ? columnStart : 0,
+        hours: cellDurationType == GanttCellDurationType.days ? 0 : columnStart,
+      ),
+    );
+
+    final cellsFromStart = position / cellWidth;
+
+    return startDateTime.add(
+      Duration(
+        days: cellDurationType == GanttCellDurationType.days
+            ? cellsFromStart.floor()
+            : 0,
+        hours: cellDurationType == GanttCellDurationType.days
+            ? 0
+            : cellsFromStart.floor(),
+      ),
+    );
+  }
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final isHovering = useState(false);
+    final hoverX = useState(0.0);
+    final taskAsync = ref.watch(taskByIdStreamProvider(taskId));
+
+    return taskAsync.when(
+      loading: () => const SizedBox.shrink(),
+      error: (_, __) => const SizedBox.shrink(),
+      data: (task) {
+        if (task == null) return const SizedBox.shrink();
+
+        // Only show for tasks without both start and end dates
+        final hasStartDate = task.startDateTime != null;
+        final hasEndDate = task.dueDate != null;
+
+        if (hasStartDate || hasEndDate) return const SizedBox.shrink();
+
+        return MouseRegion(
+          onHover: (event) {
+            isHovering.value = true;
+            hoverX.value = event.localPosition.dx;
+          },
+          onExit: (_) {
+            isHovering.value = false;
+          },
+          child: GestureDetector(
+            onTapUp: (details) {
+              final date = _calculateDateFromPosition(details.localPosition.dx);
+              ref.read(tasksRepositoryProvider).updateTaskStartDateTime(
+                    task.id,
+                    date,
+                  );
+            },
+            child: Stack(
+              children: [
+                Container(
+                  width: double.infinity,
+                  height: cellHeight,
+                  color: Colors.transparent,
+                ),
+                if (isHovering.value)
+                  Positioned(
+                    left: hoverX.value,
+                    child: Container(
+                      width: 2,
+                      height: cellHeight,
+                      color:
+                          Theme.of(context).colorScheme.primary.withAlpha(180),
+                      child: Stack(
+                        clipBehavior: Clip.none,
+                        children: [
+                          Positioned(
+                            top: -25,
+                            left: -40,
+                            child: Container(
+                              padding: const EdgeInsets.all(4),
+                              decoration: BoxDecoration(
+                                color: Theme.of(context).colorScheme.primary,
+                                borderRadius: BorderRadius.circular(4),
+                              ),
+                              child: Text(
+                                DateFormat(
+                                        cellDurationType ==
+                                                GanttCellDurationType.days
+                                            ? 'MMM d, yyyy'
+                                            : 'MMM d, HH:mm',
+                                        AppLocalizations.of(context)!
+                                            .localeName)
+                                    .format(_calculateDateFromPosition(
+                                        hoverX.value)),
+                                style: const TextStyle(
+                                  color: Colors.white,
+                                  fontSize: 10,
+                                ),
+                              ),
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ),
+              ],
+            ),
+          ),
+        );
+      },
     );
   }
 }
