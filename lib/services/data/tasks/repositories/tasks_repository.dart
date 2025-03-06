@@ -206,7 +206,7 @@ class TasksRepository extends BaseRepository<TaskModel> {
     await updateField(
       taskId,
       'due_date',
-      dueDate?.toIso8601String(),
+      dueDate?.toUtc().toIso8601String(),
     );
     // TODO p4: move this logic to backend
     // never used, since we currently don't have a way to set due date to null
@@ -283,7 +283,7 @@ class TasksRepository extends BaseRepository<TaskModel> {
     await updateField(
       taskId,
       'start_date_time',
-      startDateTime?.toIso8601String(),
+      startDateTime?.toUtc().toIso8601String(),
     );
   }
 

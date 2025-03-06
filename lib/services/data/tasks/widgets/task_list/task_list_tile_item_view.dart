@@ -67,7 +67,7 @@ class TaskListTileItemView extends ConsumerWidget {
             Icon(Icons.calendar_today, size: 16, color: dueDateColor),
             const SizedBox(width: 4),
             Text(
-              DateFormat.MMMd().format(task.dueDate!.toLocal()),
+              DateFormat.MMMd().format(task.dueDate!),
               style: TextStyle(color: dueDateColor),
             ),
           ],

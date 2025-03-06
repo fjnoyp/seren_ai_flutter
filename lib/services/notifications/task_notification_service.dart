@@ -278,7 +278,7 @@ class TaskNotificationService {
           notificationTitle: AppLocalizations.of(context)!.taskReminder,
           notificationBody: AppLocalizations.of(context)!.taskReminderBody(
             task.name,
-            task.dueDate!.toLocal().toString(),
+            task.dueDate!.toString(),
           ),
           sendAt: task.dueDate!
               .toUtc()
