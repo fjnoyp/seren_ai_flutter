@@ -21,10 +21,32 @@ class BaseNameField extends HookConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    // TODO p3: bug - nameProvider is returning '' all the time for task ...
     final curName = ref.watch(nameProvider);
     final nameController = useTextEditingController(text: curName);
     final focusNode = this.focusNode ?? useFocusNode();
+
+    // Track if we've already got the name to ensure we only set the selection once
+    final isFirstCurNameLoad = useRef(true);
+
+    // Wrap the selection logic in useEffect to ensure it only runs when dependencies change
+    useEffect(() {
+      // Only set selection when it has (auto)focus and we have a non-empty name for the first time
+      if (focusNode.hasFocus &&
+          curName.isNotEmpty &&
+          isFirstCurNameLoad.value) {
+        // Add a microtask to ensure the controller is ready before setting selection
+        Future.microtask(() {
+          if (nameController.text.isNotEmpty) {
+            nameController.selection = TextSelection(
+              baseOffset: 0,
+              extentOffset: nameController.text.length,
+            );
+            isFirstCurNameLoad.value = false;
+          }
+        });
+      }
+      return null;
+    }, [curName]);
 
     final colorAnimation = useAiActionColorAnimation(
       context,
