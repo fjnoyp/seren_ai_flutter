@@ -80,11 +80,14 @@ class TaskListItemView extends ConsumerWidget {
               if (task.dueDate != null) ...[
                 Icon(Icons.calendar_today, size: 14, color: dueDateColor),
                 const SizedBox(width: 4),
-                Text(
-                  DateFormat.yMMMd().format(task.dueDate!),
-                  style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                        color: dueDateColor,
-                      ),
+                Flexible(
+                  child: Text(
+                    DateFormat.yMMMd().format(task.dueDate!),
+                    overflow: TextOverflow.ellipsis,
+                    style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                          color: dueDateColor,
+                        ),
+                  ),
                 ),
               ],
             ],
