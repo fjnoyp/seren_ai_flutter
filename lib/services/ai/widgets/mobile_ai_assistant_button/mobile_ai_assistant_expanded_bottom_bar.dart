@@ -3,13 +3,10 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:seren_ai_flutter/common/navigation_service_provider.dart';
 import 'package:seren_ai_flutter/common/routes/app_routes.dart';
-import 'package:seren_ai_flutter/services/ai/ai_chat_service_provider.dart';
 import 'package:seren_ai_flutter/services/ai/is_ai_assistant_expanded_provider.dart';
-import 'package:seren_ai_flutter/services/ai/widgets/mobile_ai_assistant_button/mobile_ai_results_widget.dart';
 import 'package:seren_ai_flutter/services/speech_to_text/speech_to_text_listen_state_provider.dart';
 import 'package:seren_ai_flutter/services/speech_to_text/speech_to_text_service_provider.dart';
 import 'package:seren_ai_flutter/services/speech_to_text/speech_to_text_status_provider.dart';
-import 'package:seren_ai_flutter/services/speech_to_text/widgets/speech_transcribed_widget.dart';
 import 'package:seren_ai_flutter/widgets/scaffold/bottom_app_bar_base.dart';
 
 // This is shown in place of the bottom app bar on mobile when the ai modal is visible ...
@@ -25,6 +22,7 @@ class MobileAiAssistantExpandedBottomBar extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final isTextFieldVisible = ref.watch(textFieldVisibilityProvider);
     final speechState = ref.watch(speechToTextStatusProvider).speechState;
+    final isPaused = ref.watch(speechToTextListenStateProvider).text.isNotEmpty;
 
     // Get the height of the keyboard
     // final keyboardHeight = MediaQuery.of(context).viewInsets.bottom;
@@ -65,7 +63,24 @@ class MobileAiAssistantExpandedBottomBar extends ConsumerWidget {
                 ),
               ),
 
-              if (speechState == SpeechToTextStateEnum.done ||
+              if (isPaused && !isTextFieldVisible)
+                Expanded(
+                  child: IconButton(
+                    tooltip: 'Resume',
+                    icon: const Icon(Icons.mic, size: 22),
+                    visualDensity: VisualDensity.compact,
+                    constraints: const BoxConstraints(
+                      minWidth: 32,
+                      minHeight: 32,
+                    ),
+                    onPressed: () {
+                      ref
+                          .read(speechToTextListenStateProvider.notifier)
+                          .resumeListening();
+                    },
+                  ),
+                )
+              else if (speechState == SpeechToTextStateEnum.done ||
                   speechState == SpeechToTextStateEnum.available ||
                   speechState == SpeechToTextStateEnum.notListening)
                 Expanded(
