@@ -177,6 +177,12 @@ class TasksRepository extends BaseRepository<TaskModel> {
           oldValue: oldStatus,
           newValue: status,
         );
+
+    if (status == StatusEnum.inProgress && task.startDateTime == null) {
+      await updateTaskStartDateTime(taskId, DateTime.now());
+    } else if (status == StatusEnum.finished && task.dueDate == null) {
+      await updateTaskDueDate(taskId, DateTime.now());
+    }
   }
 
   Future<void> updateTaskPriority(String taskId, PriorityEnum? priority) async {
