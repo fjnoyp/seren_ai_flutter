@@ -64,18 +64,22 @@ class CurSelectedProjectIdNotifier extends Notifier<String?> {
       final defaultProject = await ref
           .read(projectsRepositoryProvider)
           .getById(curUser.defaultProjectId!);
-      if (defaultProject != null) {
+
+      // Check if the default project is in the user's current org
+      final curOrgId = ref.read(curSelectedOrgIdNotifierProvider);
+      if (defaultProject != null && defaultProject.parentOrgId == curOrgId) {
         return defaultProject.id;
       }
     }
 
-    // Fall back to first available project
+    // Fall back to first available project in the user's current org
     final orgId = ref.read(curSelectedOrgIdNotifierProvider)!;
     final userProjects = await ref
         .read(projectsRepositoryProvider)
         .getUserProjects(userId: curUser.id, orgId: orgId);
     if (userProjects.isNotEmpty) {
-      return userProjects.first.id;
+      final curOrgId = ref.read(curSelectedOrgIdNotifierProvider);
+      return userProjects.firstWhere((p) => p.parentOrgId == curOrgId).id;
     }
 
     throw Exception('No project found');
