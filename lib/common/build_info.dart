@@ -2,10 +2,10 @@
 class BuildInfo {
   // Core build info
   static const String version = '1.0.0';
-  static const String buildDate = '2025-03-07 17:03:13';
+  static const String buildDate = '2025-03-07 17:35:57';
   
   // Git info
-  static const String commitHash = '5e243d7';
+  static const String commitHash = '6eba876';
   static const String branch = 'feat/daily-summary-notes';
   static const String lastTag = 'no tag';
   
@@ -16,12 +16,20 @@ class BuildInfo {
   // Recent commits (last 5)
   static const List<Map<String, String>> recentCommits = [
     {
+      "hash": "6eba876",
+      "author": "renata-sisilio",
+      "email": "renata@seren-ai.co", 
+      "message": "feat(notes): localize daily summary note title",
+      "date": "2025-03-07",
+      "relativeDate": "33 minutes ago"
+    },
+    {
       "hash": "5e243d7",
       "author": "renata-sisilio",
       "email": "renata@seren-ai.co", 
       "message": "refactor: make daily summary notes user-specific to avoid overrides",
       "date": "2025-03-07",
-      "relativeDate": "39 minutes ago"
+      "relativeDate": "72 minutes ago"
     },
     {
       "hash": "cc4f0e2",
@@ -47,17 +55,9 @@ class BuildInfo {
       "date": "2025-03-05",
       "relativeDate": "2 days ago"
     },
-    {
-      "hash": "c752429",
-      "author": "Kyle",
-      "email": "kylcheng@gmail.com", 
-      "message": "chore: minor fixes",
-      "date": "2025-03-05",
-      "relativeDate": "2 days ago"
-    },
   ];
 
   // Stats
-  static const String totalCommits = '395';
+  static const String totalCommits = '396';
   static const String contributors = '0';
 }

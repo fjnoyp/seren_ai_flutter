@@ -194,7 +194,7 @@ $baseMessage${additionalInstructions != null ? '\n$additionalInstructions' : ''}
     // Generate new summary
     final summary = await _sendAiRequest(
       systemBaseMessage:
-          'Generate a concise and informative summary of the day\'s activities based on the notifications. Focus on highlighting key events, task updates, and important changes. The summary should be well-structured and easy to read. Organize related activities together when possible.',
+          'Generate a concise and informative summary of the day\'s activities based on the notifications. MOST IMPORTANTLY, highlight any task status updates or changes. Then focus on other key events, task updates, and important changes. The summary should be well-structured and easy to read. Organize related activities together when possible.',
       userMessage: 'Summarize the day\'s activities: $formattedNotifications',
       additionalInstructions: additionalInstructions,
     );
