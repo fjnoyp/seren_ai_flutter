@@ -143,7 +143,7 @@ class NotesRepository extends BaseRepository<NoteModel> {
     return null;
   }
 
-  Future<NoteModel?> getDailySummaryNote(DateTime date) async {
+  Future<NoteModel?> getDailySummaryNote(DateTime date, String? userId) async {
     final startOfDay =
         DateTime(date.year, date.month, date.day).toLocal().copyWith(hour: 0);
     final endOfDay = startOfDay.add(const Duration(days: 1));
@@ -156,6 +156,7 @@ class NotesRepository extends BaseRepository<NoteModel> {
       {
         'start_date': startDateStr,
         'end_date': endDateStr,
+        'user_id': userId,
       },
     );
 

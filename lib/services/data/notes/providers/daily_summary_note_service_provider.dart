@@ -26,7 +26,7 @@ class DailySummaryNoteService {
     final aiContextHelper = ref.read(aiContextHelperProvider);
 
     // Check if a note already exists for this day
-    final existingNote = await notesRepo.getDailySummaryNote(date);
+    final existingNote = await notesRepo.getDailySummaryNote(date, curUser.id);
 
     // Get the summary content
     final summaryContent = await aiContextHelper.getDailyNotificationsSummary(
@@ -59,7 +59,11 @@ class DailySummaryNoteService {
   Future<NoteModel> getOrCreateDailySummaryNote(DateTime date,
       {String? additionalInstructions}) async {
     final notesRepo = ref.read(notesRepositoryProvider);
-    final existingNote = await notesRepo.getDailySummaryNote(date);
+    final curUser = ref.read(curUserProvider).value;
+    if (curUser == null) {
+      throw Exception('User not logged in');
+    }
+    final existingNote = await notesRepo.getDailySummaryNote(date, curUser.id);
 
     if (existingNote != null) {
       return existingNote;
@@ -74,7 +78,11 @@ class DailySummaryNoteService {
 
   Future<void> deleteDailySummaryNote(DateTime date) async {
     final notesRepo = ref.read(notesRepositoryProvider);
-    final existingNote = await notesRepo.getDailySummaryNote(date);
+    final curUser = ref.read(curUserProvider).value;
+    if (curUser == null) {
+      throw Exception('User not logged in');
+    }
+    final existingNote = await notesRepo.getDailySummaryNote(date, curUser.id);
 
     if (existingNote != null) {
       await notesRepo.deleteItem(existingNote.id);

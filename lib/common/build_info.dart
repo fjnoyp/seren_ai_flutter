@@ -2,10 +2,10 @@
 class BuildInfo {
   // Core build info
   static const String version = '1.0.0';
-  static const String buildDate = '2025-03-07 14:14:11';
+  static const String buildDate = '2025-03-07 16:23:54';
   
   // Git info
-  static const String commitHash = '690f159';
+  static const String commitHash = 'cc4f0e2';
   static const String branch = 'feat/daily-summary-notes';
   static const String lastTag = 'no tag';
   
@@ -16,12 +16,20 @@ class BuildInfo {
   // Recent commits (last 5)
   static const List<Map<String, String>> recentCommits = [
     {
+      "hash": "cc4f0e2",
+      "author": "renata-sisilio",
+      "email": "renata@seren-ai.co", 
+      "message": "feat(notes): create daily summary note with AI based on notifications data",
+      "date": "2025-03-07",
+      "relativeDate": "2 hours ago"
+    },
+    {
       "hash": "690f159",
       "author": "renata-sisilio",
       "email": "renata@seren-ai.co", 
       "message": "fix(ai_assistant): remove previous ai results when user starts talking + re-enable paused speaking state",
       "date": "2025-03-06",
-      "relativeDate": "28 hours ago"
+      "relativeDate": "30 hours ago"
     },
     {
       "hash": "90b294f",
@@ -47,17 +55,9 @@ class BuildInfo {
       "date": "2025-03-05",
       "relativeDate": "2 days ago"
     },
-    {
-      "hash": "d80f6e6",
-      "author": "Kyle",
-      "email": "kylcheng@gmail.com", 
-      "message": "chore: refactor and consolidate scaffold and bottom ai view code",
-      "date": "2025-02-28",
-      "relativeDate": "7 days ago"
-    },
   ];
 
   // Stats
-  static const String totalCommits = '393';
+  static const String totalCommits = '394';
   static const String contributors = '0';
 }
