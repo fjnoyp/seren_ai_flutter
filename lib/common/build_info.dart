@@ -2,10 +2,10 @@
 class BuildInfo {
   // Core build info
   static const String version = '1.0.0';
-  static const String buildDate = '2025-03-07 16:23:54';
+  static const String buildDate = '2025-03-07 17:03:13';
   
   // Git info
-  static const String commitHash = 'cc4f0e2';
+  static const String commitHash = '5e243d7';
   static const String branch = 'feat/daily-summary-notes';
   static const String lastTag = 'no tag';
   
@@ -16,12 +16,20 @@ class BuildInfo {
   // Recent commits (last 5)
   static const List<Map<String, String>> recentCommits = [
     {
+      "hash": "5e243d7",
+      "author": "renata-sisilio",
+      "email": "renata@seren-ai.co", 
+      "message": "refactor: make daily summary notes user-specific to avoid overrides",
+      "date": "2025-03-07",
+      "relativeDate": "39 minutes ago"
+    },
+    {
       "hash": "cc4f0e2",
       "author": "renata-sisilio",
       "email": "renata@seren-ai.co", 
       "message": "feat(notes): create daily summary note with AI based on notifications data",
       "date": "2025-03-07",
-      "relativeDate": "2 hours ago"
+      "relativeDate": "3 hours ago"
     },
     {
       "hash": "690f159",
@@ -29,7 +37,7 @@ class BuildInfo {
       "email": "renata@seren-ai.co", 
       "message": "fix(ai_assistant): remove previous ai results when user starts talking + re-enable paused speaking state",
       "date": "2025-03-06",
-      "relativeDate": "30 hours ago"
+      "relativeDate": "31 hours ago"
     },
     {
       "hash": "90b294f",
@@ -47,17 +55,9 @@ class BuildInfo {
       "date": "2025-03-05",
       "relativeDate": "2 days ago"
     },
-    {
-      "hash": "02ab075",
-      "author": "Kyle",
-      "email": "kylcheng@gmail.com", 
-      "message": "feat(ai): refactor mobile ai assistant button",
-      "date": "2025-03-05",
-      "relativeDate": "2 days ago"
-    },
   ];
 
   // Stats
-  static const String totalCommits = '394';
+  static const String totalCommits = '395';
   static const String contributors = '0';
 }

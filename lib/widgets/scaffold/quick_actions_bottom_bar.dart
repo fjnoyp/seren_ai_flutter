@@ -85,8 +85,7 @@ class QuickActionsBottomAppBar extends ConsumerWidget {
             children: [
               Icon(Icons.calendar_today, color: theme.iconTheme.color),
               const SizedBox(width: 8),
-              Text(
-                  'Daily Summary'), //AppLocalizations.of(context)!.dailySummary),
+              Text(AppLocalizations.of(context)!.dailySummary),
             ],
           ),
         ),

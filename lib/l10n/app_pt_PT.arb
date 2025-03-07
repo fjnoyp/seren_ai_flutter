@@ -239,10 +239,11 @@
     "pdfDescription": "Descrição",
     "pdfAddress": "Morada",
     "pdfActionRequired": "Ação Necessária",
-    "pdfImageAttachments": "Anexos de imagem",
-    "pdfOtherAttachments": "Outros anexos",
+    "dailySummary": "Resumo do Dia",
 
     "@_": {"description": "Note Attachments"},
+    "pdfImageAttachments": "Anexos de imagem",
+    "pdfOtherAttachments": "Outros anexos",
     "addAttachment": "Adicionar Anexo",
     "photosPermissionDenied": "Permissão de fotos negada",
     "deleteAttachment": "Eliminar {fileName}?",

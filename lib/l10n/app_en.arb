@@ -341,10 +341,11 @@
     "pdfDescription": "Description",
     "pdfAddress": "Address",
     "pdfActionRequired": "Action Required",
-    "pdfImageAttachments": "Image attachments",
-    "pdfOtherAttachments": "Other attachments",
+    "dailySummary": "Daily Summary",
 
     "@_": {"description": "Note Attachments"},
+    "pdfImageAttachments": "Image attachments",
+    "pdfOtherAttachments": "Other attachments",
     "addAttachment": "Add Attachment",
     "photosPermissionDenied": "Photos permission denied",
     "deleteAttachment": "Delete {fileName}?",

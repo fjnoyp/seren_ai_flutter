@@ -54,9 +54,10 @@ abstract class NoteQueries {
   /// - start_date: String (ISO8601 format)
   /// - end_date: String (ISO8601 format)
   /// - user_id: String
+  /// - title_prefix: String
   static const dailySummaryNoteQuery = '''
     SELECT * FROM notes
-    WHERE name LIKE 'Daily Summary:%'
+    WHERE name LIKE :title_prefix || ':%'
     AND datetime(date) >= datetime(:start_date) AND datetime(date) < datetime(:end_date)
     AND author_user_id = :user_id
     LIMIT 1
