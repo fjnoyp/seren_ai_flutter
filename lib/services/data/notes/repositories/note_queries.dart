@@ -49,4 +49,14 @@ abstract class NoteQueries {
     ORDER BY n.updated_at DESC
     LIMIT :limit
   ''';
+
+  /// Params:
+  /// - start_date: String (ISO8601 format)
+  /// - end_date: String (ISO8601 format)
+  static const dailySummaryNoteQuery = '''
+    SELECT * FROM notes
+    WHERE name LIKE 'Daily Summary:%'
+    AND datetime(date) >= datetime(:start_date) AND datetime(date) < datetime(:end_date)
+    LIMIT 1
+  ''';
 }

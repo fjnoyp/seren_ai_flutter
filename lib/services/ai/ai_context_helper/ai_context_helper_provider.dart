@@ -4,12 +4,11 @@ import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:seren_ai_flutter/common/language_provider.dart';
 import 'package:seren_ai_flutter/services/ai/ai_chat_service_provider.dart';
 import 'package:seren_ai_flutter/services/ai/ai_context_helper/ai_summary_cache_provider.dart';
-import 'package:seren_ai_flutter/services/ai/ai_request/models/requests/ai_action_request_model.dart';
-import 'package:seren_ai_flutter/services/ai/ai_request/models/requests/ai_info_request_model.dart';
 import 'package:seren_ai_flutter/services/data/tasks/models/task_model.dart';
 import 'package:seren_ai_flutter/services/data/tasks/repositories/tasks_repository.dart';
 import 'package:seren_ai_flutter/services/data/tasks/repositories/task_comments_repository.dart';
 import 'package:seren_ai_flutter/services/data/users/repositories/users_repository.dart';
+import 'package:seren_ai_flutter/services/notifications/repositories/push_notifications_repository.dart';
 
 enum AiSummaryType {
   taskOverview,
@@ -145,6 +144,58 @@ $baseMessage${additionalInstructions != null ? '\n$additionalInstructions' : ''}
       systemBaseMessage:
           'Generate a concise and compact summary to be displayed in a small UI card for users to quickly understand important details about the list of tasks and the current status. Focus on highlighting key patterns, urgent items, and overall progress. Only provide summary no other text. The users can see the task list below in the UI so you do not need to restate obvious details. Generate a max of 4-6 sentences preferably 1-2.',
       userMessage: 'Summarize: ${formattedTasks}',
+      additionalInstructions: additionalInstructions,
+    );
+
+    // Cache the result
+    ref.read(aiSummaryCacheProvider(cacheKey).notifier).set(summary);
+
+    return summary;
+  }
+
+  Future<String> getDailyNotificationsSummary(DateTime date,
+      {String? additionalInstructions}) async {
+    final pushNotificationsRepo = ref.read(pushNotificationsRepositoryProvider);
+
+    // Generate cache key
+    final cacheKey = generateDailyNotificationsCacheKey(date);
+
+    // Check cache
+    final cachedSummary =
+        ref.read(aiSummaryCacheProvider(cacheKey).notifier).get();
+    if (cachedSummary != null) {
+      return cachedSummary;
+    }
+
+    // Get notifications for the specified day
+    final startOfDay =
+        DateTime(date.year, date.month, date.day).toLocal().copyWith(hour: 0);
+    final endOfDay = startOfDay.add(const Duration(days: 1));
+
+    // Get notifications for the day
+    final notifications =
+        await pushNotificationsRepo.getNotificationsForDateRange(
+      startDate: startOfDay,
+      endDate: endOfDay,
+    );
+
+    log.info(
+        'got ${notifications.length} notifications between $startOfDay and $endOfDay');
+
+    if (notifications.isEmpty) {
+      return "No notable activities for this day.";
+    }
+
+    // Format notifications for AI
+    final formattedNotifications = notifications
+        .map((notification) => notification.toAiReadableMap())
+        .toList();
+
+    // Generate new summary
+    final summary = await _sendAiRequest(
+      systemBaseMessage:
+          'Generate a concise and informative summary of the day\'s activities based on the notifications. Focus on highlighting key events, task updates, and important changes. The summary should be well-structured and easy to read. Organize related activities together when possible.',
+      userMessage: 'Summarize the day\'s activities: $formattedNotifications',
       additionalInstructions: additionalInstructions,
     );
 

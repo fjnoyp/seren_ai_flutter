@@ -12,6 +12,7 @@ import 'package:seren_ai_flutter/services/data/notes/widgets/delete_note_button.
 import 'package:seren_ai_flutter/services/data/notes/widgets/pdf/share_note_button.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:seren_ai_flutter/services/data/orgs/providers/cur_selected_org_id_notifier.dart';
+import 'package:seren_ai_flutter/services/data/notes/providers/daily_summary_note_service_provider.dart';
 
 final notesNavigationServiceProvider = Provider<NotesNavigationService>((ref) {
   return NotesNavigationService(ref);
@@ -96,5 +97,23 @@ class NotesNavigationService extends BaseNavigationService {
               .read(currentRouteProvider)
               .startsWith(AppRoutes.notePage.name),
         );
+  }
+
+  /// Opens the daily summary note for the given date.
+  /// If [useExistingIfAvailable] is true, will try to use the existing note without updating.
+  /// If false or if no note exists, will create or update the note.
+  Future<void> openDailySummaryNote(
+    DateTime date, {
+    bool useExistingIfAvailable = true,
+  }) async {
+    final dailySummaryService = ref.read(dailySummaryNoteServiceProvider);
+
+    // Get or create the daily summary note
+    final note = useExistingIfAvailable
+        ? await dailySummaryService.getOrCreateDailySummaryNote(date)
+        : await dailySummaryService.createOrUpdateDailySummaryNote(date);
+
+    // Open the note using the existing openNote method
+    await openNote(noteId: note.id);
   }
 }

@@ -88,6 +88,18 @@ class PushNotificationModel extends IHasId {
   @override
   Map<String, dynamic> toJson() => _$PushNotificationModelToJson(this);
 
+  Map<String, dynamic> toAiReadableMap() {
+    return {
+        'title': notificationTitle,
+        'body': notificationBody,
+        'send_at': sendAt.toIso8601String(),
+        // when we uncomment this, the AI is responding with the reference ids,
+        // which can be useful in future when we add mentions and links
+        // but for now, we're not using it.
+        // 'notification_data': data?.toJson(),
+    };
+  }
+
   // when using powersync, the json need to be properly encoded (manually).
   // just need to find a way to apply this conditionally to the toJson method
   // for now, we're not using powersync's insertion method

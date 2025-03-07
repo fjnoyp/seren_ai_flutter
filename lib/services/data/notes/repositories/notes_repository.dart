@@ -142,4 +142,27 @@ class NotesRepository extends BaseRepository<NoteModel> {
     // For personal notes (without a project), the org ID is null
     return null;
   }
+
+  Future<NoteModel?> getDailySummaryNote(DateTime date) async {
+    final startOfDay =
+        DateTime(date.year, date.month, date.day).toLocal().copyWith(hour: 0);
+    final endOfDay = startOfDay.add(const Duration(days: 1));
+
+    final startDateStr = startOfDay.toUtc().toIso8601String();
+    final endDateStr = endOfDay.toUtc().toIso8601String();
+
+    final notes = await get(
+      NoteQueries.dailySummaryNoteQuery,
+      {
+        'start_date': startDateStr,
+        'end_date': endDateStr,
+      },
+    );
+
+    if (notes.isNotEmpty) {
+      return notes.first;
+    }
+
+    return null;
+  }
 }

@@ -79,6 +79,17 @@ class QuickActionsBottomAppBar extends ConsumerWidget {
             ],
           ),
         ),
+        PopupMenuItem(
+          value: 'daily_summary',
+          child: Row(
+            children: [
+              Icon(Icons.calendar_today, color: theme.iconTheme.color),
+              const SizedBox(width: 8),
+              Text(
+                  'Daily Summary'), //AppLocalizations.of(context)!.dailySummary),
+            ],
+          ),
+        ),
       ],
       onSelected: (value) {
         switch (value) {
@@ -88,6 +99,11 @@ class QuickActionsBottomAppBar extends ConsumerWidget {
           case 'note':
             ref.read(notesNavigationServiceProvider).openNewNote();
             break;
+          case 'daily_summary':
+            ref.read(notesNavigationServiceProvider).openDailySummaryNote(
+                  DateTime.now(),
+                  useExistingIfAvailable: false,
+                );
         }
       },
     );

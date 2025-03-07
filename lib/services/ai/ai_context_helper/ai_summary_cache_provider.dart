@@ -34,6 +34,11 @@ String generateTaskListCacheKey(List<TaskModel> tasks) {
   return sha256.convert(bytes).toString();
 }
 
+String generateDailyNotificationsCacheKey(DateTime date) {
+  final dateString = '${date.year}-${date.month}-${date.day}';
+  return 'daily_notifications_summary_$dateString';
+}
+
 class AiSummaryCacheEntry extends StateNotifier<String?> {
   Timer? _timer;
   final Ref ref;

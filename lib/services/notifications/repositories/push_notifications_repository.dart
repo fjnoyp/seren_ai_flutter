@@ -30,4 +30,22 @@ class PushNotificationsRepository
       },
     );
   }
+
+  Future<List<PushNotificationModel>> getNotificationsForDateRange({
+    required DateTime startDate,
+    required DateTime endDate,
+  }) async {
+    final startDateStr = startDate.toUtc().toIso8601String();
+    final endDateStr = endDate.toUtc().toIso8601String();
+
+    log.info('getting notifications for $startDateStr - $endDateStr');
+
+    return get(
+      NotificationsQueries.pushNotificationsByDateRangeQuery,
+      {
+        'start_date': startDateStr,
+        'end_date': endDateStr,
+      },
+    );
+  }
 }
