@@ -9,7 +9,6 @@ import 'package:seren_ai_flutter/services/data/common/widgets/priority_view.dart
 import 'package:seren_ai_flutter/services/data/tasks/widgets/form/task_selection_fields.dart';
 import 'package:seren_ai_flutter/services/data/tasks/widgets/inline_creation/inline_task_name_field.dart';
 import 'package:seren_ai_flutter/services/data/tasks/widgets/inline_creation/cur_inline_creating_task_id_provider.dart';
-import 'package:seren_ai_flutter/services/data/tasks/widgets/task_assignees_avatars.dart';
 import 'package:seren_ai_flutter/services/data/common/status_enum.dart';
 import 'package:seren_ai_flutter/services/data/common/widgets/status_view.dart';
 
@@ -94,7 +93,7 @@ class TaskListItemView extends ConsumerWidget {
           ),
         ],
       ),
-      trailing: task.id == ref.watch(curInlineCreatingTaskIdProvider)
+      trailing: task.id != ref.watch(curInlineCreatingTaskIdProvider)
           ? SizedBox(
               width: 92,
               child: TaskAssigneesSelectionField(
@@ -103,10 +102,7 @@ class TaskListItemView extends ConsumerWidget {
                 showLabelWidget: false,
               ),
             )
-          : SizedBox(
-              width: 84,
-              child: TaskAssigneesAvatars(task.id),
-            ),
+          : const SizedBox.shrink(),
 
       onTap: onTap != null
           ? () => onTap!(task.id)
