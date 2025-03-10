@@ -36,7 +36,7 @@ class DeleteNoteButton extends ConsumerWidget {
   Future<void> _showDeleteConfirmationDialog(
       BuildContext context, WidgetRef ref) async {
     final itemName =
-        ref.watch(noteByIdStreamProvider(noteId)).value?.name ?? '';
+        ref.watch(noteByIdStreamProvider(noteId)).value?.name ?? 'this note';
     await showDialog(
       context: context,
       builder: (context) {

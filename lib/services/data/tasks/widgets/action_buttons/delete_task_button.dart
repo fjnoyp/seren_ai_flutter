@@ -76,7 +76,7 @@ class DeleteTaskButton extends ConsumerWidget {
     VoidCallback? onDelete,
   ) async {
     final itemName =
-        ref.watch(taskByIdStreamProvider(taskId)).value?.name ?? '';
+        ref.watch(taskByIdStreamProvider(taskId)).value?.name ?? 'this task';
     await showDialog(
       context: context,
       builder: (context) {

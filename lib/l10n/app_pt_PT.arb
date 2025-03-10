@@ -8,7 +8,7 @@
     "allChangesSaved": "✓ Todas as alterações foram guardadas",
     "cancel": "Cancelar",
     "delete": "Eliminar",
-    "deleteConfirmationMessage": "Tem certeza que deseja excluir \"{itemName}\"?",
+    "deleteConfirmationMessage": "Tem certeza que deseja excluir {itemName}?",
     "areYouSure": "Tem certeza?",
     "quitWithoutSaving": "Sair sem salvar?",
     "yes": "Sim",

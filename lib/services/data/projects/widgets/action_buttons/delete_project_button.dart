@@ -24,7 +24,7 @@ class DeleteProjectButton extends ConsumerWidget {
           builder: (context) {
             final projectName =
                 ref.watch(projectByIdStreamProvider(projectId)).value?.name ??
-                    '';
+                    'this project';
 
             return DeleteConfirmationDialog(
               itemName: projectName,
