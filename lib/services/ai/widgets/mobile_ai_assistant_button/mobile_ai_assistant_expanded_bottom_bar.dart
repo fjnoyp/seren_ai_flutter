@@ -22,7 +22,8 @@ class MobileAiAssistantExpandedBottomBar extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final isTextFieldVisible = ref.watch(textFieldVisibilityProvider);
     final speechState = ref.watch(speechToTextStatusProvider).speechState;
-    final isPaused = ref.watch(speechToTextListenStateProvider).text.isNotEmpty;
+    final isPaused = speechState != SpeechToTextStateEnum.listening &&
+        ref.watch(speechToTextListenStateProvider).text.isNotEmpty;
 
     // Get the height of the keyboard
     // final keyboardHeight = MediaQuery.of(context).viewInsets.bottom;
@@ -80,9 +81,7 @@ class MobileAiAssistantExpandedBottomBar extends ConsumerWidget {
                     },
                   ),
                 )
-              else if (speechState == SpeechToTextStateEnum.done ||
-                  speechState == SpeechToTextStateEnum.available ||
-                  speechState == SpeechToTextStateEnum.notListening)
+              else
                 Expanded(
                   child: IconButton(
                     icon: Icon(
