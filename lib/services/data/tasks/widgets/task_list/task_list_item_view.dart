@@ -6,11 +6,12 @@ import 'package:seren_ai_flutter/services/data/tasks/models/task_model.dart';
 import 'package:intl/intl.dart';
 import 'package:seren_ai_flutter/services/data/tasks/providers/task_navigation_service.dart';
 import 'package:seren_ai_flutter/services/data/common/widgets/priority_view.dart';
-import 'package:seren_ai_flutter/services/data/tasks/widgets/form/task_selection_fields.dart';
+import 'package:seren_ai_flutter/services/data/tasks/widgets/action_buttons/task_list_item_more_options_button.dart';
 import 'package:seren_ai_flutter/services/data/tasks/widgets/inline_creation/inline_task_name_field.dart';
 import 'package:seren_ai_flutter/services/data/tasks/widgets/inline_creation/cur_inline_creating_task_id_provider.dart';
 import 'package:seren_ai_flutter/services/data/common/status_enum.dart';
 import 'package:seren_ai_flutter/services/data/common/widgets/status_view.dart';
+import 'package:seren_ai_flutter/services/data/tasks/widgets/task_assignees_avatars.dart';
 
 class TaskListItemView extends ConsumerWidget {
   const TaskListItemView({
@@ -93,16 +94,24 @@ class TaskListItemView extends ConsumerWidget {
           ),
         ],
       ),
-      trailing: task.id != ref.watch(curInlineCreatingTaskIdProvider)
-          ? SizedBox(
-              width: 92,
-              child: TaskAssigneesSelectionField(
-                taskId: task.id,
-                context: context,
-                showLabelWidget: false,
-              ),
-            )
-          : const SizedBox.shrink(),
+      trailing: Row(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          task.id != ref.watch(curInlineCreatingTaskIdProvider)
+              ? SizedBox(
+                  width: 92,
+                  child: TaskAssigneesAvatars(task.id),
+                  // switch to TaskAssigneesSelectionField if we want to make it directly editable
+                  // TaskAssigneesSelectionField(
+                  //   taskId: task.id,
+                  //   context: context,
+                  //   showLabelWidget: false,
+                  // ),
+                )
+              : const SizedBox.shrink(),
+          TaskListItemMoreOptionsButton(taskId: task.id),
+        ],
+      ),
 
       onTap: onTap != null
           ? () => onTap!(task.id)
