@@ -2,11 +2,11 @@
 class BuildInfo {
   // Core build info
   static const String version = '1.0.0';
-  static const String buildDate = '2025-03-06 10:17:27';
+  static const String buildDate = '2025-03-10 14:44:20';
   
   // Git info
-  static const String commitHash = 'b09bfd0';
-  static const String branch = 'feat/ai_mobile_ui_overhaul';
+  static const String commitHash = '4b7a5c4';
+  static const String branch = 'fix/inline-task-creation-issues';
   static const String lastTag = 'no tag';
   
   // Author of last commit
@@ -16,48 +16,48 @@ class BuildInfo {
   // Recent commits (last 5)
   static const List<Map<String, String>> recentCommits = [
     {
-      "hash": "b09bfd0",
+      "hash": "4b7a5c4",
       "author": "renata-sisilio",
       "email": "renata@seren-ai.co", 
-      "message": "fix(ai_assistant): re-enable paused speaking state",
+      "message": "feat(forms): text formatting for description fields (web-only for now)",
       "date": "2025-03-06",
-      "relativeDate": "4 minutes ago"
+      "relativeDate": "4 days ago"
     },
     {
-      "hash": "33a6040",
-      "author": "Kyle",
-      "email": "kylcheng@gmail.com", 
-      "message": "fix: crud, null, and other errors from parent org id",
-      "date": "2025-03-05",
-      "relativeDate": "14 hours ago"
+      "hash": "b2392e8",
+      "author": "renata-sisilio",
+      "email": "renata@seren-ai.co", 
+      "message": "feat(gantt): add start date by tapping the blank chart area",
+      "date": "2025-03-06",
+      "relativeDate": "4 days ago"
     },
     {
-      "hash": "cfbdb62",
-      "author": "Kyle",
-      "email": "kylcheng@gmail.com", 
-      "message": "chore: minor fixes",
-      "date": "2025-03-05",
-      "relativeDate": "14 hours ago"
+      "hash": "0b39d10",
+      "author": "renata-sisilio",
+      "email": "renata@seren-ai.co", 
+      "message": "fix(tasks): task list item overflow + scroll physics on home "my tasks" section",
+      "date": "2025-03-06",
+      "relativeDate": "4 days ago"
     },
     {
-      "hash": "68c0cb0",
-      "author": "Kyle",
-      "email": "kylcheng@gmail.com", 
-      "message": "feat(ai): refactor mobile ai assistant button",
-      "date": "2025-03-05",
-      "relativeDate": "15 hours ago"
+      "hash": "b03ade3",
+      "author": "renata-sisilio",
+      "email": "renata@seren-ai.co", 
+      "message": "fix(projects): project overview render error on notes list",
+      "date": "2025-03-06",
+      "relativeDate": "4 days ago"
     },
     {
-      "hash": "bd06114",
-      "author": "Kyle",
-      "email": "kylcheng@gmail.com", 
-      "message": "chore: refactor and consolidate scaffold and bottom ai view code",
-      "date": "2025-02-28",
-      "relativeDate": "6 days ago"
+      "hash": "5fc0596",
+      "author": "renata-sisilio",
+      "email": "renata@seren-ai.co", 
+      "message": "feat(tasks): auto select text so the user can just start typing (only when the field is auto focused)",
+      "date": "2025-03-06",
+      "relativeDate": "4 days ago"
     },
   ];
 
   // Stats
-  static const String totalCommits = '393';
+  static const String totalCommits = '403';
   static const String contributors = '0';
 }
