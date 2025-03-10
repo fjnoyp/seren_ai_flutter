@@ -11,7 +11,6 @@ import 'package:seren_ai_flutter/services/data/tasks/widgets/gantt/experimental/
 import 'package:seren_ai_flutter/services/data/tasks/widgets/inline_creation/inline_task_creation_button.dart';
 import 'package:seren_ai_flutter/services/data/tasks/widgets/inline_creation/inline_task_name_field.dart';
 import 'package:seren_ai_flutter/services/data/tasks/widgets/inline_creation/cur_inline_creating_task_id_provider.dart';
-import 'package:seren_ai_flutter/services/data/tasks/widgets/task_assignees_avatars.dart';
 
 class GanttStaticColumnView extends ConsumerWidget {
   static const Map<TaskFieldEnum, double> columnWidths = {
@@ -482,13 +481,12 @@ class _StaticCellContent extends ConsumerWidget {
         );
       case TaskFieldEnum.assignees:
         if (task.id != ref.watch(curInlineCreatingTaskIdProvider)) {
-          return TaskAssigneesAvatars(taskId);
-          // switch to TaskAssigneesSelectionField if we want to make it directly editable
-          // return TaskAssigneesSelectionField(
-          //   taskId: taskId,
-          //   context: context,
-          //   showLabelWidget: false,
-          // );
+          return TaskAssigneesSelectionField(
+            taskId: taskId,
+            context: context,
+            showLabelWidget: false,
+            useIconButton: true,
+          );
         }
         return const SizedBox.shrink();
       default:
