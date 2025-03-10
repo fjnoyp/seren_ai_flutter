@@ -4,9 +4,10 @@ import 'package:seren_ai_flutter/services/data/common/widgets/priority_view.dart
 import 'package:seren_ai_flutter/services/data/tasks/models/task_model.dart';
 import 'package:seren_ai_flutter/services/data/tasks/providers/task_navigation_service.dart';
 import 'package:intl/intl.dart';
-import 'package:seren_ai_flutter/services/data/tasks/widgets/form/task_selection_fields.dart';
+import 'package:seren_ai_flutter/services/data/tasks/widgets/action_buttons/task_list_item_more_options_button.dart';
 import 'package:seren_ai_flutter/services/data/tasks/widgets/inline_creation/inline_task_name_field.dart';
 import 'package:seren_ai_flutter/services/data/tasks/widgets/inline_creation/cur_inline_creating_task_id_provider.dart';
+import 'package:seren_ai_flutter/services/data/tasks/widgets/task_assignees_avatars.dart';
 import 'package:seren_ai_flutter/services/data/tasks/widgets/ui_constants.dart';
 
 class TaskListTileItemView extends ConsumerWidget {
@@ -46,11 +47,13 @@ class TaskListTileItemView extends ConsumerWidget {
           if (!isCreatingTask)
             SizedBox(
               width: 92,
-              child: TaskAssigneesSelectionField(
-                taskId: task.id,
-                context: context,
-                showLabelWidget: false,
-              ),
+              child: TaskAssigneesAvatars(task.id),
+              // switch to TaskAssigneesSelectionField if we want to make it directly editable
+              // TaskAssigneesSelectionField(
+              //   taskId: task.id,
+              //   context: context,
+              //   showLabelWidget: false,
+              // ),
             ),
           if (task.priority != null) ...[
             const SizedBox(width: 8),
@@ -65,6 +68,7 @@ class TaskListTileItemView extends ConsumerWidget {
               style: TextStyle(color: dueDateColor),
             ),
           ],
+          TaskListItemMoreOptionsButton(taskId: task.id),
         ],
       ),
     );
