@@ -20,7 +20,7 @@
     "allChangesSaved": "✓ All changes saved",
     "cancel": "Cancel",
     "delete": "Delete",
-    "deleteConfirmationMessage": "Are you sure you want to delete \"{itemName}\"?",
+    "deleteConfirmationMessage": "Are you sure you want to delete {itemName}?",
     "@deleteConfirmationMessage": {
         "placeholders": {
             "itemName": {
