@@ -258,10 +258,12 @@ class SelectionField<T> extends HookConsumerWidget {
                               // });
                             }
                           : null,
-                      style: TextButton.styleFrom(
-                        alignment: Alignment.centerLeft,
-                        padding: const EdgeInsets.only(left: 10),
-                      ),
+                      style: valueToWidget == null
+                          ? TextButton.styleFrom(
+                              alignment: Alignment.centerLeft,
+                              padding: const EdgeInsets.only(left: 10),
+                            )
+                          : null,
                       // Current Value Display
                       child: valueToWidget != null && value != null
                           ? valueToWidget!(value!)
