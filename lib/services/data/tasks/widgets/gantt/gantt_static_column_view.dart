@@ -134,6 +134,8 @@ class _StaticRowValues extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    final curEditingTaskId = ref.watch(curInlineCreatingTaskIdProvider);
+
     // RepaintBoundary should wrap the ListView, not the Expanded
     return Expanded(
       child: RepaintBoundary(
@@ -148,24 +150,36 @@ class _StaticRowValues extends ConsumerWidget {
             addRepaintBoundaries: true,
             itemBuilder: (context, rowIndex) {
               final taskId = taskIds[rowIndex];
-              final task = ref.watch(taskByIdStreamProvider(taskId)).value;
 
-              final visualState =
-                  ref.watch(ganttTaskVisualStateProvider(taskId));
-              final isVisible = ref.watch(ganttTaskVisibilityProvider(taskId));
-              return task != null && task.isPhase
-                  ? _StaticPhaseRow(
-                      taskId: taskId,
-                      cellHeight: cellHeight,
-                      isExpanded: visualState.isExpanded,
-                    )
-                  : isVisible
-                      ? _StaticTaskRow(
+              return taskId == curEditingTaskId
+                  ? Stack(
+                      children: [
+                        Container(
+                          height: cellHeight,
+                          width: double.infinity,
+                          decoration: BoxDecoration(
+                            color: Theme.of(context)
+                                .colorScheme
+                                .primaryContainer
+                                .withAlpha(51),
+                            border: Border.all(
+                              color: Theme.of(context).colorScheme.primary,
+                              width: 4,
+                            ),
+                          ),
+                        ),
+                        _StaticRow(
                           taskId: taskId,
                           cellHeight: cellHeight,
                           staticColumnHeaders: staticColumnHeaders,
-                        )
-                      : const SizedBox.shrink();
+                        ),
+                      ],
+                    )
+                  : _StaticRow(
+                      taskId: taskId,
+                      cellHeight: cellHeight,
+                      staticColumnHeaders: staticColumnHeaders,
+                    );
             },
             separatorBuilder: (context, index) {
               final isTaskVisible =
@@ -178,6 +192,39 @@ class _StaticRowValues extends ConsumerWidget {
         ),
       ),
     );
+  }
+}
+
+class _StaticRow extends ConsumerWidget {
+  final String taskId;
+  final double cellHeight;
+  final List<TaskFieldEnum> staticColumnHeaders;
+
+  const _StaticRow({
+    required this.taskId,
+    required this.cellHeight,
+    required this.staticColumnHeaders,
+  });
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final task = ref.watch(taskByIdStreamProvider(taskId)).value;
+
+    final visualState = ref.watch(ganttTaskVisualStateProvider(taskId));
+    final isVisible = ref.watch(ganttTaskVisibilityProvider(taskId));
+    return task != null && task.isPhase
+        ? _StaticPhaseRow(
+            taskId: taskId,
+            cellHeight: cellHeight,
+            isExpanded: visualState.isExpanded,
+          )
+        : isVisible
+            ? _StaticTaskRow(
+                taskId: taskId,
+                cellHeight: cellHeight,
+                staticColumnHeaders: staticColumnHeaders,
+              )
+            : const SizedBox.shrink();
   }
 }
 
@@ -434,14 +481,16 @@ class _StaticCellContent extends ConsumerWidget {
           showLabelWidget: false,
         );
       case TaskFieldEnum.assignees:
-        if (task.id == ref.watch(curInlineCreatingTaskIdProvider)) {
-          return TaskAssigneesSelectionField(
-            taskId: taskId,
-            context: context,
-            showLabelWidget: false,
-          );
+        if (task.id != ref.watch(curInlineCreatingTaskIdProvider)) {
+          return TaskAssigneesAvatars(taskId);
+          // switch to TaskAssigneesSelectionField if we want to make it directly editable
+          // return TaskAssigneesSelectionField(
+          //   taskId: taskId,
+          //   context: context,
+          //   showLabelWidget: false,
+          // );
         }
-        return TaskAssigneesAvatars(taskId);
+        return const SizedBox.shrink();
       default:
         // TaskFieldEnum values that are not included in the static column view
         return const SizedBox.shrink();
