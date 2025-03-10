@@ -2,10 +2,10 @@
 class BuildInfo {
   // Core build info
   static const String version = '1.0.0';
-  static const String buildDate = '2025-03-10 15:58:48';
+  static const String buildDate = '2025-03-10 17:05:06';
   
   // Git info
-  static const String commitHash = '27b4225';
+  static const String commitHash = 'f79f7dc';
   static const String branch = 'fix/inline-task-creation-issues';
   static const String lastTag = 'no tag';
   
@@ -16,12 +16,20 @@ class BuildInfo {
   // Recent commits (last 5)
   static const List<Map<String, String>> recentCommits = [
     {
+      "hash": "f79f7dc",
+      "author": "renata-sisilio",
+      "email": "renata@seren-ai.co", 
+      "message": "feat(gantt): enable directly assign tasks from gantt chart view",
+      "date": "2025-03-10",
+      "relativeDate": "66 minutes ago"
+    },
+    {
       "hash": "27b4225",
       "author": "renata-sisilio",
       "email": "renata@seren-ai.co", 
       "message": "fix: task name not loaded yet when deleting task",
       "date": "2025-03-10",
-      "relativeDate": "28 minutes ago"
+      "relativeDate": "2 hours ago"
     },
     {
       "hash": "9acb0d3",
@@ -29,7 +37,7 @@ class BuildInfo {
       "email": "renata@seren-ai.co", 
       "message": "feat(tasks): add 3 dot that opens a dropdown that allows the task to be deleted",
       "date": "2025-03-10",
-      "relativeDate": "31 minutes ago"
+      "relativeDate": "2 hours ago"
     },
     {
       "hash": "c2c77ae",
@@ -37,7 +45,7 @@ class BuildInfo {
       "email": "renata@seren-ai.co", 
       "message": "fix(gantt_chart): highlight editing task on gantt chart",
       "date": "2025-03-10",
-      "relativeDate": "75 minutes ago"
+      "relativeDate": "2 hours ago"
     },
     {
       "hash": "4b7a5c4",
@@ -47,17 +55,9 @@ class BuildInfo {
       "date": "2025-03-06",
       "relativeDate": "4 days ago"
     },
-    {
-      "hash": "b2392e8",
-      "author": "renata-sisilio",
-      "email": "renata@seren-ai.co", 
-      "message": "feat(gantt): add start date by tapping the blank chart area",
-      "date": "2025-03-06",
-      "relativeDate": "4 days ago"
-    },
   ];
 
   // Stats
-  static const String totalCommits = '406';
+  static const String totalCommits = '407';
   static const String contributors = '0';
 }

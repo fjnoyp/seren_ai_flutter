@@ -266,26 +266,23 @@ class _StaticPhaseRow extends ConsumerWidget {
                                   taskId: taskId,
                                   isPhase: true,
                                 )
-                              : InkWell(
-                                  onTapDown: (details) => showMenu(
-                                    context: context,
-                                    position: RelativeRect.fromLTRB(
-                                      details.globalPosition.dx,
-                                      details.globalPosition.dy,
-                                      details.globalPosition.dx + 1,
-                                      details.globalPosition.dy + 1,
-                                    ),
-                                    items: [
-                                      PopupMenuItem(
-                                        enabled: false,
-                                        child: _TaskDetailsPopup(task),
-                                      )
-                                    ],
+                              : Tooltip(
+                                  preferBelow: true,
+                                  richMessage: _buildTaskTooltipRichMessage(
+                                    context,
+                                    task,
                                   ),
-                                  child: Text(
-                                    task.name,
-                                    maxLines: 1,
-                                    overflow: TextOverflow.ellipsis,
+                                  child: InkWell(
+                                    onTap: () {
+                                      ref
+                                          .read(taskNavigationServiceProvider)
+                                          .openTask(initialTaskId: taskId);
+                                    },
+                                    child: Text(
+                                      task.name,
+                                      maxLines: 1,
+                                      overflow: TextOverflow.ellipsis,
+                                    ),
                                   ),
                                 ),
                     ),
@@ -347,52 +344,6 @@ class _StaticTaskRow extends ConsumerWidget {
   }
 }
 
-class _TaskDetailsPopup extends StatelessWidget {
-  const _TaskDetailsPopup(this.task);
-
-  final TaskModel task;
-
-  @override
-  Widget build(BuildContext context) {
-    return ConstrainedBox(
-      constraints: const BoxConstraints(maxHeight: 300),
-      child: SingleChildScrollView(
-        child: Padding(
-          padding: const EdgeInsets.all(8.0),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Row(
-                children: [
-                  Flexible(
-                    child: Text(
-                      task.name,
-                      style: Theme.of(context).textTheme.titleMedium,
-                    ),
-                  ),
-                  Consumer(
-                    builder: (context, ref, child) => IconButton(
-                      onPressed: () => ref
-                          .read(taskNavigationServiceProvider)
-                          .openTask(initialTaskId: task.id),
-                      icon: const Icon(Icons.open_in_new),
-                    ),
-                  ),
-                ],
-              ),
-              const SizedBox(height: 8),
-              Text(
-                task.description ?? '',
-                style: Theme.of(context).textTheme.bodySmall,
-              ),
-            ],
-          ),
-        ),
-      ),
-    );
-  }
-}
-
 class _StaticCell extends StatelessWidget {
   final String taskId;
   final double cellHeight;
@@ -446,26 +397,21 @@ class _StaticCellContent extends ConsumerWidget {
           padding: EdgeInsets.only(
             left: task.parentTaskId == null ? 0 : 16,
           ),
-          child: InkWell(
-            onTapDown: (details) => showMenu(
-              context: context,
-              position: RelativeRect.fromLTRB(
-                details.globalPosition.dx,
-                details.globalPosition.dy,
-                details.globalPosition.dx + 1,
-                details.globalPosition.dy + 1,
+          child: Tooltip(
+            preferBelow: true,
+            richMessage: _buildTaskTooltipRichMessage(context, task),
+            waitDuration: const Duration(milliseconds: 500),
+            child: InkWell(
+              onTap: () {
+                ref.read(taskNavigationServiceProvider).openTask(
+                      initialTaskId: task.id,
+                    );
+              },
+              child: Text(
+                task.name,
+                maxLines: 2,
+                overflow: TextOverflow.ellipsis,
               ),
-              items: [
-                PopupMenuItem(
-                  enabled: false,
-                  child: _TaskDetailsPopup(task),
-                )
-              ],
-            ),
-            child: Text(
-              task.name,
-              maxLines: 2,
-              overflow: TextOverflow.ellipsis,
             ),
           ),
         );
@@ -494,4 +440,32 @@ class _StaticCellContent extends ConsumerWidget {
         return const SizedBox.shrink();
     }
   }
+}
+
+WidgetSpan _buildTaskTooltipRichMessage(BuildContext context, TaskModel task) {
+  final theme = Theme.of(context);
+  return WidgetSpan(
+    child: ConstrainedBox(
+      constraints: const BoxConstraints(maxWidth: 300, maxHeight: 200),
+      child: DefaultTextStyle(
+        style: theme.textTheme.bodySmall?.copyWith(
+              color: theme.colorScheme.surface,
+            ) ??
+            const TextStyle(),
+        child: SingleChildScrollView(
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Text(
+                task.name,
+                style: const TextStyle(fontWeight: FontWeight.bold),
+              ),
+              if (task.description != null && task.description!.isNotEmpty)
+                Text('\n${task.description!}'),
+            ],
+          ),
+        ),
+      ),
+    ),
+  );
 }
