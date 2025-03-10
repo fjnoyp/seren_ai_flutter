@@ -261,7 +261,7 @@ class _TaskInfoDisplay extends ConsumerWidget {
                 TaskDescriptionSelectionField(taskId: taskId, context: context),
                 const SizedBox(height: 16),
 
-                DeleteTaskButton(taskId, showLabelText: true),
+                DeleteTaskButton(taskId, showLabelText: true, outlined: true),
               ],
             ),
           ),
