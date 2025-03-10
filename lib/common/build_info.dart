@@ -2,10 +2,10 @@
 class BuildInfo {
   // Core build info
   static const String version = '1.0.0';
-  static const String buildDate = '2025-03-10 14:44:20';
+  static const String buildDate = '2025-03-10 15:27:24';
   
   // Git info
-  static const String commitHash = '4b7a5c4';
+  static const String commitHash = 'c2c77ae';
   static const String branch = 'fix/inline-task-creation-issues';
   static const String lastTag = 'no tag';
   
@@ -15,6 +15,14 @@ class BuildInfo {
   
   // Recent commits (last 5)
   static const List<Map<String, String>> recentCommits = [
+    {
+      "hash": "c2c77ae",
+      "author": "renata-sisilio",
+      "email": "renata@seren-ai.co", 
+      "message": "fix(gantt_chart): highlight editing task on gantt chart",
+      "date": "2025-03-10",
+      "relativeDate": "43 minutes ago"
+    },
     {
       "hash": "4b7a5c4",
       "author": "renata-sisilio",
@@ -47,17 +55,9 @@ class BuildInfo {
       "date": "2025-03-06",
       "relativeDate": "4 days ago"
     },
-    {
-      "hash": "5fc0596",
-      "author": "renata-sisilio",
-      "email": "renata@seren-ai.co", 
-      "message": "feat(tasks): auto select text so the user can just start typing (only when the field is auto focused)",
-      "date": "2025-03-06",
-      "relativeDate": "4 days ago"
-    },
   ];
 
   // Stats
-  static const String totalCommits = '403';
+  static const String totalCommits = '404';
   static const String contributors = '0';
 }
