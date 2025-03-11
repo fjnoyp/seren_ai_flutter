@@ -23,12 +23,14 @@ class GanttStaticColumnView extends ConsumerWidget {
   final ScrollController? verticalController;
   final double cellHeight;
   final ScrollController mainVerticalController;
+  final Function(String taskId)? onNavigateToTask;
 
   const GanttStaticColumnView({
     super.key,
     required this.cellHeight,
     this.verticalController,
     required this.mainVerticalController,
+    this.onNavigateToTask,
   });
 
   @override
@@ -38,7 +40,7 @@ class GanttStaticColumnView extends ConsumerWidget {
       TaskFieldEnum.name,
       TaskFieldEnum.assignees,
       TaskFieldEnum.status,
-      TaskFieldEnum.priority
+      TaskFieldEnum.priority,
     ];
 
     return Listener(
@@ -47,9 +49,10 @@ class GanttStaticColumnView extends ConsumerWidget {
         onVerticalDragUpdate: _handleVerticalDrag,
         child: SizedBox(
           width: staticColumnHeaders.fold<double>(
-            0,
-            (sum, field) => sum + columnWidths[field]!,
-          ),
+                0,
+                (sum, field) => sum + columnWidths[field]!,
+              ) +
+              40, // navigation button width
           child: Column(
             children: [
               _StaticHeader(
@@ -94,25 +97,36 @@ class _StaticHeader extends StatelessWidget {
   Widget build(BuildContext context) {
     return Row(
       children: List.generate(
-        staticColumnHeaders.length,
-        (index) => Container(
-          width:
-              GanttStaticColumnView.columnWidths[staticColumnHeaders[index]]!,
-          height: 60,
-          alignment: Alignment.center,
-          decoration: BoxDecoration(
-            border: Border.symmetric(
-              horizontal: BorderSide(
-                  color: Theme.of(context).colorScheme.outlineVariant),
-            ),
-          ),
-          child: Text(
-            staticColumnHeaders[index].toHumanReadable(context),
-            style: Theme.of(context).textTheme.titleSmall,
-            maxLines: 1,
-            overflow: TextOverflow.ellipsis,
-          ),
-        ),
+        staticColumnHeaders.length + 1,
+        (index) => index == staticColumnHeaders.length
+            ? Container(
+                height: 60,
+                decoration: BoxDecoration(
+                  border: Border.symmetric(
+                    horizontal: BorderSide(
+                        color: Theme.of(context).colorScheme.outlineVariant),
+                  ),
+                ),
+                child: const SizedBox(width: 40) // navigation button width
+                )
+            : Container(
+                width: GanttStaticColumnView
+                    .columnWidths[staticColumnHeaders[index]]!,
+                height: 60,
+                alignment: Alignment.center,
+                decoration: BoxDecoration(
+                  border: Border.symmetric(
+                    horizontal: BorderSide(
+                        color: Theme.of(context).colorScheme.outlineVariant),
+                  ),
+                ),
+                child: Text(
+                  staticColumnHeaders[index].toHumanReadable(context),
+                  style: Theme.of(context).textTheme.titleSmall,
+                  maxLines: 1,
+                  overflow: TextOverflow.ellipsis,
+                ),
+              ),
       ),
     );
   }
@@ -324,12 +338,50 @@ class _StaticTaskRow extends ConsumerWidget {
           ? RepaintBoundary(
               child: Row(
                 children: List.generate(
-                  staticColumnHeaders.length,
-                  (columnIndex) => _StaticCell(
-                    taskId: taskId,
-                    cellHeight: cellHeight,
-                    fieldType: staticColumnHeaders[columnIndex],
-                  ),
+                  staticColumnHeaders.length + 1,
+                  (columnIndex) {
+                    if (columnIndex == staticColumnHeaders.length) {
+                      final hasStartDate = task.startDateTime != null;
+                      final hasEndDate = task.dueDate != null;
+                      final canNavigate = hasStartDate || hasEndDate;
+
+                      return Container(
+                        width: 40,
+                        height: cellHeight,
+                        alignment: Alignment.center,
+                        child: IconButton(
+                          icon: Icon(
+                            Icons.arrow_right,
+                            color: canNavigate
+                                ? Theme.of(context).colorScheme.primary
+                                : Theme.of(context)
+                                    .colorScheme
+                                    .outline
+                                    .withAlpha(76),
+                          ),
+                          tooltip: canNavigate
+                              ? 'Navigate to task timeframe'
+                              : 'No dates set',
+                          onPressed: canNavigate
+                              ? () {
+                                  final parentWidget =
+                                      context.findAncestorWidgetOfExactType<
+                                          GanttStaticColumnView>();
+                                  if (parentWidget?.onNavigateToTask != null) {
+                                    parentWidget!.onNavigateToTask!(taskId);
+                                  }
+                                }
+                              : null,
+                        ),
+                      );
+                    } else {
+                      return _StaticCell(
+                        taskId: taskId,
+                        cellHeight: cellHeight,
+                        fieldType: staticColumnHeaders[columnIndex],
+                      );
+                    }
+                  },
                 ),
               ),
             )
