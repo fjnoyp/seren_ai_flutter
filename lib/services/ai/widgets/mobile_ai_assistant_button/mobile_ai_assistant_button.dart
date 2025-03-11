@@ -22,18 +22,20 @@ import 'package:seren_ai_flutter/services/ai/widgets/mobile_ai_assistant_button/
 
 class MobileAiAssistantButton extends HookConsumerWidget {
   const MobileAiAssistantButton({
-    super.key,
+    super.key
   });
 
   final double size = 56.0;
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    final isAiAssistantExpanded = ref.watch(isAiAssistantExpandedProvider);
     final speechState = ref.watch(speechToTextStatusProvider);
     final isListening =
         speechState.speechState == SpeechToTextStateEnum.listening;
     final isTextFieldVisible = ref.watch(textFieldVisibilityProvider);
-    final isPaused = ref.watch(speechToTextListenStateProvider).text.isNotEmpty;
+    final isPaused = !isListening &&
+        ref.watch(speechToTextListenStateProvider).text.isNotEmpty;
 
     // Watch for AI processing state
     final isAiResponding = ref.watch(isAiRespondingProvider);
@@ -46,6 +48,21 @@ class MobileAiAssistantButton extends HookConsumerWidget {
 
     // Watch for AI results and show them when available
     final lastAiResults = ref.watch(lastAiMessageListenerProvider);
+
+    ref.listen<bool>(isAiAssistantExpandedProvider, (previous, current) {
+      if (!current) {
+        // Hide all overlays
+        MobileAiAssistantOverlayManager.hideAll();
+
+        // Clear the text
+        textController.value.clear();
+
+        // Also ensure speech state is reset when assistant is closed
+        if (ref.read(speechToTextListenStateProvider).text.isNotEmpty) {
+          ref.read(speechToTextListenStateProvider.notifier).cancelListening();
+        }
+      }
+    });
 
     // Listen for text field visibility changes and show/hide overlay accordingly
     ref.listen<bool>(textFieldVisibilityProvider, (previous, current) {
@@ -125,16 +142,6 @@ class MobileAiAssistantButton extends HookConsumerWidget {
           clipBehavior: Clip.none,
           alignment: Alignment.center,
           children: [
-            // Text input field (only visible when textFieldVisibility is true)
-            // if (isTextFieldVisible)
-            //   Positioned(
-            //     bottom: size + 55, // Position it above the button
-            //     child: MobileUserInputTextDisplayWidget(
-            //       key: UniqueKey(),
-            //       controller: textController.value,
-            //     ),
-            //   ),
-
             // Speech State widget - fixed position relative to the parent, not the button
             Positioned(
               bottom: -15, // Fixed position from the top of the Stack
@@ -148,9 +155,11 @@ class MobileAiAssistantButton extends HookConsumerWidget {
                   borderRadius: BorderRadius.circular(8),
                 ),
                 child: Text(
-                  isTextFieldVisible || isPaused
-                      ? "Click to send"
-                      : _mapSpeechStateToText(speechState.speechState),
+                  !isAiAssistantExpanded
+                      ? "Click to talk with AI."
+                      : isTextFieldVisible || isPaused
+                          ? "Click to send"
+                          : _mapSpeechStateToText(speechState.speechState),
                   style: const TextStyle(
                     color: Colors.white,
                     fontSize: 12,
@@ -158,19 +167,6 @@ class MobileAiAssistantButton extends HookConsumerWidget {
                 ),
               ),
             ),
-
-            // Positioned(
-            //   bottom: size + 55,
-            //   child: const MobileAiResultsWidget(),
-            // ),
-
-            // Positioned(
-            //   bottom: size + 55,
-            //   child: const SpeechTranscribedWidget(),
-            // ),
-
-            // const AiResultsWidget(),
-            // const SpeechTranscribedWidget(),
 
             // Listening animation (only visible when listening)
             Positioned(
@@ -193,70 +189,22 @@ class MobileAiAssistantButton extends HookConsumerWidget {
                       key: buttonKey
                           .value, // This is critical for the overlay positioning
                       onTap: () async {
-                        if (isTextFieldVisible) {
-                          if (textController.value.text.isEmpty) return;
-
-                          // Show loading indicator
-                          ref.read(isAiRespondingProvider.notifier).state =
-                              true;
-
-                          // Send the text
-                          await ref
-                              .read(aiChatServiceProvider)
-                              .sendMessageToAi(textController.value.text);
-
-                          // Clear the text and hide the text field
-                          textController.value.clear();
-                          ref.read(textFieldVisibilityProvider.notifier).state =
-                              false;
-
-                          // Reset sending state
-                          ref.read(isAiRespondingProvider.notifier).state =
-                              false;
-                          return;
-                        }
-
-                        // Check if already listening
-                        if (isListening || isPaused) {
-                          // Show loading indicator
-                          ref.read(isAiRespondingProvider.notifier).state =
-                              true;
-
-                          // Stop listening and send the transcript
-                          Future.microtask(() async {
-                            await ref
-                                .read(speechToTextListenStateProvider.notifier)
-                                .sendText(ref);
-                            // Reset sending state after a short delay to ensure the UI updates properly
-                            Future.delayed(const Duration(milliseconds: 500),
-                                () {
-                              if (context.mounted) {
-                                ref
-                                    .read(isAiRespondingProvider.notifier)
-                                    .state = false;
-                              }
-                            });
-                          });
-                        } else {
+                        if (!isAiAssistantExpanded) {
                           // First set the AI assistant to expanded immediately for a smooth UI transition
                           ref
                               .read(isAiAssistantExpandedProvider.notifier)
                               .state = true;
 
                           // Stop any ongoing text-to-speech
-                          await ref
-                              .read(textToSpeechServiceProvider.notifier)
-                              .stop();
-
-                          // Remove previous AI results
-                          ref
-                              .read(lastAiMessageListenerProvider.notifier)
-                              .clearState();
-
-                          // Start listening
-                          final notifier = ref
-                              .read(speechToTextListenStateProvider.notifier);
-                          notifier.startListening();
+                          await _startListeningProcess(ref);
+                        } else if (isTextFieldVisible) {
+                          await _sendTextFieldValue(textController, ref);
+                        }
+                        // Check if already listening
+                        else if (isListening || isPaused) {
+                          _sendCurrentTranscript(ref, context);
+                        } else {
+                          await _startListeningProcess(ref);
                         }
                       },
                       child: SizedBox(
@@ -277,7 +225,8 @@ class MobileAiAssistantButton extends HookConsumerWidget {
                           ),
                           child: isAiResponding
                               ? _PulsatingLoadingIndicator()
-                              : isTextFieldVisible || isPaused
+                              : isAiAssistantExpanded &&
+                                      (isTextFieldVisible || isPaused)
                                   ? const Center(
                                       child: Icon(
                                         Icons.send,
@@ -319,6 +268,56 @@ class MobileAiAssistantButton extends HookConsumerWidget {
         ),
       ),
     );
+  }
+
+  Future<void> _sendTextFieldValue(
+      ValueNotifier<TextEditingController> textController,
+      WidgetRef ref) async {
+    if (textController.value.text.isEmpty) return;
+
+    // Show loading indicator
+    ref.read(isAiRespondingProvider.notifier).state = true;
+
+    // Send the text
+    await ref
+        .read(aiChatServiceProvider)
+        .sendMessageToAi(textController.value.text);
+
+    // Clear the text and hide the text field
+    textController.value.clear();
+    ref.read(textFieldVisibilityProvider.notifier).state = false;
+
+    // Reset sending state
+    ref.read(isAiRespondingProvider.notifier).state = false;
+    return;
+  }
+
+  void _sendCurrentTranscript(WidgetRef ref, BuildContext context) {
+    // Show loading indicator
+    ref.read(isAiRespondingProvider.notifier).state = true;
+
+    // Stop listening and send the transcript
+    Future.microtask(() async {
+      await ref.read(speechToTextListenStateProvider.notifier).sendText(ref);
+      // Reset sending state after a short delay to ensure the UI updates properly
+      Future.delayed(const Duration(milliseconds: 500), () {
+        if (context.mounted) {
+          ref.read(isAiRespondingProvider.notifier).state = false;
+        }
+      });
+    });
+  }
+
+  Future<void> _startListeningProcess(WidgetRef ref) async {
+    // Stop any ongoing text-to-speech
+    await ref.read(textToSpeechServiceProvider.notifier).stop();
+
+    // Remove previous AI results
+    ref.read(lastAiMessageListenerProvider.notifier).clearState();
+
+    // Start listening
+    final notifier = ref.read(speechToTextListenStateProvider.notifier);
+    notifier.startListening();
   }
 
   String _mapSpeechStateToText(SpeechToTextStateEnum speechState) {

@@ -2,11 +2,11 @@
 class BuildInfo {
   // Core build info
   static const String version = '1.0.0';
-  static const String buildDate = '2025-03-10 17:05:06';
+  static const String buildDate = '2025-03-11 14:48:16';
   
   // Git info
-  static const String commitHash = 'f79f7dc';
-  static const String branch = 'fix/inline-task-creation-issues';
+  static const String commitHash = 'd6e054d';
+  static const String branch = 'fix/ai-flow-issues';
   static const String lastTag = 'no tag';
   
   // Author of last commit
@@ -16,48 +16,48 @@ class BuildInfo {
   // Recent commits (last 5)
   static const List<Map<String, String>> recentCommits = [
     {
-      "hash": "f79f7dc",
+      "hash": "d6e054d",
+      "author": "renata-sisilio",
+      "email": "renata@seren-ai.co", 
+      "message": "fix(ai_assistant): show keyboard button whenever speech to text state isn't paused + text input overlay being hidden by keyboard + fix ai assistant button state management",
+      "date": "2025-03-11",
+      "relativeDate": "18 minutes ago"
+    },
+    {
+      "hash": "60d537e",
+      "author": "renata-sisilio",
+      "email": "renata@seren-ai.co", 
+      "message": "feat(gantt): add task navigation button to Gantt chart for quick timeframe access",
+      "date": "2025-03-11",
+      "relativeDate": "5 hours ago"
+    },
+    {
+      "hash": "83d03dd",
+      "author": "renata-sisilio",
+      "email": "renata@seren-ai.co", 
+      "message": "fix: redirect to home and show message when trying to open a page containing data from an org that the user is not a member of.",
+      "date": "2025-03-11",
+      "relativeDate": "6 hours ago"
+    },
+    {
+      "hash": "52f7fdf",
+      "author": "renata-sisilio",
+      "email": "renata@seren-ai.co", 
+      "message": "fix(gantt): open task directly on click in gantt Chart + show description on hover",
+      "date": "2025-03-10",
+      "relativeDate": "22 hours ago"
+    },
+    {
+      "hash": "ab288be",
       "author": "renata-sisilio",
       "email": "renata@seren-ai.co", 
       "message": "feat(gantt): enable directly assign tasks from gantt chart view",
       "date": "2025-03-10",
-      "relativeDate": "66 minutes ago"
-    },
-    {
-      "hash": "27b4225",
-      "author": "renata-sisilio",
-      "email": "renata@seren-ai.co", 
-      "message": "fix: task name not loaded yet when deleting task",
-      "date": "2025-03-10",
-      "relativeDate": "2 hours ago"
-    },
-    {
-      "hash": "9acb0d3",
-      "author": "renata-sisilio",
-      "email": "renata@seren-ai.co", 
-      "message": "feat(tasks): add 3 dot that opens a dropdown that allows the task to be deleted",
-      "date": "2025-03-10",
-      "relativeDate": "2 hours ago"
-    },
-    {
-      "hash": "c2c77ae",
-      "author": "renata-sisilio",
-      "email": "renata@seren-ai.co", 
-      "message": "fix(gantt_chart): highlight editing task on gantt chart",
-      "date": "2025-03-10",
-      "relativeDate": "2 hours ago"
-    },
-    {
-      "hash": "4b7a5c4",
-      "author": "renata-sisilio",
-      "email": "renata@seren-ai.co", 
-      "message": "feat(forms): text formatting for description fields (web-only for now)",
-      "date": "2025-03-06",
-      "relativeDate": "4 days ago"
+      "relativeDate": "23 hours ago"
     },
   ];
 
   // Stats
-  static const String totalCommits = '407';
+  static const String totalCommits = '411';
   static const String contributors = '0';
 }

@@ -41,14 +41,22 @@ class MobileAiAssistantOverlayManager {
       }
 
       final overlayEntry = OverlayEntry(
-        builder: (context) => Positioned(
-          bottom: defaultBottomPosition,
-          left: 0,
-          right: 0,
-          child: Center(
-            child: builder(context),
-          ),
-        ),
+        builder: (context) {
+          // Get keyboard height to adjust position
+          final keyboardHeight = MediaQuery.of(context).viewInsets.bottom;
+          final bottomPosition = keyboardHeight > 0
+              ? keyboardHeight + 8.0 // Add a small gap above keyboard
+              : defaultBottomPosition;
+
+          return Positioned(
+            bottom: bottomPosition,
+            left: 0,
+            right: 0,
+            child: Center(
+              child: builder(context),
+            ),
+          );
+        },
       );
 
       _entries[type] = overlayEntry;
