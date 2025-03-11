@@ -1,6 +1,7 @@
 // Configurable view for gantt
 
 import 'dart:async';
+import 'dart:math';
 import 'dart:ui';
 
 import 'package:flutter/material.dart';
@@ -70,7 +71,7 @@ class GanttView extends HookConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final availableWidth =
-        MediaQuery.of(context).size.width - 550; // drawer + static
+        MediaQuery.of(context).size.width - 590; // drawer + static
     final cellWidth = switch (viewType) {
       GanttViewType.day => availableWidth / 24,
       GanttViewType.week => availableWidth / 7,
@@ -194,16 +195,101 @@ class GanttView extends HookConsumerWidget {
             staticHeadersWidth,
         [columnRange.value, staticHeadersWidth]);
 
+    // Add a function to navigate to a specific task's timeframe
+    void navigateToTaskTimeframe(String taskId) {
+      final taskAsync = ref.read(taskByIdStreamProvider(taskId));
+
+      taskAsync.whenData((task) {
+        if (task == null) return;
+
+        // Determine which date to use (start date preferred, fallback to due date)
+        final targetDate = task.startDateTime ?? task.dueDate;
+        if (targetDate == null) return;
+
+        // Get current date range from the Gantt chart
+        final (currentStartUnit, currentEndUnit) = columnRange.value;
+        final visibleUnits = currentEndUnit - currentStartUnit;
+        final buffer = visibleUnits ~/ 4;
+
+        // Calculate view start date based on view type
+        final viewStartDate = DateTime.now().add(Duration(
+            days: viewType == GanttViewType.day ? 0 : currentStartUnit,
+            hours: viewType == GanttViewType.day ? currentStartUnit : 0));
+
+        // Calculate target offset based on view type
+        final targetOffset = viewType == GanttViewType.day
+            ? targetDate.difference(viewStartDate).inHours
+            : targetDate.difference(viewStartDate).inDays;
+
+        // Check if target is within visible range
+        final needsRangeAdjustment =
+            targetOffset < 0 || targetOffset > visibleUnits;
+
+        // Calculate new start unit if adjustment needed
+        int newStartUnit = currentStartUnit;
+
+        if (needsRangeAdjustment) {
+          if (viewType == GanttViewType.week) {
+            // Align to week boundaries (start on Monday)
+            final targetWeekStart =
+                targetDate.subtract(Duration(days: targetDate.weekday - 1));
+            newStartUnit = targetWeekStart.difference(DateTime.now()).inDays;
+          } else if (viewType == GanttViewType.month) {
+            // Align to month boundaries (start on 1st of month)
+            final targetMonthStart =
+                DateTime(targetDate.year, targetDate.month, 1);
+            newStartUnit = targetMonthStart.difference(DateTime.now()).inDays;
+          } else {
+            // Day view or default
+            newStartUnit = currentStartUnit + targetOffset - buffer;
+          }
+
+          // Update column range
+          columnRange.value = (newStartUnit, newStartUnit + visibleUnits);
+        }
+
+        // Scroll to the target position
+        WidgetsBinding.instance.addPostFrameCallback((_) {
+          if (mainHorizontalController.hasClients) {
+            // Calculate the position to scroll to
+            double scrollPosition;
+
+            if (needsRangeAdjustment) {
+              // If we adjusted the range, calculate new position
+              final adjustedViewStartDate = DateTime.now().add(Duration(
+                  days: viewType == GanttViewType.day ? 0 : newStartUnit,
+                  hours: viewType == GanttViewType.day ? newStartUnit : 0));
+
+              final adjustedOffset = viewType == GanttViewType.day
+                  ? targetDate.difference(adjustedViewStartDate).inHours
+                  : targetDate.difference(adjustedViewStartDate).inDays;
+
+              scrollPosition = adjustedOffset * cellWidth;
+            } else {
+              // Use original offset if no adjustment was needed
+              scrollPosition = targetOffset * cellWidth;
+            }
+
+            // Show 3 units (days or hours) before the task date
+            final contextBuffer = 3 * cellWidth;
+
+            mainHorizontalController.animateTo(
+              max(0, scrollPosition - contextBuffer),
+              duration: const Duration(milliseconds: 500),
+              curve: Curves.easeInOut,
+            );
+          }
+        });
+      });
+    }
+
     return Row(
       children: [
         GanttStaticColumnView(
-          //headers: staticHeadersValues,
-          //staticRowsValues: staticRowsValues,
-          //rowCount: rowCount.value,
-          //cellWidth: cellWidth,
           cellHeight: cellHeight,
           verticalController: leftController,
           mainVerticalController: mainVerticalController,
+          onNavigateToTask: navigateToTaskTimeframe,
         ),
         const VerticalDivider(width: 1),
         Expanded(
@@ -238,7 +324,6 @@ class GanttView extends HookConsumerWidget {
                     // Body
                     Expanded(
                       child: GanttBody(
-                        //events: events,
                         cellWidth: cellWidth,
                         cellHeight: cellHeight,
                         mainHorizontalController: mainHorizontalController,
