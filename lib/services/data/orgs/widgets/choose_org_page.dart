@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+import 'package:seren_ai_flutter/common/navigation_service_provider.dart';
+import 'package:seren_ai_flutter/common/routes/app_routes.dart';
 import 'package:seren_ai_flutter/services/data/common/widgets/async_value_handler_widget.dart';
 import 'package:seren_ai_flutter/services/data/orgs/providers/cur_selected_org_id_notifier.dart';
 import 'package:seren_ai_flutter/services/data/orgs/providers/cur_user_joined_org_roles_stream_provider.dart';
@@ -53,7 +55,12 @@ class ChooseOrgPage extends ConsumerWidget {
                       ref
                           .read(curSelectedOrgIdNotifierProvider.notifier)
                           .setDesiredOrgId(orgModel.id);
-                      Navigator.maybePop(context);
+                      // we need to redirect to home page
+                      // because we could pop to another org's project/task page
+                      ref.read(navigationServiceProvider).navigateTo(
+                            AppRoutes.home.name,
+                            clearStack: true,
+                          );
                     },
                   ),
                 );

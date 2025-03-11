@@ -230,7 +230,57 @@ class AppState extends ConsumerState<App> {
                       ref.read(navigationService.idNotifierProvider);
 
                   if (curSelectedId == null) {
-                    navigationService.setIdFunction(uri.pathSegments[1]);
+                    try {
+                      log.info('Setting ID function: ${uri.pathSegments[1]}');
+                      // Use await to ensure the promise rejection is caught
+                      Future(() async {
+                        try {
+                          await navigationService
+                              .setIdFunction(uri.pathSegments[1]);
+                        } catch (e) {
+                          log.severe('Error setting ID function: $e');
+                          final appNavigationService =
+                              ref.read(navigationServiceProvider);
+
+                          // Navigate first
+                          appNavigationService.navigateTo(AppRoutes.home.name);
+
+                          // After navigation completes, show the SnackBar
+                          // We'll use a slight delay to ensure the new route is fully built
+                          Future.delayed(const Duration(milliseconds: 300), () {
+                            final messenger = ScaffoldMessenger.of(
+                                appNavigationService
+                                    .navigatorKey.currentContext!);
+                            messenger.showSnackBar(
+                              const SnackBar(
+                                content: Text(
+                                    'You\'re not allowed to access that page.'),
+                              ),
+                            );
+                          });
+                        }
+                      });
+                    } catch (e) {
+                      // This will catch synchronous errors
+                      log.severe('Error setting ID function: $e');
+                      // Navigate first
+                      ref
+                          .read(navigationServiceProvider)
+                          .navigateTo(AppRoutes.home.name);
+                      // After navigation completes, show the SnackBar
+                      Future.delayed(const Duration(milliseconds: 300), () {
+                        final messenger = ScaffoldMessenger.of(ref
+                            .read(navigationServiceProvider)
+                            .navigatorKey
+                            .currentContext!);
+                        messenger.showSnackBar(
+                          const SnackBar(
+                            content: Text(
+                                'Error trying to open the page. Please try again later.'),
+                          ),
+                        );
+                      });
+                    }
                   }
                 }
               });

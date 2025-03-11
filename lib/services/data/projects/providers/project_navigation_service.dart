@@ -32,8 +32,10 @@ class ProjectNavigationService extends BaseNavigationService {
       curSelectedProjectIdNotifierProvider;
 
   @override
-  void setIdFunction(String id) =>
-      ref.read(curSelectedProjectIdNotifierProvider.notifier).setProjectId(id);
+  Future<void> setIdFunction(String id) async {
+    await _ensureProjectOrgIsSelected(id);
+    ref.read(curSelectedProjectIdNotifierProvider.notifier).setProjectId(id);
+  }
 
   /// For projects, readOnly mode is used to open the project overview page.
   Future<void> openProjectPage({
