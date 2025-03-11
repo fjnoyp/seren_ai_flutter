@@ -24,7 +24,8 @@ class NotesNavigationService extends BaseNavigationService {
   NotifierProvider get idNotifierProvider => curSelectedNoteIdNotifierProvider;
 
   @override
-  void setIdFunction(String id) {
+  Future<void> setIdFunction(String id) async {
+    await _ensureNoteOrgIsSelected(id);
     ref.read(curSelectedNoteIdNotifierProvider.notifier).setNoteId(id);
   }
 
