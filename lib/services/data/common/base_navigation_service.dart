@@ -9,7 +9,7 @@ abstract class BaseNavigationService {
   BaseNavigationService(this.ref);
 
   NotifierProvider get idNotifierProvider;
-  void setIdFunction(String id);
+  Future<void> setIdFunction(String id);
 
   static BaseNavigationService? fromAppRoute(AppRoutes route, WidgetRef ref) {
     return switch (route) {
