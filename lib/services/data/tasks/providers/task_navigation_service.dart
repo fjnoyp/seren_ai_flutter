@@ -22,8 +22,10 @@ class TaskNavigationService extends BaseNavigationService {
   NotifierProvider get idNotifierProvider => curSelectedTaskIdNotifierProvider;
 
   @override
-  void setIdFunction(String id) =>
-      ref.read(curSelectedTaskIdNotifierProvider.notifier).setTaskId(id);
+  Future<void> setIdFunction(String id) async {
+    await _ensureTaskOrgIsSelected(id);
+    ref.read(curSelectedTaskIdNotifierProvider.notifier).setTaskId(id);
+  }
 
   Future<void> openTask({required String initialTaskId}) async {
     final taskIdNotifier = ref.read(curSelectedTaskIdNotifierProvider.notifier);

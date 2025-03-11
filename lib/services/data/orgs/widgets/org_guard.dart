@@ -20,6 +20,12 @@ class OrgGuard extends ConsumerWidget {
     // Check if user no longer belongs to current org
     if (curUserOrgs.hasValue &&
         _userNoLongerBelongsTo(curOrgId, curUserOrgs: curUserOrgs.value!)) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text(
+              'You\'re trying to access an organization you are not a member of.'),
+        ),
+      );
       ref.read(curSelectedOrgIdNotifierProvider.notifier).clearDesiredOrgId();
     }
 
@@ -68,5 +74,5 @@ class OrgGuard extends ConsumerWidget {
 
   bool _userNoLongerBelongsTo(String? curOrgId,
           {required List<OrgModel> curUserOrgs}) =>
-      !(curUserOrgs.any((org) => org.id == curOrgId));
+      curOrgId != null && !(curUserOrgs.any((org) => org.id == curOrgId));
 }
