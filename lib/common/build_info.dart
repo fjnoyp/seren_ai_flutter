@@ -2,10 +2,10 @@
 class BuildInfo {
   // Core build info
   static const String version = '1.0.0';
-  static const String buildDate = '2025-03-11 14:48:16';
+  static const String buildDate = '2025-03-11 17:35:28';
   
   // Git info
-  static const String commitHash = 'd6e054d';
+  static const String commitHash = 'a9dc5d4';
   static const String branch = 'fix/ai-flow-issues';
   static const String lastTag = 'no tag';
   
@@ -16,12 +16,12 @@ class BuildInfo {
   // Recent commits (last 5)
   static const List<Map<String, String>> recentCommits = [
     {
-      "hash": "d6e054d",
+      "hash": "a9dc5d4",
       "author": "renata-sisilio",
       "email": "renata@seren-ai.co", 
       "message": "fix(ai_assistant): show keyboard button whenever speech to text state isn't paused + text input overlay being hidden by keyboard + fix ai assistant button state management",
       "date": "2025-03-11",
-      "relativeDate": "18 minutes ago"
+      "relativeDate": "3 hours ago"
     },
     {
       "hash": "60d537e",
@@ -29,7 +29,7 @@ class BuildInfo {
       "email": "renata@seren-ai.co", 
       "message": "feat(gantt): add task navigation button to Gantt chart for quick timeframe access",
       "date": "2025-03-11",
-      "relativeDate": "5 hours ago"
+      "relativeDate": "7 hours ago"
     },
     {
       "hash": "83d03dd",
@@ -37,7 +37,7 @@ class BuildInfo {
       "email": "renata@seren-ai.co", 
       "message": "fix: redirect to home and show message when trying to open a page containing data from an org that the user is not a member of.",
       "date": "2025-03-11",
-      "relativeDate": "6 hours ago"
+      "relativeDate": "9 hours ago"
     },
     {
       "hash": "52f7fdf",
@@ -45,7 +45,7 @@ class BuildInfo {
       "email": "renata@seren-ai.co", 
       "message": "fix(gantt): open task directly on click in gantt Chart + show description on hover",
       "date": "2025-03-10",
-      "relativeDate": "22 hours ago"
+      "relativeDate": "25 hours ago"
     },
     {
       "hash": "ab288be",
@@ -53,7 +53,7 @@ class BuildInfo {
       "email": "renata@seren-ai.co", 
       "message": "feat(gantt): enable directly assign tasks from gantt chart view",
       "date": "2025-03-10",
-      "relativeDate": "23 hours ago"
+      "relativeDate": "26 hours ago"
     },
   ];
 
