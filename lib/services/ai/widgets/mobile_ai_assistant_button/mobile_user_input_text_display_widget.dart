@@ -69,8 +69,6 @@ class MobileUserInputTextDisplayWidget extends StatelessWidget {
                     onPressed: () {
                       if (controller.text.isNotEmpty && onSubmit != null) {
                         onSubmit!();
-                        // Hide overlay after submitting
-                        hide();
                       }
                     },
                   ),
@@ -80,8 +78,6 @@ class MobileUserInputTextDisplayWidget extends StatelessWidget {
                 onSubmitted: (_) {
                   if (onSubmit != null) {
                     onSubmit!();
-                    // Hide overlay after submitting
-                    hide();
                   }
                 },
               ),
