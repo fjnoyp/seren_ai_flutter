@@ -203,6 +203,7 @@ class TaskAssigneesSelectionField extends BaseAssigneesSelectionField {
     required this.taskId,
     required BuildContext context,
     super.showLabelWidget,
+
     /// use an "+" icon button instead of the "choose assignees" text
     useIconButton = false,
   }) : super(
@@ -218,7 +219,7 @@ class TaskAssigneesSelectionField extends BaseAssigneesSelectionField {
                   assigneeIds: assignees?.map((e) => e.id).toList() ?? []),
           assigneesWidget: (assignees) => assignees.isEmpty
               ? useIconButton
-                  ? const Icon(Icons.add)
+                  ? const Center(child: Icon(Icons.add))
                   : Text(
                       AppLocalizations.of(context)!.chooseAssignees,
                       style: Theme.of(context).textTheme.bodyMedium,
