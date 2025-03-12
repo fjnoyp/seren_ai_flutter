@@ -4,15 +4,17 @@ import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:seren_ai_flutter/common/navigation_service_provider.dart';
 import 'package:seren_ai_flutter/common/routes/app_routes.dart';
 import 'package:seren_ai_flutter/services/ai/is_ai_assistant_expanded_provider.dart';
+import 'package:seren_ai_flutter/services/ai/is_ai_responding_provider.dart';
 import 'package:seren_ai_flutter/services/speech_to_text/speech_to_text_listen_state_provider.dart';
 import 'package:seren_ai_flutter/services/speech_to_text/speech_to_text_service_provider.dart';
 import 'package:seren_ai_flutter/services/speech_to_text/speech_to_text_status_provider.dart';
+import 'package:seren_ai_flutter/services/text_to_speech/text_to_speech_notifier.dart';
 import 'package:seren_ai_flutter/widgets/scaffold/bottom_app_bar_base.dart';
 
 // This is shown in place of the bottom app bar on mobile when the ai modal is visible ...
 
 // TODO p5: save and retrieve this preference locally
-final textFieldVisibilityProvider = StateProvider<bool>((ref) => false);
+final isKeyboardInputModeSelectedProvider = StateProvider<bool>((ref) => false);
 
 /// Should be displayed when the isAiAssistantExpandedProvider is true
 class MobileAiAssistantExpandedBottomBar extends ConsumerWidget {
@@ -20,16 +22,13 @@ class MobileAiAssistantExpandedBottomBar extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final isTextFieldVisible = ref.watch(textFieldVisibilityProvider);
+    final isKeyboardInputModeSelected =
+        ref.watch(isKeyboardInputModeSelectedProvider);
     final speechState = ref.watch(speechToTextStatusProvider).speechState;
     final isPaused = speechState != SpeechToTextStateEnum.listening &&
         ref.watch(speechToTextListenStateProvider).text.isNotEmpty;
 
-    // Get the height of the keyboard
-    // final keyboardHeight = MediaQuery.of(context).viewInsets.bottom;
-
     return BottomAppBarBase(
-      //height: isTextFieldVisible ? 200.0 : 65.0,
       height: 65.0,
       padding: const EdgeInsets.symmetric(horizontal: 8.0, vertical: 4.0),
       child: Column(
@@ -54,17 +53,25 @@ class MobileAiAssistantExpandedBottomBar extends ConsumerWidget {
                     ref.read(isAiAssistantExpandedProvider.notifier).state =
                         false;
 
-                    // Then cancel listening (this can happen in the background)
+                    // Then cancel side effects (this can happen in the background)
                     Future.microtask(() {
+                      // Cancel is AI responding
+                      ref.read(isAiRespondingProvider.notifier).state = false;
+
+                      // Cancel listening
                       ref
                           .read(speechToTextListenStateProvider.notifier)
                           .cancelListening();
+
+                      // Cancel text to speech
+                      ref.read(textToSpeechServiceProvider.notifier).stop();
                     });
                   },
                 ),
               ),
 
-              if (isPaused && !isTextFieldVisible)
+              // Second, resume button (if paused) or toggle keyboard input mode button
+              if (isPaused && !isKeyboardInputModeSelected)
                 Expanded(
                   child: IconButton(
                     tooltip: 'Resume',
@@ -85,7 +92,7 @@ class MobileAiAssistantExpandedBottomBar extends ConsumerWidget {
                 Expanded(
                   child: IconButton(
                     icon: Icon(
-                      isTextFieldVisible ? Icons.mic : Icons.keyboard,
+                      isKeyboardInputModeSelected ? Icons.mic : Icons.keyboard,
                       size: 22,
                     ),
                     visualDensity: VisualDensity.compact,
@@ -94,12 +101,22 @@ class MobileAiAssistantExpandedBottomBar extends ConsumerWidget {
                       minHeight: 32,
                     ),
                     onPressed: () async {
-                      await ref
-                          .read(speechToTextListenStateProvider.notifier)
-                          .cancelListening();
+                      final speechToTextListenStateNotifier =
+                          ref.read(speechToTextListenStateProvider.notifier);
+                      if (isKeyboardInputModeSelected) {
+                        // If we are in keyboard input mode, it's the mic button
+                        // so we need to start listening
+                        speechToTextListenStateNotifier.startListening();
+                      } else {
+                        // If we are in voice input mode, it's the keyboard button
+                        // so we need to cancel listening
+                        speechToTextListenStateNotifier.cancelListening();
+                      }
 
-                      ref.read(textFieldVisibilityProvider.notifier).state =
-                          !isTextFieldVisible;
+                      // Toggle the keyboard input mode
+                      ref
+                          .read(isKeyboardInputModeSelectedProvider.notifier)
+                          .state = !isKeyboardInputModeSelected;
                     },
                   ),
                 ),
