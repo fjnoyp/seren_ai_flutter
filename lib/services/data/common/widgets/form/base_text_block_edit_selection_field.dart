@@ -183,9 +183,11 @@ class FormattedTextInput extends HookWidget {
       return () => focusNode.removeListener(onFocusChange);
     }, [focusNode]);
 
-    // Get the current theme text style for proper text appearance
-    final textStyle = Theme.of(context).textTheme.bodyMedium!;
-    final hintStyle = textStyle.copyWith(color: Theme.of(context).hintColor);
+    // Get the current theme text style for proper text appearance and add consistent spacing
+    final textStyle = Theme.of(context).textTheme.bodyMedium!.copyWith(
+          letterSpacing: -0.1, // Slightly decreased letter spacing
+          wordSpacing: 0.0, // Neutral word spacing
+        );
 
     return GestureDetector(
       onTap: () {
@@ -203,6 +205,8 @@ class FormattedTextInput extends HookWidget {
               ),
             Expanded(
               child: Stack(
+                clipBehavior: Clip.none,
+                fit: StackFit.passthrough,
                 children: [
                   // Invisible TextField for handling input
                   TextField(
@@ -212,6 +216,7 @@ class FormattedTextInput extends HookWidget {
                     maxLines: null,
                     decoration: InputDecoration(
                       hintText: hintText,
+                      isDense: true, // Reduces the internal padding
                       fillColor: Colors.transparent,
                       filled: true,
                       enabledBorder: InputBorder.none,
@@ -220,15 +225,11 @@ class FormattedTextInput extends HookWidget {
                       border: InputBorder.none,
                       hoverColor:
                           Theme.of(context).colorScheme.primary.withAlpha(25),
-                      // Add padding to match the RichText padding
-                      contentPadding:
-                          const EdgeInsets.symmetric(vertical: 16.0),
+                      contentPadding: EdgeInsets.zero,
                     ),
                     style: textStyle.copyWith(
                       // Make the text invisible but keep the cursor visible
                       color: Colors.transparent,
-                      // Match the height of the RichText for proper cursor positioning
-                      height: 1.5,
                     ),
                     onSubmitted: onSubmitted,
                     cursorColor: Theme.of(context).colorScheme.primary,
@@ -236,11 +237,18 @@ class FormattedTextInput extends HookWidget {
 
                   // Formatted text display
                   if (controller.text.isNotEmpty)
-                    Positioned.fill(
+                    Positioned(
+                      left: 0,
+                      right: 0,
+                      top: 0,
                       child: IgnorePointer(
-                        child: Padding(
-                          padding: const EdgeInsets.symmetric(vertical: 16.0),
+                        child: Container(
+                          padding: EdgeInsets.zero,
+                          alignment: Alignment.topLeft,
                           child: RichText(
+                            overflow: TextOverflow.clip,
+                            textAlign: TextAlign.left,
+                            textScaler: MediaQuery.of(context).textScaler,
                             text: _buildFormattedTextSpan(
                               controller.text,
                               context,
@@ -251,18 +259,6 @@ class FormattedTextInput extends HookWidget {
                         ),
                       ),
                     )
-                  else
-                    Positioned.fill(
-                      child: IgnorePointer(
-                        child: Padding(
-                          padding: const EdgeInsets.symmetric(vertical: 16.0),
-                          child: Text(
-                            hintText ?? '',
-                            style: hintStyle,
-                          ),
-                        ),
-                      ),
-                    ),
                 ],
               ),
             ),
@@ -361,6 +357,9 @@ class FormattedTextInput extends HookWidget {
               textStyle: baseStyle,
               color: Theme.of(context).colorScheme.onInverseSurface,
               backgroundColor: Theme.of(context).colorScheme.inverseSurface,
+              // Preserve letter and word spacing in code blocks
+              letterSpacing: baseStyle.letterSpacing,
+              wordSpacing: baseStyle.wordSpacing,
             );
           } else {
             // When focused, use regular font with background color
