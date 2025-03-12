@@ -20,11 +20,15 @@ class TaskListItemView extends ConsumerWidget {
     this.onTap,
     this.showStatus = false,
     this.showProject = false,
+    this.showAssignees = true,
+    this.showMoreOptionsButton = true,
   });
 
   final TaskModel task;
   final bool showStatus;
   final bool showProject;
+  final bool showAssignees;
+  final bool showMoreOptionsButton;
   final void Function(String taskId)? onTap;
 
   @override
@@ -38,8 +42,11 @@ class TaskListItemView extends ConsumerWidget {
     return ListTile(
       contentPadding: showStatus
           ? null // Use default padding when showing status
-          : const EdgeInsets.only(
-              right: 16), // Remove left padding when not showing status
+          : showMoreOptionsButton || showAssignees
+              ? const EdgeInsets.only(
+                  right: 16) // Remove left padding when not showing status
+              : const EdgeInsets.all(
+                  0), // Remove all padding when not showing either status or trailing widgets
       leading: showStatus
           ? Icon(
               getStatusIcon(task.status ?? StatusEnum.open),
@@ -97,7 +104,7 @@ class TaskListItemView extends ConsumerWidget {
       trailing: Row(
         mainAxisSize: MainAxisSize.min,
         children: [
-          task.id != ref.watch(curInlineCreatingTaskIdProvider)
+          task.id != ref.watch(curInlineCreatingTaskIdProvider) && showAssignees
               ? SizedBox(
                   width: 92,
                   child: TaskAssigneesAvatars(task.id),
@@ -109,7 +116,8 @@ class TaskListItemView extends ConsumerWidget {
                   // ),
                 )
               : const SizedBox.shrink(),
-          TaskListItemMoreOptionsButton(taskId: task.id),
+          if (showMoreOptionsButton)
+            TaskListItemMoreOptionsButton(taskId: task.id),
         ],
       ),
 
