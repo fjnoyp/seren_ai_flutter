@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:seren_ai_flutter/common/current_route_provider.dart';
 import 'package:seren_ai_flutter/common/routes/app_routes.dart';
+import 'package:seren_ai_flutter/common/universal_platform/universal_platform.dart';
 import 'package:seren_ai_flutter/services/data/tasks/tool_methods/models/create_task_result_model.dart';
 import 'package:seren_ai_flutter/services/data/tasks/tool_methods/models/delete_task_result_model.dart';
 import 'package:seren_ai_flutter/services/data/tasks/tool_methods/models/find_tasks_result_model.dart';
@@ -28,9 +29,19 @@ class FindTasksResultWidget extends ConsumerWidget {
             padding: const EdgeInsets.only(left: 16.0),
             child: Text(AppLocalizations.of(context)!.noTasksFound),
           ),
-        ...result.tasks.map((task) {
-          return TaskListItemView(task: task);
-        }),
+        ListView.separated(
+          shrinkWrap: true,
+          physics: const NeverScrollableScrollPhysics(),
+          itemCount: result.tasks.length,
+          separatorBuilder: (context, index) => const Divider(),
+          itemBuilder: (context, index) {
+            return TaskListItemView(
+              task: result.tasks[index],
+              showAssignees: isWebVersion,
+              showMoreOptionsButton: false,
+            );
+          },
+        ),
       ],
     );
   }
@@ -42,7 +53,7 @@ class CreateTaskResultWidget extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    return ref.read(currentRouteProvider).contains(AppRoutes.aiChats.name)
+    return !ref.read(currentRouteProvider).contains(AppRoutes.aiChats.name)
         ? Text(AppLocalizations.of(context)!
             .createdNewTaskAndOpenedTaskPage(result.task.name))
         : Column(
@@ -62,7 +73,7 @@ class UpdateTaskFieldsResultWidget extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    return ref.read(currentRouteProvider).contains(AppRoutes.aiChats.name)
+    return !ref.read(currentRouteProvider).contains(AppRoutes.aiChats.name)
         ? Text(AppLocalizations.of(context)!
             .updatedTaskAndShowedResultInUI(result.task.name))
         : Column(
