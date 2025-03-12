@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 enum AiAssistantOverlayType {
   results,
@@ -41,14 +42,33 @@ class MobileAiAssistantOverlayManager {
       }
 
       final overlayEntry = OverlayEntry(
-        builder: (context) => Positioned(
-          bottom: defaultBottomPosition,
-          left: 0,
-          right: 0,
-          child: Center(
-            child: builder(context),
-          ),
-        ),
+        builder: (overlayContext) {
+          // Get keyboard height to adjust position
+          final keyboardHeight =
+              MediaQuery.of(overlayContext).viewInsets.bottom;
+          final bottomPosition = keyboardHeight > 0
+              ? keyboardHeight + 8.0 // Add a small gap above keyboard
+              : defaultBottomPosition;
+
+          // Overlays are added to the widget tree at a different level
+          // than your main application widgets, which can cause issues
+          // with provider inheritance and rebuilding.
+          // This is a known issue with Flutter overlays
+          // and state management systems like Riverpod.
+          // To fix this, we can use an UncontrolledProviderScope
+          // to create a new provider scope for the overlay.
+          return UncontrolledProviderScope(
+            container: ProviderScope.containerOf(context),
+            child: Positioned(
+              bottom: bottomPosition,
+              left: 0,
+              right: 0,
+              child: Center(
+                child: builder(overlayContext),
+              ),
+            ),
+          );
+        },
       );
 
       _entries[type] = overlayEntry;
