@@ -17,6 +17,7 @@ class WebScaffold extends ConsumerWidget {
   final bool isAiAssistantExpanded;
 
   const WebScaffold({
+    super.key,
     required this.title,
     required this.body,
     required this.showBottomBar,
@@ -45,12 +46,19 @@ class WebScaffold extends ConsumerWidget {
             Expanded(
               flex: 4,
               child: Scaffold(
-                appBar: PreferredSize(
-                  preferredSize: const Size.fromHeight(kToolbarHeight),
-                  child: showAppBar
-                      ? _buildFullAppBar(context, theme, isNarrow, isDebugMode)
-                      : _buildMinimalAppBar(context, theme, isNarrow),
-                ),
+                appBar: showAppBar
+                    ? _FullAppBar(
+                        title: title,
+                        actions: actions ?? [],
+                        theme: theme,
+                        context: context,
+                        isDebugMode: isDebugMode,
+                        isNarrow: isNarrow,
+                      )
+                    : _MinimalAppBar(
+                        theme: theme,
+                        isNarrow: isNarrow,
+                      ),
                 drawer: isNarrow ? const DrawerView() : null,
                 body: Stack(
                   alignment: Alignment.centerRight,
@@ -70,48 +78,58 @@ class WebScaffold extends ConsumerWidget {
           : null,
     );
   }
+}
 
-  AppBar _buildFullAppBar(
-      BuildContext context, ThemeData theme, bool isNarrow, bool isDebugMode) {
-    return AppBar(
-      backgroundColor: theme.appBarTheme.backgroundColor,
-      leading: _buildMenuButton(context, theme),
-      elevation: 0,
-      title: Padding(
-        padding: const EdgeInsets.all(8.0),
-        child: Text(
-          title,
-          style: theme.appBarTheme.titleTextStyle,
-        ),
-      ),
-      actions: [
-        if (!AppConfig.isProdMode)
-          const Text(
-            'DevConfig',
-            style: TextStyle(color: Colors.red, fontWeight: FontWeight.bold),
+class _FullAppBar extends AppBar {
+  _FullAppBar({
+    required String title,
+    required List<Widget> actions,
+    required ThemeData theme,
+    required BuildContext context,
+    required bool isDebugMode,
+    required bool isNarrow,
+  }) : super(
+          backgroundColor: theme.appBarTheme.backgroundColor,
+          leading: isNarrow ? _MenuButton() : null,
+          elevation: 0,
+          title: Padding(
+            padding: const EdgeInsets.all(8.0),
+            child: Text(
+              title,
+              style: theme.appBarTheme.titleTextStyle,
+            ),
           ),
-        if (isDebugMode) DebugOpenModalButton(),
-        ...actions ?? [],
-      ],
-    );
-  }
+          actions: [
+            if (!AppConfig.isProdMode)
+              const Text(
+                'DevConfig',
+                style:
+                    TextStyle(color: Colors.red, fontWeight: FontWeight.bold),
+              ),
+            if (isDebugMode) DebugOpenModalButton(),
+            ...actions,
+          ],
+        );
+}
 
-  AppBar _buildMinimalAppBar(
-      BuildContext context, ThemeData theme, bool isNarrow) {
-    return AppBar(
-      backgroundColor: Colors.transparent,
-      elevation: 0,
-      leading: isNarrow ? _buildMenuButton(context, theme) : null,
-    );
-  }
+class _MinimalAppBar extends AppBar {
+  _MinimalAppBar({required ThemeData theme, required bool isNarrow})
+      : super(
+          backgroundColor: Colors.transparent,
+          elevation: 0,
+          leading: isNarrow ? _MenuButton() : null,
+        );
+}
 
-  Widget _buildMenuButton(BuildContext context, ThemeData theme) {
-    return Builder(
-      builder: (context) => IconButton(
-        icon: Icon(Icons.menu, color: theme.iconTheme.color),
-        onPressed: () => Scaffold.of(context).openDrawer(),
-        tooltip: AppLocalizations.of(context)!.menu,
-      ),
-    );
+class _MenuButton extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold.of(context).isDrawerOpen
+        ? const SizedBox.shrink()
+        : IconButton(
+            icon: Icon(Icons.menu, color: Theme.of(context).iconTheme.color),
+            onPressed: () => Scaffold.of(context).openDrawer(),
+            tooltip: AppLocalizations.of(context)!.menu,
+          );
   }
 }
