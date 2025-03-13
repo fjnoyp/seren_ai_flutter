@@ -507,6 +507,7 @@
         }
     },
     "chooseDueDate": "Choose a Due Date",
+    "chooseDueTime": "Choose a Due Time",
     "todaysTasks": "Today's Tasks",
     "noTasksDueToday": "No tasks due today",
     "seeAll": "See All",
@@ -517,6 +518,7 @@
     "chooseAssignees": "Choose Assignees",
     "notAssigned": "Not Assigned",
     "chooseStartDate": "Choose a Start Date",
+    "chooseStartTime": "Choose a Start Time",
     "selectATask": "Select a Task",
     "choosePhase": "Choose Phase",
     "blockedByTask": "Blocked by Task",
