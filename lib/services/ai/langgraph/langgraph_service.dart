@@ -4,8 +4,9 @@
 import 'package:seren_ai_flutter/services/ai/langgraph/langgraph_api.dart';
 import 'package:seren_ai_flutter/services/ai/langgraph/models/lg_ai_base_message_model.dart';
 import 'package:seren_ai_flutter/services/ai/langgraph/models/lg_ai_chat_message_role.dart';
+import 'package:seren_ai_flutter/services/ai/langgraph/models/lg_command_model.dart';
 import 'package:seren_ai_flutter/services/ai/langgraph/models/lg_config_model.dart';
-import 'package:seren_ai_flutter/services/ai/langgraph/models/lg_input_model.dart';
+import 'package:seren_ai_flutter/services/ai/langgraph/models/lg_agent_state_model.dart';
 import 'package:seren_ai_flutter/services/data/db_setup/app_config.dart';
 
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -38,10 +39,11 @@ class LanggraphService {
 
   /// Top level method for sending a user message to the Langgraph API AI
   Future<List<LgAiBaseMessageModel>> runAi({
-    required String? message,
-    required String? uiContext,
+    String? message,
+    String? uiContext,
     required String lgThreadId,
     required String lgAssistantId,
+    LgCommandModel? command,
   }) async {
     // Create or Get thread info stored in DB AiChatThread table
     // final aiChatThread =
@@ -60,7 +62,11 @@ class LanggraphService {
     //     userMessage, aiChatThread.id, LgAiChatMessageRole.user);
 
     final lgBaseMessages = await _runAi(
-        lgThreadId: lgThreadId, lgAssistantId: lgAssistantId, lgInput: lgInput);
+      lgThreadId: lgThreadId,
+      lgAssistantId: lgAssistantId,
+      lgInput: lgInput,
+      command: command,
+    );
 
     // final aiChatMessages = await _langgraphDbOperations.saveLgBaseMessageModels(
     //   messages: lgBaseMessages,
@@ -164,6 +170,7 @@ class LanggraphService {
     required String lgThreadId,
     required String lgAssistantId,
     LgAgentStateModel? lgInput,
+    LgCommandModel? command,
   }) async {
     // Collect all messages from the stream
     final messages = <LgAiBaseMessageModel>[];
@@ -173,6 +180,7 @@ class LanggraphService {
       threadId: lgThreadId,
       assistantId: lgAssistantId,
       input: lgInput,
+      command: command,
       streamMode: 'updates',
     )) {
       messages.add(message);

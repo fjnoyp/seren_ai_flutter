@@ -260,6 +260,8 @@ class TaskToolMethods {
           .setTaskId(newTask.id);
 
       final navigationService = ref.read(navigationServiceProvider);
+
+      // Do not await - this never returns
       navigationService.navigateTo(AppRoutes.taskPage.name, arguments: {
         'mode': EditablePageMode.readOnly,
         'actions': [EditTaskButton(newTask.id)],
