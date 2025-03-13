@@ -33,6 +33,23 @@ class WebTaskPage extends ConsumerWidget {
 
     final isDebugMode = ref.watch(isDebugModeSNP);
 
+    final tabs = [
+      if (isPhase)
+        (
+          title: AppLocalizations.of(context)?.tasks,
+          body: _TasksFromPhaseSection(phaseId: curTaskId),
+        ),
+      (
+        title: AppLocalizations.of(context)?.comments,
+        body: TaskCommentSection(curTaskId),
+      ),
+      if (isDebugMode)
+        (
+          title: 'Budget',
+          body: TaskBudgetSection(curTaskId),
+        ),
+    ];
+
     return Row(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -41,28 +58,17 @@ class WebTaskPage extends ConsumerWidget {
         Expanded(
           flex: 2,
           child: DefaultTabController(
-            length: isDebugMode ? 2 : 1,
+            length: tabs.length,
             child: Column(
               children: [
                 AIContextTaskOverview(taskId: curTaskId),
                 const SizedBox(height: 8),
-                TabBar(
-                  tabs: [
-                    if (isPhase) Tab(text: AppLocalizations.of(context)?.tasks),
-                    Tab(text: AppLocalizations.of(context)?.comments),
-                    if (isDebugMode) const Tab(text: 'Budget'),
-                  ],
-                ),
+                TabBar(tabs: tabs.map((e) => Tab(text: e.title)).toList()),
                 Expanded(
                   child: Padding(
                     padding: const EdgeInsets.all(16),
-                    child: TabBarView(
-                      children: [
-                        if (isPhase) _TasksFromPhaseSection(phaseId: curTaskId),
-                        TaskCommentSection(curTaskId),
-                        if (isDebugMode) TaskBudgetSection(curTaskId),
-                      ],
-                    ),
+                    child:
+                        TabBarView(children: tabs.map((e) => e.body).toList()),
                   ),
                 ),
               ],

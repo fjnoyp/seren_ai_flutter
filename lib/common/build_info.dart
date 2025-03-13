@@ -2,11 +2,11 @@
 class BuildInfo {
   // Core build info
   static const String version = '1.0.0';
-  static const String buildDate = '2025-03-13 10:10:44';
+  static const String buildDate = '2025-03-13 14:19:06';
   
   // Git info
-  static const String commitHash = '141567b';
-  static const String branch = 'fix/hide-drawer-button-and-ellipsis-org-user-name';
+  static const String commitHash = '3762870';
+  static const String branch = 'fix/task-comments-not-opening';
   static const String lastTag = 'no tag';
   
   // Author of last commit
@@ -16,20 +16,28 @@ class BuildInfo {
   // Recent commits (last 5)
   static const List<Map<String, String>> recentCommits = [
     {
-      "hash": "141567b",
+      "hash": "3762870",
+      "author": "renata-sisilio",
+      "email": "renata@seren-ai.co", 
+      "message": "fix(drawer_view): limit text overflow for organization and user names in drawer",
+      "date": "2025-03-13",
+      "relativeDate": "4 hours ago"
+    },
+    {
+      "hash": "c1295a4",
       "author": "renata-sisilio",
       "email": "renata@seren-ai.co", 
       "message": "fix(web_scaffold): hide drawer button when drawer is already open",
       "date": "2025-03-13",
-      "relativeDate": "30 minutes ago"
+      "relativeDate": "5 hours ago"
     },
     {
-      "hash": "9160de1",
+      "hash": "e327110",
       "author": "renata-sisilio",
       "email": "renata@seren-ai.co", 
       "message": "fix(onboarding): auto redirect to org page - for slow connection cases where users already have orgs but are redirected to onboarding",
       "date": "2025-03-13",
-      "relativeDate": "61 minutes ago"
+      "relativeDate": "5 hours ago"
     },
     {
       "hash": "d1f1cea",
@@ -37,7 +45,7 @@ class BuildInfo {
       "email": "renata@seren-ai.co", 
       "message": "fix(tasks): description field cursor position + revert selection fields misalignment",
       "date": "2025-03-12",
-      "relativeDate": "21 hours ago"
+      "relativeDate": "25 hours ago"
     },
     {
       "hash": "d42d62f",
@@ -45,19 +53,11 @@ class BuildInfo {
       "email": "renata@seren-ai.co", 
       "message": "fix(ai_assistant): cleanup and fix ai assistant flow logics",
       "date": "2025-03-12",
-      "relativeDate": "24 hours ago"
-    },
-    {
-      "hash": "60d537e",
-      "author": "renata-sisilio",
-      "email": "renata@seren-ai.co", 
-      "message": "feat(gantt): add task navigation button to Gantt chart for quick timeframe access",
-      "date": "2025-03-11",
-      "relativeDate": "2 days ago"
+      "relativeDate": "28 hours ago"
     },
   ];
 
   // Stats
-  static const String totalCommits = '414';
+  static const String totalCommits = '415';
   static const String contributors = '0';
 }
