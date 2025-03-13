@@ -2,11 +2,11 @@
 class BuildInfo {
   // Core build info
   static const String version = '1.0.0';
-  static const String buildDate = '2025-03-13 09:09:50';
+  static const String buildDate = '2025-03-13 09:41:13';
   
   // Git info
-  static const String commitHash = 'd1f1cea';
-  static const String branch = 'fix/onboarding-in-a-new-device-for-existing-user';
+  static const String commitHash = '9160de1';
+  static const String branch = 'fix/hide-drawer-button-and-ellipsis-org-user-name';
   static const String lastTag = 'no tag';
   
   // Author of last commit
@@ -16,12 +16,20 @@ class BuildInfo {
   // Recent commits (last 5)
   static const List<Map<String, String>> recentCommits = [
     {
+      "hash": "9160de1",
+      "author": "renata-sisilio",
+      "email": "renata@seren-ai.co", 
+      "message": "fix(onboarding): auto redirect to org page - for slow connection cases where users already have orgs but are redirected to onboarding",
+      "date": "2025-03-13",
+      "relativeDate": "31 minutes ago"
+    },
+    {
       "hash": "d1f1cea",
       "author": "renata-sisilio",
       "email": "renata@seren-ai.co", 
       "message": "fix(tasks): description field cursor position + revert selection fields misalignment",
       "date": "2025-03-12",
-      "relativeDate": "20 hours ago"
+      "relativeDate": "21 hours ago"
     },
     {
       "hash": "d42d62f",
@@ -47,17 +55,9 @@ class BuildInfo {
       "date": "2025-03-11",
       "relativeDate": "2 days ago"
     },
-    {
-      "hash": "52f7fdf",
-      "author": "renata-sisilio",
-      "email": "renata@seren-ai.co", 
-      "message": "fix(gantt): open task directly on click in gantt Chart + show description on hover",
-      "date": "2025-03-10",
-      "relativeDate": "3 days ago"
-    },
   ];
 
   // Stats
-  static const String totalCommits = '412';
+  static const String totalCommits = '413';
   static const String contributors = '0';
 }
