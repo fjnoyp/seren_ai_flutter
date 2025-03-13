@@ -10,6 +10,7 @@ import 'package:seren_ai_flutter/services/ai/ai_request/ai_request_executor.dart
 import 'package:seren_ai_flutter/services/ai/ai_request/models/requests/ai_request_model.dart';
 import 'package:seren_ai_flutter/services/ai/langgraph/langgraph_service.dart';
 import 'package:seren_ai_flutter/services/ai/langgraph/models/lg_ai_base_message_model.dart';
+import 'package:seren_ai_flutter/services/ai/langgraph/models/lg_command_model.dart';
 import 'package:seren_ai_flutter/services/ai/langgraph/models/lg_config_model.dart';
 import 'package:seren_ai_flutter/services/ai/last_ai_message_listener_provider.dart';
 import 'package:seren_ai_flutter/services/auth/cur_auth_state_provider.dart';
@@ -162,6 +163,7 @@ class AIChatService {
     required AiChatThreadModel aiChatThread,
     String? userMessage,
     String? uiContext,
+    LgCommandModel? command,
   }) async {
     final langgraphService = ref.read(langgraphServiceProvider);
     final lastAiMessageListener =
@@ -174,6 +176,7 @@ class AIChatService {
       uiContext: uiContext,
       lgThreadId: aiChatThread.parentLgThreadId,
       lgAssistantId: aiChatThread.parentLgAssistantId,
+      command: command,
     );
 
     // Convert lgBaseMessages as aiChatMessages
@@ -205,7 +208,6 @@ class AIChatService {
         ref.read(lastAiMessageListenerProvider.notifier);
     final aiRequestExecutor = ref.read(aiRequestExecutorProvider);
     final aiChatMessagesRepo = ref.read(aiChatMessagesRepositoryProvider);
-    final langGraphService = ref.read(langgraphServiceProvider);
 
     // === Check if Execution is needed ===
 
@@ -223,47 +225,37 @@ class AIChatService {
       return;
     }
 
-    if (toolResponses.length > 1) {
-      log.warning(
-          'Multiple tool responses found in executeAiChatMessages, ignoring all but the first');
+    // === Execute All Requests ===
+    final allResults = StringBuffer();
+
+    for (final toolRequest in toolResponses) {
+      // Execute each request
+      final result = await aiRequestExecutor.executeAiRequest(toolRequest);
+
+      // Append result to combined results
+      if (allResults.isNotEmpty) {
+        allResults.write('\n\n');
+      }
+      allResults.write(result.resultForAi);
+
+      // Save Result to DB
+      final aiResultMessage = AiChatMessageModel(
+          content: jsonEncode(result.toJson()),
+          type: AiChatMessageType.tool,
+          parentChatThreadId: aiChatThread.id);
+
+      await aiChatMessagesRepo.insertItem(aiResultMessage);
+
+      // Display in UI
+      lastAiMessageListener.addAiChatMessage(aiResultMessage);
     }
 
-    // === Execute Request ===
-    final result = await aiRequestExecutor.executeAiRequest(toolResponses[0]);
-
-    // Display Result
-    // final isCallAgain = result.showOnly ? '' : '<AI CALLED AGAIN>';
-    // lastAiMessageListener.addLastToolResponseResult(result.copyWith(
-    //     message: '$isCallAgain${result.resultForAi}', showOnly: result.showOnly));
-    // //speakAiMessage(aiChatMessages);
-
-    // Save Result to DB
-    final aiResultMessage = AiChatMessageModel(
-        content: jsonEncode(result.toJson()),
-        type: AiChatMessageType.tool,
-        parentChatThreadId: aiChatThread.id);
-
-    await aiChatMessagesRepo.insertItem(aiResultMessage);
-
-    lastAiMessageListener.addAiChatMessage(aiResultMessage);
-
-    // Update LangGraph's Memory with the result of the request
-    await langGraphService.updateLastToolMessageWithResult(
-      resultString: result.resultForAi,
-      showOnly: result.showOnly,
-      lgThreadId: aiChatThread.parentLgThreadId,
-      lgAssistantId: aiChatThread.parentLgAssistantId,
-    );
-
-    // Check if AI should call again
-    if (result.showOnly) {
-      return;
-    }
-
-    // === Send Result to LangGraph for Followup ===
+    // === Send All Results to LangGraph for Followup ===
 
     await _runAi(
-        aiChatThread: aiChatThread, userMessage: null, uiContext: null);
+        aiChatThread: aiChatThread,
+        command: LgCommandModel.resume(allResults.toString()),
+        uiContext: null);
   }
 
   Future<AiChatThreadModel> _getOrCreateAiChatThread(

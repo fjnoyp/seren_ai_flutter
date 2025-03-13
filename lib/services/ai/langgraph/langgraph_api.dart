@@ -2,7 +2,7 @@ import 'package:dio/dio.dart';
 import 'package:seren_ai_flutter/services/ai/langgraph/models/lg_ai_base_message_model.dart';
 import 'package:seren_ai_flutter/services/ai/langgraph/models/lg_assistant_model.dart';
 import 'package:seren_ai_flutter/services/ai/langgraph/models/lg_config_model.dart';
-import 'package:seren_ai_flutter/services/ai/langgraph/models/lg_input_model.dart';
+import 'package:seren_ai_flutter/services/ai/langgraph/models/lg_agent_state_model.dart';
 import 'dart:convert';
 import 'dart:async';
 
@@ -10,6 +10,7 @@ import 'package:seren_ai_flutter/services/ai/langgraph/models/lg_run_model.dart'
 import 'package:seren_ai_flutter/services/ai/langgraph/models/lg_run_stream_response_model.dart';
 import 'package:seren_ai_flutter/services/ai/langgraph/models/lg_thread_model.dart';
 import 'package:seren_ai_flutter/services/ai/langgraph/models/lg_thread_state_model.dart';
+import 'package:seren_ai_flutter/services/ai/langgraph/models/lg_command_model.dart';
 
 // TODO p0: create assistant with metadata to be findable again ....
 
@@ -90,17 +91,20 @@ class LanggraphApi {
     );
   }
 
+  // https://langchain-ai.github.io/langgraph/cloud/reference/api/api_ref.html#tag/thread-runs/POST/threads/{thread_id}/runs/stream
   Stream<LgAiBaseMessageModel> streamRun({
     required String threadId,
     required String assistantId,
     required String streamMode,
     LgAgentStateModel? input,
+    LgCommandModel? command,
     Duration timeout = const Duration(minutes: 5),
   }) async* {
     final requestData = {
       'assistant_id': assistantId,
       'stream_mode': streamMode,
-      'input': input?.toJson(),
+      if (input != null) 'input': input.toJson(),
+      if (command != null) 'command': command.toJson(),
     };
 
     yield* _handleStreamResponse(
@@ -161,23 +165,43 @@ class LanggraphApi {
             final responseJson = json.decode(responseModel.data);
 
             // NOTE: In Langgraph Cloud - the name of the node added via add_node will be returned as the key here ...
-            if (responseJson.containsKey("chatbot")) {
-              final messagesJson = responseJson["chatbot"]["messages"];
-              for (final messageJson in messagesJson) {
-                yield LgAiBaseMessageModel.fromJson(messageJson);
+            const keys = [
+              "chatbot",
+              "response_generator",
+              "tools",
+              "single_call"
+            ];
+            bool keyFound = false; // Flag to track if a key was found
+            for (final key in keys) {
+              if (responseJson.containsKey(key)) {
+                keyFound = true; // Set flag to true if a key is found
+                final messagesJson = responseJson[key]["messages"];
+                for (final messageJson in messagesJson) {
+                  yield LgAiBaseMessageModel.fromJson(messageJson);
+                }
+                break; // Exit the loop after processing the first matching key
               }
-            } else if (responseJson.containsKey("tools")) {
-              final messagesJson = responseJson["tools"]["messages"];
-              for (final messageJson in messagesJson) {
-                yield LgAiBaseMessageModel.fromJson(messageJson);
+            }
+
+            // These nodes do not return messages, but update the state, we can show that in the future but not yet
+            const thinkingKeys = [
+              "planner",
+              "tool_caller",
+              "execute_ai_request_on_client"
+            ];
+            for (final key in thinkingKeys) {
+              if (responseJson.containsKey(key)) {
+                keyFound = true;
+                break;
               }
-            } else if (responseJson.containsKey("single_call")) {
-              final messagesJson = responseJson["single_call"]["messages"];
-              for (final messageJson in messagesJson) {
-                yield LgAiBaseMessageModel.fromJson(messageJson);
+            }
+
+            if (!keyFound) {
+              // Check if no key was found
+              if (responseJson.containsKey("__interrupt__")) {
+              } else {
+                throw Exception('Unknown event type: ${responseJson.keys}');
               }
-            } else {
-              throw Exception('Unknown event type: ${responseJson.keys}');
             }
           }
         } catch (e) {
