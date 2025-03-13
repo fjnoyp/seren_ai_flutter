@@ -13,7 +13,8 @@ class BaseDueDateSelectionField extends _BaseDateTimeSelectionField {
   }) : super(
           dateTimeProvider: dueDateProvider,
           updateDateTime: updateDueDate,
-          label: ((context) => AppLocalizations.of(context)!.chooseDueDate),
+          dateLabel: ((context) => AppLocalizations.of(context)!.chooseDueDate),
+          timeLabel: ((context) => AppLocalizations.of(context)!.chooseDueTime),
         );
 }
 
@@ -26,7 +27,10 @@ class BaseStartDateSelectionField extends _BaseDateTimeSelectionField {
   }) : super(
           dateTimeProvider: startDateTimeProvider,
           updateDateTime: updateStartDate,
-          label: ((context) => AppLocalizations.of(context)!.chooseStartDate),
+          dateLabel: ((context) =>
+              AppLocalizations.of(context)!.chooseStartDate),
+          timeLabel: ((context) =>
+              AppLocalizations.of(context)!.chooseStartTime),
         );
 }
 
@@ -34,38 +38,82 @@ class _BaseDateTimeSelectionField extends ConsumerWidget {
   final bool enabled;
   final ProviderListenable<DateTime?> dateTimeProvider;
   final Function(WidgetRef, DateTime) updateDateTime;
-  final String Function(BuildContext) label;
+  final String Function(BuildContext) dateLabel;
+  final String Function(BuildContext) timeLabel;
 
   const _BaseDateTimeSelectionField({
     super.key,
     required this.enabled,
     required this.dateTimeProvider,
     required this.updateDateTime,
-    required this.label,
+    required this.dateLabel,
+    required this.timeLabel,
   });
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final curDate = ref.watch(dateTimeProvider);
+    final curDateTime = ref.watch(dateTimeProvider);
 
-    return AnimatedSelectionField<DateTime>(
-      labelWidget: const Icon(Icons.date_range),
-      validator: _validator,
-      valueToString: (date) => _valueToString(date, context: context),
-      enabled: enabled,
-      value: curDate?.toLocal(),
-      onTap: (BuildContext context) async {
-        return _pickDateTime(context, initialDate: curDate ?? DateTime.now())
-            .then(
-          (pickedDateTime) => pickedDateTime != null
-              ? updateDateTime(ref, pickedDateTime)
-              : null,
-        );
-      },
+    return Row(
+      children: [
+        Flexible(
+          child: AnimatedSelectionField<DateTime>(
+            labelWidget: const Icon(Icons.date_range),
+            validator: _validator,
+            valueToString: (date) => _valueToDate(date, context: context),
+            enabled: enabled,
+            value: curDateTime?.toLocal(),
+            onTap: (BuildContext context) async {
+              return _pickDate(context,
+                      initialDate: curDateTime ?? DateTime.now())
+                  .then(
+                (pickedDateTime) => pickedDateTime != null
+                    ? updateDateTime(
+                        ref,
+                        pickedDateTime.copyWith(
+                            hour: curDateTime?.hour ?? 0,
+                            minute: curDateTime?.minute ?? 0),
+                      )
+                    : null,
+              );
+            },
+          ),
+        ),
+        Flexible(
+          child: AnimatedSelectionField<TimeOfDay>(
+            labelWidget: const Icon(Icons.access_time),
+            valueToString: (time) =>
+                time == null ? timeLabel(context) : time.format(context),
+            enabled: enabled,
+            value: _timeOfDayFromCurDateTime(curDateTime),
+            onTap: (BuildContext context) async {
+              return _pickTime(context,
+                      initialTime: _timeOfDayFromCurDateTime(curDateTime) ??
+                          const TimeOfDay(hour: 0, minute: 0))
+                  .then(
+                (pickedTime) => pickedTime != null
+                    ? updateDateTime(
+                        ref,
+                        (curDateTime ?? DateTime.now()).copyWith(
+                          hour: pickedTime.hour,
+                          minute: pickedTime.minute,
+                        ),
+                      )
+                    : null,
+              );
+            },
+          ),
+        ),
+      ],
     );
   }
 
-  Future<DateTime?> _pickDateTime(
+  TimeOfDay? _timeOfDayFromCurDateTime(DateTime? curDateTime) =>
+      curDateTime != null
+          ? TimeOfDay.fromDateTime(curDateTime.toLocal())
+          : null;
+
+  Future<DateTime?> _pickDate(
     BuildContext context, {
     required DateTime initialDate,
   }) async {
@@ -76,33 +124,28 @@ class _BaseDateTimeSelectionField extends ConsumerWidget {
       firstDate: DateTime(2000),
       lastDate: DateTime(2100),
     );
+    FocusManager.instance.primaryFocus?.unfocus();
 
-    if (pickedDate != null) {
-      FocusManager.instance.primaryFocus?.unfocus();
-      final TimeOfDay? pickedTime = await showTimePicker(
-        context: context,
-        initialTime: TimeOfDay.fromDateTime(initialDate.toLocal()),
-      );
-      FocusManager.instance.primaryFocus?.unfocus();
-
-      if (pickedTime != null) {
-        return DateTime(
-          pickedDate.year,
-          pickedDate.month,
-          pickedDate.day,
-          pickedTime.hour,
-          pickedTime.minute,
-        ).toUtc();
-      }
-    }
-
-    return null;
+    return pickedDate?.toLocal();
   }
 
-  String _valueToString(DateTime? date, {required BuildContext context}) {
-    final dayFormat =
-        DateFormat.yMMMd(AppLocalizations.of(context)!.localeName).add_jm();
-    return date == null ? label(context) : dayFormat.format(date);
+  Future<TimeOfDay?> _pickTime(
+    BuildContext context, {
+    required TimeOfDay initialTime,
+  }) async {
+    FocusManager.instance.primaryFocus?.unfocus();
+    final TimeOfDay? pickedTime = await showTimePicker(
+      context: context,
+      initialTime: initialTime,
+    );
+    FocusManager.instance.primaryFocus?.unfocus();
+
+    return pickedTime;
+  }
+
+  String _valueToDate(DateTime? date, {required BuildContext context}) {
+    final dayFormat = DateFormat.yMd(AppLocalizations.of(context)!.localeName);
+    return date == null ? dateLabel(context) : dayFormat.format(date);
   }
 
   String? _validator(DateTime? date) {
