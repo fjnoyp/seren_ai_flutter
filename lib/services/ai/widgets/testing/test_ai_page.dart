@@ -102,58 +102,60 @@ class TestAiPage extends HookConsumerWidget {
       );
     }
 
-    return Column(
-      children: [
-        const Text('Debug Page'),
-        _buildDebugButton(
-          label: 'Test Single Call',
-          onPressed: () async {
-            final messages = await aiChatService.sendSingleCallMessageToAi(
-              systemMessage: 'Respond in French only',
-              userMessage: 'Pourquoi est-il difficile de parler français?',
-            );
-            responseState.value = 'Messages: $messages';
-          },
-        ),
-        _buildDebugButton(
-          label: 'Test Create Assistant',
-          onPressed: () async {
-            final assistantId =
-                await createAssistant(curUserId, curOrgId, langgraphService);
-            responseState.value = 'Created Assistant: $assistantId';
-          },
-        ),
-        _buildDebugButton(
-          label: 'Test Get Assistants',
-          onPressed: () async {
-            final assistantIds =
-                await getAssistants(curUserId, curOrgId, langgraphService);
-            responseState.value = 'Found Assistants: $assistantIds';
-          },
-        ),
-        _buildDebugButton(
-          label: 'Test Delete All Assistants',
-          onPressed: () => deleteAllAssistants(langgraphService),
-          successMessage: 'Deleted All Assistants',
-        ),
-        _buildDebugButton(
-          label: 'Test Get Threads',
-          onPressed: () async {
-            final threads = await getThreads(langgraphService);
-            responseState.value = 'Found Threads: $threads';
-          },
-        ),
-        _buildDebugButton(
-          label: 'Test Delete All Threads',
-          onPressed: () => deleteAllThreads(langgraphService),
-          successMessage: 'Deleted All Threads',
-        ),
-        if (responseState.value != null)
-          Padding(
-            padding: const EdgeInsets.all(8.0),
-            child: SelectableText('Response: ${responseState.value}'),
+    return SingleChildScrollView(
+      child: Column(
+        children: [
+          const Text('Debug Page'),
+          _buildDebugButton(
+            label: 'Test Single Call',
+            onPressed: () async {
+              final messages = await aiChatService.sendSingleCallMessageToAi(
+                systemMessage: 'Respond in French only',
+                userMessage: 'Pourquoi est-il difficile de parler français?',
+              );
+              responseState.value = 'Messages: $messages';
+            },
           ),
-      ],
+          _buildDebugButton(
+            label: 'Test Create Assistant',
+            onPressed: () async {
+              final assistantId =
+                  await createAssistant(curUserId, curOrgId, langgraphService);
+              responseState.value = 'Created Assistant: $assistantId';
+            },
+          ),
+          _buildDebugButton(
+            label: 'Test Get Assistants',
+            onPressed: () async {
+              final assistantIds =
+                  await getAssistants(curUserId, curOrgId, langgraphService);
+              responseState.value = 'Found Assistants: $assistantIds';
+            },
+          ),
+          _buildDebugButton(
+            label: 'Test Delete All Assistants',
+            onPressed: () => deleteAllAssistants(langgraphService),
+            successMessage: 'Deleted All Assistants',
+          ),
+          _buildDebugButton(
+            label: 'Test Get Threads',
+            onPressed: () async {
+              final threads = await getThreads(langgraphService);
+              responseState.value = 'Found Threads: $threads';
+            },
+          ),
+          _buildDebugButton(
+            label: 'Test Delete All Threads',
+            onPressed: () => deleteAllThreads(langgraphService),
+            successMessage: 'Deleted All Threads',
+          ),
+          if (responseState.value != null)
+            Padding(
+              padding: const EdgeInsets.all(8.0),
+              child: SelectableText('Response: ${responseState.value}'),
+            ),
+        ],
+      ),
     );
   }
 }

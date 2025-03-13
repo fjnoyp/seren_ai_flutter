@@ -2,11 +2,11 @@
 class BuildInfo {
   // Core build info
   static const String version = '1.0.0';
-  static const String buildDate = '2025-03-13 14:21:09';
+  static const String buildDate = '2025-03-13 09:34:40';
   
   // Git info
-  static const String commitHash = 'aae8709';
-  static const String branch = 'feat/split-date-and-time-on-field';
+  static const String commitHash = 'd42d62f';
+  static const String branch = 'feat/ai_overhaul';
   static const String lastTag = 'no tag';
   
   // Author of last commit
@@ -16,48 +16,48 @@ class BuildInfo {
   // Recent commits (last 5)
   static const List<Map<String, String>> recentCommits = [
     {
-      "hash": "aae8709",
+      "hash": "d42d62f",
       "author": "renata-sisilio",
       "email": "renata@seren-ai.co", 
-      "message": "fix(tasks): task comments not opening",
-      "date": "2025-03-13",
-      "relativeDate": "2 minutes ago"
-    },
-    {
-      "hash": "3762870",
-      "author": "renata-sisilio",
-      "email": "renata@seren-ai.co", 
-      "message": "fix(drawer_view): limit text overflow for organization and user names in drawer",
-      "date": "2025-03-13",
-      "relativeDate": "4 hours ago"
-    },
-    {
-      "hash": "c1295a4",
-      "author": "renata-sisilio",
-      "email": "renata@seren-ai.co", 
-      "message": "fix(web_scaffold): hide drawer button when drawer is already open",
-      "date": "2025-03-13",
-      "relativeDate": "5 hours ago"
-    },
-    {
-      "hash": "e327110",
-      "author": "renata-sisilio",
-      "email": "renata@seren-ai.co", 
-      "message": "fix(onboarding): auto redirect to org page - for slow connection cases where users already have orgs but are redirected to onboarding",
-      "date": "2025-03-13",
-      "relativeDate": "5 hours ago"
-    },
-    {
-      "hash": "d1f1cea",
-      "author": "renata-sisilio",
-      "email": "renata@seren-ai.co", 
-      "message": "fix(tasks): description field cursor position + revert selection fields misalignment",
+      "message": "fix(ai_assistant): cleanup and fix ai assistant flow logics",
       "date": "2025-03-12",
-      "relativeDate": "25 hours ago"
+      "relativeDate": "27 hours ago"
+    },
+    {
+      "hash": "60d537e",
+      "author": "renata-sisilio",
+      "email": "renata@seren-ai.co", 
+      "message": "feat(gantt): add task navigation button to Gantt chart for quick timeframe access",
+      "date": "2025-03-11",
+      "relativeDate": "2 days ago"
+    },
+    {
+      "hash": "83d03dd",
+      "author": "renata-sisilio",
+      "email": "renata@seren-ai.co", 
+      "message": "fix: redirect to home and show message when trying to open a page containing data from an org that the user is not a member of.",
+      "date": "2025-03-11",
+      "relativeDate": "2 days ago"
+    },
+    {
+      "hash": "52f7fdf",
+      "author": "renata-sisilio",
+      "email": "renata@seren-ai.co", 
+      "message": "fix(gantt): open task directly on click in gantt Chart + show description on hover",
+      "date": "2025-03-10",
+      "relativeDate": "3 days ago"
+    },
+    {
+      "hash": "ab288be",
+      "author": "renata-sisilio",
+      "email": "renata@seren-ai.co", 
+      "message": "feat(gantt): enable directly assign tasks from gantt chart view",
+      "date": "2025-03-10",
+      "relativeDate": "3 days ago"
     },
   ];
 
   // Stats
-  static const String totalCommits = '416';
-  static const String contributors = '0';
+  static const String totalCommits = '411';
+  static const String contributors = '       0';
 }
