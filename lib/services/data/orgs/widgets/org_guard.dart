@@ -60,6 +60,13 @@ class OrgGuard extends ConsumerWidget {
         }
         // If still no orgs after retries, navigate to onboarding page
         if (context.mounted) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(
+              content: Text(
+                  'Slow connection. If you already have an organization, please wait a moment and you\'ll be redirected automatically.'),
+              duration: Duration(seconds: 6),
+            ),
+          );
           ref
               .read(navigationServiceProvider)
               .navigateTo(AppRoutes.onboarding.name, clearStack: true);
