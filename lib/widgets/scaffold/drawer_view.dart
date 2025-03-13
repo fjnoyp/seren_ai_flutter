@@ -54,8 +54,11 @@ class DrawerView extends ConsumerWidget {
                   Flexible(
                     fit: FlexFit.tight,
                     child: Text(
-                        curOrg?.name ?? AppLocalizations.of(context)!.menu,
-                        style: const TextStyle(fontSize: 24)),
+                      curOrg?.name ?? AppLocalizations.of(context)!.menu,
+                      style: const TextStyle(fontSize: 24),
+                      maxLines: 1,
+                      overflow: TextOverflow.clip,
+                    ),
                   ),
                   IconButton(
                     icon: const Icon(Icons.swap_horiz),
@@ -178,7 +181,11 @@ class DrawerView extends ConsumerWidget {
                   .read(navigationServiceProvider)
                   .navigateTo(AppRoutes.settings.name),
               leading: UserAvatar(user, radius: 16),
-              title: Text('${user.firstName} ${user.lastName}'),
+              title: Text(
+                '${user.firstName} ${user.lastName}',
+                maxLines: 1,
+                overflow: TextOverflow.clip,
+              ),
               trailing: Tooltip(
                 message: AppLocalizations.of(context)!.signOut,
                 child: IconButton(
