@@ -195,11 +195,13 @@ class AppState extends ConsumerState<App> {
                     AppLocalizations.of(context)!.notifications,
                     const NotificationsPage(),
                   ),
-              AppRoutes.onboarding.name: (context) => const AuthGuard(
-                    child: OnboardingPage(),
+              AppRoutes.onboarding.name: (context) => const _GuardScaffold(
+                    'Onboarding',
+                    OnboardingPage(),
                   ),
-              AppRoutes.noInvites.name: (context) => const AuthGuard(
-                    child: NoInvitesPage(),
+              AppRoutes.noInvites.name: (context) => const _GuardScaffold(
+                    'No Invites',
+                    NoInvitesPage(),
                   ),
               AppRoutes.orgInvite.name: (context) => AuthGuard(
                     child: OrgInvitePage(orgId: args?['orgId']),
