@@ -8,6 +8,7 @@ import 'package:seren_ai_flutter/services/data/tasks/tool_methods/models/create_
 import 'package:seren_ai_flutter/services/data/tasks/tool_methods/models/delete_task_result_model.dart';
 import 'package:seren_ai_flutter/services/data/tasks/tool_methods/models/find_tasks_result_model.dart';
 import 'package:seren_ai_flutter/services/data/tasks/tool_methods/models/update_task_fields_result_model.dart';
+import 'package:seren_ai_flutter/services/data/tasks/tool_methods/models/add_comment_to_task_result_model.dart';
 
 enum AiRequestResultType {
   shiftAssignments('shift_assignments'),
@@ -17,7 +18,8 @@ enum AiRequestResultType {
   createTask('create_task'),
   deleteTask('delete_task'),
   error('error'),
-  updateTaskFields('update_task_fields');
+  updateTaskFields('update_task_fields'),
+  addCommentToTask('add_comment_to_task');
   //unknown('unknown');
 
   final String value;
@@ -76,6 +78,8 @@ abstract class AiRequestResultModel {
         return ErrorRequestResultModel.fromJson(json);
       case AiRequestResultType.deleteTask:
         return DeleteTaskResultModel.fromJson(json);
+      case AiRequestResultType.addCommentToTask:
+        return AddCommentToTaskResultModel.fromJson(json);
       //throw Exception('Unknown type for AiRequestResultModel: $resultType');
     }
   }

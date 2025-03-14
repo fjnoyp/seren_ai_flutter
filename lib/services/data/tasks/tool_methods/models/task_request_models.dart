@@ -54,9 +54,29 @@ class FindTasksRequestModel extends AiInfoRequestModel {
   }
 }
 
+class AddCommentToTaskRequestModel extends AiActionRequestModel {
+  final String taskName;
+  final String comment;
+
+  AddCommentToTaskRequestModel({
+    required this.taskName,
+    required this.comment,
+    super.args,
+  }) : super(actionRequestType: AiActionRequestType.addCommentToTask);
+
+  static AddCommentToTaskRequestModel fromJson(Map<String, dynamic> json) {
+    return AddCommentToTaskRequestModel(
+      args: json['args'],
+      taskName: json['args']['task_name'],
+      comment: json['args']['comment'],
+    );
+  }
+}
+
 class CreateTaskRequestModel extends AiActionRequestModel {
   final String taskName;
   final String? taskDescription;
+  final String? taskStartDate; // Must be in ISO 8601 format
   final String? taskDueDate; // Must be in ISO 8601 format
   final String? taskPriority; // Must be: veryLow, low, normal, high, veryHigh
   final String? taskStatus; // Must be: todo, inProgress, done
@@ -67,6 +87,7 @@ class CreateTaskRequestModel extends AiActionRequestModel {
   CreateTaskRequestModel({
     required this.taskName,
     this.taskDescription,
+    this.taskStartDate,
     this.taskDueDate,
     this.taskPriority,
     this.taskStatus,
@@ -81,6 +102,7 @@ class CreateTaskRequestModel extends AiActionRequestModel {
       args: json['args'],
       taskName: json['args']['task_name'],
       taskDescription: json['args']['task_description'],
+      taskStartDate: json['args']['task_start_date'],
       taskDueDate: json['args']['task_due_date'],
       taskPriority: json['args']['task_priority'],
       taskStatus: json['args']['task_status'],
