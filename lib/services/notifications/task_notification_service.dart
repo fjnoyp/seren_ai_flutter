@@ -125,6 +125,10 @@ class TaskNotificationService {
     final task = await ref.read(tasksRepositoryProvider).getById(taskId);
     if (task == null) return;
 
+    // Ensure we don't notify the current user
+    final curUser = ref.read(curUserProvider).value;
+    if (curUser != null && curUser.id == affectedUserId) return;
+
     // For assignments, we only notify:
     // 1. The affected user (being assigned/unassigned)
     // 2. The task author (if different from current user)
