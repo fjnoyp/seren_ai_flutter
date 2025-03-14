@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:seren_ai_flutter/common/current_route_provider.dart';
 import 'package:seren_ai_flutter/common/routes/app_routes.dart';
 import 'package:seren_ai_flutter/common/universal_platform/universal_platform.dart';
+import 'package:seren_ai_flutter/services/data/tasks/tool_methods/models/add_comment_to_task_result_model.dart';
 import 'package:seren_ai_flutter/services/data/tasks/tool_methods/models/create_task_result_model.dart';
 import 'package:seren_ai_flutter/services/data/tasks/tool_methods/models/delete_task_result_model.dart';
 import 'package:seren_ai_flutter/services/data/tasks/tool_methods/models/find_tasks_result_model.dart';
@@ -107,6 +108,49 @@ class DeleteTaskResultWidget extends ConsumerWidget {
               _ => result.resultForAi,
             },
             style: Theme.of(context).textTheme.titleMedium,
+          ),
+        ),
+      ],
+    );
+  }
+}
+
+class AddCommentToTaskResultWidget extends ConsumerWidget {
+  final AddCommentToTaskResultModel result;
+  const AddCommentToTaskResultWidget({super.key, required this.result});
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    return Row(
+      children: [
+        const Icon(Icons.chat_bubble_outline),
+        const SizedBox(width: 8),
+        Expanded(
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text(
+                result.task != null
+                    ? 'Added comment to task "${result.task!.name}"'
+                    : 'Added comment to task',
+                style: Theme.of(context).textTheme.titleMedium,
+              ),
+              const SizedBox(height: 4),
+              Card(
+                elevation: 0,
+                color: Theme.of(context)
+                    .colorScheme
+                    .surfaceVariant
+                    .withOpacity(0.5),
+                child: Padding(
+                  padding: const EdgeInsets.all(8.0),
+                  child: Text(
+                    result.comment.content ?? '',
+                    style: Theme.of(context).textTheme.bodyMedium,
+                  ),
+                ),
+              ),
+            ],
           ),
         ),
       ],

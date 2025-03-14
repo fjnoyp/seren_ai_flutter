@@ -26,10 +26,13 @@ import 'package:seren_ai_flutter/services/data/orgs/providers/cur_selected_org_i
 import 'package:seren_ai_flutter/services/data/projects/models/project_model.dart';
 import 'package:seren_ai_flutter/services/data/projects/providers/search_projects_service.dart';
 import 'package:seren_ai_flutter/services/data/projects/repositories/projects_repository.dart';
+import 'package:seren_ai_flutter/services/data/tasks/models/task_comment_model.dart';
 import 'package:seren_ai_flutter/services/data/tasks/models/task_model.dart';
 import 'package:seren_ai_flutter/services/data/tasks/providers/cur_selected_task_id_notifier_provider.dart';
 import 'package:seren_ai_flutter/services/data/tasks/providers/task_assignments_service_provider.dart';
+import 'package:seren_ai_flutter/services/data/tasks/repositories/task_comments_repository.dart';
 import 'package:seren_ai_flutter/services/data/tasks/repositories/tasks_repository.dart';
+import 'package:seren_ai_flutter/services/data/tasks/tool_methods/models/add_comment_to_task_result_model.dart';
 import 'package:seren_ai_flutter/services/data/tasks/tool_methods/models/create_task_result_model.dart';
 import 'package:seren_ai_flutter/services/data/tasks/tool_methods/models/delete_task_result_model.dart';
 import 'package:seren_ai_flutter/services/data/tasks/tool_methods/models/find_tasks_result_model.dart';
@@ -225,6 +228,9 @@ class TaskToolMethods {
     final newTask = TaskModel(
       name: actionRequest.taskName,
       description: actionRequest.taskDescription,
+      startDateTime: actionRequest.taskStartDate != null
+          ? DateTime.parse(actionRequest.taskStartDate!)
+          : null,
       dueDate: actionRequest.taskDueDate != null
           ? DateTime.parse(actionRequest.taskDueDate!)
           : null,
@@ -452,6 +458,48 @@ class TaskToolMethods {
     return ErrorRequestResultModel(
         resultForAi: 'Not implemented for request: ${actionRequest.toString()}',
         showOnly: true);
+  }
+
+  Future<AiRequestResultModel> addCommentToTask(
+      {required Ref ref,
+      required AddCommentToTaskRequestModel actionRequest}) async {
+    final userId = _getUserId(ref);
+    if (userId == null) return _handleNoAuth();
+
+    // Find the task by name
+    final matchingTasks = await _getTasksByName(ref, actionRequest.taskName);
+
+    if (matchingTasks.isEmpty) {
+      return ErrorRequestResultModel(
+          resultForAi:
+              'No matching tasks found with the name "${actionRequest.taskName}"',
+          showOnly: true);
+    }
+
+    final taskToComment = matchingTasks.first;
+
+    // Create and save the comment
+    final comment = TaskCommentModel(
+      authorUserId: userId,
+      parentTaskId: taskToComment.id,
+      content: actionRequest.comment,
+      createdAt: DateTime.now().toUtc(),
+    );
+
+    // Save the comment to the repository
+    await ref.read(taskCommentsRepositoryProvider).insertItem(comment);
+
+    // Update task view if available
+    ref
+        .read(curSelectedTaskIdNotifierProvider.notifier)
+        .setTaskId(taskToComment.id);
+
+    return AddCommentToTaskResultModel(
+      comment: comment,
+      task: taskToComment,
+      resultForAi: 'Added comment to task "${taskToComment.name}"',
+      showOnly: true,
+    );
   }
 
   String? _getUserId(Ref ref) {
