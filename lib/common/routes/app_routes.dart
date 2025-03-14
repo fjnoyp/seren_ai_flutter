@@ -37,23 +37,15 @@ enum AppRoutes {
     if (!path.startsWith('/')) {
       path = '/$path';
     }
-    // Add trailing / if not present
-    if (!path.endsWith('/')) {
-      path = '$path/';
-    }
 
     // Remove multiple consecutive slashes and normalize
     path = path.replaceAll(RegExp(r'\/+'), '/');
 
     for (var route in AppRoutes.values) {
-      // Convert route path to pattern by adding trailing slash
-      String routePath = route._path;
-      if (!routePath.endsWith('/')) {
-        routePath = '$routePath/';
-      }
-
-      // Check if paths match when normalized
-      if (path == routePath) {
+      // Check if path starts with the route path
+      if (path == route._path ||
+          path.startsWith('${route._path}/') ||
+          path == '${route._path}') {
         return route;
       }
     }
