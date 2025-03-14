@@ -77,14 +77,45 @@ class CurSelectedTaskIdNotifier extends Notifier<String?> {
         .read(usersRepositoryProvider)
         .getTaskAssignedUsers(taskId: state!);
 
-    return {
-      'task': {
-        'name': curTask.name,
-        'description': curTask.description,
-        'status': curTask.status,
-        'due_date': curTask.dueDate?.toIso8601String(),
-      },
-      'assignees': curAssignees.map((user) => user.email).toList(),
+    final taskMap = <String, dynamic>{
+      'name': curTask.name,
+      'type': curTask.type.toString(),
     };
+
+    if (curTask.description != null && curTask.description!.isNotEmpty) {
+      taskMap['description'] = curTask.description;
+    }
+
+    if (curTask.status != null) {
+      taskMap['status'] = curTask.status.toString();
+    }
+
+    if (curTask.priority != null) {
+      taskMap['priority'] = curTask.priority.toString();
+    }
+
+    if (curTask.dueDate != null) {
+      taskMap['due_date'] = curTask.dueDate!.toIso8601String();
+    }
+
+    if (curTask.startDateTime != null) {
+      taskMap['start_date'] = curTask.startDateTime!.toIso8601String();
+    }
+
+    if (curTask.estimatedDurationMinutes != null) {
+      taskMap['estimated_duration_minutes'] = curTask.estimatedDurationMinutes;
+    }
+
+    if (curTask.createdAt != null) {
+      taskMap['created_at'] = curTask.createdAt!.toIso8601String();
+    }
+
+    if (curAssignees.isNotEmpty) {
+      taskMap['assignees'] = curAssignees.map((user) => user.fullName).toList();
+    }
+
+    final result = {'task': taskMap};
+
+    return result;
   }
 }
