@@ -57,6 +57,8 @@ class UserModel implements IHasId {
   @override
   int get hashCode => id.hashCode;
 
+  String get fullName => '$firstName $lastName';
+
   factory UserModel.fromJson(Map<String, dynamic> json) =>
       _$UserModelFromJson(json);
   Map<String, dynamic> toJson() => _$UserModelToJson(this);
