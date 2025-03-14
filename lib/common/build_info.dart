@@ -2,11 +2,11 @@
 class BuildInfo {
   // Core build info
   static const String version = '1.0.0';
-  static const String buildDate = '2025-03-14 11:04:51';
+  static const String buildDate = '2025-03-14 11:24:12';
   
   // Git info
-  static const String commitHash = 'b1ca2a3';
-  static const String branch = 'main';
+  static const String commitHash = 'af052ef';
+  static const String branch = 'feat/ai_enhancements';
   static const String lastTag = 'no tag';
   
   // Author of last commit
@@ -15,6 +15,14 @@ class BuildInfo {
   
   // Recent commits (last 5)
   static const List<Map<String, String>> recentCommits = [
+    {
+      "hash": "af052ef",
+      "author": "Kyle",
+      "email": "kylcheng@gmail.com", 
+      "message": "feat(ai): allow ai to add task comments, fix ui context",
+      "date": "2025-03-14",
+      "relativeDate": "19 minutes ago"
+    },
     {
       "hash": "b1ca2a3",
       "author": "Kyle",
@@ -47,17 +55,9 @@ class BuildInfo {
       "date": "2025-03-13",
       "relativeDate": "29 hours ago"
     },
-    {
-      "hash": "c1295a4",
-      "author": "renata-sisilio",
-      "email": "renata@seren-ai.co", 
-      "message": "fix(web_scaffold): hide drawer button when drawer is already open",
-      "date": "2025-03-13",
-      "relativeDate": "29 hours ago"
-    },
   ];
 
   // Stats
-  static const String totalCommits = '418';
+  static const String totalCommits = '419';
   static const String contributors = '       0';
 }

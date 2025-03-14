@@ -1,4 +1,5 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:seren_ai_flutter/services/auth/cur_auth_state_provider.dart';
 import 'package:seren_ai_flutter/services/data/orgs/providers/cur_selected_org_id_notifier.dart';
 import 'package:seren_ai_flutter/services/data/tasks/models/task_user_assignment_model.dart';
 import 'package:seren_ai_flutter/services/data/tasks/repositories/task_user_assignments_repository.dart';
@@ -35,6 +36,14 @@ class TaskAssignmentsService {
       if (users.isNotEmpty) {
         userAssignmentResults.add(users.first);
         await _addAssignee(taskId, users.first.id);
+      }
+    }
+
+    // Handle special "MYSELF" assignment
+    if (userSearchQuery.contains('MYSELF')) {
+      final currentUser = ref.read(curUserProvider).value;
+      if (currentUser != null) {
+        await _addAssignee(taskId, currentUser.id);
       }
     }
 
