@@ -1,13 +1,15 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_hooks/flutter_hooks.dart';
+import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:intl/intl.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+import 'package:seren_ai_flutter/services/data/common/widgets/form/color_animation.dart';
 import 'package:seren_ai_flutter/services/data/tasks/models/task_comment_model.dart';
 import 'package:seren_ai_flutter/services/data/users/widgets/user_avatar.dart';
 import 'package:seren_ai_flutter/services/data/users/models/user_model.dart';
 import 'package:seren_ai_flutter/services/data/users/repositories/users_repository.dart';
-import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-class TaskCommentCard extends ConsumerWidget {
+class TaskCommentCard extends HookConsumerWidget {
   const TaskCommentCard(this.comment, {super.key});
   final TaskCommentModel comment;
 
@@ -15,6 +17,13 @@ class TaskCommentCard extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final authorFuture =
         ref.watch(usersRepositoryProvider).getById(comment.authorUserId);
+
+    // Add color animation for new comments when AI is responding
+    final colorAnimation = useAiActionColorAnimation(
+      context,
+      ref,
+      triggerValue: comment.id,
+    );
 
     return Card(
       child: Padding(
@@ -51,7 +60,17 @@ class TaskCommentCard extends ConsumerWidget {
             ),
             Padding(
               padding: const EdgeInsets.all(16.0),
-              child: Text(comment.content ?? ''),
+              child: AnimatedBuilder(
+                animation: colorAnimation.colorTween,
+                builder: (context, child) {
+                  return Text(
+                    comment.content ?? '',
+                    style: TextStyle(
+                      color: colorAnimation.colorTween.value,
+                    ),
+                  );
+                },
+              ),
             ),
           ],
         ),

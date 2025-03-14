@@ -2,62 +2,62 @@
 class BuildInfo {
   // Core build info
   static const String version = '1.0.0';
-  static const String buildDate = '2025-03-13 09:34:40';
+  static const String buildDate = '2025-03-14 11:04:51';
   
   // Git info
-  static const String commitHash = 'd42d62f';
-  static const String branch = 'feat/ai_overhaul';
+  static const String commitHash = 'b1ca2a3';
+  static const String branch = 'main';
   static const String lastTag = 'no tag';
   
   // Author of last commit
-  static const String lastCommitAuthor = 'renata-sisilio';
-  static const String lastCommitEmail = 'renata@seren-ai.co';
+  static const String lastCommitAuthor = 'Kyle';
+  static const String lastCommitEmail = 'kylcheng@gmail.com';
   
   // Recent commits (last 5)
   static const List<Map<String, String>> recentCommits = [
     {
-      "hash": "d42d62f",
-      "author": "renata-sisilio",
-      "email": "renata@seren-ai.co", 
-      "message": "fix(ai_assistant): cleanup and fix ai assistant flow logics",
-      "date": "2025-03-12",
-      "relativeDate": "27 hours ago"
+      "hash": "b1ca2a3",
+      "author": "Kyle",
+      "email": "kylcheng@gmail.com", 
+      "message": "feat(ai): ai overhaul to multistep reasoning",
+      "date": "2025-03-13",
+      "relativeDate": "26 hours ago"
     },
     {
-      "hash": "60d537e",
+      "hash": "1169993",
       "author": "renata-sisilio",
       "email": "renata@seren-ai.co", 
-      "message": "feat(gantt): add task navigation button to Gantt chart for quick timeframe access",
-      "date": "2025-03-11",
-      "relativeDate": "2 days ago"
+      "message": "feat(forms): enhance date-time selection UI by splitting fields",
+      "date": "2025-03-13",
+      "relativeDate": "25 hours ago"
     },
     {
-      "hash": "83d03dd",
+      "hash": "aae8709",
       "author": "renata-sisilio",
       "email": "renata@seren-ai.co", 
-      "message": "fix: redirect to home and show message when trying to open a page containing data from an org that the user is not a member of.",
-      "date": "2025-03-11",
-      "relativeDate": "2 days ago"
+      "message": "fix(tasks): task comments not opening",
+      "date": "2025-03-13",
+      "relativeDate": "25 hours ago"
     },
     {
-      "hash": "52f7fdf",
+      "hash": "3762870",
       "author": "renata-sisilio",
       "email": "renata@seren-ai.co", 
-      "message": "fix(gantt): open task directly on click in gantt Chart + show description on hover",
-      "date": "2025-03-10",
-      "relativeDate": "3 days ago"
+      "message": "fix(drawer_view): limit text overflow for organization and user names in drawer",
+      "date": "2025-03-13",
+      "relativeDate": "29 hours ago"
     },
     {
-      "hash": "ab288be",
+      "hash": "c1295a4",
       "author": "renata-sisilio",
       "email": "renata@seren-ai.co", 
-      "message": "feat(gantt): enable directly assign tasks from gantt chart view",
-      "date": "2025-03-10",
-      "relativeDate": "3 days ago"
+      "message": "fix(web_scaffold): hide drawer button when drawer is already open",
+      "date": "2025-03-13",
+      "relativeDate": "29 hours ago"
     },
   ];
 
   // Stats
-  static const String totalCommits = '411';
+  static const String totalCommits = '418';
   static const String contributors = '       0';
 }

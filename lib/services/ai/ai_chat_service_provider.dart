@@ -139,7 +139,7 @@ class AIChatService {
     }
 
     final sb = StringBuffer();
-    sb.writeln('CurPage: $curRoute\n');
+    sb.writeln('CurPage: ${appRoute.toString()}\n');
 
     //final curUser = ref.read(curUserProvider).value;
     //sb.writeln('CurUser: ${curUser?.email}\n');
@@ -162,7 +162,7 @@ class AIChatService {
   Future<void> _runAi({
     required AiChatThreadModel aiChatThread,
     String? userMessage,
-    String? uiContext,
+    required String uiContext,
     LgCommandModel? command,
   }) async {
     final langgraphService = ref.read(langgraphServiceProvider);
@@ -252,10 +252,13 @@ class AIChatService {
 
     // === Send All Results to LangGraph for Followup ===
 
+    // Update the UI Context as tools may have changed it ...
+    final uiContext = await _getUIContext();
+
     await _runAi(
         aiChatThread: aiChatThread,
         command: LgCommandModel.resume(allResults.toString()),
-        uiContext: null);
+        uiContext: uiContext);
   }
 
   Future<AiChatThreadModel> _getOrCreateAiChatThread(

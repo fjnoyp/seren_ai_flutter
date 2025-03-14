@@ -126,6 +126,11 @@ class AiRequestExecutor {
             ref: ref,
             actionRequest: actionRequest as AssignUserToTaskRequestModel);
 
+      case AiActionRequestType.addCommentToTask:
+        return await taskToolMethods.addCommentToTask(
+            ref: ref,
+            actionRequest: actionRequest as AddCommentToTaskRequestModel);
+
       default:
         return ErrorRequestResultModel(
             resultForAi: 'Unknown action request: ${actionRequest.toString()}',

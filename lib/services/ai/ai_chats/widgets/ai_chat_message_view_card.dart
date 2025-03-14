@@ -9,6 +9,7 @@ import 'package:seren_ai_flutter/services/data/shifts/tool_methods/models/shift_
 import 'package:seren_ai_flutter/services/data/shifts/tool_methods/models/shift_clock_in_out_result_model.dart';
 import 'package:seren_ai_flutter/services/data/shifts/tool_methods/models/shift_log_results_model.dart';
 import 'package:seren_ai_flutter/services/data/shifts/tool_methods/shift_result_widgets.dart';
+import 'package:seren_ai_flutter/services/data/tasks/tool_methods/models/add_comment_to_task_result_model.dart';
 import 'package:seren_ai_flutter/services/data/tasks/tool_methods/models/create_task_result_model.dart';
 import 'package:seren_ai_flutter/services/data/tasks/tool_methods/models/delete_task_result_model.dart';
 import 'package:seren_ai_flutter/services/data/tasks/tool_methods/models/find_tasks_result_model.dart';
@@ -313,6 +314,8 @@ class _AiRequestResultWidget extends StatelessWidget {
               result: result as UpdateTaskFieldsResultModel),
           AiRequestResultType.deleteTask =>
             DeleteTaskResultWidget(result: result as DeleteTaskResultModel),
+          AiRequestResultType.addCommentToTask => AddCommentToTaskResultWidget(
+              result: result as AddCommentToTaskResultModel),
         },
       ),
     );
