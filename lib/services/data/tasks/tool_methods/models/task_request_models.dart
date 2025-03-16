@@ -116,6 +116,7 @@ class CreateTaskRequestModel extends AiActionRequestModel {
 class UpdateTaskFieldsRequestModel extends AiActionRequestModel {
   final String taskName;
   final String? taskDescription;
+  final String? taskStartDate;
   final String? taskDueDate;
   final String? taskStatus;
   final String? taskPriority;
@@ -126,6 +127,7 @@ class UpdateTaskFieldsRequestModel extends AiActionRequestModel {
   UpdateTaskFieldsRequestModel({
     required this.taskName,
     this.taskDescription,
+    this.taskStartDate,
     this.taskDueDate,
     this.taskStatus,
     this.taskPriority,
@@ -140,6 +142,7 @@ class UpdateTaskFieldsRequestModel extends AiActionRequestModel {
       args: json['args'],
       taskName: json['args']['task_name'],
       taskDescription: json['args']['task_description'],
+      taskStartDate: json['args']['task_start_date'],
       taskDueDate: json['args']['task_due_date'],
       taskStatus: json['args']['task_status'],
       taskPriority: json['args']['task_priority'],
