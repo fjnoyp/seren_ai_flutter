@@ -17,7 +17,7 @@ import 'package:seren_ai_flutter/common/utils/date_time_extension.dart';
 import 'package:seren_ai_flutter/services/ai/ai_request/models/results/ai_request_result_model.dart';
 import 'package:seren_ai_flutter/services/ai/ai_request/models/results/error_request_result_model.dart';
 import 'package:seren_ai_flutter/services/auth/cur_auth_state_provider.dart';
-import 'package:seren_ai_flutter/services/ai/ai_chats/date_list_parser.dart';
+import 'package:seren_ai_flutter/services/data/tasks/tool_methods/ai_date_parser.dart';
 import 'package:seren_ai_flutter/services/data/common/status_enum.dart';
 import 'package:seren_ai_flutter/services/data/common/utils/string_similarity_extension.dart';
 import 'package:seren_ai_flutter/services/data/common/widgets/delete_confirmation_dialog.dart';
@@ -41,6 +41,7 @@ import 'package:seren_ai_flutter/services/data/tasks/tool_methods/models/update_
 import 'package:seren_ai_flutter/services/data/tasks/widgets/action_buttons/edit_task_button.dart';
 import 'package:seren_ai_flutter/services/data/users/models/user_model.dart';
 import 'package:seren_ai_flutter/services/data/users/repositories/users_repository.dart';
+import 'package:seren_ai_flutter/services/data/tasks/tool_methods/ai_tool_execution_utils.dart';
 
 class TaskToolMethods {
   // Threshold for string similarity (0.0 to 1.0)
@@ -81,11 +82,11 @@ class TaskToolMethods {
 
     // Get a list of dates to allow for due date search
     final List<DateTime> dueDatesToGet = infoRequest.dueDatesToGet != null
-        ? DateListParser.parseDateList(infoRequest.dueDatesToGet!)
+        ? AiDateParser.parseDateList(infoRequest.dueDatesToGet!)
         : [];
     final List<DateTime> createdDatesToGet =
         infoRequest.createdDatesToGet != null
-            ? DateListParser.parseDateList(infoRequest.createdDatesToGet!)
+            ? AiDateParser.parseDateList(infoRequest.createdDatesToGet!)
             : [];
 
     // Filter tasks based on search criteria
@@ -113,13 +114,19 @@ class TaskToolMethods {
         return false;
       }
 
-      // Author email / username search with fuzzy matching
+      // Author email / username search with fuzzy matching or MYSELF match
       final author = authorsMap[task.authorUserId];
-      if (infoRequest.authorUserName != null &&
-          author != null &&
-          author.email.similarity(infoRequest.authorUserName!) <
-              _similarityThreshold) {
-        return false;
+      if (infoRequest.authorUserName != null) {
+        if (AiToolExecutionUtils.isMyselfKeyword(infoRequest.authorUserName)) {
+          // Special case for "MYSELF" to match current user
+          if (userId != task.authorUserId) {
+            return false;
+          }
+        } else if (author != null &&
+            author.email.similarity(infoRequest.authorUserName!) <
+                _similarityThreshold) {
+          return false;
+        }
       }
 
       // --- Keep exact matching for non-string fields:
@@ -178,28 +185,42 @@ class TaskToolMethods {
         return false;
       }
 
-      // Assigned users match using similarity calculation
+      // Assigned users match using similarity calculation or MYSELF match
       final assignedUsers = assigneesMap[task.id];
       if (infoRequest.assignedUserNames != null && assignedUsers != null) {
-        final taskAssigneeNames =
-            assignedUsers.map((u) => u.email.toLowerCase()).toList();
-        final searchNames =
-            infoRequest.assignedUserNames!.map((n) => n.toLowerCase()).toList();
+        if (AiToolExecutionUtils.containsMyselfKeyword(
+            infoRequest.assignedUserNames)) {
+          // Check if current user is assigned to this task
+          if (!assignedUsers.any((user) => user.id == userId)) {
+            return false;
+          }
+        } else {
+          // Standard similarity matching for user names
+          final taskAssigneeNames =
+              assignedUsers.map((u) => u.email.toLowerCase()).toList();
+          final searchNames = infoRequest.assignedUserNames!
+              .map((n) => n.toLowerCase())
+              .toList();
 
-        // Calculate similarity and check if any search name matches task assignee names
-        if (!searchNames.any((searchName) => taskAssigneeNames.any((taskName) =>
-            searchName.similarity(taskName) > _differenceThreshold))) {
-          return false;
+          // Calculate similarity and check if any search name matches task assignee names
+          if (!searchNames.any((searchName) => taskAssigneeNames.any(
+              (taskName) =>
+                  searchName.similarity(taskName) > _differenceThreshold))) {
+            return false;
+          }
         }
       }
 
       return true;
     }).toList();
 
+    const maxTasksToSend = 20;
+    final tasksToSend = filteredTasks.take(maxTasksToSend).toList();
+
     return FindTasksResultModel(
-      tasks: filteredTasks,
+      tasks: tasksToSend,
       resultForAi:
-          'Found ${filteredTasks.length} matching tasks: ${filteredTasks.map((task) => task.toAiReadableMap(project: projectsMap[task.parentProjectId], author: authorsMap[task.authorUserId], assignees: assigneesMap[task.id])).toList()}',
+          'Found ${filteredTasks.length} matching tasks: ${tasksToSend.map((task) => task.toAiReadableMap(project: projectsMap[task.parentProjectId], author: authorsMap[task.authorUserId], assignees: assigneesMap[task.id])).toList()}',
       showOnly: infoRequest.showOnly,
     );
   }
@@ -228,12 +249,9 @@ class TaskToolMethods {
     final newTask = TaskModel(
       name: actionRequest.taskName,
       description: actionRequest.taskDescription,
-      startDateTime: actionRequest.taskStartDate != null
-          ? DateTime.parse(actionRequest.taskStartDate!)
-          : null,
-      dueDate: actionRequest.taskDueDate != null
-          ? DateTime.parse(actionRequest.taskDueDate!)
-          : null,
+      startDateTime:
+          AiDateParser.parseIsoIntoLocal(actionRequest.taskStartDate),
+      dueDate: AiDateParser.parseIsoIntoLocal(actionRequest.taskDueDate),
       status: actionRequest.taskStatus != null
           ? StatusEnum.tryParse(actionRequest.taskStatus)
           : StatusEnum.open,
@@ -254,9 +272,21 @@ class TaskToolMethods {
     List<SearchUserResult>? userAssignmentResults;
     if (actionRequest.assignedUserNames != null &&
         actionRequest.assignedUserNames!.isNotEmpty) {
+      List<String> assignedUserNames = actionRequest.assignedUserNames!;
+
+      // Check if MYSELF is in the list, and if so swap with current user id
+      if (AiToolExecutionUtils.containsMyselfKeyword(
+          actionRequest.assignedUserNames)) {
+        assignedUserNames.removeWhere((name) => name == "MYSELF");
+        ref.read(taskAssignmentsServiceProvider).addAssignee(
+              newTask.id,
+              userId,
+            );
+      }
+
       userAssignmentResults = await ref
           .read(taskAssignmentsServiceProvider)
-          .tryAssignUsersByName(newTask.id, actionRequest.assignedUserNames!);
+          .tryAssignUsersByName(newTask.id, assignedUserNames);
     }
     // === END ASSIGN USERS TO TASK ===
     // Navigate to task page in readOnly mode
@@ -345,12 +375,16 @@ class TaskToolMethods {
     }
     // === END SELECT PROJECT ===
 
+    // WHat the fuck is wrong ... keeps getting the wrong date after ...
+    // the date sent from ai 3/17 2 pm is stored as UTC string equivalent in database for some reason ...
+    // unsure why ...
+
     final updatedTask = taskToModify.copyWith(
       name: actionRequest.taskName,
       description: actionRequest.taskDescription,
-      dueDate: actionRequest.taskDueDate != null
-          ? DateTime.parse(actionRequest.taskDueDate!)
-          : null,
+      startDateTime:
+          AiDateParser.parseIsoIntoLocal(actionRequest.taskStartDate),
+      dueDate: AiDateParser.parseIsoIntoLocal(actionRequest.taskDueDate),
       status: actionRequest.taskStatus != null
           ? StatusEnum.tryParse(actionRequest.taskStatus)
           : null,
@@ -376,8 +410,24 @@ class TaskToolMethods {
     // Try to assign users by name
     if (actionRequest.assignedUserNames != null &&
         actionRequest.assignedUserNames!.isNotEmpty) {
-      await ref.read(taskAssignmentsServiceProvider).tryAssignUsersByName(
-          updatedTask.id, actionRequest.assignedUserNames!);
+      List<String> assignedUserNames = actionRequest.assignedUserNames!;
+
+      // Check if MYSELF is in the list, and if so swap with current user id
+      if (AiToolExecutionUtils.containsMyselfKeyword(
+          actionRequest.assignedUserNames)) {
+        final userId = _getUserId(ref);
+        if (userId != null) {
+          assignedUserNames.removeWhere((name) => name == "MYSELF");
+          ref.read(taskAssignmentsServiceProvider).addAssignee(
+                updatedTask.id,
+                userId,
+              );
+        }
+      }
+
+      await ref
+          .read(taskAssignmentsServiceProvider)
+          .tryAssignUsersByName(updatedTask.id, assignedUserNames);
     }
 
     return UpdateTaskFieldsResultModel(
