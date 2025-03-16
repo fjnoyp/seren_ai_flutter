@@ -2,10 +2,10 @@
 class BuildInfo {
   // Core build info
   static const String version = '1.0.0';
-  static const String buildDate = '2025-03-14 11:24:12';
+  static const String buildDate = '2025-03-16 11:56:57';
   
   // Git info
-  static const String commitHash = 'af052ef';
+  static const String commitHash = 'c84ea0c';
   static const String branch = 'feat/ai_enhancements';
   static const String lastTag = 'no tag';
   
@@ -16,12 +16,20 @@ class BuildInfo {
   // Recent commits (last 5)
   static const List<Map<String, String>> recentCommits = [
     {
+      "hash": "c84ea0c",
+      "author": "Kyle",
+      "email": "kylcheng@gmail.com", 
+      "message": "feat(ai): allow ai to assign task to current user",
+      "date": "2025-03-14",
+      "relativeDate": "2 days ago"
+    },
+    {
       "hash": "af052ef",
       "author": "Kyle",
       "email": "kylcheng@gmail.com", 
       "message": "feat(ai): allow ai to add task comments, fix ui context",
       "date": "2025-03-14",
-      "relativeDate": "19 minutes ago"
+      "relativeDate": "2 days ago"
     },
     {
       "hash": "b1ca2a3",
@@ -29,7 +37,7 @@ class BuildInfo {
       "email": "kylcheng@gmail.com", 
       "message": "feat(ai): ai overhaul to multistep reasoning",
       "date": "2025-03-13",
-      "relativeDate": "26 hours ago"
+      "relativeDate": "3 days ago"
     },
     {
       "hash": "1169993",
@@ -37,7 +45,7 @@ class BuildInfo {
       "email": "renata@seren-ai.co", 
       "message": "feat(forms): enhance date-time selection UI by splitting fields",
       "date": "2025-03-13",
-      "relativeDate": "25 hours ago"
+      "relativeDate": "3 days ago"
     },
     {
       "hash": "aae8709",
@@ -45,19 +53,11 @@ class BuildInfo {
       "email": "renata@seren-ai.co", 
       "message": "fix(tasks): task comments not opening",
       "date": "2025-03-13",
-      "relativeDate": "25 hours ago"
-    },
-    {
-      "hash": "3762870",
-      "author": "renata-sisilio",
-      "email": "renata@seren-ai.co", 
-      "message": "fix(drawer_view): limit text overflow for organization and user names in drawer",
-      "date": "2025-03-13",
-      "relativeDate": "29 hours ago"
+      "relativeDate": "3 days ago"
     },
   ];
 
   // Stats
-  static const String totalCommits = '419';
+  static const String totalCommits = '420';
   static const String contributors = '       0';
 }

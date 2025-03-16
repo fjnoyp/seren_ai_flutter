@@ -230,6 +230,7 @@ class TaskModel implements IHasId {
         'description': description,
         'status': status,
         'priority': priority,
+        'start_date': startDateTime?.toIso8601String(),
         'due_date': dueDate?.toIso8601String(),
       },
       'author': author?.email ?? 'Unknown',
