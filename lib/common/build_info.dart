@@ -2,10 +2,10 @@
 class BuildInfo {
   // Core build info
   static const String version = '1.0.0';
-  static const String buildDate = '2025-03-16 11:56:57';
+  static const String buildDate = '2025-03-16 14:14:06';
   
   // Git info
-  static const String commitHash = 'c84ea0c';
+  static const String commitHash = '6febe12';
   static const String branch = 'feat/ai_enhancements';
   static const String lastTag = 'no tag';
   
@@ -15,6 +15,14 @@ class BuildInfo {
   
   // Recent commits (last 5)
   static const List<Map<String, String>> recentCommits = [
+    {
+      "hash": "6febe12",
+      "author": "Kyle",
+      "email": "kylcheng@gmail.com", 
+      "message": "fix(ai): fix ai date time updates, and assigning to self",
+      "date": "2025-03-16",
+      "relativeDate": "2 hours ago"
+    },
     {
       "hash": "c84ea0c",
       "author": "Kyle",
@@ -47,17 +55,9 @@ class BuildInfo {
       "date": "2025-03-13",
       "relativeDate": "3 days ago"
     },
-    {
-      "hash": "aae8709",
-      "author": "renata-sisilio",
-      "email": "renata@seren-ai.co", 
-      "message": "fix(tasks): task comments not opening",
-      "date": "2025-03-13",
-      "relativeDate": "3 days ago"
-    },
   ];
 
   // Stats
-  static const String totalCommits = '420';
+  static const String totalCommits = '421';
   static const String contributors = '       0';
 }

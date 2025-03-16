@@ -6,7 +6,7 @@ import 'package:seren_ai_flutter/services/data/projects/providers/cur_selected_p
 import 'package:seren_ai_flutter/services/data/projects/widgets/project_overview/sub_lists/project_tasks_board_view.dart';
 import 'package:seren_ai_flutter/services/data/projects/widgets/project_overview/sub_lists/project_tasks_filters.dart';
 import 'package:seren_ai_flutter/services/data/projects/widgets/project_overview/sub_lists/project_tasks_sectioned_list_view.dart';
-import 'package:seren_ai_flutter/services/data/projects/widgets/project_overview/task_search_modal.dart';
+import 'package:seren_ai_flutter/services/data/tasks/filtered/task_search_modal.dart';
 import 'package:seren_ai_flutter/services/data/tasks/widgets/gantt/gantt_task_page.dart';
 
 enum ProjectTasksSectionViewMode {
@@ -93,7 +93,7 @@ class ProjectTasksSectionMobile extends StatelessWidget {
         Padding(
           padding: const EdgeInsets.all(8),
           child: GestureDetector(
-            onTap: () => _showTaskSearchModal(context),
+            onTap: () => showTaskSearchModal(context),
             child: Container(
               padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
               decoration: BoxDecoration(
@@ -117,17 +117,6 @@ class ProjectTasksSectionMobile extends StatelessWidget {
           child: ProjectTasksSectionedListView(),
         ),
       ],
-    );
-  }
-
-  Future<void> _showTaskSearchModal(BuildContext context) {
-    return showModalBottomSheet(
-      context: context,
-      isScrollControlled: true,
-      builder: (context) => const TaskSearchModal(),
-      constraints: BoxConstraints(
-        maxHeight: MediaQuery.of(context).size.height * 0.9,
-      ),
     );
   }
 }

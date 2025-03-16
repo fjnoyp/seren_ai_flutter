@@ -5,9 +5,10 @@ import 'package:seren_ai_flutter/services/ai/ai_context_helper/widgets/ai_contex
 import 'package:seren_ai_flutter/services/data/common/status_enum.dart';
 import 'package:seren_ai_flutter/services/data/projects/providers/cur_selected_project_providers.dart';
 import 'package:seren_ai_flutter/services/data/tasks/repositories/tasks_repository.dart';
+import 'package:seren_ai_flutter/services/data/tasks/filtered/tasks_filtered_provider.dart';
 import 'package:seren_ai_flutter/services/data/tasks/widgets/inline_creation/inline_task_creation_button.dart';
-import 'package:seren_ai_flutter/services/data/tasks/widgets/task_list/task_list_item_view.dart';
-import 'package:seren_ai_flutter/services/data/tasks/providers/task_filter_state_provider.dart';
+import 'package:seren_ai_flutter/services/data/tasks/widgets/task_list/task_list_card_item_view.dart';
+import 'package:seren_ai_flutter/services/data/tasks/filtered/task_filter_state_provider.dart';
 import 'package:seren_ai_flutter/services/data/tasks/models/task_model.dart';
 
 class _TasksList extends StatelessWidget {
@@ -34,7 +35,7 @@ class _TasksList extends StatelessWidget {
       itemCount: tasks.length,
       itemBuilder: (context, index) => horizontalDragOffsetToChangeStatus ==
               null
-          ? TaskListItemView(task: tasks[index])
+          ? TaskListCardItemView(task: tasks[index])
           : LayoutBuilder(
               builder: (context, constraints) {
                 return Consumer(
@@ -71,10 +72,10 @@ class _TasksList extends StatelessWidget {
                         feedback: Material(
                           child: SizedBox(
                             width: constraints.maxWidth,
-                            child: TaskListItemView(task: task),
+                            child: TaskListCardItemView(task: task),
                           ),
                         ),
-                        child: TaskListItemView(task: task),
+                        child: TaskListCardItemView(task: task),
                       ),
                     );
                   },
@@ -96,7 +97,7 @@ class ProjectTasksBoardView extends HookConsumerWidget {
     final projectId = ref.watch(curSelectedProjectIdNotifierProvider);
     if (projectId == null) return const SizedBox.shrink();
 
-    final tasks = ref.watch(filteredTasksProvider(projectId));
+    final tasks = ref.watch(tasksByProjectsFilteredProvider(projectId));
 
     return Row(
       children: StatusEnum.values
