@@ -35,15 +35,7 @@ class TaskAssignmentsService {
           );
       if (users.isNotEmpty) {
         userAssignmentResults.add(users.first);
-        await _addAssignee(taskId, users.first.id);
-      }
-    }
-
-    // Handle special "MYSELF" assignment
-    if (userSearchQuery.contains('MYSELF')) {
-      final currentUser = ref.read(curUserProvider).value;
-      if (currentUser != null) {
-        await _addAssignee(taskId, currentUser.id);
+        await addAssignee(taskId, users.first.id);
       }
     }
 
@@ -103,7 +95,7 @@ class TaskAssignmentsService {
     }
   }
 
-  Future<void> _addAssignee(String taskId, String userId) async {
+  Future<void> addAssignee(String taskId, String userId) async {
     final taskAssignmentsRepository =
         ref.read(taskUserAssignmentsRepositoryProvider);
 
