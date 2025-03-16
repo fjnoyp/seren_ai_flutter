@@ -7,7 +7,7 @@ import 'package:seren_ai_flutter/common/utils/date_time_range_extension.dart';
 import 'package:seren_ai_flutter/services/ai/ai_request/models/results/ai_request_result_model.dart';
 import 'package:seren_ai_flutter/services/ai/ai_request/models/results/error_request_result_model.dart';
 import 'package:seren_ai_flutter/services/auth/cur_auth_state_provider.dart';
-import 'package:seren_ai_flutter/services/ai/ai_chats/date_list_parser.dart';
+import 'package:seren_ai_flutter/services/data/tasks/tool_methods/ai_date_parser.dart';
 import 'package:seren_ai_flutter/services/data/shifts/models/shift_log_model.dart';
 import 'package:seren_ai_flutter/services/data/shifts/providers/cur_shift_state_provider.dart';
 import 'package:seren_ai_flutter/services/data/shifts/providers/shift_logs_service_provider.dart';
@@ -34,7 +34,7 @@ class ShiftToolMethods {
     if (info == null) return _handleNoAuthOrShiftInfo();
 
     final List<String> daysToGet = infoRequest.daysToGet;
-    final List<DateTime> parsedDays = DateListParser.parseDateList(daysToGet);
+    final List<DateTime> parsedDays = AiDateParser.parseDateList(daysToGet);
 
     final Map<DateTime, List<DateTimeRange>> shiftAssignments = {};
 
@@ -73,7 +73,7 @@ class ShiftToolMethods {
     if (info == null) return _handleNoAuthOrShiftInfo();
 
     final List<String> daysToGet = infoRequest.daysToGet;
-    final List<DateTime> parsedDays = DateListParser.parseDateList(daysToGet);
+    final List<DateTime> parsedDays = AiDateParser.parseDateList(daysToGet);
 
     final Map<DateTime, List<ShiftLogModel>> shiftLogs = {};
 
