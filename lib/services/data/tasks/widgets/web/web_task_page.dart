@@ -3,7 +3,8 @@ import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:logging/logging.dart';
 import 'package:seren_ai_flutter/common/navigation_service_provider.dart';
 import 'package:seren_ai_flutter/services/ai/ai_context_helper/widgets/ai_context_view.dart';
-import 'package:seren_ai_flutter/services/data/projects/widgets/project_overview/task_search_modal.dart';
+import 'package:seren_ai_flutter/services/data/tasks/filtered/task_search_modal.dart';
+import 'package:seren_ai_flutter/services/data/tasks/filtered/tasks_filtered_list_view.dart';
 import 'package:seren_ai_flutter/services/data/tasks/providers/cur_selected_task_id_notifier_provider.dart';
 import 'package:seren_ai_flutter/services/data/tasks/providers/task_by_id_stream_provider.dart';
 import 'package:seren_ai_flutter/services/data/tasks/providers/tasks_by_parent_stream_provider.dart';
@@ -15,7 +16,7 @@ import 'package:seren_ai_flutter/services/data/tasks/widgets/form/task_selection
 import 'package:seren_ai_flutter/services/data/tasks/widgets/inline_creation/inline_task_creation_button.dart';
 import 'package:seren_ai_flutter/services/data/tasks/widgets/task_comments/task_comment_section.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
-import 'package:seren_ai_flutter/services/data/tasks/widgets/task_list/tasks_list_tiles_view.dart';
+import 'package:seren_ai_flutter/services/data/tasks/widgets/task_list/task_list_view.dart';
 import 'package:seren_ai_flutter/services/data/tasks/widgets/task_tag.dart';
 import 'package:seren_ai_flutter/widgets/debug/debug_mode_provider.dart';
 
@@ -88,7 +89,7 @@ class _TasksFromPhaseSection extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final tasks = ref.watch(tasksByParentStreamProvider(phaseId));
-    final labelStyle = Theme.of(context).textTheme.bodyMedium?.copyWith(
+    final labelStyle = Theme.of(context).textTheme.titleMedium?.copyWith(
           fontWeight: FontWeight.bold,
         );
 
@@ -127,23 +128,25 @@ class _TasksFromPhaseSection extends ConsumerWidget {
           ],
         ),
         Expanded(
-          child: Column(
-            children: [
-              Flexible(
-                child: SingleChildScrollView(
-                  child: TasksListTilesView(
-                    watchedTasks: tasks,
-                    filterCondition: null,
+          child: Padding(
+            padding: const EdgeInsets.all(16),
+            child: Column(
+              children: [
+                Flexible(
+                  child: SingleChildScrollView(
+                    child: TaskListView(
+                        tasks: tasks.value ?? [],
+                        additionalFilter: (task) => task.isPhase == false),
                   ),
                 ),
-              ),
-              SizedBox(
-                width: double.infinity,
-                child: InlineTaskCreationButton(
-                  initialParentTaskId: phaseId,
+                SizedBox(
+                  width: double.infinity,
+                  child: InlineTaskCreationButton(
+                    initialParentTaskId: phaseId,
+                  ),
                 ),
-              ),
-            ],
+              ],
+            ),
           ),
         ),
       ],

@@ -3,10 +3,10 @@ import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:intl/intl.dart';
 import 'package:seren_ai_flutter/services/data/projects/providers/cur_selected_project_providers.dart';
-import 'package:seren_ai_flutter/services/data/tasks/providers/task_filter_options_provider.dart';
+import 'package:seren_ai_flutter/services/data/tasks/filtered/task_filter_options_provider.dart';
 import 'package:seren_ai_flutter/services/data/tasks/task_filter.dart';
 import 'package:seren_ai_flutter/services/data/tasks/providers/task_navigation_service.dart';
-import 'package:seren_ai_flutter/services/data/tasks/providers/task_filter_state_provider.dart';
+import 'package:seren_ai_flutter/services/data/tasks/filtered/task_filter_state_provider.dart';
 import 'package:seren_ai_flutter/services/data/tasks/task_field_enum.dart';
 
 class ProjectTasksFilters extends ConsumerWidget {

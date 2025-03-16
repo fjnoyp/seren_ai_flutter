@@ -8,7 +8,7 @@ import 'package:seren_ai_flutter/services/data/common/recent_updated_items/recen
 import 'package:seren_ai_flutter/services/data/notes/models/note_model.dart';
 import 'package:seren_ai_flutter/services/data/notes/widgets/note_list_item_view.dart';
 import 'package:seren_ai_flutter/services/data/tasks/models/task_model.dart';
-import 'package:seren_ai_flutter/services/data/tasks/widgets/task_list/task_list_item_view.dart';
+import 'package:seren_ai_flutter/services/data/tasks/widgets/task_list/task_list_card_item_view.dart';
 
 class RecentUpdatedItemsScreen extends ConsumerWidget {
   const RecentUpdatedItemsScreen({super.key});
@@ -66,7 +66,7 @@ class RecentUpdatedItemsScreen extends ConsumerWidget {
           return Column(
             children: [
               if (item is TaskModel)
-                TaskListItemView(
+                TaskListCardItemView(
                     task: item, showStatus: true, showProject: true)
               else if (item is NoteModel)
                 NoteListItemView(item, showStatus: true),

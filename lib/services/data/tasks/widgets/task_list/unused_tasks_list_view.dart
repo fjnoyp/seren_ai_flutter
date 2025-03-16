@@ -4,7 +4,7 @@ import 'package:seren_ai_flutter/services/data/common/widgets/async_value_handle
 import 'package:seren_ai_flutter/services/data/tasks/models/task_model.dart';
 import 'package:seren_ai_flutter/services/data/tasks/providers/cur_user_viewable_tasks_stream_provider.dart';
 import 'package:seren_ai_flutter/services/data/tasks/repositories/tasks_repository.dart';
-import 'package:seren_ai_flutter/services/data/tasks/widgets/task_list/task_list_item_view.dart';
+import 'package:seren_ai_flutter/services/data/tasks/widgets/task_list/task_list_card_item_view.dart';
 
 class TasksListView extends ConsumerWidget {
   const TasksListView({
@@ -55,8 +55,8 @@ class TasksListView extends ConsumerWidget {
                               );
                         }
                       },
-                      child: TaskListItemView(task: filteredTasks[index]))
-                  : TaskListItemView(task: filteredTasks[index]),
+                      child: TaskListCardItemView(task: filteredTasks[index]))
+                  : TaskListCardItemView(task: filteredTasks[index]),
         );
       },
     );
