@@ -4,11 +4,22 @@ import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:seren_ai_flutter/services/ai/widgets/base_ai_assistant_button.dart';
 import 'package:seren_ai_flutter/services/data/projects/providers/cur_selected_project_providers.dart';
 import 'package:seren_ai_flutter/services/data/projects/widgets/project_overview/sub_lists/project_tasks_filters.dart';
+import 'package:seren_ai_flutter/services/data/tasks/filtered/tasks_filtered_list_view.dart';
 import 'package:seren_ai_flutter/services/data/tasks/models/task_model.dart';
-import 'package:seren_ai_flutter/services/data/tasks/providers/task_filter_state_provider.dart';
-import 'package:seren_ai_flutter/services/data/tasks/providers/tasks_by_project_stream_provider.dart';
+import 'package:seren_ai_flutter/services/data/tasks/filtered/task_filter_state_provider.dart';
+import 'package:seren_ai_flutter/services/data/tasks/filtered/tasks_filtered_provider.dart';
 import 'package:seren_ai_flutter/services/data/tasks/task_field_enum.dart';
-import 'package:seren_ai_flutter/services/data/tasks/widgets/task_list/tasks_list_tiles_view.dart';
+
+Future<void> showTaskSearchModal(BuildContext context) {
+  return showModalBottomSheet(
+    context: context,
+    isScrollControlled: true,
+    builder: (context) => const TaskSearchModal(),
+    constraints: BoxConstraints(
+      maxHeight: MediaQuery.of(context).size.height * 0.9,
+    ),
+  );
+}
 
 // TODO p3: add sort
 // TODO p4: add multi type searching - this should search on notes, shifts, etc. in the future
@@ -35,14 +46,7 @@ class TaskSearchModal extends HookConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final filterState = ref.watch(taskFilterStateProvider);
     final filterNotifier = ref.read(taskFilterStateProvider.notifier);
-
-    // TODO p0: project selection needs to be a filter ... and NOT be hardcoded
-    final projectId = ref.watch(curSelectedProjectIdNotifierProvider);
-    if (projectId == null) {
-      return const SizedBox.shrink();
-    }
 
     return DraggableScrollableSheet(
       initialChildSize: 1,
@@ -84,16 +88,9 @@ class TaskSearchModal extends HookConsumerWidget {
               hiddenFilters: hiddenFilters,
             ),
             Expanded(
-              child: TasksListTilesView(
-                watchedTasks: ref
-                    .watch(tasksByProjectStreamProvider(projectId))
-                    .whenData((tasks) => additionalFilter != null
-                        ? tasks?.where(additionalFilter!).toList()
-                        : tasks),
-                filterCondition: (task) => filterState.filterCondition(task),
-                // TODO p3: add sort
-                //sort: filterState.sortComparator,
-                onTapOption: onTapOption,
+              child: TasksFilteredListView(
+                additionalFilter: additionalFilter,
+                onTapTask: onTapOption,
               ),
             ),
           ],
