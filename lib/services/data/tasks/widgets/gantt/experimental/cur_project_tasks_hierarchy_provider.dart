@@ -1,7 +1,8 @@
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:seren_ai_flutter/services/data/projects/providers/cur_selected_project_providers.dart';
 import 'package:seren_ai_flutter/services/data/tasks/models/task_model.dart';
-import 'package:seren_ai_flutter/services/data/tasks/providers/task_filter_state_provider.dart';
+import 'package:seren_ai_flutter/services/data/tasks/filtered/task_filter_state_provider.dart';
+import 'package:seren_ai_flutter/services/data/tasks/filtered/tasks_filtered_provider.dart';
 import 'package:seren_ai_flutter/services/data/tasks/widgets/inline_creation/cur_inline_creating_task_id_provider.dart';
 
 class TaskHierarchyInfo {
@@ -72,7 +73,8 @@ final taskParentChainIdsProvider =
 final _curProjectTasksHierarchyProvider =
     Provider<Map<String, TaskHierarchyInfo>>((ref) {
   final projectId = ref.watch(curSelectedProjectIdNotifierProvider);
-  final filteredTasks = ref.watch(filteredTasksAndParentsProvider(projectId));
+  final filteredTasks =
+      ref.watch(tasksAndParentsByProjectFilteredProvider(projectId));
 
   // Build hierarchy map including all necessary tasks
   final hierarchyMap = <String, TaskHierarchyInfo>{};

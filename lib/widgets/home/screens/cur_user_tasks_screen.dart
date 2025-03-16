@@ -5,7 +5,7 @@ import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:seren_ai_flutter/services/data/common/recent_updated_items/date_grouped_items.dart';
 import 'package:seren_ai_flutter/services/data/tasks/models/task_model.dart';
 import 'package:seren_ai_flutter/services/data/tasks/providers/cur_user_grouped_tasks_stream_provider.dart';
-import 'package:seren_ai_flutter/services/data/tasks/widgets/task_list/task_list_item_view.dart';
+import 'package:seren_ai_flutter/services/data/tasks/widgets/task_list/task_list_card_item_view.dart';
 
 class _DateHeader extends StatelessWidget {
   const _DateHeader({required this.group});
@@ -68,7 +68,7 @@ class _TasksList extends StatelessWidget {
       shrinkWrap: true,
       physics: const NeverScrollableScrollPhysics(),
       itemCount: tasks.length,
-      itemBuilder: (context, index) => TaskListItemView(task: tasks[index]),
+      itemBuilder: (context, index) => TaskListCardItemView(task: tasks[index]),
       separatorBuilder: (context, index) => Divider(
         color: Theme.of(context).dividerColor.withAlpha(38),
       ),

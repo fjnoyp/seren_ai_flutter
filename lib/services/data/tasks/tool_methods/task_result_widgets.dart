@@ -8,7 +8,7 @@ import 'package:seren_ai_flutter/services/data/tasks/tool_methods/models/create_
 import 'package:seren_ai_flutter/services/data/tasks/tool_methods/models/delete_task_result_model.dart';
 import 'package:seren_ai_flutter/services/data/tasks/tool_methods/models/find_tasks_result_model.dart';
 import 'package:seren_ai_flutter/services/data/tasks/tool_methods/models/update_task_fields_result_model.dart';
-import 'package:seren_ai_flutter/services/data/tasks/widgets/task_list/task_list_item_view.dart';
+import 'package:seren_ai_flutter/services/data/tasks/widgets/task_list/task_list_card_item_view.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 class FindTasksResultWidget extends ConsumerWidget {
@@ -36,7 +36,7 @@ class FindTasksResultWidget extends ConsumerWidget {
           itemCount: result.tasks.length,
           separatorBuilder: (context, index) => const Divider(),
           itemBuilder: (context, index) {
-            return TaskListItemView(
+            return TaskListCardItemView(
               task: result.tasks[index],
               showAssignees: isWebVersion,
               showMoreOptionsButton: false,
@@ -62,7 +62,7 @@ class CreateTaskResultWidget extends ConsumerWidget {
             children: [
               Text(AppLocalizations.of(context)!
                   .createdNewTask(result.task.name)),
-              TaskListItemView(task: result.task),
+              TaskListCardItemView(task: result.task),
             ],
           );
   }
@@ -81,7 +81,7 @@ class UpdateTaskFieldsResultWidget extends ConsumerWidget {
             mainAxisSize: MainAxisSize.min,
             children: [
               Text(AppLocalizations.of(context)!.updatedTask(result.task.name)),
-              TaskListItemView(task: result.task),
+              TaskListCardItemView(task: result.task),
             ],
           );
   }

@@ -4,9 +4,10 @@ import 'package:seren_ai_flutter/services/ai/ai_context_helper/widgets/ai_contex
 import 'package:seren_ai_flutter/services/data/common/status_enum.dart';
 import 'package:seren_ai_flutter/services/data/projects/providers/cur_selected_project_providers.dart';
 import 'package:seren_ai_flutter/services/data/projects/widgets/project_overview/sub_lists/create_task_button.dart';
+import 'package:seren_ai_flutter/services/data/tasks/filtered/tasks_filtered_provider.dart';
 import 'package:seren_ai_flutter/services/data/tasks/widgets/inline_creation/inline_task_creation_button.dart';
-import 'package:seren_ai_flutter/services/data/tasks/providers/task_filter_state_provider.dart';
-import 'package:seren_ai_flutter/services/data/tasks/widgets/task_list/task_list_tile_item_view.dart';
+import 'package:seren_ai_flutter/services/data/tasks/filtered/task_filter_state_provider.dart';
+import 'package:seren_ai_flutter/services/data/tasks/widgets/task_list/task_list_item_view.dart';
 
 class ProjectTasksSectionedListView extends ConsumerWidget {
   const ProjectTasksSectionedListView({super.key});
@@ -16,7 +17,7 @@ class ProjectTasksSectionedListView extends ConsumerWidget {
     final projectId = ref.watch(curSelectedProjectIdNotifierProvider);
     if (projectId == null) return const SizedBox.shrink();
 
-    final tasks = ref.watch(filteredTasksProvider(projectId));
+    final tasks = ref.watch(tasksByProjectsFilteredProvider(projectId));
 
     return SingleChildScrollView(
       child: Column(children: [
@@ -47,7 +48,7 @@ class ProjectTasksSectionedListView extends ConsumerWidget {
                     physics: const NeverScrollableScrollPhysics(),
                     itemCount: filteredTasks.length,
                     itemBuilder: (context, index) =>
-                        TaskListTileItemView(filteredTasks[index]),
+                        TaskListItemView(filteredTasks[index]),
                     separatorBuilder: (context, index) =>
                         const Divider(height: 1),
                   ),
