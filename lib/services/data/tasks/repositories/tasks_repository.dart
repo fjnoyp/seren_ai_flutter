@@ -208,7 +208,21 @@ class TasksRepository extends BaseRepository<TaskModel> {
       'due_date',
       dueDate?.toUtc().toIso8601String(),
     );
-    // TODO p4: move this logic to backend
+
+    // If due date is set, check if it's after the parent task's due date
+    // If it is, update the parent task's due date to the child task's due date
+    final task = await getById(taskId);
+    if (task != null && dueDate != null && task.parentTaskId != null) {
+      final parentTask = await getById(task.parentTaskId!);
+      if (parentTask != null && parentTask.dueDate?.isBefore(dueDate) == true) {
+        await updateTaskDueDate(
+          task.parentTaskId!,
+          dueDate,
+        );
+      }
+    }
+
+    // If due date is null, set reminder offset to null
     // never used, since we currently don't have a way to set due date to null
     if (dueDate == null) {
       await updateField(
@@ -299,6 +313,20 @@ class TasksRepository extends BaseRepository<TaskModel> {
       'start_date_time',
       startDateTime?.toUtc().toIso8601String(),
     );
+
+    // If start date is set, check if it's before the parent task's start date
+    // If it is, update the parent task's start date to the child task's start date
+    final task = await getById(taskId);
+    if (task != null && startDateTime != null && task.parentTaskId != null) {
+      final parentTask = await getById(task.parentTaskId!);
+      if (parentTask != null &&
+          parentTask.startDateTime?.isAfter(startDateTime) == true) {
+        await updateTaskStartDateTime(
+          task.parentTaskId!,
+          startDateTime,
+        );
+      }
+    }
   }
 
   Future<void> updateTaskParentTaskId(
@@ -310,6 +338,34 @@ class TasksRepository extends BaseRepository<TaskModel> {
       'parent_task_id',
       parentTaskId,
     );
+
+    // If parent task id is set, check if it's after the parent task's start date
+    // If it is, handle task parent's start date and due date
+    if (parentTaskId != null) {
+      final task = await getById(taskId);
+      if (task != null) {
+        final parentTask = await getById(parentTaskId);
+        if (parentTask != null) {
+          // Handle start date
+          if (task.startDateTime != null &&
+              parentTask.startDateTime?.isAfter(task.startDateTime!) == true) {
+            await updateTaskStartDateTime(
+              parentTaskId,
+              task.startDateTime,
+            );
+          }
+
+          // Handle due date
+          if (task.dueDate != null &&
+              parentTask.dueDate?.isBefore(task.dueDate!) == true) {
+            await updateTaskDueDate(
+              parentTaskId,
+              task.dueDate,
+            );
+          }
+        }
+      }
+    }
   }
 
   Future<void> updateTaskBlockedByTaskId(
