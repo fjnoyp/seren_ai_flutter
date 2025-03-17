@@ -16,7 +16,9 @@ OrgModel _$OrgModelFromJson(Map<String, dynamic> json) => OrgModel(
       updatedAt: json['updated_at'] == null
           ? null
           : DateTime.parse(json['updated_at'] as String),
-      isEnabled: json['is_enabled'] as bool? ?? true,
+      isEnabled: json['is_enabled'] == null
+          ? true
+          : OrgModel._boolFromJson(json['is_enabled']),
     );
 
 Map<String, dynamic> _$OrgModelToJson(OrgModel instance) => <String, dynamic>{
@@ -25,5 +27,5 @@ Map<String, dynamic> _$OrgModelToJson(OrgModel instance) => <String, dynamic>{
       'address': instance.address,
       'created_at': instance.createdAt?.toIso8601String(),
       'updated_at': instance.updatedAt?.toIso8601String(),
-      'is_enabled': instance.isEnabled,
+      'is_enabled': OrgModel._boolToJson(instance.isEnabled),
     };

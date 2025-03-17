@@ -1,12 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+import 'package:seren_ai_flutter/common/navigation_service_provider.dart';
+import 'package:seren_ai_flutter/common/routes/app_routes.dart';
 import 'package:seren_ai_flutter/services/data/common/widgets/async_value_handler_widget.dart';
 import 'package:seren_ai_flutter/services/data/common/widgets/delete_confirmation_dialog.dart';
 import 'package:seren_ai_flutter/services/data/orgs/providers/cur_selected_org_id_notifier.dart';
 import 'package:seren_ai_flutter/services/data/orgs/providers/org_stream_provider.dart';
-import 'package:seren_ai_flutter/services/data/orgs/repositories/orgs_repository.dart';
-import 'package:seren_ai_flutter/services/data/orgs/repositories/user_org_roles_repository.dart';
 
 class DeleteOrgButton extends ConsumerWidget {
   const DeleteOrgButton({super.key});
@@ -17,7 +17,7 @@ class DeleteOrgButton extends ConsumerWidget {
     if (orgId == null) return const SizedBox.shrink();
 
     return IconButton(
-      tooltip: AppLocalizations.of(context)!.deleteProjectTooltip,
+      tooltip: AppLocalizations.of(context)!.deleteOrgTooltip,
       icon: const Icon(Icons.delete),
       onPressed: () async {
         await showDialog(
@@ -29,16 +29,39 @@ class DeleteOrgButton extends ConsumerWidget {
                   ? DeleteConfirmationDialog(
                       itemName: org.name,
                       onDelete: () async {
-                        final orgsRepository = ref.read(orgsRepositoryProvider);
+                        try {
+                          // Capture the scaffold context before any navigation
+                          final scaffoldMessenger =
+                              ScaffoldMessenger.of(context);
+                          final orgName = org.name;
 
-                        await ref
-                            .read(userOrgRolesRepositoryProvider)
-                            .removeAllOrgRolesForOrg(orgId);
+                          // Use a single call to handle both operations atomically
+                          await ref
+                              .read(curSelectedOrgIdNotifierProvider.notifier)
+                              .disableOrgAndRemoveAllRoles();
 
-                        // we don't want to delete the org,
-                        // we just want to disable it after removing all users from it
-                        orgsRepository
-                            .updateItem(org.copyWith(isEnabled: false));
+                          // Show a snackbar to confirm the deletion before navigation
+                          scaffoldMessenger.showSnackBar(
+                            SnackBar(
+                                content: Text('$orgName has been deleted.')),
+                          );
+
+                          // Reset the navigation stack to the home page (it'll be redirected accordingly);
+                          ref.read(navigationServiceProvider).navigateTo(
+                                AppRoutes.home.name,
+                                clearStack: true,
+                              );
+                        } catch (e) {
+                          // Show error message with valid context
+                          if (context.mounted) {
+                            ScaffoldMessenger.of(context).showSnackBar(
+                              SnackBar(
+                                content: Text(
+                                    'Failed to delete ${org.name}. Please try again later.'),
+                              ),
+                            );
+                          }
+                        }
                       },
                     )
                   : const Center(child: Text('Error: could not find org')),

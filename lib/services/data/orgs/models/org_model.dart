@@ -14,8 +14,11 @@ class OrgModel implements IHasId {
   final DateTime? createdAt;
   @JsonKey(name: 'updated_at')
   final DateTime? updatedAt;
-  @JsonKey(name: 'is_enabled')
+  @JsonKey(name: 'is_enabled', toJson: _boolToJson, fromJson: _boolFromJson)
   final bool isEnabled;
+
+  static bool _boolFromJson(dynamic value) => value == 1;
+  static int _boolToJson(bool value) => value ? 1 : 0;
 
   OrgModel({
     String? id,
