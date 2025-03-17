@@ -9,15 +9,19 @@ import 'package:seren_ai_flutter/services/data/tasks/widgets/inline_creation/inl
 import 'package:seren_ai_flutter/services/data/tasks/widgets/inline_creation/cur_inline_creating_task_id_provider.dart';
 import 'package:seren_ai_flutter/services/data/tasks/widgets/task_assignees_avatars.dart';
 import 'package:seren_ai_flutter/services/data/tasks/widgets/task_list/task_list_item_phase_indicator.dart';
+import 'package:seren_ai_flutter/services/data/tasks/widgets/task_list/task_project_indicator.dart';
 import 'package:seren_ai_flutter/services/data/tasks/widgets/ui_constants.dart';
 
 class TaskListItemView extends ConsumerWidget {
-  const TaskListItemView(this.task, {super.key, this.onTap});
+  const TaskListItemView(this.task,
+      {super.key, this.onTap, this.showProjectIndicator = false});
 
   final TaskModel task;
 
   /// If this is null, tapping on a task will open the task page
   final void Function(String taskId)? onTap;
+
+  final bool showProjectIndicator;
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -40,9 +44,19 @@ class TaskListItemView extends ConsumerWidget {
               initialStatus: task.status,
               initialParentTaskId: task.parentTaskId,
             )
-          : Text(
-              task.name,
-              overflow: TextOverflow.ellipsis,
+          : Row(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Text(
+                  task.name,
+                  overflow: TextOverflow.ellipsis,
+                ),
+                if (showProjectIndicator) ...[
+                  const SizedBox(width: 8),
+                  TaskProjectIndicator(task),
+                  const SizedBox(width: 8),
+                ],
+              ],
             ),
       trailing: LayoutBuilder(builder: (context, constraints) {
         final isNarrow = constraints.maxWidth < 200;

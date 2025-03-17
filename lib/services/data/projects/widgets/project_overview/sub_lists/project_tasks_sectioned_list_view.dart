@@ -17,6 +17,9 @@ class ProjectTasksSectionedListView extends ConsumerWidget {
 
     final tasks = ref.watch(tasksByProjectsFilteredProvider(projectId));
 
+    final showProjectIndicator =
+        CurSelectedProjectIdNotifier.isEverythingId(projectId);
+
     return SingleChildScrollView(
       child: Column(children: [
         tasks.isNotEmpty
@@ -45,8 +48,10 @@ class ProjectTasksSectionedListView extends ConsumerWidget {
                     shrinkWrap: true,
                     physics: const NeverScrollableScrollPhysics(),
                     itemCount: filteredTasks.length,
-                    itemBuilder: (context, index) =>
-                        TaskListItemView(filteredTasks[index]),
+                    itemBuilder: (context, index) => TaskListItemView(
+                      filteredTasks[index],
+                      showProjectIndicator: showProjectIndicator,
+                    ),
                     separatorBuilder: (context, index) =>
                         const Divider(height: 1),
                   ),

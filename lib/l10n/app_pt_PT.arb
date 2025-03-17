@@ -184,6 +184,7 @@
     "project": "Projeto",
     "newProjectDefaultName": "Novo Projeto",
     "projects": "Projetos",
+    "everythingProjectName": "Tudo",
     "selectAProject": "Selecionar um Projeto",
     "personal": "Pessoal",
     "projectIsRequired": "O projeto é obrigatório",

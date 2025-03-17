@@ -1,7 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
-import 'package:seren_ai_flutter/services/data/common/generate_color_from_id.dart';
-import 'package:seren_ai_flutter/services/data/projects/providers/project_by_id_stream_provider.dart';
 import 'package:seren_ai_flutter/services/data/tasks/models/task_model.dart';
 import 'package:intl/intl.dart';
 import 'package:seren_ai_flutter/services/data/tasks/providers/task_navigation_service.dart';
@@ -12,6 +10,7 @@ import 'package:seren_ai_flutter/services/data/tasks/widgets/inline_creation/cur
 import 'package:seren_ai_flutter/services/data/common/status_enum.dart';
 import 'package:seren_ai_flutter/services/data/common/widgets/status_view.dart';
 import 'package:seren_ai_flutter/services/data/tasks/widgets/task_assignees_avatars.dart';
+import 'package:seren_ai_flutter/services/data/tasks/widgets/task_list/task_project_indicator.dart';
 import 'package:seren_ai_flutter/services/data/tasks/widgets/task_list/task_list_item_phase_indicator.dart';
 
 // Card like view that uses ListTile
@@ -77,7 +76,7 @@ class TaskListCardItemView extends ConsumerWidget {
                           style: theme.textTheme.titleMedium,
                           overflow: TextOverflow.ellipsis,
                         ),
-                  _ProjectIndicator(task, showProject: showProject),
+                  if (showProject) TaskProjectIndicator(task),
                   if (task.description?.isNotEmpty == true)
                     Text(
                       task.description!,
@@ -137,34 +136,6 @@ class TaskListCardItemView extends ConsumerWidget {
           ],
         ),
       ),
-    );
-  }
-}
-
-class _ProjectIndicator extends ConsumerWidget {
-  const _ProjectIndicator(this.task, {required this.showProject});
-
-  final TaskModel task;
-  final bool showProject;
-
-  @override
-  Widget build(BuildContext context, WidgetRef ref) {
-    return Consumer(
-      builder: (context, ref, _) {
-        if (!showProject) return const SizedBox.shrink();
-
-        final taskProject =
-            ref.watch(projectByIdStreamProvider(task.parentProjectId));
-        if (taskProject.valueOrNull == null) return const SizedBox.shrink();
-
-        return Text(
-          taskProject.valueOrNull!.name,
-          style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                color: generateColorFromId(task.parentProjectId),
-                fontSize: 11,
-              ),
-        );
-      },
     );
   }
 }
