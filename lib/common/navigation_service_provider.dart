@@ -46,12 +46,16 @@ class NavigationService {
     }
   }
 
-  Future<dynamic> showPopupDialog(Widget dialog,
-      {bool barrierDismissible = true}) async {
+  Future<dynamic> showPopupDialog(
+    Widget dialog, {
+    bool barrierDismissible = true,
+    bool applyBarrierColor = true,
+  }) async {
     return await showDialog(
       context: context,
       builder: (context) => dialog,
       barrierDismissible: barrierDismissible,
+      barrierColor: applyBarrierColor ? null : Colors.transparent,
     );
   }
 

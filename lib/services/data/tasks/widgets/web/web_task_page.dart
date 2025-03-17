@@ -4,7 +4,6 @@ import 'package:logging/logging.dart';
 import 'package:seren_ai_flutter/common/navigation_service_provider.dart';
 import 'package:seren_ai_flutter/services/ai/ai_context_helper/widgets/ai_context_view.dart';
 import 'package:seren_ai_flutter/services/data/tasks/filtered/task_search_modal.dart';
-import 'package:seren_ai_flutter/services/data/tasks/filtered/tasks_filtered_list_view.dart';
 import 'package:seren_ai_flutter/services/data/tasks/providers/cur_selected_task_id_notifier_provider.dart';
 import 'package:seren_ai_flutter/services/data/tasks/providers/task_by_id_stream_provider.dart';
 import 'package:seren_ai_flutter/services/data/tasks/providers/tasks_by_parent_stream_provider.dart';
@@ -269,11 +268,46 @@ class _TaskInfoDisplay extends ConsumerWidget {
                 TaskDescriptionSelectionField(taskId: taskId, context: context),
                 const SizedBox(height: 16),
 
-                DeleteTaskButton(taskId, showLabelText: true, outlined: true),
+                DeleteTaskButton(
+                  taskId,
+                  showLabelText: true,
+                  outlined: true,
+                  shouldPopOnDelete: true,
+                ),
               ],
             ),
           ),
         ],
+      ),
+    );
+  }
+}
+
+class TaskPopupDialog extends ConsumerWidget {
+  const TaskPopupDialog({super.key});
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final taskId = ref.watch(curSelectedTaskIdNotifierProvider);
+    if (taskId == null) {
+      return const Center(child: CircularProgressIndicator());
+    }
+
+    return Align(
+      alignment: Alignment.bottomRight,
+      child: Padding(
+        padding: const EdgeInsets.all(16),
+        child: Material(
+          elevation: 16,
+          borderRadius: BorderRadius.circular(8),
+          child: Container(
+            constraints: const BoxConstraints(
+              maxWidth: 720,
+              maxHeight: 500,
+            ),
+            child: _TaskInfoDisplay(taskId: taskId),
+          ),
+        ),
       ),
     );
   }

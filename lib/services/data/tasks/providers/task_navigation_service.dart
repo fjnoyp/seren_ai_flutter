@@ -10,6 +10,7 @@ import 'package:seren_ai_flutter/services/data/tasks/providers/task_by_id_stream
 import 'package:seren_ai_flutter/services/data/tasks/widgets/action_buttons/delete_task_button.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:seren_ai_flutter/services/data/tasks/repositories/tasks_repository.dart';
+import 'package:seren_ai_flutter/services/data/tasks/widgets/web/web_task_page.dart';
 
 final taskNavigationServiceProvider = Provider<TaskNavigationService>((ref) {
   return TaskNavigationService(ref);
@@ -48,6 +49,7 @@ class TaskNavigationService extends BaseNavigationService {
     StatusEnum? initialStatus,
     String? initialParentTaskId,
     bool isPhase = false,
+    bool asPopup = false,
   }) async {
     assert(
       initialParentTaskId == null || isPhase == false,
@@ -64,7 +66,16 @@ class TaskNavigationService extends BaseNavigationService {
       updateState: true,
     );
 
-    await _navigateToTaskPage(mode: EditablePageMode.create, taskId: curTaskId);
+    if (asPopup) {
+      await ref.read(navigationServiceProvider).showPopupDialog(
+            const TaskPopupDialog(),
+            barrierDismissible: false,
+            applyBarrierColor: false,
+          );
+    } else {
+      await _navigateToTaskPage(
+          mode: EditablePageMode.create, taskId: curTaskId);
+    }
   }
 
   Future<void> _ensureTaskOrgIsSelected(String taskId) async {
@@ -93,7 +104,7 @@ class TaskNavigationService extends BaseNavigationService {
   }) async {
     final context = ref.read(navigationServiceProvider).context;
 
-    final actions = [DeleteTaskButton(taskId)];
+    final actions = [DeleteTaskButton(taskId, shouldPopOnDelete: true)];
 
     final title = mode == EditablePageMode.create
         ? AppLocalizations.of(context)!.createTask

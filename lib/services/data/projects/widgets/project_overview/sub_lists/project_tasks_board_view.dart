@@ -4,11 +4,10 @@ import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:seren_ai_flutter/services/ai/ai_context_helper/widgets/ai_context_view.dart';
 import 'package:seren_ai_flutter/services/data/common/status_enum.dart';
 import 'package:seren_ai_flutter/services/data/projects/providers/cur_selected_project_providers.dart';
+import 'package:seren_ai_flutter/services/data/projects/widgets/project_overview/sub_lists/create_task_button.dart';
 import 'package:seren_ai_flutter/services/data/tasks/repositories/tasks_repository.dart';
 import 'package:seren_ai_flutter/services/data/tasks/filtered/tasks_filtered_provider.dart';
-import 'package:seren_ai_flutter/services/data/tasks/widgets/inline_creation/inline_task_creation_button.dart';
 import 'package:seren_ai_flutter/services/data/tasks/widgets/task_list/task_list_card_item_view.dart';
-import 'package:seren_ai_flutter/services/data/tasks/filtered/task_filter_state_provider.dart';
 import 'package:seren_ai_flutter/services/data/tasks/models/task_model.dart';
 
 class _TasksList extends StatelessWidget {
@@ -143,12 +142,16 @@ class ProjectTasksBoardView extends HookConsumerWidget {
                   const Divider(height: 1),
                   SizedBox(
                     width: double.infinity,
-                    child: InlineTaskCreationButton(
+                    child: CreateTaskButton(
                       initialStatus: status,
-                      onPressed: () => scrollController.jumpTo(
-                        scrollController.position.maxScrollExtent,
-                      ),
+                      initialProjectId: projectId,
                     ),
+                    // InlineTaskCreationButton(
+                    //   initialStatus: status,
+                    //   onPressed: () => scrollController.jumpTo(
+                    //     scrollController.position.maxScrollExtent,
+                    //   ),
+                    // ),
                   ),
                 ],
               ),
