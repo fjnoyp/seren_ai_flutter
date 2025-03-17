@@ -239,6 +239,7 @@ class _NewTaskFromCurrentProjectButton extends ConsumerWidget {
               await ref.read(taskNavigationServiceProvider).openNewTask(
                     initialProjectId:
                         ref.read(curSelectedProjectIdNotifierProvider),
+                    asPopup: true,
                   ),
         ),
         MenuItemButton(
@@ -248,6 +249,7 @@ class _NewTaskFromCurrentProjectButton extends ConsumerWidget {
                     isPhase: true,
                     initialProjectId:
                         ref.read(curSelectedProjectIdNotifierProvider),
+                    asPopup: true,
                   ),
         ),
       ],

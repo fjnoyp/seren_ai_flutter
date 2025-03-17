@@ -1,8 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:seren_ai_flutter/common/current_route_provider.dart';
 import 'package:seren_ai_flutter/common/navigation_service_provider.dart';
-import 'package:seren_ai_flutter/common/routes/app_routes.dart';
 import 'package:seren_ai_flutter/services/data/common/widgets/delete_confirmation_dialog.dart';
 import 'package:seren_ai_flutter/services/data/tasks/providers/task_by_id_stream_provider.dart';
 import 'package:seren_ai_flutter/services/data/tasks/repositories/tasks_repository.dart';
@@ -16,6 +14,7 @@ class DeleteTaskButton extends ConsumerWidget {
     this.colored = false,
     this.outlined = false,
     this.onDelete,
+    this.shouldPopOnDelete = false,
   });
 
   final String taskId;
@@ -23,6 +22,7 @@ class DeleteTaskButton extends ConsumerWidget {
   final bool colored;
   final bool outlined;
   final VoidCallback? onDelete;
+  final bool shouldPopOnDelete;
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -42,6 +42,7 @@ class DeleteTaskButton extends ConsumerWidget {
                   context,
                   ref,
                   onDelete,
+                  shouldPopOnDelete,
                 ),
               )
             : TextButton.icon(
@@ -55,6 +56,7 @@ class DeleteTaskButton extends ConsumerWidget {
                   context,
                   ref,
                   onDelete,
+                  shouldPopOnDelete,
                 ),
               )
         : IconButton(
@@ -63,6 +65,7 @@ class DeleteTaskButton extends ConsumerWidget {
               context,
               ref,
               onDelete,
+              shouldPopOnDelete,
             ),
             style: IconButton.styleFrom(
               foregroundColor: colored ? redColor : null,
@@ -74,6 +77,7 @@ class DeleteTaskButton extends ConsumerWidget {
     BuildContext context,
     WidgetRef ref,
     VoidCallback? onDelete,
+    bool shouldPopOnDelete,
   ) async {
     final itemName =
         ref.watch(taskByIdStreamProvider(taskId)).value?.name ?? 'this task';
@@ -84,12 +88,12 @@ class DeleteTaskButton extends ConsumerWidget {
           itemName: itemName,
           onDelete: () {
             final tasksRepository = ref.read(tasksRepositoryProvider);
-            // only pop if we are on the task page
-            final currentRoute = ref.read(currentRouteProvider);
-            if (currentRoute.startsWith(AppRoutes.taskPage.name) &&
-                currentRoute.contains(taskId)) {
+
+            // conditionally pop
+            if (shouldPopOnDelete) {
               ref.read(navigationServiceProvider).pop();
             }
+
             tasksRepository.deleteItem(taskId);
             onDelete?.call();
           },
