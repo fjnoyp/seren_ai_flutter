@@ -10,7 +10,8 @@ enum TaskFieldEnum {
   dueDate,
   assignees,
   type,
-  createdAt;
+  createdAt,
+  project;
 
   String toHumanReadable(BuildContext context) => switch (this) {
         TaskFieldEnum.name => AppLocalizations.of(context)!.name,
@@ -20,6 +21,7 @@ enum TaskFieldEnum {
         TaskFieldEnum.dueDate => AppLocalizations.of(context)!.dueDate,
         TaskFieldEnum.type => AppLocalizations.of(context)!.type,
         TaskFieldEnum.createdAt => AppLocalizations.of(context)!.creationDate,
+        TaskFieldEnum.project => AppLocalizations.of(context)!.project,
       };
       
   Comparator<TaskModel>? get comparator => switch (this) {
@@ -37,5 +39,6 @@ enum TaskFieldEnum {
         // the fields below are not sortable
         TaskFieldEnum.assignees => null,
         TaskFieldEnum.type => null,
+        TaskFieldEnum.project => null,
       };
 }
