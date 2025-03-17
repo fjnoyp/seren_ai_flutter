@@ -164,6 +164,7 @@
     "editor": "Editor",
     "member": "Membro",
     "userRoleOfOrg": "{userRole} de {orgName}",
+    "deleteOrgTooltip": "Excluir Organização",
 
     "@_": {"description": "Invite User"},
     "inviteUser": "Convidar Usuário",
