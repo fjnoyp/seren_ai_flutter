@@ -2,10 +2,10 @@
 class BuildInfo {
   // Core build info
   static const String version = '1.0.0';
-  static const String buildDate = '2025-03-16 14:14:06';
+  static const String buildDate = '2025-03-17 05:41:46';
   
   // Git info
-  static const String commitHash = '6febe12';
+  static const String commitHash = '2cecde2';
   static const String branch = 'feat/ai_enhancements';
   static const String lastTag = 'no tag';
   
@@ -16,12 +16,20 @@ class BuildInfo {
   // Recent commits (last 5)
   static const List<Map<String, String>> recentCommits = [
     {
+      "hash": "2cecde2",
+      "author": "Kyle",
+      "email": "kylcheng@gmail.com", 
+      "message": "chore(tasks): refactor task list views",
+      "date": "2025-03-16",
+      "relativeDate": "15 hours ago"
+    },
+    {
       "hash": "6febe12",
       "author": "Kyle",
       "email": "kylcheng@gmail.com", 
       "message": "fix(ai): fix ai date time updates, and assigning to self",
       "date": "2025-03-16",
-      "relativeDate": "2 hours ago"
+      "relativeDate": "18 hours ago"
     },
     {
       "hash": "c84ea0c",
@@ -29,7 +37,7 @@ class BuildInfo {
       "email": "kylcheng@gmail.com", 
       "message": "feat(ai): allow ai to assign task to current user",
       "date": "2025-03-14",
-      "relativeDate": "2 days ago"
+      "relativeDate": "3 days ago"
     },
     {
       "hash": "af052ef",
@@ -37,7 +45,7 @@ class BuildInfo {
       "email": "kylcheng@gmail.com", 
       "message": "feat(ai): allow ai to add task comments, fix ui context",
       "date": "2025-03-14",
-      "relativeDate": "2 days ago"
+      "relativeDate": "3 days ago"
     },
     {
       "hash": "b1ca2a3",
@@ -45,19 +53,11 @@ class BuildInfo {
       "email": "kylcheng@gmail.com", 
       "message": "feat(ai): ai overhaul to multistep reasoning",
       "date": "2025-03-13",
-      "relativeDate": "3 days ago"
-    },
-    {
-      "hash": "1169993",
-      "author": "renata-sisilio",
-      "email": "renata@seren-ai.co", 
-      "message": "feat(forms): enhance date-time selection UI by splitting fields",
-      "date": "2025-03-13",
-      "relativeDate": "3 days ago"
+      "relativeDate": "4 days ago"
     },
   ];
 
   // Stats
-  static const String totalCommits = '421';
+  static const String totalCommits = '422';
   static const String contributors = '       0';
 }
