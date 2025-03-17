@@ -2,10 +2,10 @@
 class BuildInfo {
   // Core build info
   static const String version = '1.0.0';
-  static const String buildDate = '2025-03-17 13:10:14';
+  static const String buildDate = '2025-03-17 13:20:04';
   
   // Git info
-  static const String commitHash = 'e070abc';
+  static const String commitHash = '8cfa865';
   static const String branch = 'feat/everything-project';
   static const String lastTag = 'no tag';
   
@@ -16,12 +16,12 @@ class BuildInfo {
   // Recent commits (last 5)
   static const List<Map<String, String>> recentCommits = [
     {
-      "hash": "e070abc",
+      "hash": "8cfa865",
       "author": "renata-sisilio",
       "email": "renata@seren-ai.co", 
       "message": "pr comment + ai suggestions",
       "date": "2025-03-17",
-      "relativeDate": "19 minutes ago"
+      "relativeDate": "29 minutes ago"
     },
     {
       "hash": "df8e3b9",
@@ -29,7 +29,7 @@ class BuildInfo {
       "email": "renata@seren-ai.co", 
       "message": "feat(projects): implement everything project tab",
       "date": "2025-03-17",
-      "relativeDate": "2 hours ago"
+      "relativeDate": "3 hours ago"
     },
     {
       "hash": "0b96b5f",

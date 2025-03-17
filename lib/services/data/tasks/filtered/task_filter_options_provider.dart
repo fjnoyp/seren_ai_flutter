@@ -22,13 +22,15 @@ final taskFilterOptionsProvider =
   final context =
       ref.read(navigationServiceProvider).navigatorKey.currentContext!;
 
+  final curSelectedOrgId = ref.read(curSelectedOrgIdNotifierProvider);
   final users = CurSelectedProjectIdNotifier.isEverythingId(projectId)
-      ? ref
-          .watch(joinedUserOrgRolesByOrgStreamProvider(
-              ref.read(curSelectedOrgIdNotifierProvider)!))
-          .valueOrNull
-          ?.map((userOrgRole) => userOrgRole.user!)
-          .toList()
+      ? (curSelectedOrgId != null
+          ? ref
+              .watch(joinedUserOrgRolesByOrgStreamProvider(curSelectedOrgId))
+              .valueOrNull
+              ?.map((userOrgRole) => userOrgRole.user)
+              .toList()
+          : [])
       : ref.watch(usersInProjectProvider(projectId)).valueOrNull;
 
   return <TaskFieldEnum, List<TaskFilter>>{
