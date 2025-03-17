@@ -3,7 +3,6 @@ import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:seren_ai_flutter/services/data/tasks/filtered/tasks_filtered_provider.dart';
 import 'package:seren_ai_flutter/services/data/tasks/models/task_model.dart';
 import 'package:seren_ai_flutter/services/data/tasks/widgets/task_list/task_list_card_item_view.dart';
-import 'package:seren_ai_flutter/services/data/tasks/widgets/task_list/task_list_item_view.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 /// A simplified task list view that uses the tasksFilteredProvider

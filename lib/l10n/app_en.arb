@@ -251,6 +251,7 @@
     "project": "Project",
     "newProjectDefaultName": "New Project",
     "projects": "Projects",
+    "everythingProjectName": "Everything",
     "selectAProject": "Select a Project",
     "personal": "Personal",
     "projectIsRequired": "Project is required",

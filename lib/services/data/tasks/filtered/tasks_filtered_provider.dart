@@ -1,4 +1,5 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:seren_ai_flutter/services/data/projects/providers/cur_selected_project_providers.dart';
 import 'package:seren_ai_flutter/services/data/tasks/models/task_model.dart';
 import 'package:seren_ai_flutter/services/data/tasks/providers/cur_user_viewable_tasks_stream_provider.dart';
 import 'package:seren_ai_flutter/services/data/tasks/providers/tasks_by_project_stream_provider.dart';
@@ -19,10 +20,10 @@ final tasksFilteredProvider = StateProvider.autoDispose<List<TaskModel>>((ref) {
   return filteredTasks;
 });
 
-final tasksByProjectsFilteredProvider = StateProvider.autoDispose
-    .family<List<TaskModel>, String?>((ref, projectId) {
+final tasksByProjectsFilteredProvider =
+    StateProvider.autoDispose.family<List<TaskModel>, String>((ref, projectId) {
   final tasks = ref
-          .watch(projectId == null
+          .watch(CurSelectedProjectIdNotifier.isEverythingId(projectId)
               ? curUserViewableTasksStreamProvider
               : tasksByProjectStreamProvider(projectId))
           .value ??
@@ -47,10 +48,10 @@ final tasksByProjectsFilteredProvider = StateProvider.autoDispose
   return filteredTasks;
 });
 
-final tasksAndParentsByProjectFilteredProvider = StateProvider.autoDispose
-    .family<List<TaskModel>, String?>((ref, projectId) {
+final tasksAndParentsByProjectFilteredProvider =
+    StateProvider.autoDispose.family<List<TaskModel>, String>((ref, projectId) {
   final tasks = ref
-          .watch(projectId == null
+          .watch(CurSelectedProjectIdNotifier.isEverythingId(projectId)
               ? curUserViewableTasksStreamProvider
               : tasksByProjectStreamProvider(projectId))
           .value ??

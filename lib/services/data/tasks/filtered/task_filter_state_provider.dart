@@ -1,12 +1,9 @@
 import 'package:flutter/widgets.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:seren_ai_flutter/common/navigation_service_provider.dart';
-import 'package:seren_ai_flutter/services/data/tasks/providers/cur_user_viewable_tasks_stream_provider.dart';
-import 'package:seren_ai_flutter/services/data/tasks/providers/tasks_by_project_stream_provider.dart';
 import 'package:seren_ai_flutter/services/data/tasks/task_filter.dart';
 import 'package:seren_ai_flutter/services/data/tasks/models/task_model.dart';
 import 'package:seren_ai_flutter/services/data/tasks/task_field_enum.dart';
-import 'package:seren_ai_flutter/services/data/tasks/widgets/inline_creation/cur_inline_creating_task_id_provider.dart';
 
 class TaskFilterState {
   final String searchQuery;

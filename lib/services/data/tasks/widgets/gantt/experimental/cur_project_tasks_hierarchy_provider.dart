@@ -73,6 +73,8 @@ final taskParentChainIdsProvider =
 final _curProjectTasksHierarchyProvider =
     Provider<Map<String, TaskHierarchyInfo>>((ref) {
   final projectId = ref.watch(curSelectedProjectIdNotifierProvider);
+  if (projectId == null)  return {};
+  
   final filteredTasks =
       ref.watch(tasksAndParentsByProjectFilteredProvider(projectId));
 

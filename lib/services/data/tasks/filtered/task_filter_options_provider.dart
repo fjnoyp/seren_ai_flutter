@@ -2,6 +2,8 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:seren_ai_flutter/common/language_provider.dart';
 import 'package:seren_ai_flutter/common/navigation_service_provider.dart';
 import 'package:seren_ai_flutter/common/utils/date_time_extension.dart';
+import 'package:seren_ai_flutter/services/data/orgs/providers/cur_selected_org_id_notifier.dart';
+import 'package:seren_ai_flutter/services/data/orgs/providers/joined_user_org_roles_by_org_stream_provider.dart';
 import 'package:seren_ai_flutter/services/data/projects/providers/cur_selected_project_providers.dart';
 import 'package:seren_ai_flutter/services/data/tasks/models/task_model.dart';
 import 'package:seren_ai_flutter/services/data/tasks/task_field_enum.dart';
@@ -12,7 +14,7 @@ import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 final taskFilterOptionsProvider =
     Provider<Map<TaskFieldEnum, List<TaskFilter>>>((ref) {
-  final projectId = ref.watch(curSelectedProjectStreamProvider).value?.id;
+  final projectId = ref.watch(curSelectedProjectIdNotifierProvider);
   if (projectId == null) throw Exception('No project selected');
 
   ref.watch(languageSNP);
@@ -20,7 +22,17 @@ final taskFilterOptionsProvider =
   final context =
       ref.read(navigationServiceProvider).navigatorKey.currentContext!;
 
-  final users = ref.watch(usersInProjectProvider(projectId));
+  final curSelectedOrgId = ref.read(curSelectedOrgIdNotifierProvider);
+  final users = CurSelectedProjectIdNotifier.isEverythingId(projectId)
+      ? (curSelectedOrgId != null
+          ? ref
+              .watch(joinedUserOrgRolesByOrgStreamProvider(curSelectedOrgId))
+              .valueOrNull
+              ?.map((userOrgRole) => userOrgRole.user)
+              .toList()
+          : [])
+      : ref.watch(usersInProjectProvider(projectId)).valueOrNull;
+
   return <TaskFieldEnum, List<TaskFilter>>{
     TaskFieldEnum.type: TaskType.values
         .map((type) => TaskFilter(
@@ -31,7 +43,7 @@ final taskFilterOptionsProvider =
             ))
         .toList(),
     TaskFieldEnum.assignees: [
-      ...(users.value?.map((user) {
+      ...(users?.map((user) {
             return TaskFilter(
               field: TaskFieldEnum.assignees,
               value: user.id,

@@ -31,6 +31,20 @@ class NotesRepository extends BaseRepository<NoteModel> {
     );
   }
 
+  // TODO p3: personal notes should probably be org-specific
+  Stream<List<NoteModel>> watchAllNotesByUserAndOrg({
+    required String userId,
+    required String orgId,
+  }) {
+    return watch(
+      NoteQueries.getAllNotesByUserAndOrg,
+      {
+        'user_id': userId,
+        'org_id': orgId,
+      },
+    );
+  }
+
   Stream<List<NoteModel>> watchDefaultProjectNotesAndPersonalNotes({
     required String userId,
   }) {
