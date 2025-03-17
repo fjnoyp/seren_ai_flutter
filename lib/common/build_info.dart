@@ -2,10 +2,10 @@
 class BuildInfo {
   // Core build info
   static const String version = '1.0.0';
-  static const String buildDate = '2025-03-17 11:04:07';
+  static const String buildDate = '2025-03-17 11:04:39';
   
   // Git info
-  static const String commitHash = 'c780c01';
+  static const String commitHash = '18cb9d7';
   static const String branch = 'feat/add-days-field-to-task-duration';
   static const String lastTag = 'no tag';
   
@@ -16,12 +16,20 @@ class BuildInfo {
   // Recent commits (last 5)
   static const List<Map<String, String>> recentCommits = [
     {
+      "hash": "18cb9d7",
+      "author": "renata-sisilio",
+      "email": "renata@seren-ai.co", 
+      "message": "fix(tasks): set task estimated duration in days and hours",
+      "date": "2025-03-17",
+      "relativeDate": "33 seconds ago"
+    },
+    {
       "hash": "c780c01",
       "author": "renata-sisilio",
       "email": "renata@seren-ai.co", 
       "message": "feat(orgs): allow users to delete (disable) orgs (#183)",
       "date": "2025-03-17",
-      "relativeDate": "11 minutes ago"
+      "relativeDate": "12 minutes ago"
     },
     {
       "hash": "bc508f1",
@@ -29,7 +37,7 @@ class BuildInfo {
       "email": "kylcheng@gmail.com", 
       "message": "chore: pr comments",
       "date": "2025-03-17",
-      "relativeDate": "82 minutes ago"
+      "relativeDate": "83 minutes ago"
     },
     {
       "hash": "2a1e617",
@@ -47,17 +55,9 @@ class BuildInfo {
       "date": "2025-03-16",
       "relativeDate": "19 hours ago"
     },
-    {
-      "hash": "9be584f",
-      "author": "Kyle",
-      "email": "kylcheng@gmail.com", 
-      "message": "feat(ai): allow ai to assign task to current user",
-      "date": "2025-03-14",
-      "relativeDate": "3 days ago"
-    },
   ];
 
   // Stats
-  static const String totalCommits = '424';
+  static const String totalCommits = '425';
   static const String contributors = '0';
 }
