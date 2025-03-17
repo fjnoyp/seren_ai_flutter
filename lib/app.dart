@@ -125,7 +125,6 @@ class AppState extends ConsumerState<App> {
                     const ManageOrgUsersPage(),
                     actions: args?['actions'],
                     webBody: const WebManageOrgUsersPage(),
-                    showAppBar: !isWebVersion,
                   ),
               AppRoutes.projects.name: (context) => _GuardScaffold(
                   AppLocalizations.of(context)!.projects,
@@ -134,7 +133,6 @@ class AppState extends ConsumerState<App> {
                     args?['title'] ?? AppLocalizations.of(context)!.project,
                     const ProjectOverviewPage(),
                     actions: args?['actions'],
-                    showAppBar: !isWebVersion,
                   ),
               AppRoutes.projectDetails.name: (context) => _GuardScaffold(
                     args?['title'] ?? AppLocalizations.of(context)!.project,
@@ -150,13 +148,11 @@ class AppState extends ConsumerState<App> {
                     TaskPage(mode: args?['mode'] ?? EditablePageMode.edit),
                     actions: args?['actions'],
                     webBody: const WebTaskPage(),
-                    showAppBar: !isWebVersion,
                   ),
               AppRoutes.aiChats.name: (context) => _GuardScaffold(
                     AppLocalizations.of(context)!.aiChatThreads,
                     const AIChatsPage(),
                     showBottomBar: false,
-                    showAppBar: false,
                   ),
               AppRoutes.shifts.name: (context) => _GuardScaffold(
                   AppLocalizations.of(context)!.shifts, const ShiftsPage()),
@@ -179,7 +175,6 @@ class AppState extends ConsumerState<App> {
                     AppLocalizations.of(context)!.settings,
                     const SettingsPage(),
                     webBody: const WebSettingsPage(),
-                    showAppBar: false,
                     showBottomBar: false,
                   ),
               AppRoutes.resetPassword.name: (context) => Scaffold(
@@ -371,7 +366,6 @@ class _GuardScaffold extends StatelessWidget {
     this.webBody,
     this.actions,
     this.showBottomBar = true,
-    this.showAppBar = true,
   });
 
   final String title;
@@ -379,7 +373,6 @@ class _GuardScaffold extends StatelessWidget {
   final Widget? webBody;
   final List<Widget>? actions;
   final bool showBottomBar;
-  final bool showAppBar;
 
   @override
   Widget build(BuildContext context) {
@@ -390,7 +383,6 @@ class _GuardScaffold extends StatelessWidget {
           body: isWebVersion ? webBody ?? body : body,
           actions: actions,
           showBottomBar: showBottomBar,
-          showAppBar: showAppBar,
         ),
       ),
     );

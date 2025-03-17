@@ -14,12 +14,6 @@ class MainScaffold extends ConsumerWidget {
   final bool showBottomBar;
   final List<Widget>? actions;
 
-  // This is a temporary solution to hide the app bar on the project page.
-  // The future goal is not to show the app bar on any web pages at all,
-  // but this is a quick fix to make the project page look better for now.
-  // TODO p2: remove this once we adjust the web layout on all pages
-  final bool showAppBar;
-
   const MainScaffold({
     super.key,
     required this.title,
@@ -27,7 +21,6 @@ class MainScaffold extends ConsumerWidget {
     this.floatingActionButton,
     this.showBottomBar = true,
     this.actions,
-    this.showAppBar = true,
   });
 
   @override
@@ -48,7 +41,6 @@ class MainScaffold extends ConsumerWidget {
               body: body,
               showBottomBar: showBottomBar,
               actions: actions,
-              showAppBar: showAppBar,
               isAiAssistantExpanded: isAiAssistantExpanded,
             )
           : MobileScaffold(
