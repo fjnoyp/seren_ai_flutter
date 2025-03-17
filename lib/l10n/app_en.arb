@@ -523,6 +523,7 @@
     "selectATask": "Select a Task",
     "choosePhase": "Choose Phase",
     "blockedByTask": "Blocked by Task",
+    "estimatedDuration": "Estimated Duration",
     "noEstimatedDurationSet": "No estimated duration set",
     "noEstimatedDuration": "No estimated duration",
     "foundTasks": "Found Tasks",
@@ -676,7 +677,14 @@
         }
     },
     "zeroHours": "0 hours",
-
+    "durationDaysAndHours": "{days, plural, =0{} =1{1 day } other{{days} days }}{hours, plural, =0{{days, plural, =0{0 hours} other{}}} =1{1 hour} other{{hours} hours}}",
+    "@durationDaysAndHours": {
+        "description": "Format for displaying duration with days and hours",
+        "placeholders": {
+            "days": {"type": "int"},
+            "hours": {"type": "int"}
+        }
+    },
     "@_": {"description": "Date Time Formatting"},
     "todayDate": "Today ({date})",
     "@todayDate": {
@@ -699,6 +707,7 @@
     "day": "Day",
     "week": "Week",
     "month": "Month",
+    "hours": "Hours",
 
     "@_": {"description": "Status Enum"},
     "status": "Status",

@@ -332,6 +332,7 @@
     "selectATask": "Selecionar uma Tarefa",
     "choosePhase": "Escolher Etapa",
     "blockedByTask": "Bloqueado por",
+    "estimatedDuration": "Duração Estimada",
     "noEstimatedDurationSet": "Sem duração estimada",
     "noEstimatedDuration": "Sem duração estimada",
     "foundTasks": "Tarefas Encontradas",
@@ -370,6 +371,7 @@
     "durationFormat": "{hours}:{minutes} horas",
     "durationHoursOnly": "{hours} {hours, plural, =1{hora} other{horas}}",
     "zeroHours": "0 horas",
+    "durationDaysAndHours": "{days, plural, =0{} =1{1 dia } other{{days} dias }}{hours, plural, =0{{days, plural, =0{0 horas} other{}}} =1{1 hora} other{{hours} horas}}",
 
     "@_": {"description": "Date Time Formatting"},
     "todayDate": "Hoje ({date})",
@@ -378,6 +380,7 @@
     "day": "Dia",
     "week": "Semana",
     "month": "Mês",
+    "hours": "Horas",
 
     "@_": {"description": "Status Enum"},
     "status": "Estado",
