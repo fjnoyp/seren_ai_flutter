@@ -115,6 +115,7 @@ class _TasksFromPhaseSection extends ConsumerWidget {
           ),
         ),
         const SizedBox(height: 32),
+        // === Show Tasks in the Phase ===
         Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
@@ -134,9 +135,7 @@ class _TasksFromPhaseSection extends ConsumerWidget {
               children: [
                 Flexible(
                   child: SingleChildScrollView(
-                    child: TaskListView(
-                        tasks: tasks.value ?? [],
-                        additionalFilter: (task) => task.isPhase == false),
+                    child: TaskListView(tasks: tasks.value ?? []),
                   ),
                 ),
                 SizedBox(
