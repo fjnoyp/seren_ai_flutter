@@ -224,6 +224,7 @@
             "orgName": {"type": "String"}
         }
     },
+    "deleteOrgTooltip": "Delete Organization",
 
     "@_": {"description": "Invite User"},
     "inviteUser": "Invite User",

@@ -14,6 +14,11 @@ class OrgModel implements IHasId {
   final DateTime? createdAt;
   @JsonKey(name: 'updated_at')
   final DateTime? updatedAt;
+  @JsonKey(name: 'is_enabled', toJson: _boolToJson, fromJson: _boolFromJson)
+  final bool isEnabled;
+
+  static bool _boolFromJson(dynamic value) => value == 1;
+  static int _boolToJson(bool value) => value ? 1 : 0;
 
   OrgModel({
     String? id,
@@ -21,6 +26,7 @@ class OrgModel implements IHasId {
     this.address,
     this.createdAt,
     this.updatedAt,
+    this.isEnabled = true,
   }) : id = id ?? uuid.v4();
 
   factory OrgModel.fromJson(Map<String, dynamic> json) => _$OrgModelFromJson(json);
@@ -32,6 +38,7 @@ class OrgModel implements IHasId {
     String? address,
     DateTime? createdAt,
     DateTime? updatedAt,
+    bool? isEnabled,
   }) {
     return OrgModel(
       id: id ?? this.id,
@@ -39,6 +46,7 @@ class OrgModel implements IHasId {
       address: address ?? this.address,
       createdAt: createdAt ?? this.createdAt,
       updatedAt: updatedAt ?? this.updatedAt,
+      isEnabled: isEnabled ?? this.isEnabled,
     );
   }
 }
