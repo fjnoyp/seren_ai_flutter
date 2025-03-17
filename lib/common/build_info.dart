@@ -2,11 +2,11 @@
 class BuildInfo {
   // Core build info
   static const String version = '1.0.0';
-  static const String buildDate = '2025-03-17 05:41:46';
+  static const String buildDate = '2025-03-17 10:51:35';
   
   // Git info
-  static const String commitHash = '2cecde2';
-  static const String branch = 'feat/ai_enhancements';
+  static const String commitHash = 'bc508f1';
+  static const String branch = 'feat/allow-org-deletion';
   static const String lastTag = 'no tag';
   
   // Author of last commit
@@ -16,23 +16,31 @@ class BuildInfo {
   // Recent commits (last 5)
   static const List<Map<String, String>> recentCommits = [
     {
-      "hash": "2cecde2",
+      "hash": "bc508f1",
+      "author": "Kyle",
+      "email": "kylcheng@gmail.com", 
+      "message": "chore: pr comments",
+      "date": "2025-03-17",
+      "relativeDate": "70 minutes ago"
+    },
+    {
+      "hash": "2a1e617",
       "author": "Kyle",
       "email": "kylcheng@gmail.com", 
       "message": "chore(tasks): refactor task list views",
       "date": "2025-03-16",
-      "relativeDate": "15 hours ago"
+      "relativeDate": "17 hours ago"
     },
     {
-      "hash": "6febe12",
+      "hash": "528e98e",
       "author": "Kyle",
       "email": "kylcheng@gmail.com", 
       "message": "fix(ai): fix ai date time updates, and assigning to self",
       "date": "2025-03-16",
-      "relativeDate": "18 hours ago"
+      "relativeDate": "19 hours ago"
     },
     {
-      "hash": "c84ea0c",
+      "hash": "9be584f",
       "author": "Kyle",
       "email": "kylcheng@gmail.com", 
       "message": "feat(ai): allow ai to assign task to current user",
@@ -40,24 +48,16 @@ class BuildInfo {
       "relativeDate": "3 days ago"
     },
     {
-      "hash": "af052ef",
+      "hash": "b755b78",
       "author": "Kyle",
       "email": "kylcheng@gmail.com", 
       "message": "feat(ai): allow ai to add task comments, fix ui context",
       "date": "2025-03-14",
       "relativeDate": "3 days ago"
     },
-    {
-      "hash": "b1ca2a3",
-      "author": "Kyle",
-      "email": "kylcheng@gmail.com", 
-      "message": "feat(ai): ai overhaul to multistep reasoning",
-      "date": "2025-03-13",
-      "relativeDate": "4 days ago"
-    },
   ];
 
   // Stats
-  static const String totalCommits = '422';
-  static const String contributors = '       0';
+  static const String totalCommits = '423';
+  static const String contributors = '0';
 }

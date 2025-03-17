@@ -7,6 +7,7 @@ import 'package:seren_ai_flutter/services/data/orgs/models/user_org_role_model.d
 import 'package:seren_ai_flutter/services/data/orgs/providers/cur_selected_org_id_notifier.dart';
 import 'package:seren_ai_flutter/services/data/orgs/providers/joined_user_org_roles_by_org_stream_provider.dart';
 import 'package:seren_ai_flutter/services/data/orgs/repositories/orgs_repository.dart';
+import 'package:seren_ai_flutter/services/data/orgs/widgets/action_buttons/delete_org_button.dart';
 import 'package:seren_ai_flutter/services/data/orgs/widgets/action_buttons/edit_org_button.dart';
 import 'package:seren_ai_flutter/services/data/orgs/widgets/form/org_selection_fields.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
@@ -114,7 +115,8 @@ class CurOrgPage extends ConsumerWidget {
 void openOrgPage(BuildContext context,
     {EditablePageMode mode = EditablePageMode.readOnly}) {
   final actions = [
-    if (mode == EditablePageMode.readOnly) const EditOrgButton()
+    if (mode == EditablePageMode.readOnly) const EditOrgButton(),
+    if (mode == EditablePageMode.edit) const DeleteOrgButton(),
   ];
 
   Navigator.pushNamed(context, AppRoutes.organization.name,

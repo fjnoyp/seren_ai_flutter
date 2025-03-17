@@ -34,4 +34,17 @@ class UserOrgRolesRepository extends BaseRepository<UserOrgRoleModel> {
       'org_id': orgId,
     });
   }
+
+  Future<List<UserOrgRoleModel>> getOrgRolesByOrg(String orgId) async {
+    return get(OrgQueries.userOrgRolesByOrgQuery, {
+      'org_id': orgId,
+    });
+  }
+
+  Future<void> removeAllOrgRolesForOrg(String orgId) async {
+    final orgRoles = await getOrgRolesByOrg(orgId);
+    for (final orgRole in orgRoles) {
+      await deleteItem(orgRole.id);
+    }
+  }
 }
