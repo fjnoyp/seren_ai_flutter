@@ -10,7 +10,7 @@ void main() {
         // Test case: ISO string representing 1 PM UTC
         final isoString = '2025-03-17T13:00:00';
 
-        final result = AiDateParser.parseIsoIntoLocal(isoString);
+        final result = AiDateParser.parseIsoIntoLocalThenUTC(isoString);
 
         // Verify the result preserves the hour (1 PM)
         expect(result?.hour, 13);
@@ -26,31 +26,31 @@ void main() {
       });
 
       test('should handle null input', () {
-        final result = AiDateParser.parseIsoIntoLocal(null);
+        final result = AiDateParser.parseIsoIntoLocalThenUTC(null);
         expect(result, isNull);
       });
 
       test('should handle invalid ISO format', () {
-        final result = AiDateParser.parseIsoIntoLocal('not-an-iso-date');
+        final result = AiDateParser.parseIsoIntoLocalThenUTC('not-an-iso-date');
         expect(result, isNull);
       });
 
       test('should handle different times of day', () {
         // Test morning time
         final morningResult =
-            AiDateParser.parseIsoIntoLocal('2025-03-17T08:30:00.000Z');
+            AiDateParser.parseIsoIntoLocalThenUTC('2025-03-17T08:30:00.000Z');
         expect(morningResult?.hour, 8);
         expect(morningResult?.minute, 30);
 
         // Test afternoon time
         final afternoonResult =
-            AiDateParser.parseIsoIntoLocal('2025-03-17T16:45:00.000Z');
+            AiDateParser.parseIsoIntoLocalThenUTC('2025-03-17T16:45:00.000Z');
         expect(afternoonResult?.hour, 16);
         expect(afternoonResult?.minute, 45);
 
         // Test midnight
         final midnightResult =
-            AiDateParser.parseIsoIntoLocal('2025-03-17T00:00:00.000Z');
+            AiDateParser.parseIsoIntoLocalThenUTC('2025-03-17T00:00:00.000Z');
         expect(midnightResult?.hour, 0);
         expect(midnightResult?.minute, 0);
       });

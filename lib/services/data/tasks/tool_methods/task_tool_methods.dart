@@ -250,8 +250,8 @@ class TaskToolMethods {
       name: actionRequest.taskName,
       description: actionRequest.taskDescription,
       startDateTime:
-          AiDateParser.parseIsoIntoLocal(actionRequest.taskStartDate),
-      dueDate: AiDateParser.parseIsoIntoLocal(actionRequest.taskDueDate),
+          AiDateParser.parseIsoIntoLocalThenUTC(actionRequest.taskStartDate),
+      dueDate: AiDateParser.parseIsoIntoLocalThenUTC(actionRequest.taskDueDate),
       status: actionRequest.taskStatus != null
           ? StatusEnum.tryParse(actionRequest.taskStatus)
           : StatusEnum.open,
@@ -375,16 +375,12 @@ class TaskToolMethods {
     }
     // === END SELECT PROJECT ===
 
-    // WHat the fuck is wrong ... keeps getting the wrong date after ...
-    // the date sent from ai 3/17 2 pm is stored as UTC string equivalent in database for some reason ...
-    // unsure why ...
-
     final updatedTask = taskToModify.copyWith(
       name: actionRequest.taskName,
       description: actionRequest.taskDescription,
       startDateTime:
-          AiDateParser.parseIsoIntoLocal(actionRequest.taskStartDate),
-      dueDate: AiDateParser.parseIsoIntoLocal(actionRequest.taskDueDate),
+          AiDateParser.parseIsoIntoLocalThenUTC(actionRequest.taskStartDate),
+      dueDate: AiDateParser.parseIsoIntoLocalThenUTC(actionRequest.taskDueDate),
       status: actionRequest.taskStatus != null
           ? StatusEnum.tryParse(actionRequest.taskStatus)
           : null,
