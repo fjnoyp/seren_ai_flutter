@@ -7,41 +7,84 @@ class TaskTag extends StatelessWidget {
     this.color,
     this.isTaskLabel = false,
     this.isPhaseLabel = false,
+    this.outlined = false,
+    this.isLarge = true,
   });
 
   final String? text;
   final bool isTaskLabel;
   final bool isPhaseLabel;
   final Color? color;
+  final bool outlined;
+  final bool isLarge;
 
   /// For a phase tag
-  factory TaskTag.phase() => const TaskTag._(isPhaseLabel: true);
+  factory TaskTag.phase({bool outlined = false, bool isLarge = true}) =>
+      TaskTag._(isPhaseLabel: true, outlined: outlined, isLarge: isLarge);
 
   /// For a task tag
-  factory TaskTag.task() => const TaskTag._(isTaskLabel: true);
+  factory TaskTag.task({bool outlined = false, bool isLarge = true}) =>
+      TaskTag._(isTaskLabel: true, outlined: outlined, isLarge: isLarge);
 
   /// For a custom tag (used to show the phase of a task, for example)
-  factory TaskTag.custom({required String text, Color? color}) =>
-      TaskTag._(text: text, color: color);
+  factory TaskTag.custom({
+    required String text,
+    Color? color,
+    bool outlined = false,
+    bool isLarge = true,
+  }) =>
+      TaskTag._(
+        text: text,
+        color: color,
+        outlined: outlined,
+        isLarge: isLarge,
+      );
 
   @override
   Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+    final label = isTaskLabel
+        ? AppLocalizations.of(context)!.task
+        : isPhaseLabel
+            ? AppLocalizations.of(context)!.phase
+            : text;
+    if (label == null) {
+      return const SizedBox.shrink();
+    }
+
     return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 4),
+      padding: isLarge
+          ? const EdgeInsets.symmetric(horizontal: 20, vertical: 4)
+          : const EdgeInsets.all(4),
       decoration: BoxDecoration(
-        color: color ?? Theme.of(context).colorScheme.primary,
-        borderRadius: const BorderRadius.horizontal(left: Radius.circular(8)),
+        color: outlined
+            ? Colors.transparent
+            : color ?? Theme.of(context).colorScheme.primary,
+        borderRadius: outlined
+            ? BorderRadius.circular(4)
+            : const BorderRadius.horizontal(left: Radius.circular(8)),
+        border: outlined
+            ? Border.all(
+                color: color ?? theme.colorScheme.primary,
+              )
+            : null,
       ),
-      child: Text(
-        isTaskLabel
-            ? AppLocalizations.of(context)!.task
-            : isPhaseLabel
-                ? AppLocalizations.of(context)!.phase
-                : text ?? '',
-        overflow: TextOverflow.ellipsis,
-        style: Theme.of(context).textTheme.titleSmall?.copyWith(
-              color: Theme.of(context).colorScheme.onPrimary,
-            ),
+      child: ConstrainedBox(
+        constraints: BoxConstraints(
+          maxWidth: isLarge ? 200 : 80,
+        ),
+        child: Text(
+          label,
+          overflow: TextOverflow.ellipsis,
+          style: (isLarge
+                  ? theme.textTheme.titleSmall
+                  : theme.textTheme.labelSmall)
+              ?.copyWith(
+            color: outlined
+                ? color ?? theme.colorScheme.primary
+                : theme.colorScheme.onPrimary,
+          ),
+        ),
       ),
     );
   }
