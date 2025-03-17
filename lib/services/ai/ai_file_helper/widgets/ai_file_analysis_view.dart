@@ -6,38 +6,25 @@ import 'package:seren_ai_flutter/services/ai/ai_file_helper/ai_file_context_help
 // TEMPORARY - this is a temporary view to identify tasks from a file
 // TODO p1: update to actual task generation view
 class AiTaskIdentificationView extends HookConsumerWidget {
-  final List<Map<String, String>> files;
+  final Map<String, String> file;
   final String projectId;
 
   const AiTaskIdentificationView({
     super.key,
-    required this.files,
+    required this.file,
     required this.projectId,
   });
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final fileCount = files.length;
-    final isSingleFile = fileCount == 1;
-    final fileName = isSingleFile
-        ? files.first['fileName'] ?? 'file'
-        : files.map((f) => f['fileName']).join(', ');
+    final fileName = file['fileName'] ?? 'file';
 
     final tasksFuture = useMemoized(() {
-      if (isSingleFile) {
-        return ref.read(aiFileContextHelperProvider).generateTasksFromFile(
-              fileUrl: files.first['fileUrl']!,
-              fileName: files.first['fileName']!,
-              projectId: projectId,
-            );
-      } else {
-        return ref
-            .read(aiFileContextHelperProvider)
-            .generateTasksFromMultipleFiles(
-              files: files,
-              projectId: projectId,
-            );
-      }
+      return ref.read(aiFileContextHelperProvider).generateTasksFromFile(
+            fileUrl: file['fileUrl']!,
+            fileName: file['fileName']!,
+            projectId: projectId,
+          );
     });
 
     final snapshot = useFuture(tasksFuture);
@@ -52,17 +39,6 @@ class AiTaskIdentificationView extends HookConsumerWidget {
               'Tasks Identified from $fileName',
               style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
             ),
-            if (!isSingleFile)
-              Padding(
-                padding: const EdgeInsets.only(top: 8.0),
-                child: Text(
-                  files.map((f) => f['fileName']).join(', '),
-                  style: TextStyle(
-                    fontSize: 14,
-                    color: Theme.of(context).colorScheme.secondary,
-                  ),
-                ),
-              ),
             const SizedBox(height: 16),
             if (snapshot.hasData)
               Expanded(
@@ -80,7 +56,7 @@ class AiTaskIdentificationView extends HookConsumerWidget {
                   children: [
                     CircularProgressIndicator(),
                     SizedBox(height: 16),
-                    Text('Analyzing file(s) to identify tasks...'),
+                    Text('Analyzing file to identify tasks...'),
                   ],
                 ),
               ),
