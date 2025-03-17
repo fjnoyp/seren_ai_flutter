@@ -27,7 +27,7 @@ class AiDateParser {
   ///
   /// Example: If AI returns "2023-09-15T15:00:00.000Z" (3PM UTC),
   /// this will return a DateTime representing 3PM in the user's local timezone.
-  static DateTime? parseIsoIntoLocal(String? isoString) {
+  static DateTime? parseIsoIntoLocalThenUTC(String? isoString) {
     if (isoString == null) return null;
 
     try {
@@ -36,7 +36,7 @@ class AiDateParser {
 
       // Create a new DateTime with the same time components but in local timezone
       // This preserves the "wall clock time" the user intended
-      final test = DateTime(
+      final parsedDateTime = DateTime(
         utcTime.year,
         utcTime.month,
         utcTime.day,
@@ -46,15 +46,8 @@ class AiDateParser {
         utcTime.millisecond,
         utcTime.microsecond,
       );
-
-      print('test: $test');
-      print('test.toUtc(): ${test.toUtc()}');
-      print('test.toLocal(): ${test.toLocal()}');
-
-      final fuckingUTC = test.toUtc();
-      print('fuckingUTC: $fuckingUTC');
-
-      return fuckingUTC;
+      final parsedDateTimeUtc = parsedDateTime.toUtc();
+      return parsedDateTimeUtc;
     } catch (e) {
       // If parsing fails, return null
       return null;
