@@ -5,8 +5,6 @@ import 'package:seren_ai_flutter/services/data/common/status_enum.dart';
 import 'package:seren_ai_flutter/services/data/projects/providers/cur_selected_project_providers.dart';
 import 'package:seren_ai_flutter/services/data/projects/widgets/project_overview/sub_lists/create_task_button.dart';
 import 'package:seren_ai_flutter/services/data/tasks/filtered/tasks_filtered_provider.dart';
-import 'package:seren_ai_flutter/services/data/tasks/widgets/inline_creation/inline_task_creation_button.dart';
-import 'package:seren_ai_flutter/services/data/tasks/filtered/task_filter_state_provider.dart';
 import 'package:seren_ai_flutter/services/data/tasks/widgets/task_list/task_list_item_view.dart';
 
 class ProjectTasksSectionedListView extends ConsumerWidget {
@@ -53,11 +51,15 @@ class ProjectTasksSectionedListView extends ConsumerWidget {
                         const Divider(height: 1),
                   ),
                   const Divider(height: 1),
-                  ListTile(
-                    title: InlineTaskCreationButton(
-                      initialStatus: status,
-                    ),
+                  CreateTaskButton(
+                    initialProjectId: projectId,
+                    initialStatus: status,
                   ),
+                  // ListTile(
+                  //   title: InlineTaskCreationButton(
+                  //     initialStatus: status,
+                  //   ),
+                  // ),
                 ],
               ),
             );
