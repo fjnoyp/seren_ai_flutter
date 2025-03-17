@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:seren_ai_flutter/services/ai/widgets/web_ai_assistant_button.dart';
 import 'package:seren_ai_flutter/services/ai/widgets/web_ai_assistant_modal.dart';
 import 'package:seren_ai_flutter/services/data/db_setup/app_config.dart';
+import 'package:seren_ai_flutter/widgets/common/global_search_text_field.dart';
 import 'package:seren_ai_flutter/widgets/debug/debug_mode_provider.dart';
 import 'package:seren_ai_flutter/widgets/debug/debug_open_modal_button.dart';
 import 'package:seren_ai_flutter/widgets/scaffold/drawer_view.dart';
@@ -13,7 +14,6 @@ class WebScaffold extends ConsumerWidget {
   final Widget body;
   final bool showBottomBar;
   final List<Widget>? actions;
-  final bool showAppBar;
   final bool isAiAssistantExpanded;
 
   const WebScaffold({
@@ -22,17 +22,13 @@ class WebScaffold extends ConsumerWidget {
     required this.body,
     required this.showBottomBar,
     required this.actions,
-    required this.showAppBar,
     required this.isAiAssistantExpanded,
   });
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final theme = Theme.of(context);
-    final isDebugMode = ref.watch(isDebugModeSNP);
-
     return Scaffold(
-      backgroundColor: theme.scaffoldBackgroundColor,
+      backgroundColor: Theme.of(context).scaffoldBackgroundColor,
       body: LayoutBuilder(builder: (context, constraints) {
         final isNarrow = constraints.maxWidth < 1200;
 
@@ -46,19 +42,10 @@ class WebScaffold extends ConsumerWidget {
             Expanded(
               flex: 4,
               child: Scaffold(
-                appBar: showAppBar
-                    ? _FullAppBar(
-                        title: title,
-                        actions: actions ?? [],
-                        theme: theme,
-                        context: context,
-                        isDebugMode: isDebugMode,
-                        isNarrow: isNarrow,
-                      )
-                    : _MinimalAppBar(
-                        theme: theme,
-                        isNarrow: isNarrow,
-                      ),
+                appBar: PreferredSize(
+                  preferredSize: const Size.fromHeight(kToolbarHeight),
+                  child: _MinimalAppBar(isNarrow: isNarrow),
+                ),
                 drawer: isNarrow ? const DrawerView() : null,
                 body: Stack(
                   alignment: Alignment.centerRight,
@@ -80,45 +67,65 @@ class WebScaffold extends ConsumerWidget {
   }
 }
 
-class _FullAppBar extends AppBar {
-  _FullAppBar({
-    required String title,
-    required List<Widget> actions,
-    required ThemeData theme,
-    required BuildContext context,
-    required bool isDebugMode,
-    required bool isNarrow,
-  }) : super(
-          backgroundColor: theme.appBarTheme.backgroundColor,
-          leading: isNarrow ? _MenuButton() : null,
-          elevation: 0,
-          title: Padding(
-            padding: const EdgeInsets.all(8.0),
-            child: Text(
-              title,
-              style: theme.appBarTheme.titleTextStyle,
-            ),
-          ),
-          actions: [
-            if (!AppConfig.isProdMode)
-              const Text(
-                'DevConfig',
-                style:
-                    TextStyle(color: Colors.red, fontWeight: FontWeight.bold),
-              ),
-            if (isDebugMode) DebugOpenModalButton(),
-            ...actions,
-          ],
-        );
-}
+// class _FullAppBar extends AppBar {
+//   _FullAppBar({
+//     required String title,
+//     required List<Widget> actions,
+//     required ThemeData theme,
+//     required BuildContext context,
+//     required bool isDebugMode,
+//     required bool isNarrow,
+//   }) : super(
+//           backgroundColor: theme.appBarTheme.backgroundColor,
+//           leading: isNarrow ? _MenuButton() : null,
+//           elevation: 0,
+//           title: Padding(
+//             padding: const EdgeInsets.all(8.0),
+//             child: Text(
+//               title,
+//               style: theme.appBarTheme.titleTextStyle,
+//             ),
+//           ),
+//           actions: [
+//             if (!AppConfig.isProdMode)
+//               const Text(
+//                 'DevConfig',
+//                 style:
+//                     TextStyle(color: Colors.red, fontWeight: FontWeight.bold),
+//               ),
+//             if (isDebugMode) DebugOpenModalButton(),
+//             ...actions,
+//           ],
+//         );
+// }
 
-class _MinimalAppBar extends AppBar {
-  _MinimalAppBar({required ThemeData theme, required bool isNarrow})
-      : super(
-          backgroundColor: Colors.transparent,
-          elevation: 0,
-          leading: isNarrow ? _MenuButton() : null,
-        );
+class _MinimalAppBar extends ConsumerWidget {
+  const _MinimalAppBar({required this.isNarrow});
+
+  final bool isNarrow;
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final isDebugMode = ref.watch(isDebugModeSNP);
+    return AppBar(
+      backgroundColor: Colors.transparent,
+      elevation: 0,
+      leading: isNarrow ? _MenuButton() : null,
+      centerTitle: true,
+      title: ConstrainedBox(
+        constraints: const BoxConstraints(maxWidth: 500),
+        child: const GlobalSearchTextField(),
+      ),
+      actions: [
+        if (!AppConfig.isProdMode)
+          const Text(
+            'DevConfig',
+            style: TextStyle(color: Colors.red, fontWeight: FontWeight.bold),
+          ),
+        if (isDebugMode) DebugOpenModalButton(),
+      ],
+    );
+  }
 }
 
 class _MenuButton extends StatelessWidget {
