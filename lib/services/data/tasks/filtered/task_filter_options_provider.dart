@@ -5,6 +5,7 @@ import 'package:seren_ai_flutter/common/utils/date_time_extension.dart';
 import 'package:seren_ai_flutter/services/data/orgs/providers/cur_selected_org_id_notifier.dart';
 import 'package:seren_ai_flutter/services/data/orgs/providers/joined_user_org_roles_by_org_stream_provider.dart';
 import 'package:seren_ai_flutter/services/data/projects/providers/cur_selected_project_providers.dart';
+import 'package:seren_ai_flutter/services/data/projects/providers/cur_user_viewable_projects_provider.dart';
 import 'package:seren_ai_flutter/services/data/tasks/models/task_model.dart';
 import 'package:seren_ai_flutter/services/data/tasks/task_field_enum.dart';
 import 'package:seren_ai_flutter/services/data/tasks/task_filter.dart';
@@ -34,6 +35,19 @@ final taskFilterOptionsProvider =
       : ref.watch(usersInProjectProvider(projectId)).valueOrNull;
 
   return <TaskFieldEnum, List<TaskFilter>>{
+    if (CurSelectedProjectIdNotifier.isEverythingId(projectId))
+      TaskFieldEnum.project: [
+        ...ref
+                .watch(curUserViewableProjectsProvider)
+                .valueOrNull
+                ?.map((project) => TaskFilter(
+                      field: TaskFieldEnum.project,
+                      value: project.id,
+                      readableName: project.name,
+                      condition: (task) => task.parentProjectId == project.id,
+                    )) ??
+            []
+      ],
     TaskFieldEnum.type: TaskType.values
         .map((type) => TaskFilter(
               field: TaskFieldEnum.type,

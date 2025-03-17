@@ -2,11 +2,11 @@
 class BuildInfo {
   // Core build info
   static const String version = '1.0.0';
-  static const String buildDate = '2025-03-17 16:01:33';
+  static const String buildDate = '2025-03-17 16:38:09';
   
   // Git info
-  static const String commitHash = '8682551';
-  static const String branch = 'main';
+  static const String commitHash = 'b17441f';
+  static const String branch = 'feat/add-project-filter-for-tasks';
   static const String lastTag = 'no tag';
   
   // Author of last commit
@@ -16,12 +16,12 @@ class BuildInfo {
   // Recent commits (last 5)
   static const List<Map<String, String>> recentCommits = [
     {
-      "hash": "8682551",
+      "hash": "b17441f",
       "author": "renata-sisilio",
       "email": "renata@seren-ai.co", 
       "message": "feat(projects): implement everything project tab (#188)",
       "date": "2025-03-17",
-      "relativeDate": "35 minutes ago"
+      "relativeDate": "72 minutes ago"
     },
     {
       "hash": "0b96b5f",
@@ -53,7 +53,7 @@ class BuildInfo {
       "email": "renata@seren-ai.co", 
       "message": "feat(tasks): update parent task dates based on child task due and start dates",
       "date": "2025-03-17",
-      "relativeDate": "5 hours ago"
+      "relativeDate": "6 hours ago"
     },
   ];
 
