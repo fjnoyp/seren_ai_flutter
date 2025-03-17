@@ -46,47 +46,4 @@ Format your response as a numbered list of tasks.
       return 'Failed to identify tasks: ${e.toString()}';
     }
   }
-
-  Future<String> generateTasksFromMultipleFiles({
-    required List<Map<String, String>> files,
-    required String projectId,
-  }) async {
-    try {
-      // Build file list for the prompt
-      final fileList = files
-          .map((file) => "- ${file['fileName']}: ${file['fileUrl']}")
-          .join('\n');
-
-      // TODO p1: update prompt to task for actual task generation instead of just identifying tasks
-      final userMessage = '''
-Please analyze the following files:
-$fileList
-
-Project id: $projectId
-
-Based on the content of these files, identify a list of potential tasks that should be created.
-IMPORTANT: Only suggest tasks that are directly supported by the file content. Do not hallucinate or invent tasks that aren't clearly indicated by the code or comments.
-
-For each task:
-1. Provide a clear, concise task title
-2. Include a detailed description that references specific parts of the files
-3. Suggest a reasonable due date if applicable
-4. Indicate a priority level (Low, Medium, High)
-5. Mention which file(s) the task is derived from
-
-Format your response as a numbered list of tasks.
-''';
-
-      final aiService = ref.read(aiChatServiceProvider);
-      final messages = await aiService.sendSingleCallMessageToAi(
-        systemMessage:
-            'You are an expert at analyzing files and extracting actionable tasks from their content. You can process multiple files at once and understand relationships between them.',
-        userMessage: userMessage,
-      );
-
-      return messages.first.content;
-    } catch (e) {
-      return 'Failed to identify tasks: ${e.toString()}';
-    }
-  }
 }

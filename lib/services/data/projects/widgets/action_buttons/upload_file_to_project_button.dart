@@ -17,30 +17,27 @@ class UploadFileToProjectButton extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     return TextButton.icon(
       onPressed: () async {
-        final result = await FilePicker.platform.pickFiles(
-          allowMultiple: true,
-        );
+        final result = await FilePicker.platform.pickFiles();
 
         if (result != null && result.files.isNotEmpty) {
-          final files = result.files.map((file) {
-            if (kIsWeb) {
-              // On web, use bytes and name only
-              return XFile.fromData(
-                file.bytes!,
-                name: file.name,
-              );
-            } else {
-              // On native platforms, use file path
-              return XFile(
-                file.path!,
-                name: file.name,
-              );
-            }
-          }).toList();
+          XFile file;
+          if (kIsWeb) {
+            // On web, use bytes and name only
+            file = XFile.fromData(
+              result.files.first.bytes!,
+              name: result.files.first.name,
+            );
+          } else {
+            // On native platforms, use file path
+            file = XFile(
+              result.files.first.path!,
+              name: result.files.first.name,
+            );
+          }
 
           try {
             await ref.read(projectFilesServiceProvider.notifier).uploadFiles(
-                  files,
+                  [file],
                   projectId: projectId,
                   type: FileUploadType.temporary,
                 );
@@ -50,20 +47,18 @@ class UploadFileToProjectButton extends ConsumerWidget {
             );
 
             // Process all uploaded files
-            if (files.isNotEmpty && context.mounted) {
+            if (context.mounted) {
               // Create a list of file info maps with URLs
-              final fileInfoList = files.map((file) {
-                final fileName = file.name;
-                final fileUrl = Supabase.instance.client.storage
-                    .from('project_files')
+              final fileName = file.name;
+              final fileUrl = Supabase.instance.client.storage
+                  .from('project_files')
                     .getPublicUrl(
                         '$projectId/${FileUploadType.temporary.directoryName}/$fileName');
 
-                return {
-                  'fileName': fileName,
-                  'fileUrl': fileUrl,
-                };
-              }).toList();
+              final fileInfo = {
+                'fileName': fileName,
+                'fileUrl': fileUrl,
+              };
 
               showDialog(
                 context: context,
@@ -73,7 +68,7 @@ class UploadFileToProjectButton extends ConsumerWidget {
                     height: 500,
                     padding: const EdgeInsets.all(16),
                     child: AiTaskIdentificationView(
-                      files: fileInfoList,
+                      file: fileInfo,
                       projectId: projectId,
                     ),
                   ),
