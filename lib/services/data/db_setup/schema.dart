@@ -25,6 +25,7 @@ const permissionSchemas = [
   Table(orgsTable, [
     Column.text('name'),
     Column.text('address'),
+    Column.integer('is_enabled'),
   ]),
   Table(teamsTable, [
     Column.text('name'),
