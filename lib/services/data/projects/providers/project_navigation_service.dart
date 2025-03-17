@@ -82,6 +82,9 @@ class ProjectNavigationService extends BaseNavigationService {
   }
 
   Future<void> _ensureProjectOrgIsSelected(String projectId) async {
+    // Everything project is not a real project, so we don't need to ensure its org is selected
+    if (projectId == everythingProjectId) return;
+
     final project = await ref.read(projectByIdStreamProvider(projectId).future);
     if (project == null) {
       throw Exception('Project not found');
@@ -96,6 +99,11 @@ class ProjectNavigationService extends BaseNavigationService {
   }
 
   Future<String?> _getProjectTitle(String projectId) async {
+    if (projectId == everythingProjectId) {
+      final context = ref.read(navigationServiceProvider).context;
+      return AppLocalizations.of(context)!.everythingProjectName;
+    }
+
     final project =
         await ref.read(projectsRepositoryProvider).getById(projectId);
     return project?.name;
@@ -107,7 +115,8 @@ class ProjectNavigationService extends BaseNavigationService {
     if (projectId == null) return;
 
     final actions =
-        (curUserOrgRole == OrgRole.admin || curUserOrgRole == OrgRole.editor)
+        (curUserOrgRole == OrgRole.admin || curUserOrgRole == OrgRole.editor) &&
+                projectId != everythingProjectId
             ? [
                 OpenProjectInfoPageButton(projectId),
               ]
@@ -128,7 +137,8 @@ class ProjectNavigationService extends BaseNavigationService {
   ) async {
     final curUserOrgRole = ref.read(curUserOrgRoleProvider).value;
     final projectId = ref.read(curEditingProjectIdNotifierProvider);
-    if (projectId == null) return;
+    // This should never happen, but just in case
+    if (projectId == null || projectId == everythingProjectId) return;
 
     final actions =
         (curUserOrgRole == OrgRole.admin || curUserOrgRole == OrgRole.editor)

@@ -15,6 +15,7 @@ class _TasksList extends StatelessWidget {
     required this.tasks,
     this.horizontalDragOffsetToChangeStatus,
     required this.scrollController,
+    required this.showProjectIndicator,
   });
 
   final List<TaskModel> tasks;
@@ -27,6 +28,8 @@ class _TasksList extends StatelessWidget {
 
   final ScrollController scrollController;
 
+  final bool showProjectIndicator;
+
   @override
   Widget build(BuildContext context) {
     return ListView.separated(
@@ -34,7 +37,8 @@ class _TasksList extends StatelessWidget {
       itemCount: tasks.length,
       itemBuilder: (context, index) => horizontalDragOffsetToChangeStatus ==
               null
-          ? TaskListCardItemView(task: tasks[index])
+          ? TaskListCardItemView(
+              task: tasks[index], showProject: showProjectIndicator)
           : LayoutBuilder(
               builder: (context, constraints) {
                 return Consumer(
@@ -71,10 +75,16 @@ class _TasksList extends StatelessWidget {
                         feedback: Material(
                           child: SizedBox(
                             width: constraints.maxWidth,
-                            child: TaskListCardItemView(task: task),
+                            child: TaskListCardItemView(
+                              task: task,
+                              showProject: showProjectIndicator,
+                            ),
                           ),
                         ),
-                        child: TaskListCardItemView(task: task),
+                        child: TaskListCardItemView(
+                          task: task,
+                          showProject: showProjectIndicator,
+                        ),
                       ),
                     );
                   },
@@ -95,6 +105,8 @@ class ProjectTasksBoardView extends HookConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final projectId = ref.watch(curSelectedProjectIdNotifierProvider);
     if (projectId == null) return const SizedBox.shrink();
+
+    final showProjectIndicator = projectId == everythingProjectId;
 
     final tasks = ref.watch(tasksByProjectsFilteredProvider(projectId));
 
@@ -134,6 +146,7 @@ class ProjectTasksBoardView extends HookConsumerWidget {
                             horizontalDragOffsetToChangeStatus:
                                 constraints.maxWidth,
                             scrollController: scrollController,
+                            showProjectIndicator: showProjectIndicator,
                           );
                         },
                       ),

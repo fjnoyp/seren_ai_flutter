@@ -13,6 +13,7 @@ import 'package:seren_ai_flutter/services/data/orgs/providers/cur_user_orgs_prov
 import 'package:seren_ai_flutter/services/data/orgs/widgets/cur_org_page.dart';
 import 'package:seren_ai_flutter/services/data/orgs/widgets/org_avatar_image.dart';
 import 'package:seren_ai_flutter/services/data/projects/models/project_model.dart';
+import 'package:seren_ai_flutter/services/data/projects/providers/cur_selected_project_providers.dart';
 import 'package:seren_ai_flutter/services/data/projects/providers/cur_user_viewable_projects_provider.dart';
 import 'package:seren_ai_flutter/services/data/projects/providers/project_navigation_service.dart';
 import 'package:seren_ai_flutter/services/data/users/widgets/user_avatar.dart';
@@ -94,7 +95,15 @@ class DrawerView extends ConsumerWidget {
                       icon: Icons.work,
                       iconColor: Theme.of(context).colorScheme.onSurface,
                       title: AppLocalizations.of(context)!.projects,
-                      options: projects,
+                      options: [
+                        (
+                          name: AppLocalizations.of(context)!
+                              .everythingProjectName,
+                          id: everythingProjectId
+                        ),
+                        ...projects.map(
+                            (project) => (name: project.name, id: project.id)),
+                      ],
                       optionToString: (project) => project.name,
                       onTapOption: (project) => ref
                           .read(projectNavigationServiceProvider)
@@ -145,13 +154,6 @@ class DrawerView extends ConsumerWidget {
                       .read(navigationServiceProvider)
                       .navigateTo(AppRoutes.shifts.name),
                   isSelected: curRoute == AppRoutes.shifts.name,
-                ),
-                _DebugModeListTile(
-                  icon: Icons.table_chart_outlined,
-                  title: 'Gantt Chart',
-                  onTap: () =>
-                      Navigator.pushNamed(context, AppRoutes.taskGantt.name),
-                  selected: curRoute == AppRoutes.taskGantt.name,
                 ),
                 if (!isWebVersion || isDebugMode)
                   _DrawerListTile(

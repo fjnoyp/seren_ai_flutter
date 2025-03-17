@@ -9,7 +9,9 @@ import 'package:seren_ai_flutter/services/data/projects/repositories/projects_re
 
 final curSelectedProjectStreamProvider = StreamProvider<ProjectModel?>((ref) {
   final projectId = ref.watch(curSelectedProjectIdNotifierProvider);
-  if (projectId == null) return Stream.value(null);
+  if (projectId == null || projectId == everythingProjectId) {
+    return Stream.value(null);
+  }
 
   final projectsRepo = ref.read(projectsRepositoryProvider);
   return projectsRepo.watchById(projectId);
@@ -98,3 +100,5 @@ class CurSelectedProjectIdNotifier extends Notifier<String?> {
     throw Exception('No project found');
   }
 }
+
+const everythingProjectId = 'everything';
