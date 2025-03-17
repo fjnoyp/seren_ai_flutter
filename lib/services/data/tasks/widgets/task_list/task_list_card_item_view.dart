@@ -12,6 +12,7 @@ import 'package:seren_ai_flutter/services/data/tasks/widgets/inline_creation/cur
 import 'package:seren_ai_flutter/services/data/common/status_enum.dart';
 import 'package:seren_ai_flutter/services/data/common/widgets/status_view.dart';
 import 'package:seren_ai_flutter/services/data/tasks/widgets/task_assignees_avatars.dart';
+import 'package:seren_ai_flutter/services/data/tasks/widgets/task_list/task_list_item_phase_indicator.dart';
 
 // Card like view that uses ListTile
 class TaskListCardItemView extends ConsumerWidget {
@@ -40,93 +41,102 @@ class TaskListCardItemView extends ConsumerWidget {
             ? Colors.red
             : Colors.grey;
 
-    return ListTile(
-      contentPadding: showStatus
-          ? null // Use default padding when showing status
-          : showMoreOptionsButton || showAssignees
-              ? const EdgeInsets.only(
-                  right: 16) // Remove left padding when not showing status
-              : const EdgeInsets.all(
-                  0), // Remove all padding when not showing either status or trailing widgets
-      leading: showStatus
-          ? Icon(
-              getStatusIcon(task.status ?? StatusEnum.open),
-              color: getStatusColor(task.status ?? StatusEnum.open),
-              size: 24,
-            )
-          : null, // Set to null instead of SizedBox.shrink()
-      title: task.id == ref.watch(curInlineCreatingTaskIdProvider)
-          ? InlineTaskNameField(
-              taskId: task.id,
-              isPhase: task.isPhase,
-              initialStatus: task.status,
-              initialParentTaskId: task.parentTaskId,
-            )
-          : Text(
-              task.name,
-              style: theme.textTheme.titleMedium,
-              overflow: TextOverflow.ellipsis,
-            ),
-      subtitle: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          _ProjectIndicator(task, showProject: showProject),
-          if (task.description?.isNotEmpty == true)
-            Text(
-              task.description!,
-              maxLines: 2,
-              overflow: TextOverflow.ellipsis,
-              style: Theme.of(context).textTheme.bodySmall,
-            ),
-          const SizedBox(height: 4),
-          Row(
-            children: [
-              if (task.priority != null) ...[
-                PriorityView(priority: task.priority!),
-                const SizedBox(width: 8),
-              ],
-              if (task.dueDate != null) ...[
-                Icon(Icons.calendar_today, size: 14, color: dueDateColor),
-                const SizedBox(width: 4),
-                Flexible(
-                  child: Text(
-                    DateFormat.yMMMd().format(task.dueDate!),
-                    overflow: TextOverflow.ellipsis,
-                    style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                          color: dueDateColor,
-                        ),
-                  ),
-                ),
-              ],
-            ],
-          ),
-        ],
-      ),
-      trailing: Row(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          task.id != ref.watch(curInlineCreatingTaskIdProvider) && showAssignees
-              ? SizedBox(
-                  width: 92,
-                  child: TaskAssigneesAvatars(task.id),
-                  // switch to TaskAssigneesSelectionField if we want to make it directly editable
-                  // TaskAssigneesSelectionField(
-                  //   taskId: task.id,
-                  //   context: context,
-                  //   showLabelWidget: false,
-                  // ),
-                )
-              : const SizedBox.shrink(),
-          if (showMoreOptionsButton)
-            TaskListItemMoreOptionsButton(taskId: task.id),
-        ],
-      ),
-
+    return InkWell(
       onTap: onTap != null
           ? () => onTap!(task.id)
           : () => ref
               .read(taskNavigationServiceProvider)
               .openTask(initialTaskId: task.id),
+      child: Padding(
+        padding: const EdgeInsets.symmetric(vertical: 8.0, horizontal: 16.0),
+        child: Row(
+          children: [
+            if (showStatus) ...[
+              Padding(
+                padding: const EdgeInsets.only(right: 16.0),
+                child: Icon(
+                  getStatusIcon(task.status ?? StatusEnum.open),
+                  color: getStatusColor(task.status ?? StatusEnum.open),
+                  size: 24,
+                ),
+              ),
+            ],
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  task.id == ref.watch(curInlineCreatingTaskIdProvider)
+                      ? InlineTaskNameField(
+                          taskId: task.id,
+                          isPhase: task.isPhase,
+                          initialStatus: task.status,
+                          initialParentTaskId: task.parentTaskId,
+                        )
+                      : Text(
+                          task.name,
+                          style: theme.textTheme.titleMedium,
+                          overflow: TextOverflow.ellipsis,
+                        ),
+                  _ProjectIndicator(task, showProject: showProject),
+                  if (task.description?.isNotEmpty == true)
+                    Text(
+                      task.description!,
+                      maxLines: 2,
+                      overflow: TextOverflow.ellipsis,
+                      style: Theme.of(context).textTheme.bodySmall,
+                    ),
+                  const SizedBox(height: 4),
+                  Row(
+                    children: [
+                      if (task.priority != null) ...[
+                        PriorityView(priority: task.priority!),
+                        const SizedBox(width: 8),
+                      ],
+                      if (task.dueDate != null) ...[
+                        Icon(Icons.calendar_today,
+                            size: 14, color: dueDateColor),
+                        const SizedBox(width: 4),
+                        Flexible(
+                          child: Text(
+                            DateFormat.yMMMd().format(task.dueDate!),
+                            overflow: TextOverflow.ellipsis,
+                            style:
+                                Theme.of(context).textTheme.bodySmall?.copyWith(
+                                      color: dueDateColor,
+                                    ),
+                          ),
+                        ),
+                      ],
+                    ],
+                  ),
+                ],
+              ),
+            ),
+            const SizedBox(width: 8),
+            Column(
+              crossAxisAlignment: CrossAxisAlignment.end,
+              mainAxisAlignment: MainAxisAlignment.start,
+              children: [
+                Row(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    TaskListItemPhaseIndicator(task),
+                    if (showMoreOptionsButton)
+                      TaskListItemMoreOptionsButton(taskId: task.id),
+                  ],
+                ),
+                const SizedBox(height: 8),
+                if (task.id != ref.watch(curInlineCreatingTaskIdProvider) &&
+                    showAssignees)
+                  SizedBox(
+                    width: 92,
+                    child: TaskAssigneesAvatars(task.id),
+                  ),
+              ],
+            ),
+          ],
+        ),
+      ),
     );
   }
 }

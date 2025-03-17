@@ -8,6 +8,7 @@ import 'package:seren_ai_flutter/services/data/tasks/widgets/action_buttons/task
 import 'package:seren_ai_flutter/services/data/tasks/widgets/inline_creation/inline_task_name_field.dart';
 import 'package:seren_ai_flutter/services/data/tasks/widgets/inline_creation/cur_inline_creating_task_id_provider.dart';
 import 'package:seren_ai_flutter/services/data/tasks/widgets/task_assignees_avatars.dart';
+import 'package:seren_ai_flutter/services/data/tasks/widgets/task_list/task_list_item_phase_indicator.dart';
 import 'package:seren_ai_flutter/services/data/tasks/widgets/ui_constants.dart';
 
 class TaskListItemView extends ConsumerWidget {
@@ -32,7 +33,6 @@ class TaskListItemView extends ConsumerWidget {
           : () => ref
               .read(taskNavigationServiceProvider)
               .openTask(initialTaskId: task.id),
-      //leading: const SizedBox.shrink(),
       title: task.id == ref.watch(curInlineCreatingTaskIdProvider)
           ? InlineTaskNameField(
               taskId: task.id,
@@ -53,7 +53,9 @@ class TaskListItemView extends ConsumerWidget {
 
         return Row(
           mainAxisSize: MainAxisSize.min,
+          mainAxisAlignment: MainAxisAlignment.end,
           children: [
+            TaskListItemPhaseIndicator(task),
             if (!isCreatingTask)
               Flexible(
                 child: SizedBox(
@@ -61,20 +63,33 @@ class TaskListItemView extends ConsumerWidget {
                   child: TaskAssigneesAvatars(task.id),
                 ),
               ),
-            if (task.priority != null) ...[
-              const SizedBox(width: 8),
-              PriorityView(priority: task.priority!),
-            ],
-            if (task.dueDate != null) ...[
-              const SizedBox(width: 8),
-              Icon(Icons.calendar_today, size: 16, color: dueDateColor),
-              const SizedBox(width: 4),
-              Text(
-                DateFormat.MMMd().format(task.dueDate!),
-                style: TextStyle(color: dueDateColor),
-                overflow: TextOverflow.ellipsis,
-              ),
-            ],
+            SizedBox(
+              width: 80,
+              child: task.priority != null
+                  ? PriorityView(priority: task.priority!)
+                  : const SizedBox.shrink(),
+            ),
+            SizedBox(
+              width: 80,
+              child: task.dueDate != null
+                  ? Row(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        const SizedBox(width: 8),
+                        Icon(Icons.calendar_today,
+                            size: 16, color: dueDateColor),
+                        const SizedBox(width: 4),
+                        Expanded(
+                          child: Text(
+                            DateFormat.MMMd().format(task.dueDate!),
+                            style: TextStyle(color: dueDateColor),
+                            overflow: TextOverflow.ellipsis,
+                          ),
+                        ),
+                      ],
+                    )
+                  : const SizedBox.shrink(),
+            ),
             TaskListItemMoreOptionsButton(taskId: task.id),
           ],
         );
