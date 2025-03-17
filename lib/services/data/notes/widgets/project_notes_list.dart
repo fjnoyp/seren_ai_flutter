@@ -7,6 +7,7 @@ import 'package:seren_ai_flutter/services/data/notes/providers/notes_by_project_
 import 'package:seren_ai_flutter/services/data/notes/providers/notes_navigation_service.dart';
 import 'package:seren_ai_flutter/services/data/common/widgets/async_value_handler_widget.dart';
 import 'package:seren_ai_flutter/services/data/notes/repositories/notes_repository.dart';
+import 'package:seren_ai_flutter/services/data/projects/providers/cur_selected_project_providers.dart';
 
 /// A notes list widget that groups notes by date ranges like Apple Notes
 class ProjectNotesList extends ConsumerWidget {
@@ -33,8 +34,11 @@ class ProjectNotesList extends ConsumerWidget {
     }
 
     // Otherwise, fetch notes from the provider
+    final notes = CurSelectedProjectIdNotifier.isEverythingId(projectId)
+        ? ref.watch(curUserAllNotesStreamProvider)
+        : ref.watch(notesByProjectStreamProvider(projectId));
     return AsyncValueHandlerWidget(
-      value: ref.watch(notesByProjectStreamProvider(projectId)),
+      value: notes,
       data: (notes) {
         return _NotesList(
             notes,

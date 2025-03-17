@@ -99,7 +99,7 @@ class DrawerView extends ConsumerWidget {
                         (
                           name: AppLocalizations.of(context)!
                               .everythingProjectName,
-                          id: everythingProjectId
+                          id: CurSelectedProjectIdNotifier.everythingProjectId,
                         ),
                         ...projects.map(
                             (project) => (name: project.name, id: project.id)),

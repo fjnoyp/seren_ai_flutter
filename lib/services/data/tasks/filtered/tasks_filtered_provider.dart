@@ -23,7 +23,7 @@ final tasksFilteredProvider = StateProvider.autoDispose<List<TaskModel>>((ref) {
 final tasksByProjectsFilteredProvider =
     StateProvider.autoDispose.family<List<TaskModel>, String>((ref, projectId) {
   final tasks = ref
-          .watch(projectId == everythingProjectId
+          .watch(CurSelectedProjectIdNotifier.isEverythingId(projectId)
               ? curUserViewableTasksStreamProvider
               : tasksByProjectStreamProvider(projectId))
           .value ??
@@ -51,7 +51,7 @@ final tasksByProjectsFilteredProvider =
 final tasksAndParentsByProjectFilteredProvider =
     StateProvider.autoDispose.family<List<TaskModel>, String>((ref, projectId) {
   final tasks = ref
-          .watch(projectId == everythingProjectId
+          .watch(CurSelectedProjectIdNotifier.isEverythingId(projectId)
               ? curUserViewableTasksStreamProvider
               : tasksByProjectStreamProvider(projectId))
           .value ??

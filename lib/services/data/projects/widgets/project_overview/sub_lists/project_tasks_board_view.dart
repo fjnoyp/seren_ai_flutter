@@ -106,7 +106,8 @@ class ProjectTasksBoardView extends HookConsumerWidget {
     final projectId = ref.watch(curSelectedProjectIdNotifierProvider);
     if (projectId == null) return const SizedBox.shrink();
 
-    final showProjectIndicator = projectId == everythingProjectId;
+    final showProjectIndicator =
+        !CurSelectedProjectIdNotifier.isEverythingId(projectId);
 
     final tasks = ref.watch(tasksByProjectsFilteredProvider(projectId));
 

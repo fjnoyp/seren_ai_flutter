@@ -2,11 +2,11 @@
 class BuildInfo {
   // Core build info
   static const String version = '1.0.0';
-  static const String buildDate = '2025-03-17 11:24:04';
+  static const String buildDate = '2025-03-17 13:10:14';
   
   // Git info
-  static const String commitHash = '710ed8c';
-  static const String branch = 'feat/add-days-field-to-task-duration';
+  static const String commitHash = 'e070abc';
+  static const String branch = 'feat/everything-project';
   static const String lastTag = 'no tag';
   
   // Author of last commit
@@ -16,48 +16,48 @@ class BuildInfo {
   // Recent commits (last 5)
   static const List<Map<String, String>> recentCommits = [
     {
-      "hash": "710ed8c",
+      "hash": "e070abc",
       "author": "renata-sisilio",
       "email": "renata@seren-ai.co", 
-      "message": "fix(tasks): properly translate task filter/sort options",
-      "date": "2025-03-17",
-      "relativeDate": "2 minutes ago"
-    },
-    {
-      "hash": "f957dd1",
-      "author": "renata-sisilio",
-      "email": "renata@seren-ai.co", 
-      "message": "feat(tasks): add phase indicator to task list items",
-      "date": "2025-03-17",
-      "relativeDate": "4 minutes ago"
-    },
-    {
-      "hash": "0cae535",
-      "author": "renata-sisilio",
-      "email": "renata@seren-ai.co", 
-      "message": "feat(tasks): update parent task dates based on child task due and start dates",
+      "message": "pr comment + ai suggestions",
       "date": "2025-03-17",
       "relativeDate": "19 minutes ago"
     },
     {
-      "hash": "18cb9d7",
+      "hash": "df8e3b9",
       "author": "renata-sisilio",
       "email": "renata@seren-ai.co", 
-      "message": "fix(tasks): set task estimated duration in days and hours",
+      "message": "feat(projects): implement everything project tab",
       "date": "2025-03-17",
-      "relativeDate": "20 minutes ago"
+      "relativeDate": "2 hours ago"
     },
     {
-      "hash": "c780c01",
+      "hash": "0b96b5f",
       "author": "renata-sisilio",
       "email": "renata@seren-ai.co", 
-      "message": "feat(orgs): allow users to delete (disable) orgs (#183)",
+      "message": "feat(tasks): enhance task creation and deletion with popup support",
       "date": "2025-03-17",
-      "relativeDate": "31 minutes ago"
+      "relativeDate": "2 hours ago"
+    },
+    {
+      "hash": "143f73d",
+      "author": "renata-sisilio",
+      "email": "renata@seren-ai.co", 
+      "message": "fix(tasks): properly translate task filter/sort options",
+      "date": "2025-03-17",
+      "relativeDate": "2 hours ago"
+    },
+    {
+      "hash": "3b98ac6",
+      "author": "renata-sisilio",
+      "email": "renata@seren-ai.co", 
+      "message": "feat(tasks): add phase indicator to task list items",
+      "date": "2025-03-17",
+      "relativeDate": "2 hours ago"
     },
   ];
 
   // Stats
-  static const String totalCommits = '428';
+  static const String totalCommits = '431';
   static const String contributors = '0';
 }

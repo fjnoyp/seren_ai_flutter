@@ -17,7 +17,8 @@ class ProjectTasksSectionedListView extends ConsumerWidget {
 
     final tasks = ref.watch(tasksByProjectsFilteredProvider(projectId));
 
-    final showProjectIndicator = projectId == everythingProjectId;
+    final showProjectIndicator =
+        CurSelectedProjectIdNotifier.isEverythingId(projectId);
 
     return SingleChildScrollView(
       child: Column(children: [

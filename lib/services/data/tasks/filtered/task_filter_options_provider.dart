@@ -22,7 +22,7 @@ final taskFilterOptionsProvider =
   final context =
       ref.read(navigationServiceProvider).navigatorKey.currentContext!;
 
-  final users = projectId == everythingProjectId
+  final users = CurSelectedProjectIdNotifier.isEverythingId(projectId)
       ? ref
           .watch(joinedUserOrgRolesByOrgStreamProvider(
               ref.read(curSelectedOrgIdNotifierProvider)!))

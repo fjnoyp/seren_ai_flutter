@@ -75,7 +75,7 @@ class ProjectOverviewPage extends HookConsumerWidget {
               ? const EdgeInsets.all(16)
               : const EdgeInsets.all(4),
           child: isProjectInfoView.value &&
-                  curSelectedProjectId != everythingProjectId
+                  !CurSelectedProjectIdNotifier.isEverythingId(curSelectedProjectId)
               ? Row(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
@@ -100,13 +100,15 @@ class ProjectOverviewPage extends HookConsumerWidget {
                         Row(
                           children: [
                             Text(
-                              curSelectedProjectId == everythingProjectId
+                              CurSelectedProjectIdNotifier.isEverythingId(
+                                      curSelectedProjectId)
                                   ? AppLocalizations.of(context)!
                                       .everythingProjectName
                                   : curSelectedProject.value?.name ?? '',
                               style: Theme.of(context).textTheme.headlineMedium,
                             ),
-                            if (curSelectedProjectId != everythingProjectId)
+                            if (!CurSelectedProjectIdNotifier.isEverythingId(
+                                curSelectedProjectId))
                               IconButton(
                                 onPressed: () => isProjectInfoView.value = true,
                                 color: Theme.of(context).colorScheme.secondary,

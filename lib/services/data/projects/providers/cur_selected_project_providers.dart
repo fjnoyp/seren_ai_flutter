@@ -9,7 +9,8 @@ import 'package:seren_ai_flutter/services/data/projects/repositories/projects_re
 
 final curSelectedProjectStreamProvider = StreamProvider<ProjectModel?>((ref) {
   final projectId = ref.watch(curSelectedProjectIdNotifierProvider);
-  if (projectId == null || projectId == everythingProjectId) {
+  if (projectId == null ||
+      CurSelectedProjectIdNotifier.isEverythingId(projectId)) {
     return Stream.value(null);
   }
 
@@ -46,7 +47,7 @@ class CurSelectedProjectIdNotifier extends Notifier<String?> {
 
   Future<void> _initializeDefaultProject() async {
     try {
-      final defaultId = await _findDefaultProjectId();
+      final defaultId = await findDefaultProjectId();
       if (defaultId != null && state == null) {
         setProjectId(defaultId);
       }
@@ -55,7 +56,7 @@ class CurSelectedProjectIdNotifier extends Notifier<String?> {
     }
   }
 
-  Future<String?> _findDefaultProjectId() async {
+  Future<String?> findDefaultProjectId() async {
     final curUser = ref.read(curUserProvider).value;
     if (curUser == null) {
       throw Exception('No user found');
@@ -89,9 +90,10 @@ class CurSelectedProjectIdNotifier extends Notifier<String?> {
 
   // Public method to get current state or find default
   Future<String> getSelectedProjectOrDefault() async {
-    if (state != null) return state!;
+    // Ignore if we're not in everything mode to avoid creation to "everything"
+    if (state != null && !isEverything) return state!;
 
-    final defaultId = await _findDefaultProjectId();
+    final defaultId = await findDefaultProjectId();
     if (defaultId != null) {
       setProjectId(defaultId);
       return defaultId;
@@ -99,6 +101,11 @@ class CurSelectedProjectIdNotifier extends Notifier<String?> {
 
     throw Exception('No project found');
   }
-}
 
-const everythingProjectId = 'everything';
+  static const everythingProjectId =
+      '__all__'; // More semantic than 'everything'
+
+  bool get isEverything => state == everythingProjectId;
+
+  static bool isEverythingId(String? id) => id == everythingProjectId;
+}
