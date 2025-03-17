@@ -217,7 +217,7 @@ class _SortChip extends ConsumerWidget {
           .where((field) => field.comparator != null)
           .map(
             (option) => MenuItemButton(
-              child: Text(option.name),
+              child: Text(option.toHumanReadable(context)),
               onPressed: () => filterNotifier.updateSortOption(option),
             ),
           )

@@ -1,4 +1,5 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:seren_ai_flutter/common/language_provider.dart';
 import 'package:seren_ai_flutter/common/navigation_service_provider.dart';
 import 'package:seren_ai_flutter/common/utils/date_time_extension.dart';
 import 'package:seren_ai_flutter/services/data/projects/providers/cur_selected_project_providers.dart';
@@ -13,6 +14,8 @@ final taskFilterOptionsProvider =
     Provider<Map<TaskFieldEnum, List<TaskFilter>>>((ref) {
   final projectId = ref.watch(curSelectedProjectStreamProvider).value?.id;
   if (projectId == null) throw Exception('No project selected');
+
+  ref.watch(languageSNP);
 
   final context =
       ref.read(navigationServiceProvider).navigatorKey.currentContext!;
