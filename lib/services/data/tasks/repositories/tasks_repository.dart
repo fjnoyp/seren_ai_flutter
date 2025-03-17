@@ -274,6 +274,20 @@ class TasksRepository extends BaseRepository<TaskModel> {
       'estimated_duration_minutes',
       estimatedDurationMinutes,
     );
+
+    // Auto set due date if it's not set and the task has a start date and estimated duration
+    final task = await getById(taskId);
+    if (task != null &&
+        estimatedDurationMinutes != null &&
+        task.startDateTime != null &&
+        task.dueDate == null) {
+      await updateTaskDueDate(
+        taskId,
+        task.startDateTime!.add(
+          Duration(minutes: estimatedDurationMinutes),
+        ),
+      );
+    }
   }
 
   Future<void> updateTaskStartDateTime(
