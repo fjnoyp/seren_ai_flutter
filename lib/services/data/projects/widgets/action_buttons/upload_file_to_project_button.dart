@@ -3,7 +3,10 @@ import 'package:file_picker/file_picker.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
+import 'package:seren_ai_flutter/services/ai/ai_file_helper/widgets/ai_file_analysis_view.dart';
+import 'package:seren_ai_flutter/services/data/projects/file_upload_type_enum.dart';
 import 'package:seren_ai_flutter/services/data/projects/providers/project_files_service_provider.dart';
+import 'package:supabase_flutter/supabase_flutter.dart';
 
 class UploadFileToProjectButton extends ConsumerWidget {
   const UploadFileToProjectButton(this.projectId, {super.key});
@@ -35,13 +38,53 @@ class UploadFileToProjectButton extends ConsumerWidget {
             }
           }).toList();
 
-          await ref
-              .read(projectFilesServiceProvider.notifier)
-              .uploadFiles(files, projectId: projectId);
+          try {
+            await ref.read(projectFilesServiceProvider.notifier).uploadFiles(
+                  files,
+                  projectId: projectId,
+                  type: FileUploadType.temporary,
+                );
 
-          ScaffoldMessenger.of(context).showSnackBar(
-            const SnackBar(content: Text('Files uploaded successfully')),
-          );
+            ScaffoldMessenger.of(context).showSnackBar(
+              const SnackBar(content: Text('Files uploaded successfully')),
+            );
+
+            // Process all uploaded files
+            if (files.isNotEmpty && context.mounted) {
+              // Create a list of file info maps with URLs
+              final fileInfoList = files.map((file) {
+                final fileName = file.name;
+                final fileUrl = Supabase.instance.client.storage
+                    .from('project_files')
+                    .getPublicUrl(
+                        '$projectId/${FileUploadType.temporary.directoryName}/$fileName');
+
+                return {
+                  'fileName': fileName,
+                  'fileUrl': fileUrl,
+                };
+              }).toList();
+
+              showDialog(
+                context: context,
+                builder: (context) => Dialog(
+                  child: Container(
+                    width: 700,
+                    height: 500,
+                    padding: const EdgeInsets.all(16),
+                    child: AiTaskIdentificationView(
+                      files: fileInfoList,
+                      projectId: projectId,
+                    ),
+                  ),
+                ),
+              );
+            }
+          } catch (e) {
+            ScaffoldMessenger.of(context).showSnackBar(
+              SnackBar(content: Text('Upload failed: ${e.toString()}')),
+            );
+          }
         }
       },
       icon: const Icon(Icons.upload_file),
