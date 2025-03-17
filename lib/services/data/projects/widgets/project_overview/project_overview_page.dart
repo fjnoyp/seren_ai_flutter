@@ -9,6 +9,7 @@ import 'package:seren_ai_flutter/services/data/notes/widgets/project_notes_list.
 import 'package:seren_ai_flutter/services/data/projects/providers/cur_selected_project_providers.dart';
 import 'package:seren_ai_flutter/services/data/projects/widgets/action_buttons/edit_project_button.dart';
 import 'package:seren_ai_flutter/services/data/projects/widgets/action_buttons/update_project_assignees_button.dart';
+import 'package:seren_ai_flutter/services/data/projects/widgets/action_buttons/upload_file_to_project_button.dart';
 import 'package:seren_ai_flutter/services/data/projects/widgets/project_details_page.dart';
 import 'package:seren_ai_flutter/services/data/projects/widgets/project_overview/project_tasks_section.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
@@ -21,6 +22,9 @@ class ProjectOverviewPage extends HookConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final curSelectedProjectId =
         ref.watch(curSelectedProjectIdNotifierProvider);
+    if (curSelectedProjectId == null) {
+      return const SizedBox.shrink();
+    }
     final curSelectedProject = ref.watch(curSelectedProjectStreamProvider);
     if (curSelectedProject.isLoading) {
       return const Center(child: CircularProgressIndicator());
@@ -75,7 +79,8 @@ class ProjectOverviewPage extends HookConsumerWidget {
               ? const EdgeInsets.all(16)
               : const EdgeInsets.all(4),
           child: isProjectInfoView.value &&
-                  !CurSelectedProjectIdNotifier.isEverythingId(curSelectedProjectId)
+                  !CurSelectedProjectIdNotifier.isEverythingId(
+                      curSelectedProjectId)
               ? Row(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
@@ -127,6 +132,8 @@ class ProjectOverviewPage extends HookConsumerWidget {
                                     fontWeight: FontWeight.bold),
                               ),
                             ),
+                            const Expanded(child: SizedBox.shrink()),
+                            UploadFileToProjectButton(curSelectedProjectId),
                           ],
                         ),
                       SizedBox(height: isLargeScreen ? 8 : 3),
