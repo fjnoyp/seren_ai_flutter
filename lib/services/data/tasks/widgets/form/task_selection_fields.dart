@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:seren_ai_flutter/services/data/common/widgets/form/base_assignees_selection_field.dart';
+import 'package:seren_ai_flutter/services/data/common/widgets/form/base_duration_selection_field.dart';
 import 'package:seren_ai_flutter/services/data/common/widgets/form/base_minute_selection_field.dart';
 import 'package:seren_ai_flutter/services/data/common/widgets/form/base_task_selection_field.dart';
 import 'package:seren_ai_flutter/services/data/common/widgets/form/base_text_block_edit_selection_field.dart';
@@ -231,7 +232,7 @@ class TaskAssigneesSelectionField extends BaseAssigneesSelectionField {
         );
 }
 
-class TaskEstimatedDurationSelectionField extends BaseMinuteSelectionField {
+class TaskEstimatedDurationSelectionField extends BaseDurationSelectionField {
   final String taskId;
 
   TaskEstimatedDurationSelectionField({
@@ -245,9 +246,6 @@ class TaskEstimatedDurationSelectionField extends BaseMinuteSelectionField {
           updateDuration: (ref, duration) => ref
               .read(tasksRepositoryProvider)
               .updateTaskEstimatedDurationMinutes(taskId, duration),
-          labelWidgetBuilder: (ref) => const Icon(Icons.timer_outlined),
-          nullValueString: AppLocalizations.of(context)!.noEstimatedDurationSet,
-          nullOptionString: AppLocalizations.of(context)!.noEstimatedDuration,
         );
 }
 

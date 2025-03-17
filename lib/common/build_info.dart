@@ -2,11 +2,11 @@
 class BuildInfo {
   // Core build info
   static const String version = '1.0.0';
-  static const String buildDate = '2025-03-17 10:52:09';
+  static const String buildDate = '2025-03-17 11:04:07';
   
   // Git info
-  static const String commitHash = '6ee418b';
-  static const String branch = 'feat/allow-org-deletion';
+  static const String commitHash = 'c780c01';
+  static const String branch = 'feat/add-days-field-to-task-duration';
   static const String lastTag = 'no tag';
   
   // Author of last commit
@@ -16,12 +16,12 @@ class BuildInfo {
   // Recent commits (last 5)
   static const List<Map<String, String>> recentCommits = [
     {
-      "hash": "6ee418b",
+      "hash": "c780c01",
       "author": "renata-sisilio",
       "email": "renata@seren-ai.co", 
-      "message": "feat(orgs): allow users to delete (disable) orgs",
+      "message": "feat(orgs): allow users to delete (disable) orgs (#183)",
       "date": "2025-03-17",
-      "relativeDate": "35 seconds ago"
+      "relativeDate": "11 minutes ago"
     },
     {
       "hash": "bc508f1",
@@ -29,7 +29,7 @@ class BuildInfo {
       "email": "kylcheng@gmail.com", 
       "message": "chore: pr comments",
       "date": "2025-03-17",
-      "relativeDate": "70 minutes ago"
+      "relativeDate": "82 minutes ago"
     },
     {
       "hash": "2a1e617",
