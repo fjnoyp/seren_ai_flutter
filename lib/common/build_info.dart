@@ -2,62 +2,62 @@
 class BuildInfo {
   // Core build info
   static const String version = '1.0.0';
-  static const String buildDate = '2025-03-17 05:41:46';
+  static const String buildDate = '2025-03-17 10:52:09';
   
   // Git info
-  static const String commitHash = '2cecde2';
-  static const String branch = 'feat/ai_enhancements';
+  static const String commitHash = '6ee418b';
+  static const String branch = 'feat/allow-org-deletion';
   static const String lastTag = 'no tag';
   
   // Author of last commit
-  static const String lastCommitAuthor = 'Kyle';
-  static const String lastCommitEmail = 'kylcheng@gmail.com';
+  static const String lastCommitAuthor = 'renata-sisilio';
+  static const String lastCommitEmail = 'renata@seren-ai.co';
   
   // Recent commits (last 5)
   static const List<Map<String, String>> recentCommits = [
     {
-      "hash": "2cecde2",
+      "hash": "6ee418b",
+      "author": "renata-sisilio",
+      "email": "renata@seren-ai.co", 
+      "message": "feat(orgs): allow users to delete (disable) orgs",
+      "date": "2025-03-17",
+      "relativeDate": "35 seconds ago"
+    },
+    {
+      "hash": "bc508f1",
+      "author": "Kyle",
+      "email": "kylcheng@gmail.com", 
+      "message": "chore: pr comments",
+      "date": "2025-03-17",
+      "relativeDate": "70 minutes ago"
+    },
+    {
+      "hash": "2a1e617",
       "author": "Kyle",
       "email": "kylcheng@gmail.com", 
       "message": "chore(tasks): refactor task list views",
       "date": "2025-03-16",
-      "relativeDate": "15 hours ago"
+      "relativeDate": "17 hours ago"
     },
     {
-      "hash": "6febe12",
+      "hash": "528e98e",
       "author": "Kyle",
       "email": "kylcheng@gmail.com", 
       "message": "fix(ai): fix ai date time updates, and assigning to self",
       "date": "2025-03-16",
-      "relativeDate": "18 hours ago"
+      "relativeDate": "19 hours ago"
     },
     {
-      "hash": "c84ea0c",
+      "hash": "9be584f",
       "author": "Kyle",
       "email": "kylcheng@gmail.com", 
       "message": "feat(ai): allow ai to assign task to current user",
       "date": "2025-03-14",
       "relativeDate": "3 days ago"
     },
-    {
-      "hash": "af052ef",
-      "author": "Kyle",
-      "email": "kylcheng@gmail.com", 
-      "message": "feat(ai): allow ai to add task comments, fix ui context",
-      "date": "2025-03-14",
-      "relativeDate": "3 days ago"
-    },
-    {
-      "hash": "b1ca2a3",
-      "author": "Kyle",
-      "email": "kylcheng@gmail.com", 
-      "message": "feat(ai): ai overhaul to multistep reasoning",
-      "date": "2025-03-13",
-      "relativeDate": "4 days ago"
-    },
   ];
 
   // Stats
-  static const String totalCommits = '422';
-  static const String contributors = '       0';
+  static const String totalCommits = '424';
+  static const String contributors = '0';
 }

@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:seren_ai_flutter/common/current_route_provider.dart';
 import 'package:seren_ai_flutter/common/navigation_service_provider.dart';
 import 'package:seren_ai_flutter/common/routes/app_routes.dart';
 import 'package:seren_ai_flutter/services/data/orgs/models/org_model.dart';
@@ -16,16 +17,21 @@ class OrgGuard extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final curOrgId = ref.watch(curSelectedOrgIdNotifierProvider);
     final curUserOrgs = ref.watch(curUserOrgsProvider);
+    final currentRoute = ref.read(currentRouteProvider);
 
     // Check if user no longer belongs to current org
     if (curUserOrgs.hasValue &&
-        _userNoLongerBelongsTo(curOrgId, curUserOrgs: curUserOrgs.value!)) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(
-          content: Text(
-              'You\'re trying to access an organization you are not a member of.'),
-        ),
-      );
+        _userNoLongerBelongsTo(curOrgId, curUserOrgs: curUserOrgs.value!) &&
+        currentRoute != AppRoutes.onboarding.name &&
+        currentRoute != AppRoutes.noInvites.name) {
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+            content: Text(
+                'You\'re trying to access an organization you are not a member of.'),
+          ),
+        );
+      });
       ref.read(curSelectedOrgIdNotifierProvider.notifier).clearDesiredOrgId();
     }
 
@@ -48,6 +54,10 @@ class OrgGuard extends ConsumerWidget {
         }
       }
 
+      if (currentRoute == AppRoutes.onboarding.name) {
+        return child;
+      }
+
       // Handle empty orgs case with retry logic
       WidgetsBinding.instance.addPostFrameCallback((_) async {
         for (int i = 0; i < 3; i++) {
@@ -59,14 +69,15 @@ class OrgGuard extends ConsumerWidget {
           }
         }
         // If still no orgs after retries, navigate to onboarding page
-        if (context.mounted) {
-          ScaffoldMessenger.of(context).showSnackBar(
-            const SnackBar(
-              content: Text(
-                  'Slow connection. If you already have an organization, please wait a moment and you\'ll be redirected automatically.'),
-              duration: Duration(seconds: 6),
-            ),
-          );
+        // unless the current user is already being onboarded
+        if (context.mounted && currentRoute != AppRoutes.onboarding.name) {
+          // ScaffoldMessenger.of(context).showSnackBar(
+          //   const SnackBar(
+          //     content: Text(
+          //         'Slow connection. If you already have an organization, please wait a moment and you\'ll be redirected automatically.'),
+          //     duration: Duration(seconds: 6),
+          //   ),
+          // );
           ref
               .read(navigationServiceProvider)
               .navigateTo(AppRoutes.onboarding.name, clearStack: true);
@@ -76,7 +87,19 @@ class OrgGuard extends ConsumerWidget {
       return const Center(child: CircularProgressIndicator());
     }
 
-    return child;
+    // (curOrgId != null) cases:
+    // 1. user is onboarding - navigate to home (will be redirected accordingly)
+    if (currentRoute == AppRoutes.onboarding.name) {
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        ref
+            .read(navigationServiceProvider)
+            .navigateTo(AppRoutes.home.name, clearStack: true);
+      });
+      return const Center(child: CircularProgressIndicator());
+    } else {
+      // 2. user is not onboarding - show the page
+      return child;
+    }
   }
 
   bool _userNoLongerBelongsTo(String? curOrgId,

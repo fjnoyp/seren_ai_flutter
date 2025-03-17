@@ -3,6 +3,7 @@ import 'package:seren_ai_flutter/services/data/db_setup/db_provider.dart';
 import 'package:seren_ai_flutter/services/data/orgs/models/org_model.dart';
 import 'package:seren_ai_flutter/services/data/common/base_repository.dart';
 import 'package:seren_ai_flutter/services/data/orgs/repositories/org_queries.dart';
+import 'package:supabase_flutter/supabase_flutter.dart';
 
 final orgsRepositoryProvider = Provider<OrgsRepository>((ref) {
   return OrgsRepository(ref.watch(dbProvider));
@@ -49,5 +50,12 @@ class OrgsRepository extends BaseRepository<OrgModel> {
 
   Future<void> updateOrgAddress(String orgId, String address) async {
     await updateField(orgId, 'address', address);
+  }
+
+  Future<void> disableOrgAndRemoveAllRoles(String orgId) async {
+    await Supabase.instance.client.rpc(
+      'disable_org_and_remove_all_roles',
+      params: {'p_org_id': orgId},
+    );
   }
 }
