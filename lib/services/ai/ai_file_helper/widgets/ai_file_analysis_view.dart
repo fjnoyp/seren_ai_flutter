@@ -17,12 +17,17 @@ class AiTaskIdentificationView extends HookConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final fileName = file['fileName'] ?? 'file';
+    final fileName = file['fileName'];
+    final fileUrl = file['fileUrl'];
 
     final tasksFuture = useMemoized(() {
+      if (fileUrl == null || fileName == null) {
+        return Future.error('Missing file information');
+      }
+
       return ref.read(aiFileContextHelperProvider).generateTasksFromFile(
-            fileUrl: file['fileUrl']!,
-            fileName: file['fileName']!,
+            fileUrl: fileUrl,
+            fileName: fileName,
             projectId: projectId,
           );
     });
