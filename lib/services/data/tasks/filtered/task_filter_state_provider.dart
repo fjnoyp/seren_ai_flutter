@@ -1,6 +1,7 @@
 import 'package:flutter/widgets.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:seren_ai_flutter/common/navigation_service_provider.dart';
+import 'package:seren_ai_flutter/services/data/tasks/filtered/task_filter_view_type.dart';
 import 'package:seren_ai_flutter/services/data/tasks/task_filter.dart';
 import 'package:seren_ai_flutter/services/data/tasks/models/task_model.dart';
 import 'package:seren_ai_flutter/services/data/tasks/task_field_enum.dart';
@@ -51,20 +52,29 @@ class TaskFilterState {
 }
 
 class TaskFilterStateNotifier extends StateNotifier<TaskFilterState> {
-  // TODO p2: find a better way to initialize the filters
-  // We want the type filter to be active for "tasks" by default
-  TaskFilterStateNotifier(BuildContext context)
-      : super(
-          TaskFilterState(
-            activeFilters: [
-              TaskFilter(
-                  field: TaskFieldEnum.type,
-                  value: TaskType.task.name,
-                  readableName: TaskType.task.toHumanReadable(context),
-                  condition: (task) => task.type == TaskType.task)
-            ],
-          ),
-        );
+  TaskFilterStateNotifier(BuildContext context, TaskFilterViewType viewType)
+      : super(_getInitialState(context, viewType));
+
+  static TaskFilterState _getInitialState(
+      BuildContext context, TaskFilterViewType viewType) {
+    final tasksOnlyFilter = TaskFilter(
+      field: TaskFieldEnum.type,
+      value: TaskType.task.name,
+      readableName: TaskType.task.toHumanReadable(context),
+      condition: (task) => task.type == TaskType.task,
+    );
+
+    // Return different initial states based on the view type
+    switch (viewType) {
+      case TaskFilterViewType.taskSearch:
+        // No default filters for search for now
+        return const TaskFilterState(activeFilters: []);
+      case TaskFilterViewType.projectOverview:
+        return TaskFilterState(activeFilters: [tasksOnlyFilter]);
+      case TaskFilterViewType.phaseSubtasks:
+        return TaskFilterState(activeFilters: [tasksOnlyFilter]);
+    }
+  }
 
   void updateSearchQuery(String query) {
     state = state.copyWith(searchQuery: query);
@@ -109,9 +119,11 @@ class TaskFilterStateNotifier extends StateNotifier<TaskFilterState> {
   }
 }
 
-final taskFilterStateProvider =
-    StateNotifierProvider<TaskFilterStateNotifier, TaskFilterState>((ref) {
+final taskFilterStateProvider = StateNotifierProvider.family
+    .autoDispose<TaskFilterStateNotifier, TaskFilterState, TaskFilterViewType>(
+        (ref, viewType) {
   final context =
       ref.read(navigationServiceProvider).navigatorKey.currentContext!;
-  return TaskFilterStateNotifier(context);
+
+  return TaskFilterStateNotifier(context, viewType);
 });

@@ -1,14 +1,16 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:seren_ai_flutter/services/data/projects/providers/cur_selected_project_providers.dart';
+import 'package:seren_ai_flutter/services/data/tasks/filtered/task_filter_view_type.dart';
 import 'package:seren_ai_flutter/services/data/tasks/models/task_model.dart';
 import 'package:seren_ai_flutter/services/data/tasks/providers/cur_user_viewable_tasks_stream_provider.dart';
 import 'package:seren_ai_flutter/services/data/tasks/providers/tasks_by_project_stream_provider.dart';
 import 'package:seren_ai_flutter/services/data/tasks/filtered/task_filter_state_provider.dart';
 import 'package:seren_ai_flutter/services/data/tasks/widgets/inline_creation/cur_inline_creating_task_id_provider.dart';
 
-final tasksFilteredProvider = StateProvider.autoDispose<List<TaskModel>>((ref) {
+final tasksFilteredProvider = StateProvider.family
+    .autoDispose<List<TaskModel>, TaskFilterViewType>((ref, viewType) {
   final tasks = ref.watch(curUserViewableTasksStreamProvider).value ?? [];
-  final filterState = ref.watch(taskFilterStateProvider);
+  final filterState = ref.watch(taskFilterStateProvider(viewType));
 
   final filteredTasks =
       tasks.where((task) => filterState.filterCondition(task)).toList();
@@ -20,16 +22,12 @@ final tasksFilteredProvider = StateProvider.autoDispose<List<TaskModel>>((ref) {
   return filteredTasks;
 });
 
-final tasksByProjectsFilteredProvider =
+final tasksByProjectFilteredProvider =
     StateProvider.autoDispose.family<List<TaskModel>, String>((ref, projectId) {
-  final tasks = ref
-          .watch(CurSelectedProjectIdNotifier.isEverythingId(projectId)
-              ? curUserViewableTasksStreamProvider
-              : tasksByProjectStreamProvider(projectId))
-          .value ??
-      [];
+  final tasks = ref.watch(tasksByProjectStreamProvider(projectId)).value ?? [];
 
-  final filterState = ref.watch(taskFilterStateProvider);
+  final filterState =
+      ref.watch(taskFilterStateProvider(TaskFilterViewType.projectOverview));
 
   final filteredTasks =
       tasks.where((task) => filterState.filterCondition(task)).toList();
@@ -66,7 +64,8 @@ final tasksAndParentsByProjectFilteredProvider =
     tasksToInclude.add(curInlineCreatingTaskId);
   }
 
-  final filterState = ref.watch(taskFilterStateProvider);
+  final filterState =
+      ref.watch(taskFilterStateProvider(TaskFilterViewType.projectOverview));
 
   // Add filtered tasks and their ancestors
   for (final task in tasks) {

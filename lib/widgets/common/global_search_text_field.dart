@@ -46,7 +46,10 @@ class GlobalSearchTextField extends ConsumerWidget {
           : () => showModalBottomSheet(
                 context: context,
                 isScrollControlled: true,
-                builder: (context) => const TaskSearchModal(),
+                builder: (context) => DraggableScrollableSheet(
+                  initialChildSize: 1,
+                  builder: (context, _) => const TaskSearchModal(),
+                ),
               ),
     );
   }
