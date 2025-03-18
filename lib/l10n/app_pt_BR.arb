@@ -347,6 +347,7 @@
     "updatedTaskAndShowedResultInUI": "Atualizada tarefa \"{taskName}\" e mostrada resultado na UI",
     "deletedTask": "Tarefa excluída com sucesso: \"{taskName}\"",
     "taskDeletionCancelledByUser": "Exclusão de tarefa cancelada pelo usuário para \"{taskName}\"",
+    "taskCreatedButHiddenDueToFilters": "Tarefa criada mas pode estar oculta devido a filtros ativos",
 
     "@_": {"description": "Task notifications"},
     "newTaskAssignment": "Nova Atribuição de Tarefa",

@@ -575,6 +575,7 @@
             "taskName": {"type": "String"}
         }
     },
+    "taskCreatedButHiddenDueToFilters": "Task created but may be hidden due to active filters",
 
     "@_": {"description": "Task notifications"},
     "newTaskAssignment": "New Task Assignment",
