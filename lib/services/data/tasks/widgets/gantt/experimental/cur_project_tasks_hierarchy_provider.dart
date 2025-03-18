@@ -178,9 +178,8 @@ final _curProjectTasksHierarchyProvider =
   if (filterState.sortComparator != null) {
     return sortTasks(filterState.sortComparator!);
   } else {
-    // If no sort comparator is set, sort by updatedAt
-    return sortTasks(
-        (a, b) => b.updatedAt?.compareTo(a.updatedAt ?? DateTime.now()) ?? 0);
+    // If no sort comparator is set, sort alphabetically
+    return sortTasks((a, b) => a.name.compareTo(b.name));
   }
 });
 
