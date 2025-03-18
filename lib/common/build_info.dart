@@ -2,10 +2,10 @@
 class BuildInfo {
   // Core build info
   static const String version = '1.0.0';
-  static const String buildDate = '2025-03-18 17:35:59';
+  static const String buildDate = '2025-03-18 17:36:18';
   
   // Git info
-  static const String commitHash = '4655051';
+  static const String commitHash = '44e8ab8';
   static const String branch = 'fix/gantt-chart-issues';
   static const String lastTag = 'no tag';
   
@@ -15,6 +15,14 @@ class BuildInfo {
   
   // Recent commits (last 5)
   static const List<Map<String, String>> recentCommits = [
+    {
+      "hash": "44e8ab8",
+      "author": "renata-sisilio",
+      "email": "renata@seren-ai.co", 
+      "message": "fix(tasks): add message for tasks created but hidden due to active filters",
+      "date": "2025-03-18",
+      "relativeDate": "23 seconds ago"
+    },
     {
       "hash": "4655051",
       "author": "renata-sisilio",
@@ -47,17 +55,9 @@ class BuildInfo {
       "date": "2025-03-17",
       "relativeDate": "26 hours ago"
     },
-    {
-      "hash": "0b96b5f",
-      "author": "renata-sisilio",
-      "email": "renata@seren-ai.co", 
-      "message": "feat(tasks): enhance task creation and deletion with popup support",
-      "date": "2025-03-17",
-      "relativeDate": "30 hours ago"
-    },
   ];
 
   // Stats
-  static const String totalCommits = '433';
+  static const String totalCommits = '434';
   static const String contributors = '0';
 }
