@@ -4,6 +4,7 @@ import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:intl/intl.dart';
 import 'package:seren_ai_flutter/services/data/projects/providers/cur_selected_project_providers.dart';
 import 'package:seren_ai_flutter/services/data/tasks/filtered/task_filter_options_provider.dart';
+import 'package:seren_ai_flutter/services/data/tasks/filtered/task_filter_view_type.dart';
 import 'package:seren_ai_flutter/services/data/tasks/task_filter.dart';
 import 'package:seren_ai_flutter/services/data/tasks/providers/task_navigation_service.dart';
 import 'package:seren_ai_flutter/services/data/tasks/filtered/task_filter_state_provider.dart';
@@ -15,7 +16,8 @@ class ProjectTasksFilters extends ConsumerWidget {
     required this.onShowCustomDateRangePicker,
     this.showExtraViewControls = true,
     required this.useHorizontalScroll,
-    this.hiddenFilters,
+    required this.viewType,
+    // this.hiddenFilters,
   });
 
   final Future<DateTimeRange?> Function(BuildContext)
@@ -27,12 +29,14 @@ class ProjectTasksFilters extends ConsumerWidget {
   final bool showExtraViewControls;
 
   final bool useHorizontalScroll;
-  final List<TaskFieldEnum>? hiddenFilters;
+  // final List<TaskFieldEnum>? hiddenFilters;
+
+  final TaskFilterViewType viewType;
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final filterState = ref.watch(taskFilterStateProvider);
-    final filterNotifier = ref.read(taskFilterStateProvider.notifier);
+    final filterState = ref.watch(taskFilterStateProvider(viewType));
+    final filterNotifier = ref.read(taskFilterStateProvider(viewType).notifier);
 
     ref.listen(curSelectedProjectIdNotifierProvider, (_, next) {
       // We need to remove the assignees filter everytime a new project is selected
@@ -53,18 +57,16 @@ class ProjectTasksFilters extends ConsumerWidget {
       //       [];
 
       //   if (!projectAssigneesIds.contains(activeFilteredAssigneeId)) {
-      ref.read(taskFilterStateProvider.notifier).removeFilter(
-            TaskFieldEnum.assignees,
-          );
+      filterNotifier.removeFilter(TaskFieldEnum.assignees);
       // }
       // }
     });
 
     final filterWidgets = [
       ...ref
-          .watch(taskFilterOptionsProvider)
+          .watch(taskFilterOptionsProvider(viewType))
           .entries
-          .where((entry) => !(hiddenFilters?.contains(entry.key) ?? false))
+          // .where((entry) => !(hiddenFilters?.contains(entry.key) ?? false))
           .map((entry) => _FilterChip(
                 field: entry.key,
                 options: entry.value,

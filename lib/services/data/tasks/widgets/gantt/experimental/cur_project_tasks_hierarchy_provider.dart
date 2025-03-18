@@ -1,5 +1,6 @@
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:seren_ai_flutter/services/data/projects/providers/cur_selected_project_providers.dart';
+import 'package:seren_ai_flutter/services/data/tasks/filtered/task_filter_view_type.dart';
 import 'package:seren_ai_flutter/services/data/tasks/models/task_model.dart';
 import 'package:seren_ai_flutter/services/data/tasks/filtered/task_filter_state_provider.dart';
 import 'package:seren_ai_flutter/services/data/tasks/filtered/tasks_filtered_provider.dart';
@@ -73,8 +74,8 @@ final taskParentChainIdsProvider =
 final _curProjectTasksHierarchyProvider =
     Provider<Map<String, TaskHierarchyInfo>>((ref) {
   final projectId = ref.watch(curSelectedProjectIdNotifierProvider);
-  if (projectId == null)  return {};
-  
+  if (projectId == null) return {};
+
   final filteredTasks =
       ref.watch(tasksAndParentsByProjectFilteredProvider(projectId));
 
@@ -170,7 +171,8 @@ final _curProjectTasksHierarchyProvider =
     return sortedMap;
   }
 
-  final filterState = ref.watch(taskFilterStateProvider);
+  final filterState =
+      ref.watch(taskFilterStateProvider(TaskFilterViewType.projectOverview));
 
   // Sort both root tasks and children lists according to the sort preference
   if (filterState.sortComparator != null) {

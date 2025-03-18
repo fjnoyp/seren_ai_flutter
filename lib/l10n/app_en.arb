@@ -493,6 +493,7 @@
     "comments": "Comments",
     "addComment": "Add Comment",
     "addTasks": "Add Tasks",
+    "searchTasksToAdd": "Search tasks to add...",
     "phaseTasks": "Phase Tasks",
     "newTask": "New Task",
     "type": "Type",
