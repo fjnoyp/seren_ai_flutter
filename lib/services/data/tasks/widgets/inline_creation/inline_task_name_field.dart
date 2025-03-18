@@ -4,6 +4,7 @@ import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:seren_ai_flutter/services/data/common/status_enum.dart';
 import 'package:seren_ai_flutter/services/data/tasks/filtered/task_filter_state_provider.dart';
+import 'package:seren_ai_flutter/services/data/tasks/filtered/task_filter_view_type.dart';
 import 'package:seren_ai_flutter/services/data/tasks/providers/cur_selected_task_id_notifier_provider.dart';
 import 'package:seren_ai_flutter/services/data/tasks/repositories/tasks_repository.dart';
 import 'package:seren_ai_flutter/services/data/tasks/widgets/form/task_selection_fields.dart';
@@ -17,6 +18,7 @@ class InlineTaskNameField extends HookConsumerWidget {
     this.isPhase = false,
     this.initialParentTaskId,
     this.initialStatus,
+    this.filterViewType = TaskFilterViewType.projectOverview,
   });
 
   final String taskId;
@@ -25,6 +27,12 @@ class InlineTaskNameField extends HookConsumerWidget {
   final bool isPhase;
   final String? initialParentTaskId;
   final StatusEnum? initialStatus;
+
+  /// The type of filter view to use for the task filter state provider
+  ///
+  /// Since we currently only have inline creation with filters on project overview page,
+  /// it defaults to that.
+  final TaskFilterViewType filterViewType;
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -36,7 +44,7 @@ class InlineTaskNameField extends HookConsumerWidget {
     ref.listen(curInlineCreatingTaskIdProvider, (previous, next) {
       if ((next == null && previous != null) ||
           (next != null && previous != null && next != previous)) {
-        final filterState = ref.read(taskFilterStateProvider);
+        final filterState = ref.read(taskFilterStateProvider(filterViewType));
 
         if (filterState.activeFilters.isNotEmpty) {
           ref.read(tasksRepositoryProvider).getById(previous).then((task) {

@@ -2,11 +2,11 @@
 class BuildInfo {
   // Core build info
   static const String version = '1.0.0';
-  static const String buildDate = '2025-03-18 17:35:59';
+  static const String buildDate = '2025-03-18 17:48:19';
   
   // Git info
-  static const String commitHash = '4655051';
-  static const String branch = 'fix/gantt-chart-issues';
+  static const String commitHash = '62688cc';
+  static const String branch = 'main';
   static const String lastTag = 'no tag';
   
   // Author of last commit
@@ -15,6 +15,22 @@ class BuildInfo {
   
   // Recent commits (last 5)
   static const List<Map<String, String>> recentCommits = [
+    {
+      "hash": "62688cc",
+      "author": "renata-sisilio",
+      "email": "renata@seren-ai.co", 
+      "message": "fix(tasks): update gantt chart to sort alphabetically by default",
+      "date": "2025-03-18",
+      "relativeDate": "12 minutes ago"
+    },
+    {
+      "hash": "f23834a",
+      "author": "renata-sisilio",
+      "email": "renata@seren-ai.co", 
+      "message": "fix(tasks): add message for tasks created but hidden due to active filters",
+      "date": "2025-03-18",
+      "relativeDate": "12 minutes ago"
+    },
     {
       "hash": "4655051",
       "author": "renata-sisilio",
@@ -39,25 +55,9 @@ class BuildInfo {
       "date": "2025-03-17",
       "relativeDate": "25 hours ago"
     },
-    {
-      "hash": "b17441f",
-      "author": "renata-sisilio",
-      "email": "renata@seren-ai.co", 
-      "message": "feat(projects): implement everything project tab (#188)",
-      "date": "2025-03-17",
-      "relativeDate": "26 hours ago"
-    },
-    {
-      "hash": "0b96b5f",
-      "author": "renata-sisilio",
-      "email": "renata@seren-ai.co", 
-      "message": "feat(tasks): enhance task creation and deletion with popup support",
-      "date": "2025-03-17",
-      "relativeDate": "30 hours ago"
-    },
   ];
 
   // Stats
-  static const String totalCommits = '433';
+  static const String totalCommits = '435';
   static const String contributors = '0';
 }
