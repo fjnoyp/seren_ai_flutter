@@ -6,6 +6,7 @@ import 'package:seren_ai_flutter/services/data/projects/providers/cur_selected_p
 import 'package:seren_ai_flutter/services/data/projects/widgets/project_overview/sub_lists/project_tasks_board_view.dart';
 import 'package:seren_ai_flutter/services/data/projects/widgets/project_overview/sub_lists/project_tasks_filters.dart';
 import 'package:seren_ai_flutter/services/data/projects/widgets/project_overview/sub_lists/project_tasks_sectioned_list_view.dart';
+import 'package:seren_ai_flutter/services/data/tasks/filtered/task_filter_view_type.dart';
 import 'package:seren_ai_flutter/services/data/tasks/filtered/task_search_modal.dart';
 import 'package:seren_ai_flutter/services/data/tasks/widgets/gantt/gantt_task_page.dart';
 
@@ -49,6 +50,7 @@ class ProjectTasksSectionWeb extends HookConsumerWidget {
           child: ProjectTasksFilters(
             onShowCustomDateRangePicker: _showCustomDateRangePicker,
             useHorizontalScroll: false,
+            viewType: TaskFilterViewType.projectOverview,
           ),
         ),
         Expanded(

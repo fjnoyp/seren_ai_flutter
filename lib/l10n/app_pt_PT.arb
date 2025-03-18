@@ -312,6 +312,7 @@
     "comments": "Comentários",
     "addComment": "Adicionar Comentário",
     "addTasks": "Adicionar Tarefas",
+    "searchTasksToAdd": "Pesquisar tarefas para adicionar...",
     "phaseTasks": "Tarefas da Etapa",
     "newTask": "Nova Tarefa",
     "type": "Tipo",

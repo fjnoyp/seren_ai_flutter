@@ -3,12 +3,12 @@ import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:logging/logging.dart';
 import 'package:seren_ai_flutter/common/navigation_service_provider.dart';
 import 'package:seren_ai_flutter/services/ai/ai_context_helper/widgets/ai_context_view.dart';
+import 'package:seren_ai_flutter/services/data/tasks/filtered/task_filter_view_type.dart';
 import 'package:seren_ai_flutter/services/data/tasks/filtered/task_search_modal.dart';
 import 'package:seren_ai_flutter/services/data/tasks/providers/cur_selected_task_id_notifier_provider.dart';
 import 'package:seren_ai_flutter/services/data/tasks/providers/task_by_id_stream_provider.dart';
 import 'package:seren_ai_flutter/services/data/tasks/providers/tasks_by_parent_stream_provider.dart';
 import 'package:seren_ai_flutter/services/data/tasks/repositories/tasks_repository.dart';
-import 'package:seren_ai_flutter/services/data/tasks/task_field_enum.dart';
 import 'package:seren_ai_flutter/services/data/tasks/widgets/action_buttons/delete_task_button.dart';
 import 'package:seren_ai_flutter/services/data/tasks/widgets/budget/task_budget_section.dart';
 import 'package:seren_ai_flutter/services/data/tasks/widgets/form/task_selection_fields.dart';
@@ -28,8 +28,8 @@ class WebTaskPage extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final curTaskId = ref.watch(curSelectedTaskIdNotifierProvider) ?? '';
-    final isPhase =
-        ref.watch(taskByIdStreamProvider(curTaskId)).value?.isPhase ?? false;
+    final task = ref.watch(taskByIdStreamProvider(curTaskId));
+    final isPhase = task.value?.isPhase ?? false;
 
     final isDebugMode = ref.watch(isDebugModeSNP);
 
@@ -37,7 +37,10 @@ class WebTaskPage extends ConsumerWidget {
       if (isPhase)
         (
           title: AppLocalizations.of(context)?.tasks,
-          body: _TasksFromPhaseSection(phaseId: curTaskId),
+          body: _TasksFromPhaseSection(
+            phaseId: curTaskId,
+            projectId: task.value?.parentProjectId ?? '',
+          ),
         ),
       (
         title: AppLocalizations.of(context)?.comments,
@@ -81,9 +84,13 @@ class WebTaskPage extends ConsumerWidget {
 }
 
 class _TasksFromPhaseSection extends ConsumerWidget {
-  const _TasksFromPhaseSection({required this.phaseId});
+  const _TasksFromPhaseSection({
+    required this.phaseId,
+    required this.projectId,
+  });
 
   final String phaseId;
+  final String projectId;
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -96,24 +103,10 @@ class _TasksFromPhaseSection extends ConsumerWidget {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Padding(
-          padding: const EdgeInsets.all(16),
-          child: Text(
-            AppLocalizations.of(context)?.addTasks ?? 'Add Tasks',
-            style: labelStyle,
-          ),
+          padding: const EdgeInsets.symmetric(horizontal: 16),
+          child: _TaskSearchField(phaseId: phaseId, projectId: projectId),
         ),
-        Expanded(
-          child: TaskSearchModal(
-            autoFocus: false,
-            onTapOption: (taskId) => ref
-                .read(tasksRepositoryProvider)
-                .updateTaskParentTaskId(taskId, phaseId),
-            hiddenFilters: const [TaskFieldEnum.type],
-            additionalFilter: (task) =>
-                task.isPhase == false && task.parentTaskId == null,
-          ),
-        ),
-        const SizedBox(height: 32),
+        const SizedBox(height: 16),
         // === Show Tasks in the Phase ===
         Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -148,6 +141,82 @@ class _TasksFromPhaseSection extends ConsumerWidget {
           ),
         ),
       ],
+    );
+  }
+}
+
+class _TaskSearchField extends ConsumerWidget {
+  const _TaskSearchField({required this.phaseId, required this.projectId});
+
+  final String phaseId;
+  final String projectId;
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    return TextField(
+      readOnly: true, // Makes it non-editable but still tappable
+      onTap: () {
+        final button = context.findRenderObject() as RenderBox;
+        final overlay =
+            Overlay.of(context).context.findRenderObject() as RenderBox;
+
+        // Calculate position that aligns with the text field
+        final RelativeRect position = RelativeRect.fromLTRB(
+          button.localToGlobal(Offset.zero, ancestor: overlay).dx,
+          button
+              .localToGlobal(Offset.zero, ancestor: overlay)
+              .dy, // Position at the top of the text field
+          button
+              .localToGlobal(Offset(button.size.width, 0), ancestor: overlay)
+              .dx,
+          0, // Bottom position doesn't matter as much
+        );
+
+        // Calculate the width of the text field
+        final double fieldWidth = button.size.width;
+
+        // Use a custom widget that wraps TaskSearchModal with fixed dimensions
+        showMenu(
+          context: context,
+          position: position,
+          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
+          elevation: 8,
+          // Force the menu to be wider
+          constraints: BoxConstraints(
+            minWidth: fieldWidth,
+            maxWidth: fieldWidth,
+          ),
+          items: [
+            PopupMenuItem(
+              padding: EdgeInsets.zero,
+              enabled: false,
+              // Force the item to take the full width
+              child: SizedBox(
+                width: fieldWidth,
+                height: 500,
+                child: TaskSearchModal(
+                  viewType: TaskFilterViewType.phaseSubtasks,
+                  onTapOption: (taskId) {
+                    ref
+                        .read(tasksRepositoryProvider)
+                        .updateTaskParentTaskId(taskId, phaseId);
+                    Navigator.of(context).pop();
+                  },
+                  // Only show tasks that don't belong to any phase yet
+                  additionalFilter: (task) => task.parentTaskId == null,
+                  projectId: projectId,
+                ),
+              ),
+            ),
+          ],
+        );
+      },
+      decoration: InputDecoration(
+        hintText: AppLocalizations.of(context)?.searchTasksToAdd ??
+            "Search tasks to add...",
+        prefixIcon: const Icon(Icons.search),
+        border: const OutlineInputBorder(),
+      ),
     );
   }
 }

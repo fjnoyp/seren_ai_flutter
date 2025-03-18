@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
+import 'package:seren_ai_flutter/services/data/projects/providers/cur_selected_project_providers.dart';
+import 'package:seren_ai_flutter/services/data/tasks/filtered/task_filter_view_type.dart';
 import 'package:seren_ai_flutter/services/data/tasks/filtered/tasks_filtered_provider.dart';
 import 'package:seren_ai_flutter/services/data/tasks/models/task_model.dart';
 import 'package:seren_ai_flutter/services/data/tasks/widgets/task_list/task_list_card_item_view.dart';
@@ -16,6 +18,7 @@ class TasksFilteredListView extends ConsumerWidget {
     this.projectId,
     this.itemBuilder,
     this.separatorBuilder,
+    required this.viewType,
   });
 
   /// Optional additional filter beyond what's in the tasksFilteredProvider
@@ -39,12 +42,23 @@ class TasksFilteredListView extends ConsumerWidget {
   /// If not provided, defaults to a simple Divider
   final Widget Function(BuildContext context, int index)? separatorBuilder;
 
+  /// The view type to use for the tasksFilteredProvider
+  final TaskFilterViewType viewType;
+
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    // Get pre-filtered tasks from the provider
-    final filteredTasks = projectId != null
-        ? ref.watch(tasksByProjectsFilteredProvider(projectId!))
-        : ref.watch(tasksFilteredProvider);
+    // Note on performance optimization:
+    // We could have used the tasksFilteredProvider directly, but retrieving tasks
+    // from tasksByProjectsFilteredProvider is more efficient because:
+    // 1. It fetches only the specific project tasks from the repository instead of all tasks
+    // 2. This reduces data transfer and memory usage by loading only what's needed
+    // 3. The filtering happens at the data source level (database/repository) where it can
+    //    potentially use indexes and optimized query mechanisms
+    // 4. It avoids the computational overhead of filtering a larger dataset in the application
+    final filteredTasks = projectId != null &&
+            !CurSelectedProjectIdNotifier.isEverythingId(projectId!)
+        ? ref.watch(tasksByProjectFilteredProvider(projectId!))
+        : ref.watch(tasksFilteredProvider(viewType));
 
     // Apply additional filter if provided
     final tasks = additionalFilter != null
