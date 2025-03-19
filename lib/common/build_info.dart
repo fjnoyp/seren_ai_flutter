@@ -2,11 +2,11 @@
 class BuildInfo {
   // Core build info
   static const String version = '1.0.0';
-  static const String buildDate = '2025-03-19 10:31:55';
+  static const String buildDate = '2025-03-19 12:36:49';
   
   // Git info
-  static const String commitHash = '1e2d337';
-  static const String branch = 'feat/just-upload-file-to-project';
+  static const String commitHash = 'a99e7c3';
+  static const String branch = 'fix/tasks-issues';
   static const String lastTag = 'no tag';
   
   // Author of last commit
@@ -16,36 +16,12 @@ class BuildInfo {
   // Recent commits (last 5)
   static const List<Map<String, String>> recentCommits = [
     {
-      "hash": "1e2d337",
+      "hash": "a99e7c3",
       "author": "renata-sisilio",
       "email": "renata@seren-ai.co", 
-      "message": "pr bot comment",
-      "date": "2025-03-17",
-      "relativeDate": "2 days ago"
-    },
-    {
-      "hash": "f1ee181",
-      "author": "renata-sisilio",
-      "email": "renata@seren-ai.co", 
-      "message": "pr comments",
-      "date": "2025-03-17",
-      "relativeDate": "2 days ago"
-    },
-    {
-      "hash": "829447b",
-      "author": "renata-sisilio",
-      "email": "renata@seren-ai.co", 
-      "message": "fix(ai_file_context): update prompts to ask ai not to hallucinate",
-      "date": "2025-03-17",
-      "relativeDate": "2 days ago"
-    },
-    {
-      "hash": "1407d3b",
-      "author": "renata-sisilio",
-      "email": "renata@seren-ai.co", 
-      "message": "feat(projects): add project file upload functionality",
-      "date": "2025-03-17",
-      "relativeDate": "2 days ago"
+      "message": "feat(projects): upload file to project (without AI data processing) (#192)",
+      "date": "2025-03-19",
+      "relativeDate": "2 minutes ago"
     },
     {
       "hash": "8ab7e91",
@@ -53,11 +29,35 @@ class BuildInfo {
       "email": "renata@seren-ai.co", 
       "message": "fix(tasks): update gantt chart to sort alphabetically by default",
       "date": "2025-03-18",
-      "relativeDate": "17 hours ago"
+      "relativeDate": "19 hours ago"
+    },
+    {
+      "hash": "f23834a",
+      "author": "renata-sisilio",
+      "email": "renata@seren-ai.co", 
+      "message": "fix(tasks): add message for tasks created but hidden due to active filters",
+      "date": "2025-03-18",
+      "relativeDate": "19 hours ago"
+    },
+    {
+      "hash": "4655051",
+      "author": "renata-sisilio",
+      "email": "renata@seren-ai.co", 
+      "message": "refactor(tasks): update task filtering logic to use view types and improve provider structure",
+      "date": "2025-03-18",
+      "relativeDate": "25 hours ago"
+    },
+    {
+      "hash": "b1cb37c",
+      "author": "renata-sisilio",
+      "email": "renata@seren-ai.co", 
+      "message": "feat(search): introduce GlobalSearchTextField and integrate into home and web scaffold",
+      "date": "2025-03-17",
+      "relativeDate": "2 days ago"
     },
   ];
 
   // Stats
-  static const String totalCommits = '439';
+  static const String totalCommits = '436';
   static const String contributors = '0';
 }
