@@ -1,8 +1,13 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:flutter_hooks/flutter_hooks.dart';
+import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:intl/intl.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+import 'package:seren_ai_flutter/services/auth/cur_auth_state_provider.dart';
 import 'package:seren_ai_flutter/services/data/common/recent_updated_items/date_grouped_items.dart';
+import 'package:seren_ai_flutter/services/data/common/widgets/async_value_handler_widget.dart';
+import 'package:seren_ai_flutter/services/data/common/widgets/select_project_widget.dart';
+import 'package:seren_ai_flutter/services/data/projects/providers/cur_user_viewable_projects_provider.dart';
 import 'package:seren_ai_flutter/services/data/tasks/models/task_model.dart';
 import 'package:seren_ai_flutter/services/data/tasks/providers/cur_user_grouped_tasks_stream_provider.dart';
 import 'package:seren_ai_flutter/services/data/tasks/widgets/task_list/task_list_card_item_view.dart';
@@ -76,19 +81,75 @@ class _TasksList extends StatelessWidget {
   }
 }
 
-class CurUserTasksScreen extends ConsumerWidget {
+class CurUserTasksScreen extends HookConsumerWidget {
   const CurUserTasksScreen({super.key});
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final myTasksAsync = ref.watch(curUserGroupedTasksStreamProvider);
+    final curUser = ref.watch(curUserProvider).value;
+    final curProjectId = useState<String?>(null);
+    // Add state to track if "All" is selected
+    final showAllTasks = useState<bool>(false);
 
-    return myTasksAsync.when(
-      loading: () => const Center(child: CircularProgressIndicator()),
-      error: (error, stack) => Center(child: Text('Error: $error')),
+    // Watch viewable projects to handle default project selection
+    final viewableProjects = ref.watch(curUserViewableProjectsProvider);
+
+    // Effect to handle default project selection
+    useEffect(() {
+      if (viewableProjects.hasValue) {
+        final projects = viewableProjects.value!;
+        final defaultProjectId = curUser?.defaultProjectId;
+
+        // If default project exists and is in viewable projects, select it
+        if (defaultProjectId != null &&
+            projects.any((p) => p.id == defaultProjectId)) {
+          curProjectId.value = defaultProjectId;
+          showAllTasks.value = false;
+        } else {
+          // Fallback to all tasks if default not found
+          curProjectId.value = null;
+          showAllTasks.value = true;
+        }
+      }
+      return null;
+    }, [viewableProjects, curUser]);
+
+    return Column(
+      children: [
+        const SizedBox(height: 16),
+        SelectProjectWidget(
+          curProjectIdValueNotifier: curProjectId,
+          showAllValueNotifier: showAllTasks,
+          showPersonalOption: false,
+        ),
+        Expanded(
+          child: _CurUserTasksList(
+              // Use null to show all tasks since we don't have personal tasks
+              projectId: showAllTasks.value ? null : curProjectId.value),
+        ),
+      ],
+    );
+  }
+}
+
+class _CurUserTasksList extends ConsumerWidget {
+  const _CurUserTasksList({this.projectId});
+
+  final String? projectId;
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final myTasksAsync = projectId == null
+        ? ref.watch(curUserGroupedTasksStreamProvider)
+        : ref.watch(curUserGroupedTasksByProjectStreamProvider(projectId!));
+
+    return AsyncValueHandlerWidget(
+      value: myTasksAsync,
       data: (groupedTasks) {
         if (groupedTasks.isEmpty) {
-          return const Center(child: Text('No tasks assigned to you'));
+          return Center(
+              child: Text(AppLocalizations.of(context)?.noTasksAssignedToYou ??
+                  'No tasks assigned to you'));
         }
 
         return ListView.builder(

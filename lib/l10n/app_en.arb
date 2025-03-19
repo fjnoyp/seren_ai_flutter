@@ -57,6 +57,7 @@
     "description": "Description",
     "address": "Address",
     "other": "Other",
+    "all": "All",
 
     "@_": {"description": "Users"},
     "users": "Users",
@@ -539,6 +540,7 @@
     "noEstimatedDuration": "No estimated duration",
     "foundTasks": "Found Tasks",
     "noTasksFound": "No tasks found",
+    "noTasksAssignedToYou": "No tasks assigned to you",
     "noReminderSet": "No reminder set",
     "minutes": "{hours, plural, =0{} =1{1 hour } other{{hours} hours }}{minutes, plural, =0{} =1{1 minute} other{{minutes} minutes}}",
     "@minutes": {

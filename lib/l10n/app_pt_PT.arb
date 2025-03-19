@@ -32,6 +32,7 @@
     "description": "Descrição",
     "address": "Endereço",
     "other": "Outro",
+    "all": "Tudo",
 
     "@_": {"description": "Users"},
     "users": "Usuários",
@@ -349,6 +350,7 @@
     "noEstimatedDuration": "Sem duração estimada",
     "foundTasks": "Tarefas Encontradas",
     "noTasksFound": "Nenhuma tarefa encontrada",
+    "noTasksAssignedToYou": "Nenhuma tarefa atribuída a você",
     "noReminderSet": "Sem lembrete configurado",
     "minutes": "{hours, plural, =0{} =1{1 hora } other{{hours} horas }}{minutes, plural, =0{} =1{1 minuto} other{{minutes} minutos}}",
     "noReminder": "Sem lembrete",
