@@ -50,7 +50,7 @@ class NoteListPage extends HookConsumerWidget {
         Expanded(
           // Choose which widget to show based on showAllNotes value
           child: showAllNotes.value
-              ? _AllNotesList() // Show all notes from recently updated provider
+              ? const _AllNotesList() // Show all notes from recently updated provider
               : ProjectNotesList(
                   curProjectId.value), // Show project-specific notes
         ),
