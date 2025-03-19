@@ -1,3 +1,7 @@
+import 'package:flutter/widgets.dart';
+import 'package:intl/intl.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+
 class DateGroupedItems {
   final DateTime date;
   final List<dynamic> items;
@@ -24,5 +28,20 @@ class DateGroupedItems {
   bool get isLastWeek {
     final weekAgo = DateTime.now().subtract(const Duration(days: 7));
     return date.isAfter(weekAgo) && !isToday && !isYesterday;
+  }
+
+  String getDateHeader(BuildContext context) {
+    if (isToday) {
+      return AppLocalizations.of(context)?.today ?? 'Today';
+    }
+    if (isYesterday) {
+      return 'Yesterday';
+    }
+    if (isLastWeek) {
+      return DateFormat.EEEE(AppLocalizations.of(context)?.localeName)
+          .format(date);
+    }
+    return DateFormat.yMMMd(AppLocalizations.of(context)?.localeName)
+        .format(date);
   }
 }
