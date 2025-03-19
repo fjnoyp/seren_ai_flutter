@@ -183,6 +183,61 @@ class TasksRepository extends BaseRepository<TaskModel> {
     } else if (status == StatusEnum.finished && task.dueDate == null) {
       await updateTaskDueDate(taskId, DateTime.now());
     }
+
+    // Handle parent task status updates
+    if (task.parentTaskId != null) {
+      await _handleParentTaskStatus(task.parentTaskId!, status);
+    }
+  }
+
+  // New method to handle parent task status updates
+  Future<void> _handleParentTaskStatus(
+      String parentTaskId, StatusEnum childStatus) async {
+    // If child task is set to inProgress, set parent to inProgress
+    if (childStatus == StatusEnum.inProgress) {
+      await updateTaskStatus(parentTaskId, StatusEnum.inProgress);
+      return;
+    }
+
+    // If child task is set to any other status, check sibling tasks (this will include the child task itself)
+    final siblingTasks = await getChildTasks(parentTaskId: parentTaskId);
+
+    // If all sibling tasks are archived or cancelled, set parent task to archived or cancelled
+    final allTasksArchivedOrCancelled = siblingTasks.every(
+        (t) => [StatusEnum.archived, StatusEnum.cancelled].contains(t.status));
+
+    if (allTasksArchivedOrCancelled) {
+      final allTasksCancelled =
+          siblingTasks.every((t) => t.status == StatusEnum.cancelled);
+      if (allTasksCancelled) {
+        await updateTaskStatus(parentTaskId, StatusEnum.cancelled);
+      } else {
+        await updateTaskStatus(parentTaskId, StatusEnum.archived);
+      }
+      return;
+    }
+
+    // If not all sibling tasks are archived or cancelled, check only active siblings
+    final activeSiblingTasks = siblingTasks
+        .where((t) =>
+            ![StatusEnum.archived, StatusEnum.cancelled].contains(t.status))
+        .toList();
+
+    // If all active sibling tasks are open, set parent task to open
+    bool allActiveTasksOpen =
+        activeSiblingTasks.every((t) => t.status == StatusEnum.open);
+    if (allActiveTasksOpen) {
+      await updateTaskStatus(parentTaskId, StatusEnum.open);
+      return;
+    }
+
+    // If all active sibling tasks are finished, set parent task to finished
+    bool allActiveTasksFinished =
+        activeSiblingTasks.every((t) => t.status == StatusEnum.finished);
+    if (allActiveTasksFinished) {
+      await updateTaskStatus(parentTaskId, StatusEnum.finished);
+    }
+    // Otherwise, do nothing
   }
 
   Future<void> updateTaskPriority(String taskId, PriorityEnum? priority) async {
@@ -240,14 +295,8 @@ class TasksRepository extends BaseRepository<TaskModel> {
   /// Gets the parent organization ID for a task
   /// This is determined by the task's project's organization
   Future<String?> getTaskParentOrgId(String taskId) async {
-    final query = '''
-      SELECT p.parent_org_id
-      FROM tasks t
-      JOIN projects p ON t.parent_project_id = p.id
-      WHERE t.id = :task_id
-    ''';
-
-    final result = await db.execute(query, [taskId]);
+    final result =
+        await db.execute(TaskQueries.getTaskParentOrgIdQuery, [taskId]);
     return result.isEmpty ? null : result.first['parent_org_id'] as String?;
   }
 
