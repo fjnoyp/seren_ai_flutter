@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:seren_ai_flutter/common/routes/app_routes.dart';
 
 final navigationServiceProvider = Provider((ref) => NavigationService(ref));
 
@@ -43,6 +44,12 @@ class NavigationService {
     if (canPop) {
       navigatorKey.currentState!.pop(result);
       return result;
+    } else {
+      // in case the user has opened the app from a link
+      // or has refreshed the page,
+      // the stack will be empty, so we need to navigate to the home screen
+      // when it tries to pop.
+      navigateTo(AppRoutes.home.name, clearStack: true);
     }
   }
 

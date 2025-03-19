@@ -2,10 +2,10 @@
 class BuildInfo {
   // Core build info
   static const String version = '1.0.0';
-  static const String buildDate = '2025-03-19 12:36:49';
+  static const String buildDate = '2025-03-19 12:37:01';
   
   // Git info
-  static const String commitHash = 'a99e7c3';
+  static const String commitHash = 'e8f3bcd';
   static const String branch = 'fix/tasks-issues';
   static const String lastTag = 'no tag';
   
@@ -15,6 +15,14 @@ class BuildInfo {
   
   // Recent commits (last 5)
   static const List<Map<String, String>> recentCommits = [
+    {
+      "hash": "e8f3bcd",
+      "author": "renata-sisilio",
+      "email": "renata@seren-ai.co", 
+      "message": "fix(home): null check operator on (possibly) null values",
+      "date": "2025-03-19",
+      "relativeDate": "13 seconds ago"
+    },
     {
       "hash": "a99e7c3",
       "author": "renata-sisilio",
@@ -47,17 +55,9 @@ class BuildInfo {
       "date": "2025-03-18",
       "relativeDate": "25 hours ago"
     },
-    {
-      "hash": "b1cb37c",
-      "author": "renata-sisilio",
-      "email": "renata@seren-ai.co", 
-      "message": "feat(search): introduce GlobalSearchTextField and integrate into home and web scaffold",
-      "date": "2025-03-17",
-      "relativeDate": "2 days ago"
-    },
   ];
 
   // Stats
-  static const String totalCommits = '436';
+  static const String totalCommits = '437';
   static const String contributors = '0';
 }
