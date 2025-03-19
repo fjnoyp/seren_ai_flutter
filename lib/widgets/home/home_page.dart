@@ -33,6 +33,37 @@ class _HomePageState extends ConsumerState<HomePage>
 
   @override
   Widget build(BuildContext context) {
+    final tabs = [
+      (
+        label: AppLocalizations.of(context)?.recent ?? 'Recent',
+        icon: Icons.history_outlined,
+        body: const RecentUpdatedItemsScreen()
+      ),
+      (
+        label: AppLocalizations.of(context)?.myTasks ?? 'My Tasks',
+        icon: Icons.task_outlined,
+        body: const CurUserTasksScreen()
+      ),
+      (
+        label: AppLocalizations.of(context)?.notes ?? 'Notes',
+        icon: Icons.note_outlined,
+        body: const NoteListPage()
+      ),
+      (
+        label: AppLocalizations.of(context)?.shifts ?? 'Shifts',
+        icon: Icons.punch_clock_outlined,
+        body: const ShiftsPage()
+      ),
+    ];
+
+    // Calculate available width for tabs
+    final screenWidth = MediaQuery.of(context).size.width;
+
+    // Check if screen is too narrow for full tab labels
+    // 70 is the average width of a tab label
+    // 32 is the default horizontal padding
+    final isNarrowScreen = screenWidth - 32 < (70 + 32) * tabs.length;
+
     return Scaffold(
       body: Column(
         children: [
@@ -43,27 +74,36 @@ class _HomePageState extends ConsumerState<HomePage>
               child: GlobalSearchTextField(textAlign: TextAlign.start),
             ),
 
-          // Tab Bar
+          // Tab Bar - conditionally show text or icon based on screen width
           TabBar(
             controller: _tabController,
-            tabs: [
-              Tab(text: AppLocalizations.of(context)?.recent ?? 'Recent'),
-              Tab(text: AppLocalizations.of(context)?.myTasks ?? 'My Tasks'),
-              Tab(text: AppLocalizations.of(context)?.notes ?? 'Notes'),
-              Tab(text: AppLocalizations.of(context)?.shifts ?? 'Shifts'),
-            ],
+            tabs: tabs
+                .map((tab) => Tab(
+                    text: isNarrowScreen ? null : tab.label,
+                    icon: isNarrowScreen ? Icon(tab.icon) : null))
+                .toList(),
           ),
 
           // Tab Bar View
           Expanded(
             child: TabBarView(
               controller: _tabController,
-              children: const [
-                RecentUpdatedItemsScreen(),
-                CurUserTasksScreen(),
-                NoteListPage(),
-                ShiftsPage(),
-              ],
+              children: tabs
+                  .map(
+                    (tab) => isNarrowScreen
+                        ? Column(
+                            children: [
+                              const SizedBox(height: 16),
+                              Text(
+                                tab.label,
+                                style: Theme.of(context).textTheme.titleLarge,
+                              ),
+                              Expanded(child: tab.body),
+                            ],
+                          )
+                        : tab.body,
+                  )
+                  .toList(),
             ),
           ),
         ],
