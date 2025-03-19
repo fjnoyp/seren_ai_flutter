@@ -35,7 +35,7 @@ class DateGroupedItems {
       return AppLocalizations.of(context)?.today ?? 'Today';
     }
     if (isYesterday) {
-      return 'Yesterday';
+      return AppLocalizations.of(context)?.yesterday ?? 'Yesterday';
     }
     if (isLastWeek) {
       return DateFormat.EEEE(AppLocalizations.of(context)?.localeName)

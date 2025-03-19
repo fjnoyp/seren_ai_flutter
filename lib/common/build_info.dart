@@ -2,10 +2,10 @@
 class BuildInfo {
   // Core build info
   static const String version = '1.0.0';
-  static const String buildDate = '2025-03-19 12:37:14';
+  static const String buildDate = '2025-03-19 12:37:36';
   
   // Git info
-  static const String commitHash = '75f0eb6';
+  static const String commitHash = 'c796716';
   static const String branch = 'fix/tasks-issues';
   static const String lastTag = 'no tag';
   
@@ -16,12 +16,20 @@ class BuildInfo {
   // Recent commits (last 5)
   static const List<Map<String, String>> recentCommits = [
     {
+      "hash": "c796716",
+      "author": "renata-sisilio",
+      "email": "renata@seren-ai.co", 
+      "message": "fix(tasks): localize task card due dates",
+      "date": "2025-03-19",
+      "relativeDate": "24 seconds ago"
+    },
+    {
       "hash": "75f0eb6",
       "author": "renata-sisilio",
       "email": "renata@seren-ai.co", 
       "message": "fix(navigation): pop after refreshing (web) + pop out to nothing (mobile)",
       "date": "2025-03-19",
-      "relativeDate": "13 seconds ago"
+      "relativeDate": "36 seconds ago"
     },
     {
       "hash": "e8f3bcd",
@@ -29,7 +37,7 @@ class BuildInfo {
       "email": "renata@seren-ai.co", 
       "message": "fix(home): null check operator on (possibly) null values",
       "date": "2025-03-19",
-      "relativeDate": "25 seconds ago"
+      "relativeDate": "48 seconds ago"
     },
     {
       "hash": "a99e7c3",
@@ -37,7 +45,7 @@ class BuildInfo {
       "email": "renata@seren-ai.co", 
       "message": "feat(projects): upload file to project (without AI data processing) (#192)",
       "date": "2025-03-19",
-      "relativeDate": "2 minutes ago"
+      "relativeDate": "3 minutes ago"
     },
     {
       "hash": "8ab7e91",
@@ -47,17 +55,9 @@ class BuildInfo {
       "date": "2025-03-18",
       "relativeDate": "19 hours ago"
     },
-    {
-      "hash": "f23834a",
-      "author": "renata-sisilio",
-      "email": "renata@seren-ai.co", 
-      "message": "fix(tasks): add message for tasks created but hidden due to active filters",
-      "date": "2025-03-18",
-      "relativeDate": "19 hours ago"
-    },
   ];
 
   // Stats
-  static const String totalCommits = '438';
+  static const String totalCommits = '439';
   static const String contributors = '0';
 }
