@@ -12,6 +12,7 @@ import 'package:seren_ai_flutter/services/data/common/widgets/status_view.dart';
 import 'package:seren_ai_flutter/services/data/tasks/widgets/task_assignees_avatars.dart';
 import 'package:seren_ai_flutter/services/data/tasks/widgets/task_list/task_project_indicator.dart';
 import 'package:seren_ai_flutter/services/data/tasks/widgets/task_list/task_list_item_phase_indicator.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 // Card like view that uses ListTile
 class TaskListCardItemView extends ConsumerWidget {
@@ -97,7 +98,9 @@ class TaskListCardItemView extends ConsumerWidget {
                         const SizedBox(width: 4),
                         Flexible(
                           child: Text(
-                            DateFormat.yMMMd().format(task.dueDate!),
+                            DateFormat.yMMMd(
+                                    AppLocalizations.of(context)?.localeName)
+                                .format(task.dueDate!),
                             overflow: TextOverflow.ellipsis,
                             style:
                                 Theme.of(context).textTheme.bodySmall?.copyWith(
