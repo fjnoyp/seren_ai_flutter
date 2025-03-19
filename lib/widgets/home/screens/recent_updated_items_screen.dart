@@ -1,10 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:intl/intl.dart';
-import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:seren_ai_flutter/services/ai/ai_context_helper/widgets/ai_context_view.dart';
 import 'package:seren_ai_flutter/services/data/common/recent_updated_items/date_grouped_items.dart';
 import 'package:seren_ai_flutter/services/data/common/recent_updated_items/recent_updated_items_provider.dart';
+import 'package:seren_ai_flutter/services/data/common/widgets/async_value_handler_widget.dart';
 import 'package:seren_ai_flutter/services/data/notes/models/note_model.dart';
 import 'package:seren_ai_flutter/services/data/notes/widgets/note_list_item_view.dart';
 import 'package:seren_ai_flutter/services/data/tasks/models/task_model.dart';
@@ -13,22 +12,41 @@ import 'package:seren_ai_flutter/services/data/tasks/widgets/task_list/task_list
 class RecentUpdatedItemsScreen extends ConsumerWidget {
   const RecentUpdatedItemsScreen({super.key});
 
-  String _getDateHeader(BuildContext context, DateGroupedItems group) {
-    if (group.isToday) {
-      return AppLocalizations.of(context)?.today ?? 'Today';
-    }
-    if (group.isYesterday) {
-      return 'Yesterday';
-    }
-    if (group.isLastWeek) {
-      return DateFormat.EEEE(AppLocalizations.of(context)?.localeName)
-          .format(group.date);
-    }
-    return DateFormat.yMMMd(AppLocalizations.of(context)?.localeName)
-        .format(group.date);
-  }
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    return AsyncValueHandlerWidget(
+      value: ref.watch(recentUpdatedItemsProvider),
+      data: (groupedItems) {
+        if (groupedItems.isEmpty) {
+          return const Center(child: Text('No recent items'));
+        }
 
-  Widget _buildDateHeader(BuildContext context, DateGroupedItems group) {
+        return ListView.builder(
+          padding: const EdgeInsets.symmetric(horizontal: 16),
+          itemCount: groupedItems.length,
+          itemBuilder: (context, index) {
+            final group = groupedItems[index];
+            return Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                _DateHeader(group),
+                _ItemsList(group.items),
+              ],
+            );
+          },
+        );
+      },
+    );
+  }
+}
+
+class _DateHeader extends ConsumerWidget {
+  const _DateHeader(this.group);
+
+  final DateGroupedItems group;
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -36,7 +54,7 @@ class RecentUpdatedItemsScreen extends ConsumerWidget {
         Row(
           children: [
             Text(
-              _getDateHeader(context, group),
+              group.getDateHeader(context),
               style: Theme.of(context).textTheme.titleSmall?.copyWith(
                     color: Theme.of(context).colorScheme.primary,
                   ),
@@ -54,64 +72,47 @@ class RecentUpdatedItemsScreen extends ConsumerWidget {
       ],
     );
   }
+}
 
-  Widget _buildItemsList(BuildContext context, List<dynamic> items) {
-    return Column(
-      children: [
-        AIContextTaskList(tasks: items.whereType<TaskModel>().toList()),
-        ...items.asMap().entries.map((entry) {
-          final item = entry.value;
-          final isLast = entry.key == items.length - 1;
+class _ItemsList extends StatelessWidget {
+  const _ItemsList(this.items);
 
-          return Column(
-            children: [
-              if (item is TaskModel)
-                TaskListCardItemView(
-                    task: item, showStatus: true, showProject: true)
-              else if (item is NoteModel)
-                NoteListItemView(item, showStatus: true),
-              if (!isLast) // Don't add divider after last item
-                Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 8),
-                  child: Divider(
-                    color: Theme.of(context).dividerColor.withAlpha(38),
-                    height: 1,
-                  ),
-                ),
-            ],
-          );
-        }).toList(),
-      ],
-    );
-  }
+  final List<dynamic> items;
 
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
-    final recentItemsAsync = ref.watch(recentUpdatedItemsProvider);
+  Widget build(BuildContext context) {
+    return Column(
+      children: [
+         // Only show AI context if there are tasks
+        if (items.whereType<TaskModel>().isNotEmpty)
+          AIContextTaskList(tasks: items.whereType<TaskModel>().toList()),
 
-    return recentItemsAsync.when(
-      loading: () => const Center(child: CircularProgressIndicator()),
-      error: (error, stack) => Center(child: Text('Error: $error')),
-      data: (groupedItems) {
-        if (groupedItems.isEmpty) {
-          return const Center(child: Text('No recent items'));
-        }
-
-        return ListView.builder(
-          padding: const EdgeInsets.symmetric(horizontal: 16),
-          itemCount: groupedItems.length,
+        // Show the list of items
+        ListView.separated(
+          shrinkWrap: true,
+          physics: const NeverScrollableScrollPhysics(),
+          itemCount: items.length,
           itemBuilder: (context, index) {
-            final group = groupedItems[index];
-            return Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                _buildDateHeader(context, group),
-                _buildItemsList(context, group.items),
-              ],
+            final item = items[index];
+
+            return switch (item) {
+              TaskModel() => TaskListCardItemView(
+                  task: item, showStatus: true, showProject: true),
+              NoteModel() => NoteListItemView(item, showStatus: true),
+              _ => const SizedBox.shrink(),
+            };
+          },
+          separatorBuilder: (context, index) {
+            return Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 8),
+              child: Divider(
+                color: Theme.of(context).dividerColor.withAlpha(38),
+                height: 1,
+              ),
             );
           },
-        );
-      },
+        ),
+      ],
     );
   }
 }
