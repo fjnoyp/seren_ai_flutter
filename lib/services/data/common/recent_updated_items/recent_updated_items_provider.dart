@@ -13,7 +13,9 @@ List<DateGroupedItems> _groupByDate(List<dynamic> items) {
 
   for (final item in items) {
     final date =
-        (item is TaskModel ? item.updatedAt : (item as NoteModel).updatedAt)!;
+        (item is TaskModel ? item.updatedAt : (item as NoteModel).updatedAt);
+    // If for some reason the date is null, skip the item
+    if (date == null) continue;
     final dateOnly = DateTime(date.year, date.month, date.day);
 
     groups.putIfAbsent(dateOnly, () => []).add(item);
@@ -51,7 +53,8 @@ final recentUpdatedItemsProvider =
       combined.sort((a, b) {
         final aDate = a is TaskModel ? a.updatedAt : (a as NoteModel).updatedAt;
         final bDate = b is TaskModel ? b.updatedAt : (b as NoteModel).updatedAt;
-        return bDate!.compareTo(aDate!);
+        if (aDate == null || bDate == null) return 0;
+        return bDate.compareTo(aDate);
       });
       return _groupByDate(combined.take(40).toList());
     },
