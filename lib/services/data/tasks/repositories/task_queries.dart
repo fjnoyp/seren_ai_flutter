@@ -122,4 +122,13 @@ abstract class TaskQueries {
     ORDER BY t.updated_at DESC
     LIMIT :limit
   ''';
+
+  /// Params:
+  /// - task_id: String
+  static const String getTaskParentOrgIdQuery = '''
+    SELECT p.parent_org_id
+    FROM tasks t
+    JOIN projects p ON t.parent_project_id = p.id
+    WHERE t.id = :task_id
+    ''';
 }
