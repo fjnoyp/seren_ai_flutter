@@ -74,3 +74,18 @@ final curUserGroupedTasksStreamProvider =
     loading: () => Stream.value([]),
   );
 });
+
+/// Stream provider that watches tasks for a specific project,
+/// assigned to the current user, and groups them by due date
+final curUserGroupedTasksByProjectStreamProvider = StreamProvider.family
+    .autoDispose<List<DateGroupedItems>, String>((ref, projectId) {
+  final tasksAsync = ref.watch(curUserTasksStreamProvider);
+
+  return tasksAsync.when(
+    data: (tasks) => Stream.value(_groupTasksByDueDate(
+      tasks.where((task) => task.parentProjectId == projectId).toList(),
+    )),
+    error: (error, stack) => Stream.error(error, stack),
+    loading: () => Stream.value([]),
+  );
+});
