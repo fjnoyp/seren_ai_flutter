@@ -66,6 +66,9 @@ class TaskModel implements IHasId {
   @JsonKey(name: 'status')
   final StatusEnum? status;
 
+  bool get isActive =>
+      status != StatusEnum.cancelled && status != StatusEnum.archived;
+
   @JsonKey(name: 'priority')
   final PriorityEnum? priority;
 
