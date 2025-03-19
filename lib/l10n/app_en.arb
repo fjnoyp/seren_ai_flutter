@@ -295,6 +295,9 @@
     "deleteProjectTooltip": "Delete Project",
     "updateProjectAssigneesTooltip": "Update Project Assignees",
     "editProjectTooltip": "Edit Project",
+    "uploadFile": "Upload file",
+    "fileUploadedSuccessfully": "File uploaded successfully",
+    "fileUploadFailed": "File upload failed",
 
     "@_": {"description": "Teams"},
     "team": "Team",
