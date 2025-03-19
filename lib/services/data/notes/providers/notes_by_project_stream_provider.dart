@@ -48,9 +48,17 @@ final recentUpdatedNotesStreamProvider =
     return CurAuthDependencyProvider.watchStream<List<NoteModel>>(
       ref: ref,
       builder: (userId) {
+        final orgId = ref.watch(curSelectedOrgIdNotifierProvider);
+        if (orgId == null) {
+          return Stream.value([]);
+        }
         return ref
             .watch(notesRepositoryProvider)
-            .watchRecentlyUpdatedNotes(userId: userId, limit: 100);
+            .watchRecentlyUpdatedNotes(
+              userId: userId,
+              orgId: orgId,
+              limit: 100,
+            );
       },
     );
   },
