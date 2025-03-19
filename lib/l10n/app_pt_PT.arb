@@ -212,6 +212,10 @@
     "deleteProjectTooltip": "Excluir Projeto",
     "updateProjectAssigneesTooltip": "Atualizar Responsáveis do Projeto",
     "editProjectTooltip": "Editar Projeto",
+    "uploadFile": "Carregar Arquivo",
+    "fileUploadedSuccessfully": "Arquivo carregado com sucesso",
+    "fileUploadFailed": "Erro ao carregar arquivo",
+
 
     "@_": {"description": "Teams"},
     "team": "Equipa",
