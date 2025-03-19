@@ -42,7 +42,7 @@ final recentUpdatedItemsProvider =
       .watchRecentlyUpdatedTasks(userId: userId, orgId: orgId);
   final notesStream = ref
       .watch(notesRepositoryProvider)
-      .watchRecentlyUpdatedNotes(userId: userId);
+      .watchRecentlyUpdatedNotes(userId: userId, orgId: orgId);
 
   await for (final combinedData in Rx.combineLatest2<List<TaskModel>,
       List<NoteModel>, List<DateGroupedItems>>(
