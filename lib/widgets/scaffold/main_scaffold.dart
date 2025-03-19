@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:seren_ai_flutter/common/navigation_service_provider.dart';
-import 'package:seren_ai_flutter/common/routes/app_routes.dart';
 import 'package:seren_ai_flutter/common/universal_platform/universal_platform.dart';
 import 'package:seren_ai_flutter/services/ai/is_ai_assistant_expanded_provider.dart';
 import 'package:seren_ai_flutter/widgets/scaffold/mobile_scaffold.dart';
@@ -28,12 +27,10 @@ class MainScaffold extends ConsumerWidget {
     final isAiAssistantExpanded = ref.watch(isAiAssistantExpandedProvider);
 
     return PopScope(
-      canPop: ref.read(navigationServiceProvider).canPop,
-      onPopInvokedWithResult: (didPop, _) async {
-        if (!didPop) {
-          Navigator.of(context)
-              .pushNamedAndRemoveUntil(AppRoutes.home.name, (route) => false);
-        }
+      canPop: false,
+      onPopInvokedWithResult: (_, __) async {
+        // call the pop method of the navigation service provider
+        await ref.read(navigationServiceProvider).pop();
       },
       child: isWebVersion
           ? WebScaffold(
