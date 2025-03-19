@@ -122,12 +122,14 @@ class NotesRepository extends BaseRepository<NoteModel> {
   /// This gives the user a unified view of their most recent activity.
   Stream<List<NoteModel>> watchRecentlyUpdatedNotes({
     required String userId,
+    required String orgId,
     int limit = 20,
   }) {
     return watch(
       NoteQueries.recentlyUpdatedNotesQuery,
       {
         'user_id': userId,
+        'org_id': orgId,
         'limit': limit,
       },
       triggerOnTables: {
