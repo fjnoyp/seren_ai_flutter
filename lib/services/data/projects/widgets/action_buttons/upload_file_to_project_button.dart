@@ -3,10 +3,9 @@ import 'package:file_picker/file_picker.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
-import 'package:seren_ai_flutter/services/ai/ai_file_helper/widgets/ai_file_analysis_view.dart';
 import 'package:seren_ai_flutter/services/data/projects/file_upload_type_enum.dart';
 import 'package:seren_ai_flutter/services/data/projects/providers/project_files_service_provider.dart';
-import 'package:supabase_flutter/supabase_flutter.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 class UploadFileToProjectButton extends ConsumerWidget {
   const UploadFileToProjectButton(this.projectId, {super.key});
@@ -37,53 +36,28 @@ class UploadFileToProjectButton extends ConsumerWidget {
 
           try {
             await ref.read(projectFilesServiceProvider.notifier).uploadFiles(
-                  [file],
-                  projectId: projectId,
-                  type: FileUploadType.temporary,
-                );
-
-            ScaffoldMessenger.of(context).showSnackBar(
-              const SnackBar(content: Text('Files uploaded successfully')),
+              [file],
+              projectId: projectId,
+              type: FileUploadType.temporary,
             );
 
-            // Process all uploaded files
-            if (context.mounted) {
-              // Create a list of file info maps with URLs
-              final fileName = file.name;
-              final fileUrl = Supabase.instance.client.storage
-                  .from('project_files')
-                    .getPublicUrl(
-                        '$projectId/${FileUploadType.temporary.directoryName}/$fileName');
-
-              final fileInfo = {
-                'fileName': fileName,
-                'fileUrl': fileUrl,
-              };
-
-              showDialog(
-                context: context,
-                builder: (context) => Dialog(
-                  child: Container(
-                    width: 700,
-                    height: 500,
-                    padding: const EdgeInsets.all(16),
-                    child: AiTaskIdentificationView(
-                      file: fileInfo,
-                      projectId: projectId,
-                    ),
-                  ),
-                ),
-              );
-            }
+            ScaffoldMessenger.of(context).showSnackBar(
+              SnackBar(
+                  content: Text(
+                      AppLocalizations.of(context)?.fileUploadedSuccessfully ??
+                          'File uploaded successfully')),
+            );
           } catch (e) {
             ScaffoldMessenger.of(context).showSnackBar(
-              SnackBar(content: Text('Upload failed: ${e.toString()}')),
+              SnackBar(
+                  content: Text(
+                      '${AppLocalizations.of(context)?.fileUploadFailed ?? 'Upload failed'}: ${e.toString()}')),
             );
           }
         }
       },
       icon: const Icon(Icons.upload_file),
-      label: const Text('Upload file'),
+      label: Text(AppLocalizations.of(context)?.uploadFile ?? 'Upload file'),
     );
   }
 }
