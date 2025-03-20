@@ -133,7 +133,9 @@ class ProjectOverviewPage extends HookConsumerWidget {
                               ),
                             ),
                             const Expanded(child: SizedBox.shrink()),
-                            UploadFileToProjectButton(curSelectedProjectId),
+                            if (!CurSelectedProjectIdNotifier.isEverythingId(
+                                curSelectedProjectId))
+                              UploadFileToProjectButton(curSelectedProjectId),
                           ],
                         ),
                       SizedBox(height: isLargeScreen ? 8 : 3),
