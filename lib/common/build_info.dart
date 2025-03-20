@@ -2,10 +2,10 @@
 class BuildInfo {
   // Core build info
   static const String version = '1.0.0';
-  static const String buildDate = '2025-03-20 15:37:57';
+  static const String buildDate = '2025-03-20 16:20:11';
   
   // Git info
-  static const String commitHash = 'ea5aaf73';
+  static const String commitHash = '6f49d8fb';
   static const String branch = 'feat/improve-task-popup-ux';
   static const String lastTag = 'no tag';
   
@@ -16,12 +16,20 @@ class BuildInfo {
   // Recent commits (last 5)
   static const List<Map<String, String>> recentCommits = [
     {
+      "hash": "6f49d8fb",
+      "author": "renata-sisilio",
+      "email": "renata@seren-ai.co", 
+      "message": "feat(tasks): enhance task popup",
+      "date": "2025-03-20",
+      "relativeDate": "42 minutes ago"
+    },
+    {
       "hash": "ea5aaf73",
       "author": "renata-sisilio",
       "email": "renata@seren-ai.co", 
       "message": "refactor(tasks): open task as popup by default (on web)",
       "date": "2025-03-20",
-      "relativeDate": "32 minutes ago"
+      "relativeDate": "75 minutes ago"
     },
     {
       "hash": "898c8482",
@@ -29,7 +37,7 @@ class BuildInfo {
       "email": "renata@seren-ai.co", 
       "message": "fix(projects): remove upload file button from everything project",
       "date": "2025-03-20",
-      "relativeDate": "75 minutes ago"
+      "relativeDate": "2 hours ago"
     },
     {
       "hash": "264c72c2",
@@ -37,7 +45,7 @@ class BuildInfo {
       "email": "renata@seren-ai.co", 
       "message": "fix(projects): show all tasks no everything project (board and list viewmodes were broken)",
       "date": "2025-03-20",
-      "relativeDate": "78 minutes ago"
+      "relativeDate": "2 hours ago"
     },
     {
       "hash": "95dd3430",
@@ -45,19 +53,11 @@ class BuildInfo {
       "email": "renata@seren-ai.co", 
       "message": "feat(tasks): add child task status handling",
       "date": "2025-03-19",
-      "relativeDate": "25 hours ago"
-    },
-    {
-      "hash": "c438a0a2",
-      "author": "renata-sisilio",
-      "email": "renata@seren-ai.co", 
-      "message": "feat(tasks): implement parent task status update logic",
-      "date": "2025-03-19",
-      "relativeDate": "25 hours ago"
+      "relativeDate": "26 hours ago"
     },
   ];
 
   // Stats
-  static const String totalCommits = '453';
+  static const String totalCommits = '454';
   static const String contributors = '0';
 }
