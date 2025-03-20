@@ -2,11 +2,11 @@
 class BuildInfo {
   // Core build info
   static const String version = '1.0.0';
-  static const String buildDate = '2025-03-20 14:22:49';
+  static const String buildDate = '2025-03-20 15:05:32';
   
   // Git info
-  static const String commitHash = '4e5497e0';
-  static const String branch = 'fix/everything-project-not-showing-tasks';
+  static const String commitHash = '898c8482';
+  static const String branch = 'feat/improve-task-popup-ux';
   static const String lastTag = 'no tag';
   
   // Author of last commit
@@ -16,12 +16,20 @@ class BuildInfo {
   // Recent commits (last 5)
   static const List<Map<String, String>> recentCommits = [
     {
-      "hash": "4e5497e0",
+      "hash": "898c8482",
+      "author": "renata-sisilio",
+      "email": "renata@seren-ai.co", 
+      "message": "fix(projects): remove upload file button from everything project",
+      "date": "2025-03-20",
+      "relativeDate": "43 minutes ago"
+    },
+    {
+      "hash": "264c72c2",
       "author": "renata-sisilio",
       "email": "renata@seren-ai.co", 
       "message": "fix(projects): show all tasks no everything project (board and list viewmodes were broken)",
       "date": "2025-03-20",
-      "relativeDate": "3 minutes ago"
+      "relativeDate": "46 minutes ago"
     },
     {
       "hash": "95dd3430",
@@ -29,7 +37,7 @@ class BuildInfo {
       "email": "renata@seren-ai.co", 
       "message": "feat(tasks): add child task status handling",
       "date": "2025-03-19",
-      "relativeDate": "24 hours ago"
+      "relativeDate": "25 hours ago"
     },
     {
       "hash": "c438a0a2",
@@ -37,7 +45,7 @@ class BuildInfo {
       "email": "renata@seren-ai.co", 
       "message": "feat(tasks): implement parent task status update logic",
       "date": "2025-03-19",
-      "relativeDate": "24 hours ago"
+      "relativeDate": "25 hours ago"
     },
     {
       "hash": "ca1ef3ee",
@@ -45,19 +53,11 @@ class BuildInfo {
       "email": "renata@seren-ai.co", 
       "message": "fix(tasks): update tasksByProjectFilteredProvider to include view type parameter",
       "date": "2025-03-20",
-      "relativeDate": "23 minutes ago"
-    },
-    {
-      "hash": "883938f5",
-      "author": "renata-sisilio",
-      "email": "renata@seren-ai.co", 
-      "message": "feat(home): add project flter for assigned tasks on home page",
-      "date": "2025-03-19",
-      "relativeDate": "25 hours ago"
+      "relativeDate": "66 minutes ago"
     },
   ];
 
   // Stats
-  static const String totalCommits = '451';
+  static const String totalCommits = '452';
   static const String contributors = '0';
 }
