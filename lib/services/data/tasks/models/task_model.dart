@@ -178,6 +178,11 @@ class TaskModel implements IHasId {
         updatedAt = updatedAt?.toLocal(),
         startDateTime = startDateTime?.toLocal();
 
+  /// Returns true if the task is unmodified (i.e. the name and description are the default values)
+  bool isUnmodified(BuildContext context) =>
+      name == AppLocalizations.of(context)!.newTaskDefaultName &&
+      description?.isEmpty == true;
+
   TaskModel copyWith({
     String? id,
     String? name,

@@ -3,7 +3,6 @@ import 'package:seren_ai_flutter/common/routes/app_routes.dart';
 import 'package:seren_ai_flutter/common/universal_platform/universal_platform.dart';
 import 'package:seren_ai_flutter/services/data/common/base_navigation_service.dart';
 import 'package:seren_ai_flutter/services/data/common/status_enum.dart';
-import 'package:seren_ai_flutter/services/data/common/widgets/delete_confirmation_dialog.dart';
 import 'package:seren_ai_flutter/services/data/common/widgets/editable_page_mode_enum.dart';
 import 'package:seren_ai_flutter/services/data/orgs/providers/cur_selected_org_id_notifier.dart';
 import 'package:seren_ai_flutter/services/data/tasks/providers/cur_selected_task_id_notifier_provider.dart';
@@ -114,18 +113,14 @@ class TaskNavigationService extends BaseNavigationService {
       )
           .then((saveTask) async {
         // Only delete the task if we're in create mode and user taps close
-        if (isCreateMode && saveTask == false) {
-          await navigationService.showPopupDialog(
-            DeleteConfirmationDialog(
-              itemName: ref.watch(taskByIdStreamProvider(taskId)).value?.name ??
-                  'this task',
-              onDelete: () {
-                ref.read(tasksRepositoryProvider).deleteItem(taskId);
-              },
-            ),
-            barrierDismissible: false,
-            applyBarrierColor: false,
-          );
+        // without updating the task name or description
+        final context = ref.read(navigationServiceProvider).context;
+        final task = await ref.read(taskByIdStreamProvider(taskId).future);
+
+        if (isCreateMode &&
+            saveTask == false &&
+            task?.isUnmodified(context) == true) {
+          ref.read(tasksRepositoryProvider).deleteItem(taskId);
         }
       });
     } else {
