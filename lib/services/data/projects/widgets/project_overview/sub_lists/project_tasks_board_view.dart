@@ -107,11 +107,13 @@ class ProjectTasksBoardView extends HookConsumerWidget {
     final projectId = ref.watch(curSelectedProjectIdNotifierProvider);
     if (projectId == null) return const SizedBox.shrink();
 
-    final showProjectIndicator =
+    final isEverythingProject =
         CurSelectedProjectIdNotifier.isEverythingId(projectId);
 
-    final tasks = ref.watch(tasksByProjectFilteredProvider(
-        (projectId, TaskFilterViewType.projectOverview)));
+    final tasks = isEverythingProject
+        ? ref.watch(tasksFilteredProvider(TaskFilterViewType.projectOverview))
+        : ref.watch(tasksByProjectFilteredProvider(
+            (projectId, TaskFilterViewType.projectOverview)));
 
     return Row(
       children: StatusEnum.values
@@ -149,7 +151,7 @@ class ProjectTasksBoardView extends HookConsumerWidget {
                             horizontalDragOffsetToChangeStatus:
                                 constraints.maxWidth,
                             scrollController: scrollController,
-                            showProjectIndicator: showProjectIndicator,
+                            showProjectIndicator: isEverythingProject,
                           );
                         },
                       ),
