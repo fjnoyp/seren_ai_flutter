@@ -1,3 +1,4 @@
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
@@ -8,21 +9,46 @@ import 'package:seren_ai_flutter/services/data/tasks/filtered/tasks_filtered_lis
 import 'package:seren_ai_flutter/services/data/tasks/models/task_model.dart';
 import 'package:seren_ai_flutter/services/data/tasks/filtered/task_filter_state_provider.dart';
 
-Future<void> showTaskSearchModal(BuildContext context) {
-  return showModalBottomSheet(
+void showSearchModalDialog(BuildContext context, WidgetRef ref) {
+  final size = MediaQuery.of(context).size;
+  //final theme = Theme.of(context);
+
+  showDialog(
     context: context,
-    isScrollControlled: true,
-    builder: (context) => const TaskSearchModal(),
-    constraints: BoxConstraints(
-      maxHeight: MediaQuery.of(context).size.height * 0.9,
+    barrierColor: Colors.black.withOpacity(0.5),
+    builder: (context) => Dialog(
+      backgroundColor: Colors.transparent,
+      elevation: 0,
+      insetPadding: kIsWeb
+          ? const EdgeInsets.symmetric(horizontal: 40.0, vertical: 24.0)
+          : const EdgeInsets.symmetric(horizontal: 12.0, vertical: 16.0),
+      child: Align(
+        alignment: Alignment.topCenter,
+        child: Padding(
+          padding: kIsWeb
+              ? const EdgeInsets.only(top: 16)
+              : const EdgeInsets.only(top: 8),
+          child: Material(
+            elevation: 16,
+            borderRadius: BorderRadius.circular(12),
+            child: Container(
+              width: kIsWeb ? size.width * 0.5 : size.width,
+              constraints: BoxConstraints(
+                maxHeight: kIsWeb ? size.height * 0.8 : size.height * 0.9,
+              ),
+              child: const SearchModal(),
+            ),
+          ),
+        ),
+      ),
     ),
   );
 }
 
 // TODO p3: add sort
 // TODO p4: add multi type searching - this should search on notes, shifts, etc. in the future
-class TaskSearchModal extends HookConsumerWidget {
-  const TaskSearchModal({
+class SearchModal extends HookConsumerWidget {
+  const SearchModal({
     super.key,
     this.onTapOption,
     // this.hiddenFilters,

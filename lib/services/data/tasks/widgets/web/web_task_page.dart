@@ -4,7 +4,7 @@ import 'package:logging/logging.dart';
 import 'package:seren_ai_flutter/common/navigation_service_provider.dart';
 import 'package:seren_ai_flutter/services/ai/ai_context_helper/widgets/ai_context_view.dart';
 import 'package:seren_ai_flutter/services/data/tasks/filtered/task_filter_view_type.dart';
-import 'package:seren_ai_flutter/services/data/tasks/filtered/task_search_modal.dart';
+import 'package:seren_ai_flutter/widgets/search/search_modal.dart';
 import 'package:seren_ai_flutter/services/data/tasks/providers/cur_selected_task_id_notifier_provider.dart';
 import 'package:seren_ai_flutter/services/data/tasks/providers/task_by_id_stream_provider.dart';
 import 'package:seren_ai_flutter/services/data/tasks/providers/tasks_by_parent_stream_provider.dart';
@@ -194,7 +194,7 @@ class _TaskSearchField extends ConsumerWidget {
               child: SizedBox(
                 width: fieldWidth,
                 height: 500,
-                child: TaskSearchModal(
+                child: SearchModal(
                   viewType: TaskFilterViewType.phaseSubtasks,
                   onTapOption: (taskId) {
                     ref
