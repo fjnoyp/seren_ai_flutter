@@ -2,10 +2,10 @@
 class BuildInfo {
   // Core build info
   static const String version = '1.0.0';
-  static const String buildDate = '2025-03-20 14:19:59';
+  static const String buildDate = '2025-03-20 14:22:49';
   
   // Git info
-  static const String commitHash = '95dd3430';
+  static const String commitHash = '4e5497e0';
   static const String branch = 'fix/everything-project-not-showing-tasks';
   static const String lastTag = 'no tag';
   
@@ -15,6 +15,14 @@ class BuildInfo {
   
   // Recent commits (last 5)
   static const List<Map<String, String>> recentCommits = [
+    {
+      "hash": "4e5497e0",
+      "author": "renata-sisilio",
+      "email": "renata@seren-ai.co", 
+      "message": "fix(projects): show all tasks no everything project (board and list viewmodes were broken)",
+      "date": "2025-03-20",
+      "relativeDate": "3 minutes ago"
+    },
     {
       "hash": "95dd3430",
       "author": "renata-sisilio",
@@ -37,7 +45,7 @@ class BuildInfo {
       "email": "renata@seren-ai.co", 
       "message": "fix(tasks): update tasksByProjectFilteredProvider to include view type parameter",
       "date": "2025-03-20",
-      "relativeDate": "20 minutes ago"
+      "relativeDate": "23 minutes ago"
     },
     {
       "hash": "883938f5",
@@ -47,17 +55,9 @@ class BuildInfo {
       "date": "2025-03-19",
       "relativeDate": "25 hours ago"
     },
-    {
-      "hash": "fb99e038",
-      "author": "renata-sisilio",
-      "email": "renata@seren-ai.co", 
-      "message": "fix(home): only show notes from the selected org + personal notes",
-      "date": "2025-03-19",
-      "relativeDate": "26 hours ago"
-    },
   ];
 
   // Stats
-  static const String totalCommits = '450';
+  static const String totalCommits = '451';
   static const String contributors = '0';
 }
