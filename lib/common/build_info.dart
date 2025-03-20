@@ -2,19 +2,27 @@
 class BuildInfo {
   // Core build info
   static const String version = '1.0.0';
-  static const String buildDate = '2025-03-20 11:24:18';
+  static const String buildDate = '2025-03-20 11:24:32';
   
   // Git info
-  static const String commitHash = '73e953cc';
+  static const String commitHash = '2bed73b0';
   static const String branch = 'fix/initial-organization-loading';
   static const String lastTag = 'no tag';
   
   // Author of last commit
-  static const String lastCommitAuthor = 'Kyle';
-  static const String lastCommitEmail = 'kylcheng@gmail.com';
+  static const String lastCommitAuthor = 'renata-sisilio';
+  static const String lastCommitEmail = 'renata@seren-ai.co';
   
   // Recent commits (last 5)
   static const List<Map<String, String>> recentCommits = [
+    {
+      "hash": "2bed73b0",
+      "author": "renata-sisilio",
+      "email": "renata@seren-ai.co", 
+      "message": "fix(org_guard): simplify organization loading logic and improve error handling",
+      "date": "2025-03-20",
+      "relativeDate": "14 seconds ago"
+    },
     {
       "hash": "73e953cc",
       "author": "Kyle",
@@ -47,17 +55,9 @@ class BuildInfo {
       "date": "2025-03-19",
       "relativeDate": "23 hours ago"
     },
-    {
-      "hash": "8f27567a",
-      "author": "renata-sisilio",
-      "email": "renata@seren-ai.co", 
-      "message": "fix(home): null check operator on (possibly) null values",
-      "date": "2025-03-19",
-      "relativeDate": "23 hours ago"
-    },
   ];
 
   // Stats
-  static const String totalCommits = '441';
+  static const String totalCommits = '442';
   static const String contributors = '0';
 }
