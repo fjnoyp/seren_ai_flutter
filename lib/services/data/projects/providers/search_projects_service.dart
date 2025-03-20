@@ -11,7 +11,7 @@ class SearchProjectsService {
 
   SearchProjectsService(this.ref);
 
-  Future<String?> selectProject(String? projectName) async {
+  Future<String?> searchProjectNameToId(String? projectName) async {
     if (projectName == null) {
       return await ref
           .read(curSelectedProjectIdNotifierProvider.notifier)
