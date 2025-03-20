@@ -191,9 +191,7 @@ class AppState extends ConsumerState<App> {
                     const NotificationsPage(),
                   ),
               AppRoutes.onboarding.name: (context) => const AuthGuard(
-                    child: OrgGuard(
-                      child: OnboardingPage(),
-                    ),
+                    child: OnboardingPage(),
                   ),
               AppRoutes.noInvites.name: (context) => const AuthGuard(
                     child: NoInvitesPage(),

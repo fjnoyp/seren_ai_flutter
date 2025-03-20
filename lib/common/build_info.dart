@@ -2,11 +2,11 @@
 class BuildInfo {
   // Core build info
   static const String version = '1.0.0';
-  static const String buildDate = '2025-03-20 05:12:35';
+  static const String buildDate = '2025-03-20 11:24:18';
   
   // Git info
-  static const String commitHash = 'ce5d557';
-  static const String branch = 'chore/refactor_search_modal';
+  static const String commitHash = '73e953cc';
+  static const String branch = 'fix/initial-organization-loading';
   static const String lastTag = 'no tag';
   
   // Author of last commit
@@ -16,48 +16,48 @@ class BuildInfo {
   // Recent commits (last 5)
   static const List<Map<String, String>> recentCommits = [
     {
-      "hash": "ce5d557",
+      "hash": "73e953cc",
       "author": "Kyle",
       "email": "kylcheng@gmail.com", 
       "message": "chore(search): refactor",
       "date": "2025-03-20",
-      "relativeDate": "4 minutes ago"
+      "relativeDate": "2 hours ago"
     },
     {
-      "hash": "df797e6",
+      "hash": "df797e6b",
       "author": "renata-sisilio",
       "email": "renata@seren-ai.co", 
       "message": "fix(localization): add missing 'yesterday' translation",
       "date": "2025-03-19",
-      "relativeDate": "21 hours ago"
+      "relativeDate": "23 hours ago"
     },
     {
-      "hash": "50856c5",
+      "hash": "50856c54",
       "author": "renata-sisilio",
       "email": "renata@seren-ai.co", 
       "message": "fix(tasks): localize task card due dates",
       "date": "2025-03-19",
-      "relativeDate": "21 hours ago"
+      "relativeDate": "23 hours ago"
     },
     {
-      "hash": "cbb5559",
+      "hash": "cbb55593",
       "author": "renata-sisilio",
       "email": "renata@seren-ai.co", 
       "message": "fix(navigation): pop after refreshing (web) + pop out to nothing (mobile)",
       "date": "2025-03-19",
-      "relativeDate": "21 hours ago"
+      "relativeDate": "23 hours ago"
     },
     {
-      "hash": "8f27567",
+      "hash": "8f27567a",
       "author": "renata-sisilio",
       "email": "renata@seren-ai.co", 
       "message": "fix(home): null check operator on (possibly) null values",
       "date": "2025-03-19",
-      "relativeDate": "21 hours ago"
+      "relativeDate": "23 hours ago"
     },
   ];
 
   // Stats
   static const String totalCommits = '441';
-  static const String contributors = '       0';
+  static const String contributors = '0';
 }
