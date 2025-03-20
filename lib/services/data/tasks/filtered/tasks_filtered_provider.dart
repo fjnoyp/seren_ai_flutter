@@ -7,21 +7,6 @@ import 'package:seren_ai_flutter/services/data/tasks/providers/tasks_by_project_
 import 'package:seren_ai_flutter/services/data/tasks/filtered/task_filter_state_provider.dart';
 import 'package:seren_ai_flutter/services/data/tasks/widgets/inline_creation/cur_inline_creating_task_id_provider.dart';
 
-final tasksFilteredProvider = StateProvider.family
-    .autoDispose<List<TaskModel>, TaskFilterViewType>((ref, viewType) {
-  final tasks = ref.watch(curUserViewableTasksStreamProvider).value ?? [];
-  final filterState = ref.watch(taskFilterStateProvider(viewType));
-
-  final filteredTasks =
-      tasks.where((task) => filterState.filterCondition(task)).toList();
-
-  if (filterState.sortComparator != null) {
-    filteredTasks.sort(filterState.sortComparator!);
-  }
-
-  return filteredTasks;
-});
-
 final tasksByProjectFilteredProvider = StateProvider.autoDispose
     .family<List<TaskModel>, (String, TaskFilterViewType)>((ref, params) {
   final (projectId, viewType) = params;
