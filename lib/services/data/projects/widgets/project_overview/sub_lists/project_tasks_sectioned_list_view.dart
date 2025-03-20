@@ -4,6 +4,7 @@ import 'package:seren_ai_flutter/services/ai/ai_context_helper/widgets/ai_contex
 import 'package:seren_ai_flutter/services/data/common/status_enum.dart';
 import 'package:seren_ai_flutter/services/data/projects/providers/cur_selected_project_providers.dart';
 import 'package:seren_ai_flutter/services/data/projects/widgets/project_overview/sub_lists/create_task_button.dart';
+import 'package:seren_ai_flutter/services/data/tasks/filtered/task_filter_view_type.dart';
 import 'package:seren_ai_flutter/services/data/tasks/filtered/tasks_filtered_provider.dart';
 import 'package:seren_ai_flutter/services/data/tasks/widgets/task_list/task_list_item_view.dart';
 
@@ -15,7 +16,8 @@ class ProjectTasksSectionedListView extends ConsumerWidget {
     final projectId = ref.watch(curSelectedProjectIdNotifierProvider);
     if (projectId == null) return const SizedBox.shrink();
 
-    final tasks = ref.watch(tasksByProjectFilteredProvider(projectId));
+    final tasks = ref.watch(tasksByProjectFilteredProvider(
+        (projectId, TaskFilterViewType.projectOverview)));
 
     final showProjectIndicator =
         CurSelectedProjectIdNotifier.isEverythingId(projectId);

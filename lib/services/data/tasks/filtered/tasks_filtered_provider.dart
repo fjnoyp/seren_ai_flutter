@@ -22,12 +22,13 @@ final tasksFilteredProvider = StateProvider.family
   return filteredTasks;
 });
 
-final tasksByProjectFilteredProvider =
-    StateProvider.autoDispose.family<List<TaskModel>, String>((ref, projectId) {
+final tasksByProjectFilteredProvider = StateProvider.autoDispose
+    .family<List<TaskModel>, (String, TaskFilterViewType)>((ref, params) {
+  final (projectId, viewType) = params;
+
   final tasks = ref.watch(tasksByProjectStreamProvider(projectId)).value ?? [];
 
-  final filterState =
-      ref.watch(taskFilterStateProvider(TaskFilterViewType.projectOverview));
+  final filterState = ref.watch(taskFilterStateProvider(viewType));
 
   final filteredTasks =
       tasks.where((task) => filterState.filterCondition(task)).toList();
