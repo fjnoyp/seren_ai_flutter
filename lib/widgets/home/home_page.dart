@@ -57,12 +57,12 @@ class _HomePageState extends ConsumerState<HomePage>
     ];
 
     // Calculate available width for tabs
-    final screenWidth = MediaQuery.of(context).size.width;
+    // final screenWidth = MediaQuery.of(context).size.width;
 
     // Check if screen is too narrow for full tab labels
     // 70 is the average width of a tab label
     // 32 is the default horizontal padding
-    final isNarrowScreen = screenWidth - 32 < (70 + 32) * tabs.length;
+    // final isNarrowScreen = screenWidth - 32 < (70 + 32) * tabs.length;
 
     return Scaffold(
       body: Column(
@@ -78,9 +78,7 @@ class _HomePageState extends ConsumerState<HomePage>
           TabBar(
             controller: _tabController,
             tabs: tabs
-                .map((tab) => Tab(
-                    text: isNarrowScreen ? null : tab.label,
-                    icon: isNarrowScreen ? Icon(tab.icon) : null))
+                .map((tab) => Tab(text: tab.label, icon: Icon(tab.icon)))
                 .toList(),
           ),
 
@@ -88,22 +86,7 @@ class _HomePageState extends ConsumerState<HomePage>
           Expanded(
             child: TabBarView(
               controller: _tabController,
-              children: tabs
-                  .map(
-                    (tab) => isNarrowScreen
-                        ? Column(
-                            children: [
-                              const SizedBox(height: 16),
-                              Text(
-                                tab.label,
-                                style: Theme.of(context).textTheme.titleLarge,
-                              ),
-                              Expanded(child: tab.body),
-                            ],
-                          )
-                        : tab.body,
-                  )
-                  .toList(),
+              children: tabs.map((tab) => tab.body).toList(),
             ),
           ),
         ],
