@@ -1,84 +1,69 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:seren_ai_flutter/services/ai/widgets/base_ai_assistant_button.dart';
-import 'package:seren_ai_flutter/services/data/projects/widgets/project_overview/sub_lists/project_tasks_filters.dart';
+import 'package:seren_ai_flutter/services/data/tasks/filtered/task_filters_view.dart';
 import 'package:seren_ai_flutter/services/data/tasks/filtered/task_filter_view_type.dart';
-import 'package:seren_ai_flutter/services/data/tasks/filtered/tasks_filtered_list_view.dart';
+import 'package:seren_ai_flutter/services/data/tasks/filtered/tasks_filtered_search_provider.dart';
 import 'package:seren_ai_flutter/services/data/tasks/models/task_model.dart';
 import 'package:seren_ai_flutter/services/data/tasks/filtered/task_filter_state_provider.dart';
+import 'package:seren_ai_flutter/services/data/tasks/providers/task_navigation_service.dart';
+import 'package:seren_ai_flutter/services/data/tasks/widgets/task_list/task_list_card_item_view.dart';
 
-void showSearchModalDialog(BuildContext context, WidgetRef ref) {
-  final size = MediaQuery.of(context).size;
-  // Get the actual height of BottomAppBar plus the floating action button and some padding
-  final bottomSpaceReserved =
-      80.0; // Height for bottom app bar with some extra space
+// Provider to track modal state
+final isSearchModalOpenProvider = StateProvider<bool>((ref) => false);
 
-  if (!kIsWeb) {
-    // Use a custom positioned dialog for mobile devices that preserves the bottom app bar
-    showDialog(
-      context: context,
-      barrierColor: Colors.black.withOpacity(0.5),
-      builder: (context) => Dialog(
-        backgroundColor: Colors.transparent,
-        elevation: 0,
-        insetPadding: EdgeInsets.zero,
-        child: Stack(
-          children: [
-            // This invisible touch area allows tapping outside to dismiss
-            Positioned.fill(
-              child: GestureDetector(
-                behavior: HitTestBehavior.opaque,
-                onTap: () => Navigator.of(context).pop(),
-                child: Container(color: Colors.transparent),
-              ),
-            ),
-            // The actual search content positioned to avoid bottom app bar
-            Positioned(
-              top: MediaQuery.of(context).padding.top +
-                  10, // Account for status bar + small margin
-              left: 12,
-              right: 12,
-              bottom:
-                  bottomSpaceReserved, // Leave space for bottom app bar + FAB
-              child: Material(
-                elevation: 16,
-                borderRadius: BorderRadius.circular(12),
-                child: ClipRRect(
-                  borderRadius: BorderRadius.circular(12),
-                  child: const SearchModal(),
-                ),
-              ),
-            ),
-          ],
-        ),
-      ),
-    );
-  } else {
-    // Use a dialog for web
-    showDialog(
-      context: context,
-      barrierColor: Colors.black.withOpacity(0.5),
-      builder: (context) => Dialog(
-        backgroundColor: Colors.transparent,
-        elevation: 0,
-        insetPadding:
-            const EdgeInsets.symmetric(horizontal: 40.0, vertical: 24.0),
-        child: Align(
-          alignment: Alignment.topCenter,
-          child: Padding(
-            padding: const EdgeInsets.only(top: 16),
-            child: Material(
-              elevation: 16,
-              borderRadius: BorderRadius.circular(12),
-              child: Container(
-                width: size.width * 0.5,
-                constraints: BoxConstraints(
-                  maxHeight: size.height * 0.8,
-                ),
-                child: const SearchModal(),
-              ),
+// Function to toggle search modal visibility
+void toggleSearchModal(WidgetRef ref) {
+  ref.read(isSearchModalOpenProvider.notifier).update((state) => !state);
+
+  // Clear search query when closing
+  if (!ref.read(isSearchModalOpenProvider)) {
+    ref
+        .read(taskSearchQueryProvider(TaskFilterViewType.modalSearch).notifier)
+        .state = '';
+  }
+}
+
+class SearchModal extends ConsumerWidget {
+  final bool isVisible;
+
+  const SearchModal({
+    super.key,
+    required this.isVisible,
+  });
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final size = MediaQuery.of(context).size;
+    const bottomSpaceReserved =
+        95.0; // Height for bottom app bar with some extra space
+
+    return Visibility(
+      visible: isVisible,
+      child: Positioned(
+        top: MediaQuery.of(context).padding.top + 10,
+        left: kIsWeb
+            ? size.width * 0.25
+            : 12, // Center on web, edge margins on mobile
+        right: kIsWeb ? size.width * 0.25 : 12,
+        bottom: bottomSpaceReserved,
+        child: Material(
+          elevation: 16,
+          borderRadius: BorderRadius.circular(12),
+          child: ClipRRect(
+            borderRadius: BorderRadius.circular(12),
+            child: SearchView(
+              onClose: () {
+                ref.read(isSearchModalOpenProvider.notifier).state = false;
+                ref
+                    .read(
+                        taskSearchQueryProvider(TaskFilterViewType.modalSearch)
+                            .notifier)
+                    .state = '';
+              },
             ),
           ),
         ),
@@ -89,23 +74,20 @@ void showSearchModalDialog(BuildContext context, WidgetRef ref) {
 
 // TODO p3: add sort
 // TODO p4: add multi type searching - this should search on notes, shifts, etc. in the future
-class SearchModal extends HookConsumerWidget {
-  const SearchModal({
+class SearchView extends HookConsumerWidget {
+  const SearchView({
     super.key,
     this.onTapOption,
-    // this.hiddenFilters,
     this.additionalFilter,
     this.autoFocus = true,
-    this.viewType = TaskFilterViewType.taskSearch,
-    this.projectId,
+    this.onClose,
+    this.emptyStateWidget,
+    this.itemBuilder,
+    this.separatorBuilder,
   });
 
   /// If this is null, tapping on a task will open the task page
   final void Function(String taskId)? onTapOption;
-
-  /// Filters to hide from the filter list
-  // No longer needed as we're using TaskFilterViewType on the options provider
-  // final List<TaskFieldEnum>? hiddenFilters;
 
   /// Additional filter to apply to the tasks (e.g. only show tasks from a certain phase)
   final bool Function(TaskModel)? additionalFilter;
@@ -113,19 +95,42 @@ class SearchModal extends HookConsumerWidget {
   /// Whether to auto focus the search field
   final bool autoFocus;
 
-  /// The view type to use for the tasksFilteredProvider.
-  ///
-  /// Defaults to [TaskFilterViewType.taskSearch].
-  final TaskFilterViewType viewType;
+  /// The view type to use for filtering
+  final TaskFilterViewType viewType = TaskFilterViewType.modalSearch;
 
-  /// The project id to filter the tasks by.
-  ///
-  /// Use this instead of [additionalFilter] to improve performance. (See [TasksFilteredListView] for clarification)
-  final String? projectId;
+  /// Callback when the modal is closed
+  final VoidCallback? onClose;
+
+  /// Widget to show when no tasks match the filters
+  final Widget? emptyStateWidget;
+
+  /// Builder function to create the task item widget
+  final Widget Function(TaskModel task, void Function(String taskId)? onTap)?
+      itemBuilder;
+
+  /// Builder function to create the separator between items
+  final Widget Function(BuildContext context, int index)? separatorBuilder;
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final filterNotifier = ref.read(taskFilterStateProvider(viewType).notifier);
+    // Watch the filtered tasks
+    final filteredTasksAsync = ref.watch(tasksFilteredSearchProvider(viewType));
+
+    // Create a wrapper for onTapTask that will also close the modal
+    final wrappedOnTapTask = onTapOption == null
+        ? (String taskId) {
+            ref
+                .read(taskNavigationServiceProvider)
+                .openTask(initialTaskId: taskId);
+            onClose?.call();
+          }
+        : (String taskId) {
+            // First call the original callback
+            onTapOption!(taskId);
+
+            // Then close the modal
+            onClose?.call();
+          };
 
     return Container(
       color: Theme.of(context).cardColor,
@@ -141,7 +146,12 @@ class SearchModal extends HookConsumerWidget {
                 Expanded(
                   child: TextField(
                     autofocus: autoFocus,
-                    onChanged: filterNotifier.updateSearchQuery,
+                    onChanged: (value) {
+                      // Update both filter state and our local search query
+                      ref
+                          .read(taskSearchQueryProvider(viewType).notifier)
+                          .state = value;
+                    },
                     decoration: InputDecoration(
                       hintText: AppLocalizations.of(context)!.search,
                       prefixIcon: const Icon(Icons.search),
@@ -149,31 +159,37 @@ class SearchModal extends HookConsumerWidget {
                     ),
                   ),
                 ),
-                BaseAiAssistantButton(
-                  size: 30,
-                  onPreClick: () {
-                    Navigator.of(context).pop();
-                  },
-                ),
                 TextButton(
-                  onPressed: () => Navigator.of(context).pop(),
+                  onPressed: () {
+                    if (onClose != null) {
+                      onClose!();
+                    }
+                    toggleSearchModal(ref);
+                  },
                   child: Text(AppLocalizations.of(context)!.cancel),
                 ),
               ],
             ),
-            ProjectTasksFilters(
-              onShowCustomDateRangePicker: _showCustomDateRangePicker,
+            TaskFiltersView(
               showExtraViewControls: false,
               useHorizontalScroll: true,
               viewType: viewType,
-              // hiddenFilters: hiddenFilters,
             ),
             Expanded(
-              child: TasksFilteredListView(
-                viewType: viewType,
-                additionalFilter: additionalFilter,
-                onTapTask: onTapOption,
-                projectId: projectId,
+              child: filteredTasksAsync.when(
+                data: (tasks) {
+                  // Apply additional filter if provided
+                  final filteredTasks = additionalFilter != null
+                      ? tasks.where(additionalFilter!).toList()
+                      : tasks;
+
+                  return _buildTaskList(
+                      context, filteredTasks, wrappedOnTapTask);
+                },
+                loading: () => const Center(child: CircularProgressIndicator()),
+                error: (error, stack) => Center(
+                  child: Text('Error: ${error.toString()}'),
+                ),
               ),
             ),
           ],
@@ -182,20 +198,34 @@ class SearchModal extends HookConsumerWidget {
     );
   }
 
-  Future<DateTimeRange?> _showCustomDateRangePicker(BuildContext context) {
-    return showDialog(
-      context: context,
-      builder: (context) => Dialog(
-        child: SizedBox(
-          width: 360,
-          height: 480,
-          child: DateRangePickerDialog(
-            firstDate: DateTime(2000),
-            lastDate: DateTime(2100),
-            initialEntryMode: DatePickerEntryMode.calendarOnly,
-          ),
-        ),
-      ),
+  Widget _buildTaskList(BuildContext context, List<TaskModel> tasks,
+      void Function(String taskId) onTapTask) {
+    // Show empty state if no tasks match the filter
+    if (tasks.isEmpty) {
+      return emptyStateWidget ??
+          Center(
+            child: Text(
+              AppLocalizations.of(context)?.noTasksFound ?? 'No tasks found',
+              style: Theme.of(context).textTheme.bodyLarge,
+            ),
+          );
+    }
+
+    // Display the tasks
+    return ListView.separated(
+      shrinkWrap: true,
+      itemCount: tasks.length,
+      itemBuilder: (context, index) {
+        final task = tasks[index];
+        return itemBuilder != null
+            ? itemBuilder!(task, onTapTask)
+            : TaskListCardItemView(
+                task: task,
+                onTap: onTapTask,
+              );
+      },
+      separatorBuilder:
+          separatorBuilder ?? (context, index) => const Divider(height: 1),
     );
   }
 }

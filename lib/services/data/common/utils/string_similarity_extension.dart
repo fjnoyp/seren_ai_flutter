@@ -1,9 +1,9 @@
 import 'dart:math';
 
-/// Temporary string similarity until we switch to using a db based FTS + semantic search 
+/// Temporary string similarity until we switch to using a db based FTS + semantic search
 extension StringSimilarity on String {
   double similarity(String other) {
-    String str1 = this.toLowerCase();
+    String str1 = toLowerCase();
     String str2 = other.toLowerCase();
 
     if (str1 == str2) return 1.0;

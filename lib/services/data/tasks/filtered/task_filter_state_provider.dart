@@ -7,12 +7,10 @@ import 'package:seren_ai_flutter/services/data/tasks/models/task_model.dart';
 import 'package:seren_ai_flutter/services/data/tasks/task_field_enum.dart';
 
 class TaskFilterState {
-  final String searchQuery;
   final TaskFieldEnum? sortBy;
   final List<TaskFilter> activeFilters;
 
   const TaskFilterState({
-    this.searchQuery = '',
     this.sortBy,
     required this.activeFilters,
   });
@@ -23,20 +21,12 @@ class TaskFilterState {
     List<TaskFilter>? activeFilters,
   }) {
     return TaskFilterState(
-      searchQuery: searchQuery ?? this.searchQuery,
       sortBy: sortBy ?? this.sortBy,
       activeFilters: activeFilters ?? this.activeFilters,
     );
   }
 
   bool Function(TaskModel) get filterCondition => (task) {
-        // Apply search filter
-        if (searchQuery.isNotEmpty) {
-          final searchResult =
-              task.name.toLowerCase().contains(searchQuery.toLowerCase());
-          if (!searchResult) return false;
-        }
-
         // Apply other filters
         for (var filter in activeFilters) {
           if (filter.condition != null) {
@@ -59,14 +49,13 @@ class TaskFilterStateNotifier extends StateNotifier<TaskFilterState> {
       BuildContext context, TaskFilterViewType viewType) {
     final tasksOnlyFilter = TaskFilter(
       field: TaskFieldEnum.type,
-      value: TaskType.task.name,
       readableName: TaskType.task.toHumanReadable(context),
       condition: (task) => task.type == TaskType.task,
     );
 
     // Return different initial states based on the view type
     switch (viewType) {
-      case TaskFilterViewType.taskSearch:
+      case TaskFilterViewType.modalSearch:
         // No default filters for search for now
         return const TaskFilterState(activeFilters: []);
       case TaskFilterViewType.projectOverview:
@@ -76,15 +65,10 @@ class TaskFilterStateNotifier extends StateNotifier<TaskFilterState> {
     }
   }
 
-  void updateSearchQuery(String query) {
-    state = state.copyWith(searchQuery: query);
-  }
-
   void updateSortOption(TaskFieldEnum? option) {
     if (option == null) {
       final curState = state;
       state = TaskFilterState(
-        searchQuery: curState.searchQuery,
         sortBy: null,
         activeFilters: curState.activeFilters,
       );
@@ -116,6 +100,10 @@ class TaskFilterStateNotifier extends StateNotifier<TaskFilterState> {
     final newFilters =
         state.activeFilters.where((f) => f.field != field).toList();
     state = state.copyWith(activeFilters: newFilters);
+  }
+
+  void clearAllFilters() {
+    state = state.copyWith(activeFilters: []);
   }
 }
 
