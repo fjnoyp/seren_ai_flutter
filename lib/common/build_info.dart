@@ -2,10 +2,10 @@
 class BuildInfo {
   // Core build info
   static const String version = '1.0.0';
-  static const String buildDate = '2025-03-20 12:51:58';
+  static const String buildDate = '2025-03-20 16:21:43';
   
   // Git info
-  static const String commitHash = '42f67b1';
+  static const String commitHash = 'eedfdbd';
   static const String branch = 'chore/refactor_search_modal';
   static const String lastTag = 'no tag';
   
@@ -16,48 +16,48 @@ class BuildInfo {
   // Recent commits (last 5)
   static const List<Map<String, String>> recentCommits = [
     {
-      "hash": "42f67b1",
+      "hash": "eedfdbd",
+      "author": "Kyle",
+      "email": "kylcheng@gmail.com", 
+      "message": "chore(search): clean the modal",
+      "date": "2025-03-20",
+      "relativeDate": "4 hours ago"
+    },
+    {
+      "hash": "d5ada3e",
       "author": "Kyle",
       "email": "kylcheng@gmail.com", 
       "message": "chore(search): refactor logic",
       "date": "2025-03-20",
-      "relativeDate": "28 minutes ago"
+      "relativeDate": "4 hours ago"
     },
     {
-      "hash": "db59031",
+      "hash": "1ace4e9",
       "author": "Kyle",
       "email": "kylcheng@gmail.com", 
       "message": "chore: resize search modal to not hide bottom app bar",
       "date": "2025-03-20",
-      "relativeDate": "8 hours ago"
+      "relativeDate": "11 hours ago"
     },
     {
-      "hash": "898c848",
+      "hash": "560c746",
       "author": "renata-sisilio",
       "email": "renata@seren-ai.co", 
-      "message": "fix(projects): remove upload file button from everything project",
+      "message": "refactor(home): use both label and icon in home tabs for all screens",
       "date": "2025-03-20",
-      "relativeDate": "2 hours ago"
+      "relativeDate": "4 hours ago"
     },
     {
-      "hash": "264c72c",
+      "hash": "04f5467",
       "author": "renata-sisilio",
       "email": "renata@seren-ai.co", 
-      "message": "fix(projects): show all tasks no everything project (board and list viewmodes were broken)",
+      "message": "refactor(tasks): updated TaskNavigationService to delete unmodified tasks in create mode - without confirmation",
       "date": "2025-03-20",
-      "relativeDate": "3 hours ago"
-    },
-    {
-      "hash": "95dd343",
-      "author": "renata-sisilio",
-      "email": "renata@seren-ai.co", 
-      "message": "feat(tasks): add child task status handling",
-      "date": "2025-03-19",
-      "relativeDate": "26 hours ago"
+      "relativeDate": "4 hours ago"
     },
   ];
 
   // Stats
-  static const String totalCommits = '454';
+  static const String totalCommits = '459';
   static const String contributors = '       0';
 }
