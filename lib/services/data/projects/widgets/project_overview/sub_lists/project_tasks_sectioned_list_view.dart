@@ -53,7 +53,7 @@ class ProjectTasksSectionedListView extends ConsumerWidget {
                     physics: const NeverScrollableScrollPhysics(),
                     itemCount: filteredTasks.length,
                     itemBuilder: (context, index) => TaskListItemView(
-                      filteredTasks[index],
+                      task: filteredTasks[index],
                       showProjectIndicator: isEverythingProject,
                     ),
                     separatorBuilder: (context, index) =>
