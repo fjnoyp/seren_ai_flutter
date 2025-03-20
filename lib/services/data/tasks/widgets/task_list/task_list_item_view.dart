@@ -13,8 +13,11 @@ import 'package:seren_ai_flutter/services/data/tasks/widgets/task_list/task_proj
 import 'package:seren_ai_flutter/services/data/tasks/widgets/ui_constants.dart';
 
 class TaskListItemView extends ConsumerWidget {
-  const TaskListItemView(this.task,
-      {super.key, this.onTap, this.showProjectIndicator = false});
+  const TaskListItemView(
+      {required this.task,
+      super.key,
+      this.onTap,
+      this.showProjectIndicator = false});
 
   final TaskModel task;
 
