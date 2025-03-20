@@ -17,6 +17,12 @@ import 'package:seren_ai_flutter/common/utils/date_time_extension.dart';
 import 'package:seren_ai_flutter/services/ai/ai_request/models/results/ai_request_result_model.dart';
 import 'package:seren_ai_flutter/services/ai/ai_request/models/results/error_request_result_model.dart';
 import 'package:seren_ai_flutter/services/auth/cur_auth_state_provider.dart';
+import 'package:seren_ai_flutter/services/data/tasks/filtered/task_filter_options_provider.dart';
+import 'package:seren_ai_flutter/services/data/tasks/filtered/task_filter_state_provider.dart';
+import 'package:seren_ai_flutter/services/data/tasks/filtered/task_filter_view_type.dart';
+import 'package:seren_ai_flutter/services/data/tasks/filtered/tasks_filtered_search_provider.dart';
+import 'package:seren_ai_flutter/services/data/tasks/task_field_enum.dart';
+import 'package:seren_ai_flutter/services/data/tasks/task_filter.dart';
 import 'package:seren_ai_flutter/services/data/tasks/tool_methods/ai_date_parser.dart';
 import 'package:seren_ai_flutter/services/data/common/status_enum.dart';
 import 'package:seren_ai_flutter/services/data/common/utils/string_similarity_extension.dart';
@@ -48,8 +54,96 @@ class TaskToolMethods {
   static const double _similarityThreshold = 0.6;
   static const double _differenceThreshold = 0.8;
 
-  // TODO p3: switch to pagination + db based FTS + semantic search
+// TODO p2: SHOW vs FIND tasks -
+// Find tasks should be a db based backend search performed by the ai
+// The result should have a SHOW ME button in case as well ...
+
+// While show tasks should be shown here
+
   Future<AiRequestResultModel> findTasks(
+      {required Ref ref, required FindTasksRequestModel infoRequest}) async {
+    final userId = _getUserId(ref);
+    if (userId == null) return _handleNoAuth();
+
+    final selectedOrgId = ref.watch(curSelectedOrgIdNotifierProvider);
+    if (selectedOrgId == null) {
+      return ErrorRequestResultModel(
+          resultForAi: 'No org selected', showOnly: true);
+    }
+
+// We need to map all the fields in the ai info request to the @task_filter_state_provider
+// and then use that to filter the tasks
+
+// And get back the result ...
+
+    final viewType = TaskFilterViewType.modalSearch;
+
+    final context =
+        ref.read(navigationServiceProvider).navigatorKey.currentContext!;
+
+    final filterNotifier = ref.read(taskFilterStateProvider(viewType).notifier);
+
+    filterNotifier.clearAllFilters();
+
+    /*
+    this.taskName,
+    this.taskDescription,
+    this.dueDatesToGet,
+    this.createdDatesToGet,
+    this.taskStatus,
+    this.taskPriority,
+    this.estimateDurationMinutes,
+    this.parentProjectName,
+    this.authorUserName,
+    this.assignedUserNames,
+    this.getOverdueTasksOnly,
+  */
+
+    if (infoRequest.taskName != null || infoRequest.taskDescription != null) {
+      ref.read(taskSearchQueryProvider(viewType).notifier).state =
+          '${infoRequest.taskName ?? ''} ${' ${infoRequest.taskDescription ?? ''}'}'
+              .trim();
+    }
+
+    /*
+     return {
+    TaskFieldEnum.project: projects
+        .map((project) => TaskFilter(
+              field: TaskFieldEnum.project,
+              value: project.id,
+              readableName: project.name,
+              condition: (task) => task.parentProjectId == project.id,
+            ))
+        .toList()
+  };
+  */
+
+    if (infoRequest.dueDatesToGet != null) {
+      // Get first and last date
+      // Use the custom filter
+
+      filterNotifier.updateFilter(TFDueDate.customDateRange(context));
+    }
+
+    if (infoRequest.getOverdueTasksOnly != null &&
+        infoRequest.getOverdueTasksOnly!) {
+      // Get first and last date
+      // Use the custom filter
+
+      filterNotifier.updateFilter(TaskFilter(
+          field: TaskFieldEnum.dueDate,
+          readableName: 'Due Date',
+          condition: (task) =>
+              task.dueDate != null && task.dueDate!.isBefore(DateTime.now())));
+    }
+
+    return ErrorRequestResultModel(
+        resultForAi: 'Not implemented for request: ${infoRequest.toString()}',
+        showOnly: true);
+  }
+
+  // TODO p3: switch to pagination + db based FTS + semantic search
+  Future<AiRequestResultModel> oldFindTasks(
       {required Ref ref, required FindTasksRequestModel infoRequest}) async {
     final userId = _getUserId(ref);
     if (userId == null) return _handleNoAuth();

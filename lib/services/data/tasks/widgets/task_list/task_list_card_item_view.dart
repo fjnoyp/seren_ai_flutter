@@ -24,6 +24,7 @@ class TaskListCardItemView extends ConsumerWidget {
     this.showProject = false,
     this.showAssignees = true,
     this.showMoreOptionsButton = true,
+    this.showDescription = false, // New field added
   });
 
   final TaskModel task;
@@ -31,6 +32,7 @@ class TaskListCardItemView extends ConsumerWidget {
   final bool showProject;
   final bool showAssignees;
   final bool showMoreOptionsButton;
+  final bool showDescription; // New field added
   final void Function(String taskId)? onTap;
 
   @override
@@ -74,11 +76,12 @@ class TaskListCardItemView extends ConsumerWidget {
                         )
                       : Text(
                           task.name,
-                          style: theme.textTheme.titleMedium,
+                          style: theme.textTheme.titleSmall,
                           overflow: TextOverflow.ellipsis,
                         ),
                   if (showProject) TaskProjectIndicator(task),
-                  if (task.description?.isNotEmpty == true)
+                  if (showDescription &&
+                      task.description?.isNotEmpty == true) // Updated condition
                     Text(
                       task.description!,
                       maxLines: 2,
