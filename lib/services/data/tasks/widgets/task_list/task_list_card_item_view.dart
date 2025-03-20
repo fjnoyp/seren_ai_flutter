@@ -24,7 +24,7 @@ class TaskListCardItemView extends ConsumerWidget {
     this.showProject = false,
     this.showAssignees = true,
     this.showMoreOptionsButton = true,
-    this.showDescription = false, // New field added
+    this.showDescription = false,
   });
 
   final TaskModel task;
@@ -32,7 +32,7 @@ class TaskListCardItemView extends ConsumerWidget {
   final bool showProject;
   final bool showAssignees;
   final bool showMoreOptionsButton;
-  final bool showDescription; // New field added
+  final bool showDescription;
   final void Function(String taskId)? onTap;
 
   @override
