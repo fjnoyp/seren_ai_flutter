@@ -2,11 +2,11 @@
 class BuildInfo {
   // Core build info
   static const String version = '1.0.0';
-  static const String buildDate = '2025-03-20 11:24:32';
+  static const String buildDate = '2025-03-20 12:12:45';
   
   // Git info
-  static const String commitHash = '2bed73b0';
-  static const String branch = 'fix/initial-organization-loading';
+  static const String commitHash = '24109b20';
+  static const String branch = 'fix/back-button-navigation-issues';
   static const String lastTag = 'no tag';
   
   // Author of last commit
@@ -16,12 +16,20 @@ class BuildInfo {
   // Recent commits (last 5)
   static const List<Map<String, String>> recentCommits = [
     {
-      "hash": "2bed73b0",
+      "hash": "24109b20",
+      "author": "renata-sisilio",
+      "email": "renata@seren-ai.co", 
+      "message": "feat(org_guard): localize org guard messages",
+      "date": "2025-03-20",
+      "relativeDate": "48 minutes ago"
+    },
+    {
+      "hash": "18d4bb81",
       "author": "renata-sisilio",
       "email": "renata@seren-ai.co", 
       "message": "fix(org_guard): simplify organization loading logic and improve error handling",
       "date": "2025-03-20",
-      "relativeDate": "14 seconds ago"
+      "relativeDate": "48 minutes ago"
     },
     {
       "hash": "73e953cc",
@@ -29,7 +37,7 @@ class BuildInfo {
       "email": "kylcheng@gmail.com", 
       "message": "chore(search): refactor",
       "date": "2025-03-20",
-      "relativeDate": "2 hours ago"
+      "relativeDate": "3 hours ago"
     },
     {
       "hash": "df797e6b",
@@ -37,7 +45,7 @@ class BuildInfo {
       "email": "renata@seren-ai.co", 
       "message": "fix(localization): add missing 'yesterday' translation",
       "date": "2025-03-19",
-      "relativeDate": "23 hours ago"
+      "relativeDate": "24 hours ago"
     },
     {
       "hash": "50856c54",
@@ -45,19 +53,11 @@ class BuildInfo {
       "email": "renata@seren-ai.co", 
       "message": "fix(tasks): localize task card due dates",
       "date": "2025-03-19",
-      "relativeDate": "23 hours ago"
-    },
-    {
-      "hash": "cbb55593",
-      "author": "renata-sisilio",
-      "email": "renata@seren-ai.co", 
-      "message": "fix(navigation): pop after refreshing (web) + pop out to nothing (mobile)",
-      "date": "2025-03-19",
-      "relativeDate": "23 hours ago"
+      "relativeDate": "24 hours ago"
     },
   ];
 
   // Stats
-  static const String totalCommits = '442';
+  static const String totalCommits = '443';
   static const String contributors = '0';
 }
