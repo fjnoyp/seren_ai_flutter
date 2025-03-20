@@ -2,62 +2,62 @@
 class BuildInfo {
   // Core build info
   static const String version = '1.0.0';
-  static const String buildDate = '2025-03-25 13:23:24';
+  static const String buildDate = '2025-03-20 12:23:34';
   
   // Git info
-  static const String commitHash = '787c5f8c';
-  static const String branch = 'fix/user-permissions';
+  static const String commitHash = '2da4ab6';
+  static const String branch = 'chore/refactor_search_modal';
   static const String lastTag = 'no tag';
   
   // Author of last commit
-  static const String lastCommitAuthor = 'renata-sisilio';
-  static const String lastCommitEmail = 'renata@seren-ai.co';
+  static const String lastCommitAuthor = 'Kyle';
+  static const String lastCommitEmail = 'kylcheng@gmail.com';
   
   // Recent commits (last 5)
   static const List<Map<String, String>> recentCommits = [
     {
-      "hash": "787c5f8c",
-      "author": "renata-sisilio",
-      "email": "renata@seren-ai.co", 
-      "message": "fix(date-grouping): handle nullable date in DateGroupedItems and update related logic",
-      "date": "2025-03-25",
-      "relativeDate": "13 seconds ago"
+      "hash": "2da4ab6",
+      "author": "Kyle",
+      "email": "kylcheng@gmail.com", 
+      "message": "chore: resize search modal to not hide bottom app bar",
+      "date": "2025-03-20",
+      "relativeDate": "7 hours ago"
     },
     {
-      "hash": "bc08d501",
+      "hash": "95dd343",
       "author": "renata-sisilio",
       "email": "renata@seren-ai.co", 
-      "message": "fix(tasks): fix state managemet for phase selection",
-      "date": "2025-03-25",
-      "relativeDate": "24 seconds ago"
+      "message": "feat(tasks): add child task status handling",
+      "date": "2025-03-19",
+      "relativeDate": "26 hours ago"
     },
     {
-      "hash": "62b43b1c",
+      "hash": "c438a0a",
       "author": "renata-sisilio",
       "email": "renata@seren-ai.co", 
-      "message": "fix(projects): prevent task creation on everything project",
-      "date": "2025-03-25",
-      "relativeDate": "35 seconds ago"
+      "message": "feat(tasks): implement parent task status update logic",
+      "date": "2025-03-19",
+      "relativeDate": "26 hours ago"
     },
     {
-      "hash": "ccdb0e89",
+      "hash": "ca1ef3e",
       "author": "renata-sisilio",
       "email": "renata@seren-ai.co", 
-      "message": "fix(projects): restrict project editing, creation and deletion to admin and editor roles",
-      "date": "2025-03-25",
-      "relativeDate": "49 seconds ago"
+      "message": "fix(tasks): update tasksByProjectFilteredProvider to include view type parameter",
+      "date": "2025-03-20",
+      "relativeDate": "2 hours ago"
     },
     {
-      "hash": "4c8a37fc",
+      "hash": "883938f",
       "author": "renata-sisilio",
       "email": "renata@seren-ai.co", 
-      "message": "fix(tasks):  prevent losing updates when closing task page while name field is focused",
-      "date": "2025-03-25",
-      "relativeDate": "3 minutes ago"
+      "message": "feat(home): add project flter for assigned tasks on home page",
+      "date": "2025-03-19",
+      "relativeDate": "27 hours ago"
     },
   ];
 
   // Stats
-  static const String totalCommits = '464';
-  static const String contributors = '0';
+  static const String totalCommits = '451';
+  static const String contributors = '       0';
 }

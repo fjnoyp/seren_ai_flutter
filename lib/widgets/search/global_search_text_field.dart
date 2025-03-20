@@ -40,7 +40,7 @@ class GlobalSearchTextField extends ConsumerWidget {
         filled: false,
         isDense: true,
       ),
-      onTap: () => showSearchModalDialog(context, ref),
+      onTap: () => toggleSearchModal(ref),
     );
   }
 }

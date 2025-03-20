@@ -1,5 +1,25 @@
 
 
+# TODO March 16 2025 
+
+- Split out the filter state to be enum based to avoid filter shared state issue s
+
+- Update the task tool method for find task to use the modal logic and re-add the showOnly logic for the ai ... 
+
+- Improve UI for showing ai response in mobile ... we should have a card by card view instead of a confusing scroll view showing multiple messages ... 
+
+
+- Ensure existing task search and complex filter search is working for user to ask interesting questions to ai 
+
+- Support multi step reasoning, like if a task for X doesn't exist, create it (expecting a find then create) 
+- Summarization of comments for multiple tasks - ie. give me the status of these tasks (and auto read comments into them) 
+
+- Consider ui methods to allow ai to show different screens to the user ...
+    like open task, open note, etc.  
+
+- Consider supporting a note based dictation system as well 
+
+
 # TODO Feb 26 2025 
 
 Enhancing notes experience to be a viable tool for tracking daily work notes or any other notes by voice 
