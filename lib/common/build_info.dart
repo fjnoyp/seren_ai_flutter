@@ -2,11 +2,11 @@
 class BuildInfo {
   // Core build info
   static const String version = '1.0.0';
-  static const String buildDate = '2025-03-20 12:12:45';
+  static const String buildDate = '2025-03-20 14:19:59';
   
   // Git info
-  static const String commitHash = '24109b20';
-  static const String branch = 'fix/back-button-navigation-issues';
+  static const String commitHash = '95dd3430';
+  static const String branch = 'fix/everything-project-not-showing-tasks';
   static const String lastTag = 'no tag';
   
   // Author of last commit
@@ -16,48 +16,48 @@ class BuildInfo {
   // Recent commits (last 5)
   static const List<Map<String, String>> recentCommits = [
     {
-      "hash": "24109b20",
+      "hash": "95dd3430",
       "author": "renata-sisilio",
       "email": "renata@seren-ai.co", 
-      "message": "feat(org_guard): localize org guard messages",
-      "date": "2025-03-20",
-      "relativeDate": "48 minutes ago"
-    },
-    {
-      "hash": "18d4bb81",
-      "author": "renata-sisilio",
-      "email": "renata@seren-ai.co", 
-      "message": "fix(org_guard): simplify organization loading logic and improve error handling",
-      "date": "2025-03-20",
-      "relativeDate": "48 minutes ago"
-    },
-    {
-      "hash": "73e953cc",
-      "author": "Kyle",
-      "email": "kylcheng@gmail.com", 
-      "message": "chore(search): refactor",
-      "date": "2025-03-20",
-      "relativeDate": "3 hours ago"
-    },
-    {
-      "hash": "df797e6b",
-      "author": "renata-sisilio",
-      "email": "renata@seren-ai.co", 
-      "message": "fix(localization): add missing 'yesterday' translation",
+      "message": "feat(tasks): add child task status handling",
       "date": "2025-03-19",
       "relativeDate": "24 hours ago"
     },
     {
-      "hash": "50856c54",
+      "hash": "c438a0a2",
       "author": "renata-sisilio",
       "email": "renata@seren-ai.co", 
-      "message": "fix(tasks): localize task card due dates",
+      "message": "feat(tasks): implement parent task status update logic",
       "date": "2025-03-19",
       "relativeDate": "24 hours ago"
+    },
+    {
+      "hash": "ca1ef3ee",
+      "author": "renata-sisilio",
+      "email": "renata@seren-ai.co", 
+      "message": "fix(tasks): update tasksByProjectFilteredProvider to include view type parameter",
+      "date": "2025-03-20",
+      "relativeDate": "20 minutes ago"
+    },
+    {
+      "hash": "883938f5",
+      "author": "renata-sisilio",
+      "email": "renata@seren-ai.co", 
+      "message": "feat(home): add project flter for assigned tasks on home page",
+      "date": "2025-03-19",
+      "relativeDate": "25 hours ago"
+    },
+    {
+      "hash": "fb99e038",
+      "author": "renata-sisilio",
+      "email": "renata@seren-ai.co", 
+      "message": "fix(home): only show notes from the selected org + personal notes",
+      "date": "2025-03-19",
+      "relativeDate": "26 hours ago"
     },
   ];
 
   // Stats
-  static const String totalCommits = '443';
+  static const String totalCommits = '450';
   static const String contributors = '0';
 }
