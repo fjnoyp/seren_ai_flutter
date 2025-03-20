@@ -1,5 +1,5 @@
 enum TaskFilterViewType {
-  taskSearch,
+  modalSearch,
   projectOverview,
   phaseSubtasks,
   // Add more as needed
