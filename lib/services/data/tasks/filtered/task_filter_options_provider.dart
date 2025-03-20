@@ -3,11 +3,13 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:seren_ai_flutter/common/language_provider.dart';
 import 'package:seren_ai_flutter/common/navigation_service_provider.dart';
 import 'package:seren_ai_flutter/common/utils/date_time_extension.dart';
+import 'package:seren_ai_flutter/services/data/common/status_enum.dart';
 import 'package:seren_ai_flutter/services/data/orgs/providers/cur_selected_org_id_notifier.dart';
 import 'package:seren_ai_flutter/services/data/orgs/providers/joined_user_org_roles_by_org_stream_provider.dart';
 import 'package:seren_ai_flutter/services/data/projects/models/project_model.dart';
 import 'package:seren_ai_flutter/services/data/projects/providers/cur_selected_project_providers.dart';
 import 'package:seren_ai_flutter/services/data/projects/providers/cur_user_viewable_projects_provider.dart';
+import 'package:seren_ai_flutter/services/data/projects/repositories/projects_repository.dart';
 import 'package:seren_ai_flutter/services/data/tasks/filtered/task_filter_view_type.dart';
 import 'package:seren_ai_flutter/services/data/tasks/models/task_model.dart';
 import 'package:seren_ai_flutter/services/data/tasks/task_field_enum.dart';
@@ -16,6 +18,28 @@ import 'package:seren_ai_flutter/services/data/users/models/user_model.dart';
 import 'package:seren_ai_flutter/services/data/users/providers/task_assigned_users_stream_provider.dart';
 import 'package:seren_ai_flutter/services/data/users/providers/user_in_project_provider.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+import 'package:seren_ai_flutter/services/data/users/repositories/users_repository.dart';
+
+/// Predefined task filters for status
+class TFStatus {
+  /// Filter for tasks by status
+  static TaskFilter byStatus(BuildContext context, StatusEnum status) =>
+      TaskFilter(
+        field: TaskFieldEnum.status,
+        readableName: status.toHumanReadable(context),
+        condition: (task) => task.status == status,
+      );
+
+  /// Filter for tasks by status string
+  static TaskFilter status(BuildContext context, String statusStr) {
+    final status = StatusEnum.tryParse(statusStr);
+    return TaskFilter(
+      field: TaskFieldEnum.status,
+      readableName: status?.toHumanReadable(context) ?? statusStr,
+      condition: (task) => task.status == status,
+    );
+  }
+}
 
 /// Predefined task filters for due dates
 class TFDueDate {
@@ -88,6 +112,7 @@ class TFCreatedAt {
   /// Filter for tasks created in a custom date range
   static TaskFilter customDateRange(BuildContext context) => TaskFilter(
         field: TaskFieldEnum.createdAt,
+        showDateRangePicker: true,
         readableName: AppLocalizations.of(context)!.customDateRange,
         // This must be overrided in the filter view
         condition: (task) => true,
@@ -106,6 +131,16 @@ class TFPriority {
         readableName: priority.toHumanReadable(context),
         condition: (task) => task.priority == priority,
       );
+
+  /// Filter for tasks by priority string
+  static TaskFilter priority(BuildContext context, String priorityStr) {
+    final priority = PriorityEnum.tryParse(priorityStr);
+    return TaskFilter(
+      field: TaskFieldEnum.priority,
+      readableName: priority.toHumanReadable(context),
+      condition: (task) => task.priority == priority,
+    );
+  }
 }
 
 /// Predefined task filters for task type
@@ -121,14 +156,25 @@ class TFType {
 /// Predefined task filters for assignees
 class TFAssignees {
   /// Filter for tasks assigned to a specific user
-  static TaskFilter byUser(Ref ref, UserModel user) => TaskFilter(
+  static TaskFilter byUser(Ref ref,
+          {required String userId,
+          required String firstName,
+          required String lastName}) =>
+      TaskFilter(
         field: TaskFieldEnum.assignees,
-        readableName: '${user.firstName} ${user.lastName}',
+        readableName: '${firstName} ${lastName}',
         condition: (task) {
           final assignees =
               ref.read(taskAssignedUsersStreamProvider(task.id)).value ?? [];
-          return assignees.any((assignee) => assignee.id == user.id);
+          return assignees.any((assignee) => assignee.id == userId);
         },
+      );
+
+  static TaskFilter byUserModel(Ref ref, UserModel user) => TFAssignees.byUser(
+        ref,
+        userId: user.id,
+        firstName: user.firstName,
+        lastName: user.lastName,
       );
 
   /// Filter for unassigned tasks
@@ -144,10 +190,12 @@ class TFAssignees {
 /// Predefined task filters for projects
 class TFProject {
   /// Filter for tasks in a specific project
-  static TaskFilter byProject(ProjectModel project) => TaskFilter(
+  static TaskFilter byProject(
+          {required String projectId, required String projectName}) =>
+      TaskFilter(
         field: TaskFieldEnum.project,
-        readableName: project.name,
-        condition: (task) => task.parentProjectId == project.id,
+        readableName: projectName,
+        condition: (task) => task.parentProjectId == projectId,
       );
 }
 
@@ -214,6 +262,7 @@ Map<TaskFieldEnum, List<TaskFilter>> _getCommonFilters(Ref ref) {
   final appLocalizations = AppLocalizations.of(context)!;
 
   return {
+    ..._createStatusFilters(context),
     ..._createPriorityFilters(context),
     ..._createDueDateFilters(context, appLocalizations),
     ..._createCreatedAtFilters(context, appLocalizations),
@@ -225,8 +274,10 @@ Map<TaskFieldEnum, List<TaskFilter>> _createProjectFilters(Ref ref) {
   final projects = ref.watch(curUserViewableProjectsProvider).valueOrNull ?? [];
 
   return {
-    TaskFieldEnum.project:
-        projects.map((project) => TFProject.byProject(project)).toList()
+    TaskFieldEnum.project: projects
+        .map((project) => TFProject.byProject(
+            projectId: project.id, projectName: project.name))
+        .toList()
   };
 }
 
@@ -235,6 +286,16 @@ Map<TaskFieldEnum, List<TaskFilter>> _createTypeFilters(BuildContext context) {
   return {
     TaskFieldEnum.type:
         TaskType.values.map((type) => TFType.byType(context, type)).toList()
+  };
+}
+
+/// Creates status filter options
+Map<TaskFieldEnum, List<TaskFilter>> _createStatusFilters(
+    BuildContext context) {
+  return {
+    TaskFieldEnum.status: StatusEnum.values
+        .map((status) => TFStatus.byStatus(context, status))
+        .toList(),
   };
 }
 
@@ -280,7 +341,7 @@ List<TaskFilter> _createUserAssigneeFilters(
   Ref ref,
   List<UserModel> users,
 ) {
-  return users.map((user) => TFAssignees.byUser(ref, user)).toList();
+  return users.map((user) => TFAssignees.byUserModel(ref, user)).toList();
 }
 
 /// Creates priority filter options

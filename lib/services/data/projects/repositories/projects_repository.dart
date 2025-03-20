@@ -64,6 +64,7 @@ class ProjectsRepository extends BaseRepository<ProjectModel> {
     await updateField(projectId, 'address', address);
   }
 
+// TODO p4 - we should just do this locally... since there will never be many projects
   Future<List<SearchProjectResult>> searchProjectsByName({
     required String searchQuery,
     required String orgId,

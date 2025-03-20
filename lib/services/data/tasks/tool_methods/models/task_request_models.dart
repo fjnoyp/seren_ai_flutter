@@ -6,28 +6,30 @@ import 'package:seren_ai_flutter/services/ai/ai_request/models/requests/ai_info_
 class FindTasksRequestModel extends AiInfoRequestModel {
   final String? taskName;
   final String? taskDescription;
-  final List<String>? dueDatesToGet;
-  final List<String>? createdDatesToGet;
   final String? taskStatus;
   final String? taskPriority;
   final int? estimateDurationMinutes;
   final String? parentProjectName;
   final String? authorUserName;
   final List<String>? assignedUserNames;
-  final bool? getOverdueTasksOnly;
+  final String? taskDueDateStart;
+  final String? taskDueDateEnd;
+  final String? taskCreatedDateStart;
+  final String? taskCreatedDateEnd;
 
   FindTasksRequestModel({
     this.taskName,
     this.taskDescription,
-    this.dueDatesToGet,
-    this.createdDatesToGet,
     this.taskStatus,
     this.taskPriority,
     this.estimateDurationMinutes,
     this.parentProjectName,
     this.authorUserName,
     this.assignedUserNames,
-    this.getOverdueTasksOnly,
+    this.taskDueDateStart,
+    this.taskDueDateEnd,
+    this.taskCreatedDateStart,
+    this.taskCreatedDateEnd,
     super.showOnly = true,
     super.args,
   }) : super(infoRequestType: AiInfoRequestType.findTasks);
@@ -37,18 +39,16 @@ class FindTasksRequestModel extends AiInfoRequestModel {
       args: json['args'],
       taskName: json['args']['task_name'],
       taskDescription: json['args']['task_description'],
-      dueDatesToGet: (json['args']['task_due_dates_to_get'] as List<dynamic>?)
-          ?.cast<String>(),
-      createdDatesToGet:
-          (json['args']['task_created_dates_to_get'] as List<dynamic>?)
-              ?.cast<String>(),
       taskStatus: json['args']['task_status'],
       taskPriority: json['args']['task_priority'],
       estimateDurationMinutes: json['args']['estimate_duration_minutes'],
       parentProjectName: json['args']['parent_project_name'],
       authorUserName: json['args']['author_user_name'],
       assignedUserNames: json['args']['assigned_user_names']?.cast<String>(),
-      getOverdueTasksOnly: json['args']['get_overdue_tasks_only'],
+      taskDueDateStart: json['args']['task_due_date_start'],
+      taskDueDateEnd: json['args']['task_due_date_end'],
+      taskCreatedDateStart: json['args']['task_created_date_start'],
+      taskCreatedDateEnd: json['args']['task_created_date_end'],
       showOnly: json['show_only'] ?? true,
     );
   }
