@@ -1,5 +1,6 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:seren_ai_flutter/common/routes/app_routes.dart';
+import 'package:seren_ai_flutter/common/universal_platform/universal_platform.dart';
 import 'package:seren_ai_flutter/services/data/common/base_navigation_service.dart';
 import 'package:seren_ai_flutter/services/data/common/status_enum.dart';
 import 'package:seren_ai_flutter/services/data/common/widgets/editable_page_mode_enum.dart';
@@ -28,7 +29,8 @@ class TaskNavigationService extends BaseNavigationService {
     ref.read(curSelectedTaskIdNotifierProvider.notifier).setTaskId(id);
   }
 
-  Future<void> openTask({required String initialTaskId}) async {
+  Future<void> openTask(
+      {required String initialTaskId, bool asPopup = true}) async {
     final taskIdNotifier = ref.read(curSelectedTaskIdNotifierProvider.notifier);
 
     taskIdNotifier.setTaskId(initialTaskId);
@@ -38,9 +40,10 @@ class TaskNavigationService extends BaseNavigationService {
 
     await _ensureTaskOrgIsSelected(curTaskId);
 
-    await _navigateToTaskPage(
+    await _openTaskPage(
       mode: EditablePageMode.edit,
       taskId: curTaskId,
+      asPopup: asPopup,
     );
   }
 
@@ -49,7 +52,7 @@ class TaskNavigationService extends BaseNavigationService {
     StatusEnum? initialStatus,
     String? initialParentTaskId,
     bool isPhase = false,
-    bool asPopup = false,
+    bool asPopup = true,
   }) async {
     assert(
       initialParentTaskId == null || isPhase == false,
@@ -66,16 +69,11 @@ class TaskNavigationService extends BaseNavigationService {
       updateState: true,
     );
 
-    if (asPopup) {
-      await ref.read(navigationServiceProvider).showPopupDialog(
-            const TaskPopupDialog(),
-            barrierDismissible: false,
-            applyBarrierColor: false,
-          );
-    } else {
-      await _navigateToTaskPage(
-          mode: EditablePageMode.create, taskId: curTaskId);
-    }
+    await _openTaskPage(
+      mode: EditablePageMode.create,
+      taskId: curTaskId,
+      asPopup: asPopup,
+    );
   }
 
   Future<void> _ensureTaskOrgIsSelected(String taskId) async {
@@ -95,6 +93,26 @@ class TaskNavigationService extends BaseNavigationService {
       await ref
           .read(curSelectedOrgIdNotifierProvider.notifier)
           .setDesiredOrgId(taskParentOrgId);
+    }
+  }
+
+  Future<void> _openTaskPage({
+    required EditablePageMode mode,
+    required bool asPopup,
+    required String taskId,
+  }) async {
+    if (asPopup && isWebVersion) {
+      // only show popup on web
+      await ref.read(navigationServiceProvider).showPopupDialog(
+            const TaskPopupDialog(),
+            barrierDismissible: false,
+            applyBarrierColor: false,
+          );
+    } else {
+      await _navigateToTaskPage(
+        mode: mode,
+        taskId: taskId,
+      );
     }
   }
 
