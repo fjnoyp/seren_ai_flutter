@@ -4,27 +4,30 @@ import 'package:seren_ai_flutter/services/data/tasks/task_field_enum.dart';
 
 class TaskFilter {
   final TaskFieldEnum field;
-  final String value;
-  final bool Function(TaskModel)? condition;
-  final bool Function(TaskModel, DateTimeRange)? dateRangeCondition;
+
+  final bool Function(TaskModel) condition;
+  //final bool Function(TaskModel, DateTimeRange)? dateRangeCondition;
   final String readableName;
+
+  final bool? showDateRangePicker;
 
   TaskFilter({
     required this.field,
-    required this.value,
     required this.readableName,
-    this.condition,
-    this.dateRangeCondition,
-  }) : assert(condition != null || dateRangeCondition != null,
-            'Either condition or dateRangeCondition must be provided');
+    required this.condition,
+    //this.dateRangeCondition,
+    this.showDateRangePicker = false,
+  });
 
-  TaskFilter copyWith({String? readableName}) {
+  TaskFilter copyWith({
+    bool Function(TaskModel)? condition,
+    String? readableName,
+  }) {
     return TaskFilter(
       field: field,
-      value: value,
       readableName: readableName ?? this.readableName,
-      condition: condition,
-      dateRangeCondition: dateRangeCondition,
+      condition: condition ?? this.condition,
+      //dateRangeCondition: dateRangeCondition ?? this.dateRangeCondition,
     );
   }
 }

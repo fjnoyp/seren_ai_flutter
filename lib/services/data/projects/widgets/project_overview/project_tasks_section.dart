@@ -4,7 +4,7 @@ import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:seren_ai_flutter/services/ai/widgets/base_ai_assistant_button.dart';
 import 'package:seren_ai_flutter/services/data/projects/providers/cur_selected_project_providers.dart';
 import 'package:seren_ai_flutter/services/data/projects/widgets/project_overview/sub_lists/project_tasks_board_view.dart';
-import 'package:seren_ai_flutter/services/data/projects/widgets/project_overview/sub_lists/project_tasks_filters.dart';
+import 'package:seren_ai_flutter/services/data/tasks/filtered/task_filters_view.dart';
 import 'package:seren_ai_flutter/services/data/projects/widgets/project_overview/sub_lists/project_tasks_sectioned_list_view.dart';
 import 'package:seren_ai_flutter/services/data/tasks/filtered/task_filter_view_type.dart';
 import 'package:seren_ai_flutter/widgets/search/search_modal.dart';
@@ -48,8 +48,7 @@ class ProjectTasksSectionWeb extends HookConsumerWidget {
       children: [
         Padding(
           padding: const EdgeInsets.all(8),
-          child: ProjectTasksFilters(
-            onShowCustomDateRangePicker: _showCustomDateRangePicker,
+          child: TaskFiltersView(
             useHorizontalScroll: false,
             viewType: TaskFilterViewType.projectOverview,
           ),
@@ -64,23 +63,6 @@ class ProjectTasksSectionWeb extends HookConsumerWidget {
           },
         ),
       ],
-    );
-  }
-
-  Future<DateTimeRange?> _showCustomDateRangePicker(BuildContext context) {
-    return showDialog(
-      context: context,
-      builder: (context) => Dialog(
-        child: SizedBox(
-          width: 360,
-          height: 480,
-          child: DateRangePickerDialog(
-            firstDate: DateTime(2000),
-            lastDate: DateTime(2100),
-            initialEntryMode: DatePickerEntryMode.calendarOnly,
-          ),
-        ),
-      ),
     );
   }
 }
