@@ -11,38 +11,80 @@ import 'package:seren_ai_flutter/services/data/tasks/filtered/task_filter_state_
 
 void showSearchModalDialog(BuildContext context, WidgetRef ref) {
   final size = MediaQuery.of(context).size;
-  //final theme = Theme.of(context);
+  // Get the actual height of BottomAppBar plus the floating action button and some padding
+  final bottomSpaceReserved =
+      80.0; // Height for bottom app bar with some extra space
 
-  showDialog(
-    context: context,
-    barrierColor: Colors.black.withOpacity(0.5),
-    builder: (context) => Dialog(
-      backgroundColor: Colors.transparent,
-      elevation: 0,
-      insetPadding: kIsWeb
-          ? const EdgeInsets.symmetric(horizontal: 40.0, vertical: 24.0)
-          : const EdgeInsets.symmetric(horizontal: 12.0, vertical: 16.0),
-      child: Align(
-        alignment: Alignment.topCenter,
-        child: Padding(
-          padding: kIsWeb
-              ? const EdgeInsets.only(top: 16)
-              : const EdgeInsets.only(top: 8),
-          child: Material(
-            elevation: 16,
-            borderRadius: BorderRadius.circular(12),
-            child: Container(
-              width: kIsWeb ? size.width * 0.5 : size.width,
-              constraints: BoxConstraints(
-                maxHeight: kIsWeb ? size.height * 0.8 : size.height * 0.9,
+  if (!kIsWeb) {
+    // Use a custom positioned dialog for mobile devices that preserves the bottom app bar
+    showDialog(
+      context: context,
+      barrierColor: Colors.black.withOpacity(0.5),
+      builder: (context) => Dialog(
+        backgroundColor: Colors.transparent,
+        elevation: 0,
+        insetPadding: EdgeInsets.zero,
+        child: Stack(
+          children: [
+            // This invisible touch area allows tapping outside to dismiss
+            Positioned.fill(
+              child: GestureDetector(
+                behavior: HitTestBehavior.opaque,
+                onTap: () => Navigator.of(context).pop(),
+                child: Container(color: Colors.transparent),
               ),
-              child: const SearchModal(),
+            ),
+            // The actual search content positioned to avoid bottom app bar
+            Positioned(
+              top: MediaQuery.of(context).padding.top +
+                  10, // Account for status bar + small margin
+              left: 12,
+              right: 12,
+              bottom:
+                  bottomSpaceReserved, // Leave space for bottom app bar + FAB
+              child: Material(
+                elevation: 16,
+                borderRadius: BorderRadius.circular(12),
+                child: ClipRRect(
+                  borderRadius: BorderRadius.circular(12),
+                  child: const SearchModal(),
+                ),
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  } else {
+    // Use a dialog for web
+    showDialog(
+      context: context,
+      barrierColor: Colors.black.withOpacity(0.5),
+      builder: (context) => Dialog(
+        backgroundColor: Colors.transparent,
+        elevation: 0,
+        insetPadding:
+            const EdgeInsets.symmetric(horizontal: 40.0, vertical: 24.0),
+        child: Align(
+          alignment: Alignment.topCenter,
+          child: Padding(
+            padding: const EdgeInsets.only(top: 16),
+            child: Material(
+              elevation: 16,
+              borderRadius: BorderRadius.circular(12),
+              child: Container(
+                width: size.width * 0.5,
+                constraints: BoxConstraints(
+                  maxHeight: size.height * 0.8,
+                ),
+                child: const SearchModal(),
+              ),
             ),
           ),
         ),
       ),
-    ),
-  );
+    );
+  }
 }
 
 // TODO p3: add sort
@@ -85,53 +127,57 @@ class SearchModal extends HookConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final filterNotifier = ref.read(taskFilterStateProvider(viewType).notifier);
 
-    return Padding(
-      padding: const EdgeInsets.all(16.0),
-      child: Column(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              Expanded(
-                child: TextField(
-                  autofocus: autoFocus,
-                  onChanged: filterNotifier.updateSearchQuery,
-                  decoration: InputDecoration(
-                    hintText: AppLocalizations.of(context)!.search,
-                    prefixIcon: const Icon(Icons.search),
-                    border: const OutlineInputBorder(),
+    return Container(
+      color: Theme.of(context).cardColor,
+      height: double.infinity,
+      child: Padding(
+        padding: const EdgeInsets.all(16.0),
+        child: Column(
+          mainAxisSize: MainAxisSize.max,
+          children: [
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Expanded(
+                  child: TextField(
+                    autofocus: autoFocus,
+                    onChanged: filterNotifier.updateSearchQuery,
+                    decoration: InputDecoration(
+                      hintText: AppLocalizations.of(context)!.search,
+                      prefixIcon: const Icon(Icons.search),
+                      border: const OutlineInputBorder(),
+                    ),
                   ),
                 ),
-              ),
-              BaseAiAssistantButton(
-                size: 30,
-                onPreClick: () {
-                  Navigator.of(context).pop();
-                },
-              ),
-              TextButton(
-                onPressed: () => Navigator.of(context).pop(),
-                child: Text(AppLocalizations.of(context)!.cancel),
-              ),
-            ],
-          ),
-          ProjectTasksFilters(
-            onShowCustomDateRangePicker: _showCustomDateRangePicker,
-            showExtraViewControls: false,
-            useHorizontalScroll: true,
-            viewType: viewType,
-            // hiddenFilters: hiddenFilters,
-          ),
-          Expanded(
-            child: TasksFilteredListView(
-              viewType: viewType,
-              additionalFilter: additionalFilter,
-              onTapTask: onTapOption,
-              projectId: projectId,
+                BaseAiAssistantButton(
+                  size: 30,
+                  onPreClick: () {
+                    Navigator.of(context).pop();
+                  },
+                ),
+                TextButton(
+                  onPressed: () => Navigator.of(context).pop(),
+                  child: Text(AppLocalizations.of(context)!.cancel),
+                ),
+              ],
             ),
-          ),
-        ],
+            ProjectTasksFilters(
+              onShowCustomDateRangePicker: _showCustomDateRangePicker,
+              showExtraViewControls: false,
+              useHorizontalScroll: true,
+              viewType: viewType,
+              // hiddenFilters: hiddenFilters,
+            ),
+            Expanded(
+              child: TasksFilteredListView(
+                viewType: viewType,
+                additionalFilter: additionalFilter,
+                onTapTask: onTapOption,
+                projectId: projectId,
+              ),
+            ),
+          ],
+        ),
       ),
     );
   }
