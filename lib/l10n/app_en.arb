@@ -225,6 +225,11 @@
         }
     },
     "deleteOrgTooltip": "Delete Organization",
+    "youAreNotAMemberOfThisOrg": "You're trying to access an organization you are not a member of.",
+    "connectionIssueTitle": "Connection Issue",
+    "connectionIssueMessage": "We're having trouble loading your organizations. Do you want to create a new organization or keep trying?",
+    "createNewOrganization": "Create New Organization",
+    "keepTrying": "Keep Trying",
 
     "@_": {"description": "Invite User"},
     "inviteUser": "Invite User",

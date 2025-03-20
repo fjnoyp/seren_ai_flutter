@@ -165,6 +165,11 @@
     "member": "Membro",
     "userRoleOfOrg": "{userRole} de {orgName}",
     "deleteOrgTooltip": "Excluir Organização",
+    "youAreNotAMemberOfThisOrg": "Você está tentando acessar uma organização de que não é membro.",
+    "connectionIssueTitle": "Problema de Conexão",
+    "connectionIssueMessage": "Estamos tendo dificuldade em carregar suas organizações. Você deseja criar uma nova organização ou continuar tentando?",
+    "createNewOrganization": "Criar Nova Organização",
+    "keepTrying": "Continuar Tentando",
 
     "@_": {"description": "Invite User"},
     "inviteUser": "Convidar Usuário",
