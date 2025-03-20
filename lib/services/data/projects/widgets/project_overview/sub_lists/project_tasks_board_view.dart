@@ -5,6 +5,7 @@ import 'package:seren_ai_flutter/services/ai/ai_context_helper/widgets/ai_contex
 import 'package:seren_ai_flutter/services/data/common/status_enum.dart';
 import 'package:seren_ai_flutter/services/data/projects/providers/cur_selected_project_providers.dart';
 import 'package:seren_ai_flutter/services/data/projects/widgets/project_overview/sub_lists/create_task_button.dart';
+import 'package:seren_ai_flutter/services/data/tasks/filtered/task_filter_view_type.dart';
 import 'package:seren_ai_flutter/services/data/tasks/repositories/tasks_repository.dart';
 import 'package:seren_ai_flutter/services/data/tasks/filtered/tasks_filtered_provider.dart';
 import 'package:seren_ai_flutter/services/data/tasks/widgets/task_list/task_list_card_item_view.dart';
@@ -109,7 +110,8 @@ class ProjectTasksBoardView extends HookConsumerWidget {
     final showProjectIndicator =
         CurSelectedProjectIdNotifier.isEverythingId(projectId);
 
-    final tasks = ref.watch(tasksByProjectFilteredProvider(projectId));
+    final tasks = ref.watch(tasksByProjectFilteredProvider(
+        (projectId, TaskFilterViewType.projectOverview)));
 
     return Row(
       children: StatusEnum.values

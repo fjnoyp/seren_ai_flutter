@@ -57,7 +57,7 @@ class TasksFilteredListView extends ConsumerWidget {
     // 4. It avoids the computational overhead of filtering a larger dataset in the application
     final filteredTasks = projectId != null &&
             !CurSelectedProjectIdNotifier.isEverythingId(projectId!)
-        ? ref.watch(tasksByProjectFilteredProvider(projectId!))
+        ? ref.watch(tasksByProjectFilteredProvider((projectId!, viewType)))
         : ref.watch(tasksFilteredProvider(viewType));
 
     // Apply additional filter if provided
