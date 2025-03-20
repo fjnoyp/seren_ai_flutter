@@ -10,18 +10,14 @@ import 'package:seren_ai_flutter/services/data/tasks/providers/task_navigation_s
 import 'package:seren_ai_flutter/services/data/tasks/filtered/task_filter_state_provider.dart';
 import 'package:seren_ai_flutter/services/data/tasks/task_field_enum.dart';
 
-class ProjectTasksFilters extends ConsumerWidget {
-  const ProjectTasksFilters({
+class TaskFiltersView extends ConsumerWidget {
+  const TaskFiltersView({
     super.key,
-    required this.onShowCustomDateRangePicker,
     this.showExtraViewControls = true,
     required this.useHorizontalScroll,
     required this.viewType,
     // this.hiddenFilters,
   });
-
-  final Future<DateTimeRange?> Function(BuildContext)
-      onShowCustomDateRangePicker;
 
   /// Whether to show extra view controls in the UI.
   /// This can include additional filtering options or settings
@@ -72,7 +68,6 @@ class ProjectTasksFilters extends ConsumerWidget {
                 options: entry.value,
                 filterState: filterState,
                 filterNotifier: filterNotifier,
-                onShowCustomDateRangePicker: onShowCustomDateRangePicker,
               )),
       _SortChip(
         filterState: filterState,
@@ -120,21 +115,38 @@ class _FilterChip extends ConsumerWidget {
     required this.options,
     required this.filterState,
     required this.filterNotifier,
-    required this.onShowCustomDateRangePicker,
   });
 
   final TaskFieldEnum field;
   final List<TaskFilter> options;
   final TaskFilterState filterState;
   final TaskFilterStateNotifier filterNotifier;
-  final Future<DateTimeRange?> Function(BuildContext)
-      onShowCustomDateRangePicker;
+
+  Future<DateTimeRange?> _showCustomDateRangePicker(BuildContext context) {
+    return showDialog(
+      context: context,
+      // Use the root navigator to ensure dialog appears above all other UI elements
+      useRootNavigator: true,
+      builder: (context) => Dialog(
+        child: SizedBox(
+          width: 360,
+          height: 480,
+          child: DateRangePickerDialog(
+            firstDate: DateTime(2020),
+            lastDate: DateTime(2050),
+            initialEntryMode: DatePickerEntryMode.calendarOnly,
+          ),
+        ),
+      ),
+    );
+  }
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     return MenuAnchor(
       builder: (context, controller, child) {
         return FilterChip(
+          visualDensity: VisualDensity.compact,
           selected:
               filterState.activeFilters.any((filter) => filter.field == field),
           avatar: const Icon(Icons.filter_list_outlined),
@@ -162,14 +174,17 @@ class _FilterChip extends ConsumerWidget {
             (option) => MenuItemButton(
               child: Text(option.readableName),
               onPressed: () {
-                if (option.value == 'customDateRange') {
-                  onShowCustomDateRangePicker(context).then((value) {
+                if (option.showDateRangePicker == true) {
+                  _showCustomDateRangePicker(context).then((value) {
                     if (value != null) {
                       filterNotifier.updateFilter(
                         option.copyWith(
-                          readableName:
-                              '${option.readableName}: ${DateFormat.MMMd().format(value.start)} - ${DateFormat.Md().format(value.end)}',
-                        ),
+                            readableName:
+                                '${option.readableName}: ${DateFormat.MMMd().format(value.start)} - ${DateFormat.Md().format(value.end)}',
+                            condition: (task) =>
+                                task.createdAt != null &&
+                                value.start.isBefore(task.createdAt!) &&
+                                value.end.isAfter(task.createdAt!)),
                       );
                     }
                   });
@@ -198,6 +213,7 @@ class _SortChip extends ConsumerWidget {
     return MenuAnchor(
       builder: (context, controller, child) {
         return FilterChip(
+          visualDensity: VisualDensity.compact,
           selected: filterState.sortBy != null,
           avatar: const Icon(Icons.import_export_outlined),
           label: filterState.sortBy != null
