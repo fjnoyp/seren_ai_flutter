@@ -26,7 +26,6 @@ class MainScaffold extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final isAiAssistantExpanded = ref.watch(isAiAssistantExpandedProvider);
-    final isSearchModalOpen = ref.watch(isSearchModalOpenProvider);
 
     return PopScope(
       canPop: false,
@@ -55,7 +54,7 @@ class MainScaffold extends ConsumerWidget {
                 actions: actions,
                 isAiAssistantExpanded: isAiAssistantExpanded,
               ),
-        SearchModal(isVisible: isSearchModalOpen)
+        const SearchModal()
       ]),
     );
   }
