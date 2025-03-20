@@ -7,8 +7,9 @@ import 'package:seren_ai_flutter/services/data/projects/widgets/project_overview
 import 'package:seren_ai_flutter/services/data/projects/widgets/project_overview/sub_lists/project_tasks_filters.dart';
 import 'package:seren_ai_flutter/services/data/projects/widgets/project_overview/sub_lists/project_tasks_sectioned_list_view.dart';
 import 'package:seren_ai_flutter/services/data/tasks/filtered/task_filter_view_type.dart';
-import 'package:seren_ai_flutter/services/data/tasks/filtered/task_search_modal.dart';
+import 'package:seren_ai_flutter/widgets/search/search_modal.dart';
 import 'package:seren_ai_flutter/services/data/tasks/widgets/gantt/gantt_task_page.dart';
+import 'package:seren_ai_flutter/widgets/search/global_search_text_field.dart';
 
 enum ProjectTasksSectionViewMode {
   list,
@@ -89,33 +90,14 @@ class ProjectTasksSectionMobile extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Column(
+    return const Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Padding(
-          padding: const EdgeInsets.all(8),
-          child: GestureDetector(
-            onTap: () => showTaskSearchModal(context),
-            child: Container(
-              padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
-              decoration: BoxDecoration(
-                border: Border.all(color: Colors.grey),
-                borderRadius: BorderRadius.circular(8),
-              ),
-              child: Row(
-                mainAxisSize: MainAxisSize.max,
-                children: [
-                  const Icon(Icons.search),
-                  const SizedBox(width: 8),
-                  Text(AppLocalizations.of(context)!.search),
-                  const Spacer(),
-                  const BaseAiAssistantButton(size: 30),
-                ],
-              ),
-            ),
-          ),
+          padding: EdgeInsets.all(8),
+          child: GlobalSearchTextField(textAlign: TextAlign.start),
         ),
-        const Expanded(
+        Expanded(
           child: ProjectTasksSectionedListView(),
         ),
       ],

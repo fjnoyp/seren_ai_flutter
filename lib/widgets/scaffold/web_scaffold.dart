@@ -3,7 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:seren_ai_flutter/services/ai/widgets/web_ai_assistant_button.dart';
 import 'package:seren_ai_flutter/services/ai/widgets/web_ai_assistant_modal.dart';
 import 'package:seren_ai_flutter/services/data/db_setup/app_config.dart';
-import 'package:seren_ai_flutter/widgets/common/global_search_text_field.dart';
+import 'package:seren_ai_flutter/widgets/search/global_search_text_field.dart';
 import 'package:seren_ai_flutter/widgets/debug/debug_mode_provider.dart';
 import 'package:seren_ai_flutter/widgets/debug/debug_open_modal_button.dart';
 import 'package:seren_ai_flutter/widgets/scaffold/drawer_view.dart';
