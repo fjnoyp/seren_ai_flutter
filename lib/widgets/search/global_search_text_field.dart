@@ -3,7 +3,8 @@ import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:seren_ai_flutter/common/navigation_service_provider.dart';
 import 'package:seren_ai_flutter/common/universal_platform/universal_platform.dart';
-import 'package:seren_ai_flutter/services/data/tasks/filtered/task_search_modal.dart';
+import 'package:seren_ai_flutter/widgets/search/search_modal.dart';
+import 'package:seren_ai_flutter/services/ai/widgets/mobile_ai_assistant_button/mobile_overlay_container.dart';
 
 // This widget is currently using [TaskSearchModal] for search.
 // We shall switch to a global search as soon as we have one.
@@ -39,44 +40,7 @@ class GlobalSearchTextField extends ConsumerWidget {
         filled: false,
         isDense: true,
       ),
-      onTap: isWebVersion
-          ? () => ref
-              .read(navigationServiceProvider)
-              .showPopupDialog(const _TaskSearchDialog())
-          : () => showModalBottomSheet(
-                context: context,
-                isScrollControlled: true,
-                builder: (context) => DraggableScrollableSheet(
-                  initialChildSize: 1,
-                  builder: (context, _) => const TaskSearchModal(),
-                ),
-              ),
-    );
-  }
-}
-
-class _TaskSearchDialog extends ConsumerWidget {
-  const _TaskSearchDialog();
-
-  @override
-  Widget build(BuildContext context, WidgetRef ref) {
-    final size = MediaQuery.of(context).size;
-    return Align(
-      alignment: Alignment.topCenter,
-      child: Padding(
-        padding: const EdgeInsets.all(16),
-        child: Material(
-          elevation: 16,
-          borderRadius: BorderRadius.circular(8),
-          child: Container(
-            constraints: BoxConstraints(
-              maxWidth: size.width * 0.5,
-              maxHeight: size.height * 0.8,
-            ),
-            child: const TaskSearchModal(),
-          ),
-        ),
-      ),
+      onTap: () => showSearchModalDialog(context, ref),
     );
   }
 }
