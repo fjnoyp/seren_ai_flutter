@@ -10,6 +10,7 @@ AiActionRequestType.assignUserToTask
 */
 import 'dart:developer';
 
+import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:seren_ai_flutter/common/navigation_service_provider.dart';
 import 'package:seren_ai_flutter/common/routes/app_routes.dart';
@@ -62,8 +63,9 @@ class TaskToolMethods {
 
   Future<AiRequestResultModel> findTasks(
       {required Ref ref, required FindTasksRequestModel infoRequest}) async {
-    final userId = _getUserId(ref);
-    if (userId == null) return _handleNoAuth();
+    final user = ref.read(curUserProvider).valueOrNull;
+
+    if (user == null) return _handleNoAuth();
 
     final selectedOrgId = ref.watch(curSelectedOrgIdNotifierProvider);
     if (selectedOrgId == null) {
@@ -86,17 +88,9 @@ class TaskToolMethods {
     filterNotifier.clearAllFilters();
 
     /*
-    this.taskName,
-    this.taskDescription,
-    this.dueDatesToGet,
-    this.createdDatesToGet,
-    this.taskStatus,
-    this.taskPriority,
+
     this.estimateDurationMinutes,
-    this.parentProjectName,
-    this.authorUserName,
-    this.assignedUserNames,
-    this.getOverdueTasksOnly,
+  
   */
 
     if (infoRequest.taskName != null || infoRequest.taskDescription != null) {
@@ -105,41 +99,170 @@ class TaskToolMethods {
               .trim();
     }
 
-    /*
-     return {
-    TaskFieldEnum.project: projects
-        .map((project) => TaskFilter(
-              field: TaskFieldEnum.project,
-              value: project.id,
-              readableName: project.name,
-              condition: (task) => task.parentProjectId == project.id,
-            ))
-        .toList()
-  };
-  */
-
-    if (infoRequest.dueDatesToGet != null) {
-      // Get first and last date
-      // Use the custom filter
-
-      filterNotifier.updateFilter(TFDueDate.customDateRange(context));
+    if (infoRequest.taskStatus != null) {
+      filterNotifier
+          .updateFilter(TFStatus.status(context, infoRequest.taskStatus!));
     }
 
-    if (infoRequest.getOverdueTasksOnly != null &&
-        infoRequest.getOverdueTasksOnly!) {
-      // Get first and last date
-      // Use the custom filter
+    if (infoRequest.taskPriority != null) {
+      filterNotifier.updateFilter(
+          TFPriority.priority(context, infoRequest.taskPriority!));
+    }
 
-      filterNotifier.updateFilter(TaskFilter(
-          field: TaskFieldEnum.dueDate,
-          readableName: 'Due Date',
-          condition: (task) =>
-              task.dueDate != null && task.dueDate!.isBefore(DateTime.now())));
+    // Handle assignee filtering if provided
+    if (infoRequest.assignedUserNames != null) {
+      // Check if MYSELF is in the list, handle special case
+      if (AiToolExecutionUtils.containsMyselfKeyword(
+          infoRequest.assignedUserNames)) {
+        filterNotifier.updateFilter(TFAssignees.byUserModel(ref, user));
+      } else if (infoRequest.assignedUserNames!.isNotEmpty) {
+        // Try to match by name - this might need to be adjusted based on your TFAssignee implementation
+        for (final userName in infoRequest.assignedUserNames!) {
+          final selectedOrgId = ref.read(curSelectedOrgIdNotifierProvider);
+          if (selectedOrgId != null) {
+            final users =
+                await ref.read(usersRepositoryProvider).searchUsersByName(
+                      searchQuery: userName,
+                      orgId: selectedOrgId,
+                    );
+            if (users.isNotEmpty) {
+              filterNotifier.updateFilter(TFAssignees.byUser(ref,
+                  userId: users.first.id,
+                  firstName: users.first.firstName,
+                  lastName: users.first.lastName));
+            }
+          }
+        }
+      } else {
+        // No assignees provided
+        filterNotifier.updateFilter(TFAssignees.unassigned(ref, context));
+      }
+    }
+
+    // Handle author filtering if provided
+    if (infoRequest.authorUserName != null) {
+      if (AiToolExecutionUtils.isMyselfKeyword(infoRequest.authorUserName)) {
+        filterNotifier.updateFilter(TFAssignees.byUserModel(ref, user));
+      } else {
+        final selectedOrgId = ref.read(curSelectedOrgIdNotifierProvider);
+        if (selectedOrgId != null) {
+          final users =
+              await ref.read(usersRepositoryProvider).searchUsersByName(
+                    searchQuery: infoRequest.authorUserName!,
+                    orgId: selectedOrgId,
+                  );
+          if (users.isNotEmpty) {
+            filterNotifier.updateFilter(TFAssignees.byUser(ref,
+                userId: users.first.id,
+                firstName: users.first.firstName,
+                lastName: users.first.lastName));
+          }
+        }
+      }
+    }
+
+    // if (infoRequest.estimateDurationMinutes != null) {
+    //   filterNotifier.updateFilter(TFEstimateDuration.estimateDuration(
+    //       context, infoRequest.estimateDurationMinutes!));
+    // }
+
+    if (infoRequest.parentProjectName != null) {
+      final projects =
+          await ref.read(projectsRepositoryProvider).searchProjectsByName(
+                searchQuery: infoRequest.parentProjectName!,
+                orgId: selectedOrgId,
+              );
+
+      if (projects.isNotEmpty) {
+        filterNotifier.updateFilter(TFProject.byProject(
+            projectId: projects.first.id, projectName: projects.first.name));
+      }
+    }
+
+    // Helper function to handle date range filtering
+
+    // Apply due date filtering
+    if (infoRequest.taskDueDateStart != null ||
+        infoRequest.taskDueDateEnd != null) {
+      applyDateRangeFilter(
+        filterNotifier: filterNotifier,
+        context: context,
+        startDateStr: infoRequest.taskDueDateStart,
+        endDateStr: infoRequest.taskDueDateEnd,
+      );
+    }
+
+    // Apply created date filtering
+    if (infoRequest.taskCreatedDateStart != null ||
+        infoRequest.taskCreatedDateEnd != null) {
+      applyDateRangeFilter(
+        filterNotifier: filterNotifier,
+        context: context,
+        startDateStr: infoRequest.taskCreatedDateStart,
+        endDateStr: infoRequest.taskCreatedDateEnd,
+        dateFieldSelector: (task) => task.createdAt?.toIso8601String() ?? '',
+      );
     }
 
     return ErrorRequestResultModel(
         resultForAi: 'Not implemented for request: ${infoRequest.toString()}',
         showOnly: true);
+  }
+
+  void applyDateRangeFilter({
+    required TaskFilterStateNotifier filterNotifier,
+    required BuildContext context,
+    String? startDateStr,
+    String? endDateStr,
+    String Function(TaskModel task)? dateFieldSelector,
+    TaskFieldEnum dateField = TaskFieldEnum.dueDate,
+  }) {
+    final start = startDateStr != null
+        ? AiDateParser.parseIsoIntoLocalThenUTC(startDateStr)
+        : null;
+    final end = endDateStr != null
+        ? AiDateParser.parseIsoIntoLocalThenUTC(endDateStr)
+        : null;
+
+    // Create the appropriate filter based on the field type
+    final baseFilter = dateField == TaskFieldEnum.createdAt
+        ? TFCreatedAt.customDateRange(context)
+        : TFDueDate.customDateRange(context);
+
+    if (start != null && end != null) {
+      filterNotifier.updateFilter(baseFilter.copyWith(
+        condition: (task) {
+          final date = dateFieldSelector != null
+              ? DateTime.tryParse(dateFieldSelector(task))
+              : dateField == TaskFieldEnum.createdAt
+                  ? task.createdAt
+                  : task.dueDate;
+          return date != null && date.isAfter(start) && date.isBefore(end);
+        },
+      ));
+    } else if (start != null) {
+      filterNotifier.updateFilter(baseFilter.copyWith(
+        condition: (task) {
+          final date = dateFieldSelector != null
+              ? DateTime.tryParse(dateFieldSelector(task))
+              : dateField == TaskFieldEnum.createdAt
+                  ? task.createdAt
+                  : task.dueDate;
+          return date != null && date.isAfter(start);
+        },
+      ));
+    } else if (end != null) {
+      filterNotifier.updateFilter(baseFilter.copyWith(
+        condition: (task) {
+          final date = dateFieldSelector != null
+              ? DateTime.tryParse(dateFieldSelector(task))
+              : dateField == TaskFieldEnum.createdAt
+                  ? task.createdAt
+                  : task.dueDate;
+          return date != null && date.isBefore(end);
+        },
+      ));
+    }
   }
 
   // TODO p3: switch to pagination + db based FTS + semantic search
@@ -175,13 +298,13 @@ class TaskToolMethods {
     }
 
     // Get a list of dates to allow for due date search
-    final List<DateTime> dueDatesToGet = infoRequest.dueDatesToGet != null
-        ? AiDateParser.parseDateList(infoRequest.dueDatesToGet!)
-        : [];
-    final List<DateTime> createdDatesToGet =
-        infoRequest.createdDatesToGet != null
-            ? AiDateParser.parseDateList(infoRequest.createdDatesToGet!)
-            : [];
+    // final List<DateTime> dueDatesToGet = infoRequest.dueDatesToGet != null
+    //     ? AiDateParser.parseDateList(infoRequest.dueDatesToGet!)
+    //     : [];
+    // final List<DateTime> createdDatesToGet =
+    //     infoRequest.createdDatesToGet != null
+    //         ? AiDateParser.parseDateList(infoRequest.createdDatesToGet!)
+    //         : [];
 
     // Filter tasks based on search criteria
     final filteredTasks = allTasks.where((task) {
@@ -240,34 +363,34 @@ class TaskToolMethods {
       }
 
       // Check overdue tasks
-      if (infoRequest.getOverdueTasksOnly != null &&
-          infoRequest.getOverdueTasksOnly!) {
-        if (task.dueDate == null ||
-            task.dueDate!.isAfter(DateTime.now().toUtc())) {
-          return false;
-        }
-      }
+      // if (infoRequest.getOverdueTasksOnly != null &&
+      //     infoRequest.getOverdueTasksOnly!) {
+      //   if (task.dueDate == null ||
+      //       task.dueDate!.isAfter(DateTime.now().toUtc())) {
+      //     return false;
+      //   }
+      // }
 
-      // Due date search
-      if (dueDatesToGet.isNotEmpty) {
-        final dueDate = task.dueDate;
+      // // Due date search
+      // if (dueDatesToGet.isNotEmpty) {
+      //   final dueDate = task.dueDate;
 
-        if (dueDate == null ||
-            !dueDatesToGet.any((dateToGet) => dueDate.isSameDate(dateToGet))) {
-          return false;
-        }
-      }
+      //   if (dueDate == null ||
+      //       !dueDatesToGet.any((dateToGet) => dueDate.isSameDate(dateToGet))) {
+      //     return false;
+      //   }
+      // }
 
-      // Created date search
-      if (createdDatesToGet.isNotEmpty) {
-        final createdDate = task.createdAt;
+      // // Created date search
+      // if (createdDatesToGet.isNotEmpty) {
+      //   final createdDate = task.createdAt;
 
-        if (createdDate == null ||
-            !createdDatesToGet
-                .any((dateToGet) => createdDate.isSameDate(dateToGet))) {
-          return false;
-        }
-      }
+      //   if (createdDate == null ||
+      //       !createdDatesToGet
+      //           .any((dateToGet) => createdDate.isSameDate(dateToGet))) {
+      //     return false;
+      //   }
+      // }
 
       // Duration estimate match
       if (infoRequest.estimateDurationMinutes != null &&
@@ -329,7 +452,7 @@ class TaskToolMethods {
     // === SELECT PROJECT ===
     final selectedProjectId = await ref
         .read(searchProjectsServiceProvider)
-        .selectProject(actionRequest.parentProjectName);
+        .searchProjectNameToId(actionRequest.parentProjectName);
 
     if (selectedProjectId == null) {
       return ErrorRequestResultModel(
@@ -459,7 +582,7 @@ class TaskToolMethods {
     // === SELECT PROJECT ===
     final selectedProjectId = await ref
         .read(searchProjectsServiceProvider)
-        .selectProject(actionRequest.parentProjectName);
+        .searchProjectNameToId(actionRequest.parentProjectName);
 
     if (selectedProjectId == null) {
       return ErrorRequestResultModel(
