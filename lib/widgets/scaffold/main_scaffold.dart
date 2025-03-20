@@ -28,9 +28,14 @@ class MainScaffold extends ConsumerWidget {
 
     return PopScope(
       canPop: false,
-      onPopInvokedWithResult: (_, __) async {
-        // call the pop method of the navigation service provider
-        await ref.read(navigationServiceProvider).pop();
+      onPopInvokedWithResult: (didPop, result) {
+        // We're using didPop to avoid potential duplicate pops
+        if (!didPop) {
+          // Use a microtask to avoid navigator lock issues
+          Future.microtask(() {
+            ref.read(navigationServiceProvider).pop(result);
+          });
+        }
       },
       child: isWebVersion
           ? WebScaffold(
