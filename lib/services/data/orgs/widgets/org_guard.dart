@@ -7,6 +7,7 @@ import 'package:seren_ai_flutter/services/data/orgs/models/org_model.dart';
 import 'package:seren_ai_flutter/services/data/orgs/providers/cur_selected_org_id_notifier.dart';
 import 'package:seren_ai_flutter/services/data/orgs/providers/cur_user_orgs_provider.dart';
 import 'package:seren_ai_flutter/services/data/orgs/repositories/orgs_repository.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 /// Ensure user has a current organization or redirect to chooseOrgRoute page
 class OrgGuard extends ConsumerWidget {
@@ -24,8 +25,9 @@ class OrgGuard extends ConsumerWidget {
         _userNoLongerBelongsTo(curOrgId, curUserOrgs: curUserOrgs.value!)) {
       WidgetsBinding.instance.addPostFrameCallback((_) {
         ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(
-            content: Text(
+          SnackBar(
+            content: Text(AppLocalizations.of(context)
+                    ?.youAreNotAMemberOfThisOrg ??
                 'You\'re trying to access an organization you are not a member of.'),
           ),
         );
@@ -99,18 +101,24 @@ class OrgGuard extends ConsumerWidget {
             barrierDismissible: false,
             builder: (BuildContext context) {
               return AlertDialog(
-                title: const Text('Connection Issue'),
-                content: const Text(
+                title: Text(
+                    AppLocalizations.of(context)?.connectionIssueTitle ??
+                        'Connection Issue'),
+                content: Text(AppLocalizations.of(context)
+                        ?.connectionIssueMessage ??
                     'We\'re having trouble loading your organizations. Do you want to create a new organization or keep trying?'),
                 actions: <Widget>[
                   TextButton(
-                    child: const Text('Keep Trying'),
+                    child: Text(AppLocalizations.of(context)?.keepTrying ??
+                        'Keep Trying'),
                     onPressed: () {
                       Navigator.of(context).pop(false);
                     },
                   ),
                   TextButton(
-                    child: const Text('Create New Organization'),
+                    child: Text(
+                        AppLocalizations.of(context)?.createNewOrganization ??
+                            'Create New Organization'),
                     onPressed: () {
                       Navigator.of(context).pop(true);
                     },
