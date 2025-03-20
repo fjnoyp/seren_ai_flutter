@@ -2,62 +2,62 @@
 class BuildInfo {
   // Core build info
   static const String version = '1.0.0';
-  static const String buildDate = '2025-03-19 12:37:36';
+  static const String buildDate = '2025-03-20 05:12:35';
   
   // Git info
-  static const String commitHash = 'c796716';
-  static const String branch = 'fix/tasks-issues';
+  static const String commitHash = 'ce5d557';
+  static const String branch = 'chore/refactor_search_modal';
   static const String lastTag = 'no tag';
   
   // Author of last commit
-  static const String lastCommitAuthor = 'renata-sisilio';
-  static const String lastCommitEmail = 'renata@seren-ai.co';
+  static const String lastCommitAuthor = 'Kyle';
+  static const String lastCommitEmail = 'kylcheng@gmail.com';
   
   // Recent commits (last 5)
   static const List<Map<String, String>> recentCommits = [
     {
-      "hash": "c796716",
+      "hash": "ce5d557",
+      "author": "Kyle",
+      "email": "kylcheng@gmail.com", 
+      "message": "chore(search): refactor",
+      "date": "2025-03-20",
+      "relativeDate": "4 minutes ago"
+    },
+    {
+      "hash": "df797e6",
+      "author": "renata-sisilio",
+      "email": "renata@seren-ai.co", 
+      "message": "fix(localization): add missing 'yesterday' translation",
+      "date": "2025-03-19",
+      "relativeDate": "21 hours ago"
+    },
+    {
+      "hash": "50856c5",
       "author": "renata-sisilio",
       "email": "renata@seren-ai.co", 
       "message": "fix(tasks): localize task card due dates",
       "date": "2025-03-19",
-      "relativeDate": "24 seconds ago"
+      "relativeDate": "21 hours ago"
     },
     {
-      "hash": "75f0eb6",
+      "hash": "cbb5559",
       "author": "renata-sisilio",
       "email": "renata@seren-ai.co", 
       "message": "fix(navigation): pop after refreshing (web) + pop out to nothing (mobile)",
       "date": "2025-03-19",
-      "relativeDate": "36 seconds ago"
+      "relativeDate": "21 hours ago"
     },
     {
-      "hash": "e8f3bcd",
+      "hash": "8f27567",
       "author": "renata-sisilio",
       "email": "renata@seren-ai.co", 
       "message": "fix(home): null check operator on (possibly) null values",
       "date": "2025-03-19",
-      "relativeDate": "48 seconds ago"
-    },
-    {
-      "hash": "a99e7c3",
-      "author": "renata-sisilio",
-      "email": "renata@seren-ai.co", 
-      "message": "feat(projects): upload file to project (without AI data processing) (#192)",
-      "date": "2025-03-19",
-      "relativeDate": "3 minutes ago"
-    },
-    {
-      "hash": "8ab7e91",
-      "author": "renata-sisilio",
-      "email": "renata@seren-ai.co", 
-      "message": "fix(tasks): update gantt chart to sort alphabetically by default",
-      "date": "2025-03-18",
-      "relativeDate": "19 hours ago"
+      "relativeDate": "21 hours ago"
     },
   ];
 
   // Stats
-  static const String totalCommits = '439';
-  static const String contributors = '0';
+  static const String totalCommits = '441';
+  static const String contributors = '       0';
 }

@@ -4,7 +4,7 @@ import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:seren_ai_flutter/common/universal_platform/universal_platform.dart';
 import 'package:seren_ai_flutter/services/data/notes/widgets/notes_list_page.dart';
 import 'package:seren_ai_flutter/services/data/shifts/widgets/shifts_page.dart';
-import 'package:seren_ai_flutter/widgets/common/global_search_text_field.dart';
+import 'package:seren_ai_flutter/widgets/search/global_search_text_field.dart';
 import 'package:seren_ai_flutter/widgets/home/screens/cur_user_tasks_screen.dart';
 import 'package:seren_ai_flutter/widgets/home/screens/recent_updated_items_screen.dart';
 
