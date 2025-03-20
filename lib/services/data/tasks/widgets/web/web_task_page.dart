@@ -4,6 +4,7 @@ import 'package:logging/logging.dart';
 import 'package:seren_ai_flutter/common/navigation_service_provider.dart';
 import 'package:seren_ai_flutter/services/ai/ai_context_helper/widgets/ai_context_view.dart';
 import 'package:seren_ai_flutter/services/data/tasks/filtered/task_filter_view_type.dart';
+import 'package:seren_ai_flutter/services/data/tasks/providers/task_navigation_service.dart';
 import 'package:seren_ai_flutter/widgets/search/search_modal.dart';
 import 'package:seren_ai_flutter/services/data/tasks/providers/cur_selected_task_id_notifier_provider.dart';
 import 'package:seren_ai_flutter/services/data/tasks/providers/task_by_id_stream_provider.dart';
@@ -56,7 +57,10 @@ class WebTaskPage extends ConsumerWidget {
     return Row(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Expanded(flex: 3, child: _TaskInfoDisplay(taskId: curTaskId)),
+        Expanded(
+          flex: 3,
+          child: _TaskInfoDisplay(taskId: curTaskId, isPopup: false),
+        ),
         const VerticalDivider(),
         Expanded(
           flex: 2,
@@ -222,9 +226,10 @@ class _TaskSearchField extends ConsumerWidget {
 }
 
 class _TaskInfoDisplay extends ConsumerWidget {
-  const _TaskInfoDisplay({required this.taskId});
+  const _TaskInfoDisplay({required this.taskId, required this.isPopup});
 
   final String taskId;
+  final bool isPopup;
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -247,12 +252,13 @@ class _TaskInfoDisplay extends ConsumerWidget {
             padding: const EdgeInsets.only(top: 16, left: 16),
             child: Row(
               children: [
-                IconButton(
-                  onPressed: () =>
-                      ref.read(navigationServiceProvider).pop(true),
-                  icon: const Icon(Icons.close),
-                ),
-                const SizedBox(width: 32),
+                if (isPopup)
+                  IconButton(
+                    onPressed: () =>
+                        ref.read(navigationServiceProvider).pop(false),
+                    icon: const Icon(Icons.close),
+                  ),
+                const SizedBox(width: 16),
                 Text(
                   task.isReloading
                       ? AppLocalizations.of(context)!.saving
@@ -264,6 +270,18 @@ class _TaskInfoDisplay extends ConsumerWidget {
                   ),
                 ),
                 const Expanded(child: SizedBox.shrink()),
+                if (isPopup)
+                  IconButton(
+                    onPressed: () async {
+                      await ref.read(navigationServiceProvider).pop(true);
+                      ref.read(taskNavigationServiceProvider).openTask(
+                            initialTaskId: taskId,
+                            asPopup: false,
+                          );
+                    },
+                    icon: const Icon(Icons.open_in_new),
+                  ),
+                const SizedBox(width: 16),
                 isPhase ? TaskTag.phase() : TaskTag.task(),
               ],
             ),
@@ -337,12 +355,13 @@ class _TaskInfoDisplay extends ConsumerWidget {
                 TaskDescriptionSelectionField(taskId: taskId, context: context),
                 const SizedBox(height: 16),
 
-                DeleteTaskButton(
-                  taskId,
-                  showLabelText: true,
-                  outlined: true,
-                  shouldPopOnDelete: true,
-                ),
+                if (!isPopup)
+                  DeleteTaskButton(
+                    taskId,
+                    showLabelText: true,
+                    outlined: true,
+                    shouldPopOnDelete: true,
+                  ),
               ],
             ),
           ),
@@ -371,10 +390,11 @@ class TaskPopupDialog extends ConsumerWidget {
           borderRadius: BorderRadius.circular(8),
           child: Container(
             constraints: const BoxConstraints(
-              maxWidth: 720,
-              maxHeight: 500,
+              maxWidth: 600,
+              minHeight: 800,
+              maxHeight: 800,
             ),
-            child: _TaskInfoDisplay(taskId: taskId),
+            child: _TaskInfoDisplay(taskId: taskId, isPopup: true),
           ),
         ),
       ),
