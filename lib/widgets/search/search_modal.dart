@@ -11,6 +11,7 @@ import 'package:seren_ai_flutter/services/data/tasks/models/task_model.dart';
 import 'package:seren_ai_flutter/services/data/tasks/filtered/task_filter_state_provider.dart';
 import 'package:seren_ai_flutter/services/data/tasks/providers/task_navigation_service.dart';
 import 'package:seren_ai_flutter/services/data/tasks/widgets/task_list/task_list_card_item_view.dart';
+import 'package:seren_ai_flutter/services/data/tasks/widgets/task_list/task_list_item_view.dart';
 
 // Provider to track modal state
 final isSearchModalOpenProvider = StateProvider<bool>((ref) => false);
@@ -28,11 +29,8 @@ void toggleSearchModal(WidgetRef ref) {
 }
 
 class SearchModal extends ConsumerWidget {
-  final bool isVisible;
-
   const SearchModal({
     super.key,
-    required this.isVisible,
   });
 
   @override
@@ -41,8 +39,10 @@ class SearchModal extends ConsumerWidget {
     const bottomSpaceReserved =
         95.0; // Height for bottom app bar with some extra space
 
+    final isSearchModalOpen = ref.watch(isSearchModalOpenProvider);
+
     return Visibility(
-      visible: isVisible,
+      visible: isSearchModalOpen,
       child: Positioned(
         top: MediaQuery.of(context).padding.top + 10,
         left: kIsWeb
@@ -55,15 +55,43 @@ class SearchModal extends ConsumerWidget {
           borderRadius: BorderRadius.circular(12),
           child: ClipRRect(
             borderRadius: BorderRadius.circular(12),
-            child: SearchView(
-              onClose: () {
-                ref.read(isSearchModalOpenProvider.notifier).state = false;
-                ref
-                    .read(
-                        taskSearchQueryProvider(TaskFilterViewType.modalSearch)
+            child: Stack(
+              clipBehavior: Clip.none,
+              children: [
+                SearchView(
+                  onClose: () {
+                    ref.read(isSearchModalOpenProvider.notifier).state = false;
+                    ref
+                        .read(taskSearchQueryProvider(
+                                TaskFilterViewType.modalSearch)
                             .notifier)
-                    .state = '';
-              },
+                        .state = '';
+                  },
+                ),
+                Positioned(
+                  top: 0,
+                  right: 0,
+                  child: Material(
+                    elevation: 4,
+                    shape: const CircleBorder(),
+                    color: Theme.of(context).colorScheme.primary,
+                    child: InkWell(
+                      onTap: () {
+                        toggleSearchModal(ref);
+                      },
+                      customBorder: const CircleBorder(),
+                      child: Padding(
+                        padding: const EdgeInsets.all(8.0),
+                        child: Icon(
+                          Icons.close,
+                          size: 20,
+                          color: Theme.of(context).colorScheme.onPrimary,
+                        ),
+                      ),
+                    ),
+                  ),
+                ),
+              ],
             ),
           ),
         ),
@@ -159,15 +187,6 @@ class SearchView extends HookConsumerWidget {
                     ),
                   ),
                 ),
-                TextButton(
-                  onPressed: () {
-                    if (onClose != null) {
-                      onClose!();
-                    }
-                    toggleSearchModal(ref);
-                  },
-                  child: Text(AppLocalizations.of(context)!.cancel),
-                ),
               ],
             ),
             TaskFiltersView(
@@ -222,6 +241,11 @@ class SearchView extends HookConsumerWidget {
             : TaskListCardItemView(
                 task: task,
                 onTap: onTapTask,
+                showStatus: false,
+                showProject: false,
+                showAssignees: false,
+                showMoreOptionsButton: false,
+                showDescription: false,
               );
       },
       separatorBuilder:
