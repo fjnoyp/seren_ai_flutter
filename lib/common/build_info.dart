@@ -2,10 +2,10 @@
 class BuildInfo {
   // Core build info
   static const String version = '1.0.0';
-  static const String buildDate = '2025-03-20 15:05:32';
+  static const String buildDate = '2025-03-20 15:37:57';
   
   // Git info
-  static const String commitHash = '898c8482';
+  static const String commitHash = 'ea5aaf73';
   static const String branch = 'feat/improve-task-popup-ux';
   static const String lastTag = 'no tag';
   
@@ -16,12 +16,20 @@ class BuildInfo {
   // Recent commits (last 5)
   static const List<Map<String, String>> recentCommits = [
     {
+      "hash": "ea5aaf73",
+      "author": "renata-sisilio",
+      "email": "renata@seren-ai.co", 
+      "message": "refactor(tasks): open task as popup by default (on web)",
+      "date": "2025-03-20",
+      "relativeDate": "32 minutes ago"
+    },
+    {
       "hash": "898c8482",
       "author": "renata-sisilio",
       "email": "renata@seren-ai.co", 
       "message": "fix(projects): remove upload file button from everything project",
       "date": "2025-03-20",
-      "relativeDate": "43 minutes ago"
+      "relativeDate": "75 minutes ago"
     },
     {
       "hash": "264c72c2",
@@ -29,7 +37,7 @@ class BuildInfo {
       "email": "renata@seren-ai.co", 
       "message": "fix(projects): show all tasks no everything project (board and list viewmodes were broken)",
       "date": "2025-03-20",
-      "relativeDate": "46 minutes ago"
+      "relativeDate": "78 minutes ago"
     },
     {
       "hash": "95dd3430",
@@ -47,17 +55,9 @@ class BuildInfo {
       "date": "2025-03-19",
       "relativeDate": "25 hours ago"
     },
-    {
-      "hash": "ca1ef3ee",
-      "author": "renata-sisilio",
-      "email": "renata@seren-ai.co", 
-      "message": "fix(tasks): update tasksByProjectFilteredProvider to include view type parameter",
-      "date": "2025-03-20",
-      "relativeDate": "66 minutes ago"
-    },
   ];
 
   // Stats
-  static const String totalCommits = '452';
+  static const String totalCommits = '453';
   static const String contributors = '0';
 }
