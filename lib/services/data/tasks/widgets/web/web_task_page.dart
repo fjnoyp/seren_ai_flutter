@@ -198,8 +198,7 @@ class _TaskSearchField extends ConsumerWidget {
               child: SizedBox(
                 width: fieldWidth,
                 height: 500,
-                child: SearchModal(
-                  viewType: TaskFilterViewType.phaseSubtasks,
+                child: SearchView(
                   onTapOption: (taskId) {
                     ref
                         .read(tasksRepositoryProvider)
@@ -207,8 +206,9 @@ class _TaskSearchField extends ConsumerWidget {
                     Navigator.of(context).pop();
                   },
                   // Only show tasks that don't belong to any phase yet
-                  additionalFilter: (task) => task.parentTaskId == null,
-                  projectId: projectId,
+                  additionalFilter: (task) =>
+                      task.parentTaskId == null &&
+                      task.parentProjectId == projectId,
                 ),
               ),
             ),

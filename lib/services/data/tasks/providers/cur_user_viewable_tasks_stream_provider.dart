@@ -7,8 +7,7 @@ import 'package:seren_ai_flutter/services/data/tasks/models/task_model.dart';
 import 'package:seren_ai_flutter/services/data/tasks/repositories/tasks_repository.dart';
 import 'package:seren_ai_flutter/services/data/users/models/user_model.dart';
 
-final curUserViewableTasksStreamProvider =
-    StreamProvider.autoDispose<List<TaskModel>?>(
+final curUserViewableTasksStreamProvider = StreamProvider<List<TaskModel>?>(
   (ref) {
     final curOrgId = ref.watch(curSelectedOrgIdNotifierProvider);
     if (curOrgId == null) throw Exception('No org selected');
