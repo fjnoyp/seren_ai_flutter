@@ -9,7 +9,7 @@ class AnimatedModalSelectionField<T> extends HookConsumerWidget {
   const AnimatedModalSelectionField({
     super.key,
     required this.labelWidget,
-    required this.validator,
+    this.validator,
     required this.valueToString,
     this.valueToWidget,
     required this.enabled,
@@ -20,7 +20,7 @@ class AnimatedModalSelectionField<T> extends HookConsumerWidget {
   });
 
   final Widget labelWidget;
-  final String? Function(T?) validator;
+  final String? Function(T?)? validator;
   final String Function(T?) valueToString;
   final Widget Function(T)? valueToWidget;
   final bool enabled;
@@ -243,6 +243,8 @@ class SelectionField<T> extends HookConsumerWidget {
                   labelWidget,
                   const SizedBox(width: 8),
                   Expanded(
+                    // Only expand if there is no valueToWidget
+                    flex: valueToWidget != null ? 0 : 1,
                     child:
                         // Button to show selection UI
                         TextButton(

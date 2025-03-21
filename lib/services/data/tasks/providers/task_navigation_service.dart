@@ -1,4 +1,5 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:seren_ai_flutter/common/current_route_provider.dart';
 import 'package:seren_ai_flutter/common/routes/app_routes.dart';
 import 'package:seren_ai_flutter/common/universal_platform/universal_platform.dart';
 import 'package:seren_ai_flutter/services/data/common/base_navigation_service.dart';
@@ -29,8 +30,11 @@ class TaskNavigationService extends BaseNavigationService {
     ref.read(curSelectedTaskIdNotifierProvider.notifier).setTaskId(id);
   }
 
-  Future<void> openTask(
-      {required String initialTaskId, bool asPopup = true}) async {
+  Future<void> openTask({
+    required String initialTaskId,
+    bool asPopup = true,
+    bool withReplacement = false,
+  }) async {
     final taskIdNotifier = ref.read(curSelectedTaskIdNotifierProvider.notifier);
 
     taskIdNotifier.setTaskId(initialTaskId);
@@ -44,6 +48,7 @@ class TaskNavigationService extends BaseNavigationService {
       mode: EditablePageMode.edit,
       taskId: curTaskId,
       asPopup: asPopup,
+      withReplacement: withReplacement,
     );
   }
 
@@ -100,11 +105,25 @@ class TaskNavigationService extends BaseNavigationService {
     required EditablePageMode mode,
     required bool asPopup,
     required String taskId,
+    bool withReplacement = false,
   }) async {
-    if (asPopup && isWebVersion) {
+    final navigationService = ref.read(navigationServiceProvider);
+
+    final isTaskPage =
+        AppRoutes.getAppRouteFromPath(ref.read(currentRouteProvider)) ==
+            AppRoutes.taskPage;
+
+    // Always replace if we're already on task page
+    // to avoid duplicated task pages
+    if (withReplacement || isTaskPage) {
+      await navigationService.pop();
+    }
+
+    // Never open popup from task page or on mobile
+    if (asPopup && isWebVersion && !isTaskPage) {
       final isCreateMode = mode == EditablePageMode.create;
+
       // only show popup on web
-      final navigationService = ref.read(navigationServiceProvider);
       await navigationService
           .showPopupDialog(
         const TaskPopupDialog(),
