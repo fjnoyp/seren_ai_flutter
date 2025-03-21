@@ -2,26 +2,34 @@
 class BuildInfo {
   // Core build info
   static const String version = '1.0.0';
-  static const String buildDate = '2025-03-21 10:34:30';
+  static const String buildDate = '2025-03-21 11:37:10';
   
   // Git info
-  static const String commitHash = '462e457b';
+  static const String commitHash = '6d19b57a';
   static const String branch = 'feat/update-task-phase-field';
   static const String lastTag = 'no tag';
   
   // Author of last commit
-  static const String lastCommitAuthor = 'Kyle';
-  static const String lastCommitEmail = 'kylcheng@gmail.com';
+  static const String lastCommitAuthor = 'renata-sisilio';
+  static const String lastCommitEmail = 'renata@seren-ai.co';
   
   // Recent commits (last 5)
   static const List<Map<String, String>> recentCommits = [
+    {
+      "hash": "6d19b57a",
+      "author": "renata-sisilio",
+      "email": "renata@seren-ai.co", 
+      "message": "feat(tasks): update PhaseSelectionField for improved phase selection",
+      "date": "2025-03-21",
+      "relativeDate": "63 minutes ago"
+    },
     {
       "hash": "462e457b",
       "author": "Kyle",
       "email": "kylcheng@gmail.com", 
       "message": "fix(ai): handle single stream event on web",
       "date": "2025-03-21",
-      "relativeDate": "51 minutes ago"
+      "relativeDate": "2 hours ago"
     },
     {
       "hash": "560c746f",
@@ -29,7 +37,7 @@ class BuildInfo {
       "email": "renata@seren-ai.co", 
       "message": "refactor(home): use both label and icon in home tabs for all screens",
       "date": "2025-03-20",
-      "relativeDate": "18 hours ago"
+      "relativeDate": "19 hours ago"
     },
     {
       "hash": "04f5467e",
@@ -37,7 +45,7 @@ class BuildInfo {
       "email": "renata@seren-ai.co", 
       "message": "refactor(tasks): updated TaskNavigationService to delete unmodified tasks in create mode - without confirmation",
       "date": "2025-03-20",
-      "relativeDate": "18 hours ago"
+      "relativeDate": "19 hours ago"
     },
     {
       "hash": "2d3214d6",
@@ -45,19 +53,11 @@ class BuildInfo {
       "email": "renata@seren-ai.co", 
       "message": "feat(tasks): enhance task popup",
       "date": "2025-03-20",
-      "relativeDate": "19 hours ago"
-    },
-    {
-      "hash": "59e023d0",
-      "author": "renata-sisilio",
-      "email": "renata@seren-ai.co", 
-      "message": "refactor(tasks): open task as popup by default (on web)",
-      "date": "2025-03-20",
-      "relativeDate": "19 hours ago"
+      "relativeDate": "20 hours ago"
     },
   ];
 
   // Stats
-  static const String totalCommits = '457';
+  static const String totalCommits = '458';
   static const String contributors = '0';
 }

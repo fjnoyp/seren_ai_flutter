@@ -94,6 +94,7 @@ class BasePhaseSelectionField extends ConsumerWidget {
             options: selectablePhases,
             onValueChanged: (ref, phase) => updatePhase(ref, phase?.id),
             isValueRequired: false,
+            expandHorizontally: false,
           )
         : Text(curPhaseName ?? emptyValueString);
   }
