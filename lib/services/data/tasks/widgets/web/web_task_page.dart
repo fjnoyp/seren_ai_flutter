@@ -295,7 +295,6 @@ class _TaskInfoDisplay extends ConsumerWidget {
                   TaskPhaseSelectionField(
                     context: context,
                     taskId: taskId,
-                    projectId: task.value?.parentProjectId ?? '',
                   ),
                 TaskNameField(taskId: taskId),
                 const SizedBox(height: 8),
