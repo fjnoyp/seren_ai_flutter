@@ -105,10 +105,15 @@ class AIChatService {
       */
 
       // Save user message
-      await aiChatMessagesRepo.insertItem(AiChatMessageModel(
-          content: message,
-          type: AiChatMessageType.user,
-          parentChatThreadId: aiChatThread.id));
+      await aiChatMessagesRepo.insertItem(
+        AiChatMessageModel(
+            content: message,
+            type: AiChatMessageType.user,
+            parentChatThreadId: aiChatThread.id,
+            // We have to set this manually to avoid wrong ordering
+            // with null values while waiting for DB to sync with supabase
+            createdAt: DateTime.now().toUtc()),
+      );
 
       // Send message to Langgraph
       await _runAi(
@@ -240,9 +245,13 @@ class AIChatService {
 
       // Save Result to DB
       final aiResultMessage = AiChatMessageModel(
-          content: jsonEncode(result.toJson()),
-          type: AiChatMessageType.tool,
-          parentChatThreadId: aiChatThread.id);
+        content: jsonEncode(result.toJson()),
+        type: AiChatMessageType.tool,
+        parentChatThreadId: aiChatThread.id,
+        // We have to set this manually to avoid wrong ordering
+        // with null values while waiting for DB to sync with supabase
+        createdAt: DateTime.now().toUtc(),
+      );
 
       await aiChatMessagesRepo.insertItem(aiResultMessage);
 
