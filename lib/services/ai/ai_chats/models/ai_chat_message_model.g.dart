@@ -13,6 +13,9 @@ AiChatMessageModel _$AiChatMessageModelFromJson(Map<String, dynamic> json) =>
       content: json['content'] as String,
       parentChatThreadId: json['parent_chat_thread_id'] as String,
       parentLgRunId: json['parent_lg_run_id'] as String?,
+      createdAt: json['created_at'] == null
+          ? null
+          : DateTime.parse(json['created_at'] as String),
     );
 
 Map<String, dynamic> _$AiChatMessageModelToJson(AiChatMessageModel instance) =>
@@ -22,6 +25,7 @@ Map<String, dynamic> _$AiChatMessageModelToJson(AiChatMessageModel instance) =>
       'content': instance.content,
       'parent_chat_thread_id': instance.parentChatThreadId,
       'parent_lg_run_id': instance.parentLgRunId,
+      'created_at': instance.createdAt?.toIso8601String(),
     };
 
 const _$AiChatMessageTypeEnumMap = {
