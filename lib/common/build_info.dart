@@ -2,11 +2,11 @@
 class BuildInfo {
   // Core build info
   static const String version = '1.0.0';
-  static const String buildDate = '2025-03-21 11:37:10';
+  static const String buildDate = '2025-03-21 12:42:03';
   
   // Git info
-  static const String commitHash = '6d19b57a';
-  static const String branch = 'feat/update-task-phase-field';
+  static const String commitHash = 'cf285dfb';
+  static const String branch = 'fix/ai-chat-new-messages-ordering';
   static const String lastTag = 'no tag';
   
   // Author of last commit
@@ -16,10 +16,10 @@ class BuildInfo {
   // Recent commits (last 5)
   static const List<Map<String, String>> recentCommits = [
     {
-      "hash": "6d19b57a",
+      "hash": "cf285dfb",
       "author": "renata-sisilio",
       "email": "renata@seren-ai.co", 
-      "message": "feat(tasks): update PhaseSelectionField for improved phase selection",
+      "message": "feat(tasks): update PhaseSelectionField for improved phase selection (#203)",
       "date": "2025-03-21",
       "relativeDate": "63 minutes ago"
     },
@@ -29,7 +29,7 @@ class BuildInfo {
       "email": "kylcheng@gmail.com", 
       "message": "fix(ai): handle single stream event on web",
       "date": "2025-03-21",
-      "relativeDate": "2 hours ago"
+      "relativeDate": "3 hours ago"
     },
     {
       "hash": "560c746f",
@@ -37,7 +37,7 @@ class BuildInfo {
       "email": "renata@seren-ai.co", 
       "message": "refactor(home): use both label and icon in home tabs for all screens",
       "date": "2025-03-20",
-      "relativeDate": "19 hours ago"
+      "relativeDate": "21 hours ago"
     },
     {
       "hash": "04f5467e",
@@ -45,7 +45,7 @@ class BuildInfo {
       "email": "renata@seren-ai.co", 
       "message": "refactor(tasks): updated TaskNavigationService to delete unmodified tasks in create mode - without confirmation",
       "date": "2025-03-20",
-      "relativeDate": "19 hours ago"
+      "relativeDate": "20 hours ago"
     },
     {
       "hash": "2d3214d6",
@@ -53,7 +53,7 @@ class BuildInfo {
       "email": "renata@seren-ai.co", 
       "message": "feat(tasks): enhance task popup",
       "date": "2025-03-20",
-      "relativeDate": "20 hours ago"
+      "relativeDate": "21 hours ago"
     },
   ];
 
