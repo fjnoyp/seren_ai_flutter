@@ -9,7 +9,7 @@ class AnimatedModalSelectionField<T> extends HookConsumerWidget {
   const AnimatedModalSelectionField({
     super.key,
     required this.labelWidget,
-    required this.validator,
+    this.validator,
     required this.valueToString,
     this.valueToWidget,
     required this.enabled,
@@ -17,10 +17,11 @@ class AnimatedModalSelectionField<T> extends HookConsumerWidget {
     required this.options,
     this.onValueChanged,
     this.isValueRequired = true,
+    this.expandHorizontally,
   });
 
   final Widget labelWidget;
-  final String? Function(T?) validator;
+  final String? Function(T?)? validator;
   final String Function(T?) valueToString;
   final Widget Function(T)? valueToWidget;
   final bool enabled;
@@ -28,6 +29,7 @@ class AnimatedModalSelectionField<T> extends HookConsumerWidget {
   final List<T> options;
   final void Function(WidgetRef, T?)? onValueChanged;
   final bool isValueRequired;
+  final bool? expandHorizontally;
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -59,6 +61,7 @@ class AnimatedModalSelectionField<T> extends HookConsumerWidget {
                       onTap: (_) => controller.isOpen
                           ? controller.close()
                           : controller.open(),
+                      expandHorizontally: expandHorizontally,
                     ),
                     menuChildren: isWebVersion
                         ? options
@@ -85,6 +88,7 @@ class AnimatedModalSelectionField<T> extends HookConsumerWidget {
                     onValueChanged: onValueChanged,
                     defaultColor: colorAnimation.colorTween.value,
                     isValueRequired: isValueRequired,
+                    expandHorizontally: expandHorizontally,
                   ),
           ),
         );
@@ -107,6 +111,7 @@ class ModalSelectionField<T> extends SelectionField<T> {
     super.enabled,
     super.defaultColor,
     bool isValueRequired = false,
+    super.expandHorizontally,
   }) : super(
           onTap: (BuildContext context) async {
             FocusManager.instance.primaryFocus?.unfocus();
@@ -192,6 +197,7 @@ class SelectionField<T> extends HookConsumerWidget {
   final Widget labelWidget;
   final String Function(T?) valueToString;
   final Widget Function(T)? valueToWidget;
+  final bool expandHorizontally;
   final Function(BuildContext) onTap;
   final FormFieldValidator<T>? validator;
   final bool enabled;
@@ -211,7 +217,8 @@ class SelectionField<T> extends HookConsumerWidget {
     this.validator,
     this.enabled = true,
     this.defaultColor,
-  });
+    bool? expandHorizontally,
+  }) : expandHorizontally = expandHorizontally ?? true;
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -243,6 +250,8 @@ class SelectionField<T> extends HookConsumerWidget {
                   labelWidget,
                   const SizedBox(width: 8),
                   Expanded(
+                    // Only expand if there is no valueToWidget
+                    flex: expandHorizontally == true ? 1 : 0,
                     child:
                         // Button to show selection UI
                         TextButton(

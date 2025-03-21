@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:seren_ai_flutter/services/data/common/widgets/form/base_assignees_selection_field.dart';
 import 'package:seren_ai_flutter/services/data/common/widgets/form/base_duration_selection_field.dart';
 import 'package:seren_ai_flutter/services/data/common/widgets/form/base_minute_selection_field.dart';
+import 'package:seren_ai_flutter/services/data/common/widgets/form/base_phase_selection_field.dart';
 import 'package:seren_ai_flutter/services/data/common/widgets/form/base_task_selection_field.dart';
 import 'package:seren_ai_flutter/services/data/common/widgets/form/base_text_block_edit_selection_field.dart';
 import 'package:seren_ai_flutter/services/data/common/widgets/form/base_date_time_selection_fields.dart';
@@ -266,25 +267,21 @@ class TaskStartDateSelectionField extends BaseStartDateSelectionField {
         );
 }
 
-class TaskPhaseSelectionField extends BaseTaskSelectionField {
+class TaskPhaseSelectionField extends BasePhaseSelectionField {
   final String taskId;
-  final String projectId;
   TaskPhaseSelectionField({
     super.key,
     required this.taskId,
-    required this.projectId,
     required BuildContext context,
   }) : super(
           enabled: true,
-          taskIdProvider: taskByIdStreamProvider(taskId)
+          phaseIdProvider: taskByIdStreamProvider(taskId)
               .select((task) => task.value?.parentTaskId),
-          selectableTasksProvider:
-              parentTasksByProjectStreamProvider(projectId),
-          updateTask: (ref, task) => ref
+          projectIdProvider: taskByIdStreamProvider(taskId)
+              .select((task) => task.value?.parentProjectId),
+          updatePhase: (ref, phaseId) => ref
               .read(tasksRepositoryProvider)
-              .updateTaskParentTaskId(taskId, task?.id),
-          label: AppLocalizations.of(context)!.phase,
-          emptyValueString: AppLocalizations.of(context)!.choosePhase,
+              .updateTaskParentTaskId(taskId, phaseId),
         );
 }
 
