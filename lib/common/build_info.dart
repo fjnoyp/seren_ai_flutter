@@ -2,11 +2,11 @@
 class BuildInfo {
   // Core build info
   static const String version = '1.0.0';
-  static const String buildDate = '2025-03-20 16:20:11';
+  static const String buildDate = '2025-03-21 05:43:32';
   
   // Git info
-  static const String commitHash = '6f49d8fb';
-  static const String branch = 'feat/improve-task-popup-ux';
+  static const String commitHash = '560c746';
+  static const String branch = 'main';
   static const String lastTag = 'no tag';
   
   // Author of last commit
@@ -16,48 +16,48 @@ class BuildInfo {
   // Recent commits (last 5)
   static const List<Map<String, String>> recentCommits = [
     {
-      "hash": "6f49d8fb",
+      "hash": "560c746",
+      "author": "renata-sisilio",
+      "email": "renata@seren-ai.co", 
+      "message": "refactor(home): use both label and icon in home tabs for all screens",
+      "date": "2025-03-20",
+      "relativeDate": "18 hours ago"
+    },
+    {
+      "hash": "04f5467",
+      "author": "renata-sisilio",
+      "email": "renata@seren-ai.co", 
+      "message": "refactor(tasks): updated TaskNavigationService to delete unmodified tasks in create mode - without confirmation",
+      "date": "2025-03-20",
+      "relativeDate": "17 hours ago"
+    },
+    {
+      "hash": "2d3214d",
       "author": "renata-sisilio",
       "email": "renata@seren-ai.co", 
       "message": "feat(tasks): enhance task popup",
       "date": "2025-03-20",
-      "relativeDate": "42 minutes ago"
+      "relativeDate": "18 hours ago"
     },
     {
-      "hash": "ea5aaf73",
+      "hash": "59e023d",
       "author": "renata-sisilio",
       "email": "renata@seren-ai.co", 
       "message": "refactor(tasks): open task as popup by default (on web)",
       "date": "2025-03-20",
-      "relativeDate": "75 minutes ago"
+      "relativeDate": "19 hours ago"
     },
     {
-      "hash": "898c8482",
+      "hash": "898c848",
       "author": "renata-sisilio",
       "email": "renata@seren-ai.co", 
       "message": "fix(projects): remove upload file button from everything project",
       "date": "2025-03-20",
-      "relativeDate": "2 hours ago"
-    },
-    {
-      "hash": "264c72c2",
-      "author": "renata-sisilio",
-      "email": "renata@seren-ai.co", 
-      "message": "fix(projects): show all tasks no everything project (board and list viewmodes were broken)",
-      "date": "2025-03-20",
-      "relativeDate": "2 hours ago"
-    },
-    {
-      "hash": "95dd3430",
-      "author": "renata-sisilio",
-      "email": "renata@seren-ai.co", 
-      "message": "feat(tasks): add child task status handling",
-      "date": "2025-03-19",
-      "relativeDate": "26 hours ago"
+      "relativeDate": "19 hours ago"
     },
   ];
 
   // Stats
-  static const String totalCommits = '454';
-  static const String contributors = '0';
+  static const String totalCommits = '456';
+  static const String contributors = '       0';
 }
