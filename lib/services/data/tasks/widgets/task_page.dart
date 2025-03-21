@@ -80,7 +80,6 @@ class TaskPage extends HookConsumerWidget {
               TaskPhaseSelectionField(
                 context: context,
                 taskId: curTaskId,
-                projectId: curTask.value?.parentProjectId ?? '',
               ),
             TaskNameField(taskId: curTaskId),
             const SizedBox(height: 8),
