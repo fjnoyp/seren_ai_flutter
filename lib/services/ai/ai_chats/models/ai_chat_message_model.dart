@@ -44,6 +44,9 @@ class AiChatMessageModel implements IHasId {
   @JsonKey(name: 'parent_lg_run_id')
   final String? parentLgRunId;
 
+  @JsonKey(name: 'created_at')
+  final DateTime? createdAt;
+
   //@JsonKey(name: 'additional_kwargs', fromJson: _parseAdditionalKwargs)
   //final Map<String, dynamic>? additionalKwargs;
 
@@ -53,6 +56,7 @@ class AiChatMessageModel implements IHasId {
     required this.content,
     required this.parentChatThreadId,
     this.parentLgRunId,
+    this.createdAt,
     //this.additionalKwargs,
   }) : id = id ?? uuid.v4();
 
