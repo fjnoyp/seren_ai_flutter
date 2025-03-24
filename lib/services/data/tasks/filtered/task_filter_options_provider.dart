@@ -6,10 +6,8 @@ import 'package:seren_ai_flutter/common/utils/date_time_extension.dart';
 import 'package:seren_ai_flutter/services/data/common/status_enum.dart';
 import 'package:seren_ai_flutter/services/data/orgs/providers/cur_selected_org_id_notifier.dart';
 import 'package:seren_ai_flutter/services/data/orgs/providers/joined_user_org_roles_by_org_stream_provider.dart';
-import 'package:seren_ai_flutter/services/data/projects/models/project_model.dart';
 import 'package:seren_ai_flutter/services/data/projects/providers/cur_selected_project_providers.dart';
 import 'package:seren_ai_flutter/services/data/projects/providers/cur_user_viewable_projects_provider.dart';
-import 'package:seren_ai_flutter/services/data/projects/repositories/projects_repository.dart';
 import 'package:seren_ai_flutter/services/data/tasks/filtered/task_filter_view_type.dart';
 import 'package:seren_ai_flutter/services/data/tasks/models/task_model.dart';
 import 'package:seren_ai_flutter/services/data/tasks/task_field_enum.dart';
@@ -18,7 +16,6 @@ import 'package:seren_ai_flutter/services/data/users/models/user_model.dart';
 import 'package:seren_ai_flutter/services/data/users/providers/task_assigned_users_stream_provider.dart';
 import 'package:seren_ai_flutter/services/data/users/providers/user_in_project_provider.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
-import 'package:seren_ai_flutter/services/data/users/repositories/users_repository.dart';
 
 /// Predefined task filters for status
 class TFStatus {
@@ -35,7 +32,7 @@ class TFStatus {
     final status = StatusEnum.tryParse(statusStr);
     return TaskFilter(
       field: TaskFieldEnum.status,
-      readableName: status?.toHumanReadable(context) ?? statusStr,
+      readableName: status.toHumanReadable(context),
       condition: (task) => task.status == status,
     );
   }
@@ -47,7 +44,9 @@ class TFDueDate {
   static TaskFilter overdue(BuildContext context) => TaskFilter(
         field: TaskFieldEnum.dueDate,
         readableName: AppLocalizations.of(context)!.overdue,
-        condition: (task) => task.dueDate?.isBefore(DateTime.now()) ?? false,
+        condition: (task) =>
+            (task.dueDate?.isBefore(DateTime.now()) ?? false) &&
+            task.status != StatusEnum.finished,
       );
 
   /// Filter for tasks due today
@@ -162,7 +161,7 @@ class TFAssignees {
           required String lastName}) =>
       TaskFilter(
         field: TaskFieldEnum.assignees,
-        readableName: '${firstName} ${lastName}',
+        readableName: '$firstName $lastName',
         condition: (task) {
           final assignees =
               ref.read(taskAssignedUsersStreamProvider(task.id)).value ?? [];

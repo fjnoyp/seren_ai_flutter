@@ -14,7 +14,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:seren_ai_flutter/common/navigation_service_provider.dart';
 import 'package:seren_ai_flutter/common/routes/app_routes.dart';
-import 'package:seren_ai_flutter/common/utils/date_time_extension.dart';
 import 'package:seren_ai_flutter/services/ai/ai_request/models/results/ai_request_result_model.dart';
 import 'package:seren_ai_flutter/services/ai/ai_request/models/results/error_request_result_model.dart';
 import 'package:seren_ai_flutter/services/auth/cur_auth_state_provider.dart';
@@ -23,7 +22,6 @@ import 'package:seren_ai_flutter/services/data/tasks/filtered/task_filter_state_
 import 'package:seren_ai_flutter/services/data/tasks/filtered/task_filter_view_type.dart';
 import 'package:seren_ai_flutter/services/data/tasks/filtered/tasks_filtered_search_provider.dart';
 import 'package:seren_ai_flutter/services/data/tasks/task_field_enum.dart';
-import 'package:seren_ai_flutter/services/data/tasks/task_filter.dart';
 import 'package:seren_ai_flutter/services/data/tasks/tool_methods/ai_date_parser.dart';
 import 'package:seren_ai_flutter/services/data/common/status_enum.dart';
 import 'package:seren_ai_flutter/services/data/common/utils/string_similarity_extension.dart';
@@ -78,7 +76,7 @@ class TaskToolMethods {
 
 // And get back the result ...
 
-    final viewType = TaskFilterViewType.modalSearch;
+    const viewType = TaskFilterViewType.modalSearch;
 
     final context =
         ref.read(navigationServiceProvider).navigatorKey.currentContext!;
@@ -178,6 +176,9 @@ class TaskToolMethods {
             projectId: projects.first.id, projectName: projects.first.name));
       }
     }
+    if (infoRequest.getOverdueTasksOnly == true) {
+      filterNotifier.updateFilter(TFDueDate.overdue(context));
+    }
 
     // Helper function to handle date range filtering
 
@@ -204,9 +205,50 @@ class TaskToolMethods {
       );
     }
 
-    return ErrorRequestResultModel(
-        resultForAi: 'Not implemented for request: ${infoRequest.toString()}',
-        showOnly: true);
+    // Make sure filters are applied before reading the provider
+    ref.read(taskFilterStateProvider(
+        viewType)); // Force a read to ensure state is updated
+
+    final tasks = await ref.read(tasksRepositoryProvider).getUserViewableTasks(
+          userId: user.id,
+          orgId: selectedOrgId,
+        );
+
+    final filteredTasks = tasks
+        .where((task) =>
+            ref.read(taskFilterStateProvider(viewType)).filterCondition(task))
+        .take(20)
+        .toList();
+
+    List<Map<String, dynamic>> tasksToSendAiReadable = [];
+    try {
+      for (final task in filteredTasks) {
+        final project = await ref
+            .read(projectsRepositoryProvider)
+            .getById(task.parentProjectId);
+
+        final author =
+            await ref.read(usersRepositoryProvider).getById(task.authorUserId);
+
+        final assignees = await ref
+            .read(usersRepositoryProvider)
+            .getTaskAssignedUsers(taskId: task.id);
+
+        tasksToSendAiReadable.add(task.toAiReadableMap(
+            project: project, author: author, assignees: assignees));
+      }
+    } catch (e, stackTrace) {
+      log('findTasks: Error converting tasks: $e');
+      log('findTasks: Stack trace: $stackTrace');
+      // Continue with what we have
+    }
+
+    return FindTasksResultModel(
+      tasks: filteredTasks,
+      resultForAi:
+          'Found ${filteredTasks.length} matching tasks: $tasksToSendAiReadable',
+      showOnly: infoRequest.showOnly,
+    );
   }
 
   void applyDateRangeFilter({
