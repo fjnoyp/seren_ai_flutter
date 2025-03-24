@@ -16,6 +16,7 @@ class FindTasksRequestModel extends AiInfoRequestModel {
   final String? taskDueDateEnd;
   final String? taskCreatedDateStart;
   final String? taskCreatedDateEnd;
+  final bool? getOverdueTasksOnly;
 
   FindTasksRequestModel({
     this.taskName,
@@ -30,6 +31,7 @@ class FindTasksRequestModel extends AiInfoRequestModel {
     this.taskDueDateEnd,
     this.taskCreatedDateStart,
     this.taskCreatedDateEnd,
+    this.getOverdueTasksOnly,
     super.showOnly = true,
     super.args,
   }) : super(infoRequestType: AiInfoRequestType.findTasks);
@@ -49,6 +51,7 @@ class FindTasksRequestModel extends AiInfoRequestModel {
       taskDueDateEnd: json['args']['task_due_date_end'],
       taskCreatedDateStart: json['args']['task_created_date_start'],
       taskCreatedDateEnd: json['args']['task_created_date_end'],
+      getOverdueTasksOnly: json['args']['get_overdue_tasks_only'],
       showOnly: json['show_only'] ?? true,
     );
   }
