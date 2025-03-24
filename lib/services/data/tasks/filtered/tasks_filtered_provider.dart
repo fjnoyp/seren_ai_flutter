@@ -94,3 +94,51 @@ final tasksAndParentsByProjectFilteredProvider =
 
   return filteredTasks;
 });
+
+// This isn't working: we return the filtered tasks, but the ai tool method isn't getting the filtered tasks
+// /// A future-based version of tasksFilteredProvider that can be awaited
+// final tasksFilteredFutureProvider =
+//     FutureProvider.family<List<TaskModel>, TaskFilterViewType>(
+//         (ref, viewType) async {
+//   // Capture the filter state early to avoid lifecycle issues
+//   final filterState = ref.read(taskFilterStateProvider(viewType));
+
+//   // Get the current state of the tasks stream
+//   final tasksAsyncValue = ref.watch(curUserViewableTasksStreamProvider);
+
+//   List<TaskModel> tasks;
+
+//   // If we already have data, use it directly
+//   if (tasksAsyncValue is AsyncData) {
+//     tasks = tasksAsyncValue.value ?? [];
+//   }
+
+//   // If there's an error, propagate it
+//   else if (tasksAsyncValue is AsyncError) {
+//     throw tasksAsyncValue.error as Object;
+//   }
+
+//   // Otherwise, we're still loading - wait for the stream
+//   else {
+//     tasks = await ref.watch(curUserViewableTasksStreamProvider.future) ?? [];
+//   }
+
+//   try {
+//     final filteredTasks = tasks.where((task) {
+//       return filterState.filterCondition(task);
+//     }).toList();
+
+//     if (filterState.sortComparator != null) {
+//       filteredTasks.sort(filterState.sortComparator!);
+//     }
+
+//     // Force the future to complete synchronously to avoid any potential issues
+//     final result = List<TaskModel>.from(filteredTasks);
+//     log('tasksFilteredFutureProvider: Returning ${result.length} filtered tasks');
+//     return result;
+//   } catch (e, stackTrace) {
+//     log('tasksFilteredFutureProvider: Error during filtering: $e');
+//     log('tasksFilteredFutureProvider: Stack trace: $stackTrace');
+//     rethrow;
+//   }
+// });
