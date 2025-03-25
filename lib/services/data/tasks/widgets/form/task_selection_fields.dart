@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:seren_ai_flutter/services/data/common/widgets/form/base_assignees_selection_field.dart';
 import 'package:seren_ai_flutter/services/data/common/widgets/form/base_duration_selection_field.dart';
 import 'package:seren_ai_flutter/services/data/common/widgets/form/base_minute_selection_field.dart';
@@ -18,51 +17,8 @@ import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:seren_ai_flutter/services/data/tasks/providers/task_by_id_stream_provider.dart';
 import 'package:seren_ai_flutter/services/data/tasks/providers/tasks_by_project_stream_provider.dart';
 import 'package:seren_ai_flutter/services/data/tasks/repositories/tasks_repository.dart';
-import 'package:seren_ai_flutter/services/data/tasks/task_field_enum.dart';
 import 'package:seren_ai_flutter/services/data/tasks/widgets/task_assignees_avatars.dart';
 import 'package:seren_ai_flutter/services/data/users/providers/task_assigned_users_stream_provider.dart';
-
-// TODO p3: we should ideally pass showLabelWidget down to the parent classes instead
-class TaskSelectionField extends ConsumerWidget {
-  final TaskFieldEnum field;
-  final String taskId;
-  final bool isEnabled;
-  final bool showLabelWidget;
-
-  const TaskSelectionField(
-    this.field, {
-    super.key,
-    required this.taskId,
-    this.isEnabled = true,
-    this.showLabelWidget = true,
-  });
-
-  @override
-  Widget build(BuildContext context, WidgetRef ref) {
-    return switch (field) {
-      TaskFieldEnum.assignees => TaskAssigneesSelectionField(
-          context: context,
-          taskId: taskId,
-          showLabelWidget: showLabelWidget,
-        ),
-      TaskFieldEnum.status => TaskStatusSelectionField(
-          taskId: taskId,
-          showLabelWidget: showLabelWidget,
-        ),
-      TaskFieldEnum.priority => TaskPrioritySelectionField(
-          taskId: taskId,
-          showLabelWidget: showLabelWidget,
-        ),
-      TaskFieldEnum.name => TaskNameField(taskId: taskId),
-      TaskFieldEnum.dueDate => TaskDueDateSelectionField(taskId: taskId),
-      TaskFieldEnum.project => TaskProjectSelectionField(taskId: taskId),
-
-      // the fields below are not editable
-      TaskFieldEnum.type => const SizedBox.shrink(),
-      TaskFieldEnum.createdAt => const SizedBox.shrink(),
-    };
-  }
-}
 
 class TaskProjectSelectionField extends BaseProjectSelectionField {
   final String taskId;
