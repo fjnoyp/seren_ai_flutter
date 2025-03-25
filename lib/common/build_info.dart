@@ -2,10 +2,10 @@
 class BuildInfo {
   // Core build info
   static const String version = '1.0.0';
-  static const String buildDate = '2025-03-25 13:23:12';
+  static const String buildDate = '2025-03-25 13:23:24';
   
   // Git info
-  static const String commitHash = 'bc08d501';
+  static const String commitHash = '787c5f8c';
   static const String branch = 'fix/user-permissions';
   static const String lastTag = 'no tag';
   
@@ -16,12 +16,20 @@ class BuildInfo {
   // Recent commits (last 5)
   static const List<Map<String, String>> recentCommits = [
     {
+      "hash": "787c5f8c",
+      "author": "renata-sisilio",
+      "email": "renata@seren-ai.co", 
+      "message": "fix(date-grouping): handle nullable date in DateGroupedItems and update related logic",
+      "date": "2025-03-25",
+      "relativeDate": "13 seconds ago"
+    },
+    {
       "hash": "bc08d501",
       "author": "renata-sisilio",
       "email": "renata@seren-ai.co", 
       "message": "fix(tasks): fix state managemet for phase selection",
       "date": "2025-03-25",
-      "relativeDate": "12 seconds ago"
+      "relativeDate": "24 seconds ago"
     },
     {
       "hash": "62b43b1c",
@@ -29,7 +37,7 @@ class BuildInfo {
       "email": "renata@seren-ai.co", 
       "message": "fix(projects): prevent task creation on everything project",
       "date": "2025-03-25",
-      "relativeDate": "23 seconds ago"
+      "relativeDate": "35 seconds ago"
     },
     {
       "hash": "ccdb0e89",
@@ -37,7 +45,7 @@ class BuildInfo {
       "email": "renata@seren-ai.co", 
       "message": "fix(projects): restrict project editing, creation and deletion to admin and editor roles",
       "date": "2025-03-25",
-      "relativeDate": "37 seconds ago"
+      "relativeDate": "49 seconds ago"
     },
     {
       "hash": "4c8a37fc",
@@ -47,17 +55,9 @@ class BuildInfo {
       "date": "2025-03-25",
       "relativeDate": "3 minutes ago"
     },
-    {
-      "hash": "675e2acb",
-      "author": "renata-sisilio",
-      "email": "renata@seren-ai.co", 
-      "message": "fix(ai_chats): ai chat new messages ordering",
-      "date": "2025-03-21",
-      "relativeDate": "4 days ago"
-    },
   ];
 
   // Stats
-  static const String totalCommits = '463';
+  static const String totalCommits = '464';
   static const String contributors = '0';
 }
