@@ -2,10 +2,10 @@
 class BuildInfo {
   // Core build info
   static const String version = '1.0.0';
-  static const String buildDate = '2025-03-25 13:23:02';
+  static const String buildDate = '2025-03-25 13:23:12';
   
   // Git info
-  static const String commitHash = '62b43b1c';
+  static const String commitHash = 'bc08d501';
   static const String branch = 'fix/user-permissions';
   static const String lastTag = 'no tag';
   
@@ -16,12 +16,20 @@ class BuildInfo {
   // Recent commits (last 5)
   static const List<Map<String, String>> recentCommits = [
     {
+      "hash": "bc08d501",
+      "author": "renata-sisilio",
+      "email": "renata@seren-ai.co", 
+      "message": "fix(tasks): fix state managemet for phase selection",
+      "date": "2025-03-25",
+      "relativeDate": "12 seconds ago"
+    },
+    {
       "hash": "62b43b1c",
       "author": "renata-sisilio",
       "email": "renata@seren-ai.co", 
       "message": "fix(projects): prevent task creation on everything project",
       "date": "2025-03-25",
-      "relativeDate": "13 seconds ago"
+      "relativeDate": "23 seconds ago"
     },
     {
       "hash": "ccdb0e89",
@@ -29,7 +37,7 @@ class BuildInfo {
       "email": "renata@seren-ai.co", 
       "message": "fix(projects): restrict project editing, creation and deletion to admin and editor roles",
       "date": "2025-03-25",
-      "relativeDate": "27 seconds ago"
+      "relativeDate": "37 seconds ago"
     },
     {
       "hash": "4c8a37fc",
@@ -47,17 +55,9 @@ class BuildInfo {
       "date": "2025-03-21",
       "relativeDate": "4 days ago"
     },
-    {
-      "hash": "cf285dfb",
-      "author": "renata-sisilio",
-      "email": "renata@seren-ai.co", 
-      "message": "feat(tasks): update PhaseSelectionField for improved phase selection (#203)",
-      "date": "2025-03-21",
-      "relativeDate": "4 days ago"
-    },
   ];
 
   // Stats
-  static const String totalCommits = '462';
+  static const String totalCommits = '463';
   static const String contributors = '0';
 }

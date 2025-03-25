@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
-import 'package:intl/intl.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:seren_ai_flutter/services/auth/cur_auth_state_provider.dart';
 import 'package:seren_ai_flutter/services/data/common/recent_updated_items/date_grouped_items.dart';
@@ -17,22 +16,6 @@ class _DateHeader extends StatelessWidget {
 
   final DateGroupedItems group;
 
-  String _getDateHeader(BuildContext context) {
-    if (group.isToday) {
-      return AppLocalizations.of(context)?.today ?? 'Today';
-    }
-    // For overdue tasks (using yesterday's date in the provider)
-    if (group.isYesterday) {
-      return AppLocalizations.of(context)?.overdue ?? 'Overdue';
-    }
-    if (group.isLastWeek) {
-      return DateFormat.EEEE(AppLocalizations.of(context)?.localeName)
-          .format(group.date);
-    }
-    return DateFormat.yMMMd(AppLocalizations.of(context)?.localeName)
-        .format(group.date);
-  }
-
   @override
   Widget build(BuildContext context) {
     return Column(
@@ -42,7 +25,7 @@ class _DateHeader extends StatelessWidget {
         Row(
           children: [
             Text(
-              _getDateHeader(context),
+              group.getDateHeader(context),
               style: Theme.of(context).textTheme.titleSmall?.copyWith(
                     color: Theme.of(context).colorScheme.primary,
                   ),
