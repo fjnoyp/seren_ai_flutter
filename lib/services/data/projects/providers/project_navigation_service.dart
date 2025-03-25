@@ -156,7 +156,12 @@ class ProjectNavigationService extends BaseNavigationService {
             AlertDialog(
               title: Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [Text(title), DeleteProjectButton(projectId)],
+                children: [
+                  Text(title),
+                  if (curUserOrgRole == OrgRole.admin ||
+                      curUserOrgRole == OrgRole.editor)
+                    DeleteProjectButton(projectId),
+                ],
               ),
               content: ProjectDetailsPage(mode: mode),
             ),

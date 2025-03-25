@@ -6,6 +6,8 @@ import 'package:seren_ai_flutter/common/universal_platform/universal_platform.da
 import 'package:seren_ai_flutter/services/data/common/status_enum.dart';
 import 'package:seren_ai_flutter/services/data/notes/providers/notes_navigation_service.dart';
 import 'package:seren_ai_flutter/services/data/notes/widgets/project_notes_list.dart';
+import 'package:seren_ai_flutter/services/data/orgs/models/user_org_role_model.dart';
+import 'package:seren_ai_flutter/services/data/orgs/providers/cur_user_org_role_provider.dart';
 import 'package:seren_ai_flutter/services/data/projects/providers/cur_selected_project_providers.dart';
 import 'package:seren_ai_flutter/services/data/projects/widgets/action_buttons/edit_project_button.dart';
 import 'package:seren_ai_flutter/services/data/projects/widgets/action_buttons/update_project_assignees_button.dart';
@@ -202,6 +204,8 @@ class _ProjectInfoView extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    final curUserOrgRole = ref.watch(curUserOrgRoleProvider).valueOrNull;
+
     return Padding(
       padding: const EdgeInsets.all(16),
       child: Column(
@@ -210,8 +214,10 @@ class _ProjectInfoView extends ConsumerWidget {
             alignment: Alignment.topRight,
             children: [
               const ProjectInfoHeader(),
-              EditProjectButton(
-                  ref.watch(curSelectedProjectIdNotifierProvider)!),
+              if (curUserOrgRole == OrgRole.admin ||
+                  curUserOrgRole == OrgRole.editor)
+                EditProjectButton(
+                    ref.watch(curSelectedProjectIdNotifierProvider)!),
             ],
           ),
           const Divider(height: 32),
@@ -220,8 +226,10 @@ class _ProjectInfoView extends ConsumerWidget {
             children: [
               ProjectAssigneesList(
                   ref.watch(curSelectedProjectIdNotifierProvider)!),
-              UpdateProjectAssigneesButton(
-                  ref.watch(curSelectedProjectIdNotifierProvider)!),
+              if (curUserOrgRole == OrgRole.admin ||
+                  curUserOrgRole == OrgRole.editor)
+                UpdateProjectAssigneesButton(
+                    ref.watch(curSelectedProjectIdNotifierProvider)!),
             ],
           ),
         ],
