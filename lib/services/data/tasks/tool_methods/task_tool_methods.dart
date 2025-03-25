@@ -186,9 +186,6 @@ class TaskToolMethods {
             projectId: projects.first.id, projectName: projects.first.name));
       }
     }
-    if (infoRequest.getOverdueTasksOnly == true) {
-      filterNotifier.updateFilter(TFDueDate.overdue(context));
-    }
 
     // Helper function to handle date range filtering
 
