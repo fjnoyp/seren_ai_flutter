@@ -2,10 +2,10 @@
 class BuildInfo {
   // Core build info
   static const String version = '1.0.0';
-  static const String buildDate = '2025-03-25 15:11:54';
+  static const String buildDate = '2025-03-25 15:12:28';
   
   // Git info
-  static const String commitHash = '4efd8a30';
+  static const String commitHash = '8ef9fbb0';
   static const String branch = 'chore/refactor_search_modal';
   static const String lastTag = 'no tag';
   
@@ -16,12 +16,12 @@ class BuildInfo {
   // Recent commits (last 5)
   static const List<Map<String, String>> recentCommits = [
     {
-      "hash": "4efd8a30",
+      "hash": "8ef9fbb0",
       "author": "renata-sisilio",
       "email": "renata@seren-ai.co", 
       "message": "fix(task_tools): remove getOverdueTasksOnly parameter from FindTasksRequestModel",
       "date": "2025-03-25",
-      "relativeDate": "17 minutes ago"
+      "relativeDate": "18 minutes ago"
     },
     {
       "hash": "561a1518",

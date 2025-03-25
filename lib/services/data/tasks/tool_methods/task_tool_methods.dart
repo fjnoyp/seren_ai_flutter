@@ -62,9 +62,9 @@ class TaskToolMethods {
 
   Future<AiRequestResultModel> findTasks(
       {required Ref ref, required FindTasksRequestModel infoRequest}) async {
-    final user = ref.read(curUserProvider).valueOrNull;
+    final curUser = ref.read(curUserProvider).valueOrNull;
 
-    if (user == null) return _handleNoAuth();
+    if (curUser == null) return _handleNoAuth();
 
     final selectedOrgId = ref.watch(curSelectedOrgIdNotifierProvider);
     if (selectedOrgId == null) {
@@ -122,7 +122,7 @@ class TaskToolMethods {
       // Check if MYSELF is in the list, handle special case
       if (AiToolExecutionUtils.containsMyselfKeyword(
           infoRequest.assignedUserNames)) {
-        filterNotifier.updateFilter(TFAssignees.byUserModel(ref, user));
+        filterNotifier.updateFilter(TFAssignees.byUserModel(ref, curUser));
       } else if (infoRequest.assignedUserNames!.isNotEmpty) {
         // Try to match by name - this might need to be adjusted based on your TFAssignee implementation
         for (final userName in infoRequest.assignedUserNames!) {
@@ -150,7 +150,7 @@ class TaskToolMethods {
     // Handle author filtering if provided
     if (infoRequest.authorUserName != null) {
       if (AiToolExecutionUtils.isMyselfKeyword(infoRequest.authorUserName)) {
-        filterNotifier.updateFilter(TFAssignees.byUserModel(ref, user));
+        filterNotifier.updateFilter(TFAssignees.byUserModel(ref, curUser));
       } else {
         final selectedOrgId = ref.read(curSelectedOrgIdNotifierProvider);
         if (selectedOrgId != null) {
@@ -217,7 +217,7 @@ class TaskToolMethods {
         viewType)); // Force a read to ensure state is updated
 
     final tasks = await ref.read(tasksRepositoryProvider).getUserViewableTasks(
-          userId: user.id,
+          userId: curUser.id,
           orgId: selectedOrgId,
         );
 
@@ -270,7 +270,9 @@ class TaskToolMethods {
         ? AiDateParser.parseIsoIntoLocalThenUTC(startDateStr)
         : null;
     final end = endDateStr != null
-        ? AiDateParser.parseIsoIntoLocalThenUTC(endDateStr)
+        ? AiDateParser.parseIsoIntoLocalThenUTC(endDateStr)!
+            // Add 1 day to include the end date
+            .add(const Duration(days: 1))
         : null;
 
     // Create the appropriate filter based on the field type
