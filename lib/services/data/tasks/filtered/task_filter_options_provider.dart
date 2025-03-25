@@ -163,6 +163,8 @@ class TFAssignees {
         field: TaskFieldEnum.assignees,
         readableName: '$firstName $lastName',
         condition: (task) {
+          // TODO p1: we shouldn't be "reading" the stream here
+          // this is likely causing not all matching tasks to be shown
           final assignees =
               ref.read(taskAssignedUsersStreamProvider(task.id)).value ?? [];
           return assignees.any((assignee) => assignee.id == userId);
@@ -180,9 +182,33 @@ class TFAssignees {
   static TaskFilter unassigned(Ref ref, BuildContext context) => TaskFilter(
         field: TaskFieldEnum.assignees,
         readableName: AppLocalizations.of(context)!.notAssigned,
-        condition: (task) =>
-            ref.read(taskAssignedUsersStreamProvider(task.id)).value?.isEmpty ??
-            true,
+        condition: (task) {
+          // TODO p1: we shouldn't be "reading" the stream here
+          final assignees =
+              ref.read(taskAssignedUsersStreamProvider(task.id)).value ?? [];
+          return assignees.isEmpty;
+        },
+      );
+}
+
+/// Predefined task filters for author user
+class TFAuthorUser {
+  /// Filter for tasks by author user
+  static TaskFilter byUser(Ref ref,
+          {required String userId,
+          required String firstName,
+          required String lastName}) =>
+      TaskFilter(
+        field: TaskFieldEnum.author,
+        readableName: '$firstName $lastName',
+        condition: (task) => task.authorUserId == userId,
+      );
+
+  static TaskFilter byUserModel(Ref ref, UserModel user) => TFAuthorUser.byUser(
+        ref,
+        userId: user.id,
+        firstName: user.firstName,
+        lastName: user.lastName,
       );
 }
 
@@ -226,6 +252,7 @@ Map<TaskFieldEnum, List<TaskFilter>> _getViewSpecificFilters(
       return {
         ..._createProjectFilters(ref),
         ..._createTypeFilters(context),
+        ..._createAuthorUserFilters(ref),
         ..._createAssigneesFilters(ref),
       };
 
@@ -237,11 +264,13 @@ Map<TaskFieldEnum, List<TaskFilter>> _getViewSpecificFilters(
         return {
           ..._createProjectFilters(ref),
           ..._createTypeFilters(context),
+          ..._createAuthorUserFilters(ref),
           ..._createAssigneesFilters(ref),
         };
       } else {
         return {
           ..._createTypeFilters(context),
+          ..._createAuthorUserFilters(ref, projectId: projectId),
           ..._createAssigneesFilters(ref, projectId: projectId),
         };
       }
@@ -250,7 +279,10 @@ Map<TaskFieldEnum, List<TaskFilter>> _getViewSpecificFilters(
       final projectId = ref.watch(curSelectedProjectIdNotifierProvider);
       if (projectId == null) throw Exception('No project selected');
 
-      return _createAssigneesFilters(ref, projectId: projectId);
+      return {
+        ..._createAuthorUserFilters(ref, projectId: projectId),
+        ..._createAssigneesFilters(ref, projectId: projectId),
+      };
   }
 }
 
@@ -309,6 +341,18 @@ Map<TaskFieldEnum, List<TaskFilter>> _createAssigneesFilters(Ref ref,
     TaskFieldEnum.assignees: [
       ..._createUserAssigneeFilters(ref, users),
       TFAssignees.unassigned(ref, context),
+    ],
+  };
+}
+
+/// Creates author user filter options
+Map<TaskFieldEnum, List<TaskFilter>> _createAuthorUserFilters(Ref ref,
+    {String? projectId}) {
+  final users = _getUsersForFilter(ref, projectId);
+
+  return {
+    TaskFieldEnum.author: [
+      ...users.map((user) => TFAuthorUser.byUserModel(ref, user)),
     ],
   };
 }
