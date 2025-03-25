@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
@@ -15,7 +16,7 @@ class BaseNameField extends HookConsumerWidget {
 
   final bool isEditable;
   final ProviderListenable<String> nameProvider;
-  final Function(WidgetRef, String) updateName;
+  final Future Function(WidgetRef, String) updateName;
   final TextStyle? textStyle;
   final FocusNode? focusNode;
 
@@ -24,6 +25,7 @@ class BaseNameField extends HookConsumerWidget {
     final curName = ref.watch(nameProvider);
     final nameController = useTextEditingController(text: curName);
     final focusNode = this.focusNode ?? useFocusNode();
+    final isSaving = useRef<bool>(false);
 
     // Track if we've already got the name to ensure we only set the selection once
     final isFirstCurNameLoad = useRef(true);
@@ -59,13 +61,41 @@ class BaseNameField extends HookConsumerWidget {
       return null;
     }, [curName]);
 
-    // Update the task name only when editing is complete or when tapping outside
-    void updateTaskName() {
-      if (nameController.text != curName) {
-        updateName(ref, nameController.text);
+    Future<void> updateTaskName() async {
+      if (nameController.text != curName && !isSaving.value) {
+        isSaving.value = true;
+        try {
+          await updateName(ref, nameController.text);
+        } finally {
+          isSaving.value = false;
+        }
       }
-      FocusScope.of(context).unfocus(); // Hide the keyboard
     }
+
+    // Add debounced auto-save functionality
+    final debounceTimer = useRef<Timer?>(null);
+
+    useEffect(() {
+      void onTextChange() {
+        // Cancel any existing timer
+        debounceTimer.value?.cancel();
+
+        // Only start a new timer if the text has changed from what's stored
+        if (nameController.text != curName) {
+          // Start a new timer for 500 ms (half a second)
+          debounceTimer.value =
+              Timer(const Duration(milliseconds: 500), updateTaskName);
+        }
+      }
+
+      nameController.addListener(onTextChange);
+
+      return () {
+        nameController.removeListener(onTextChange);
+        // Cancel any pending timer when disposing
+        debounceTimer.value?.cancel();
+      };
+    }, []);
 
     return AnimatedBuilder(
       animation: colorAnimation.colorTween,
@@ -80,7 +110,9 @@ class BaseNameField extends HookConsumerWidget {
           textInputAction: TextInputAction.done,
           onEditingComplete: updateTaskName, // Update on editing complete
           onTapOutside: (_) {
-            updateTaskName(); // Update on tap outside
+            // Update on tap outside
+            updateTaskName();
+            FocusScope.of(context).unfocus(); // Hide the keyboard
           },
           decoration: InputDecoration(
             hintText: 'Enter name',
