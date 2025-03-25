@@ -32,19 +32,24 @@ class BasePhaseSelectionField extends ConsumerWidget {
 
     // Improve performance by using a selector provider
     // avoiding unnecessary rebuilds
-    final selectablePhases = ref
+    final phasesResult = ref
         .watch(parentTasksByProjectStreamProvider(projectId).select((phases) {
-      return phases.hasValue
-          ? phases.value!
-              .map((phase) => (id: phase.id, name: phase.name))
-              .toList()
-          : <({String id, String name})>[];
+      return (
+        isLoading: phases.isLoading,
+        phases: phases.hasValue
+            ? phases.value!
+                .map((phase) => (id: phase.id, name: phase.name))
+                .toList()
+            : <({String id, String name})>[]
+      );
     }));
 
     // Handle loading state
-    if (selectablePhases.isEmpty) {
+    if (phasesResult.isLoading) {
       return const Center(child: LinearProgressIndicator());
     }
+
+    final selectablePhases = phasesResult.phases;
 
     final curPhaseId = ref.watch(phaseIdProvider);
     final curPhaseName = curPhaseId != null
@@ -82,7 +87,10 @@ class BasePhaseSelectionField extends ConsumerWidget {
                 ],
               ),
             ),
-            valueToString: (phase) => phase?.name ?? emptyValueString,
+            valueToString: (phase) => selectablePhases.isEmpty
+                ? AppLocalizations.of(context)?.thisProjectCurrentlyHasNoPhases ??
+                    'This project currently has no phases'
+                : phase?.name ?? emptyValueString,
             valueToWidget: (phase) => Tooltip(
               message: emptyValueString,
               child: const Icon(Icons.arrow_drop_down),
