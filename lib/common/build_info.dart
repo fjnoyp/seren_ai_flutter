@@ -2,10 +2,10 @@
 class BuildInfo {
   // Core build info
   static const String version = '1.0.0';
-  static const String buildDate = '2025-03-25 15:12:28';
+  static const String buildDate = '2025-03-25 17:04:10';
   
   // Git info
-  static const String commitHash = '8ef9fbb0';
+  static const String commitHash = '2b00b181';
   static const String branch = 'chore/refactor_search_modal';
   static const String lastTag = 'no tag';
   
@@ -16,12 +16,20 @@ class BuildInfo {
   // Recent commits (last 5)
   static const List<Map<String, String>> recentCommits = [
     {
+      "hash": "2b00b181",
+      "author": "renata-sisilio",
+      "email": "renata@seren-ai.co", 
+      "message": "fix(task_tools): added a day to end date parsing to include the end date in the filter",
+      "date": "2025-03-25",
+      "relativeDate": "2 hours ago"
+    },
+    {
       "hash": "8ef9fbb0",
       "author": "renata-sisilio",
       "email": "renata@seren-ai.co", 
       "message": "fix(task_tools): remove getOverdueTasksOnly parameter from FindTasksRequestModel",
       "date": "2025-03-25",
-      "relativeDate": "18 minutes ago"
+      "relativeDate": "2 hours ago"
     },
     {
       "hash": "561a1518",
@@ -29,7 +37,7 @@ class BuildInfo {
       "email": "renata@seren-ai.co", 
       "message": "feat(task_tools): conditionally open search modal when calling findTasks tool method",
       "date": "2025-03-25",
-      "relativeDate": "6 hours ago"
+      "relativeDate": "7 hours ago"
     },
     {
       "hash": "2edb089c",
@@ -37,7 +45,7 @@ class BuildInfo {
       "email": "renata@seren-ai.co", 
       "message": "fix(tasks): finish findTasks method sending the result back to the ai",
       "date": "2025-03-24",
-      "relativeDate": "21 hours ago"
+      "relativeDate": "23 hours ago"
     },
     {
       "hash": "05af5f63",
@@ -47,17 +55,9 @@ class BuildInfo {
       "date": "2025-03-20",
       "relativeDate": "5 days ago"
     },
-    {
-      "hash": "eedfdbd9",
-      "author": "Kyle",
-      "email": "kylcheng@gmail.com", 
-      "message": "chore(search): clean the modal",
-      "date": "2025-03-20",
-      "relativeDate": "5 days ago"
-    },
   ];
 
   // Stats
-  static const String totalCommits = '463';
+  static const String totalCommits = '464';
   static const String contributors = '0';
 }

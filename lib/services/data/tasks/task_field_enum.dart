@@ -11,6 +11,7 @@ enum TaskFieldEnum {
   assignees,
   type,
   createdAt,
+  author,
   project;
 
   String toHumanReadable(BuildContext context) => switch (this) {
@@ -22,6 +23,7 @@ enum TaskFieldEnum {
         TaskFieldEnum.type => AppLocalizations.of(context)!.type,
         TaskFieldEnum.createdAt => AppLocalizations.of(context)!.creationDate,
         TaskFieldEnum.project => AppLocalizations.of(context)!.project,
+        TaskFieldEnum.author => AppLocalizations.of(context)!.author,
       };
       
   Comparator<TaskModel>? get comparator => switch (this) {
@@ -40,5 +42,6 @@ enum TaskFieldEnum {
         TaskFieldEnum.assignees => null,
         TaskFieldEnum.type => null,
         TaskFieldEnum.project => null,
+        TaskFieldEnum.author => null,
       };
 }
