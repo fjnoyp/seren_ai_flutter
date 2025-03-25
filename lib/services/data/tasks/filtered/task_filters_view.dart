@@ -52,9 +52,10 @@ class TaskFiltersView extends ConsumerWidget {
       //           .toList() ??
       //       [];
 
-      //   if (!projectAssigneesIds.contains(activeFilteredAssigneeId)) {
-      filterNotifier.removeFilter(TaskFieldEnum.assignees);
-      // }
+      // We don't want to remove the assignees filter when the user is in the modal search view
+      if (viewType != TaskFilterViewType.modalSearch) {
+        filterNotifier.removeFilter(TaskFieldEnum.assignees);
+      }
       // }
     });
 
