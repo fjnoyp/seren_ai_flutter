@@ -211,6 +211,7 @@
     "list": "Lista",
     "filterBy": "Filtrar por",
     "overdue": "Atrasado",
+    "unscheduled": "Sem data definida",
     "today": "Hoje",
     "yesterday": "Ontem",
     "thisWeek": "Esta semana",

@@ -12,9 +12,13 @@ List<DateGroupedItems> _groupTasksByDueDate(List<TaskModel> tasks) {
   final overdueTasks = <TaskModel>[];
   final todayTasks = <TaskModel>[];
   final futureTasks = <DateTime, List<TaskModel>>{};
+  final unscheduledTasks = <TaskModel>[];
 
   for (final task in tasks) {
-    if (task.dueDate == null) continue;
+    if (task.dueDate == null) {
+      unscheduledTasks.add(task);
+      continue;
+    }
 
     final dueDate = DateTime(
       task.dueDate!.year,
@@ -38,6 +42,13 @@ List<DateGroupedItems> _groupTasksByDueDate(List<TaskModel> tasks) {
 
   final groupedItems = <DateGroupedItems>[];
 
+  if (unscheduledTasks.isNotEmpty) {
+    groupedItems.add(DateGroupedItems(
+      null,
+      unscheduledTasks,
+    ));
+  }
+
   // Add overdue tasks if any
   if (overdueTasks.isNotEmpty) {
     groupedItems.add(DateGroupedItems(
@@ -57,7 +68,7 @@ List<DateGroupedItems> _groupTasksByDueDate(List<TaskModel> tasks) {
     futureTasks.entries
         .map((entry) => DateGroupedItems(entry.key, entry.value))
         .toList()
-      ..sort((a, b) => a.date.compareTo(b.date)),
+      ..sort((a, b) => a.date!.compareTo(b.date!)),
   );
 
   return groupedItems;
