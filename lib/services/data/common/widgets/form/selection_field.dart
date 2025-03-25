@@ -58,24 +58,24 @@ class AnimatedModalSelectionField<T> extends HookConsumerWidget {
                       value: value,
                       onValueChanged: onValueChanged,
                       defaultColor: colorAnimation.colorTween.value,
-                      onTap: (_) => controller.isOpen
-                          ? controller.close()
-                          : controller.open(),
+                      onTap: options.isEmpty
+                          ? null
+                          : (_) => controller.isOpen
+                              ? controller.close()
+                              : controller.open(),
                       expandHorizontally: expandHorizontally,
                     ),
-                    menuChildren: isWebVersion
-                        ? options
-                            .map(
-                              (option) => MenuItemButton(
-                                  onPressed: () {
-                                    if (context.mounted) {
-                                      onValueChanged?.call(ref, option);
-                                    }
-                                  },
-                                  child: Text(valueToString(option))),
-                            )
-                            .toList()
-                        : [],
+                    menuChildren: options
+                        .map(
+                          (option) => MenuItemButton(
+                              onPressed: () {
+                                if (context.mounted) {
+                                  onValueChanged?.call(ref, option);
+                                }
+                              },
+                              child: Text(valueToString(option))),
+                        )
+                        .toList(),
                   )
                 : ModalSelectionField<T>(
                     labelWidget: labelWidget,
@@ -113,35 +113,39 @@ class ModalSelectionField<T> extends SelectionField<T> {
     bool isValueRequired = false,
     super.expandHorizontally,
   }) : super(
-          onTap: (BuildContext context) async {
-            FocusManager.instance.primaryFocus?.unfocus();
+          onTap: options.isEmpty
+              ? null
+              : (BuildContext context) async {
+                  FocusManager.instance.primaryFocus?.unfocus();
 
-            final result = await showModalBottomSheet<T>(
-              context: context,
-              builder: (BuildContext context) => Consumer(
-                builder: (BuildContext context, WidgetRef ref, Widget? child) {
-                  return ListView.builder(
-                    itemCount:
-                        isValueRequired ? options.length : options.length + 1,
-                    itemBuilder: (BuildContext context, int index) {
-                      final T? option =
-                          index == options.length ? null : options[index];
-                      return ListTile(
-                        title: Text(valueToString(option)),
-                        onTap: () {
-                          onValueChanged?.call(ref, option);
-                          ref.read(navigationServiceProvider).pop(option);
-                        },
-                      );
-                    },
+                  final result = await showModalBottomSheet<T>(
+                    context: context,
+                    builder: (BuildContext context) => Consumer(
+                      builder:
+                          (BuildContext context, WidgetRef ref, Widget? child) {
+                        return ListView.builder(
+                          itemCount: isValueRequired
+                              ? options.length
+                              : options.length + 1,
+                          itemBuilder: (BuildContext context, int index) {
+                            final T? option =
+                                index == options.length ? null : options[index];
+                            return ListTile(
+                              title: Text(valueToString(option)),
+                              onTap: () {
+                                onValueChanged?.call(ref, option);
+                                ref.read(navigationServiceProvider).pop(option);
+                              },
+                            );
+                          },
+                        );
+                      },
+                    ),
                   );
-                },
-              ),
-            );
 
-            FocusManager.instance.primaryFocus?.unfocus();
-            return result;
-          },
+                  FocusManager.instance.primaryFocus?.unfocus();
+                  return result;
+                },
         );
 }
 
@@ -198,7 +202,7 @@ class SelectionField<T> extends HookConsumerWidget {
   final String Function(T?) valueToString;
   final Widget Function(T)? valueToWidget;
   final bool expandHorizontally;
-  final Function(BuildContext) onTap;
+  final Function(BuildContext)? onTap;
   final FormFieldValidator<T>? validator;
   final bool enabled;
   final T? value;
@@ -255,12 +259,12 @@ class SelectionField<T> extends HookConsumerWidget {
                     child:
                         // Button to show selection UI
                         TextButton(
-                      onPressed: enabled
+                      onPressed: enabled && onTap != null
                           ? () async {
                               // TODO p3: reapply field validation display (currently we're just not saving invalid field values)
                               // // Using ShowBottomSheet or ShowDatePicker invalidates the ref context after the modal closes
                               // // Only fix has been to use consumer directly in the modal builder when the tap occurs
-                              await onTap(context);
+                              await onTap!(context);
                               // .then((value) {
                               //   field.didChange(value);
                               //   field.validate();
