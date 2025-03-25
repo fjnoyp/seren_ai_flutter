@@ -17,6 +17,7 @@ class FindTasksRequestModel extends AiInfoRequestModel {
   final String? taskCreatedDateStart;
   final String? taskCreatedDateEnd;
   final bool? getOverdueTasksOnly;
+  final bool? showSearchModal;
 
   FindTasksRequestModel({
     this.taskName,
@@ -32,6 +33,7 @@ class FindTasksRequestModel extends AiInfoRequestModel {
     this.taskCreatedDateStart,
     this.taskCreatedDateEnd,
     this.getOverdueTasksOnly,
+    this.showSearchModal,
     super.showOnly = true,
     super.args,
   }) : super(infoRequestType: AiInfoRequestType.findTasks);
@@ -52,6 +54,8 @@ class FindTasksRequestModel extends AiInfoRequestModel {
       taskCreatedDateStart: json['args']['task_created_date_start'],
       taskCreatedDateEnd: json['args']['task_created_date_end'],
       getOverdueTasksOnly: json['args']['get_overdue_tasks_only'],
+      // OBS: show_search_modal is not currently present in the json, so we default to true
+      showSearchModal: json['args']['show_search_modal'] ?? true,
       showOnly: json['show_only'] ?? true,
     );
   }
