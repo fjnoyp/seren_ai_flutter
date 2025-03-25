@@ -2,11 +2,11 @@
 class BuildInfo {
   // Core build info
   static const String version = '1.0.0';
-  static const String buildDate = '2025-03-21 12:42:03';
+  static const String buildDate = '2025-03-25 13:20:01';
   
   // Git info
-  static const String commitHash = 'cf285dfb';
-  static const String branch = 'fix/ai-chat-new-messages-ordering';
+  static const String commitHash = '675e2acb';
+  static const String branch = 'fix/task-name-not-always-updating-on-popup-for-create-mode';
   static const String lastTag = 'no tag';
   
   // Author of last commit
@@ -16,12 +16,20 @@ class BuildInfo {
   // Recent commits (last 5)
   static const List<Map<String, String>> recentCommits = [
     {
+      "hash": "675e2acb",
+      "author": "renata-sisilio",
+      "email": "renata@seren-ai.co", 
+      "message": "fix(ai_chats): ai chat new messages ordering",
+      "date": "2025-03-21",
+      "relativeDate": "4 days ago"
+    },
+    {
       "hash": "cf285dfb",
       "author": "renata-sisilio",
       "email": "renata@seren-ai.co", 
       "message": "feat(tasks): update PhaseSelectionField for improved phase selection (#203)",
       "date": "2025-03-21",
-      "relativeDate": "63 minutes ago"
+      "relativeDate": "4 days ago"
     },
     {
       "hash": "462e457b",
@@ -29,7 +37,7 @@ class BuildInfo {
       "email": "kylcheng@gmail.com", 
       "message": "fix(ai): handle single stream event on web",
       "date": "2025-03-21",
-      "relativeDate": "3 hours ago"
+      "relativeDate": "4 days ago"
     },
     {
       "hash": "560c746f",
@@ -37,7 +45,7 @@ class BuildInfo {
       "email": "renata@seren-ai.co", 
       "message": "refactor(home): use both label and icon in home tabs for all screens",
       "date": "2025-03-20",
-      "relativeDate": "21 hours ago"
+      "relativeDate": "5 days ago"
     },
     {
       "hash": "04f5467e",
@@ -45,19 +53,11 @@ class BuildInfo {
       "email": "renata@seren-ai.co", 
       "message": "refactor(tasks): updated TaskNavigationService to delete unmodified tasks in create mode - without confirmation",
       "date": "2025-03-20",
-      "relativeDate": "20 hours ago"
-    },
-    {
-      "hash": "2d3214d6",
-      "author": "renata-sisilio",
-      "email": "renata@seren-ai.co", 
-      "message": "feat(tasks): enhance task popup",
-      "date": "2025-03-20",
-      "relativeDate": "21 hours ago"
+      "relativeDate": "5 days ago"
     },
   ];
 
   // Stats
-  static const String totalCommits = '458';
+  static const String totalCommits = '459';
   static const String contributors = '0';
 }
