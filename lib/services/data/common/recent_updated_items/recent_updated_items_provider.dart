@@ -22,7 +22,7 @@ List<DateGroupedItems> _groupByDate(List<dynamic> items) {
   }
 
   return groups.entries.map((e) => DateGroupedItems(e.key, e.value)).toList()
-    ..sort((a, b) => b.date.compareTo(a.date));
+    ..sort((a, b) => b.date!.compareTo(a.date!));
 }
 
 final recentUpdatedItemsProvider =
