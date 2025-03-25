@@ -2,11 +2,11 @@
 class BuildInfo {
   // Core build info
   static const String version = '1.0.0';
-  static const String buildDate = '2025-03-25 13:20:01';
+  static const String buildDate = '2025-03-25 13:22:37';
   
   // Git info
-  static const String commitHash = '675e2acb';
-  static const String branch = 'fix/task-name-not-always-updating-on-popup-for-create-mode';
+  static const String commitHash = '4c8a37fc';
+  static const String branch = 'fix/user-permissions';
   static const String lastTag = 'no tag';
   
   // Author of last commit
@@ -15,6 +15,14 @@ class BuildInfo {
   
   // Recent commits (last 5)
   static const List<Map<String, String>> recentCommits = [
+    {
+      "hash": "4c8a37fc",
+      "author": "renata-sisilio",
+      "email": "renata@seren-ai.co", 
+      "message": "fix(tasks):  prevent losing updates when closing task page while name field is focused",
+      "date": "2025-03-25",
+      "relativeDate": "3 minutes ago"
+    },
     {
       "hash": "675e2acb",
       "author": "renata-sisilio",
@@ -47,17 +55,9 @@ class BuildInfo {
       "date": "2025-03-20",
       "relativeDate": "5 days ago"
     },
-    {
-      "hash": "04f5467e",
-      "author": "renata-sisilio",
-      "email": "renata@seren-ai.co", 
-      "message": "refactor(tasks): updated TaskNavigationService to delete unmodified tasks in create mode - without confirmation",
-      "date": "2025-03-20",
-      "relativeDate": "5 days ago"
-    },
   ];
 
   // Stats
-  static const String totalCommits = '459';
+  static const String totalCommits = '460';
   static const String contributors = '0';
 }
