@@ -29,16 +29,19 @@ class TaskFilterState {
   bool Function(TaskModel) get filterCondition => (task) {
         // Apply other filters
         for (var filter in activeFilters) {
-          if (filter.condition != null) {
-            final result = filter.condition!(task);
-            if (!result) return false;
-          }
+          final result = filter.condition(task);
+          if (!result) return false;
         }
 
         return true;
       };
 
   Comparator<TaskModel>? get sortComparator => sortBy?.comparator;
+
+  @override
+  String toString() {
+    return 'TaskFilterState(sortBy: $sortBy, activeFilters: ${activeFilters.map((f) => '${f.field}: ${f.readableName}').join(', ')})';
+  }
 }
 
 class TaskFilterStateNotifier extends StateNotifier<TaskFilterState> {
@@ -107,9 +110,12 @@ class TaskFilterStateNotifier extends StateNotifier<TaskFilterState> {
   }
 }
 
-final taskFilterStateProvider = StateNotifierProvider.family
-    .autoDispose<TaskFilterStateNotifier, TaskFilterState, TaskFilterViewType>(
-        (ref, viewType) {
+// Remove the .autoDispose to prevent the state notifier
+// from being disposed while the modal is being rendered
+final taskFilterStateProvider = StateNotifierProvider.family<
+    TaskFilterStateNotifier,
+    TaskFilterState,
+    TaskFilterViewType>((ref, viewType) {
   final context =
       ref.read(navigationServiceProvider).navigatorKey.currentContext!;
 

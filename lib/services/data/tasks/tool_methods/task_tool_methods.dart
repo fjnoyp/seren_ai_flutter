@@ -47,6 +47,7 @@ import 'package:seren_ai_flutter/services/data/tasks/widgets/action_buttons/edit
 import 'package:seren_ai_flutter/services/data/users/models/user_model.dart';
 import 'package:seren_ai_flutter/services/data/users/repositories/users_repository.dart';
 import 'package:seren_ai_flutter/services/data/tasks/tool_methods/ai_tool_execution_utils.dart';
+import 'package:seren_ai_flutter/widgets/search/search_modal.dart';
 
 class TaskToolMethods {
   // Threshold for string similarity (0.0 to 1.0)
@@ -84,6 +85,15 @@ class TaskToolMethods {
     final filterNotifier = ref.read(taskFilterStateProvider(viewType).notifier);
 
     filterNotifier.clearAllFilters();
+
+    if (infoRequest.showSearchModal == true) {
+      // We can't use the toggleSearchModal function here
+      // because it would close the modal if it's already open
+      ref.read(isSearchModalOpenProvider.notifier).state = true;
+
+      // Wait for the next frame to ensure the modal is rendered
+      await WidgetsBinding.instance.endOfFrame;
+    }
 
     /*
 
