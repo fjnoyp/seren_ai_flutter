@@ -36,6 +36,7 @@ class DrawerView extends ConsumerWidget {
             .valueOrNull
             ?.firstWhere((org) => org.id == curOrgId)
         : null;
+    final curUserOrgRole = ref.watch(curUserOrgRoleProvider).valueOrNull;
 
     return Drawer(
       child: Column(
@@ -96,11 +97,13 @@ class DrawerView extends ConsumerWidget {
                       iconColor: Theme.of(context).colorScheme.onSurface,
                       title: AppLocalizations.of(context)!.projects,
                       options: [
-                        (
-                          name: AppLocalizations.of(context)!
-                              .everythingProjectName,
-                          id: CurSelectedProjectIdNotifier.everythingProjectId,
-                        ),
+                        if (projects.length > 1)
+                          (
+                            name: AppLocalizations.of(context)!
+                                .everythingProjectName,
+                            id: CurSelectedProjectIdNotifier
+                                .everythingProjectId,
+                          ),
                         ...projects.map(
                             (project) => (name: project.name, id: project.id)),
                       ],
@@ -108,9 +111,12 @@ class DrawerView extends ConsumerWidget {
                       onTapOption: (project) => ref
                           .read(projectNavigationServiceProvider)
                           .openProjectPage(projectId: project.id),
-                      onTapAddButton: () => ref
-                          .read(projectNavigationServiceProvider)
-                          .openProjectPage(mode: EditablePageMode.create),
+                      onTapAddButton: curUserOrgRole == OrgRole.admin ||
+                              curUserOrgRole == OrgRole.editor
+                          ? () => ref
+                              .read(projectNavigationServiceProvider)
+                              .openProjectPage(mode: EditablePageMode.create)
+                          : null,
                     );
                   },
                 ),
