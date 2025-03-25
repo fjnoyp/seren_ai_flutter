@@ -124,7 +124,9 @@ class TaskToolMethods {
           infoRequest.assignedUserNames)) {
         filterNotifier.updateFilter(TFAssignees.byUserModel(ref, curUser));
       } else if (infoRequest.assignedUserNames!.isNotEmpty) {
+        bool foundMatch = false;
         // Try to match by name - this might need to be adjusted based on your TFAssignee implementation
+        // TODO p2: we currently don't support multiple assignees filtering
         for (final userName in infoRequest.assignedUserNames!) {
           final selectedOrgId = ref.read(curSelectedOrgIdNotifierProvider);
           if (selectedOrgId != null) {
@@ -138,11 +140,22 @@ class TaskToolMethods {
                   userId: users.first.id,
                   firstName: users.first.firstName,
                   lastName: users.first.lastName));
+              foundMatch = true;
             }
           }
         }
+        // If we don't find a match, we can't just remove the filter
+        // because the user has provided a list of assignees
+        // So we return an error message to the AI
+        if (!foundMatch) {
+          return ErrorRequestResultModel(
+            resultForAi:
+                'No matching users found for ${infoRequest.assignedUserNames}',
+            showOnly: true,
+          );
+        }
       } else {
-        // No assignees provided
+        // Provided an empty list of assignees
         filterNotifier.updateFilter(TFAssignees.unassigned(ref, context));
       }
     }
@@ -150,8 +163,9 @@ class TaskToolMethods {
     // Handle author filtering if provided
     if (infoRequest.authorUserName != null) {
       if (AiToolExecutionUtils.isMyselfKeyword(infoRequest.authorUserName)) {
-        filterNotifier.updateFilter(TFAssignees.byUserModel(ref, curUser));
+        filterNotifier.updateFilter(TFAuthorUser.byUserModel(ref, curUser));
       } else {
+        bool foundMatch = false;
         final selectedOrgId = ref.read(curSelectedOrgIdNotifierProvider);
         if (selectedOrgId != null) {
           final users =
@@ -160,11 +174,19 @@ class TaskToolMethods {
                     orgId: selectedOrgId,
                   );
           if (users.isNotEmpty) {
-            filterNotifier.updateFilter(TFAssignees.byUser(ref,
+            filterNotifier.updateFilter(TFAuthorUser.byUser(ref,
                 userId: users.first.id,
                 firstName: users.first.firstName,
                 lastName: users.first.lastName));
+            foundMatch = true;
           }
+        }
+        if (!foundMatch) {
+          return ErrorRequestResultModel(
+            resultForAi:
+                'No matching user found for "${infoRequest.authorUserName}"',
+            showOnly: true,
+          );
         }
       }
     }
@@ -184,6 +206,12 @@ class TaskToolMethods {
       if (projects.isNotEmpty) {
         filterNotifier.updateFilter(TFProject.byProject(
             projectId: projects.first.id, projectName: projects.first.name));
+      } else {
+        return ErrorRequestResultModel(
+          resultForAi:
+              'No matching project found for "${infoRequest.parentProjectName}"',
+          showOnly: true,
+        );
       }
     }
 
@@ -197,6 +225,7 @@ class TaskToolMethods {
         context: context,
         startDateStr: infoRequest.taskDueDateStart,
         endDateStr: infoRequest.taskDueDateEnd,
+        dateField: TaskFieldEnum.dueDate,
       );
     }
 
@@ -208,7 +237,7 @@ class TaskToolMethods {
         context: context,
         startDateStr: infoRequest.taskCreatedDateStart,
         endDateStr: infoRequest.taskCreatedDateEnd,
-        dateFieldSelector: (task) => task.createdAt?.toIso8601String() ?? '',
+        dateField: TaskFieldEnum.createdAt,
       );
     }
 
@@ -263,8 +292,8 @@ class TaskToolMethods {
     required BuildContext context,
     String? startDateStr,
     String? endDateStr,
-    String Function(TaskModel task)? dateFieldSelector,
-    TaskFieldEnum dateField = TaskFieldEnum.dueDate,
+    // String Function(TaskModel task)? dateFieldSelector,
+    required TaskFieldEnum dateField,
   }) {
     final start = startDateStr != null
         ? AiDateParser.parseIsoIntoLocalThenUTC(startDateStr)
@@ -283,9 +312,9 @@ class TaskToolMethods {
     if (start != null && end != null) {
       filterNotifier.updateFilter(baseFilter.copyWith(
         condition: (task) {
-          final date = dateFieldSelector != null
-              ? DateTime.tryParse(dateFieldSelector(task))
-              : dateField == TaskFieldEnum.createdAt
+          final date =
+              // dateFieldSelector != null ? DateTime.tryParse(dateFieldSelector(task)) :
+              dateField == TaskFieldEnum.createdAt
                   ? task.createdAt
                   : task.dueDate;
           return date != null && date.isAfter(start) && date.isBefore(end);
@@ -294,9 +323,9 @@ class TaskToolMethods {
     } else if (start != null) {
       filterNotifier.updateFilter(baseFilter.copyWith(
         condition: (task) {
-          final date = dateFieldSelector != null
-              ? DateTime.tryParse(dateFieldSelector(task))
-              : dateField == TaskFieldEnum.createdAt
+          final date =
+              // dateFieldSelector != null ? DateTime.tryParse(dateFieldSelector(task)) :
+              dateField == TaskFieldEnum.createdAt
                   ? task.createdAt
                   : task.dueDate;
           return date != null && date.isAfter(start);
@@ -305,9 +334,9 @@ class TaskToolMethods {
     } else if (end != null) {
       filterNotifier.updateFilter(baseFilter.copyWith(
         condition: (task) {
-          final date = dateFieldSelector != null
-              ? DateTime.tryParse(dateFieldSelector(task))
-              : dateField == TaskFieldEnum.createdAt
+          final date =
+              // dateFieldSelector != null ? DateTime.tryParse(dateFieldSelector(task)) :
+              dateField == TaskFieldEnum.createdAt
                   ? task.createdAt
                   : task.dueDate;
           return date != null && date.isBefore(end);
