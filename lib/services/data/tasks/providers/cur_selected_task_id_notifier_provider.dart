@@ -34,8 +34,12 @@ class CurSelectedTaskIdNotifier extends Notifier<String?> {
       final curUser = ref.read(curUserProvider).value;
       if (curUser == null) throw Exception('No current user');
 
-      final parentProjectId = initialProjectId ??
-          await ref
+      // If initialProjectId is set and is not "everything", use it
+      // Otherwise, get the default project
+      final parentProjectId = initialProjectId != null &&
+              !CurSelectedProjectIdNotifier.isEverythingId(initialProjectId)
+          ? initialProjectId
+          : await ref
               .read(curSelectedProjectIdNotifierProvider.notifier)
               .getSelectedProjectOrDefault();
 
