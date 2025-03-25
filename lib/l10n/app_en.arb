@@ -534,6 +534,7 @@
     "chooseStartTime": "Choose a Start Time",
     "selectATask": "Select a Task",
     "choosePhase": "Choose Phase",
+    "thisProjectCurrentlyHasNoPhases": "This project currently has no phases",
     "blockedByTask": "Blocked by Task",
     "estimatedDuration": "Estimated Duration",
     "noEstimatedDurationSet": "No estimated duration set",

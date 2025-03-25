@@ -342,6 +342,7 @@
     "chooseStartTime": "Hora de Início",
     "selectATask": "Selecionar uma Tarefa",
     "choosePhase": "Escolher Etapa",
+    "thisProjectCurrentlyHasNoPhases": "Este projeto ainda não tem etapas",
     "blockedByTask": "Bloqueado por",
     "estimatedDuration": "Duração Estimada",
     "noEstimatedDurationSet": "Sem duração estimada",

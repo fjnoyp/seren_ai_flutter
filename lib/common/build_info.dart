@@ -2,10 +2,10 @@
 class BuildInfo {
   // Core build info
   static const String version = '1.0.0';
-  static const String buildDate = '2025-03-25 13:22:50';
+  static const String buildDate = '2025-03-25 13:23:02';
   
   // Git info
-  static const String commitHash = 'ccdb0e89';
+  static const String commitHash = '62b43b1c';
   static const String branch = 'fix/user-permissions';
   static const String lastTag = 'no tag';
   
@@ -16,12 +16,20 @@ class BuildInfo {
   // Recent commits (last 5)
   static const List<Map<String, String>> recentCommits = [
     {
+      "hash": "62b43b1c",
+      "author": "renata-sisilio",
+      "email": "renata@seren-ai.co", 
+      "message": "fix(projects): prevent task creation on everything project",
+      "date": "2025-03-25",
+      "relativeDate": "13 seconds ago"
+    },
+    {
       "hash": "ccdb0e89",
       "author": "renata-sisilio",
       "email": "renata@seren-ai.co", 
       "message": "fix(projects): restrict project editing, creation and deletion to admin and editor roles",
       "date": "2025-03-25",
-      "relativeDate": "15 seconds ago"
+      "relativeDate": "27 seconds ago"
     },
     {
       "hash": "4c8a37fc",
@@ -47,17 +55,9 @@ class BuildInfo {
       "date": "2025-03-21",
       "relativeDate": "4 days ago"
     },
-    {
-      "hash": "462e457b",
-      "author": "Kyle",
-      "email": "kylcheng@gmail.com", 
-      "message": "fix(ai): handle single stream event on web",
-      "date": "2025-03-21",
-      "relativeDate": "4 days ago"
-    },
   ];
 
   // Stats
-  static const String totalCommits = '461';
+  static const String totalCommits = '462';
   static const String contributors = '0';
 }
