@@ -140,10 +140,12 @@ class _CurUserTasksList extends ConsumerWidget {
           itemCount: groupedTasks.length,
           itemBuilder: (context, index) {
             final group = groupedTasks[index];
-            return Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
+            return ExpansionTile(
+              initiallyExpanded: group.date != null,
+              tilePadding: const EdgeInsets.all(0),
+              childrenPadding: const EdgeInsets.all(0),
+              title: _DateHeader(group: group),
               children: [
-                _DateHeader(group: group),
                 _TasksList(tasks: group.items.cast<TaskModel>()),
               ],
             );
