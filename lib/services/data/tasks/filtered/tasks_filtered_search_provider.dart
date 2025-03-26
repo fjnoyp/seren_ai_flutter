@@ -1,5 +1,6 @@
 import 'dart:math';
 
+import 'package:flutter/foundation.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:seren_ai_flutter/services/auth/cur_auth_state_provider.dart';
 import 'package:seren_ai_flutter/services/data/common/utils/string_similarity_extension.dart';
@@ -66,9 +67,20 @@ class TasksFilteredSearchService {
 
     final filterState = _ref.read(taskFilterStateProvider(viewType));
 
-    // Apply filter conditions
-    var filteredTasks =
-        tasks.where((task) => filterState.filterCondition(task)).toList();
+    // Apply async filtering with proper error handling
+    final asyncResults = await Future.wait(
+      tasks.map((task) async {
+        try {
+          final matches = await filterState.asyncFilterCondition(task);
+          return matches ? task : null;
+        } catch (e) {
+          debugPrint('Error in async filter for task ${task.id}: $e');
+          return null;
+        }
+      }),
+    );
+
+    var filteredTasks = asyncResults.whereType<TaskModel>().toList();
 
     // Apply sorting if provided
     if (filterState.sortComparator != null) {
