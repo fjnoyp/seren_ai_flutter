@@ -1,7 +1,9 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
+import 'package:seren_ai_flutter/services/data/common/widgets/async_value_handler_widget.dart';
 import 'package:seren_ai_flutter/services/data/tasks/filtered/task_filters_view.dart';
 import 'package:seren_ai_flutter/services/data/tasks/filtered/task_filter_view_type.dart';
 import 'package:seren_ai_flutter/services/data/tasks/filtered/tasks_filtered_search_provider.dart';
@@ -156,6 +158,18 @@ class SearchView extends HookConsumerWidget {
             onClose?.call();
           };
 
+    final searchQuery = ref.watch(taskSearchQueryProvider(viewType));
+    final searchController = useTextEditingController(text: searchQuery);
+
+    useEffect(() {
+      // Update the controller text when the search query changes externally
+      if (searchQuery != searchController.text) {
+        searchController.text = searchQuery;
+      }
+
+      return null;
+    }, [searchQuery]);
+
     return Container(
       color: Theme.of(context).cardColor,
       height: double.infinity,
@@ -169,6 +183,7 @@ class SearchView extends HookConsumerWidget {
               children: [
                 Expanded(
                   child: TextField(
+                    controller: searchController,
                     autofocus: autoFocus,
                     onChanged: (value) {
                       // Update both filter state and our local search query
@@ -191,20 +206,22 @@ class SearchView extends HookConsumerWidget {
               viewType: viewType,
             ),
             Expanded(
-              child: filteredTasksAsync.when(
+              child: AsyncValueHandlerWidget(
+                value: filteredTasksAsync,
                 data: (tasks) {
                   // Apply additional filter if provided
                   final filteredTasks = additionalFilter != null
                       ? tasks.where(additionalFilter!).toList()
                       : tasks;
 
-                  return _buildTaskList(
-                      context, filteredTasks, wrappedOnTapTask);
+                  return _TaskList(
+                    tasks: filteredTasks,
+                    onTapTask: wrappedOnTapTask,
+                    emptyStateWidget: emptyStateWidget,
+                    itemBuilder: itemBuilder,
+                    separatorBuilder: separatorBuilder,
+                  );
                 },
-                loading: () => const Center(child: CircularProgressIndicator()),
-                error: (error, stack) => Center(
-                  child: Text('Error: ${error.toString()}'),
-                ),
               ),
             ),
           ],
@@ -212,9 +229,26 @@ class SearchView extends HookConsumerWidget {
       ),
     );
   }
+}
 
-  Widget _buildTaskList(BuildContext context, List<TaskModel> tasks,
-      void Function(String taskId) onTapTask) {
+class _TaskList extends ConsumerWidget {
+  const _TaskList({
+    required this.tasks,
+    required this.onTapTask,
+    this.emptyStateWidget,
+    this.itemBuilder,
+    this.separatorBuilder,
+  });
+
+  final List<TaskModel> tasks;
+  final void Function(String taskId) onTapTask;
+  final Widget? emptyStateWidget;
+  final Widget Function(TaskModel task, void Function(String taskId)? onTap)?
+      itemBuilder;
+  final Widget Function(BuildContext context, int index)? separatorBuilder;
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
     // Show empty state if no tasks match the filter
     if (tasks.isEmpty) {
       return emptyStateWidget ??
