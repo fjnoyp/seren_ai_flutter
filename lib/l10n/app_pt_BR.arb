@@ -349,6 +349,7 @@
     "noEstimatedDurationSet": "Sem duração estimada",
     "noEstimatedDuration": "Sem duração estimada",
     "foundTasks": "Tarefas Encontradas",
+    "foundTasksWithCount": "{count, plural, =1{1 tarefa} other{{count} tarefas}} encontradas",
     "noTasksFound": "Nenhuma tarefa encontrada",
     "noTasksAssignedToYou": "Nenhuma tarefa atribuída a você",
     "noReminderSet": "Sem lembrete configurado",
