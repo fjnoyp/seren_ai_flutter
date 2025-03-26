@@ -60,6 +60,17 @@ class UsersRepository extends BaseRepository<UserModel> {
     );
   }
 
+  Future<List<String>> getTaskAssignedUserIds({
+    required String taskId,
+  }) async {
+    final result = await db.execute(
+      UserQueries.getTaskAssignedUserIdsQuery,
+      [taskId],
+    );
+
+    return result.map((row) => row['id'] as String).toList();
+  }
+
   // Watch users assigned to a specific project
   Stream<List<UserModel>> watchUsersInProject({
     required String projectId,
