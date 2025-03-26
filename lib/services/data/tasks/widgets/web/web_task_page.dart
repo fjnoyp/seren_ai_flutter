@@ -45,7 +45,7 @@ class WebTaskPage extends ConsumerWidget {
         ),
       (
         title: AppLocalizations.of(context)?.comments,
-        body: TaskCommentSection(curTaskId),
+        body: SingleChildScrollView(child: TaskCommentSection(curTaskId)),
       ),
       if (isDebugMode)
         (
