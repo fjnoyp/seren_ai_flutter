@@ -36,6 +36,17 @@ class TaskFilterState {
         return true;
       };
 
+  Future<bool> Function(TaskModel) get asyncFilterCondition => (task) async {
+        for (var filter in activeFilters) {
+          final result = filter.asyncCondition == null
+              ? filter.condition(task)
+              : await filter.asyncCondition!(task);
+          if (!result) return false;
+        }
+
+        return true;
+      };
+
   Comparator<TaskModel>? get sortComparator => sortBy?.comparator;
 
   @override

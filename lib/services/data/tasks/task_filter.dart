@@ -1,12 +1,18 @@
-import 'package:flutter/material.dart';
 import 'package:seren_ai_flutter/services/data/tasks/models/task_model.dart';
 import 'package:seren_ai_flutter/services/data/tasks/task_field_enum.dart';
 
 class TaskFilter {
   final TaskFieldEnum field;
 
+  /// This filters the tasks synchronously.
+  ///
+  /// For filters that use async conditions,
+  /// this will be used for the initial filtering.
   final bool Function(TaskModel) condition;
-  //final bool Function(TaskModel, DateTimeRange)? dateRangeCondition;
+
+  /// This filters the tasks asynchronously.
+  final Future<bool> Function(TaskModel)? asyncCondition;
+
   final String readableName;
 
   final bool? showDateRangePicker;
@@ -15,7 +21,7 @@ class TaskFilter {
     required this.field,
     required this.readableName,
     required this.condition,
-    //this.dateRangeCondition,
+    this.asyncCondition,
     this.showDateRangePicker = false,
   });
 
@@ -27,7 +33,7 @@ class TaskFilter {
       field: field,
       readableName: readableName ?? this.readableName,
       condition: condition ?? this.condition,
-      //dateRangeCondition: dateRangeCondition ?? this.dateRangeCondition,
+      asyncCondition: asyncCondition,
     );
   }
 }
