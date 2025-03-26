@@ -99,7 +99,7 @@ class SearchProjectResult {
     return SearchProjectResult(
       id: json['id'],
       name: json['name'],
-      similarityScore: json['similarity_score'],
+      similarityScore: json['similarity_score'].toDouble(),
     );
   }
 }
