@@ -13,9 +13,9 @@ import 'package:seren_ai_flutter/services/data/tasks/models/task_model.dart';
 import 'package:seren_ai_flutter/services/data/tasks/task_field_enum.dart';
 import 'package:seren_ai_flutter/services/data/tasks/task_filter.dart';
 import 'package:seren_ai_flutter/services/data/users/models/user_model.dart';
-import 'package:seren_ai_flutter/services/data/users/providers/task_assigned_users_stream_provider.dart';
 import 'package:seren_ai_flutter/services/data/users/providers/user_in_project_provider.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+import 'package:seren_ai_flutter/services/data/users/repositories/users_repository.dart';
 
 /// Predefined task filters for status
 class TFStatus {
@@ -162,12 +162,12 @@ class TFAssignees {
       TaskFilter(
         field: TaskFieldEnum.assignees,
         readableName: '$firstName $lastName',
-        condition: (task) {
-          // TODO p1: we shouldn't be "reading" the stream here
-          // this is likely causing not all matching tasks to be shown
-          final assignees =
-              ref.read(taskAssignedUsersStreamProvider(task.id)).value ?? [];
-          return assignees.any((assignee) => assignee.id == userId);
+        condition: (task) => true,
+        asyncCondition: (task) async {
+          final assigneeIds = await ref
+              .read(usersRepositoryProvider)
+              .getTaskAssignedUserIds(taskId: task.id);
+          return assigneeIds.any((assigneeId) => assigneeId == userId);
         },
       );
 
@@ -182,11 +182,12 @@ class TFAssignees {
   static TaskFilter unassigned(Ref ref, BuildContext context) => TaskFilter(
         field: TaskFieldEnum.assignees,
         readableName: AppLocalizations.of(context)!.notAssigned,
-        condition: (task) {
-          // TODO p1: we shouldn't be "reading" the stream here
-          final assignees =
-              ref.read(taskAssignedUsersStreamProvider(task.id)).value ?? [];
-          return assignees.isEmpty;
+        condition: (task) => true,
+        asyncCondition: (task) async {
+          final assigneeIds = await ref
+              .read(usersRepositoryProvider)
+              .getTaskAssignedUserIds(taskId: task.id);
+          return assigneeIds.isEmpty;
         },
       );
 }

@@ -250,10 +250,22 @@ class TaskToolMethods {
           orgId: selectedOrgId,
         );
 
-    final filteredTasks = tasks
-        .where((task) =>
-            ref.read(taskFilterStateProvider(viewType)).filterCondition(task))
-        .toList();
+    // Apply async filtering with proper error handling
+    final asyncResults = await Future.wait(
+      tasks.map((task) async {
+        try {
+          final matches = await ref
+              .read(taskFilterStateProvider(viewType))
+              .asyncFilterCondition(task);
+          return matches ? task : null;
+        } catch (e) {
+          log('Error in async filter for task ${task.id}: $e');
+          return null;
+        }
+      }),
+    );
+
+    final filteredTasks = asyncResults.whereType<TaskModel>().toList();
 
     List<Map<String, dynamic>> tasksToSendAiReadable = [];
     try {

@@ -110,10 +110,10 @@ class ProjectTasksBoardView extends HookConsumerWidget {
     final isEverythingProject =
         CurSelectedProjectIdNotifier.isEverythingId(projectId);
 
-    final tasks = isEverythingProject
-        ? ref.watch(tasksFilteredProvider(TaskFilterViewType.projectOverview))
-        : ref.watch(tasksByProjectFilteredProvider(
-            (projectId, TaskFilterViewType.projectOverview)));
+    final tasks = ref
+            .watch(tasksFilteredProvider(TaskFilterViewType.projectOverview))
+            .value ??
+        [];
 
     return Row(
       children: StatusEnum.values
