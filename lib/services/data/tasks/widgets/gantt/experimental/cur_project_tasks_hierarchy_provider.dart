@@ -77,7 +77,8 @@ final _curProjectTasksHierarchyProvider =
   if (projectId == null) return {};
 
   final filteredTasks =
-      ref.watch(tasksAndParentsByProjectFilteredProvider(projectId));
+      ref.watch(tasksAndParentsByProjectFilteredProvider(projectId)).value ??
+          [];
 
   // Build hierarchy map including all necessary tasks
   final hierarchyMap = <String, TaskHierarchyInfo>{};

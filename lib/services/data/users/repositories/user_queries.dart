@@ -41,4 +41,15 @@ abstract class UserQueries {
     INNER JOIN task_user_assignments tua ON u.id = tua.user_id
     WHERE tua.task_id = :task_id;
   ''';
+
+  /// Params:
+  /// - task_id: String
+  ///
+  /// Used to fetch all user IDs that are assigned to a specific task
+  static const String getTaskAssignedUserIdsQuery = '''
+    SELECT u.id
+    FROM users u  
+    INNER JOIN task_user_assignments tua ON u.id = tua.user_id
+    WHERE tua.task_id = :task_id;
+  ''';
 }
