@@ -253,7 +253,6 @@ class TaskToolMethods {
     final filteredTasks = tasks
         .where((task) =>
             ref.read(taskFilterStateProvider(viewType)).filterCondition(task))
-        .take(20)
         .toList();
 
     List<Map<String, dynamic>> tasksToSendAiReadable = [];

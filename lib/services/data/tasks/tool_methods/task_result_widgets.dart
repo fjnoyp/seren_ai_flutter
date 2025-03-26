@@ -19,32 +19,36 @@ class FindTasksResultWidget extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final theme = Theme.of(context);
 
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.stretch,
-      children: [
-        Text(AppLocalizations.of(context)!.foundTasks,
-            style: theme.textTheme.titleMedium),
-        const SizedBox(height: 8),
-        if (result.tasks.isEmpty)
-          Padding(
+    return result.tasks.isEmpty
+        ? Padding(
             padding: const EdgeInsets.only(left: 16.0),
             child: Text(AppLocalizations.of(context)!.noTasksFound),
-          ),
-        ListView.separated(
-          shrinkWrap: true,
-          physics: const NeverScrollableScrollPhysics(),
-          itemCount: result.tasks.length,
-          separatorBuilder: (context, index) => const Divider(),
-          itemBuilder: (context, index) {
-            return TaskListCardItemView(
-              task: result.tasks[index],
-              showAssignees: isWebVersion,
-              showMoreOptionsButton: false,
-            );
-          },
-        ),
-      ],
-    );
+          )
+        : ExpansionTile(
+            shape: const Border(),
+            title: Text(
+              AppLocalizations.of(context)!
+                  .foundTasksWithCount(result.tasks.length),
+              style: theme.textTheme.titleMedium,
+            ),
+            children: [
+              ConstrainedBox(
+                constraints: const BoxConstraints(maxHeight: 300),
+                child: ListView.separated(
+                  shrinkWrap: true,
+                  itemCount: result.tasks.length,
+                  separatorBuilder: (context, index) => const Divider(),
+                  itemBuilder: (context, index) {
+                    return TaskListCardItemView(
+                      task: result.tasks[index],
+                      showAssignees: isWebVersion,
+                      showMoreOptionsButton: false,
+                    );
+                  },
+                ),
+              ),
+            ],
+          );
   }
 }
 
