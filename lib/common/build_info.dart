@@ -2,10 +2,10 @@
 class BuildInfo {
   // Core build info
   static const String version = '1.0.0';
-  static const String buildDate = '2025-03-26 09:44:19';
+  static const String buildDate = '2025-03-26 10:49:25';
   
   // Git info
-  static const String commitHash = '8e1424ac';
+  static const String commitHash = 'c5c46e4a';
   static const String branch = 'chore/refactor_search_modal';
   static const String lastTag = 'no tag';
   
@@ -16,12 +16,20 @@ class BuildInfo {
   // Recent commits (last 5)
   static const List<Map<String, String>> recentCommits = [
     {
+      "hash": "c5c46e4a",
+      "author": "renata-sisilio",
+      "email": "renata@seren-ai.co", 
+      "message": "refactor(task_tools): improve task result display with ExpansionTile for better UX",
+      "date": "2025-03-26",
+      "relativeDate": "65 minutes ago"
+    },
+    {
       "hash": "8e1424ac",
       "author": "renata-sisilio",
       "email": "renata@seren-ai.co", 
       "message": "fix(task_tools): update search modal to watch for query external updates",
       "date": "2025-03-26",
-      "relativeDate": "43 minutes ago"
+      "relativeDate": "2 hours ago"
     },
     {
       "hash": "68a2ad1b",
@@ -29,7 +37,7 @@ class BuildInfo {
       "email": "renata@seren-ai.co", 
       "message": "fix(task_tools): enhance user filtering and error handling in task tool methods (task_name task_description and parent_project_name are still not working)",
       "date": "2025-03-25",
-      "relativeDate": "17 hours ago"
+      "relativeDate": "18 hours ago"
     },
     {
       "hash": "2b00b181",
@@ -37,7 +45,7 @@ class BuildInfo {
       "email": "renata@seren-ai.co", 
       "message": "fix(task_tools): added a day to end date parsing to include the end date in the filter",
       "date": "2025-03-25",
-      "relativeDate": "19 hours ago"
+      "relativeDate": "20 hours ago"
     },
     {
       "hash": "8ef9fbb0",
@@ -45,19 +53,11 @@ class BuildInfo {
       "email": "renata@seren-ai.co", 
       "message": "fix(task_tools): remove getOverdueTasksOnly parameter from FindTasksRequestModel",
       "date": "2025-03-25",
-      "relativeDate": "19 hours ago"
-    },
-    {
-      "hash": "561a1518",
-      "author": "renata-sisilio",
-      "email": "renata@seren-ai.co", 
-      "message": "feat(task_tools): conditionally open search modal when calling findTasks tool method",
-      "date": "2025-03-25",
-      "relativeDate": "24 hours ago"
+      "relativeDate": "20 hours ago"
     },
   ];
 
   // Stats
-  static const String totalCommits = '466';
+  static const String totalCommits = '467';
   static const String contributors = '0';
 }

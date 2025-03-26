@@ -14,22 +14,39 @@ import 'package:seren_ai_flutter/services/data/tasks/widgets/task_list/task_list
 // Provider to track modal state
 final isSearchModalOpenProvider = StateProvider<bool>((ref) => false);
 
+// Add a global focus node for the search field
+final _searchFocusNodeProvider = Provider<FocusNode>((ref) {
+  final focusNode = FocusNode();
+  ref.onDispose(() => focusNode.dispose());
+  return focusNode;
+});
+
 // Function to toggle search modal visibility
-void toggleSearchModal(WidgetRef ref) {
-  ref.read(isSearchModalOpenProvider.notifier).update((state) => !state);
+void toggleSearchModal(WidgetRef ref, {bool autofocus = true}) {
+  // Use a more readable variable name
+  final isClosing = ref.read(isSearchModalOpenProvider);
+
+  // Toggle the modal state
+  ref.read(isSearchModalOpenProvider.notifier).state =
+      !ref.read(isSearchModalOpenProvider);
 
   // Clear search query when closing
-  if (!ref.read(isSearchModalOpenProvider)) {
+  if (isClosing) {
     ref
         .read(taskSearchQueryProvider(TaskFilterViewType.modalSearch).notifier)
         .state = '';
   }
+  // Request focus when opening if autofocus is true
+  else if (autofocus) {
+    // Use a post-frame callback to ensure the widget is built before requesting focus
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      ref.read(_searchFocusNodeProvider).requestFocus();
+    });
+  }
 }
 
 class SearchModal extends ConsumerWidget {
-  const SearchModal({
-    super.key,
-  });
+  const SearchModal({super.key});
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -74,9 +91,7 @@ class SearchModal extends ConsumerWidget {
                     shape: const CircleBorder(),
                     color: Theme.of(context).colorScheme.primary,
                     child: InkWell(
-                      onTap: () {
-                        toggleSearchModal(ref);
-                      },
+                      onTap: () => toggleSearchModal(ref),
                       customBorder: const CircleBorder(),
                       child: Padding(
                         padding: const EdgeInsets.all(8.0),
@@ -105,7 +120,6 @@ class SearchView extends HookConsumerWidget {
     super.key,
     this.onTapOption,
     this.additionalFilter,
-    this.autoFocus = true,
     this.onClose,
     this.emptyStateWidget,
     this.itemBuilder,
@@ -117,9 +131,6 @@ class SearchView extends HookConsumerWidget {
 
   /// Additional filter to apply to the tasks (e.g. only show tasks from a certain phase)
   final bool Function(TaskModel)? additionalFilter;
-
-  /// Whether to auto focus the search field
-  final bool autoFocus;
 
   /// The view type to use for filtering
   final TaskFilterViewType viewType = TaskFilterViewType.modalSearch;
@@ -170,6 +181,9 @@ class SearchView extends HookConsumerWidget {
       return null;
     }, [searchQuery]);
 
+    // Get the shared focus node
+    final searchFocusNode = ref.watch(_searchFocusNodeProvider);
+
     return Container(
       color: Theme.of(context).cardColor,
       height: double.infinity,
@@ -184,7 +198,8 @@ class SearchView extends HookConsumerWidget {
                 Expanded(
                   child: TextField(
                     controller: searchController,
-                    autofocus: autoFocus,
+                    // Use the shared focus node instead of autofocus
+                    focusNode: searchFocusNode,
                     onChanged: (value) {
                       // Update both filter state and our local search query
                       ref
