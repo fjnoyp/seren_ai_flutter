@@ -1,9 +1,10 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:seren_ai_flutter/services/ai/widgets/mobile_ai_assistant_button/mobile_overlay_container.dart';
 import 'package:seren_ai_flutter/services/ai/widgets/mobile_ai_assistant_button/mobile_ai_assistant_overlay_manager.dart';
 
 /// Text input widget that appears as an overlay
-class MobileUserInputTextDisplayWidget extends StatelessWidget {
+class MobileUserInputTextDisplayWidget extends HookWidget {
   final TextEditingController controller;
   final VoidCallback? onSubmit;
 
@@ -39,7 +40,11 @@ class MobileUserInputTextDisplayWidget extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
-    final focusNode = FocusNode();
+    final focusNode = useMemoized(() => FocusNode(), []);
+
+    useEffect(() {
+      return () => focusNode.dispose();
+    }, [focusNode]);
 
     return Material(
       elevation: 8,
@@ -49,12 +54,9 @@ class MobileUserInputTextDisplayWidget extends StatelessWidget {
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
-            Focus(
-              onFocusChange: (hasFocus) {
-                // We could add visual feedback here if needed
-              },
+            GestureDetector(
+              onTap: focusNode.requestFocus,
               child: TextField(
-                autofocus: true,
                 focusNode: focusNode,
                 controller: controller,
                 maxLines: null,
