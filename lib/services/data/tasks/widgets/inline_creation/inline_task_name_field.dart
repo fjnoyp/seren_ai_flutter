@@ -47,11 +47,14 @@ class InlineTaskNameField extends HookConsumerWidget {
         final filterState = ref.read(taskFilterStateProvider(filterViewType));
 
         if (filterState.activeFilters.isNotEmpty) {
-          ref.read(tasksRepositoryProvider).getById(previous).then((task) {
+          ref
+              .read(tasksRepositoryProvider)
+              .getById(previous)
+              .then((task) async {
             if (task != null) {
               bool isTaskVisible = false;
               try {
-                isTaskVisible = filterState.filterCondition(task);
+                isTaskVisible = await filterState.asyncFilterCondition(task);
               } catch (e) {
                 isTaskVisible =
                     false; // Assume task is not visible if filter errors

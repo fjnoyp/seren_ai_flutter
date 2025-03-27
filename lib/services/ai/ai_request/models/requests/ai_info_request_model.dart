@@ -21,12 +21,14 @@ enum AiInfoRequestType {
 
 class AiInfoRequestModel extends AiRequestModel {
   final AiInfoRequestType infoRequestType;
-  final bool showOnly;
+
+  // TODO p3: defaults to true, in future get ai readable from the ai request
+  final bool showUI;
 
   AiInfoRequestModel({
     required this.infoRequestType,
     super.args,
-    this.showOnly = true,
+    this.showUI = true,
   }) : super(AiRequestType.infoRequest);
 
   factory AiInfoRequestModel.fromJson(Map<String, dynamic> json) {
@@ -45,6 +47,6 @@ class AiInfoRequestModel extends AiRequestModel {
 
   @override
   String toString() {
-    return 'AiInfoRequestModel(infoRequestType: $infoRequestType, showOnly: $showOnly, args: $args)';
+    return 'AiInfoRequestModel(infoRequestType: $infoRequestType, showOnly: $showUI, args: $args)';
   }
 }
