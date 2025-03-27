@@ -62,6 +62,9 @@ class TaskToolMethods {
 
   Future<AiRequestResultModel> findTasks(
       {required Ref ref, required FindTasksRequestModel infoRequest}) async {
+    // TODO p0 - support updated at filter and finding
+    // This way user can find tasks that were updated in the last X days
+
     // === Validate Auth ===
     final curUser = ref.read(curUserProvider).valueOrNull;
 
