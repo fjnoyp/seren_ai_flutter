@@ -62,7 +62,7 @@ class TaskListItemView extends ConsumerWidget {
               ],
             ),
       trailing: LayoutBuilder(builder: (context, constraints) {
-        final isNarrow = constraints.maxWidth < 200;
+        final isNarrow = constraints.maxWidth < 600;
 
         if (isNarrow) {
           return TaskListItemMoreOptionsButton(taskId: task.id);
@@ -108,6 +108,52 @@ class TaskListItemView extends ConsumerWidget {
                   : const SizedBox.shrink(),
             ),
             TaskListItemMoreOptionsButton(taskId: task.id),
+          ],
+        );
+      }),
+      subtitle: LayoutBuilder(builder: (context, constraints) {
+        final isNarrow = constraints.maxWidth < 600;
+
+        if (!isNarrow || isCreatingTask) return const SizedBox.shrink();
+
+        return Row(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            TaskListItemPhaseIndicator(task),
+            if (!isCreatingTask)
+              Flexible(
+                child: SizedBox(
+                  width: 92,
+                  child: TaskAssigneesAvatars(task.id),
+                ),
+              ),
+            SizedBox(
+              width: 80,
+              child: task.priority != null
+                  ? PriorityView(priority: task.priority!)
+                  : const SizedBox.shrink(),
+            ),
+            SizedBox(
+              width: 80,
+              child: task.dueDate != null
+                  ? Row(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        const SizedBox(width: 8),
+                        Icon(Icons.calendar_today,
+                            size: 16, color: dueDateColor),
+                        const SizedBox(width: 4),
+                        Expanded(
+                          child: Text(
+                            DateFormat.MMMd().format(task.dueDate!),
+                            style: TextStyle(color: dueDateColor),
+                            overflow: TextOverflow.ellipsis,
+                          ),
+                        ),
+                      ],
+                    )
+                  : const SizedBox.shrink(),
+            ),
           ],
         );
       }),
