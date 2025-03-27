@@ -2,26 +2,34 @@
 class BuildInfo {
   // Core build info
   static const String version = '1.0.0';
-  static const String buildDate = '2025-03-27 11:06:03';
+  static const String buildDate = '2025-03-27 11:21:03';
   
   // Git info
-  static const String commitHash = '7c44c54';
+  static const String commitHash = '2a22b6d';
   static const String branch = 'feat/ai_note_task_additions';
   static const String lastTag = 'no tag';
   
   // Author of last commit
-  static const String lastCommitAuthor = 'renata-sisilio';
-  static const String lastCommitEmail = 'renata@seren-ai.co';
+  static const String lastCommitAuthor = 'Kyle';
+  static const String lastCommitEmail = 'kylcheng@gmail.com';
   
   // Recent commits (last 5)
   static const List<Map<String, String>> recentCommits = [
+    {
+      "hash": "2a22b6d",
+      "author": "Kyle",
+      "email": "kylcheng@gmail.com", 
+      "message": "chore(ai): add basic note requests + update task request fields",
+      "date": "2025-03-27",
+      "relativeDate": "15 minutes ago"
+    },
     {
       "hash": "7c44c54",
       "author": "renata-sisilio",
       "email": "renata@seren-ai.co", 
       "message": "fix(project_overview): move filter logic from TaskFiltersView to ProjectOverviewPage.",
       "date": "2025-03-27",
-      "relativeDate": "72 minutes ago"
+      "relativeDate": "87 minutes ago"
     },
     {
       "hash": "e286fd3",
@@ -45,19 +53,11 @@ class BuildInfo {
       "email": "renata@seren-ai.co", 
       "message": "fix(ai): improve MobileUserInputTextDisplayWidget focus management",
       "date": "2025-03-26",
-      "relativeDate": "28 hours ago"
-    },
-    {
-      "hash": "715a433",
-      "author": "renata-sisilio",
-      "email": "renata@seren-ai.co", 
-      "message": "refactor(task_tools): improve task result display with ExpansionTile for better UX",
-      "date": "2025-03-26",
       "relativeDate": "29 hours ago"
     },
   ];
 
   // Stats
-  static const String totalCommits = '480';
+  static const String totalCommits = '481';
   static const String contributors = '       0';
 }
