@@ -26,16 +26,6 @@ class TaskFilterState {
     );
   }
 
-  bool Function(TaskModel) get filterCondition => (task) {
-        // Apply other filters
-        for (var filter in activeFilters) {
-          final result = filter.condition(task);
-          if (!result) return false;
-        }
-
-        return true;
-      };
-
   Future<bool> Function(TaskModel) get asyncFilterCondition => (task) async {
         for (var filter in activeFilters) {
           final result = filter.asyncCondition == null

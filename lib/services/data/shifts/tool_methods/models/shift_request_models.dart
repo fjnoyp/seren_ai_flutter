@@ -7,7 +7,7 @@ class ShiftAssignmentsRequestModel extends AiInfoRequestModel {
 
   ShiftAssignmentsRequestModel({
     required this.daysToGet,
-    super.showOnly = true,
+    super.showUI = true,
     super.args,
   }) : super(infoRequestType: AiInfoRequestType.shiftAssignments);
 
@@ -16,7 +16,6 @@ class ShiftAssignmentsRequestModel extends AiInfoRequestModel {
       args: json['args'],
       daysToGet:
           (json['args']['days_to_get'] as List<dynamic>?)?.cast<String>() ?? [],
-      showOnly: json['show_only'] ?? true,
     );
   }
 }
@@ -26,7 +25,7 @@ class ShiftLogsRequestModel extends AiInfoRequestModel {
 
   ShiftLogsRequestModel({
     required this.daysToGet,
-    super.showOnly = true,
+    super.showUI = true,
     super.args,
   }) : super(infoRequestType: AiInfoRequestType.shiftLogs);
 
@@ -35,7 +34,6 @@ class ShiftLogsRequestModel extends AiInfoRequestModel {
       args: json['args'],
       daysToGet:
           (json['args']['days_to_get'] as List<dynamic>?)?.cast<String>() ?? [],
-      showOnly: json['show_only'] ?? true,
     );
   }
 }
