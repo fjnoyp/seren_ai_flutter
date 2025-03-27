@@ -2,10 +2,10 @@
 class BuildInfo {
   // Core build info
   static const String version = '1.0.0';
-  static const String buildDate = '2025-03-27 11:22:47';
+  static const String buildDate = '2025-03-27 12:47:09';
   
   // Git info
-  static const String commitHash = '6a5f027';
+  static const String commitHash = '04933b3';
   static const String branch = 'feat/ai_note_task_additions';
   static const String lastTag = 'no tag';
   
@@ -16,12 +16,20 @@ class BuildInfo {
   // Recent commits (last 5)
   static const List<Map<String, String>> recentCommits = [
     {
+      "hash": "04933b3",
+      "author": "Kyle",
+      "email": "kylcheng@gmail.com", 
+      "message": "chore(ai): use new ai context within task tools",
+      "date": "2025-03-27",
+      "relativeDate": "84 minutes ago"
+    },
+    {
       "hash": "6a5f027",
       "author": "Kyle",
       "email": "kylcheng@gmail.com", 
       "message": "chore(ai): update ui context logic",
       "date": "2025-03-27",
-      "relativeDate": "2 minutes ago"
+      "relativeDate": "86 minutes ago"
     },
     {
       "hash": "2a22b6d",
@@ -29,7 +37,7 @@ class BuildInfo {
       "email": "kylcheng@gmail.com", 
       "message": "chore(ai): add basic note requests + update task request fields",
       "date": "2025-03-27",
-      "relativeDate": "17 minutes ago"
+      "relativeDate": "2 hours ago"
     },
     {
       "hash": "7c44c54",
@@ -37,7 +45,7 @@ class BuildInfo {
       "email": "renata@seren-ai.co", 
       "message": "fix(project_overview): move filter logic from TaskFiltersView to ProjectOverviewPage.",
       "date": "2025-03-27",
-      "relativeDate": "89 minutes ago"
+      "relativeDate": "3 hours ago"
     },
     {
       "hash": "e286fd3",
@@ -45,19 +53,11 @@ class BuildInfo {
       "email": "kylcheng@gmail.com", 
       "message": "chore(ai): minor fixes + remove showOnly ai param",
       "date": "2025-03-27",
-      "relativeDate": "3 hours ago"
-    },
-    {
-      "hash": "d964581",
-      "author": "renata-sisilio",
-      "email": "renata@seren-ai.co", 
-      "message": "fix(task_filters): async conditions and error handling on task filters",
-      "date": "2025-03-26",
-      "relativeDate": "24 hours ago"
+      "relativeDate": "5 hours ago"
     },
   ];
 
   // Stats
-  static const String totalCommits = '482';
+  static const String totalCommits = '483';
   static const String contributors = '       0';
 }
