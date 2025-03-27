@@ -52,20 +52,6 @@ class TaskFiltersView extends ConsumerWidget {
       //           .toList() ??
       //       [];
 
-      if (next != null && viewType == TaskFilterViewType.projectOverview) {
-        final taskFilterStateNotifier =
-            ref.read(taskFilterStateProvider(viewType).notifier);
-
-        if (CurSelectedProjectIdNotifier.isEverythingId(next)) {
-          taskFilterStateNotifier.removeFilter(TaskFieldEnum.project);
-        } else {
-          // We only use the name String to show the filter name in the UI
-          // but the filter will be hidden on this view
-          taskFilterStateNotifier.updateFilter(
-              TFProject.byProject(projectId: next, projectName: ""));
-        }
-      }
-
       // We don't want to remove the assignees filter when the user is in the modal search view
       if (viewType != TaskFilterViewType.modalSearch) {
         filterNotifier.removeFilter(TaskFieldEnum.assignees);
