@@ -2,6 +2,7 @@ import 'package:json_annotation/json_annotation.dart';
 import 'package:seren_ai_flutter/services/data/common/i_has_id.dart';
 import 'package:seren_ai_flutter/services/data/common/status_enum.dart';
 import 'package:seren_ai_flutter/services/data/common/uuid.dart';
+import 'package:seren_ai_flutter/services/ai/ai_readable_mixin.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:seren_ai_flutter/services/data/projects/models/project_model.dart';
@@ -57,7 +58,7 @@ enum TaskType {
 }
 
 @JsonSerializable()
-class TaskModel implements IHasId {
+class TaskModel with AiReadableMixin implements IHasId {
   @override
   final String id;
   final String name;
@@ -232,18 +233,28 @@ class TaskModel implements IHasId {
 
   Map<String, dynamic> toAiReadableMap(
       {ProjectModel? project, UserModel? author, List<UserModel>? assignees}) {
+    final taskData = {
+      'id': id,
+      'name': name,
+      'description': description,
+      'status': status,
+      'priority': priority,
+      'start_date': startDateTime?.toIso8601String(),
+      'due_date': dueDate?.toIso8601String(),
+      'created_at': createdAt?.toIso8601String(),
+      'updated_at': updatedAt?.toIso8601String(),
+    };
+
+    final baseMap = baseAiReadableMap(
+      type: 'task',
+      data: taskData,
+      author: author,
+      project: project,
+    );
+
     return {
-      'task': {
-        'name': name,
-        'description': description,
-        'status': status,
-        'priority': priority,
-        'start_date': startDateTime?.toIso8601String(),
-        'due_date': dueDate?.toIso8601String(),
-      },
-      'author': author?.email ?? 'Unknown',
-      'project': project?.name ?? 'No Project',
-      'assignees': assignees?.map((user) => user.email).toList() ?? [],
+      ...baseMap,
+      'assignees': assignees?.map((user) => user.fullName).toList() ?? [],
     };
   }
 }

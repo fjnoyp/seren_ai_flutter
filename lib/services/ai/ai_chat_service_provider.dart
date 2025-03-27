@@ -21,6 +21,7 @@ import 'package:seren_ai_flutter/services/ai/ai_chats/repositories/ai_chat_messa
 import 'package:seren_ai_flutter/services/ai/ai_chats/repositories/ai_chat_threads_repository.dart';
 import 'package:seren_ai_flutter/services/data/notes/providers/cur_selected_note_id_notifier_provider.dart';
 import 'package:seren_ai_flutter/services/data/orgs/providers/cur_selected_org_id_notifier.dart';
+import 'package:seren_ai_flutter/services/ai/ai_context_service.dart';
 
 import 'package:logging/logging.dart';
 import 'package:seren_ai_flutter/services/data/tasks/providers/cur_selected_task_id_notifier_provider.dart';
@@ -134,31 +135,34 @@ class AIChatService {
 
   Future<String> _getUIContext() async {
     final curRoute = ref.read(currentRouteProvider);
-
     final appRoute = AppRoutes.getAppRouteFromPath(curRoute);
 
     if (appRoute == null) {
       log.warning('AppRoute is null but curRoute is: $curRoute');
       return '';
-      //print('AppRoute: ${appRoute.toString()}');
     }
 
     final sb = StringBuffer();
     sb.writeln('CurPage: ${appRoute.toString()}\n');
 
-    //final curUser = ref.read(curUserProvider).value;
-    //sb.writeln('CurUser: ${curUser?.email}\n');
+    final aiContextService = ref.read(aiContextServiceProvider);
 
     if (appRoute == AppRoutes.taskPage) {
-      final curEditingTaskMap = await ref
-          .read(curSelectedTaskIdNotifierProvider.notifier)
-          .toReadableMap();
-      sb.writeln('CurTask: $curEditingTaskMap');
+      final taskId = ref.read(curSelectedTaskIdNotifierProvider);
+      if (taskId != null) {
+        final context = await aiContextService.getTaskContext(taskId);
+        if (context != null) {
+          sb.writeln(context);
+        }
+      }
     } else if (appRoute == AppRoutes.notePage) {
-      final curNoteMap = await ref
-          .read(curSelectedNoteIdNotifierProvider.notifier)
-          .toReadableMap();
-      sb.writeln('CurNote: $curNoteMap');
+      final noteId = ref.read(curSelectedNoteIdNotifierProvider);
+      if (noteId != null) {
+        final context = await aiContextService.getNoteContext(noteId);
+        if (context != null) {
+          sb.writeln(context);
+        }
+      }
     }
 
     return sb.toString();
