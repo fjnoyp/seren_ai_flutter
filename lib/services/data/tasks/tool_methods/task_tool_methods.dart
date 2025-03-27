@@ -48,6 +48,7 @@ import 'package:seren_ai_flutter/services/data/users/models/user_model.dart';
 import 'package:seren_ai_flutter/services/data/users/repositories/users_repository.dart';
 import 'package:seren_ai_flutter/services/data/tasks/tool_methods/ai_tool_execution_utils.dart';
 import 'package:seren_ai_flutter/widgets/search/search_modal.dart';
+import 'package:seren_ai_flutter/services/ai/ai_context_service.dart';
 
 class TaskToolMethods {
   // Threshold for string similarity (0.0 to 1.0)
@@ -261,36 +262,19 @@ class TaskToolMethods {
     );
     final filteredTasks = asyncResults.whereType<TaskModel>().toList();
 
-    List<Map<String, dynamic>> tasksToSendAiReadable = [];
-    try {
-      for (final task in filteredTasks) {
-        final project = await ref
-            .read(projectsRepositoryProvider)
-            .getById(task.parentProjectId);
-
-        final author =
-            await ref.read(usersRepositoryProvider).getById(task.authorUserId);
-
-        final assignees = await ref
-            .read(usersRepositoryProvider)
-            .getTaskAssignedUsers(taskId: task.id);
-
-        tasksToSendAiReadable.add(task.toAiReadableMap(
-            project: project, author: author, assignees: assignees));
-      }
-    } catch (e, stackTrace) {
-      log('findTasks: Error converting tasks: $e');
-      log('findTasks: Stack trace: $stackTrace');
-      // Continue with what we have
-    }
-
     // Only take first 20 tasks to send to AI
-    tasksToSendAiReadable = tasksToSendAiReadable.take(20).toList();
+    final tasksToSend = filteredTasks.take(20).toList();
+
+    // Get AI-readable context for each task using AIContextService
+    final aiContextService = ref.read(aiContextServiceProvider);
+    final tasksToSendAiReadable = await Future.wait(
+      tasksToSend.map((task) => aiContextService.getTaskContext(task.id)),
+    );
 
     return FindTasksResultModel(
-      tasks: filteredTasks,
+      tasks: tasksToSend,
       resultForAi:
-          'Found ${filteredTasks.length} matching tasks: $tasksToSendAiReadable',
+          'Found ${filteredTasks.length} matching tasks: ${tasksToSendAiReadable.whereType<String>().toList()}',
       showOnly: infoRequest.showUI,
     );
   }
@@ -522,10 +506,16 @@ class TaskToolMethods {
     const maxTasksToSend = 20;
     final tasksToSend = filteredTasks.take(maxTasksToSend).toList();
 
+    // Get AI-readable context for each task using AIContextService
+    final aiContextService = ref.read(aiContextServiceProvider);
+    final tasksToSendAiReadable = await Future.wait(
+      tasksToSend.map((task) => aiContextService.getTaskContext(task.id)),
+    );
+
     return FindTasksResultModel(
       tasks: tasksToSend,
       resultForAi:
-          'Found ${filteredTasks.length} matching tasks: ${tasksToSend.map((task) => task.toAiReadableMap(project: projectsMap[task.parentProjectId], author: authorsMap[task.authorUserId], assignees: assigneesMap[task.id])).toList()}',
+          'Found ${filteredTasks.length} matching tasks: ${tasksToSendAiReadable.whereType<String>().toList()}',
       showOnly: infoRequest.showUI,
     );
   }
