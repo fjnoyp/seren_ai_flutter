@@ -2,62 +2,62 @@
 class BuildInfo {
   // Core build info
   static const String version = '1.0.0';
-  static const String buildDate = '2025-03-27 13:54:07';
+  static const String buildDate = '2025-03-27 11:06:03';
   
   // Git info
-  static const String commitHash = 'e286fd33';
-  static const String branch = 'main';
+  static const String commitHash = '7c44c54';
+  static const String branch = 'feat/ai_note_task_additions';
   static const String lastTag = 'no tag';
   
   // Author of last commit
-  static const String lastCommitAuthor = 'Kyle';
-  static const String lastCommitEmail = 'kylcheng@gmail.com';
+  static const String lastCommitAuthor = 'renata-sisilio';
+  static const String lastCommitEmail = 'renata@seren-ai.co';
   
   // Recent commits (last 5)
   static const List<Map<String, String>> recentCommits = [
     {
-      "hash": "e286fd33",
+      "hash": "7c44c54",
+      "author": "renata-sisilio",
+      "email": "renata@seren-ai.co", 
+      "message": "fix(project_overview): move filter logic from TaskFiltersView to ProjectOverviewPage.",
+      "date": "2025-03-27",
+      "relativeDate": "72 minutes ago"
+    },
+    {
+      "hash": "e286fd3",
       "author": "Kyle",
       "email": "kylcheng@gmail.com", 
       "message": "chore(ai): minor fixes + remove showOnly ai param",
       "date": "2025-03-27",
-      "relativeDate": "2 hours ago"
+      "relativeDate": "3 hours ago"
     },
     {
-      "hash": "d964581c",
+      "hash": "d964581",
       "author": "renata-sisilio",
       "email": "renata@seren-ai.co", 
       "message": "fix(task_filters): async conditions and error handling on task filters",
       "date": "2025-03-26",
-      "relativeDate": "23 hours ago"
+      "relativeDate": "24 hours ago"
     },
     {
-      "hash": "152f2535",
+      "hash": "152f253",
       "author": "renata-sisilio",
       "email": "renata@seren-ai.co", 
       "message": "fix(ai): improve MobileUserInputTextDisplayWidget focus management",
       "date": "2025-03-26",
-      "relativeDate": "27 hours ago"
-    },
-    {
-      "hash": "715a4331",
-      "author": "renata-sisilio",
-      "email": "renata@seren-ai.co", 
-      "message": "refactor(task_tools): improve task result display with ExpansionTile for better UX",
-      "date": "2025-03-26",
       "relativeDate": "28 hours ago"
     },
     {
-      "hash": "895bc736",
+      "hash": "715a433",
       "author": "renata-sisilio",
       "email": "renata@seren-ai.co", 
-      "message": "fix(task_tools): update search modal to watch for query external updates",
+      "message": "refactor(task_tools): improve task result display with ExpansionTile for better UX",
       "date": "2025-03-26",
       "relativeDate": "29 hours ago"
     },
   ];
 
   // Stats
-  static const String totalCommits = '479';
-  static const String contributors = '0';
+  static const String totalCommits = '480';
+  static const String contributors = '       0';
 }
