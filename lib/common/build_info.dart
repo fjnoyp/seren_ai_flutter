@@ -2,10 +2,10 @@
 class BuildInfo {
   // Core build info
   static const String version = '1.0.0';
-  static const String buildDate = '2025-03-27 11:21:03';
+  static const String buildDate = '2025-03-27 11:22:47';
   
   // Git info
-  static const String commitHash = '2a22b6d';
+  static const String commitHash = '6a5f027';
   static const String branch = 'feat/ai_note_task_additions';
   static const String lastTag = 'no tag';
   
@@ -16,12 +16,20 @@ class BuildInfo {
   // Recent commits (last 5)
   static const List<Map<String, String>> recentCommits = [
     {
+      "hash": "6a5f027",
+      "author": "Kyle",
+      "email": "kylcheng@gmail.com", 
+      "message": "chore(ai): update ui context logic",
+      "date": "2025-03-27",
+      "relativeDate": "2 minutes ago"
+    },
+    {
       "hash": "2a22b6d",
       "author": "Kyle",
       "email": "kylcheng@gmail.com", 
       "message": "chore(ai): add basic note requests + update task request fields",
       "date": "2025-03-27",
-      "relativeDate": "15 minutes ago"
+      "relativeDate": "17 minutes ago"
     },
     {
       "hash": "7c44c54",
@@ -29,7 +37,7 @@ class BuildInfo {
       "email": "renata@seren-ai.co", 
       "message": "fix(project_overview): move filter logic from TaskFiltersView to ProjectOverviewPage.",
       "date": "2025-03-27",
-      "relativeDate": "87 minutes ago"
+      "relativeDate": "89 minutes ago"
     },
     {
       "hash": "e286fd3",
@@ -47,17 +55,9 @@ class BuildInfo {
       "date": "2025-03-26",
       "relativeDate": "24 hours ago"
     },
-    {
-      "hash": "152f253",
-      "author": "renata-sisilio",
-      "email": "renata@seren-ai.co", 
-      "message": "fix(ai): improve MobileUserInputTextDisplayWidget focus management",
-      "date": "2025-03-26",
-      "relativeDate": "29 hours ago"
-    },
   ];
 
   // Stats
-  static const String totalCommits = '481';
+  static const String totalCommits = '482';
   static const String contributors = '       0';
 }
