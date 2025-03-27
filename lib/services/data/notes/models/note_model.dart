@@ -2,11 +2,14 @@ import 'package:json_annotation/json_annotation.dart';
 import 'package:seren_ai_flutter/services/data/common/i_has_id.dart';
 import 'package:seren_ai_flutter/services/data/common/status_enum.dart';
 import 'package:seren_ai_flutter/services/data/common/uuid.dart';
+import 'package:seren_ai_flutter/services/ai/ai_readable_mixin.dart';
+import 'package:seren_ai_flutter/services/data/projects/models/project_model.dart';
+import 'package:seren_ai_flutter/services/data/users/models/user_model.dart';
 
 part 'note_model.g.dart';
 
 @JsonSerializable()
-class NoteModel implements IHasId {
+class NoteModel with AiReadableMixin implements IHasId {
   @override
   final String id;
   final String name;
@@ -78,4 +81,24 @@ class NoteModel implements IHasId {
   factory NoteModel.fromJson(Map<String, dynamic> json) =>
       _$NoteModelFromJson(json);
   Map<String, dynamic> toJson() => _$NoteModelToJson(this);
+
+  Map<String, dynamic> toAiReadableMap(
+      {ProjectModel? project, UserModel? author}) {
+    final noteData = {
+      'id': id,
+      'name': name,
+      'description': description,
+      'status': status,
+      'date': date?.toIso8601String(),
+      'address': address,
+      'action_required': actionRequired,
+    };
+
+    return baseAiReadableMap(
+      type: 'note',
+      data: noteData,
+      author: author,
+      project: project,
+    );
+  }
 }
