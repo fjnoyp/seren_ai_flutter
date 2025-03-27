@@ -62,6 +62,7 @@ class TaskToolMethods {
 
   Future<AiRequestResultModel> findTasks(
       {required Ref ref, required FindTasksRequestModel infoRequest}) async {
+    // === Validate Auth ===
     final curUser = ref.read(curUserProvider).valueOrNull;
 
     if (curUser == null) return _handleNoAuth();
@@ -72,11 +73,8 @@ class TaskToolMethods {
           resultForAi: 'No org selected', showOnly: true);
     }
 
-// We need to map all the fields in the ai info request to the @task_filter_state_provider
-// and then use that to filter the tasks
-
-// And get back the result ...
-
+    // === Filter Notifier Control ===
+    // We use filter notifier to control the selected filters in the search modal we will show
     const viewType = TaskFilterViewType.modalSearch;
 
     final context =
@@ -86,37 +84,36 @@ class TaskToolMethods {
 
     filterNotifier.clearAllFilters();
 
-    if (infoRequest.showSearchModal == true) {
-      // We can't use the toggleSearchModal function here
-      // because it would close the modal if it's already open
+    if (infoRequest.showUI == true) {
+      // Open modal
       ref.read(isSearchModalOpenProvider.notifier).state = true;
 
       // Wait for the next frame to ensure the modal is rendered
       await WidgetsBinding.instance.endOfFrame;
     }
 
-    /*
+    // === Parse the AI Request into filter notifier filters ===
 
-    this.estimateDurationMinutes,
-  
-  */
-
+    // == TaskName
     if (infoRequest.taskName != null || infoRequest.taskDescription != null) {
       ref.read(taskSearchQueryProvider(viewType).notifier).state =
           '${infoRequest.taskName ?? ''} ${' ${infoRequest.taskDescription ?? ''}'}'
               .trim();
     }
 
+    // == TaskStatus
     if (infoRequest.taskStatus != null) {
       filterNotifier
           .updateFilter(TFStatus.status(context, infoRequest.taskStatus!));
     }
 
+    // == TaskPriority
     if (infoRequest.taskPriority != null) {
       filterNotifier.updateFilter(
           TFPriority.priority(context, infoRequest.taskPriority!));
     }
 
+    // == TaskAssignees
     // Handle assignee filtering if provided
     if (infoRequest.assignedUserNames != null) {
       // Check if MYSELF is in the list, handle special case
@@ -125,7 +122,6 @@ class TaskToolMethods {
         filterNotifier.updateFilter(TFAssignees.byUserModel(ref, curUser));
       } else if (infoRequest.assignedUserNames!.isNotEmpty) {
         bool foundMatch = false;
-        // Try to match by name - this might need to be adjusted based on your TFAssignee implementation
         // TODO p2: we currently don't support multiple assignees filtering
         for (final userName in infoRequest.assignedUserNames!) {
           final selectedOrgId = ref.read(curSelectedOrgIdNotifierProvider);
@@ -160,7 +156,7 @@ class TaskToolMethods {
       }
     }
 
-    // Handle author filtering if provided
+    // == TaskAuthor
     if (infoRequest.authorUserName != null) {
       if (AiToolExecutionUtils.isMyselfKeyword(infoRequest.authorUserName)) {
         filterNotifier.updateFilter(TFAuthorUser.byUserModel(ref, curUser));
@@ -191,11 +187,7 @@ class TaskToolMethods {
       }
     }
 
-    // if (infoRequest.estimateDurationMinutes != null) {
-    //   filterNotifier.updateFilter(TFEstimateDuration.estimateDuration(
-    //       context, infoRequest.estimateDurationMinutes!));
-    // }
-
+    // == TaskProject
     if (infoRequest.parentProjectName != null) {
       final projects =
           await ref.read(projectsRepositoryProvider).searchProjectsByName(
@@ -215,9 +207,7 @@ class TaskToolMethods {
       }
     }
 
-    // Helper function to handle date range filtering
-
-    // Apply due date filtering
+    // == TaskDueDate
     if (infoRequest.taskDueDateStart != null ||
         infoRequest.taskDueDateEnd != null) {
       applyDateRangeFilter(
@@ -229,7 +219,7 @@ class TaskToolMethods {
       );
     }
 
-    // Apply created date filtering
+    // == TaskCreatedDate
     if (infoRequest.taskCreatedDateStart != null ||
         infoRequest.taskCreatedDateEnd != null) {
       applyDateRangeFilter(
@@ -241,15 +231,17 @@ class TaskToolMethods {
       );
     }
 
-    // Make sure filters are applied before reading the provider
-    ref.read(taskFilterStateProvider(
-        viewType)); // Force a read to ensure state is updated
+    // === Get Tasks for AI Result ===
+
+    // Force a read to ensure state is updated
+    ref.read(taskFilterStateProvider(viewType));
 
     final tasks = await ref.read(tasksRepositoryProvider).getUserViewableTasks(
           userId: curUser.id,
           orgId: selectedOrgId,
         );
 
+    // TODO p2: Filter should be done on server side to improve performance, have better FTS, semantic search, etc
     // Apply async filtering with proper error handling
     final asyncResults = await Future.wait(
       tasks.map((task) async {
@@ -264,7 +256,6 @@ class TaskToolMethods {
         }
       }),
     );
-
     final filteredTasks = asyncResults.whereType<TaskModel>().toList();
 
     List<Map<String, dynamic>> tasksToSendAiReadable = [];
@@ -290,11 +281,14 @@ class TaskToolMethods {
       // Continue with what we have
     }
 
+    // Only take first 20 tasks to send to AI
+    tasksToSendAiReadable = tasksToSendAiReadable.take(20).toList();
+
     return FindTasksResultModel(
       tasks: filteredTasks,
       resultForAi:
           'Found ${filteredTasks.length} matching tasks: $tasksToSendAiReadable',
-      showOnly: infoRequest.showOnly,
+      showOnly: infoRequest.showUI,
     );
   }
 
@@ -529,7 +523,7 @@ class TaskToolMethods {
       tasks: tasksToSend,
       resultForAi:
           'Found ${filteredTasks.length} matching tasks: ${tasksToSend.map((task) => task.toAiReadableMap(project: projectsMap[task.parentProjectId], author: authorsMap[task.authorUserId], assignees: assigneesMap[task.id])).toList()}',
-      showOnly: infoRequest.showOnly,
+      showOnly: infoRequest.showUI,
     );
   }
 
@@ -612,9 +606,9 @@ class TaskToolMethods {
         'title': newTask.name,
       });
 
-      log('and opened task page');
+      log('opened task page');
     } else {
-      log('but UI actions are not allowed');
+      log('did not open task page, UI actions are not allowed');
     }
 
     return CreateTaskResultModel(
@@ -706,6 +700,19 @@ class TaskToolMethods {
       ref
           .read(curSelectedTaskIdNotifierProvider.notifier)
           .setTaskId(updatedTask.id);
+
+      final navigationService = ref.read(navigationServiceProvider);
+
+      // Do not await - this never returns
+      navigationService.navigateTo(AppRoutes.taskPage.name, arguments: {
+        'mode': EditablePageMode.readOnly,
+        'actions': [EditTaskButton(updatedTask.id)],
+        'title': updatedTask.name,
+      });
+
+      log('opened task page');
+    } else {
+      log('did not open task page, UI actions are not allowed');
     }
 
     // Save task changes ...
