@@ -16,6 +16,8 @@ class FindTasksRequestModel extends AiInfoRequestModel {
   final String? taskDueDateEnd;
   final String? taskCreatedDateStart;
   final String? taskCreatedDateEnd;
+  final String? taskUpdatedDateStart;
+  final String? taskUpdatedDateEnd;
 
   FindTasksRequestModel({
     this.taskName,
@@ -30,6 +32,8 @@ class FindTasksRequestModel extends AiInfoRequestModel {
     this.taskDueDateEnd,
     this.taskCreatedDateStart,
     this.taskCreatedDateEnd,
+    this.taskUpdatedDateStart,
+    this.taskUpdatedDateEnd,
     super.showUI = true,
     super.args,
   }) : super(infoRequestType: AiInfoRequestType.findTasks);
@@ -49,15 +53,60 @@ class FindTasksRequestModel extends AiInfoRequestModel {
       taskDueDateEnd: json['args']['task_due_date_end'],
       taskCreatedDateStart: json['args']['task_created_date_start'],
       taskCreatedDateEnd: json['args']['task_created_date_end'],
+      taskUpdatedDateStart: json['args']['task_updated_date_start'],
+      taskUpdatedDateEnd: json['args']['task_updated_date_end'],
+    );
+  }
+}
+
+class ShowTasksRequestModel extends AiActionRequestModel {
+  final String taskId;
+  final String taskName;
+  final String? parentProjectName;
+  final TaskViewType taskType;
+
+  ShowTasksRequestModel({
+    required this.taskId,
+    required this.taskName,
+    this.parentProjectName,
+    this.taskType = TaskViewType.singleTask,
+    super.args,
+  }) : super(actionRequestType: AiActionRequestType.showTask);
+
+  static ShowTasksRequestModel fromJson(Map<String, dynamic> json) {
+    return ShowTasksRequestModel(
+      args: json['args'],
+      taskId: json['args']['task_id'],
+      taskName: json['args']['task_name'],
+      parentProjectName: json['args']['parent_project_name'],
+      taskType:
+          TaskViewType.fromString(json['args']['task_type'] ?? 'singleTask'),
+    );
+  }
+}
+
+enum TaskViewType {
+  singleTask,
+  recentTasks,
+  myTasks,
+  projectGanttTasks,
+  projectTasks;
+
+  static TaskViewType fromString(String value) {
+    return TaskViewType.values.firstWhere(
+      (type) => type.name == value,
+      orElse: () => TaskViewType.singleTask,
     );
   }
 }
 
 class AddCommentToTaskRequestModel extends AiActionRequestModel {
+  final String taskId;
   final String taskName;
   final String comment;
 
   AddCommentToTaskRequestModel({
+    required this.taskId,
     required this.taskName,
     required this.comment,
     super.args,
@@ -66,6 +115,7 @@ class AddCommentToTaskRequestModel extends AiActionRequestModel {
   static AddCommentToTaskRequestModel fromJson(Map<String, dynamic> json) {
     return AddCommentToTaskRequestModel(
       args: json['args'],
+      taskId: json['args']['task_id'],
       taskName: json['args']['task_name'],
       comment: json['args']['comment'],
     );
@@ -113,6 +163,7 @@ class CreateTaskRequestModel extends AiActionRequestModel {
 }
 
 class UpdateTaskFieldsRequestModel extends AiActionRequestModel {
+  final String taskId;
   final String taskName;
   final String? taskDescription;
   final String? taskStartDate;
@@ -124,6 +175,7 @@ class UpdateTaskFieldsRequestModel extends AiActionRequestModel {
   final String? parentProjectName;
 
   UpdateTaskFieldsRequestModel({
+    required this.taskId,
     required this.taskName,
     this.taskDescription,
     this.taskStartDate,
@@ -139,6 +191,7 @@ class UpdateTaskFieldsRequestModel extends AiActionRequestModel {
   static UpdateTaskFieldsRequestModel fromJson(Map<String, dynamic> json) {
     return UpdateTaskFieldsRequestModel(
       args: json['args'],
+      taskId: json['args']['task_id'],
       taskName: json['args']['task_name'],
       taskDescription: json['args']['task_description'],
       taskStartDate: json['args']['task_start_date'],
@@ -153,9 +206,11 @@ class UpdateTaskFieldsRequestModel extends AiActionRequestModel {
 }
 
 class DeleteTaskRequestModel extends AiActionRequestModel {
+  final String taskId;
   final String taskName;
 
   DeleteTaskRequestModel({
+    required this.taskId,
     required this.taskName,
     super.args,
   }) : super(actionRequestType: AiActionRequestType.deleteTask);
@@ -163,16 +218,19 @@ class DeleteTaskRequestModel extends AiActionRequestModel {
   static DeleteTaskRequestModel fromJson(Map<String, dynamic> json) {
     return DeleteTaskRequestModel(
       args: json['args'],
+      taskId: json['args']['task_id'],
       taskName: json['args']['task_name'],
     );
   }
 }
 
 class AssignUserToTaskRequestModel extends AiActionRequestModel {
+  final String taskId;
   final String taskName;
   final String userName;
 
   AssignUserToTaskRequestModel({
+    required this.taskId,
     required this.taskName,
     required this.userName,
     super.args,
@@ -181,6 +239,7 @@ class AssignUserToTaskRequestModel extends AiActionRequestModel {
   static AssignUserToTaskRequestModel fromJson(Map<String, dynamic> json) {
     return AssignUserToTaskRequestModel(
       args: json['args'],
+      taskId: json['args']['task_id'],
       taskName: json['args']['task_name'],
       userName: json['args']['user_name'],
     );
