@@ -1,5 +1,6 @@
 import 'package:seren_ai_flutter/services/ai/ai_request/models/requests/ai_request_model.dart';
 import 'package:seren_ai_flutter/services/data/tasks/tool_methods/models/task_request_models.dart';
+import 'package:seren_ai_flutter/services/data/notes/tool_methods/models/note_request_models.dart';
 
 /// Subtypes of Action Request Type
 enum AiActionRequestType {
@@ -8,7 +9,13 @@ enum AiActionRequestType {
   updateTaskFields('update_task_fields'),
   deleteTask('delete_task'),
   assignUserToTask('assign_user_to_task'),
-  addCommentToTask('add_comment_to_task');
+  addCommentToTask('add_comment_to_task'),
+  showTask('show_task'),
+  createNote('create_note'),
+  updateNote('update_note'),
+  shareNote('share_note'),
+  deleteNote('delete_note'),
+  showNotes('show_notes');
 
   final String value;
   const AiActionRequestType(this.value);
@@ -50,6 +57,18 @@ class AiActionRequestModel extends AiRequestModel {
           args: json['args'],
           actionRequestType: actionRequestType,
         );
+      case AiActionRequestType.showTask:
+        return ShowTasksRequestModel.fromJson(json);
+      case AiActionRequestType.createNote:
+        return CreateNoteRequestModel.fromJson(json);
+      case AiActionRequestType.updateNote:
+        return UpdateNoteRequestModel.fromJson(json);
+      case AiActionRequestType.shareNote:
+        return ShareNoteRequestModel.fromJson(json);
+      case AiActionRequestType.deleteNote:
+        return DeleteNoteRequestModel.fromJson(json);
+      case AiActionRequestType.showNotes:
+        return ShowNotesRequestModel.fromJson(json);
     }
   }
 
