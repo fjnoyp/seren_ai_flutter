@@ -63,7 +63,7 @@ class ShiftToolMethods {
       resultForAi: shiftAssignments.isEmpty
           ? 'No shift assignments in requested range.'
           : 'Shift assignments: ${shiftAssignments.entries.map((entry) => '${entry.key.toLocal().toSimpleDateString()} - ${entry.value.map((range) => range.getReadableTimeOnly()).join('\n')}').join('\n')}\n$totalDurationStr',
-      showOnly: infoRequest.showOnly,
+      showOnly: infoRequest.showUI,
     );
   }
 
@@ -115,7 +115,7 @@ class ShiftToolMethods {
       resultForAi: shiftLogs.isEmpty
           ? 'No shift logs in requested range.'
           : 'Shift logs: ${shiftLogs.entries.map((entry) => '${entry.key.toLocal().toSimpleDateString()} - ${entry.value.map((log) => '${log.clockInDatetime.toLocal().toSimpleTimeString()} - ${log.clockOutDatetime?.toLocal().toSimpleTimeString() ?? 'ONGOING'}').join('\n')}').join('\n')}\n$totalDurationStr${curShiftDuration != null ? '\n$curDurationStr' : ''}',
-      showOnly: infoRequest.showOnly,
+      showOnly: infoRequest.showUI,
     );
   }
 
