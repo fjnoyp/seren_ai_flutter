@@ -86,11 +86,19 @@ class TaskToolMethods {
 
     final filterNotifier = ref.read(taskFilterStateProvider(viewType).notifier);
 
+    // Clear all filters
     filterNotifier.clearAllFilters();
+
+    // Clear the search query
+    ref.watch(taskSearchQueryProvider(viewType).notifier).state = '';
 
     if (infoRequest.showUI == true) {
       // Open modal
-      ref.read(isSearchModalOpenProvider.notifier).state = true;
+      try {
+        ref.watch(isSearchModalOpenProvider.notifier).state = true;
+      } catch (e) {
+        log('Error opening search modal: $e');
+      }
 
       // Wait for the next frame to ensure the modal is rendered
       await WidgetsBinding.instance.endOfFrame;
@@ -237,30 +245,36 @@ class TaskToolMethods {
 
     // === Get Tasks for AI Result ===
 
-    // Force a read to ensure state is updated
-    ref.read(taskFilterStateProvider(viewType));
-
-    final tasks = await ref.read(tasksRepositoryProvider).getUserViewableTasks(
-          userId: curUser.id,
-          orgId: selectedOrgId,
-        );
-
-    // TODO p2: Filter should be done on server side to improve performance, have better FTS, semantic search, etc
-    // Apply async filtering with proper error handling
-    final asyncResults = await Future.wait(
-      tasks.map((task) async {
-        try {
-          final matches = await ref
-              .read(taskFilterStateProvider(viewType))
-              .asyncFilterCondition(task);
-          return matches ? task : null;
-        } catch (e) {
-          log('Error in async filter for task ${task.id}: $e');
-          return null;
-        }
-      }),
+    final searchService = ref.watch(tasksFilteredSearchServiceProvider);
+    final filteredTasks = await searchService.getFilteredTasks(
+      viewType: viewType,
+      searchQuery: ref.watch(taskSearchQueryProvider(viewType)),
     );
-    final filteredTasks = asyncResults.whereType<TaskModel>().toList();
+
+    // // Force a read to ensure state is updated
+    // ref.read(taskFilterStateProvider(viewType));
+
+    // final tasks = await ref.read(tasksRepositoryProvider).getUserViewableTasks(
+    //       userId: curUser.id,
+    //       orgId: selectedOrgId,
+    //     );
+
+    // // TODO p2: Filter should be done on server side to improve performance, have better FTS, semantic search, etc
+    // // Apply async filtering with proper error handling
+    // final asyncResults = await Future.wait(
+    //   tasks.map((task) async {
+    //     try {
+    //       final matches = await ref
+    //           .read(taskFilterStateProvider(viewType))
+    //           .asyncFilterCondition(task);
+    //       return matches ? task : null;
+    //     } catch (e) {
+    //       log('Error in async filter for task ${task.id}: $e');
+    //       return null;
+    //     }
+    //   }),
+    // );
+    // final filteredTasks = asyncResults.whereType<TaskModel>().toList();
 
     // Only take first 20 tasks to send to AI
     final tasksToSend = filteredTasks.take(20).toList();
