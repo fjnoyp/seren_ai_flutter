@@ -121,6 +121,41 @@ class TFCreatedAt {
       );
 }
 
+/// Predefined task filters for updated date
+class TFUpdatedAt {
+  /// Filter for tasks updated today
+  static TaskFilter today(BuildContext context) => TaskFilter(
+        field: TaskFieldEnum.updatedAt,
+        readableName: AppLocalizations.of(context)!.today,
+        condition: (task) =>
+            task.updatedAt?.isSameDate(DateTime.now()) ?? false,
+      );
+
+  /// Filter for tasks updated this week
+  static TaskFilter thisWeek(BuildContext context) => TaskFilter(
+        field: TaskFieldEnum.updatedAt,
+        readableName: AppLocalizations.of(context)!.thisWeek,
+        condition: (task) =>
+            task.updatedAt?.isSameWeek(DateTime.now()) ?? false,
+      );
+
+  /// Filter for tasks updated this month
+  static TaskFilter thisMonth(BuildContext context) => TaskFilter(
+        field: TaskFieldEnum.updatedAt,
+        readableName: AppLocalizations.of(context)!.thisMonth,
+        condition: (task) =>
+            task.updatedAt?.isSameMonth(DateTime.now()) ?? false,
+      );
+
+  /// Filter for tasks created in a custom date range
+  static TaskFilter customDateRange(BuildContext context) => TaskFilter(
+        field: TaskFieldEnum.updatedAt,
+        showDateRangePicker: true,
+        readableName: AppLocalizations.of(context)!.customDateRange,
+        // This must be overrided in the filter view
+        condition: (task) => true,
+      );
+}
 /// Predefined task filters for priority
 class TFPriority {
   /// Filter for tasks by priority
@@ -298,6 +333,7 @@ Map<TaskFieldEnum, List<TaskFilter>> _getCommonFilters(Ref ref) {
     ..._createPriorityFilters(context),
     ..._createDueDateFilters(context, appLocalizations),
     ..._createCreatedAtFilters(context, appLocalizations),
+    ..._createUpdatedAtFilters(context, appLocalizations),
   };
 }
 
@@ -425,6 +461,21 @@ Map<TaskFieldEnum, List<TaskFilter>> _createCreatedAtFilters(
       TFCreatedAt.thisWeek(context),
       TFCreatedAt.thisMonth(context),
       TFCreatedAt.customDateRange(context),
+    ]
+  };
+}
+
+/// Creates updated date filter options
+Map<TaskFieldEnum, List<TaskFilter>> _createUpdatedAtFilters(
+  BuildContext context,
+  AppLocalizations appLocalizations,
+) {
+  return {
+    TaskFieldEnum.updatedAt: [
+      TFUpdatedAt.today(context),
+      TFUpdatedAt.thisWeek(context),
+      TFUpdatedAt.thisMonth(context),
+      TFUpdatedAt.customDateRange(context),
     ]
   };
 }
