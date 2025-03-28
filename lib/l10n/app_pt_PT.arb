@@ -207,6 +207,7 @@
     "sortBy": "Ordenar por",
     "dueDate": "Prazo",
     "createdAt": "Criado em",
+    "updatedAt": "Atualizado em",
     "board": "Quadro",
     "list": "Lista",
     "filterBy": "Filtrar por",
