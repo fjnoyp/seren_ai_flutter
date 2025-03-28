@@ -11,6 +11,7 @@ enum TaskFieldEnum {
   assignees,
   type,
   createdAt,
+  updatedAt,
   author,
   project;
 
@@ -22,6 +23,7 @@ enum TaskFieldEnum {
         TaskFieldEnum.dueDate => AppLocalizations.of(context)!.dueDate,
         TaskFieldEnum.type => AppLocalizations.of(context)!.type,
         TaskFieldEnum.createdAt => AppLocalizations.of(context)!.creationDate,
+        TaskFieldEnum.updatedAt => AppLocalizations.of(context)!.updatedAt,
         TaskFieldEnum.project => AppLocalizations.of(context)!.project,
         TaskFieldEnum.author => AppLocalizations.of(context)!.author,
       };
@@ -34,6 +36,8 @@ enum TaskFieldEnum {
             (a.dueDate?.compareTo(b.dueDate ?? DateTime.now()) ?? 0),
         TaskFieldEnum.createdAt => (a, b) =>
             a.createdAt!.compareTo(b.createdAt!),
+        TaskFieldEnum.updatedAt => (a, b) =>
+            a.updatedAt!.compareTo(b.updatedAt!),
         TaskFieldEnum.name => null, // (a, b) => a.name.compareTo(b.name),
         // TODO p4: add comparator for status
         TaskFieldEnum.status => null,
