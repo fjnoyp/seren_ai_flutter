@@ -290,6 +290,7 @@
     "sortBy": "Sort by",
     "dueDate": "Due date",
     "createdAt": "Created at",
+    "updatedAt": "Updated at",
     "board": "Board",
     "list": "List",
     "filterBy": "Filter by",
