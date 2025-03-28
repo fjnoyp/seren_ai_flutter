@@ -109,7 +109,7 @@ class MobileAiAssistantButton extends HookConsumerWidget {
 
     // Separately handle text input visibility based on keyboard input mode
     useEffect(() {
-      if (isKeyboardInputModeSelected) {
+      if (isAiAssistantExpanded && isKeyboardInputModeSelected) {
         MobileUserInputTextDisplayWidget.show(
           context,
           buttonKey.value,
@@ -121,7 +121,7 @@ class MobileAiAssistantButton extends HookConsumerWidget {
       }
 
       return null;
-    }, [isKeyboardInputModeSelected]);
+    }, [isAiAssistantExpanded, isKeyboardInputModeSelected]);
 
     // Add this separate effect for cleanup on unmount only
     useEffect(() {
