@@ -1,3 +1,4 @@
+import 'package:collection/collection.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
@@ -88,7 +89,8 @@ class BasePhaseSelectionField extends ConsumerWidget {
               ),
             ),
             valueToString: (phase) => selectablePhases.isEmpty
-                ? AppLocalizations.of(context)?.thisProjectCurrentlyHasNoPhases ??
+                ? AppLocalizations.of(context)
+                        ?.thisProjectCurrentlyHasNoPhases ??
                     'This project currently has no phases'
                 : phase?.name ?? emptyValueString,
             valueToWidget: (phase) => Tooltip(
@@ -97,7 +99,8 @@ class BasePhaseSelectionField extends ConsumerWidget {
             ),
             enabled: enabled,
             value: curPhaseId != null
-                ? selectablePhases.firstWhere((phase) => phase.id == curPhaseId)
+                ? selectablePhases
+                    .firstWhereOrNull((phase) => phase.id == curPhaseId)
                 : null,
             options: selectablePhases,
             onValueChanged: (ref, phase) => updatePhase(ref, phase?.id),

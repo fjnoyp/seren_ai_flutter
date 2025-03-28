@@ -4,6 +4,7 @@ import 'dart:developer';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:seren_ai_flutter/common/routes/app_routes.dart';
+import 'package:seren_ai_flutter/widgets/search/search_modal.dart';
 
 final navigationServiceProvider = Provider((ref) => NavigationService(ref));
 
@@ -31,6 +32,9 @@ class NavigationService {
     bool clearStack = false,
     int retryCount = 0,
   }) async {
+    // Close Modal
+    ref.read(isSearchModalOpenProvider.notifier).state = false;
+
     try {
       if (clearStack) {
         return navigatorKey.currentState!.pushNamedAndRemoveUntil(
@@ -76,6 +80,10 @@ class NavigationService {
 
   Future<dynamic> pop([dynamic result]) async {
     if (!navigatorKey.currentState!.mounted) return result;
+
+    // Close Modal
+    ref.read(isSearchModalOpenProvider.notifier).state = false;
+
     try {
       if (canPop) {
         navigatorKey.currentState!.pop(result);
@@ -111,6 +119,9 @@ class NavigationService {
     bool barrierDismissible = true,
     bool applyBarrierColor = true,
   }) async {
+    // Close Modal
+    ref.read(isSearchModalOpenProvider.notifier).state = false;
+
     try {
       return await showDialog(
         context: context,
