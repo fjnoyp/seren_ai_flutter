@@ -89,7 +89,7 @@ class TasksFilteredSearchService {
     // Apply text search if provided
     if (searchQuery != null && searchQuery.isNotEmpty) {
       // Use string similarity extension for fuzzy matching
-      const double similarityThreshold = 0.0;
+      const double similarityThreshold = 0.35;
 
       // Create a list of tasks with their similarity scores
       final scoredTasks = filteredTasks.map((task) {
