@@ -121,15 +121,14 @@ class AiRequestExecutor {
         return await taskToolMethods.deleteTask(
             ref: ref, actionRequest: actionRequest as DeleteTaskRequestModel);
 
-      case AiActionRequestType.assignUserToTask:
-        return await taskToolMethods.assignUserToTask(
-            ref: ref,
-            actionRequest: actionRequest as AssignUserToTaskRequestModel);
-
       case AiActionRequestType.addCommentToTask:
         return await taskToolMethods.addCommentToTask(
             ref: ref,
             actionRequest: actionRequest as AddCommentToTaskRequestModel);
+
+      case AiActionRequestType.showTasks:
+        return await taskToolMethods.showTask(
+            ref: ref, actionRequest: actionRequest as ShowTasksRequestModel);
 
       default:
         return ErrorRequestResultModel(
