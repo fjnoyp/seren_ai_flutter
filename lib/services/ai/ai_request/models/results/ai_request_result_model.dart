@@ -1,15 +1,15 @@
 import 'dart:convert';
 
 import 'package:seren_ai_flutter/services/ai/ai_request/models/results/error_request_result_model.dart';
-import 'package:seren_ai_flutter/services/data/shifts/tool_methods/models/shift_assignments_result_model.dart';
-import 'package:seren_ai_flutter/services/data/shifts/tool_methods/models/shift_clock_in_out_result_model.dart';
-import 'package:seren_ai_flutter/services/data/shifts/tool_methods/models/shift_log_results_model.dart';
-import 'package:seren_ai_flutter/services/data/tasks/tool_methods/models/create_task_result_model.dart';
-import 'package:seren_ai_flutter/services/data/tasks/tool_methods/models/delete_task_result_model.dart';
-import 'package:seren_ai_flutter/services/data/tasks/tool_methods/models/find_tasks_result_model.dart';
-import 'package:seren_ai_flutter/services/data/tasks/tool_methods/models/show_tasks_result_model.dart';
-import 'package:seren_ai_flutter/services/data/tasks/tool_methods/models/update_task_fields_result_model.dart';
-import 'package:seren_ai_flutter/services/data/tasks/tool_methods/models/add_comment_to_task_result_model.dart';
+import 'package:seren_ai_flutter/services/data/shifts/ai_tool_methods/models/shift_assignments_result_model.dart';
+import 'package:seren_ai_flutter/services/data/shifts/ai_tool_methods/models/shift_clock_in_out_result_model.dart';
+import 'package:seren_ai_flutter/services/data/shifts/ai_tool_methods/models/shift_log_results_model.dart';
+import 'package:seren_ai_flutter/services/data/tasks/ai_tool_methods/models/create_task_result_model.dart';
+import 'package:seren_ai_flutter/services/data/tasks/ai_tool_methods/models/delete_task_result_model.dart';
+import 'package:seren_ai_flutter/services/data/tasks/ai_tool_methods/models/find_tasks_result_model.dart';
+import 'package:seren_ai_flutter/services/data/tasks/ai_tool_methods/models/show_tasks_result_model.dart';
+import 'package:seren_ai_flutter/services/data/tasks/ai_tool_methods/models/update_task_fields_result_model.dart';
+import 'package:seren_ai_flutter/services/data/tasks/ai_tool_methods/models/add_comment_to_task_result_model.dart';
 
 enum AiRequestResultType {
   shiftAssignments('shift_assignments'),

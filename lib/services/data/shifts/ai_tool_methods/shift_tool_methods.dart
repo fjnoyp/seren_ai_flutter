@@ -7,16 +7,16 @@ import 'package:seren_ai_flutter/common/utils/date_time_range_extension.dart';
 import 'package:seren_ai_flutter/services/ai/ai_request/models/results/ai_request_result_model.dart';
 import 'package:seren_ai_flutter/services/ai/ai_request/models/results/error_request_result_model.dart';
 import 'package:seren_ai_flutter/services/auth/cur_auth_state_provider.dart';
-import 'package:seren_ai_flutter/services/data/tasks/tool_methods/ai_date_parser.dart';
+import 'package:seren_ai_flutter/services/data/tasks/ai_tool_methods/ai_date_parser.dart';
 import 'package:seren_ai_flutter/services/data/shifts/models/shift_log_model.dart';
 import 'package:seren_ai_flutter/services/data/shifts/providers/cur_shift_state_provider.dart';
 import 'package:seren_ai_flutter/services/data/shifts/providers/shift_logs_service_provider.dart';
 import 'package:seren_ai_flutter/services/data/shifts/repositories/shift_logs_repository.dart';
 import 'package:seren_ai_flutter/services/data/shifts/repositories/shift_time_ranges_repository.dart';
-import 'package:seren_ai_flutter/services/data/shifts/tool_methods/models/shift_assignments_result_model.dart';
-import 'package:seren_ai_flutter/services/data/shifts/tool_methods/models/shift_clock_in_out_result_model.dart';
-import 'package:seren_ai_flutter/services/data/shifts/tool_methods/models/shift_log_results_model.dart';
-import 'package:seren_ai_flutter/services/data/shifts/tool_methods/models/shift_request_models.dart';
+import 'package:seren_ai_flutter/services/data/shifts/ai_tool_methods/models/shift_assignments_result_model.dart';
+import 'package:seren_ai_flutter/services/data/shifts/ai_tool_methods/models/shift_clock_in_out_result_model.dart';
+import 'package:seren_ai_flutter/services/data/shifts/ai_tool_methods/models/shift_log_results_model.dart';
+import 'package:seren_ai_flutter/services/data/shifts/ai_tool_methods/models/shift_request_models.dart';
 
 /*
 Method executors for: 
