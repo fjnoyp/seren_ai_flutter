@@ -329,7 +329,7 @@ class AIChatService {
     // Create new thread and assistant
     final (newLgThreadId, newLgAssistantId) =
         await langgraphService.createNewThread(
-      name: name,
+      //name: name,
       lgConfig: LgConfigSchemaModel(
         timezoneOffsetMinutes: timezoneOffsetMinutes,
         //language: language,

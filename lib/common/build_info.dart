@@ -2,10 +2,10 @@
 class BuildInfo {
   // Core build info
   static const String version = '1.0.0';
-  static const String buildDate = '2025-03-30 12:27:15';
+  static const String buildDate = '2025-03-30 15:50:50';
   
   // Git info
-  static const String commitHash = '3328fd0';
+  static const String commitHash = '2191102';
   static const String branch = 'main';
   static const String lastTag = 'no tag';
   
@@ -16,12 +16,12 @@ class BuildInfo {
   // Recent commits (last 5)
   static const List<Map<String, String>> recentCommits = [
     {
-      "hash": "3328fd0",
+      "hash": "2191102",
       "author": "Kyle",
       "email": "kylcheng@gmail.com", 
       "message": "chore(task): fix task date filter dispaly",
       "date": "2025-03-30",
-      "relativeDate": "17 minutes ago"
+      "relativeDate": "4 hours ago"
     },
     {
       "hash": "1e57881",
@@ -37,7 +37,7 @@ class BuildInfo {
       "email": "kylcheng@gmail.com", 
       "message": "fix(ai): Replace watch with read when modifying state in task_tool_methods",
       "date": "2025-03-30",
-      "relativeDate": "50 minutes ago"
+      "relativeDate": "4 hours ago"
     },
     {
       "hash": "2553868",
@@ -45,7 +45,7 @@ class BuildInfo {
       "email": "kylcheng@gmail.com", 
       "message": "chore(ai): cleanup logic",
       "date": "2025-03-30",
-      "relativeDate": "53 minutes ago"
+      "relativeDate": "4 hours ago"
     },
     {
       "hash": "0658526",

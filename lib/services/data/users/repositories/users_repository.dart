@@ -140,7 +140,7 @@ class SearchUserResult {
       email: json['email'],
       firstName: json['first_name'],
       lastName: json['last_name'],
-      similarityScore: json['similarity_score'],
+      similarityScore: (json['similarity_score'] as num).toDouble(),
     );
   }
 }
