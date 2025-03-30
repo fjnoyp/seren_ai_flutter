@@ -17,10 +17,12 @@ import 'package:seren_ai_flutter/common/routes/app_routes.dart';
 import 'package:seren_ai_flutter/services/ai/ai_request/models/results/ai_request_result_model.dart';
 import 'package:seren_ai_flutter/services/ai/ai_request/models/results/error_request_result_model.dart';
 import 'package:seren_ai_flutter/services/auth/cur_auth_state_provider.dart';
+import 'package:seren_ai_flutter/services/data/projects/providers/project_navigation_service.dart';
 import 'package:seren_ai_flutter/services/data/tasks/filtered/task_filter_options_provider.dart';
 import 'package:seren_ai_flutter/services/data/tasks/filtered/task_filter_state_provider.dart';
 import 'package:seren_ai_flutter/services/data/tasks/filtered/task_filter_view_type.dart';
 import 'package:seren_ai_flutter/services/data/tasks/filtered/tasks_filtered_search_provider.dart';
+import 'package:seren_ai_flutter/services/data/tasks/providers/task_navigation_service.dart';
 import 'package:seren_ai_flutter/services/data/tasks/task_field_enum.dart';
 import 'package:seren_ai_flutter/services/data/tasks/tool_methods/ai_date_parser.dart';
 import 'package:seren_ai_flutter/services/data/common/status_enum.dart';
@@ -41,6 +43,7 @@ import 'package:seren_ai_flutter/services/data/tasks/tool_methods/models/add_com
 import 'package:seren_ai_flutter/services/data/tasks/tool_methods/models/create_task_result_model.dart';
 import 'package:seren_ai_flutter/services/data/tasks/tool_methods/models/delete_task_result_model.dart';
 import 'package:seren_ai_flutter/services/data/tasks/tool_methods/models/find_tasks_result_model.dart';
+import 'package:seren_ai_flutter/services/data/tasks/tool_methods/models/show_tasks_result_model.dart';
 import 'package:seren_ai_flutter/services/data/tasks/tool_methods/models/task_request_models.dart';
 import 'package:seren_ai_flutter/services/data/tasks/tool_methods/models/update_task_fields_result_model.dart';
 import 'package:seren_ai_flutter/services/data/tasks/widgets/action_buttons/edit_task_button.dart';
@@ -867,14 +870,6 @@ class TaskToolMethods {
     );
   }
 
-  Future<AiRequestResultModel> assignUserToTask(
-      {required Ref ref,
-      required AssignUserToTaskRequestModel actionRequest}) async {
-    return ErrorRequestResultModel(
-        resultForAi: 'Not implemented for request: ${actionRequest.toString()}',
-        showOnly: true);
-  }
-
   Future<AiRequestResultModel> addCommentToTask(
       {required Ref ref,
       required AddCommentToTaskRequestModel actionRequest}) async {
@@ -915,6 +910,132 @@ class TaskToolMethods {
       resultForAi: 'Added comment to task "${taskToComment.name}"',
       showOnly: true,
     );
+  }
+
+  Future<AiRequestResultModel> showTask(
+      {required Ref ref, required ShowTasksRequestModel actionRequest}) async {
+    final userId = _getUserId(ref);
+    if (userId == null) return _handleNoAuth();
+
+    final selectedOrgId = ref.read(curSelectedOrgIdNotifierProvider);
+    if (selectedOrgId == null) {
+      return ErrorRequestResultModel(
+          resultForAi: 'No org selected', showOnly: true);
+    }
+
+    final navigationService = ref.read(navigationServiceProvider);
+
+    // just return a temporary tesmp result to see what ai is sending
+    // return ShowTasksResultModel(
+    //   resultForAi:
+    //       'The AI request to show the task "${actionRequest.taskName}" with ID "${actionRequest.taskId}", parent project "${actionRequest.parentProjectName}", and type "${actionRequest.taskType}" has been successfully processed.',
+    //   showOnly: true,
+    // );
+
+    // Case 1: Show a single task by name or id
+    if (actionRequest.taskName != null || actionRequest.taskId != null) {
+      TaskModel? taskToShow;
+
+      // If task ID is provided, fetch directly
+      if (actionRequest.taskId != null) {
+        taskToShow = await ref
+            .read(tasksRepositoryProvider)
+            .getById(actionRequest.taskId!);
+      }
+      // Otherwise find by name using similarity
+      else if (actionRequest.taskName != null) {
+        final matchingTasks =
+            await _getTasksByName(ref, actionRequest.taskName!);
+        if (matchingTasks.isNotEmpty) {
+          taskToShow = matchingTasks.first;
+        }
+      }
+
+      if (taskToShow == null) {
+        return ErrorRequestResultModel(
+            resultForAi:
+                'No matching task found for "${actionRequest.taskName ?? actionRequest.taskId}"',
+            showOnly: true);
+      }
+
+      // Navigate to task details page
+      ref.read(taskNavigationServiceProvider).openTask(
+            initialTaskId: taskToShow.id,
+            withReplacement: true,
+          );
+
+      return ShowTasksResultModel(
+        resultForAi: 'Showing task "${taskToShow.name}"',
+        showOnly: true,
+      );
+    }
+    // Case 2: Show a tasks list/view based on type
+    else {
+      // Handle different view types
+      switch (actionRequest.taskType) {
+        case TaskViewType.recentTasks:
+          ref.read(navigationServiceProvider).navigateTo(AppRoutes.home.name);
+          return ShowTasksResultModel(
+            resultForAi: 'Showing recent tasks',
+            showOnly: true,
+          );
+
+        case TaskViewType.myTasks:
+          ref.read(navigationServiceProvider).navigateTo(AppRoutes.home.name);
+          return ShowTasksResultModel(
+            resultForAi: 'Showing my tasks',
+            showOnly: true,
+          );
+
+        case TaskViewType.projectGanttTasks:
+        case TaskViewType.projectTasks:
+          // If project name is provided, find the project first
+          if (actionRequest.parentProjectName != null) {
+            final projectId = await ref
+                .read(searchProjectsServiceProvider)
+                .searchProjectNameToId(actionRequest.parentProjectName);
+
+            if (projectId == null) {
+              return ErrorRequestResultModel(
+                  resultForAi:
+                      'No project found with name "${actionRequest.parentProjectName}"',
+                  showOnly: true);
+            }
+
+            // Navigate to the appropriate project view
+            if (actionRequest.taskType == TaskViewType.projectGanttTasks) {
+              // TODO p2 - use gantt page deep link
+              ref
+                  .read(projectNavigationServiceProvider)
+                  .openProjectPage(projectId: projectId);
+              return ShowTasksResultModel(
+                resultForAi:
+                    'Showing Gantt view for project "${actionRequest.parentProjectName}"',
+                showOnly: true,
+              );
+            } else {
+              ref
+                  .read(projectNavigationServiceProvider)
+                  .openProjectPage(projectId: projectId);
+              return ShowTasksResultModel(
+                resultForAi:
+                    'Showing tasks for project "${actionRequest.parentProjectName}"',
+                showOnly: true,
+              );
+            }
+          } else {
+            return ErrorRequestResultModel(
+                resultForAi: 'Project name is required for project task views',
+                showOnly: true);
+          }
+
+        default:
+          return ErrorRequestResultModel(
+              resultForAi:
+                  'Unsupported task view type: ${actionRequest.taskType}',
+              showOnly: true);
+      }
+    }
   }
 
   String? _getUserId(Ref ref) {
