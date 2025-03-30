@@ -2,11 +2,11 @@
 class BuildInfo {
   // Core build info
   static const String version = '1.0.0';
-  static const String buildDate = '2025-03-30 11:38:53';
+  static const String buildDate = '2025-03-30 12:27:15';
   
   // Git info
-  static const String commitHash = '14b88dd';
-  static const String branch = 'feat/ai_note_task_additions';
+  static const String commitHash = '3328fd0';
+  static const String branch = 'main';
   static const String lastTag = 'no tag';
   
   // Author of last commit
@@ -16,48 +16,48 @@ class BuildInfo {
   // Recent commits (last 5)
   static const List<Map<String, String>> recentCommits = [
     {
-      "hash": "14b88dd",
+      "hash": "3328fd0",
+      "author": "Kyle",
+      "email": "kylcheng@gmail.com", 
+      "message": "chore(task): fix task date filter dispaly",
+      "date": "2025-03-30",
+      "relativeDate": "17 minutes ago"
+    },
+    {
+      "hash": "1e57881",
+      "author": "renata-sisilio",
+      "email": "renata@seren-ai.co", 
+      "message": "feat(tasks): support updated at filter and finding",
+      "date": "2025-03-28",
+      "relativeDate": "2 days ago"
+    },
+    {
+      "hash": "e10b76b",
       "author": "Kyle",
       "email": "kylcheng@gmail.com", 
       "message": "fix(ai): Replace watch with read when modifying state in task_tool_methods",
       "date": "2025-03-30",
-      "relativeDate": "2 minutes ago"
+      "relativeDate": "50 minutes ago"
     },
     {
-      "hash": "8c12b31",
+      "hash": "2553868",
       "author": "Kyle",
       "email": "kylcheng@gmail.com", 
       "message": "chore(ai): cleanup logic",
       "date": "2025-03-30",
-      "relativeDate": "4 minutes ago"
+      "relativeDate": "53 minutes ago"
     },
     {
-      "hash": "f68fb81",
+      "hash": "0658526",
       "author": "Kyle",
       "email": "kylcheng@gmail.com", 
       "message": "chore(ai): fix several bugs",
       "date": "2025-03-27",
       "relativeDate": "3 days ago"
     },
-    {
-      "hash": "6eafa18",
-      "author": "Kyle",
-      "email": "kylcheng@gmail.com", 
-      "message": "chore(tasks): fix task list item view narrow",
-      "date": "2025-03-27",
-      "relativeDate": "3 days ago"
-    },
-    {
-      "hash": "04933b3",
-      "author": "Kyle",
-      "email": "kylcheng@gmail.com", 
-      "message": "chore(ai): use new ai context within task tools",
-      "date": "2025-03-27",
-      "relativeDate": "3 days ago"
-    },
   ];
 
   // Stats
-  static const String totalCommits = '487';
+  static const String totalCommits = '489';
   static const String contributors = '       0';
 }
