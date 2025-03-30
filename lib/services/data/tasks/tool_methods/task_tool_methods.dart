@@ -71,7 +71,7 @@ class TaskToolMethods {
 
     if (curUser == null) return _handleNoAuth();
 
-    final selectedOrgId = ref.watch(curSelectedOrgIdNotifierProvider);
+    final selectedOrgId = ref.read(curSelectedOrgIdNotifierProvider);
     if (selectedOrgId == null) {
       return ErrorRequestResultModel(
           resultForAi: 'No org selected', showOnly: true);
@@ -90,12 +90,12 @@ class TaskToolMethods {
     filterNotifier.clearAllFilters();
 
     // Clear the search query
-    ref.watch(taskSearchQueryProvider(viewType).notifier).state = '';
+    ref.read(taskSearchQueryProvider(viewType).notifier).state = '';
 
     if (infoRequest.showUI == true) {
       // Open modal
       try {
-        ref.watch(isSearchModalOpenProvider.notifier).state = true;
+        ref.read(isSearchModalOpenProvider.notifier).state = true;
       } catch (e) {
         log('Error opening search modal: $e');
       }
@@ -245,10 +245,10 @@ class TaskToolMethods {
 
     // === Get Tasks for AI Result ===
 
-    final searchService = ref.watch(tasksFilteredSearchServiceProvider);
+    final searchService = ref.read(tasksFilteredSearchServiceProvider);
     final filteredTasks = await searchService.getFilteredTasks(
       viewType: viewType,
-      searchQuery: ref.watch(taskSearchQueryProvider(viewType)),
+      searchQuery: ref.read(taskSearchQueryProvider(viewType)),
     );
 
     // // Force a read to ensure state is updated
@@ -357,7 +357,7 @@ class TaskToolMethods {
     final userId = _getUserId(ref);
     if (userId == null) return _handleNoAuth();
 
-    final selectedOrgId = ref.watch(curSelectedOrgIdNotifierProvider);
+    final selectedOrgId = ref.read(curSelectedOrgIdNotifierProvider);
     if (selectedOrgId == null) {
       return ErrorRequestResultModel(
           resultForAi: 'No org selected', showOnly: true);
@@ -635,7 +635,7 @@ class TaskToolMethods {
     final userId = _getUserId(ref);
     if (userId == null) return [];
 
-    final selectedOrgId = ref.watch(curSelectedOrgIdNotifierProvider);
+    final selectedOrgId = ref.read(curSelectedOrgIdNotifierProvider);
     if (selectedOrgId == null) return [];
 
     final allTasks = await ref
@@ -769,7 +769,7 @@ class TaskToolMethods {
     final userId = _getUserId(ref);
     if (userId == null) return _handleNoAuth();
 
-    final selectedOrgId = ref.watch(curSelectedOrgIdNotifierProvider);
+    final selectedOrgId = ref.read(curSelectedOrgIdNotifierProvider);
     if (selectedOrgId == null) {
       return ErrorRequestResultModel(
           resultForAi: 'No org selected', showOnly: true);
