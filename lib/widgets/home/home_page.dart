@@ -9,7 +9,9 @@ import 'package:seren_ai_flutter/widgets/home/screens/cur_user_tasks_screen.dart
 import 'package:seren_ai_flutter/widgets/home/screens/recent_updated_items_screen.dart';
 
 class HomePage extends ConsumerStatefulWidget {
-  const HomePage({super.key});
+  final int? initialTab;
+
+  const HomePage({super.key, this.initialTab});
 
   @override
   ConsumerState<HomePage> createState() => _HomePageState();
@@ -23,6 +25,25 @@ class _HomePageState extends ConsumerState<HomePage>
   void initState() {
     super.initState();
     _tabController = TabController(length: 4, vsync: this);
+
+    // Set initial tab if provided
+    if (widget.initialTab != null) {
+      _tabController.index = widget.initialTab!;
+    }
+
+    // Check for route arguments as fallback
+    else {
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        final modalRoute = ModalRoute.of(context);
+        if (modalRoute != null && modalRoute.settings.arguments != null) {
+          final args = modalRoute.settings.arguments as Map<String, dynamic>?;
+          final initialTab = args?['initialTab'] as int?;
+          if (initialTab != null && initialTab >= 0 && initialTab < 4) {
+            _tabController.animateTo(initialTab);
+          }
+        }
+      });
+    }
   }
 
   @override

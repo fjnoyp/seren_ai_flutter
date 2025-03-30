@@ -22,6 +22,9 @@ enum StatusEnum {
       // exception case for 'inprogress'
       if (value.toLowerCase() == 'inprogress') return StatusEnum.inProgress;
 
+      // catch ai sending closed instead of finished
+      if (value.toLowerCase() == 'closed') return StatusEnum.finished;
+
       return StatusEnum.values.byName(value.toLowerCase());
     } catch (_) {
       return StatusEnum.open;
@@ -43,10 +46,7 @@ enum StatusEnum {
     return switch (this) {
       StatusEnum.finished => StatusEnum.inProgress,
       StatusEnum.inProgress => StatusEnum.open,
-      StatusEnum.cancelled ||
-      StatusEnum.open ||
-      StatusEnum.archived =>
-        this,
+      StatusEnum.cancelled || StatusEnum.open || StatusEnum.archived => this,
     };
   }
 }
