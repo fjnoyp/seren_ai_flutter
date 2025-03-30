@@ -1,5 +1,5 @@
 import 'package:flutter_test/flutter_test.dart';
-import 'package:seren_ai_flutter/services/data/tasks/tool_methods/ai_date_parser.dart';
+import 'package:seren_ai_flutter/services/data/tasks/ai_tool_methods/ai_date_parser.dart';
 
 //    flutter test lib/services/data/tasks/tool_methods/tests/ai_date_parser_test.dart
 void main() {
