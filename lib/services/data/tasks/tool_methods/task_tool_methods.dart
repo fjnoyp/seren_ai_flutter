@@ -974,14 +974,16 @@ class TaskToolMethods {
       // Handle different view types
       switch (actionRequest.taskType) {
         case TaskViewType.recentTasks:
-          ref.read(navigationServiceProvider).navigateTo(AppRoutes.home.name);
+          ref.read(navigationServiceProvider).navigateTo(AppRoutes.home.name,
+              arguments: {'initialTab': 0}); // Recent tab index
           return ShowTasksResultModel(
             resultForAi: 'Showing recent tasks',
             showOnly: true,
           );
 
         case TaskViewType.myTasks:
-          ref.read(navigationServiceProvider).navigateTo(AppRoutes.home.name);
+          ref.read(navigationServiceProvider).navigateTo(AppRoutes.home.name,
+              arguments: {'initialTab': 1}); // My Tasks tab index
           return ShowTasksResultModel(
             resultForAi: 'Showing my tasks',
             showOnly: true,
