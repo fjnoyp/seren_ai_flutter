@@ -50,6 +50,20 @@ listen does not rebuild the provider, it just calls the callback when the data c
 
 watch rebuilds the provider and all its dependents. This can cause issues with too many rebuilds triggering each other etc. 
 
+### Avoid using `watch` to modify state
+
+⚠️ **WARNING:** Never use `ref.watch()` to access a provider when you intend to modify its state. Always use `ref.read()` instead.
+
+```dart
+// WRONG - Can cause dependency cycles and errors:
+ref.watch(someProvider.notifier).state = newValue;
+
+// CORRECT - Use read when you're modifying state:
+ref.read(someProvider.notifier).state = newValue;
+```
+
+Using `watch` establishes a dependency that expects rebuilds after changes. When you modify the same provider using `watch`, Riverpod will throw a "Cannot use ref functions after the dependency of a provider changed but before the provider rebuilt" error, especially when that provider is being watched elsewhere in the widget tree.
+
 ## Time Zone - DateTime Issues 
 For all DateTime calculations USE UTC - for any display use TOLOCAL
 
