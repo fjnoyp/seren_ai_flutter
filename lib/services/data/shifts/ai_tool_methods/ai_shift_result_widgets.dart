@@ -5,9 +5,9 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:intl/intl.dart';
 import 'package:seren_ai_flutter/common/utils/date_time_extension.dart';
 import 'package:seren_ai_flutter/common/utils/date_time_range_extension.dart';
-import 'package:seren_ai_flutter/services/data/shifts/tool_methods/models/shift_assignments_result_model.dart';
-import 'package:seren_ai_flutter/services/data/shifts/tool_methods/models/shift_clock_in_out_result_model.dart';
-import 'package:seren_ai_flutter/services/data/shifts/tool_methods/models/shift_log_results_model.dart';
+import 'package:seren_ai_flutter/services/data/shifts/ai_tool_methods/models/shift_assignments_result_model.dart';
+import 'package:seren_ai_flutter/services/data/shifts/ai_tool_methods/models/shift_clock_in_out_result_model.dart';
+import 'package:seren_ai_flutter/services/data/shifts/ai_tool_methods/models/shift_log_results_model.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 // class ShiftInfoResultWidget extends ConsumerWidget {
@@ -48,7 +48,9 @@ class ShiftClockInOutResultWidget extends ConsumerWidget {
         const SizedBox(width: 8),
         Expanded(
           child: Text(
-            result.clockedIn ? AppLocalizations.of(context)!.successClockIn : AppLocalizations.of(context)!.successClockOut,
+            result.clockedIn
+                ? AppLocalizations.of(context)!.successClockIn
+                : AppLocalizations.of(context)!.successClockOut,
             style: Theme.of(context).textTheme.titleMedium,
           ),
         ),
@@ -119,7 +121,9 @@ class ShiftLogsResultWidget extends ConsumerWidget {
                             Expanded(
                               child: Text(
                                 isOngoing
-                                    ? AppLocalizations.of(context)!.ongoingShift(DateFormat.Hm().format(log.clockInDatetime.toLocal()))
+                                    ? AppLocalizations.of(context)!
+                                        .ongoingShift(DateFormat.Hm().format(
+                                            log.clockInDatetime.toLocal()))
                                     : '${DateFormat.Hm().format(log.clockInDatetime.toLocal())} - ${DateFormat.Hm().format(log.clockOutDatetime!.toLocal())}',
                                 style: theme.textTheme.bodyMedium,
                               ),
@@ -209,7 +213,8 @@ class ShiftAssignmentsResultWidget extends ConsumerWidget {
                         if (ranges.isEmpty)
                           Padding(
                             padding: const EdgeInsets.only(left: 16.0),
-                            child: Text(AppLocalizations.of(context)!.noAssignments),
+                            child: Text(
+                                AppLocalizations.of(context)!.noAssignments),
                           ),
                       ],
                     ),

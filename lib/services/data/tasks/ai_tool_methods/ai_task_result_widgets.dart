@@ -3,11 +3,11 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:seren_ai_flutter/common/current_route_provider.dart';
 import 'package:seren_ai_flutter/common/routes/app_routes.dart';
 import 'package:seren_ai_flutter/common/universal_platform/universal_platform.dart';
-import 'package:seren_ai_flutter/services/data/tasks/tool_methods/models/add_comment_to_task_result_model.dart';
-import 'package:seren_ai_flutter/services/data/tasks/tool_methods/models/create_task_result_model.dart';
-import 'package:seren_ai_flutter/services/data/tasks/tool_methods/models/delete_task_result_model.dart';
-import 'package:seren_ai_flutter/services/data/tasks/tool_methods/models/find_tasks_result_model.dart';
-import 'package:seren_ai_flutter/services/data/tasks/tool_methods/models/update_task_fields_result_model.dart';
+import 'package:seren_ai_flutter/services/data/tasks/ai_tool_methods/models/add_comment_to_task_result_model.dart';
+import 'package:seren_ai_flutter/services/data/tasks/ai_tool_methods/models/create_task_result_model.dart';
+import 'package:seren_ai_flutter/services/data/tasks/ai_tool_methods/models/delete_task_result_model.dart';
+import 'package:seren_ai_flutter/services/data/tasks/ai_tool_methods/models/find_tasks_result_model.dart';
+import 'package:seren_ai_flutter/services/data/tasks/ai_tool_methods/models/update_task_fields_result_model.dart';
 import 'package:seren_ai_flutter/services/data/tasks/widgets/task_list/task_list_card_item_view.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
