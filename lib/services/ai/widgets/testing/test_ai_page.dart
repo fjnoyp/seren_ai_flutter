@@ -2,7 +2,10 @@ import 'package:flutter/material.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:seren_ai_flutter/services/ai/ai_chat_service_provider.dart';
+import 'package:seren_ai_flutter/services/ai/langgraph/langgraph_api.dart';
 import 'package:seren_ai_flutter/services/ai/langgraph/langgraph_service.dart';
+import 'package:seren_ai_flutter/services/ai/langgraph/models/lg_agent_state_model.dart';
+import 'package:seren_ai_flutter/services/ai/langgraph/models/lg_command_model.dart';
 import 'package:seren_ai_flutter/services/ai/langgraph/models/lg_config_model.dart';
 import 'package:seren_ai_flutter/services/auth/cur_auth_state_provider.dart';
 import 'package:seren_ai_flutter/services/data/orgs/providers/cur_selected_org_id_notifier.dart';
@@ -106,6 +109,34 @@ class TestAiPage extends HookConsumerWidget {
       child: Column(
         children: [
           const Text('Debug Page'),
+          _buildDebugButton(
+              label: 'test send message',
+              onPressed: () async {
+                final messages = await aiChatService.sendTestMessageToAi(
+                  userMessage: 'find tasks related to construction please',
+                );
+                responseState.value = 'Messages: $messages';
+              }),
+          _buildDebugButton(
+              label: 'test resume',
+              onPressed: () async {
+                final messages = await aiChatService.sendTestMessageToAi(
+                  command: LgCommandModel.resume(
+                      'The following tasks were found: make foundation, make walls, make roof'),
+                );
+                responseState.value = 'Messages: $messages';
+              }),
+          // _buildDebugButton(
+          //     label: 'test send message with command',
+          //     onPressed: () async {
+          //       final messages = await langgraphService.sendCommand(
+          //         lgThreadId: '2faed92f-734e-41b8-9aa8-a27b84b21265',
+          //         lgAssistantId: 'fe096781-5601-53d2-b2f6-0d3403f7e9ca',
+          //         command: LgCommandModel.resume(
+          //             'The following tasks were found: make foundation, make walls, make roof'),
+          //       );
+          //       //responseState.value = 'Messages: $messages';
+          //     }),
           _buildDebugButton(
             label: 'Test Single Call',
             onPressed: () async {
