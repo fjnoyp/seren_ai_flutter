@@ -7,6 +7,7 @@ import 'package:seren_ai_flutter/services/data/shifts/tool_methods/models/shift_
 import 'package:seren_ai_flutter/services/data/tasks/tool_methods/models/create_task_result_model.dart';
 import 'package:seren_ai_flutter/services/data/tasks/tool_methods/models/delete_task_result_model.dart';
 import 'package:seren_ai_flutter/services/data/tasks/tool_methods/models/find_tasks_result_model.dart';
+import 'package:seren_ai_flutter/services/data/tasks/tool_methods/models/show_tasks_result_model.dart';
 import 'package:seren_ai_flutter/services/data/tasks/tool_methods/models/update_task_fields_result_model.dart';
 import 'package:seren_ai_flutter/services/data/tasks/tool_methods/models/add_comment_to_task_result_model.dart';
 
@@ -19,7 +20,8 @@ enum AiRequestResultType {
   deleteTask('delete_task'),
   error('error'),
   updateTaskFields('update_task_fields'),
-  addCommentToTask('add_comment_to_task');
+  addCommentToTask('add_comment_to_task'),
+  showTasks('show_tasks');
   //unknown('unknown');
 
   final String value;
@@ -80,6 +82,8 @@ abstract class AiRequestResultModel {
         return DeleteTaskResultModel.fromJson(json);
       case AiRequestResultType.addCommentToTask:
         return AddCommentToTaskResultModel.fromJson(json);
+      case AiRequestResultType.showTasks:
+        return ShowTasksResultModel.fromJson(json);
       //throw Exception('Unknown type for AiRequestResultModel: $resultType');
     }
   }

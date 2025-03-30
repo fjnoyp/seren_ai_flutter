@@ -8,9 +8,9 @@ enum AiActionRequestType {
   createTask('create_task'),
   updateTaskFields('update_task_fields'),
   deleteTask('delete_task'),
-  assignUserToTask('assign_user_to_task'),
+  //assignUserToTask('assign_user_to_task'),
   addCommentToTask('add_comment_to_task'),
-  showTask('show_task'),
+  showTasks('show_tasks'),
   createNote('create_note'),
   updateNote('update_note'),
   shareNote('share_note'),
@@ -48,8 +48,6 @@ class AiActionRequestModel extends AiRequestModel {
         return UpdateTaskFieldsRequestModel.fromJson(json);
       case AiActionRequestType.deleteTask:
         return DeleteTaskRequestModel.fromJson(json);
-      case AiActionRequestType.assignUserToTask:
-        return AssignUserToTaskRequestModel.fromJson(json);
       case AiActionRequestType.addCommentToTask:
         return AddCommentToTaskRequestModel.fromJson(json);
       case AiActionRequestType.toggleClockInOrOut:
@@ -57,7 +55,7 @@ class AiActionRequestModel extends AiRequestModel {
           args: json['args'],
           actionRequestType: actionRequestType,
         );
-      case AiActionRequestType.showTask:
+      case AiActionRequestType.showTasks:
         return ShowTasksRequestModel.fromJson(json);
       case AiActionRequestType.createNote:
         return CreateNoteRequestModel.fromJson(json);

@@ -60,27 +60,27 @@ class FindTasksRequestModel extends AiInfoRequestModel {
 }
 
 class ShowTasksRequestModel extends AiActionRequestModel {
-  final String taskId;
-  final String taskName;
+  final String? taskId;
+  final String? taskName;
   final String? parentProjectName;
   final TaskViewType taskType;
 
   ShowTasksRequestModel({
-    required this.taskId,
-    required this.taskName,
+    this.taskId,
+    this.taskName,
     this.parentProjectName,
-    this.taskType = TaskViewType.singleTask,
+    required this.taskType,
     super.args,
-  }) : super(actionRequestType: AiActionRequestType.showTask);
+  }) : super(actionRequestType: AiActionRequestType.showTasks);
 
   static ShowTasksRequestModel fromJson(Map<String, dynamic> json) {
+    final taskTypeStr = json['args']['task_type'];
     return ShowTasksRequestModel(
       args: json['args'],
       taskId: json['args']['task_id'],
       taskName: json['args']['task_name'],
       parentProjectName: json['args']['parent_project_name'],
-      taskType:
-          TaskViewType.fromString(json['args']['task_type'] ?? 'singleTask'),
+      taskType: TaskViewType.fromString(taskTypeStr),
     );
   }
 }
@@ -220,28 +220,6 @@ class DeleteTaskRequestModel extends AiActionRequestModel {
       args: json['args'],
       taskId: json['args']['task_id'],
       taskName: json['args']['task_name'],
-    );
-  }
-}
-
-class AssignUserToTaskRequestModel extends AiActionRequestModel {
-  final String taskId;
-  final String taskName;
-  final String userName;
-
-  AssignUserToTaskRequestModel({
-    required this.taskId,
-    required this.taskName,
-    required this.userName,
-    super.args,
-  }) : super(actionRequestType: AiActionRequestType.assignUserToTask);
-
-  static AssignUserToTaskRequestModel fromJson(Map<String, dynamic> json) {
-    return AssignUserToTaskRequestModel(
-      args: json['args'],
-      taskId: json['args']['task_id'],
-      taskName: json['args']['task_name'],
-      userName: json['args']['user_name'],
     );
   }
 }

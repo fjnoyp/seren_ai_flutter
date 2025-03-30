@@ -228,7 +228,7 @@ class LanggraphService {
   }
 
   Future<(String, String)> createNewThread({
-    required String name,
+    //required String name,
     required LgConfigSchemaModel lgConfig,
   }) async {
     final newLgThreadId = await langgraphApi.createThread();
