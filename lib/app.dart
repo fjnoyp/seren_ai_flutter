@@ -110,7 +110,11 @@ class AppState extends ConsumerState<App> {
                       centerTitle: true),
                   body: const SignInUpPage()),
               AppRoutes.home.name: (context) => _GuardScaffold(
-                  AppLocalizations.of(context)!.home, const HomePage()),
+                  AppLocalizations.of(context)!.home,
+                  HomePage(
+                    initialTab:
+                        args != null ? args['initialTab'] as int? : null,
+                  )),
               AppRoutes.chooseOrg.name: (context) => _AuthGuardScaffold(
                   AppLocalizations.of(context)!.chooseOrganization,
                   const ChooseOrgPage()),
