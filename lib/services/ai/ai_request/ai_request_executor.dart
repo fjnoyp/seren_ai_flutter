@@ -7,10 +7,10 @@ import 'package:seren_ai_flutter/services/ai/ai_request/models/requests/ai_info_
 import 'package:seren_ai_flutter/services/ai/ai_request/models/requests/ai_request_model.dart';
 import 'package:seren_ai_flutter/services/ai/ai_request/models/requests/ai_ui_action_request_model.dart';
 import 'package:seren_ai_flutter/services/ai/ai_request/models/results/error_request_result_model.dart';
-import 'package:seren_ai_flutter/services/data/shifts/tool_methods/models/shift_request_models.dart';
-import 'package:seren_ai_flutter/services/data/shifts/tool_methods/shift_tool_methods.dart';
-import 'package:seren_ai_flutter/services/data/tasks/tool_methods/models/task_request_models.dart';
-import 'package:seren_ai_flutter/services/data/tasks/tool_methods/task_tool_methods.dart';
+import 'package:seren_ai_flutter/services/data/shifts/ai_tool_methods/models/shift_request_models.dart';
+import 'package:seren_ai_flutter/services/data/shifts/ai_tool_methods/shift_tool_methods.dart';
+import 'package:seren_ai_flutter/services/data/tasks/ai_tool_methods/models/task_request_models.dart';
+import 'package:seren_ai_flutter/services/data/tasks/ai_tool_methods/task_tool_methods.dart';
 
 final aiRequestExecutorProvider =
     Provider<AiRequestExecutor>(AiRequestExecutor.new);
