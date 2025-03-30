@@ -2,10 +2,10 @@
 class BuildInfo {
   // Core build info
   static const String version = '1.0.0';
-  static const String buildDate = '2025-03-30 11:34:43';
+  static const String buildDate = '2025-03-30 11:37:52';
   
   // Git info
-  static const String commitHash = 'f68fb81';
+  static const String commitHash = '97d0037';
   static const String branch = 'feat/ai_note_task_additions';
   static const String lastTag = 'no tag';
   
@@ -15,6 +15,22 @@ class BuildInfo {
   
   // Recent commits (last 5)
   static const List<Map<String, String>> recentCommits = [
+    {
+      "hash": "97d0037",
+      "author": "Kyle",
+      "email": "kylcheng@gmail.com", 
+      "message": "fix(ai): Replace watch with read when modifying state in task_tool_methods",
+      "date": "2025-03-30",
+      "relativeDate": "60 seconds ago"
+    },
+    {
+      "hash": "8c12b31",
+      "author": "Kyle",
+      "email": "kylcheng@gmail.com", 
+      "message": "chore(ai): cleanup logic",
+      "date": "2025-03-30",
+      "relativeDate": "3 minutes ago"
+    },
     {
       "hash": "f68fb81",
       "author": "Kyle",
@@ -39,25 +55,9 @@ class BuildInfo {
       "date": "2025-03-27",
       "relativeDate": "3 days ago"
     },
-    {
-      "hash": "6a5f027",
-      "author": "Kyle",
-      "email": "kylcheng@gmail.com", 
-      "message": "chore(ai): update ui context logic",
-      "date": "2025-03-27",
-      "relativeDate": "3 days ago"
-    },
-    {
-      "hash": "2a22b6d",
-      "author": "Kyle",
-      "email": "kylcheng@gmail.com", 
-      "message": "chore(ai): add basic note requests + update task request fields",
-      "date": "2025-03-27",
-      "relativeDate": "3 days ago"
-    },
   ];
 
   // Stats
-  static const String totalCommits = '485';
+  static const String totalCommits = '487';
   static const String contributors = '       0';
 }
