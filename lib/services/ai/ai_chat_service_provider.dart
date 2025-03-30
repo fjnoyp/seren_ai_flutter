@@ -45,6 +45,33 @@ class AIChatService {
 
   AIChatService(this.ref);
 
+  Future<List<LgAiBaseMessageModel>> sendTestMessageToAi(
+      {String? userMessage, LgCommandModel? command}) async {
+    final isAiRespondingNotifier = ref.read(isAiRespondingProvider.notifier);
+    final curOrgId = ref.read(curSelectedOrgIdNotifierProvider);
+    final curUser = ref.read(curUserProvider).value;
+
+    isAiRespondingNotifier.state = true;
+
+    if (curUser == null || curOrgId == null) {
+      isAiRespondingNotifier.state = false;
+      throw Exception('No current user or org id found');
+    }
+
+    final aiChatThread = await _getOrCreateAiChatThread(curUser.id, curOrgId);
+
+    final langgraphService = ref.read(langgraphServiceProvider);
+
+    final lgBaseMessages = await langgraphService.sendMessage(
+      message: userMessage,
+      lgThreadId: aiChatThread.parentLgThreadId,
+      lgAssistantId: aiChatThread.parentLgAssistantId,
+      command: command,
+    );
+
+    return lgBaseMessages;
+  }
+
 // TODO p2: raw lg message types should not be leaked to rest of code
 // We should be handling types here instead ...
   Future<List<LgAiBaseMessageModel>> sendSingleCallMessageToAi({
@@ -180,7 +207,7 @@ class AIChatService {
     final aiChatMessagesRepo = ref.read(aiChatMessagesRepositoryProvider);
 
     // Call Langgraph API
-    final lgBaseMessages = await langgraphService.runAi(
+    final lgBaseMessages = await langgraphService.sendMessage(
       message: userMessage,
       uiContext: uiContext,
       lgThreadId: aiChatThread.parentLgThreadId,

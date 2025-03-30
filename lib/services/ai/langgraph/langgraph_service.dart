@@ -38,7 +38,7 @@ class LanggraphService {
   }
 
   /// Top level method for sending a user message to the Langgraph API AI
-  Future<List<LgAiBaseMessageModel>> runAi({
+  Future<List<LgAiBaseMessageModel>> sendMessage({
     String? message,
     String? uiContext,
     required String lgThreadId,
@@ -61,7 +61,7 @@ class LanggraphService {
     // await _langgraphDbOperations.saveUserAiChatMessage(
     //     userMessage, aiChatThread.id, LgAiChatMessageRole.user);
 
-    final lgBaseMessages = await _runAi(
+    final lgBaseMessages = await _sendMessage(
       lgThreadId: lgThreadId,
       lgAssistantId: lgAssistantId,
       lgInput: lgInput,
@@ -75,6 +75,18 @@ class LanggraphService {
 
     return lgBaseMessages;
   }
+
+  // Future<void> sendCommand({
+  //   required String lgThreadId,
+  //   required String lgAssistantId,
+  //   required LgCommandModel command,
+  // }) async {
+  //   await langgraphApi.sendRunCommand(
+  //     threadId: lgThreadId,
+  //     assistantId: lgAssistantId,
+  //     command: command,
+  //   );
+  // }
 
   Future<void> updateLastToolMessageWithResult({
     required String resultString,
@@ -166,7 +178,7 @@ class LanggraphService {
     return messages;
   }
 
-  Future<List<LgAiBaseMessageModel>> _runAi({
+  Future<List<LgAiBaseMessageModel>> _sendMessage({
     required String lgThreadId,
     required String lgAssistantId,
     LgAgentStateModel? lgInput,
