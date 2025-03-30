@@ -52,21 +52,24 @@ class TFDueDate {
   /// Filter for tasks due today
   static TaskFilter today(BuildContext context) => TaskFilter(
         field: TaskFieldEnum.dueDate,
-        readableName: AppLocalizations.of(context)!.today,
+        readableName:
+            '${TaskFieldEnum.dueDate.toHumanReadable(context)}: ${AppLocalizations.of(context)!.today}',
         condition: (task) => task.dueDate?.isSameDate(DateTime.now()) ?? false,
       );
 
   /// Filter for tasks due this week
   static TaskFilter thisWeek(BuildContext context) => TaskFilter(
         field: TaskFieldEnum.dueDate,
-        readableName: AppLocalizations.of(context)!.thisWeek,
+        readableName:
+            '${TaskFieldEnum.dueDate.toHumanReadable(context)}: ${AppLocalizations.of(context)!.thisWeek}',
         condition: (task) => task.dueDate?.isSameWeek(DateTime.now()) ?? false,
       );
 
   /// Filter for tasks due this month
   static TaskFilter thisMonth(BuildContext context) => TaskFilter(
         field: TaskFieldEnum.dueDate,
-        readableName: AppLocalizations.of(context)!.thisMonth,
+        readableName:
+            '${TaskFieldEnum.dueDate.toHumanReadable(context)}: ${AppLocalizations.of(context)!.thisMonth}',
         condition: (task) => task.dueDate?.isSameMonth(DateTime.now()) ?? false,
       );
 
@@ -74,11 +77,23 @@ class TFDueDate {
   static TaskFilter customDateRange(BuildContext context) => TaskFilter(
         field: TaskFieldEnum.dueDate,
         showDateRangePicker: true,
-        readableName: AppLocalizations.of(context)!.customDateRange,
+        readableName:
+            '${TaskFieldEnum.dueDate.toHumanReadable(context)}: ${AppLocalizations.of(context)!.customDateRange}',
         condition: (task) => true,
         // dateRangeCondition: (task, dateRange) =>
         //     (task.dueDate?.isAfter(dateRange.start) ?? false) &&
         //     (task.dueDate?.isBefore(dateRange.end) ?? false),
+      );
+
+  /// Filter for tasks due in a custom date range with a custom name
+  static TaskFilter customDateRangeWithName(
+          BuildContext context, String customName) =>
+      TaskFilter(
+        field: TaskFieldEnum.dueDate,
+        showDateRangePicker: true,
+        readableName:
+            '${TaskFieldEnum.dueDate.toHumanReadable(context)}: $customName',
+        condition: (task) => true,
       );
 }
 
@@ -87,7 +102,8 @@ class TFCreatedAt {
   /// Filter for tasks created today
   static TaskFilter today(BuildContext context) => TaskFilter(
         field: TaskFieldEnum.createdAt,
-        readableName: AppLocalizations.of(context)!.today,
+        readableName:
+            '${TaskFieldEnum.createdAt.toHumanReadable(context)}: ${AppLocalizations.of(context)!.today}',
         condition: (task) =>
             task.createdAt?.isSameDate(DateTime.now()) ?? false,
       );
@@ -95,7 +111,8 @@ class TFCreatedAt {
   /// Filter for tasks created this week
   static TaskFilter thisWeek(BuildContext context) => TaskFilter(
         field: TaskFieldEnum.createdAt,
-        readableName: AppLocalizations.of(context)!.thisWeek,
+        readableName:
+            '${TaskFieldEnum.createdAt.toHumanReadable(context)}: ${AppLocalizations.of(context)!.thisWeek}',
         condition: (task) =>
             task.createdAt?.isSameWeek(DateTime.now()) ?? false,
       );
@@ -103,7 +120,8 @@ class TFCreatedAt {
   /// Filter for tasks created this month
   static TaskFilter thisMonth(BuildContext context) => TaskFilter(
         field: TaskFieldEnum.createdAt,
-        readableName: AppLocalizations.of(context)!.thisMonth,
+        readableName:
+            '${TaskFieldEnum.createdAt.toHumanReadable(context)}: ${AppLocalizations.of(context)!.thisMonth}',
         condition: (task) =>
             task.createdAt?.isSameMonth(DateTime.now()) ?? false,
       );
@@ -112,12 +130,24 @@ class TFCreatedAt {
   static TaskFilter customDateRange(BuildContext context) => TaskFilter(
         field: TaskFieldEnum.createdAt,
         showDateRangePicker: true,
-        readableName: AppLocalizations.of(context)!.customDateRange,
+        readableName:
+            '${TaskFieldEnum.createdAt.toHumanReadable(context)}: ${AppLocalizations.of(context)!.customDateRange}',
         // This must be overrided in the filter view
         condition: (task) => true,
         // dateRangeCondition: (task, dateRange) =>
         //     (task.createdAt?.isAfter(dateRange.start) ?? false) &&
         //     (task.createdAt?.isBefore(dateRange.end) ?? false),
+      );
+
+  /// Filter for tasks created in a custom date range with a custom name
+  static TaskFilter customDateRangeWithName(
+          BuildContext context, String customName) =>
+      TaskFilter(
+        field: TaskFieldEnum.createdAt,
+        showDateRangePicker: true,
+        readableName:
+            '${TaskFieldEnum.createdAt.toHumanReadable(context)}: $customName',
+        condition: (task) => true,
       );
 }
 
@@ -126,7 +156,8 @@ class TFUpdatedAt {
   /// Filter for tasks updated today
   static TaskFilter today(BuildContext context) => TaskFilter(
         field: TaskFieldEnum.updatedAt,
-        readableName: AppLocalizations.of(context)!.today,
+        readableName:
+            '${TaskFieldEnum.updatedAt.toHumanReadable(context)}: ${AppLocalizations.of(context)!.today}',
         condition: (task) =>
             task.updatedAt?.isSameDate(DateTime.now()) ?? false,
       );
@@ -134,7 +165,8 @@ class TFUpdatedAt {
   /// Filter for tasks updated this week
   static TaskFilter thisWeek(BuildContext context) => TaskFilter(
         field: TaskFieldEnum.updatedAt,
-        readableName: AppLocalizations.of(context)!.thisWeek,
+        readableName:
+            '${TaskFieldEnum.updatedAt.toHumanReadable(context)}: ${AppLocalizations.of(context)!.thisWeek}',
         condition: (task) =>
             task.updatedAt?.isSameWeek(DateTime.now()) ?? false,
       );
@@ -142,7 +174,8 @@ class TFUpdatedAt {
   /// Filter for tasks updated this month
   static TaskFilter thisMonth(BuildContext context) => TaskFilter(
         field: TaskFieldEnum.updatedAt,
-        readableName: AppLocalizations.of(context)!.thisMonth,
+        readableName:
+            '${TaskFieldEnum.updatedAt.toHumanReadable(context)}: ${AppLocalizations.of(context)!.thisMonth}',
         condition: (task) =>
             task.updatedAt?.isSameMonth(DateTime.now()) ?? false,
       );
@@ -151,11 +184,24 @@ class TFUpdatedAt {
   static TaskFilter customDateRange(BuildContext context) => TaskFilter(
         field: TaskFieldEnum.updatedAt,
         showDateRangePicker: true,
-        readableName: AppLocalizations.of(context)!.customDateRange,
+        readableName:
+            '${TaskFieldEnum.updatedAt.toHumanReadable(context)}: ${AppLocalizations.of(context)!.customDateRange}',
         // This must be overrided in the filter view
         condition: (task) => true,
       );
+
+  /// Filter for tasks created in a custom date range with a custom name
+  static TaskFilter customDateRangeWithName(
+          BuildContext context, String customName) =>
+      TaskFilter(
+        field: TaskFieldEnum.updatedAt,
+        showDateRangePicker: true,
+        readableName:
+            '${TaskFieldEnum.updatedAt.toHumanReadable(context)}: $customName',
+        condition: (task) => true,
+      );
 }
+
 /// Predefined task filters for priority
 class TFPriority {
   /// Filter for tasks by priority
