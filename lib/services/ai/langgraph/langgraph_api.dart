@@ -93,11 +93,12 @@ class LanggraphApi {
     );
   }
 
+  // TODO p3: streaming is not worked ...
   // https://langchain-ai.github.io/langgraph/cloud/reference/api/api_ref.html#tag/thread-runs/POST/threads/{thread_id}/runs/stream
   Stream<LgAiBaseMessageModel> streamRun({
     required String threadId,
     required String assistantId,
-    required String streamMode,
+    String streamMode = 'updates',
     LgAgentStateModel? input,
     LgCommandModel? command,
     Duration timeout = const Duration(minutes: 5),

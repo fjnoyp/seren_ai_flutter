@@ -2,10 +2,10 @@
 class BuildInfo {
   // Core build info
   static const String version = '1.0.0';
-  static const String buildDate = '2025-03-27 19:06:56';
+  static const String buildDate = '2025-03-30 11:34:43';
   
   // Git info
-  static const String commitHash = '6eafa18';
+  static const String commitHash = 'f68fb81';
   static const String branch = 'feat/ai_note_task_additions';
   static const String lastTag = 'no tag';
   
@@ -16,12 +16,20 @@ class BuildInfo {
   // Recent commits (last 5)
   static const List<Map<String, String>> recentCommits = [
     {
+      "hash": "f68fb81",
+      "author": "Kyle",
+      "email": "kylcheng@gmail.com", 
+      "message": "chore(ai): fix several bugs",
+      "date": "2025-03-27",
+      "relativeDate": "3 days ago"
+    },
+    {
       "hash": "6eafa18",
       "author": "Kyle",
       "email": "kylcheng@gmail.com", 
       "message": "chore(tasks): fix task list item view narrow",
       "date": "2025-03-27",
-      "relativeDate": "6 hours ago"
+      "relativeDate": "3 days ago"
     },
     {
       "hash": "04933b3",
@@ -29,7 +37,7 @@ class BuildInfo {
       "email": "kylcheng@gmail.com", 
       "message": "chore(ai): use new ai context within task tools",
       "date": "2025-03-27",
-      "relativeDate": "8 hours ago"
+      "relativeDate": "3 days ago"
     },
     {
       "hash": "6a5f027",
@@ -37,7 +45,7 @@ class BuildInfo {
       "email": "kylcheng@gmail.com", 
       "message": "chore(ai): update ui context logic",
       "date": "2025-03-27",
-      "relativeDate": "8 hours ago"
+      "relativeDate": "3 days ago"
     },
     {
       "hash": "2a22b6d",
@@ -45,19 +53,11 @@ class BuildInfo {
       "email": "kylcheng@gmail.com", 
       "message": "chore(ai): add basic note requests + update task request fields",
       "date": "2025-03-27",
-      "relativeDate": "8 hours ago"
-    },
-    {
-      "hash": "7c44c54",
-      "author": "renata-sisilio",
-      "email": "renata@seren-ai.co", 
-      "message": "fix(project_overview): move filter logic from TaskFiltersView to ProjectOverviewPage.",
-      "date": "2025-03-27",
-      "relativeDate": "9 hours ago"
+      "relativeDate": "3 days ago"
     },
   ];
 
   // Stats
-  static const String totalCommits = '484';
+  static const String totalCommits = '485';
   static const String contributors = '       0';
 }
