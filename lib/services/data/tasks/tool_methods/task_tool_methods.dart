@@ -49,6 +49,8 @@ import 'package:seren_ai_flutter/services/data/users/repositories/users_reposito
 import 'package:seren_ai_flutter/services/data/tasks/tool_methods/ai_tool_execution_utils.dart';
 import 'package:seren_ai_flutter/widgets/search/search_modal.dart';
 import 'package:seren_ai_flutter/services/ai/ai_context_service.dart';
+import 'package:intl/intl.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 class TaskToolMethods {
   // Threshold for string similarity (0.0 to 1.0)
@@ -243,6 +245,18 @@ class TaskToolMethods {
       );
     }
 
+    // == TaskUpdatedDate
+    if (infoRequest.taskUpdatedDateStart != null ||
+        infoRequest.taskUpdatedDateEnd != null) {
+      applyDateRangeFilter(
+        filterNotifier: filterNotifier,
+        context: context,
+        startDateStr: infoRequest.taskUpdatedDateStart,
+        endDateStr: infoRequest.taskUpdatedDateEnd,
+        dateField: TaskFieldEnum.updatedAt,
+      );
+    }
+
     // === Get Tasks for AI Result ===
 
     final searchService = ref.read(tasksFilteredSearchServiceProvider);
@@ -298,7 +312,6 @@ class TaskToolMethods {
     required BuildContext context,
     String? startDateStr,
     String? endDateStr,
-    // String Function(TaskModel task)? dateFieldSelector,
     required TaskFieldEnum dateField,
   }) {
     final start = startDateStr != null
@@ -310,41 +323,75 @@ class TaskToolMethods {
             .add(const Duration(days: 1))
         : null;
 
+    // Format dates for a user-friendly display
+    String formatDate(DateTime date) {
+      // Use intl package for proper internationalization
+      final currentLocale = Localizations.localeOf(context).toString();
+      final DateFormat formatter = DateFormat.MMMd(currentLocale);
+      return formatter.format(date);
+    }
+
+    // Create a readable date range name
+    String dateRangeName = '';
+    if (start != null && end != null) {
+      dateRangeName =
+          '${formatDate(start)} - ${formatDate(end.subtract(const Duration(days: 1)))}';
+    } else if (start != null) {
+      // Use a symbol instead of the word "from"
+      dateRangeName = '${formatDate(start)} →';
+    } else if (end != null) {
+      // Use a symbol instead of the word "until"
+      dateRangeName = '→ ${formatDate(end.subtract(const Duration(days: 1)))}';
+    } else {
+      final appLocalizations = AppLocalizations.of(context);
+      dateRangeName = appLocalizations?.customDateRange ?? 'custom range';
+    }
+
     // Create the appropriate filter based on the field type
-    final baseFilter = dateField == TaskFieldEnum.createdAt
-        ? TFCreatedAt.customDateRange(context)
-        : TFDueDate.customDateRange(context);
+    final baseFilter = switch (dateField) {
+      TaskFieldEnum.createdAt =>
+        TFCreatedAt.customDateRangeWithName(context, dateRangeName),
+      TaskFieldEnum.updatedAt =>
+        TFUpdatedAt.customDateRangeWithName(context, dateRangeName),
+      TaskFieldEnum.dueDate =>
+        TFDueDate.customDateRangeWithName(context, dateRangeName),
+      _ => TFDueDate.customDateRangeWithName(
+          context, dateRangeName), // Default to due date for other fields
+    };
 
     if (start != null && end != null) {
       filterNotifier.updateFilter(baseFilter.copyWith(
         condition: (task) {
-          final date =
-              // dateFieldSelector != null ? DateTime.tryParse(dateFieldSelector(task)) :
-              dateField == TaskFieldEnum.createdAt
-                  ? task.createdAt
-                  : task.dueDate;
+          final date = switch (dateField) {
+            TaskFieldEnum.createdAt => task.createdAt,
+            TaskFieldEnum.updatedAt => task.updatedAt,
+            TaskFieldEnum.dueDate => task.dueDate,
+            _ => task.dueDate, // Default to due date for other fields
+          };
           return date != null && date.isAfter(start) && date.isBefore(end);
         },
       ));
     } else if (start != null) {
       filterNotifier.updateFilter(baseFilter.copyWith(
         condition: (task) {
-          final date =
-              // dateFieldSelector != null ? DateTime.tryParse(dateFieldSelector(task)) :
-              dateField == TaskFieldEnum.createdAt
-                  ? task.createdAt
-                  : task.dueDate;
+          final date = switch (dateField) {
+            TaskFieldEnum.createdAt => task.createdAt,
+            TaskFieldEnum.updatedAt => task.updatedAt,
+            TaskFieldEnum.dueDate => task.dueDate,
+            _ => task.dueDate, // Default to due date for other fields
+          };
           return date != null && date.isAfter(start);
         },
       ));
     } else if (end != null) {
       filterNotifier.updateFilter(baseFilter.copyWith(
         condition: (task) {
-          final date =
-              // dateFieldSelector != null ? DateTime.tryParse(dateFieldSelector(task)) :
-              dateField == TaskFieldEnum.createdAt
-                  ? task.createdAt
-                  : task.dueDate;
+          final date = switch (dateField) {
+            TaskFieldEnum.createdAt => task.createdAt,
+            TaskFieldEnum.updatedAt => task.updatedAt,
+            TaskFieldEnum.dueDate => task.dueDate,
+            _ => task.dueDate, // Default to due date for other fields
+          };
           return date != null && date.isBefore(end);
         },
       ));
