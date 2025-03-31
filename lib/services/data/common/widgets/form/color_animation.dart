@@ -27,7 +27,7 @@ ColorAnimation useColorAnimation({
 }
 
 ColorAnimation useAiActionColorAnimation(BuildContext context, WidgetRef ref,
-    {Duration duration = const Duration(seconds: 3),
+    {Duration duration = const Duration(seconds: 6),
     required dynamic triggerValue}) {
   final colorAnimation = useColorAnimation(
     duration: duration,
@@ -35,12 +35,16 @@ ColorAnimation useAiActionColorAnimation(BuildContext context, WidgetRef ref,
     end: Colors.red,
   );
 
+  // Use a ref to store the previous trigger value
+  final previousTriggerValue = useRef<dynamic>(triggerValue);
+
   useEffect(() {
     // Capture the value once when the effect runs
     final shouldAnimate = ref.read(isAiRespondingProvider);
 
-    // Only start animation if it should animate
-    if (shouldAnimate) {
+    // Check if the triggerValue has changed
+    if (shouldAnimate && previousTriggerValue.value != triggerValue) {
+      previousTriggerValue.value = triggerValue; // Update the previous value
       colorAnimation.controller
           .forward()
           .then((_) => colorAnimation.controller.reverse());

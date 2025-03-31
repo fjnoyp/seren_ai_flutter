@@ -7,6 +7,8 @@ import 'package:seren_ai_flutter/services/ai/ai_request/models/requests/ai_info_
 import 'package:seren_ai_flutter/services/ai/ai_request/models/requests/ai_request_model.dart';
 import 'package:seren_ai_flutter/services/ai/ai_request/models/requests/ai_ui_action_request_model.dart';
 import 'package:seren_ai_flutter/services/ai/ai_request/models/results/error_request_result_model.dart';
+import 'package:seren_ai_flutter/services/data/notes/tool_methods/models/note_request_models.dart';
+import 'package:seren_ai_flutter/services/data/notes/tool_methods/note_tool_methods.dart';
 import 'package:seren_ai_flutter/services/data/shifts/ai_tool_methods/models/shift_request_models.dart';
 import 'package:seren_ai_flutter/services/data/shifts/ai_tool_methods/shift_tool_methods.dart';
 import 'package:seren_ai_flutter/services/data/tasks/ai_tool_methods/models/task_request_models.dart';
@@ -19,6 +21,7 @@ class AiRequestExecutor {
   final Ref ref;
   final ShiftToolMethods shiftToolMethods = ShiftToolMethods();
   final TaskToolMethods taskToolMethods = TaskToolMethods();
+  final NoteToolMethods noteToolMethods = NoteToolMethods();
 
   AiRequestExecutor(this.ref);
 
@@ -132,6 +135,12 @@ class AiRequestExecutor {
       case AiActionRequestType.showTasks:
         return await taskToolMethods.showTask(
             ref: ref, actionRequest: actionRequest as ShowTasksRequestModel);
+
+      case AiActionRequestType.createNote:
+        return await noteToolMethods.createNote(
+            ref: ref,
+            actionRequest: actionRequest as CreateNoteRequestModel,
+            allowToolUiActions: allowToolUiActions);
 
       default:
         return ErrorRequestResultModel(

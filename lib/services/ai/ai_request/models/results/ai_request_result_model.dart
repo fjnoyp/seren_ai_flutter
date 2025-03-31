@@ -1,7 +1,11 @@
 import 'dart:convert';
 
 import 'package:seren_ai_flutter/services/ai/ai_request/models/results/error_request_result_model.dart';
-import 'package:seren_ai_flutter/services/data/shifts/ai_tool_methods/models/shift_result_models.dart';
+import 'package:seren_ai_flutter/services/data/notes/tool_methods/models/create_note_result_model.dart';
+import 'package:seren_ai_flutter/services/data/shifts/ai_tool_methods/models/current_shift_info_result_model.dart';
+import 'package:seren_ai_flutter/services/data/shifts/ai_tool_methods/models/shift_assignments_result_model.dart';
+import 'package:seren_ai_flutter/services/data/shifts/ai_tool_methods/models/shift_clock_in_out_result_model.dart';
+import 'package:seren_ai_flutter/services/data/shifts/ai_tool_methods/models/shift_log_results_model.dart';
 import 'package:seren_ai_flutter/services/data/tasks/ai_tool_methods/models/create_task_result_model.dart';
 import 'package:seren_ai_flutter/services/data/tasks/ai_tool_methods/models/delete_task_result_model.dart';
 import 'package:seren_ai_flutter/services/data/tasks/ai_tool_methods/models/find_tasks_result_model.dart';
@@ -20,7 +24,8 @@ enum AiRequestResultType {
   error('error'),
   updateTaskFields('update_task_fields'),
   addCommentToTask('add_comment_to_task'),
-  showTasks('show_tasks');
+  showTasks('show_tasks'),
+  createNote('create_note');
   //unknown('unknown');
 
   final String value;
@@ -79,6 +84,8 @@ abstract class AiRequestResultModel {
         return AddCommentToTaskResultModel.fromJson(json);
       case AiRequestResultType.showTasks:
         return ShowTasksResultModel.fromJson(json);
+      case AiRequestResultType.createNote:
+        return CreateNoteResultModel.fromJson(json);
       //throw Exception('Unknown type for AiRequestResultModel: $resultType');
     }
   }
