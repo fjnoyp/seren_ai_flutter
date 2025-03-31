@@ -9,7 +9,6 @@ class FindTasksResultModel extends AiRequestResultModel {
   FindTasksResultModel(
       {required this.tasks,
       required super.resultForAi,
-      required super.showOnly,
       this.searchCriteria = const {}})
       : super(resultType: AiRequestResultType.findTasks);
 
@@ -25,7 +24,6 @@ class FindTasksResultModel extends AiRequestResultModel {
     return FindTasksResultModel(
       tasks: tasks,
       resultForAi: resultForAi,
-      showOnly: showOnly,
       searchCriteria: searchCriteria,
     );
   }
@@ -96,7 +94,6 @@ class FindTasksResultModel extends AiRequestResultModel {
           .map((task) => TaskModel.fromJson(task['task'] ?? task))
           .toList(),
       resultForAi: json['result_for_ai'],
-      showOnly: json['show_only'],
       searchCriteria: json['search_criteria'] ?? {},
     );
   }

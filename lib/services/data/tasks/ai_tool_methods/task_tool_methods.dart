@@ -67,7 +67,9 @@ class TaskToolMethods {
 // While show tasks should be shown here
 
   Future<AiRequestResultModel> findTasks(
-      {required Ref ref, required FindTasksRequestModel infoRequest}) async {
+      {required Ref ref,
+      required FindTasksRequestModel infoRequest,
+      bool allowToolUiActions = true}) async {
     // TODO p0 - support updated at filter and finding
     // This way user can find tasks that were updated in the last X days
 
@@ -79,7 +81,8 @@ class TaskToolMethods {
     final selectedOrgId = ref.read(curSelectedOrgIdNotifierProvider);
     if (selectedOrgId == null) {
       return ErrorRequestResultModel(
-          resultForAi: 'No org selected', showOnly: true);
+        resultForAi: 'No org selected',
+      );
     }
 
     // === Filter Notifier Control ===
@@ -97,7 +100,7 @@ class TaskToolMethods {
     // Clear the search query
     ref.read(taskSearchQueryProvider(viewType).notifier).state = '';
 
-    if (infoRequest.showUI == true) {
+    if (allowToolUiActions && infoRequest.showToUser) {
       // Open modal
       try {
         ref.read(isSearchModalOpenProvider.notifier).state = true;
@@ -164,7 +167,6 @@ class TaskToolMethods {
           return ErrorRequestResultModel(
             resultForAi:
                 'No matching users found for ${infoRequest.assignedUserNames}',
-            showOnly: true,
           );
         }
       } else {
@@ -198,7 +200,6 @@ class TaskToolMethods {
           return ErrorRequestResultModel(
             resultForAi:
                 'No matching user found for "${infoRequest.authorUserName}"',
-            showOnly: true,
           );
         }
       }
@@ -219,7 +220,6 @@ class TaskToolMethods {
         return ErrorRequestResultModel(
           resultForAi:
               'No matching project found for "${infoRequest.parentProjectName}"',
-          showOnly: true,
         );
       }
     }
@@ -268,31 +268,6 @@ class TaskToolMethods {
       searchQuery: ref.read(taskSearchQueryProvider(viewType)),
     );
 
-    // // Force a read to ensure state is updated
-    // ref.read(taskFilterStateProvider(viewType));
-
-    // final tasks = await ref.read(tasksRepositoryProvider).getUserViewableTasks(
-    //       userId: curUser.id,
-    //       orgId: selectedOrgId,
-    //     );
-
-    // // TODO p2: Filter should be done on server side to improve performance, have better FTS, semantic search, etc
-    // // Apply async filtering with proper error handling
-    // final asyncResults = await Future.wait(
-    //   tasks.map((task) async {
-    //     try {
-    //       final matches = await ref
-    //           .read(taskFilterStateProvider(viewType))
-    //           .asyncFilterCondition(task);
-    //       return matches ? task : null;
-    //     } catch (e) {
-    //       log('Error in async filter for task ${task.id}: $e');
-    //       return null;
-    //     }
-    //   }),
-    // );
-    // final filteredTasks = asyncResults.whereType<TaskModel>().toList();
-
     // Only take first 20 tasks to send to AI
     final tasksToSend = filteredTasks.take(20).toList();
 
@@ -308,7 +283,7 @@ class TaskToolMethods {
       request: infoRequest,
       resultForAi:
           'Found ${filteredTasks.length} matching tasks: ${tasksToSendAiReadable.whereType<String>().toList()}',
-      showOnly: infoRequest.showUI,
+      showOnly: allowToolUiActions && infoRequest.showToUser,
     );
   }
 
@@ -412,7 +387,8 @@ class TaskToolMethods {
     final selectedOrgId = ref.read(curSelectedOrgIdNotifierProvider);
     if (selectedOrgId == null) {
       return ErrorRequestResultModel(
-          resultForAi: 'No org selected', showOnly: true);
+        resultForAi: 'No org selected',
+      );
     }
 
     final allTasks = await ref
@@ -582,14 +558,13 @@ class TaskToolMethods {
       tasks: tasksToSend,
       resultForAi:
           'Found ${filteredTasks.length} matching tasks: ${tasksToSendAiReadable.whereType<String>().toList()}',
-      showOnly: infoRequest.showUI,
     );
   }
 
   Future<AiRequestResultModel> createTask(
       {required Ref ref,
       required CreateTaskRequestModel actionRequest,
-      required bool allowToolUiActions}) async {
+      bool allowToolUiActions = true}) async {
     final userId = _getUserId(ref);
     if (userId == null) return _handleNoAuth();
 
@@ -600,9 +575,9 @@ class TaskToolMethods {
 
     if (selectedProjectId == null) {
       return ErrorRequestResultModel(
-          resultForAi:
-              'No project found with name "${actionRequest.parentProjectName}"',
-          showOnly: true);
+        resultForAi:
+            'No project found with name "${actionRequest.parentProjectName}"',
+      );
     }
     // === END SELECT PROJECT ===
 
@@ -651,7 +626,7 @@ class TaskToolMethods {
     }
     // === END ASSIGN USERS TO TASK ===
     // Navigate to task page in readOnly mode
-    if (allowToolUiActions) {
+    if (allowToolUiActions && actionRequest.showToUser) {
       ref
           .read(curSelectedTaskIdNotifierProvider.notifier)
           .setTaskId(newTask.id);
@@ -675,10 +650,9 @@ class TaskToolMethods {
       task: newTask,
       request: actionRequest,
       userAssignmentResults: userAssignmentResults,
-      resultForAi: allowToolUiActions
+      resultForAi: actionRequest.showToUser
           ? 'Created new task "${newTask.name}" and opened task page'
           : 'Created new task "${newTask.name}"',
-      showOnly: true,
     );
   }
 
@@ -713,14 +687,15 @@ class TaskToolMethods {
   Future<AiRequestResultModel> updateTaskFields(
       {required Ref ref,
       required UpdateTaskFieldsRequestModel actionRequest,
-      required bool allowToolUiActions}) async {
+      bool allowToolUiActions = true}) async {
     final matchingTasks = await _getTasksByName(ref, actionRequest.taskName);
 
     // TODO p2: determine task matching logic - may want to ask user for confirmation or add a good undo
     // For now - just update the first matching task
     if (matchingTasks.isEmpty) {
       return ErrorRequestResultModel(
-          resultForAi: 'No matching tasks found', showOnly: true);
+        resultForAi: 'No matching tasks found',
+      );
     }
 
     final taskToModify = matchingTasks.first;
@@ -736,9 +711,9 @@ class TaskToolMethods {
 
       if (selectedProjectId == null) {
         return ErrorRequestResultModel(
-            resultForAi:
-                'No project found with name "${actionRequest.parentProjectName}"',
-            showOnly: true);
+          resultForAi:
+              'No project found with name "${actionRequest.parentProjectName}"',
+        );
       }
 
       // Project changes require repository access, so we handle them separately
@@ -777,7 +752,7 @@ class TaskToolMethods {
     );
 
     // Navigate to task page if allowed
-    if (allowToolUiActions) {
+    if (allowToolUiActions && actionRequest.showToUser) {
       ref
           .read(curSelectedTaskIdNotifierProvider.notifier)
           .setTaskId(updatedTask.id);
@@ -839,8 +814,9 @@ class TaskToolMethods {
       originalTask: taskToModify,
       updatedTask: updatedTask,
       request: actionRequest,
-      resultForAi: 'Updated task "${updatedTask.name}" and showed result in UI',
-      showOnly: true,
+      resultForAi: actionRequest.showToUser
+          ? 'Updated task "${updatedTask.name}" and showed result in UI'
+          : 'Updated task "${updatedTask.name}"',
       additionalChanges: additionalChanges,
     );
   }
@@ -853,7 +829,8 @@ class TaskToolMethods {
     final selectedOrgId = ref.read(curSelectedOrgIdNotifierProvider);
     if (selectedOrgId == null) {
       return ErrorRequestResultModel(
-          resultForAi: 'No org selected', showOnly: true);
+        resultForAi: 'No org selected',
+      );
     }
 
     final joinedTasks = await ref
@@ -865,45 +842,57 @@ class TaskToolMethods {
 
     if (filteredTasks.isEmpty) {
       return ErrorRequestResultModel(
-          resultForAi: 'Task not found', showOnly: true);
+        resultForAi: 'Task not found',
+      );
     } else if (filteredTasks.length > 1) {
       // TODO p3: handle this case
       return ErrorRequestResultModel(
         resultForAi:
             'Multiple tasks found with name "${actionRequest.taskName}"',
-        showOnly: true,
       );
     }
 
     // If the task is found, move on to deleting it
     final toDeleteTask = filteredTasks.first;
-    ref
-        .read(curSelectedTaskIdNotifierProvider.notifier)
-        .setTaskId(toDeleteTask.id);
 
-    final navigationService = ref.read(navigationServiceProvider);
-    final deleted = await navigationService.showPopupDialog(
-      DeleteConfirmationDialog(
-        itemName: toDeleteTask.name,
-        onDelete: () async {
-          await ref.read(tasksRepositoryProvider).deleteItem(toDeleteTask.id);
-        },
-      ),
-    );
+    if (actionRequest.showToUser) {
+      ref
+          .read(curSelectedTaskIdNotifierProvider.notifier)
+          .setTaskId(toDeleteTask.id);
 
-    return DeleteTaskResultModel(
-      resultForAi: deleted == true
-          ? 'Successfully deleted task "${toDeleteTask.name}"'
-          : 'Task deletion cancelled by user for "${toDeleteTask.name}"',
-      isDeleted: deleted,
-      taskName: toDeleteTask.name,
-      showOnly: true,
-    );
+      final navigationService = ref.read(navigationServiceProvider);
+      final deleted = await navigationService.showPopupDialog(
+        DeleteConfirmationDialog(
+          itemName: toDeleteTask.name,
+          onDelete: () async {
+            await ref.read(tasksRepositoryProvider).deleteItem(toDeleteTask.id);
+          },
+        ),
+      );
+
+      return DeleteTaskResultModel(
+        resultForAi: deleted == true
+            ? 'Successfully deleted task "${toDeleteTask.name}"'
+            : 'Task deletion cancelled by user for "${toDeleteTask.name}"',
+        isDeleted: deleted,
+        taskName: toDeleteTask.name,
+      );
+    } else {
+      // Delete the task without showing UI
+      await ref.read(tasksRepositoryProvider).deleteItem(toDeleteTask.id);
+
+      return DeleteTaskResultModel(
+        resultForAi: 'Successfully deleted task "${toDeleteTask.name}"',
+        isDeleted: true,
+        taskName: toDeleteTask.name,
+      );
+    }
   }
 
   Future<AiRequestResultModel> addCommentToTask(
       {required Ref ref,
-      required AddCommentToTaskRequestModel actionRequest}) async {
+      required AddCommentToTaskRequestModel actionRequest,
+      bool allowToolUiActions = true}) async {
     final userId = _getUserId(ref);
     if (userId == null) return _handleNoAuth();
 
@@ -912,9 +901,9 @@ class TaskToolMethods {
 
     if (matchingTasks.isEmpty) {
       return ErrorRequestResultModel(
-          resultForAi:
-              'No matching tasks found with the name "${actionRequest.taskName}"',
-          showOnly: true);
+        resultForAi:
+            'No matching tasks found with the name "${actionRequest.taskName}"',
+      );
     }
 
     final taskToComment = matchingTasks.first;
@@ -930,16 +919,23 @@ class TaskToolMethods {
     // Save the comment to the repository
     await ref.read(taskCommentsRepositoryProvider).insertItem(comment);
 
-    // Update task view if available
-    ref
-        .read(curSelectedTaskIdNotifierProvider.notifier)
-        .setTaskId(taskToComment.id);
+    // Update task view if available and showToUser is true
+    if (allowToolUiActions && actionRequest.showToUser) {
+      ref
+          .read(curSelectedTaskIdNotifierProvider.notifier)
+          .setTaskId(taskToComment.id);
+
+      final navigationService = ref.read(navigationServiceProvider);
+      navigationService.navigateTo(AppRoutes.taskPage.name, arguments: {
+        'mode': EditablePageMode.readOnly,
+        'actions': [EditTaskButton(taskToComment.id)],
+      });
+    }
 
     return AddCommentToTaskResultModel(
       comment: comment,
       task: taskToComment,
       resultForAi: 'Added comment to task "${taskToComment.name}"',
-      showOnly: true,
     );
   }
 
@@ -951,17 +947,18 @@ class TaskToolMethods {
     final selectedOrgId = ref.read(curSelectedOrgIdNotifierProvider);
     if (selectedOrgId == null) {
       return ErrorRequestResultModel(
-          resultForAi: 'No org selected', showOnly: true);
+        resultForAi: 'No org selected',
+      );
     }
 
     final navigationService = ref.read(navigationServiceProvider);
 
-    // just return a temporary tesmp result to see what ai is sending
-    // return ShowTasksResultModel(
-    //   resultForAi:
-    //       'The AI request to show the task "${actionRequest.taskName}" with ID "${actionRequest.taskId}", parent project "${actionRequest.parentProjectName}", and type "${actionRequest.taskType}" has been successfully processed.',
-    //   showOnly: true,
-    // );
+    // If showToUser is false, just return information without showing in UI
+    if (!actionRequest.showToUser) {
+      return ShowTasksResultModel(
+        resultForAi: 'Task data retrieved but not shown in UI as per request.',
+      );
+    }
 
     // Case 1: Show a single task by name or id
     if (actionRequest.taskName != null || actionRequest.taskId != null) {
@@ -984,9 +981,9 @@ class TaskToolMethods {
 
       if (taskToShow == null) {
         return ErrorRequestResultModel(
-            resultForAi:
-                'No matching task found for "${actionRequest.taskName ?? actionRequest.taskId}"',
-            showOnly: true);
+          resultForAi:
+              'No matching task found for "${actionRequest.taskName ?? actionRequest.taskId}"',
+        );
       }
 
       // Navigate to task details page
@@ -997,7 +994,6 @@ class TaskToolMethods {
 
       return ShowTasksResultModel(
         resultForAi: 'Showing task "${taskToShow.name}"',
-        showOnly: true,
       );
     }
     // Case 2: Show a tasks list/view based on type
@@ -1009,7 +1005,6 @@ class TaskToolMethods {
               arguments: {'initialTab': 0}); // Recent tab index
           return ShowTasksResultModel(
             resultForAi: 'Showing recent tasks',
-            showOnly: true,
           );
 
         case TaskViewType.myTasks:
@@ -1017,7 +1012,6 @@ class TaskToolMethods {
               arguments: {'initialTab': 1}); // My Tasks tab index
           return ShowTasksResultModel(
             resultForAi: 'Showing my tasks',
-            showOnly: true,
           );
 
         case TaskViewType.projectGanttTasks:
@@ -1030,9 +1024,9 @@ class TaskToolMethods {
 
             if (projectId == null) {
               return ErrorRequestResultModel(
-                  resultForAi:
-                      'No project found with name "${actionRequest.parentProjectName}"',
-                  showOnly: true);
+                resultForAi:
+                    'No project found with name "${actionRequest.parentProjectName}"',
+              );
             }
 
             // Navigate to the appropriate project view
@@ -1044,7 +1038,6 @@ class TaskToolMethods {
               return ShowTasksResultModel(
                 resultForAi:
                     'Showing Gantt view for project "${actionRequest.parentProjectName}"',
-                showOnly: true,
               );
             } else {
               ref
@@ -1053,20 +1046,19 @@ class TaskToolMethods {
               return ShowTasksResultModel(
                 resultForAi:
                     'Showing tasks for project "${actionRequest.parentProjectName}"',
-                showOnly: true,
               );
             }
           } else {
             return ErrorRequestResultModel(
-                resultForAi: 'Project name is required for project task views',
-                showOnly: true);
+              resultForAi: 'Project name is required for project task views',
+            );
           }
 
         default:
           return ErrorRequestResultModel(
-              resultForAi:
-                  'Unsupported task view type: ${actionRequest.taskType}',
-              showOnly: true);
+            resultForAi:
+                'Unsupported task view type: ${actionRequest.taskType}',
+          );
       }
     }
   }
@@ -1077,6 +1069,8 @@ class TaskToolMethods {
   }
 
   AiRequestResultModel _handleNoAuth() {
-    return ErrorRequestResultModel(resultForAi: 'No auth', showOnly: true);
+    return ErrorRequestResultModel(
+      resultForAi: 'No auth',
+    );
   }
 }

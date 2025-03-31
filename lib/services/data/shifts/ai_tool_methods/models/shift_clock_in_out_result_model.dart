@@ -6,14 +6,12 @@ class ShiftClockInOutResultModel extends AiRequestResultModel {
   ShiftClockInOutResultModel({
     required this.clockedIn,
     required super.resultForAi,
-    required super.showOnly,
   }) : super(resultType: AiRequestResultType.shiftClockInOut);
 
   factory ShiftClockInOutResultModel.fromJson(Map<String, dynamic> json) {
     return ShiftClockInOutResultModel(
       clockedIn: json['clocked_in'],
       resultForAi: json['result_for_ai'],
-      showOnly: json['show_only'],
     );
   }
 

@@ -66,12 +66,10 @@ class AiRequestExecutor {
     switch (uiAction.uiActionType) {
       case AiUIActionRequestType.shiftsPage:
         // TODO p1: open shifts page
-        return ErrorRequestResultModel(
-            resultForAi: 'Not implemented', showOnly: true);
+        return ErrorRequestResultModel(resultForAi: 'Not implemented');
       default:
         return ErrorRequestResultModel(
-            resultForAi: 'Unknown UI action: ${uiAction.toString()}',
-            showOnly: true);
+            resultForAi: 'Unknown UI action: ${uiAction.toString()}');
     }
   }
 
@@ -80,22 +78,26 @@ class AiRequestExecutor {
     switch (infoRequest.infoRequestType) {
       case AiInfoRequestType.shiftAssignments:
         return await shiftToolMethods.getShiftAssignments(
-            ref: ref, infoRequest: infoRequest as ShiftAssignmentsRequestModel);
+            ref: ref,
+            infoRequest: infoRequest as ShiftAssignmentsRequestModel,
+            allowToolUiActions: allowToolUiActions);
 
       case AiInfoRequestType.shiftLogs:
         return await shiftToolMethods.getShiftLogs(
-            ref: ref, infoRequest: infoRequest as ShiftLogsRequestModel);
+            ref: ref,
+            infoRequest: infoRequest as ShiftLogsRequestModel,
+            allowToolUiActions: allowToolUiActions);
 
       case AiInfoRequestType.findTasks:
         return await taskToolMethods.findTasks(
           ref: ref,
           infoRequest: infoRequest as FindTasksRequestModel,
+          allowToolUiActions: allowToolUiActions,
         );
 
       default:
         return ErrorRequestResultModel(
-            resultForAi: 'Unknown info request: ${infoRequest.toString()}',
-            showOnly: true);
+            resultForAi: 'Unknown info request: ${infoRequest.toString()}');
     }
   }
 
@@ -124,7 +126,8 @@ class AiRequestExecutor {
       case AiActionRequestType.addCommentToTask:
         return await taskToolMethods.addCommentToTask(
             ref: ref,
-            actionRequest: actionRequest as AddCommentToTaskRequestModel);
+            actionRequest: actionRequest as AddCommentToTaskRequestModel,
+            allowToolUiActions: allowToolUiActions);
 
       case AiActionRequestType.showTasks:
         return await taskToolMethods.showTask(
@@ -132,8 +135,7 @@ class AiRequestExecutor {
 
       default:
         return ErrorRequestResultModel(
-            resultForAi: 'Unknown action request: ${actionRequest.toString()}',
-            showOnly: true);
+            resultForAi: 'Unknown action request: ${actionRequest.toString()}');
     }
   }
 }

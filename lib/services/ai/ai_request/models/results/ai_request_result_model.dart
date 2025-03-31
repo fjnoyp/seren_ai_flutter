@@ -1,9 +1,7 @@
 import 'dart:convert';
 
 import 'package:seren_ai_flutter/services/ai/ai_request/models/results/error_request_result_model.dart';
-import 'package:seren_ai_flutter/services/data/shifts/ai_tool_methods/models/shift_assignments_result_model.dart';
-import 'package:seren_ai_flutter/services/data/shifts/ai_tool_methods/models/shift_clock_in_out_result_model.dart';
-import 'package:seren_ai_flutter/services/data/shifts/ai_tool_methods/models/shift_log_results_model.dart';
+import 'package:seren_ai_flutter/services/data/shifts/ai_tool_methods/models/shift_result_models.dart';
 import 'package:seren_ai_flutter/services/data/tasks/ai_tool_methods/models/create_task_result_model.dart';
 import 'package:seren_ai_flutter/services/data/tasks/ai_tool_methods/models/delete_task_result_model.dart';
 import 'package:seren_ai_flutter/services/data/tasks/ai_tool_methods/models/find_tasks_result_model.dart';
@@ -15,6 +13,7 @@ enum AiRequestResultType {
   shiftAssignments('shift_assignments'),
   shiftLogs('shift_logs'),
   shiftClockInOut('shift_clock_in_out'),
+  currentShiftInfo('current_shift_info'),
   findTasks('find_tasks'),
   createTask('create_task'),
   deleteTask('delete_task'),
@@ -42,20 +41,14 @@ abstract class AiRequestResultModel {
   /// Result of the AI Request to be displayed to the user
   final String resultForAi;
 
-  final bool showOnly;
-
   final AiRequestResultType resultType;
 
-  AiRequestResultModel(
-      {required this.resultForAi,
-      required this.showOnly,
-      required this.resultType});
+  AiRequestResultModel({required this.resultForAi, required this.resultType});
 
   Map<String, dynamic> toJson() {
     return {
       'result_type': resultType.value,
       'result_for_ai': resultForAi,
-      'show_only': showOnly,
     };
   }
 
@@ -70,6 +63,8 @@ abstract class AiRequestResultModel {
         return ShiftLogsResultModel.fromJson(json);
       case AiRequestResultType.shiftClockInOut:
         return ShiftClockInOutResultModel.fromJson(json);
+      case AiRequestResultType.currentShiftInfo:
+        return CurrentShiftInfoResultModel.fromJson(json);
       case AiRequestResultType.findTasks:
         return FindTasksResultModel.fromJson(json);
       case AiRequestResultType.createTask:

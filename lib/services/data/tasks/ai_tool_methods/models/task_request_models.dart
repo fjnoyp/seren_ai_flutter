@@ -18,6 +18,7 @@ class FindTasksRequestModel extends AiInfoRequestModel {
   final String? taskCreatedDateEnd;
   final String? taskUpdatedDateStart;
   final String? taskUpdatedDateEnd;
+  final bool showToUser;
 
   FindTasksRequestModel({
     this.taskName,
@@ -34,7 +35,7 @@ class FindTasksRequestModel extends AiInfoRequestModel {
     this.taskCreatedDateEnd,
     this.taskUpdatedDateStart,
     this.taskUpdatedDateEnd,
-    super.showUI = true,
+    this.showToUser = true,
     super.args,
   }) : super(infoRequestType: AiInfoRequestType.findTasks);
 
@@ -55,6 +56,7 @@ class FindTasksRequestModel extends AiInfoRequestModel {
       taskCreatedDateEnd: json['args']['task_created_date_end'],
       taskUpdatedDateStart: json['args']['task_updated_date_start'],
       taskUpdatedDateEnd: json['args']['task_updated_date_end'],
+      showToUser: json['args']['show_to_user'] ?? true,
     );
   }
 }
@@ -64,12 +66,14 @@ class ShowTasksRequestModel extends AiActionRequestModel {
   final String? taskName;
   final String? parentProjectName;
   final TaskViewType taskType;
+  final bool showToUser;
 
   ShowTasksRequestModel({
     this.taskId,
     this.taskName,
     this.parentProjectName,
     required this.taskType,
+    this.showToUser = true,
     super.args,
   }) : super(actionRequestType: AiActionRequestType.showTasks);
 
@@ -81,6 +85,7 @@ class ShowTasksRequestModel extends AiActionRequestModel {
       taskName: json['args']['task_name'],
       parentProjectName: json['args']['parent_project_name'],
       taskType: TaskViewType.fromString(taskTypeStr),
+      showToUser: json['args']['show_to_user'] ?? true,
     );
   }
 }
@@ -104,11 +109,13 @@ class AddCommentToTaskRequestModel extends AiActionRequestModel {
   final String taskId;
   final String taskName;
   final String comment;
+  final bool showToUser;
 
   AddCommentToTaskRequestModel({
     required this.taskId,
     required this.taskName,
     required this.comment,
+    this.showToUser = true,
     super.args,
   }) : super(actionRequestType: AiActionRequestType.addCommentToTask);
 
@@ -118,6 +125,7 @@ class AddCommentToTaskRequestModel extends AiActionRequestModel {
       taskId: json['args']['task_id'],
       taskName: json['args']['task_name'],
       comment: json['args']['comment'],
+      showToUser: json['args']['show_to_user'] ?? true,
     );
   }
 }
@@ -132,6 +140,7 @@ class CreateTaskRequestModel extends AiActionRequestModel {
   final int? estimateDurationMinutes;
   final List<String>? assignedUserNames;
   final String? parentProjectName;
+  final bool showToUser;
 
   CreateTaskRequestModel({
     required this.taskName,
@@ -143,6 +152,7 @@ class CreateTaskRequestModel extends AiActionRequestModel {
     this.estimateDurationMinutes,
     this.assignedUserNames,
     this.parentProjectName,
+    this.showToUser = true,
     super.args,
   }) : super(actionRequestType: AiActionRequestType.createTask);
 
@@ -158,6 +168,7 @@ class CreateTaskRequestModel extends AiActionRequestModel {
       estimateDurationMinutes: json['args']['estimate_duration_minutes'],
       assignedUserNames: json['args']['assigned_user_names']?.cast<String>(),
       parentProjectName: json['args']['parent_project_name'],
+      showToUser: json['args']['show_to_user'] ?? true,
     );
   }
 }
@@ -173,6 +184,7 @@ class UpdateTaskFieldsRequestModel extends AiActionRequestModel {
   final int? estimateDurationMinutes;
   final List<String>? assignedUserNames;
   final String? parentProjectName;
+  final bool showToUser;
 
   UpdateTaskFieldsRequestModel({
     required this.taskId,
@@ -185,6 +197,7 @@ class UpdateTaskFieldsRequestModel extends AiActionRequestModel {
     this.estimateDurationMinutes,
     this.assignedUserNames,
     this.parentProjectName,
+    this.showToUser = true,
     super.args,
   }) : super(actionRequestType: AiActionRequestType.updateTaskFields);
 
@@ -201,6 +214,7 @@ class UpdateTaskFieldsRequestModel extends AiActionRequestModel {
       estimateDurationMinutes: json['args']['estimate_duration_minutes'],
       assignedUserNames: json['args']['assigned_user_names']?.cast<String>(),
       parentProjectName: json['args']['parent_project_name'],
+      showToUser: json['args']['show_to_user'] ?? true,
     );
   }
 }
@@ -208,10 +222,12 @@ class UpdateTaskFieldsRequestModel extends AiActionRequestModel {
 class DeleteTaskRequestModel extends AiActionRequestModel {
   final String taskId;
   final String taskName;
+  final bool showToUser;
 
   DeleteTaskRequestModel({
     required this.taskId,
     required this.taskName,
+    this.showToUser = true,
     super.args,
   }) : super(actionRequestType: AiActionRequestType.deleteTask);
 
@@ -220,6 +236,7 @@ class DeleteTaskRequestModel extends AiActionRequestModel {
       args: json['args'],
       taskId: json['args']['task_id'],
       taskName: json['args']['task_name'],
+      showToUser: json['args']['show_to_user'] ?? true,
     );
   }
 }

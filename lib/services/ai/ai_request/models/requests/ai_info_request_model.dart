@@ -7,6 +7,7 @@ import 'package:seren_ai_flutter/services/data/notes/tool_methods/models/note_re
 enum AiInfoRequestType {
   shiftAssignments('shift_assignments'),
   shiftLogs('shift_logs'),
+  currentShiftInfo('current_shift_info'),
   findTasks('find_tasks'),
   findNotes('find_notes');
 
@@ -25,12 +26,10 @@ class AiInfoRequestModel extends AiRequestModel {
   final AiInfoRequestType infoRequestType;
 
   // TODO p3: defaults to true, in future get ai readable from the ai request
-  final bool showUI;
 
   AiInfoRequestModel({
     required this.infoRequestType,
     super.args,
-    this.showUI = true,
   }) : super(AiRequestType.infoRequest);
 
   factory AiInfoRequestModel.fromJson(Map<String, dynamic> json) {
@@ -42,6 +41,8 @@ class AiInfoRequestModel extends AiRequestModel {
         return ShiftAssignmentsRequestModel.fromJson(json);
       case AiInfoRequestType.shiftLogs:
         return ShiftLogsRequestModel.fromJson(json);
+      case AiInfoRequestType.currentShiftInfo:
+        return CurrentShiftInfoRequestModel.fromJson(json);
       case AiInfoRequestType.findTasks:
         return FindTasksRequestModel.fromJson(json);
       case AiInfoRequestType.findNotes:
@@ -51,6 +52,6 @@ class AiInfoRequestModel extends AiRequestModel {
 
   @override
   String toString() {
-    return 'AiInfoRequestModel(infoRequestType: $infoRequestType, showOnly: $showUI, args: $args)';
+    return 'AiInfoRequestModel(infoRequestType: $infoRequestType, args: $args)';
   }
 }
