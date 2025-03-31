@@ -10,7 +10,6 @@ class AddCommentToTaskResultModel extends AiRequestResultModel {
     required this.comment,
     this.task,
     required super.resultForAi,
-    required super.showOnly,
   }) : super(resultType: AiRequestResultType.addCommentToTask);
 
   factory AddCommentToTaskResultModel.fromJson(Map<String, dynamic> json) {
@@ -18,7 +17,6 @@ class AddCommentToTaskResultModel extends AiRequestResultModel {
       comment: TaskCommentModel.fromJson(json['comment']),
       task: json['task'] != null ? TaskModel.fromJson(json['task']) : null,
       resultForAi: json['result_for_ai'],
-      showOnly: json['show_only'],
     );
   }
 

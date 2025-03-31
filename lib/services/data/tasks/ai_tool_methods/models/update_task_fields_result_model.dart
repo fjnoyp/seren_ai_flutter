@@ -11,7 +11,6 @@ class UpdateTaskFieldsResultModel extends AiRequestResultModel {
   UpdateTaskFieldsResultModel(
       {required this.task,
       required super.resultForAi,
-      required super.showOnly,
       this.changedFields = const {}})
       : super(resultType: AiRequestResultType.updateTaskFields);
 
@@ -21,7 +20,6 @@ class UpdateTaskFieldsResultModel extends AiRequestResultModel {
     required TaskModel updatedTask,
     required UpdateTaskFieldsRequestModel request,
     required String resultForAi,
-    required bool showOnly,
     Map<String, Map<String, dynamic>>? additionalChanges,
   }) {
     final changedFields = _processChanges(
@@ -34,7 +32,6 @@ class UpdateTaskFieldsResultModel extends AiRequestResultModel {
     return UpdateTaskFieldsResultModel(
       task: updatedTask,
       resultForAi: resultForAi,
-      showOnly: showOnly,
       changedFields: changedFields,
     );
   }
@@ -134,7 +131,6 @@ class UpdateTaskFieldsResultModel extends AiRequestResultModel {
       // Adjustment to fit old and new data structures
       task: TaskModel.fromJson(json['task'] ?? json['joined_task']['task']),
       resultForAi: json['result_for_ai'],
-      showOnly: json['show_only'],
       changedFields: json['changed_fields'] != null
           ? Map<String, Map<String, dynamic>>.from(json['changed_fields'])
           : {},
