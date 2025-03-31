@@ -25,11 +25,6 @@ class AiRequestResultGenericWidget extends StatelessWidget {
             ),
             const SizedBox(height: 8),
             Text(
-              'Show Only: ${result.showOnly}',
-              style: Theme.of(context).textTheme.bodyMedium,
-            ),
-            const SizedBox(height: 8),
-            Text(
               'Result:',
               style: Theme.of(context).textTheme.titleSmall,
             ),

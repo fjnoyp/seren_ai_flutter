@@ -9,7 +9,6 @@ class ShiftLogsResultModel extends AiRequestResultModel {
   ShiftLogsResultModel({
     required this.shiftLogs,
     required super.resultForAi,
-    required super.showOnly,
     required this.curShiftMinutes,
     required this.totalLogMinutes,
   }) : super(resultType: AiRequestResultType.shiftLogs);
@@ -24,7 +23,6 @@ class ShiftLogsResultModel extends AiRequestResultModel {
                     .toList(),
               )),
       resultForAi: json['result_for_ai'],
-      showOnly: json['show_only'],
       curShiftMinutes: json['ongoing_shift_duration'],
       totalLogMinutes:
           json['total_duration_logs'] ?? 0, // Support old data format
