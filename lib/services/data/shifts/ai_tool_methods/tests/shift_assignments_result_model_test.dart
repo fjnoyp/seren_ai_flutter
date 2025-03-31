@@ -25,7 +25,6 @@ void main() {
         shiftAssignments: shiftAssignments,
         totalShiftMinutes: 100,
         resultForAi: 'Sample result for AI',
-        showOnly: true,
       );
 
       // Convert to JSON
@@ -36,7 +35,6 @@ void main() {
 
       // Verify the data matches
       expect(deserializedModel.resultForAi, model.resultForAi);
-      expect(deserializedModel.showOnly, model.showOnly);
 
       // Verify shift assignments
       expect(deserializedModel.shiftAssignments.length,

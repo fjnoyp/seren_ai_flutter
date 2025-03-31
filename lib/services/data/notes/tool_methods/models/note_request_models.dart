@@ -4,10 +4,12 @@ import 'package:seren_ai_flutter/services/ai/ai_request/models/requests/ai_info_
 class CreateNoteRequestModel extends AiActionRequestModel {
   final String noteName;
   final String noteDescription;
+  final bool showToUser;
 
   CreateNoteRequestModel({
     required this.noteName,
     required this.noteDescription,
+    this.showToUser = true,
     super.args,
   }) : super(actionRequestType: AiActionRequestType.createNote);
 
@@ -16,6 +18,7 @@ class CreateNoteRequestModel extends AiActionRequestModel {
       args: json['args'],
       noteName: json['args']['note_name'],
       noteDescription: json['args']['note_description'],
+      showToUser: json['args']['show_to_user'] ?? true,
     );
   }
 }
@@ -23,10 +26,12 @@ class CreateNoteRequestModel extends AiActionRequestModel {
 class UpdateNoteRequestModel extends AiActionRequestModel {
   final String noteName;
   final String updatedNoteDescription;
+  final bool showToUser;
 
   UpdateNoteRequestModel({
     required this.noteName,
     required this.updatedNoteDescription,
+    this.showToUser = true,
     super.args,
   }) : super(actionRequestType: AiActionRequestType.updateNote);
 
@@ -35,15 +40,18 @@ class UpdateNoteRequestModel extends AiActionRequestModel {
       args: json['args'],
       noteName: json['args']['note_name'],
       updatedNoteDescription: json['args']['updated_note_description'],
+      showToUser: json['args']['show_to_user'] ?? true,
     );
   }
 }
 
 class ShareNoteRequestModel extends AiActionRequestModel {
   final String noteName;
+  final bool showToUser;
 
   ShareNoteRequestModel({
     required this.noteName,
+    this.showToUser = true,
     super.args,
   }) : super(actionRequestType: AiActionRequestType.shareNote);
 
@@ -51,15 +59,18 @@ class ShareNoteRequestModel extends AiActionRequestModel {
     return ShareNoteRequestModel(
       args: json['args'],
       noteName: json['args']['note_name'],
+      showToUser: json['args']['show_to_user'] ?? true,
     );
   }
 }
 
 class DeleteNoteRequestModel extends AiActionRequestModel {
   final String noteName;
+  final bool showToUser;
 
   DeleteNoteRequestModel({
     required this.noteName,
+    this.showToUser = true,
     super.args,
   }) : super(actionRequestType: AiActionRequestType.deleteNote);
 
@@ -67,15 +78,18 @@ class DeleteNoteRequestModel extends AiActionRequestModel {
     return DeleteNoteRequestModel(
       args: json['args'],
       noteName: json['args']['note_name'],
+      showToUser: json['args']['show_to_user'] ?? true,
     );
   }
 }
 
 class ShowNotesRequestModel extends AiActionRequestModel {
   final String? noteName;
+  final bool showToUser;
 
   ShowNotesRequestModel({
     this.noteName,
+    this.showToUser = true,
     super.args,
   }) : super(actionRequestType: AiActionRequestType.showNotes);
 
@@ -83,6 +97,7 @@ class ShowNotesRequestModel extends AiActionRequestModel {
     return ShowNotesRequestModel(
       args: json['args'],
       noteName: json['args']['note_name'],
+      showToUser: json['args']['show_to_user'] ?? true,
     );
   }
 }
@@ -93,6 +108,7 @@ class FindNotesRequestModel extends AiInfoRequestModel {
   final String? noteCreatedDateEnd;
   final String? noteUpdatedDateStart;
   final String? noteUpdatedDateEnd;
+  final bool showToUser;
 
   FindNotesRequestModel({
     this.noteName,
@@ -100,7 +116,7 @@ class FindNotesRequestModel extends AiInfoRequestModel {
     this.noteCreatedDateEnd,
     this.noteUpdatedDateStart,
     this.noteUpdatedDateEnd,
-    super.showUI = true,
+    this.showToUser = true,
     super.args,
   }) : super(infoRequestType: AiInfoRequestType.findNotes);
 
@@ -112,6 +128,7 @@ class FindNotesRequestModel extends AiInfoRequestModel {
       noteCreatedDateEnd: json['args']['note_created_date_end'],
       noteUpdatedDateStart: json['args']['note_updated_date_start'],
       noteUpdatedDateEnd: json['args']['note_updated_date_end'],
+      showToUser: json['args']['show_to_user'] ?? true,
     );
   }
 }
