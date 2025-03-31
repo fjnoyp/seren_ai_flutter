@@ -302,8 +302,10 @@ class TaskToolMethods {
       tasksToSend.map((task) => aiContextService.getTaskContext(task.id)),
     );
 
-    return FindTasksResultModel(
+    // Use the factory constructor to process search criteria
+    return FindTasksResultModel.fromTasksAndRequest(
       tasks: tasksToSend,
+      request: infoRequest,
       resultForAi:
           'Found ${filteredTasks.length} matching tasks: ${tasksToSendAiReadable.whereType<String>().toList()}',
       showOnly: infoRequest.showUI,
@@ -668,8 +670,10 @@ class TaskToolMethods {
       log('did not open task page, UI actions are not allowed');
     }
 
-    return CreateTaskResultModel(
+    // Use the factory constructor to process created fields
+    return CreateTaskResultModel.fromTaskAndRequest(
       task: newTask,
+      request: actionRequest,
       userAssignmentResults: userAssignmentResults,
       resultForAi: allowToolUiActions
           ? 'Created new task "${newTask.name}" and opened task page'
@@ -722,18 +726,39 @@ class TaskToolMethods {
     final taskToModify = matchingTasks.first;
 
     // === SELECT PROJECT ===
-    final selectedProjectId = await ref
-        .read(searchProjectsServiceProvider)
-        .searchProjectNameToId(actionRequest.parentProjectName);
+    String? selectedProjectId;
+    Map<String, Map<String, dynamic>> additionalChanges = {};
 
-    if (selectedProjectId == null) {
-      return ErrorRequestResultModel(
-          resultForAi:
-              'No project found with name "${actionRequest.parentProjectName}"',
-          showOnly: true);
+    if (actionRequest.parentProjectName != null) {
+      selectedProjectId = await ref
+          .read(searchProjectsServiceProvider)
+          .searchProjectNameToId(actionRequest.parentProjectName);
+
+      if (selectedProjectId == null) {
+        return ErrorRequestResultModel(
+            resultForAi:
+                'No project found with name "${actionRequest.parentProjectName}"',
+            showOnly: true);
+      }
+
+      // Project changes require repository access, so we handle them separately
+      if (selectedProjectId != taskToModify.parentProjectId) {
+        final oldProject = await ref
+            .read(projectsRepositoryProvider)
+            .getById(taskToModify.parentProjectId);
+        final newProject = await ref
+            .read(projectsRepositoryProvider)
+            .getById(selectedProjectId);
+
+        additionalChanges['project'] = {
+          'old': oldProject?.name,
+          'new': newProject?.name,
+        };
+      }
     }
     // === END SELECT PROJECT ===
 
+    // Build updated task
     final updatedTask = taskToModify.copyWith(
       name: actionRequest.taskName,
       description: actionRequest.taskDescription,
@@ -748,11 +773,10 @@ class TaskToolMethods {
           : null,
       estimatedDurationMinutes: actionRequest.estimateDurationMinutes,
       updatedAt: DateTime.now().toUtc(),
-      parentProjectId: selectedProjectId,
+      parentProjectId: selectedProjectId ?? taskToModify.parentProjectId,
     );
 
-    // Show the new task fields and ask for confirmation
-
+    // Navigate to task page if allowed
     if (allowToolUiActions) {
       ref
           .read(curSelectedTaskIdNotifierProvider.notifier)
@@ -760,7 +784,6 @@ class TaskToolMethods {
 
       final navigationService = ref.read(navigationServiceProvider);
 
-      // Do not await - this never returns
       navigationService.navigateTo(AppRoutes.taskPage.name, arguments: {
         'mode': EditablePageMode.readOnly,
         'actions': [EditTaskButton(updatedTask.id)],
@@ -772,15 +795,28 @@ class TaskToolMethods {
       log('did not open task page, UI actions are not allowed');
     }
 
-    // Save task changes ...
+    // Save task changes
     await ref.read(tasksRepositoryProvider).upsertItem(updatedTask);
 
-    // Try to assign users by name
+    // Handle assignees
     if (actionRequest.assignedUserNames != null &&
         actionRequest.assignedUserNames!.isNotEmpty) {
+      // Get current assignees for comparison
+      final currentAssignees = await ref
+          .read(usersRepositoryProvider)
+          .getTaskAssignedUsers(taskId: updatedTask.id);
+
+      // Track assignee changes
+      additionalChanges['assignees'] = {
+        'old': currentAssignees
+            .map((u) => '${u.firstName} ${u.lastName}')
+            .toList(),
+        'new': actionRequest.assignedUserNames,
+      };
+
       List<String> assignedUserNames = actionRequest.assignedUserNames!;
 
-      // Check if MYSELF is in the list, and if so swap with current user id
+      // Handle MYSELF keyword
       if (AiToolExecutionUtils.containsMyselfKeyword(
           actionRequest.assignedUserNames)) {
         final userId = _getUserId(ref);
@@ -798,20 +834,15 @@ class TaskToolMethods {
           .tryAssignUsersByName(updatedTask.id, assignedUserNames);
     }
 
-    return UpdateTaskFieldsResultModel(
-      task: updatedTask,
+    // Use the factory constructor to process changes
+    return UpdateTaskFieldsResultModel.fromTaskAndRequest(
+      originalTask: taskToModify,
+      updatedTask: updatedTask,
+      request: actionRequest,
       resultForAi: 'Updated task "${updatedTask.name}" and showed result in UI',
       showOnly: true,
+      additionalChanges: additionalChanges,
     );
-
-    // 1) get the task name
-    // 2) make sure it's open and currently viewed
-    // 3) update the task fields
-    // 4) return the updated task fields (TBD)
-
-    // return ErrorRequestResultModel(
-    //     resultForAi: 'Not implemented for request: ${actionRequest.toString()}',
-    //     showOnly: true);
   }
 
   Future<AiRequestResultModel> deleteTask(
