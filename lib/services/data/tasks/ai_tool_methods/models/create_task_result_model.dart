@@ -11,7 +11,6 @@ class CreateTaskResultModel extends AiRequestResultModel {
   CreateTaskResultModel(
       {required this.task,
       required super.resultForAi,
-      required super.showOnly,
       this.userAssignmentResults,
       this.createdFields = const {}})
       : super(resultType: AiRequestResultType.createTask);
@@ -21,7 +20,6 @@ class CreateTaskResultModel extends AiRequestResultModel {
     required TaskModel task,
     required CreateTaskRequestModel request,
     required String resultForAi,
-    required bool showOnly,
     List<SearchUserResult>? userAssignmentResults,
   }) {
     final createdFields = _processCreatedFields(request);
@@ -29,7 +27,6 @@ class CreateTaskResultModel extends AiRequestResultModel {
     return CreateTaskResultModel(
       task: task,
       resultForAi: resultForAi,
-      showOnly: showOnly,
       userAssignmentResults: userAssignmentResults,
       createdFields: createdFields,
     );
@@ -76,7 +73,6 @@ class CreateTaskResultModel extends AiRequestResultModel {
       // Adjustment to fit old and new data structures
       task: TaskModel.fromJson(json['task'] ?? json['joined_task']['task']),
       resultForAi: json['result_for_ai'],
-      showOnly: json['show_only'],
       createdFields: json['created_fields'] ?? {},
     );
   }

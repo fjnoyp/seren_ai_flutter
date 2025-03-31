@@ -9,7 +9,6 @@ class ShiftAssignmentsResultModel extends AiRequestResultModel {
     required this.shiftAssignments,
     required this.totalShiftMinutes,
     required super.resultForAi,
-    required super.showOnly,
   }) : super(resultType: AiRequestResultType.shiftAssignments);
 
   factory ShiftAssignmentsResultModel.fromJson(Map<String, dynamic> json) {
@@ -27,7 +26,6 @@ class ShiftAssignmentsResultModel extends AiRequestResultModel {
       totalShiftMinutes:
           json['total_shift_minutes'] ?? 0, // Support old data format
       resultForAi: json['result_for_ai'],
-      showOnly: json['show_only'],
     );
   }
 
