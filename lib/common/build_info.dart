@@ -2,62 +2,62 @@
 class BuildInfo {
   // Core build info
   static const String version = '1.0.0';
-  static const String buildDate = '2025-03-30 16:38:25';
+  static const String buildDate = '2025-03-31 13:10:16';
   
   // Git info
-  static const String commitHash = '0be4cb5';
-  static const String branch = 'main';
+  static const String commitHash = '5b9490d1';
+  static const String branch = 'feat/introduce-task-budgets';
   static const String lastTag = 'no tag';
   
   // Author of last commit
-  static const String lastCommitAuthor = 'Kyle';
-  static const String lastCommitEmail = 'kylcheng@gmail.com';
+  static const String lastCommitAuthor = 'renata-sisilio';
+  static const String lastCommitEmail = 'renata@seren-ai.co';
   
   // Recent commits (last 5)
   static const List<Map<String, String>> recentCommits = [
     {
-      "hash": "0be4cb5",
+      "hash": "5b9490d1",
+      "author": "renata-sisilio",
+      "email": "renata@seren-ai.co", 
+      "message": "fix(web): task comment section scroll",
+      "date": "2025-03-26",
+      "relativeDate": "5 days ago"
+    },
+    {
+      "hash": "dee09723",
+      "author": "Kyle",
+      "email": "kylcheng@gmail.com", 
+      "message": "chore(ai): rename tool methods to ai",
+      "date": "2025-03-30",
+      "relativeDate": "17 hours ago"
+    },
+    {
+      "hash": "0be4cb59",
       "author": "Kyle",
       "email": "kylcheng@gmail.com", 
       "message": "chore(ai): finalize show task support",
       "date": "2025-03-30",
-      "relativeDate": "12 minutes ago"
+      "relativeDate": "17 hours ago"
     },
     {
-      "hash": "3a91f1e",
+      "hash": "3a91f1e0",
       "author": "Kyle",
       "email": "kylcheng@gmail.com", 
       "message": "feat(ai): initial implementation show tasks tool",
       "date": "2025-03-30",
-      "relativeDate": "48 minutes ago"
+      "relativeDate": "17 hours ago"
     },
     {
-      "hash": "2191102",
+      "hash": "21911024",
       "author": "Kyle",
       "email": "kylcheng@gmail.com", 
       "message": "chore(task): fix task date filter dispaly",
       "date": "2025-03-30",
-      "relativeDate": "4 hours ago"
-    },
-    {
-      "hash": "1e57881",
-      "author": "renata-sisilio",
-      "email": "renata@seren-ai.co", 
-      "message": "feat(tasks): support updated at filter and finding",
-      "date": "2025-03-28",
-      "relativeDate": "2 days ago"
-    },
-    {
-      "hash": "e10b76b",
-      "author": "Kyle",
-      "email": "kylcheng@gmail.com", 
-      "message": "fix(ai): Replace watch with read when modifying state in task_tool_methods",
-      "date": "2025-03-30",
-      "relativeDate": "5 hours ago"
+      "relativeDate": "21 hours ago"
     },
   ];
 
   // Stats
-  static const String totalCommits = '491';
-  static const String contributors = '       0';
+  static const String totalCommits = '493';
+  static const String contributors = '0';
 }

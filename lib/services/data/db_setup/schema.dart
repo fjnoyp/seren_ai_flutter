@@ -36,6 +36,7 @@ const permissionSchemas = [
     Column.text('description'),
     Column.text('address'),
     Column.text('parent_org_id'),
+    Column.real('bdi_value'),
   ]),
   Table(userOrgRolesTable, [
     Column.text('user_id'),
@@ -213,6 +214,29 @@ const pushNotificationSchemas = [
   ]),
 ];
 
+const budgetItemReferencesTable = 'budget_item_references';
+const taskBudgetItemsTable = 'task_budget_items';
+
+const budgetSchemas = [
+  Table(budgetItemReferencesTable, [
+    Column.text('type'),
+    Column.text('code'),
+    Column.text('source'),
+    Column.text('parent_org_id'),
+    Column.text('name'),
+    Column.text('measure_unit'),
+    Column.real('base_unit_value'),
+  ]),
+  Table(taskBudgetItemsTable, [
+    Column.text('task_id'),
+    Column.text('budget_item_ref_id'),
+    Column.integer('item_number'),
+    Column.real('amount'),
+    Column.real('unit_value'),
+    Column.integer('is_estimated'),
+  ]),
+];
+
 const allTables = [
   ...permissionSchemas,
   ...tasksSchemas,
@@ -220,6 +244,7 @@ const allTables = [
   ...shiftSchemas,
   ...noteSchemas,
   ...pushNotificationSchemas,
+  ...budgetSchemas,
 ];
 
 // Create a function to add timestamp columns
