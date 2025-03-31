@@ -20,6 +20,8 @@ import 'package:seren_ai_flutter/services/data/tasks/ai_tool_methods/ai_task_res
 import 'package:seren_ai_flutter/widgets/debug/debug_mode_provider.dart';
 import 'package:flutter/rendering.dart';
 import 'package:flutter/services.dart';
+import 'package:seren_ai_flutter/services/data/notes/tool_methods/models/create_note_result_model.dart';
+import 'package:seren_ai_flutter/services/data/notes/tool_methods/ai_note_result_widgets.dart';
 
 class AiChatMessageViewCard extends HookConsumerWidget {
   final AiChatMessageModel message;
@@ -311,6 +313,8 @@ class _AiRequestResultWidget extends StatelessWidget {
             FindTasksResultWidget(result: result as FindTasksResultModel),
           AiRequestResultType.createTask =>
             CreateTaskResultWidget(result: result as CreateTaskResultModel),
+          AiRequestResultType.createNote =>
+            CreateNoteResultWidget(result: result as CreateNoteResultModel),
           AiRequestResultType.error => Text(result.resultForAi),
           AiRequestResultType.updateTaskFields => UpdateTaskFieldsResultWidget(
               result: result as UpdateTaskFieldsResultModel),
