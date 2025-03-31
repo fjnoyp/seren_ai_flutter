@@ -2,10 +2,10 @@
 class BuildInfo {
   // Core build info
   static const String version = '1.0.0';
-  static const String buildDate = '2025-03-31 12:10:36';
+  static const String buildDate = '2025-03-31 12:25:20';
   
   // Git info
-  static const String commitHash = '197bede';
+  static const String commitHash = '6912831';
   static const String branch = 'main';
   static const String lastTag = 'no tag';
   
@@ -16,12 +16,20 @@ class BuildInfo {
   // Recent commits (last 5)
   static const List<Map<String, String>> recentCommits = [
     {
+      "hash": "6912831",
+      "author": "Kyle",
+      "email": "kylcheng@gmail.com", 
+      "message": "chore: remove showOnly param",
+      "date": "2025-03-31",
+      "relativeDate": "15 minutes ago"
+    },
+    {
       "hash": "197bede",
       "author": "Kyle",
       "email": "kylcheng@gmail.com", 
       "message": "chore(ai): improve task tool result display",
       "date": "2025-03-31",
-      "relativeDate": "47 minutes ago"
+      "relativeDate": "62 minutes ago"
     },
     {
       "hash": "5b9490d",
@@ -47,17 +55,9 @@ class BuildInfo {
       "date": "2025-03-30",
       "relativeDate": "20 hours ago"
     },
-    {
-      "hash": "3a91f1e",
-      "author": "Kyle",
-      "email": "kylcheng@gmail.com", 
-      "message": "feat(ai): initial implementation show tasks tool",
-      "date": "2025-03-30",
-      "relativeDate": "20 hours ago"
-    },
   ];
 
   // Stats
-  static const String totalCommits = '494';
+  static const String totalCommits = '495';
   static const String contributors = '       0';
 }
