@@ -1,6 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:intl/intl.dart';
+import 'package:seren_ai_flutter/common/currency_provider.dart';
 import 'package:seren_ai_flutter/common/language_provider.dart';
+import 'package:seren_ai_flutter/common/universal_platform/universal_platform.dart';
 import 'package:seren_ai_flutter/services/auth/cur_auth_state_provider.dart';
 import 'package:seren_ai_flutter/services/speech_to_text/speech_to_text_service_provider.dart';
 import 'package:seren_ai_flutter/services/text_to_speech/text_to_speech_notifier.dart';
@@ -82,6 +85,7 @@ class SettingsAppSection extends ConsumerWidget {
     final themeMode = ref.watch(themeSNP);
     final language = ref.watch(languageSNP).toUpperCase();
     final isDebugMode = ref.watch(isDebugModeSNP);
+    final currency = ref.watch(currencyFormatSNP);
 
     return Column(
       mainAxisSize: MainAxisSize.min,
@@ -137,7 +141,7 @@ class SettingsAppSection extends ConsumerWidget {
             },
             items: [
               DropdownMenuItem(
-                value: 'EN_US',
+                value: 'EN_GB',
                 child: Text(AppLocalizations.of(context)!.english,
                     style: theme.textTheme.bodySmall),
               ),
@@ -154,6 +158,41 @@ class SettingsAppSection extends ConsumerWidget {
             ],
           ),
         ),
+        if (isWebVersion) // budgets are not supported on mobile yet
+          ListTile(
+            dense: true,
+            leading: const Icon(Icons.currency_exchange),
+            title: Text("Currency", // AppLocalizations.of(context)!.currency,
+                style: const TextStyle(fontWeight: FontWeight.bold)),
+            trailing: DropdownButton<String>(
+              value: currency.locale,
+              onChanged: (String? newCurrencyLocale) {
+                if (newCurrencyLocale != null) {
+                  ref
+                      .read(currencyFormatSNP.notifier)
+                      .setCurrency(newCurrencyLocale);
+                }
+              },
+              items: [
+                ...AppLocalizations.supportedLocales
+                    .where((e) => e.countryCode != null) // avoid unsupported
+                    .map((e) => (
+                          locale: e.toString(),
+                          currencySymbol:
+                              NumberFormat.currency(locale: e.toString())
+                                  .currencySymbol
+                        ))
+                    .toSet() // remove duplicated values if there are any
+                    .map((e) => DropdownMenuItem(
+                          value: e.locale,
+                          child: Text(
+                            e.currencySymbol,
+                            style: theme.textTheme.bodySmall,
+                          ),
+                        ))
+              ],
+            ),
+          ),
         SwitchListTile(
           title: Text(AppLocalizations.of(context)!.debugMode),
           value: isDebugMode,
