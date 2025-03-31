@@ -67,11 +67,15 @@ class BasePhaseSelectionField extends ConsumerWidget {
                   Flexible(
                     child: Text(
                       AppLocalizations.of(context)?.phase ?? 'Phase',
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
                       style: const TextStyle(fontWeight: FontWeight.bold),
                     ),
                   ),
                   const SizedBox(width: 12),
-                  if (curPhaseId != null && curPhaseName != null)
+                  if (curPhaseId != null &&
+                      curPhaseName != null &&
+                      selectablePhases.isNotEmpty) // prevent previously (wrongly) set phases with empty state
                     TextButton(
                       onPressed: () =>
                           ref.read(taskNavigationServiceProvider).openTask(

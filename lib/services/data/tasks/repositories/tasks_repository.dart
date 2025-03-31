@@ -342,6 +342,10 @@ class TasksRepository extends BaseRepository<TaskModel> {
       'parent_project_id',
       parentProjectId,
     );
+
+    // If parent project id is updated, reset parent task id
+    // This is to prevent the task from being assigned to a parent task from a different project
+    await updateTaskParentTaskId(taskId, null);
   }
 
   Future<void> updateTaskReminderOffsetMinutes(
