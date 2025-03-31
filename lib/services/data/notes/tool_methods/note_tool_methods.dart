@@ -10,6 +10,13 @@ import 'package:seren_ai_flutter/services/data/notes/models/note_model.dart';
 import 'package:seren_ai_flutter/services/data/notes/repositories/notes_repository.dart';
 import 'package:seren_ai_flutter/services/data/notes/tool_methods/models/create_note_result_model.dart';
 import 'package:seren_ai_flutter/services/data/notes/tool_methods/models/note_request_models.dart';
+import 'package:seren_ai_flutter/common/navigation_service_provider.dart';
+import 'package:seren_ai_flutter/common/routes/app_routes.dart';
+import 'package:seren_ai_flutter/services/data/common/widgets/editable_page_mode_enum.dart';
+import 'package:seren_ai_flutter/services/data/notes/widgets/delete_note_button.dart';
+import 'package:seren_ai_flutter/services/data/notes/widgets/pdf/share_note_button.dart';
+import 'package:seren_ai_flutter/services/data/notes/providers/cur_selected_note_id_notifier_provider.dart';
+import 'package:seren_ai_flutter/services/data/notes/providers/notes_navigation_service.dart';
 
 class NoteToolMethods {
   // Threshold for string similarity (0.0 to 1.0)
@@ -43,23 +50,28 @@ class NoteToolMethods {
 
     // Navigate to note page if allowed
     if (allowToolUiActions) {
-      // TODO: Implement navigation to note detail page
-      log('would open note page, but not implemented yet');
+      // Set the selected note ID and navigate using the notes navigation service
+      ref
+          .read(curSelectedNoteIdNotifierProvider.notifier)
+          .setNoteId(newNote.id);
 
-      // Example navigation pattern following task implementation:
-      // ref.read(curSelectedNoteIdNotifierProvider.notifier).setNoteId(newNote.id);
-      // ref.read(navigationServiceProvider).navigateTo(AppRoutes.notePage.name, arguments: {
-      //   'mode': EditablePageMode.readOnly,
-      //   'title': newNote.name,
-      // });
+      // Use the notes navigation service to open the note
+      ref.read(notesNavigationServiceProvider).openNote(noteId: newNote.id);
+
+      log('opened note page for "${newNote.name}"');
     } else {
       log('did not open note page, UI actions are not allowed');
     }
 
-    // Return result model
-    return CreateNoteResultModel(
+    // Return result model using the factory constructor
+    final resultMessage = allowToolUiActions
+        ? 'Created new note "${newNote.name}" and opened note page'
+        : 'Created new note "${newNote.name}"';
+
+    return CreateNoteResultModel.fromNoteAndRequest(
       note: newNote,
-      resultForAi: 'Created new note "${newNote.name}"',
+      request: actionRequest,
+      resultForAi: resultMessage,
     );
   }
 

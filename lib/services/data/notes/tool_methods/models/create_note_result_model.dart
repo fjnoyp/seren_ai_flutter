@@ -4,56 +4,60 @@ import 'package:seren_ai_flutter/services/data/notes/tool_methods/models/note_re
 
 class CreateNoteResultModel extends AiRequestResultModel {
   final NoteModel note;
+  final Map<String, dynamic> createdFields;
 
   CreateNoteResultModel({
     required this.note,
     required String resultForAi,
+    this.createdFields = const {},
   }) : super(
           resultForAi: resultForAi,
           resultType: AiRequestResultType.createNote,
         );
 
+  /// Factory constructor that processes the fields from the request
   factory CreateNoteResultModel.fromNoteAndRequest({
     required NoteModel note,
     required CreateNoteRequestModel request,
     required String resultForAi,
-    required bool showOnly,
   }) {
+    final createdFields = _processCreatedFields(request);
+
     return CreateNoteResultModel(
       note: note,
       resultForAi: resultForAi,
+      createdFields: createdFields,
     );
+  }
+
+  /// Process fields that were set during creation
+  static Map<String, dynamic> _processCreatedFields(
+      CreateNoteRequestModel request) {
+    final Map<String, dynamic> createdFields = {
+      'name': request.noteName,
+    };
+
+    if (request.noteDescription != null) {
+      createdFields['description'] = request.noteDescription;
+    }
+
+    return createdFields;
   }
 
   factory CreateNoteResultModel.fromJson(Map<String, dynamic> json) {
-    final noteData = json['note'] as Map<String, dynamic>;
     return CreateNoteResultModel(
-      note: NoteModel(
-        id: noteData['id'],
-        name: noteData['name'],
-        description: noteData['description'],
-        authorUserId: noteData['author_user_id'] ?? '',
-        createdAt: noteData['created_at'] != null
-            ? DateTime.parse(noteData['created_at'])
-            : null,
-        updatedAt: noteData['updated_at'] != null
-            ? DateTime.parse(noteData['updated_at'])
-            : null,
-      ),
+      note: NoteModel.fromJson(json['note']),
       resultForAi: json['result_for_ai'],
+      createdFields: json['created_fields'] ?? {},
     );
   }
 
-  Map<String, dynamic> toMap() {
-    return {
-      'note': {
-        'id': note.id,
-        'name': note.name,
-        'description': note.description,
-        'created_at': note.createdAt?.toIso8601String(),
-        'updated_at': note.updatedAt?.toIso8601String(),
-      },
-      'result_for_ai': resultForAi,
-    };
+  @override
+  Map<String, dynamic> toJson() {
+    return super.toJson()
+      ..addAll({
+        'note': note.toJson(),
+        'created_fields': createdFields,
+      });
   }
 }
