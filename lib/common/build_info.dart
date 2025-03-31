@@ -2,11 +2,11 @@
 class BuildInfo {
   // Core build info
   static const String version = '1.0.0';
-  static const String buildDate = '2025-03-31 12:25:20';
+  static const String buildDate = '2025-03-31 16:19:30';
   
   // Git info
-  static const String commitHash = '6912831';
-  static const String branch = 'main';
+  static const String commitHash = '499ea57';
+  static const String branch = 'feat/ai_note_tools';
   static const String lastTag = 'no tag';
   
   // Author of last commit
@@ -16,12 +16,20 @@ class BuildInfo {
   // Recent commits (last 5)
   static const List<Map<String, String>> recentCommits = [
     {
+      "hash": "499ea57",
+      "author": "Kyle",
+      "email": "kylcheng@gmail.com", 
+      "message": "feat(notes): add first implementation + fix ai color animation",
+      "date": "2025-03-31",
+      "relativeDate": "4 hours ago"
+    },
+    {
       "hash": "6912831",
       "author": "Kyle",
       "email": "kylcheng@gmail.com", 
       "message": "chore: remove showOnly param",
       "date": "2025-03-31",
-      "relativeDate": "15 minutes ago"
+      "relativeDate": "4 hours ago"
     },
     {
       "hash": "197bede",
@@ -29,7 +37,7 @@ class BuildInfo {
       "email": "kylcheng@gmail.com", 
       "message": "chore(ai): improve task tool result display",
       "date": "2025-03-31",
-      "relativeDate": "62 minutes ago"
+      "relativeDate": "5 hours ago"
     },
     {
       "hash": "5b9490d",
@@ -45,19 +53,11 @@ class BuildInfo {
       "email": "kylcheng@gmail.com", 
       "message": "chore(ai): rename tool methods to ai",
       "date": "2025-03-30",
-      "relativeDate": "20 hours ago"
-    },
-    {
-      "hash": "0be4cb5",
-      "author": "Kyle",
-      "email": "kylcheng@gmail.com", 
-      "message": "chore(ai): finalize show task support",
-      "date": "2025-03-30",
-      "relativeDate": "20 hours ago"
+      "relativeDate": "24 hours ago"
     },
   ];
 
   // Stats
-  static const String totalCommits = '495';
+  static const String totalCommits = '496';
   static const String contributors = '       0';
 }
