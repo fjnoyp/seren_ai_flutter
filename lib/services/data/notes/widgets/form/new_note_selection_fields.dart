@@ -4,6 +4,8 @@ import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:seren_ai_flutter/services/data/common/widgets/form/color_animation.dart';
 import 'package:seren_ai_flutter/services/data/notes/providers/note_by_id_stream_provider.dart';
 import 'package:seren_ai_flutter/services/data/notes/repositories/notes_repository.dart';
+import 'package:seren_ai_flutter/services/data/notes/tool_methods/models/note_pending_edits_model.dart';
+import 'package:seren_ai_flutter/services/data/notes/tool_methods/models/note_edit_operation.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 // TODO p3: This code duplicates the functionality from the base text block and name fields ... We should consider consolidating them to avoid code duplication ...
@@ -208,10 +210,37 @@ class NewNoteBodyField extends HookConsumerWidget {
       onSubmitted: null,
     );
 
+    // Check if the note description contains pending edits
+    final hasPendingEdits = useState(false);
+    final pendingEdits = useState<NotePendingEditsModel?>(null);
+
+    // Process the description field to detect pending edits
+    useEffect(() {
+      if (fieldState.currentValue.isNotEmpty) {
+        final isPending =
+            NotePendingEditsModel.isPendingEdits(fieldState.currentValue);
+        hasPendingEdits.value = isPending;
+
+        if (isPending) {
+          pendingEdits.value =
+              NotePendingEditsModel.fromString(fieldState.currentValue);
+        } else {
+          pendingEdits.value = null;
+        }
+      } else {
+        hasPendingEdits.value = false;
+        pendingEdits.value = null;
+      }
+      return null;
+    }, [fieldState.currentValue]);
+
     // For multiline fields, implement auto-save with debouncing
     final debounceTimer = useState<Future<void>?>(null);
 
     useEffect(() {
+      // Skip this if we have pending edits
+      if (hasPendingEdits.value) return null;
+
       void onChange() {
         if (fieldState.controller.text != fieldState.lastSyncedValue) {
           if (debounceTimer.value != null) {
@@ -231,8 +260,19 @@ class NewNoteBodyField extends HookConsumerWidget {
 
       fieldState.controller.addListener(onChange);
       return () => fieldState.controller.removeListener(onChange);
-    }, [fieldState.controller]);
+    }, [fieldState.controller, hasPendingEdits.value]);
 
+    // If there are pending edits, show the diff view
+    if (hasPendingEdits.value && pendingEdits.value != null) {
+      return _buildPendingEditsView(
+        context,
+        ref,
+        pendingEdits.value!,
+        fieldState,
+      );
+    }
+
+    // Otherwise show the normal text field
     return AnimatedBuilder(
       animation: fieldState.colorAnimation,
       builder: (context, child) {
@@ -260,6 +300,175 @@ class NewNoteBodyField extends HookConsumerWidget {
               fieldState.updateValue(fieldState.controller.text),
         );
       },
+    );
+  }
+
+  /// Builds a view for displaying and handling pending edits
+  Widget _buildPendingEditsView(
+    BuildContext context,
+    WidgetRef ref,
+    NotePendingEditsModel pendingEdits,
+    FieldState fieldState,
+  ) {
+    final theme = Theme.of(context);
+
+    // Handle accepting the changes
+    void acceptChanges() {
+      // Apply the edits to get the final text
+      final finalText = pendingEdits.applyEdits();
+
+      // Update the note with the final text
+      ref
+          .read(notesRepositoryProvider)
+          .updateNoteDescription(noteId, finalText);
+    }
+
+    // Handle rejecting the changes
+    void rejectChanges() {
+      // Restore the original text
+      ref.read(notesRepositoryProvider).updateNoteDescription(
+            noteId,
+            pendingEdits.originalText,
+          );
+    }
+
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        // Info banner at the top
+        Container(
+          width: double.infinity,
+          padding: const EdgeInsets.all(12),
+          color: theme.colorScheme.primaryContainer.withOpacity(0.3),
+          child: Row(
+            children: [
+              Icon(
+                Icons.edit_note,
+                color: theme.colorScheme.primary,
+                size: 20,
+              ),
+              const SizedBox(width: 8),
+              Expanded(
+                child: Text(
+                  "AI has suggested edits to this note",
+                  style: theme.textTheme.bodyMedium?.copyWith(
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+              ),
+            ],
+          ),
+        ),
+
+        // Original content
+        Padding(
+          padding: const EdgeInsets.all(16),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text(
+                "Original content:",
+                style: theme.textTheme.titleSmall,
+              ),
+              const SizedBox(height: 8),
+              Container(
+                width: double.infinity,
+                padding: const EdgeInsets.all(12),
+                decoration: BoxDecoration(
+                  color: theme.colorScheme.surfaceVariant.withOpacity(0.3),
+                  borderRadius: BorderRadius.circular(4),
+                ),
+                child: Text(
+                  pendingEdits.originalText.isEmpty
+                      ? "No content"
+                      : pendingEdits.originalText,
+                  style: theme.textTheme.bodyMedium,
+                ),
+              ),
+
+              const SizedBox(height: 16),
+
+              // Proposed changes
+              Text(
+                "Proposed changes:",
+                style: theme.textTheme.titleSmall,
+              ),
+              const SizedBox(height: 8),
+              Container(
+                width: double.infinity,
+                padding: const EdgeInsets.all(12),
+                decoration: BoxDecoration(
+                  color: theme.colorScheme.primaryContainer.withOpacity(0.3),
+                  borderRadius: BorderRadius.circular(4),
+                ),
+                child: _buildDiffView(context, pendingEdits.operations),
+              ),
+
+              const SizedBox(height: 16),
+
+              // Accept/Reject buttons
+              Row(
+                mainAxisAlignment: MainAxisAlignment.end,
+                children: [
+                  OutlinedButton(
+                    onPressed: rejectChanges,
+                    child: const Text("Reject"),
+                  ),
+                  const SizedBox(width: 8),
+                  FilledButton(
+                    onPressed: acceptChanges,
+                    child: const Text("Accept"),
+                  ),
+                ],
+              ),
+            ],
+          ),
+        ),
+      ],
+    );
+  }
+
+  /// Builds a visual representation of the edit operations
+  Widget _buildDiffView(
+      BuildContext context, List<NoteEditOperation> operations) {
+    final theme = Theme.of(context);
+
+    // Create rich text spans for each operation
+    final List<InlineSpan> spans = [];
+
+    for (final op in operations) {
+      switch (op.type) {
+        case 'keep':
+          spans.add(TextSpan(
+            text: op.text,
+            style: theme.textTheme.bodyMedium,
+          ));
+          break;
+        case 'add':
+          spans.add(TextSpan(
+            text: op.text,
+            style: TextStyle(
+              color: Colors.green.shade700,
+              backgroundColor: Colors.green.shade50,
+              fontWeight: FontWeight.bold,
+            ),
+          ));
+          break;
+        case 'remove':
+          spans.add(TextSpan(
+            text: op.text,
+            style: TextStyle(
+              color: Colors.red.shade700,
+              backgroundColor: Colors.red.shade50,
+              decoration: TextDecoration.lineThrough,
+            ),
+          ));
+          break;
+      }
+    }
+
+    return RichText(
+      text: TextSpan(children: spans),
     );
   }
 }

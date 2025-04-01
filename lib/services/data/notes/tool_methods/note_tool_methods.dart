@@ -107,14 +107,15 @@ class NoteToolMethods {
     // Get the first matching note
     final noteToUpdate = matchingNotes.first;
 
-    // Get the current description to apply edits to
+    // Get the current description
     String currentDescription = noteToUpdate.description ?? '';
 
-    // Apply the edit operations to get the new description
+    // Instead of directly applying edits, format them as pending edits
+    // that will require user confirmation
     final updatedDescription =
-        actionRequest.applyEditOperations(currentDescription);
+        actionRequest.formatAsPendingEdits(currentDescription);
 
-    // Update the note with the new description
+    // Update the note with the pending edits in the description field
     final updatedNote = noteToUpdate.copyWith(
       description: updatedDescription,
       updatedAt: DateTime.now().toUtc(),
@@ -140,8 +141,8 @@ class NoteToolMethods {
 
     // Return result model
     final resultMessage = allowToolUiActions
-        ? 'Updated note "${updatedNote.name}" and opened note page'
-        : 'Updated note "${updatedNote.name}"';
+        ? 'Created edit suggestions for note "${updatedNote.name}" and opened note page'
+        : 'Created edit suggestions for note "${updatedNote.name}"';
 
     return UpdateNoteResultModel.fromNoteAndRequest(
       note: updatedNote,
