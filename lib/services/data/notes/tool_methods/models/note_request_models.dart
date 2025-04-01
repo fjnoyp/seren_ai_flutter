@@ -3,6 +3,7 @@ import 'dart:convert';
 import 'package:seren_ai_flutter/services/ai/ai_request/models/requests/ai_action_request_model.dart';
 import 'package:seren_ai_flutter/services/ai/ai_request/models/requests/ai_info_request_model.dart';
 import 'package:seren_ai_flutter/services/data/notes/tool_methods/models/note_edit_operation.dart';
+import 'package:seren_ai_flutter/services/data/notes/tool_methods/models/note_pending_edits_model.dart';
 
 class CreateNoteRequestModel extends AiActionRequestModel {
   final String noteName;
@@ -47,6 +48,16 @@ class UpdateNoteRequestModel extends AiActionRequestModel {
     );
   }
 
+  Map<String, dynamic> toJson() {
+    return {
+      'args': {
+        'note_name': noteName,
+        'updated_note_description': updatedNoteDescription,
+        'show_to_user': showToUser,
+      },
+    };
+  }
+
   /// Parse the updatedNoteDescription as a JSON array of edit operations
   /// Returns a list of NoteEditOperation objects
   List<NoteEditOperation> parseEditOperations() {
@@ -62,8 +73,27 @@ class UpdateNoteRequestModel extends AiActionRequestModel {
     }
   }
 
+  /// Create a pending edits model for the original text
+  /// This stores both the original text and the proposed changes
+  NotePendingEditsModel createPendingEdits(String originalText) {
+    return NotePendingEditsModel(
+      originalText: originalText,
+      operations: parseEditOperations(),
+    );
+  }
+
+  /// Format the edit operations as a pending edits JSON string
+  /// This can be stored in the note description field
+  String formatAsPendingEdits(String originalText) {
+    final pendingEdits = createPendingEdits(originalText);
+    return pendingEdits.toJsonString();
+  }
+
   /// Apply edit operations to transform the original text
   /// Returns the resulting text after applying all operations
+  /// Note: This is deprecated, use formatAsPendingEdits instead
+  /// to allow user confirmation before applying changes
+  @deprecated
   String applyEditOperations(String originalText) {
     final operations = parseEditOperations();
 
