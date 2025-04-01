@@ -121,7 +121,7 @@ class NoteToolMethods {
     );
 
     // Save the updated note to the repository
-    await notesRepository.upsertItem(updatedNote);
+    await ref.read(notesRepositoryProvider).upsertItem(updatedNote);
 
     // Navigate to note page if allowed
     if (allowToolUiActions) {
