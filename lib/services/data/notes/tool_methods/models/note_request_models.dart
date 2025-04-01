@@ -73,13 +73,18 @@ class UpdateNoteRequestModel extends AiActionRequestModel {
       return operations[0].text;
     }
 
-    // Otherwise, build the new content from the operations
+    // Handle empty operations list
+    if (operations.isEmpty) {
+      return '';
+    }
+
+    // Build the final text by applying operations in sequence
     final buffer = StringBuffer();
     for (final op in operations) {
       if (op.type == 'keep' || op.type == 'add') {
         buffer.write(op.text);
       }
-      // 'remove' operations are skipped in the output
+      // 'remove' operations are skipped
     }
 
     return buffer.toString();
