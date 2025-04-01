@@ -21,6 +21,7 @@ import 'package:seren_ai_flutter/widgets/debug/debug_mode_provider.dart';
 import 'package:flutter/rendering.dart';
 import 'package:flutter/services.dart';
 import 'package:seren_ai_flutter/services/data/notes/tool_methods/models/create_note_result_model.dart';
+import 'package:seren_ai_flutter/services/data/notes/tool_methods/models/update_note_result_model.dart';
 import 'package:seren_ai_flutter/services/data/notes/tool_methods/ai_note_result_widgets.dart';
 
 class AiChatMessageViewCard extends HookConsumerWidget {
@@ -315,6 +316,8 @@ class _AiRequestResultWidget extends StatelessWidget {
             CreateTaskResultWidget(result: result as CreateTaskResultModel),
           AiRequestResultType.createNote =>
             CreateNoteResultWidget(result: result as CreateNoteResultModel),
+          AiRequestResultType.updateNote =>
+            UpdateNoteResultWidget(result: result as UpdateNoteResultModel),
           AiRequestResultType.error => Text(result.resultForAi),
           AiRequestResultType.updateTaskFields => UpdateTaskFieldsResultWidget(
               result: result as UpdateTaskFieldsResultModel),
@@ -322,8 +325,7 @@ class _AiRequestResultWidget extends StatelessWidget {
             DeleteTaskResultWidget(result: result as DeleteTaskResultModel),
           AiRequestResultType.addCommentToTask => AddCommentToTaskResultWidget(
               result: result as AddCommentToTaskResultModel),
-          _ => AiRequestResultGenericWidget(
-              result: result as ShowTasksResultModel),
+          _ => AiRequestResultGenericWidget(result: result),
         },
       ),
     );
