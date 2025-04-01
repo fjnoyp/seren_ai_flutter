@@ -9,6 +9,7 @@ import 'package:seren_ai_flutter/services/data/orgs/providers/cur_selected_org_i
 import 'package:seren_ai_flutter/services/data/notes/models/note_model.dart';
 import 'package:seren_ai_flutter/services/data/notes/repositories/notes_repository.dart';
 import 'package:seren_ai_flutter/services/data/notes/tool_methods/models/create_note_result_model.dart';
+import 'package:seren_ai_flutter/services/data/notes/tool_methods/models/update_note_result_model.dart';
 import 'package:seren_ai_flutter/services/data/notes/tool_methods/models/note_request_models.dart';
 import 'package:seren_ai_flutter/common/navigation_service_provider.dart';
 import 'package:seren_ai_flutter/common/routes/app_routes.dart';
@@ -70,6 +71,80 @@ class NoteToolMethods {
 
     return CreateNoteResultModel.fromNoteAndRequest(
       note: newNote,
+      request: actionRequest,
+      resultForAi: resultMessage,
+    );
+  }
+
+  Future<AiRequestResultModel> updateNote({
+    required Ref ref,
+    required UpdateNoteRequestModel actionRequest,
+    required bool allowToolUiActions,
+  }) async {
+    // === Validate Auth ===
+    final curUser = ref.read(curUserProvider).valueOrNull;
+    if (curUser == null) return _handleNoAuth();
+
+    final selectedOrgId = ref.read(curSelectedOrgIdNotifierProvider);
+    if (selectedOrgId == null) {
+      return ErrorRequestResultModel(resultForAi: 'No org selected');
+    }
+
+    // Find the note by name
+    final matchingNotes =
+        await ref.read(notesRepositoryProvider).searchNotesByName(
+              searchQuery: actionRequest.noteName,
+              orgId: selectedOrgId,
+            );
+
+    if (matchingNotes.isEmpty) {
+      return ErrorRequestResultModel(
+        resultForAi:
+            'Could not find note with name "${actionRequest.noteName}"',
+      );
+    }
+
+    // Get the first matching note
+    final noteToUpdate = matchingNotes.first;
+
+    // Get the current description to apply edits to
+    String currentDescription = noteToUpdate.description ?? '';
+
+    // Apply the edit operations to get the new description
+    final updatedDescription =
+        actionRequest.applyEditOperations(currentDescription);
+
+    // Update the note with the new description
+    final updatedNote = noteToUpdate.copyWith(
+      description: updatedDescription,
+      updatedAt: DateTime.now().toUtc(),
+    );
+
+    // Save the updated note to the repository
+    await notesRepository.upsertItem(updatedNote);
+
+    // Navigate to note page if allowed
+    if (allowToolUiActions) {
+      // Set the selected note ID and navigate using the notes navigation service
+      ref
+          .read(curSelectedNoteIdNotifierProvider.notifier)
+          .setNoteId(updatedNote.id);
+
+      // Use the notes navigation service to open the note
+      ref.read(notesNavigationServiceProvider).openNote(noteId: updatedNote.id);
+
+      log('opened note page for updated note "${updatedNote.name}"');
+    } else {
+      log('did not open note page, UI actions are not allowed');
+    }
+
+    // Return result model
+    final resultMessage = allowToolUiActions
+        ? 'Updated note "${updatedNote.name}" and opened note page'
+        : 'Updated note "${updatedNote.name}"';
+
+    return UpdateNoteResultModel.fromNoteAndRequest(
+      note: updatedNote,
       request: actionRequest,
       resultForAi: resultMessage,
     );
