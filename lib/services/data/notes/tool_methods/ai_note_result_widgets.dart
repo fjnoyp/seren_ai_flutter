@@ -127,93 +127,30 @@ class UpdateNoteResultWidget extends ConsumerWidget {
     // If we're not in the AI chats route, just show a simple text
     if (!ref.read(currentRouteProvider).contains(AppRoutes.aiChats.name)) {
       return Text(
-        "Updated note \"${result.note.name}\" with new content",
+        "Provided edit suggestions for note \"${result.note.name}\"",
       );
     }
 
-    return Column(
-      mainAxisSize: MainAxisSize.min,
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Text("Updated note \"${result.note.name}\""),
-        Padding(
-          padding: const EdgeInsets.all(8.0),
-          child: Card(
-            child: Padding(
-              padding: const EdgeInsets.all(16.0),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(
-                    result.note.name,
-                    style: theme.textTheme.titleMedium?.copyWith(
-                      fontWeight: FontWeight.bold,
-                    ),
-                  ),
-                  const SizedBox(height: 16),
-
-                  // Show the diff view only if we have multiple operations
-                  if (result.editOperations.length > 1) ...[
-                    _buildEditDiffView(context, result.editOperations),
-                  ]
-                  // Otherwise show the plain updated text
-                  else if (result.note.description != null &&
-                      result.note.description!.isNotEmpty) ...[
-                    Text(
-                      result.note.description!,
-                      style: theme.textTheme.bodyMedium,
-                    ),
-                  ],
-                ],
-              ),
+    return Card(
+      child: Padding(
+        padding: const EdgeInsets.all(16.0),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text(
+              "Edit suggestions provided",
+              style: theme.textTheme.titleMedium,
             ),
-          ),
+            const SizedBox(height: 8),
+            Text(
+              "Edit suggestions for note \"${result.note.name}\" have been created. You can review and apply them when viewing the note.",
+              style: theme.textTheme.bodyMedium,
+            ),
+            // TODO(p2): In the future, we should send the user's decision
+            // (accept/reject) back to the AI
+          ],
         ),
-      ],
-    );
-  }
-
-  /// Builds a visual representation of the edit operations
-  Widget _buildEditDiffView(
-      BuildContext context, List<NoteEditOperation> operations) {
-    final theme = Theme.of(context);
-
-    // Create rich text spans for each operation
-    final List<InlineSpan> spans = [];
-
-    for (final op in operations) {
-      switch (op.type) {
-        case 'keep':
-          spans.add(TextSpan(
-            text: op.text,
-            style: theme.textTheme.bodyMedium,
-          ));
-          break;
-        case 'add':
-          spans.add(TextSpan(
-            text: op.text,
-            style: TextStyle(
-              color: Colors.green.shade700,
-              backgroundColor: Colors.green.shade50,
-              fontWeight: FontWeight.bold,
-            ),
-          ));
-          break;
-        case 'remove':
-          spans.add(TextSpan(
-            text: op.text,
-            style: TextStyle(
-              color: Colors.red.shade700,
-              backgroundColor: Colors.red.shade50,
-              decoration: TextDecoration.lineThrough,
-            ),
-          ));
-          break;
-      }
-    }
-
-    return RichText(
-      text: TextSpan(children: spans),
+      ),
     );
   }
 }
