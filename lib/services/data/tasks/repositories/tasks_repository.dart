@@ -1,5 +1,7 @@
 import 'package:hooks_riverpod/hooks_riverpod.dart';
+import 'package:seren_ai_flutter/services/auth/cur_auth_state_provider.dart';
 import 'package:seren_ai_flutter/services/data/common/status_enum.dart';
+import 'package:seren_ai_flutter/services/data/common/utils/string_similarity_extension.dart';
 import 'package:seren_ai_flutter/services/data/db_setup/db_provider.dart';
 import 'package:seren_ai_flutter/services/data/tasks/models/task_model.dart';
 import 'package:seren_ai_flutter/services/data/common/base_repository.dart';
@@ -484,5 +486,38 @@ class TasksRepository extends BaseRepository<TaskModel> {
         'user_org_roles',
       },
     );
+  }
+
+  Future<List<TaskModel>> searchTasksByName({
+    required String searchQuery,
+    required String orgId,
+    double similarityThreshold = 0.6,
+    int limit = 5,
+  }) async {
+    // TODO p3: implement db based search
+    //return get(TaskQueries.searchTasksByNameQuery, {'search_query': searchQuery, 'org_id': orgId});
+
+    final curAuthState = ref.read(curUserProvider);
+
+    if (curAuthState.value == null) throw Exception('No auth');
+
+    // For now do a local search
+    final allTasks = await getUserViewableTasks(
+      userId: curAuthState.value!.id,
+      orgId: orgId,
+    );
+
+    // Calculate similarity scores and sort
+    final tasksWithScores = allTasks
+        .map((task) {
+          final similarity = task.name.similarity(searchQuery);
+          return (task, similarity);
+        })
+        .where((tuple) => tuple.$2 >= similarityThreshold)
+        .toList()
+      ..sort((a, b) => b.$2.compareTo(a.$2));
+
+    // Return top matches
+    return tasksWithScores.take(limit).map((tuple) => tuple.$1).toList();
   }
 }

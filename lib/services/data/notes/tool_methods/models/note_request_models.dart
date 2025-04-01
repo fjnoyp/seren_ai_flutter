@@ -1,5 +1,8 @@
+import 'dart:convert';
+
 import 'package:seren_ai_flutter/services/ai/ai_request/models/requests/ai_action_request_model.dart';
 import 'package:seren_ai_flutter/services/ai/ai_request/models/requests/ai_info_request_model.dart';
+import 'package:seren_ai_flutter/services/data/notes/tool_methods/models/note_edit_operation.dart';
 
 class CreateNoteRequestModel extends AiActionRequestModel {
   final String noteName;
@@ -42,6 +45,44 @@ class UpdateNoteRequestModel extends AiActionRequestModel {
       updatedNoteDescription: json['args']['updated_note_description'],
       showToUser: json['args']['show_to_user'] ?? true,
     );
+  }
+
+  /// Parse the updatedNoteDescription as a JSON array of edit operations
+  /// Returns a list of NoteEditOperation objects
+  List<NoteEditOperation> parseEditOperations() {
+    try {
+      final List<dynamic> operationsJson = jsonDecode(updatedNoteDescription);
+      return operationsJson
+          .map((op) => NoteEditOperation.fromJson(op))
+          .toList();
+    } catch (e) {
+      // If parsing fails, treat the entire content as a single "keep" operation
+      // This ensures backward compatibility if we receive a plain string
+      return [NoteEditOperation(type: 'keep', text: updatedNoteDescription)];
+    }
+  }
+
+  /// Apply edit operations to transform the original text
+  /// Returns the resulting text after applying all operations
+  String applyEditOperations(String originalText) {
+    final operations = parseEditOperations();
+
+    // If we only have one "keep" operation with the entire content,
+    // just return the updated description directly
+    if (operations.length == 1 && operations[0].type == 'keep') {
+      return operations[0].text;
+    }
+
+    // Otherwise, build the new content from the operations
+    final buffer = StringBuffer();
+    for (final op in operations) {
+      if (op.type == 'keep' || op.type == 'add') {
+        buffer.write(op.text);
+      }
+      // 'remove' operations are skipped in the output
+    }
+
+    return buffer.toString();
   }
 }
 

@@ -142,6 +142,17 @@ class AiRequestExecutor {
             actionRequest: actionRequest as CreateNoteRequestModel,
             allowToolUiActions: allowToolUiActions);
 
+      case AiActionRequestType.updateNote:
+        return await noteToolMethods.updateNote(
+            ref: ref,
+            actionRequest: actionRequest as UpdateNoteRequestModel,
+            allowToolUiActions: allowToolUiActions);
+
+      case AiActionRequestType.shareNote:
+      case AiActionRequestType.deleteNote:
+      case AiActionRequestType.showNotes:
+        return ErrorRequestResultModel(resultForAi: 'Not implemented');
+
       default:
         return ErrorRequestResultModel(
             resultForAi: 'Unknown action request: ${actionRequest.toString()}');
