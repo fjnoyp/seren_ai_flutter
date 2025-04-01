@@ -2,10 +2,10 @@
 class BuildInfo {
   // Core build info
   static const String version = '1.0.0';
-  static const String buildDate = '2025-04-01 15:58:51';
+  static const String buildDate = '2025-04-01 16:57:17';
   
   // Git info
-  static const String commitHash = '405b53f';
+  static const String commitHash = '33979c6';
   static const String branch = 'feat/ai_note_tools';
   static const String lastTag = 'no tag';
   
@@ -16,12 +16,20 @@ class BuildInfo {
   // Recent commits (last 5)
   static const List<Map<String, String>> recentCommits = [
     {
+      "hash": "33979c6",
+      "author": "Kyle",
+      "email": "kylcheng@gmail.com", 
+      "message": "chore(notes): refine and test the note edit operation",
+      "date": "2025-04-01",
+      "relativeDate": "58 minutes ago"
+    },
+    {
       "hash": "405b53f",
       "author": "Kyle",
       "email": "kylcheng@gmail.com", 
       "message": "feat(note): basic note edit method",
       "date": "2025-04-01",
-      "relativeDate": "20 minutes ago"
+      "relativeDate": "79 minutes ago"
     },
     {
       "hash": "5d7453a",
@@ -29,7 +37,7 @@ class BuildInfo {
       "email": "kylcheng@gmail.com", 
       "message": "feat(notes): basic ai note creation",
       "date": "2025-03-31",
-      "relativeDate": "24 hours ago"
+      "relativeDate": "25 hours ago"
     },
     {
       "hash": "499ea57",
@@ -37,7 +45,7 @@ class BuildInfo {
       "email": "kylcheng@gmail.com", 
       "message": "feat(notes): add first implementation + fix ai color animation",
       "date": "2025-03-31",
-      "relativeDate": "28 hours ago"
+      "relativeDate": "29 hours ago"
     },
     {
       "hash": "6912831",
@@ -45,19 +53,11 @@ class BuildInfo {
       "email": "kylcheng@gmail.com", 
       "message": "chore: remove showOnly param",
       "date": "2025-03-31",
-      "relativeDate": "28 hours ago"
-    },
-    {
-      "hash": "197bede",
-      "author": "Kyle",
-      "email": "kylcheng@gmail.com", 
-      "message": "chore(ai): improve task tool result display",
-      "date": "2025-03-31",
       "relativeDate": "29 hours ago"
     },
   ];
 
   // Stats
-  static const String totalCommits = '498';
+  static const String totalCommits = '499';
   static const String contributors = '       0';
 }
