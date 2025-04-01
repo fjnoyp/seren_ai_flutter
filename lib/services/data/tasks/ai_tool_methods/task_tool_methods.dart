@@ -656,39 +656,21 @@ class TaskToolMethods {
     );
   }
 
-  // TODO p2: move this to a db method
-  // Finds the tasks with the highest similarity to the search task name
-  Future<List<TaskModel>> _getTasksByName(
-      Ref ref, String searchTaskName) async {
-    final userId = _getUserId(ref);
-    if (userId == null) return [];
-
-    final selectedOrgId = ref.read(curSelectedOrgIdNotifierProvider);
-    if (selectedOrgId == null) return [];
-
-    final allTasks = await ref
-        .read(tasksRepositoryProvider)
-        .getUserViewableTasks(userId: userId, orgId: selectedOrgId);
-
-    // Calculate similarity scores and sort
-    final tasksWithScores = allTasks
-        .map((task) {
-          final similarity = task.name.similarity(searchTaskName);
-          return (task, similarity);
-        })
-        .where((tuple) => tuple.$2 >= _similarityThreshold)
-        .toList()
-      ..sort((a, b) => b.$2.compareTo(a.$2));
-
-    // Return top 3 matches
-    return tasksWithScores.take(3).map((tuple) => tuple.$1).toList();
-  }
-
   Future<AiRequestResultModel> updateTaskFields(
       {required Ref ref,
       required UpdateTaskFieldsRequestModel actionRequest,
       bool allowToolUiActions = true}) async {
-    final matchingTasks = await _getTasksByName(ref, actionRequest.taskName);
+    final selectedOrgId = ref.read(curSelectedOrgIdNotifierProvider);
+    if (selectedOrgId == null) {
+      return ErrorRequestResultModel(
+        resultForAi: 'No org selected',
+      );
+    }
+    final matchingTasks =
+        await ref.read(tasksRepositoryProvider).searchTasksByName(
+              searchQuery: actionRequest.taskName,
+              orgId: selectedOrgId,
+            );
 
     // TODO p2: determine task matching logic - may want to ask user for confirmation or add a good undo
     // For now - just update the first matching task
@@ -823,28 +805,23 @@ class TaskToolMethods {
 
   Future<AiRequestResultModel> deleteTask(
       {required Ref ref, required DeleteTaskRequestModel actionRequest}) async {
-    final userId = _getUserId(ref);
-    if (userId == null) return _handleNoAuth();
-
     final selectedOrgId = ref.read(curSelectedOrgIdNotifierProvider);
     if (selectedOrgId == null) {
       return ErrorRequestResultModel(
         resultForAi: 'No org selected',
       );
     }
+    final foundTasks =
+        await ref.read(tasksRepositoryProvider).searchTasksByName(
+              searchQuery: actionRequest.taskName,
+              orgId: selectedOrgId,
+            );
 
-    final joinedTasks = await ref
-        .read(tasksRepositoryProvider)
-        .getUserViewableTasks(userId: userId, orgId: selectedOrgId);
-
-    final filteredTasks = joinedTasks.where((task) =>
-        task.name.similarity(actionRequest.taskName) >= _similarityThreshold);
-
-    if (filteredTasks.isEmpty) {
+    if (foundTasks.isEmpty) {
       return ErrorRequestResultModel(
         resultForAi: 'Task not found',
       );
-    } else if (filteredTasks.length > 1) {
+    } else if (foundTasks.length > 1) {
       // TODO p3: handle this case
       return ErrorRequestResultModel(
         resultForAi:
@@ -853,7 +830,7 @@ class TaskToolMethods {
     }
 
     // If the task is found, move on to deleting it
-    final toDeleteTask = filteredTasks.first;
+    final toDeleteTask = foundTasks.first;
 
     if (actionRequest.showToUser) {
       ref
@@ -895,9 +872,19 @@ class TaskToolMethods {
       bool allowToolUiActions = true}) async {
     final userId = _getUserId(ref);
     if (userId == null) return _handleNoAuth();
+    final selectedOrgId = ref.read(curSelectedOrgIdNotifierProvider);
+    if (selectedOrgId == null) {
+      return ErrorRequestResultModel(
+        resultForAi: 'No org selected',
+      );
+    }
 
     // Find the task by name
-    final matchingTasks = await _getTasksByName(ref, actionRequest.taskName);
+    final matchingTasks =
+        await ref.read(tasksRepositoryProvider).searchTasksByName(
+              searchQuery: actionRequest.taskName,
+              orgId: selectedOrgId,
+            );
 
     if (matchingTasks.isEmpty) {
       return ErrorRequestResultModel(
@@ -973,7 +960,10 @@ class TaskToolMethods {
       // Otherwise find by name using similarity
       else if (actionRequest.taskName != null) {
         final matchingTasks =
-            await _getTasksByName(ref, actionRequest.taskName!);
+            await ref.read(tasksRepositoryProvider).searchTasksByName(
+                  searchQuery: actionRequest.taskName!,
+                  orgId: selectedOrgId,
+                );
         if (matchingTasks.isNotEmpty) {
           taskToShow = matchingTasks.first;
         }
