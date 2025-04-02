@@ -2,10 +2,10 @@
 class BuildInfo {
   // Core build info
   static const String version = '1.0.0';
-  static const String buildDate = '2025-04-02 15:27:47';
+  static const String buildDate = '2025-04-02 15:38:19';
   
   // Git info
-  static const String commitHash = '27d94e71';
+  static const String commitHash = '6f915c2e';
   static const String branch = 'feat/introduce-task-budgets';
   static const String lastTag = 'no tag';
   
@@ -15,6 +15,14 @@ class BuildInfo {
   
   // Recent commits (last 5)
   static const List<Map<String, String>> recentCommits = [
+    {
+      "hash": "6f915c2e",
+      "author": "renata-sisilio",
+      "email": "renata@seren-ai.co", 
+      "message": "fix(budget): budget item management with new features and refactor",
+      "date": "2025-04-02",
+      "relativeDate": "11 minutes ago"
+    },
     {
       "hash": "27d94e71",
       "author": "renata-sisilio",
@@ -47,17 +55,9 @@ class BuildInfo {
       "date": "2025-03-30",
       "relativeDate": "3 days ago"
     },
-    {
-      "hash": "3a91f1e0",
-      "author": "Kyle",
-      "email": "kylcheng@gmail.com", 
-      "message": "feat(ai): initial implementation show tasks tool",
-      "date": "2025-03-30",
-      "relativeDate": "3 days ago"
-    },
   ];
 
   // Stats
-  static const String totalCommits = '494';
+  static const String totalCommits = '495';
   static const String contributors = '0';
 }
