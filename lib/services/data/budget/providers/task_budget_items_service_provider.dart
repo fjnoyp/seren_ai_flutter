@@ -26,7 +26,6 @@ class TaskBudgetItemsService {
       amount: 0,
       unitValue: 0,
     );
-    print('newTaskBudgetItem id: ${newTaskBudgetItem.id}');
 
     await taskBudgetsRepository.insertItem(newTaskBudgetItem);
   }

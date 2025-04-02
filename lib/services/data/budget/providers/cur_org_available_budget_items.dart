@@ -25,5 +25,5 @@ final budgetItemRefByIdStreamProvider =
 
   return ref
       .watch(budgetItemRefsRepositoryProvider)
-      .watchBudgetItemById(budgetItemId: budgetItemId);
+      .watchById(budgetItemId);
 });

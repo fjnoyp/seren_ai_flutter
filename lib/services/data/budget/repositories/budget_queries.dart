@@ -18,22 +18,4 @@ class BudgetQueries {
   WHERE parent_task_id = :task_id
   ORDER BY item_number
   ''';
-
-  /// Params:
-  /// - budget_item_id: String
-  ///
-  /// Get a task budget for a given budget item id
-  static const String getTaskBudgetItemByIdQuery = '''
-  SELECT * FROM task_budget_items
-  WHERE id = :budget_item_id
-  ''';
-
-  /// Params:
-  /// - budget_item_id: String
-  ///
-  /// Get a budget item reference for a given budget item id
-  static const String getBudgetItemRefByIdQuery = '''
-  SELECT * FROM budget_item_references
-  WHERE id = :budget_item_id
-  ''';
 }

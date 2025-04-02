@@ -2,10 +2,10 @@
 class BuildInfo {
   // Core build info
   static const String version = '1.0.0';
-  static const String buildDate = '2025-04-02 16:11:51';
+  static const String buildDate = '2025-04-02 16:24:21';
   
   // Git info
-  static const String commitHash = 'ed5c8220';
+  static const String commitHash = 'a8835950';
   static const String branch = 'feat/introduce-task-budgets';
   static const String lastTag = 'no tag';
   
@@ -16,12 +16,28 @@ class BuildInfo {
   // Recent commits (last 5)
   static const List<Map<String, String>> recentCommits = [
     {
+      "hash": "a8835950",
+      "author": "renata-sisilio",
+      "email": "renata@seren-ai.co", 
+      "message": "clean up unused queries and print statements + add missing currency label localization",
+      "date": "2025-04-02",
+      "relativeDate": "3 minutes ago"
+    },
+    {
+      "hash": "3563c2c8",
+      "author": "renata-sisilio",
+      "email": "renata@seren-ai.co", 
+      "message": "revert: settings page language value",
+      "date": "2025-04-02",
+      "relativeDate": "13 minutes ago"
+    },
+    {
       "hash": "ed5c8220",
       "author": "renata-sisilio",
       "email": "renata@seren-ai.co", 
       "message": "feat(budget): add localization for budget-related fields",
       "date": "2025-04-02",
-      "relativeDate": "8 minutes ago"
+      "relativeDate": "21 minutes ago"
     },
     {
       "hash": "4ff8c55e",
@@ -29,7 +45,7 @@ class BuildInfo {
       "email": "renata@seren-ai.co", 
       "message": "fix(budget): change + button location",
       "date": "2025-04-02",
-      "relativeDate": "25 minutes ago"
+      "relativeDate": "38 minutes ago"
     },
     {
       "hash": "ee221124",
@@ -37,27 +53,11 @@ class BuildInfo {
       "email": "renata@seren-ai.co", 
       "message": "feat(budget): add integration for updating task budget item numbers",
       "date": "2025-04-02",
-      "relativeDate": "34 minutes ago"
-    },
-    {
-      "hash": "6f915c2e",
-      "author": "renata-sisilio",
-      "email": "renata@seren-ai.co", 
-      "message": "fix(budget): budget item management with new features and refactor",
-      "date": "2025-04-02",
-      "relativeDate": "44 minutes ago"
-    },
-    {
-      "hash": "27d94e71",
-      "author": "renata-sisilio",
-      "email": "renata@seren-ai.co", 
-      "message": "feat(budget): implement budget item management with models, providers, and UI components",
-      "date": "2025-03-31",
-      "relativeDate": "2 days ago"
+      "relativeDate": "46 minutes ago"
     },
   ];
 
   // Stats
-  static const String totalCommits = '498';
+  static const String totalCommits = '500';
   static const String contributors = '0';
 }

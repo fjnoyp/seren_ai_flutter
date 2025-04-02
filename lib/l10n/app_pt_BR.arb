@@ -392,6 +392,7 @@
     "unitValueWithBdi": "Valor Un com BDI",
     "totalValue": "Valor Total",
     "totalValueWithBdi": "Total com BDI",
+    "currency": "Moeda",
 
     "@_": {"description": "Speech Recognition"},
     "unknownState": "Estado desconhecido: {state}",
