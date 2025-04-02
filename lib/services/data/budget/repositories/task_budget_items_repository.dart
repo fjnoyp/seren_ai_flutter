@@ -5,6 +5,7 @@ import 'package:seren_ai_flutter/services/data/budget/repositories/budget_querie
 import 'package:seren_ai_flutter/services/data/db_setup/db_provider.dart';
 import 'package:seren_ai_flutter/services/data/common/base_repository.dart';
 import 'package:seren_ai_flutter/services/data/budget/budget_item_field_enum.dart';
+import 'package:supabase_flutter/supabase_flutter.dart';
 
 final taskBudgetItemsRepositoryProvider =
     Provider<TaskBudgetItemsRepository>((ref) {
@@ -61,11 +62,16 @@ class TaskBudgetItemsRepository extends BaseRepository<TaskBudgetItemModel> {
     required BudgetItemFieldEnum field,
     required String value,
   }) async {
-    print('updateTaskBudgetItemField: $budgetItemId, $field, $value');
-
     switch (field) {
       case BudgetItemFieldEnum.itemNumber:
-        // TODO p0: Implement this case
+        // Handle item number update for the current item and all items between the current and the new item number
+        await Supabase.instance.client.rpc(
+          'update_task_budget_item_number',
+          params: {
+            'budget_item_id': budgetItemId,
+            'new_item_number': value,
+          },
+        );
         break;
       default:
         await updateField(budgetItemId, field.toDbField(), value);
