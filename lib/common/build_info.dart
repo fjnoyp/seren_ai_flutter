@@ -2,10 +2,10 @@
 class BuildInfo {
   // Core build info
   static const String version = '1.0.0';
-  static const String buildDate = '2025-03-31 13:10:16';
+  static const String buildDate = '2025-04-02 15:27:47';
   
   // Git info
-  static const String commitHash = '5b9490d1';
+  static const String commitHash = '27d94e71';
   static const String branch = 'feat/introduce-task-budgets';
   static const String lastTag = 'no tag';
   
@@ -16,12 +16,20 @@ class BuildInfo {
   // Recent commits (last 5)
   static const List<Map<String, String>> recentCommits = [
     {
+      "hash": "27d94e71",
+      "author": "renata-sisilio",
+      "email": "renata@seren-ai.co", 
+      "message": "feat(budget): implement budget item management with models, providers, and UI components",
+      "date": "2025-03-31",
+      "relativeDate": "2 days ago"
+    },
+    {
       "hash": "5b9490d1",
       "author": "renata-sisilio",
       "email": "renata@seren-ai.co", 
       "message": "fix(web): task comment section scroll",
       "date": "2025-03-26",
-      "relativeDate": "5 days ago"
+      "relativeDate": "7 days ago"
     },
     {
       "hash": "dee09723",
@@ -29,7 +37,7 @@ class BuildInfo {
       "email": "kylcheng@gmail.com", 
       "message": "chore(ai): rename tool methods to ai",
       "date": "2025-03-30",
-      "relativeDate": "17 hours ago"
+      "relativeDate": "3 days ago"
     },
     {
       "hash": "0be4cb59",
@@ -37,7 +45,7 @@ class BuildInfo {
       "email": "kylcheng@gmail.com", 
       "message": "chore(ai): finalize show task support",
       "date": "2025-03-30",
-      "relativeDate": "17 hours ago"
+      "relativeDate": "3 days ago"
     },
     {
       "hash": "3a91f1e0",
@@ -45,19 +53,11 @@ class BuildInfo {
       "email": "kylcheng@gmail.com", 
       "message": "feat(ai): initial implementation show tasks tool",
       "date": "2025-03-30",
-      "relativeDate": "17 hours ago"
-    },
-    {
-      "hash": "21911024",
-      "author": "Kyle",
-      "email": "kylcheng@gmail.com", 
-      "message": "chore(task): fix task date filter dispaly",
-      "date": "2025-03-30",
-      "relativeDate": "21 hours ago"
+      "relativeDate": "3 days ago"
     },
   ];
 
   // Stats
-  static const String totalCommits = '493';
+  static const String totalCommits = '494';
   static const String contributors = '0';
 }
