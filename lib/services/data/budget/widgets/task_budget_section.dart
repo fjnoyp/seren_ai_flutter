@@ -4,6 +4,7 @@ import 'package:seren_ai_flutter/common/currency_provider.dart';
 import 'package:seren_ai_flutter/services/data/budget/models/budget_item_ref_model.dart';
 import 'package:seren_ai_flutter/services/data/budget/models/task_budget_item_model.dart';
 import 'package:seren_ai_flutter/services/data/budget/providers/cur_org_available_budget_items.dart';
+import 'package:seren_ai_flutter/services/data/budget/providers/task_budget_items_service_provider.dart';
 import 'package:seren_ai_flutter/services/data/budget/providers/task_budget_items_stream_provider.dart';
 import 'package:seren_ai_flutter/services/data/budget/widgets/task_budget_fields.dart';
 import 'package:seren_ai_flutter/services/data/budget/budget_item_field_enum.dart';
@@ -63,6 +64,7 @@ class TaskBudgetSection extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    final projectBdi = ref.watch(projectBdiProvider);
     final taskBudgetItems =
         ref.watch(taskBudgetItemsStreamProvider(taskId)).value ?? [];
 
@@ -72,7 +74,7 @@ class TaskBudgetSection extends ConsumerWidget {
     return Column(
       children: [
         Text(
-          'Total: ${ref.watch(currencyFormatSNP).format(taskBudgetItems.fold(0.0, (sum, item) => sum + item.totalValue))}',
+          'Total: ${ref.watch(currencyFormatSNP).format(taskBudgetItems.fold(0.0, (sum, item) => sum + item.totalValue) * (1 + projectBdi))}',
           style: Theme.of(context).textTheme.titleLarge,
         ),
         const SizedBox(height: 16),
@@ -92,8 +94,10 @@ class TaskBudgetSection extends ConsumerWidget {
                     const Divider(height: 1.0),
                     Expanded(
                       child: SingleChildScrollView(
-                        child:
-                            _TaskBudgetRows(taskBudgetItems: taskBudgetItems),
+                        child: _TaskBudgetRows(
+                          taskBudgetItems: taskBudgetItems,
+                          taskId: taskId,
+                        ),
                       ),
                     ),
                     const SizedBox(height: 16),
@@ -136,15 +140,17 @@ class _TaskBudgetHeaders extends StatelessWidget {
   }
 }
 
-class _TaskBudgetRows extends StatelessWidget {
-  const _TaskBudgetRows({required this.taskBudgetItems});
+class _TaskBudgetRows extends ConsumerWidget {
+  const _TaskBudgetRows({required this.taskBudgetItems, required this.taskId});
 
   final List<TaskBudgetItemModel> taskBudgetItems;
+  final String taskId;
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
     return Column(
       mainAxisSize: MainAxisSize.min,
+      mainAxisAlignment: MainAxisAlignment.start,
       children: [
         ...taskBudgetItems.expand(
           (item) => [
@@ -162,11 +168,6 @@ class _TaskBudgetRows extends StatelessWidget {
                           child: _TaskBudgetRowValue(
                             curItem: item,
                             field: column.field,
-                            // auto numbering
-                            initialValue: column.field ==
-                                    BudgetItemFieldEnum.itemNumber
-                                ? (taskBudgetItems.indexOf(item) + 1).toString()
-                                : null,
                           ),
                         ),
                       ),
@@ -179,6 +180,15 @@ class _TaskBudgetRows extends StatelessWidget {
             const Divider(height: 1.0),
           ],
         ),
+        IconButton(
+          icon: const Icon(Icons.add),
+          onPressed: () {
+            ref.read(taskBudgetItemsServiceProvider).addTaskBudgetItem(
+                  taskId: taskId,
+                  itemNumber: taskBudgetItems.length + 1,
+                );
+          },
+        ),
       ],
     );
   }
@@ -189,12 +199,10 @@ class _TaskBudgetRowValue extends ConsumerWidget {
   const _TaskBudgetRowValue({
     required this.curItem,
     required this.field,
-    this.initialValue,
   });
 
   final TaskBudgetItemModel curItem;
   final BudgetItemFieldEnum field;
-  final String? initialValue;
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -202,43 +210,44 @@ class _TaskBudgetRowValue extends ConsumerWidget {
     final matchedItemRef = ref
             .watch(budgetItemRefByIdStreamProvider(curItem.budgetItemRefId))
             .value ??
-        BudgetItemRefModel.empty();
+        BudgetItemRefModel.loading();
 
     final numberFormat = ref.watch(currencyFormatSNP);
 
     return switch (field) {
       BudgetItemFieldEnum.itemNumber => TaskBudgetItemNumberField(
-          budgetItemId: curItem.budgetItemRefId,
+          budgetItemId: curItem.id,
           isEnabled: true,
-          initialValue: initialValue,
         ),
       BudgetItemFieldEnum.type => matchedItemRef.isOwnSource
           ? TaskBudgetTypeField(
-              budgetItemId: curItem.budgetItemRefId,
+              budgetItemRefId: curItem.budgetItemRefId,
               isEnabled: true,
             )
           : Text(matchedItemRef.type),
       BudgetItemFieldEnum.source => Text(matchedItemRef.source),
       BudgetItemFieldEnum.code => TaskBudgetCodeField(
-          budgetItemId: curItem.budgetItemRefId,
+          budgetItemId: curItem.id,
+          budgetItemRefId: curItem.budgetItemRefId,
           isEnabled: true,
         ),
       BudgetItemFieldEnum.name => TaskBudgetNameField(
-          budgetItemId: curItem.budgetItemRefId,
+          budgetItemId: curItem.id,
+          budgetItemRefId: curItem.budgetItemRefId,
           isEnabled: true,
         ),
       BudgetItemFieldEnum.amount => TaskBudgetAmountField(
-          budgetItemId: curItem.budgetItemRefId,
+          budgetItemId: curItem.id,
           isEnabled: true,
         ),
       BudgetItemFieldEnum.measureUnit => matchedItemRef.isOwnSource
           ? TaskBudgetMeasureUnitField(
-              budgetItemId: curItem.budgetItemRefId,
+              budgetItemRefId: curItem.budgetItemRefId,
               isEnabled: true,
             )
           : Text(matchedItemRef.measureUnit),
       BudgetItemFieldEnum.unitValue => TaskBudgetUnitValueField(
-          budgetItemId: curItem.budgetItemRefId,
+          budgetItemId: curItem.id,
           isEnabled: true,
         ),
       BudgetItemFieldEnum.unitValueWithBdi => Text(

@@ -13,7 +13,7 @@ class TaskBudgetItemModel implements IHasId {
   final String parentTaskId;
 
   @JsonKey(name: 'budget_item_ref_id')
-  final String budgetItemRefId;
+  final String? budgetItemRefId;
 
   @JsonKey(name: 'item_number')
   final int itemNumber;
@@ -34,22 +34,12 @@ class TaskBudgetItemModel implements IHasId {
   TaskBudgetItemModel({
     String? id,
     required this.parentTaskId,
-    required this.budgetItemRefId,
+    this.budgetItemRefId,
     required this.itemNumber,
     required this.amount,
     required this.unitValue,
-    required this.isEstimated,
+    this.isEstimated = false,
   }) : id = id ?? uuid.v4();
-
-  factory TaskBudgetItemModel.empty() => TaskBudgetItemModel(
-        id: '',
-        parentTaskId: '',
-        budgetItemRefId: '',
-        itemNumber: 0,
-        amount: 0,
-        unitValue: 0,
-        isEstimated: false,
-      );
 
   factory TaskBudgetItemModel.fromJson(Map<String, dynamic> json) =>
       _$TaskBudgetItemModelFromJson(json);

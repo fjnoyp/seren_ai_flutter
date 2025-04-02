@@ -10,11 +10,13 @@ TaskBudgetItemModel _$TaskBudgetItemModelFromJson(Map<String, dynamic> json) =>
     TaskBudgetItemModel(
       id: json['id'] as String?,
       parentTaskId: json['parent_task_id'] as String,
-      budgetItemRefId: json['budget_item_ref_id'] as String,
+      budgetItemRefId: json['budget_item_ref_id'] as String?,
       itemNumber: (json['item_number'] as num).toInt(),
       amount: (json['amount'] as num).toDouble(),
       unitValue: (json['unit_value'] as num).toDouble(),
-      isEstimated: TaskBudgetItemModel._boolFromInt(json['is_estimated']),
+      isEstimated: json['is_estimated'] == null
+          ? false
+          : TaskBudgetItemModel._boolFromInt(json['is_estimated']),
     );
 
 Map<String, dynamic> _$TaskBudgetItemModelToJson(

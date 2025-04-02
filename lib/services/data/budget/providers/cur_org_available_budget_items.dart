@@ -1,5 +1,4 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:seren_ai_flutter/services/auth/cur_auth_dependency_provider.dart';
 import 'package:seren_ai_flutter/services/data/budget/models/budget_item_ref_model.dart';
 import 'package:seren_ai_flutter/services/data/budget/repositories/budget_item_refs_repository.dart';
 import 'package:seren_ai_flutter/services/data/orgs/providers/cur_selected_org_id_notifier.dart';
@@ -7,24 +6,23 @@ import 'package:seren_ai_flutter/services/data/orgs/providers/cur_selected_org_i
 /// This provider is used to get the available budget items for the current organization.
 /// It is used to populate the budget items autofill/autocomplete in the task budget fields.
 final curOrgAvailableBudgetItemsStreamProvider =
-    StreamProvider.autoDispose<List<BudgetItemRefModel>?>(
+    StreamProvider<List<BudgetItemRefModel>?>(
   (ref) {
     final curOrgId = ref.watch(curSelectedOrgIdNotifierProvider);
     if (curOrgId == null) throw Exception('No org selected');
 
-    return CurAuthDependencyProvider.watchStream(
-      ref: ref,
-      builder: (userId) => ref
-          .watch(budgetItemRefsRepositoryProvider)
-          .watchBudgetItems(orgId: curOrgId),
-    );
+    return ref
+        .watch(budgetItemRefsRepositoryProvider)
+        .watchBudgetItems(orgId: curOrgId);
   },
 );
 
 final budgetItemRefByIdStreamProvider =
-    StreamProvider.family<BudgetItemRefModel, String>((ref, budgetItemId) {
-  final curOrgId = ref.watch(curSelectedOrgIdNotifierProvider);
-  if (curOrgId == null) throw Exception('No org selected');
+    StreamProvider.family<BudgetItemRefModel, String?>((ref, budgetItemId) {
+  if (budgetItemId == null) {
+    return Stream.value(BudgetItemRefModel.empty());
+  }
+
   return ref
       .watch(budgetItemRefsRepositoryProvider)
       .watchBudgetItemById(budgetItemId: budgetItemId);
