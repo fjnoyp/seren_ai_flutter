@@ -655,6 +655,20 @@
         }
     },
 
+    "@_": {"description": "Task Budgets"},
+    "budget": "Budget",
+    "itemNumber": "",
+    "type": "Type",
+    "code": "Code",
+    "source": "Source",
+    "name": "Name",
+    "amount": "Amount",
+    "measureUnit": "Unit",
+    "unitValue": "Unit Value",
+    "unitValueWithBdi": "Unit Value with BDI",
+    "totalValue": "Total Value",
+    "totalValueWithBdi": "Total Value with BDI",
+
     "@_": {"description": "Test SQL Page"},
     "testSQLPage": "Test SQL Page",
     "enterSQLQuery": "Enter SQL query",
