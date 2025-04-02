@@ -61,11 +61,48 @@ class UpdateNoteRequestModel extends AiActionRequestModel {
   /// Parse the updatedNoteDescription as a JSON array of edit operations
   /// Returns a list of NoteEditOperation objects
   List<NoteEditOperation> parseEditOperations() {
+    // If the description is empty, return an empty list
+    if (updatedNoteDescription.trim().isEmpty) {
+      return [];
+    }
+
     try {
-      final List<dynamic> operationsJson = jsonDecode(updatedNoteDescription);
-      return operationsJson
-          .map((op) => NoteEditOperation.fromJson(op))
-          .toList();
+      // Check if the description is already a valid JSON array
+      final dynamic decoded = jsonDecode(updatedNoteDescription);
+
+      // Handle case where it's a simple string - treat as a single "keep" operation
+      if (decoded is String) {
+        return [NoteEditOperation(type: 'keep', text: decoded)];
+      }
+
+      // Handle case where it's not an array - treat the entire content as a single "keep" operation
+      if (decoded is! List) {
+        return [NoteEditOperation(type: 'keep', text: updatedNoteDescription)];
+      }
+
+      final List<dynamic> operationsJson = decoded;
+      final operations =
+          operationsJson.map((op) => NoteEditOperation.fromJson(op)).toList();
+
+      // Validate operations - ensure we have at least one operation
+      if (operations.isEmpty) {
+        return [NoteEditOperation(type: 'keep', text: updatedNoteDescription)];
+      }
+
+      // Ensure we have the required types
+      bool hasValidTypes = true;
+      for (final op in operations) {
+        if (op.type != 'keep' && op.type != 'add' && op.type != 'remove') {
+          hasValidTypes = false;
+          break;
+        }
+      }
+
+      if (!hasValidTypes) {
+        return [NoteEditOperation(type: 'keep', text: updatedNoteDescription)];
+      }
+
+      return operations;
     } catch (e) {
       // If parsing fails, treat the entire content as a single "keep" operation
       // This ensures backward compatibility if we receive a plain string

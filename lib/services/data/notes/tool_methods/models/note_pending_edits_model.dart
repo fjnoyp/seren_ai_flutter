@@ -74,7 +74,25 @@ class NotePendingEditsModel {
       return operations[0].text;
     }
 
-    // Build the final text by applying operations in sequence
+    // Check if we have any "keep" operations
+    final hasKeepOperations = operations.any((op) => op.type == 'keep');
+    final hasRemoveOperations = operations.any((op) => op.type == 'remove');
+
+    // If there are no "keep" operations but there are "add" operations,
+    // and we're not removing anything, we should preserve the original text
+    // and just append the additions
+    if (!hasKeepOperations && !hasRemoveOperations) {
+      // All the operations must be "add" operations
+      final addedText = operations
+          .where((op) => op.type == 'add')
+          .map((op) => op.text)
+          .join();
+
+      // Return original text + additions
+      return originalText + addedText;
+    }
+
+    // Normal case: Build the final text by applying operations in sequence
     final buffer = StringBuffer();
     for (final op in operations) {
       if (op.type == 'keep' || op.type == 'add') {
