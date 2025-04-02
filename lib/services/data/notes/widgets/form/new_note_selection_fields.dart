@@ -433,9 +433,31 @@ class NewNoteBodyField extends HookConsumerWidget {
       BuildContext context, List<NoteEditOperation> operations) {
     final theme = Theme.of(context);
 
+    // If there are no operations, return empty text
+    if (operations.isEmpty) {
+      return Text("No changes", style: theme.textTheme.bodyMedium);
+    }
+
     // Create rich text spans for each operation
     final List<InlineSpan> spans = [];
 
+    // Check if we only have "add" operations (no "keep" operations)
+    final hasKeepOperations = operations.any((op) => op.type == 'keep');
+    final onlyHasAddOperations =
+        !hasKeepOperations && operations.every((op) => op.type == 'add');
+
+    // If we only have add operations, let's make that clear in the diff view
+    if (onlyHasAddOperations) {
+      spans.add(TextSpan(
+        text: "(Original text preserved) ",
+        style: TextStyle(
+          fontStyle: FontStyle.italic,
+          color: theme.colorScheme.secondary,
+        ),
+      ));
+    }
+
+    // Add spans for each operation
     for (final op in operations) {
       switch (op.type) {
         case 'keep':
@@ -464,6 +486,12 @@ class NewNoteBodyField extends HookConsumerWidget {
             ),
           ));
           break;
+        default:
+          // Unrecognized operation type, just add as plain text
+          spans.add(TextSpan(
+            text: op.text,
+            style: theme.textTheme.bodyMedium,
+          ));
       }
     }
 
