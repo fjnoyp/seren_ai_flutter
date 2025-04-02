@@ -1,6 +1,7 @@
 import 'package:flutter/widgets.dart';
 import 'package:seren_ai_flutter/services/data/budget/models/budget_item_ref_model.dart';
 import 'package:seren_ai_flutter/services/data/budget/models/task_budget_item_model.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 enum BudgetItemFieldEnum {
   itemNumber,
@@ -16,17 +17,28 @@ enum BudgetItemFieldEnum {
   totalValueWithBdi;
 
   String toHumanReadable(BuildContext context) => switch (this) {
-        BudgetItemFieldEnum.itemNumber => '',
-        BudgetItemFieldEnum.type => 'Tipo',
-        BudgetItemFieldEnum.code => 'Código',
-        BudgetItemFieldEnum.source => 'Fonte',
-        BudgetItemFieldEnum.name => 'Descrição',
-        BudgetItemFieldEnum.amount => 'Qtd',
-        BudgetItemFieldEnum.measureUnit => 'Un',
-        BudgetItemFieldEnum.unitValue => 'Valor Un',
-        BudgetItemFieldEnum.unitValueWithBdi => 'Valor Un com BDI',
-        BudgetItemFieldEnum.totalValue => 'Valor Total',
-        BudgetItemFieldEnum.totalValueWithBdi => 'Total com BDI',
+        BudgetItemFieldEnum.itemNumber =>
+          AppLocalizations.of(context)?.itemNumber ?? '',
+        BudgetItemFieldEnum.type =>
+          AppLocalizations.of(context)?.type ?? 'Tipo',
+        BudgetItemFieldEnum.code =>
+          AppLocalizations.of(context)?.code ?? 'Código',
+        BudgetItemFieldEnum.source =>
+          AppLocalizations.of(context)?.source ?? 'Fonte',
+        BudgetItemFieldEnum.name =>
+          AppLocalizations.of(context)?.name ?? 'Descrição',
+        BudgetItemFieldEnum.amount =>
+          AppLocalizations.of(context)?.amount ?? 'Qtd',
+        BudgetItemFieldEnum.measureUnit =>
+          AppLocalizations.of(context)?.measureUnit ?? 'Un',
+        BudgetItemFieldEnum.unitValue =>
+          AppLocalizations.of(context)?.unitValue ?? 'Valor Un',
+        BudgetItemFieldEnum.unitValueWithBdi =>
+          AppLocalizations.of(context)?.unitValueWithBdi ?? 'Valor Un com BDI',
+        BudgetItemFieldEnum.totalValue =>
+          AppLocalizations.of(context)?.totalValue ?? 'Valor Total',
+        BudgetItemFieldEnum.totalValueWithBdi =>
+          AppLocalizations.of(context)?.totalValueWithBdi ?? 'Total com BDI',
       };
 
   String toDbField() => switch (this) {

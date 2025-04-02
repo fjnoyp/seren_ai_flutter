@@ -48,7 +48,7 @@ class WebTaskPage extends ConsumerWidget {
       ),
       if (isDebugMode)
         (
-          title: 'Budget',
+          title: AppLocalizations.of(context)?.budget,
           body: TaskBudgetSection(curTaskId),
         ),
     ];
