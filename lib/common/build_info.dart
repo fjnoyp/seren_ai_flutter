@@ -2,10 +2,10 @@
 class BuildInfo {
   // Core build info
   static const String version = '1.0.0';
-  static const String buildDate = '2025-04-01 16:57:17';
+  static const String buildDate = '2025-04-01 17:11:05';
   
   // Git info
-  static const String commitHash = '33979c6';
+  static const String commitHash = '10808b5';
   static const String branch = 'feat/ai_note_tools';
   static const String lastTag = 'no tag';
   
@@ -16,12 +16,20 @@ class BuildInfo {
   // Recent commits (last 5)
   static const List<Map<String, String>> recentCommits = [
     {
+      "hash": "10808b5",
+      "author": "Kyle",
+      "email": "kylcheng@gmail.com", 
+      "message": "feat(notes): working edit note functionality",
+      "date": "2025-04-01",
+      "relativeDate": "14 minutes ago"
+    },
+    {
       "hash": "33979c6",
       "author": "Kyle",
       "email": "kylcheng@gmail.com", 
       "message": "chore(notes): refine and test the note edit operation",
       "date": "2025-04-01",
-      "relativeDate": "58 minutes ago"
+      "relativeDate": "72 minutes ago"
     },
     {
       "hash": "405b53f",
@@ -29,7 +37,7 @@ class BuildInfo {
       "email": "kylcheng@gmail.com", 
       "message": "feat(note): basic note edit method",
       "date": "2025-04-01",
-      "relativeDate": "79 minutes ago"
+      "relativeDate": "2 hours ago"
     },
     {
       "hash": "5d7453a",
@@ -47,17 +55,9 @@ class BuildInfo {
       "date": "2025-03-31",
       "relativeDate": "29 hours ago"
     },
-    {
-      "hash": "6912831",
-      "author": "Kyle",
-      "email": "kylcheng@gmail.com", 
-      "message": "chore: remove showOnly param",
-      "date": "2025-03-31",
-      "relativeDate": "29 hours ago"
-    },
   ];
 
   // Stats
-  static const String totalCommits = '499';
+  static const String totalCommits = '500';
   static const String contributors = '       0';
 }
