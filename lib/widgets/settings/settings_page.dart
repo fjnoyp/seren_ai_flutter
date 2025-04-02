@@ -141,7 +141,7 @@ class SettingsAppSection extends ConsumerWidget {
             },
             items: [
               DropdownMenuItem(
-                value: 'EN_GB',
+                value: 'EN_US',
                 child: Text(AppLocalizations.of(context)!.english,
                     style: theme.textTheme.bodySmall),
               ),
