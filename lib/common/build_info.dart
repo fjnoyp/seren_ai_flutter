@@ -2,10 +2,10 @@
 class BuildInfo {
   // Core build info
   static const String version = '1.0.0';
-  static const String buildDate = '2025-04-01 17:11:05';
+  static const String buildDate = '2025-04-02 16:47:16';
   
   // Git info
-  static const String commitHash = '10808b5';
+  static const String commitHash = '3432ad9';
   static const String branch = 'feat/ai_note_tools';
   static const String lastTag = 'no tag';
   
@@ -16,48 +16,48 @@ class BuildInfo {
   // Recent commits (last 5)
   static const List<Map<String, String>> recentCommits = [
     {
-      "hash": "10808b5",
+      "hash": "3432ad9",
+      "author": "Kyle",
+      "email": "kylcheng@gmail.com", 
+      "message": "fix(notes): support append only ai edits",
+      "date": "2025-04-01",
+      "relativeDate": "24 hours ago"
+    },
+    {
+      "hash": "3af2984",
       "author": "Kyle",
       "email": "kylcheng@gmail.com", 
       "message": "feat(notes): working edit note functionality",
       "date": "2025-04-01",
-      "relativeDate": "14 minutes ago"
+      "relativeDate": "24 hours ago"
     },
     {
-      "hash": "33979c6",
+      "hash": "b7303f2",
       "author": "Kyle",
       "email": "kylcheng@gmail.com", 
       "message": "chore(notes): refine and test the note edit operation",
       "date": "2025-04-01",
-      "relativeDate": "72 minutes ago"
+      "relativeDate": "25 hours ago"
     },
     {
-      "hash": "405b53f",
+      "hash": "b34fbd5",
       "author": "Kyle",
       "email": "kylcheng@gmail.com", 
       "message": "feat(note): basic note edit method",
       "date": "2025-04-01",
-      "relativeDate": "2 hours ago"
+      "relativeDate": "25 hours ago"
     },
     {
-      "hash": "5d7453a",
+      "hash": "7eb4228",
       "author": "Kyle",
       "email": "kylcheng@gmail.com", 
       "message": "feat(notes): basic ai note creation",
       "date": "2025-03-31",
-      "relativeDate": "25 hours ago"
-    },
-    {
-      "hash": "499ea57",
-      "author": "Kyle",
-      "email": "kylcheng@gmail.com", 
-      "message": "feat(notes): add first implementation + fix ai color animation",
-      "date": "2025-03-31",
-      "relativeDate": "29 hours ago"
+      "relativeDate": "2 days ago"
     },
   ];
 
   // Stats
-  static const String totalCommits = '500';
+  static const String totalCommits = '502';
   static const String contributors = '       0';
 }

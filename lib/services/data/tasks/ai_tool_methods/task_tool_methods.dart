@@ -136,8 +136,12 @@ class TaskToolMethods {
     // == TaskAssignees
     // Handle assignee filtering if provided
     if (infoRequest.assignedUserNames != null) {
+      // Handle unassigned tasks
+      if (infoRequest.assignedUserNames!.isEmpty) {
+        filterNotifier.updateFilter(TFAssignees.unassigned(ref, context));
+      }
       // Check if MYSELF is in the list, handle special case
-      if (AiToolExecutionUtils.containsMyselfKeyword(
+      else if (AiToolExecutionUtils.containsMyselfKeyword(
           infoRequest.assignedUserNames)) {
         filterNotifier.updateFilter(TFAssignees.byUserModel(ref, curUser));
       } else if (infoRequest.assignedUserNames!.isNotEmpty) {
