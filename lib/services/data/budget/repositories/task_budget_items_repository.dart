@@ -45,18 +45,6 @@ class TaskBudgetItemsRepository extends BaseRepository<TaskBudgetItemModel> {
     );
   }
 
-  Stream<TaskBudgetItemModel> watchTaskBudgetItemById({
-    required String budgetItemId,
-  }) {
-    return watchById(budgetItemId);
-  }
-
-  Future<TaskBudgetItemModel?> getTaskBudgetItemById({
-    required String budgetItemId,
-  }) async {
-    return getById(budgetItemId);
-  }
-
   Future<void> updateTaskBudgetItemField({
     required String budgetItemId,
     required BudgetItemFieldEnum field,

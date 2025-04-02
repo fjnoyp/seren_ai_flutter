@@ -162,7 +162,7 @@ class SettingsAppSection extends ConsumerWidget {
           ListTile(
             dense: true,
             leading: const Icon(Icons.currency_exchange),
-            title: Text("Currency", // AppLocalizations.of(context)!.currency,
+            title: Text(AppLocalizations.of(context)!.currency,
                 style: const TextStyle(fontWeight: FontWeight.bold)),
             trailing: DropdownButton<String>(
               value: currency.locale,

@@ -44,25 +44,11 @@ class BudgetItemReferencesRepository
     );
   }
 
-  Stream<BudgetItemRefModel> watchBudgetItemById({
-    required String budgetItemId,
-  }) {
-    return watchById(budgetItemId);
-  }
-
-  Future<BudgetItemRefModel?> getBudgetItemById({
-    required String budgetItemId,
-  }) async {
-    return getById(budgetItemId);
-  }
-
   Future<void> updateBudgetItemRefField({
     required String budgetItemId,
     required BudgetItemFieldEnum field,
     required String value,
   }) async {
-    print('updateBudgetItemRefField: $budgetItemId, $field, $value');
-
     await updateField(budgetItemId, field.toDbField(), value);
   }
 }

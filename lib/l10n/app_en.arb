@@ -668,6 +668,7 @@
     "unitValueWithBdi": "Unit Value with BDI",
     "totalValue": "Total Value",
     "totalValueWithBdi": "Total Value with BDI",
+    "currency": "Currency",
 
     "@_": {"description": "Test SQL Page"},
     "testSQLPage": "Test SQL Page",
