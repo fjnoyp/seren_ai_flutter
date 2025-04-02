@@ -228,7 +228,7 @@ const budgetSchemas = [
     Column.real('base_unit_value'),
   ]),
   Table(taskBudgetItemsTable, [
-    Column.text('task_id'),
+    Column.text('parent_task_id'),
     Column.text('budget_item_ref_id'),
     Column.integer('item_number'),
     Column.real('amount'),

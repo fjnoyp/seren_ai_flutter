@@ -36,14 +36,45 @@ class BudgetItemRefModel implements IHasId {
     required this.baseUnitValue,
   }) : id = id ?? uuid.v4();
 
-  /// Factory constructed to be used in loading states
-  factory BudgetItemRefModel.empty() => BudgetItemRefModel(
+  /// Factory constructor to be used in loading states
+  factory BudgetItemRefModel.loading() => BudgetItemRefModel(
         type: '...',
         code: '...',
         source: '...',
         name: '...',
         measureUnit: '...',
         baseUnitValue: 0,
+      );
+
+  /// Factory constructor to be used before the user selects an item reference
+  factory BudgetItemRefModel.empty() => BudgetItemRefModel(
+        type: '',
+        code: '',
+        source: '',
+        name: '',
+        measureUnit: '',
+        baseUnitValue: 0,
+      );
+
+  BudgetItemRefModel copyWith({
+    String? id,
+    String? parentOrgId,
+    String? type,
+    String? code,
+    String? source,
+    String? name,
+    String? measureUnit,
+    double? baseUnitValue,
+  }) =>
+      BudgetItemRefModel(
+        id: id ?? this.id,
+        parentOrgId: parentOrgId ?? this.parentOrgId,
+        type: type ?? this.type,
+        code: code ?? this.code,
+        source: source ?? this.source,
+        name: name ?? this.name,
+        measureUnit: measureUnit ?? this.measureUnit,
+        baseUnitValue: baseUnitValue ?? this.baseUnitValue,
       );
 
   factory BudgetItemRefModel.fromJson(Map<String, dynamic> json) =>

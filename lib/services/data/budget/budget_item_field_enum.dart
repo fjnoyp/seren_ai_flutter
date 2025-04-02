@@ -29,6 +29,23 @@ enum BudgetItemFieldEnum {
         BudgetItemFieldEnum.totalValueWithBdi => 'Total com BDI',
       };
 
+  String toDbField() => switch (this) {
+        BudgetItemFieldEnum.itemNumber => 'item_number',
+        BudgetItemFieldEnum.type => 'type',
+        BudgetItemFieldEnum.code => 'code',
+        BudgetItemFieldEnum.source => 'source',
+        BudgetItemFieldEnum.name => 'name',
+        BudgetItemFieldEnum.amount => 'amount',
+        BudgetItemFieldEnum.measureUnit => 'measure_unit',
+        BudgetItemFieldEnum.unitValue => 'unit_value',
+
+        // The fields below are not in the db
+        BudgetItemFieldEnum.unitValueWithBdi ||
+        BudgetItemFieldEnum.totalValue ||
+        BudgetItemFieldEnum.totalValueWithBdi =>
+          '',
+      };
+
   Comparator<BudgetItemRefModel>? get comparatorRefValues => switch (this) {
         BudgetItemFieldEnum.name => (a, b) => a.name.compareTo(b.name),
         BudgetItemFieldEnum.type => (a, b) => a.type.compareTo(b.type),
