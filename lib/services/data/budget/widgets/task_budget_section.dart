@@ -78,7 +78,7 @@ class TaskBudgetSection extends ConsumerWidget {
           style: Theme.of(context).textTheme.titleLarge,
         ),
         const SizedBox(height: 16),
-        Expanded(
+        Flexible(
           child: Scrollbar(
             controller: horizontalScrollController,
             thumbVisibility: true,
@@ -88,11 +88,12 @@ class TaskBudgetSection extends ConsumerWidget {
               child: SizedBox(
                 width: totalWidth, // to properly show the dividers
                 child: Column(
+                  mainAxisSize: MainAxisSize.min,
                   children: [
                     const Divider(height: 1.0),
                     const _TaskBudgetHeaders(),
                     const Divider(height: 1.0),
-                    Expanded(
+                    Flexible(
                       child: SingleChildScrollView(
                         child: _TaskBudgetRows(
                           taskBudgetItems: taskBudgetItems,
@@ -106,6 +107,16 @@ class TaskBudgetSection extends ConsumerWidget {
               ),
             ),
           ),
+        ),
+        const SizedBox(height: 16),
+        IconButton(
+          icon: const Icon(Icons.add),
+          onPressed: () {
+            ref.read(taskBudgetItemsServiceProvider).addTaskBudgetItem(
+                  taskId: taskId,
+                  itemNumber: taskBudgetItems.length + 1,
+                );
+          },
         ),
       ],
     );
@@ -150,7 +161,6 @@ class _TaskBudgetRows extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     return Column(
       mainAxisSize: MainAxisSize.min,
-      mainAxisAlignment: MainAxisAlignment.start,
       children: [
         ...taskBudgetItems.expand(
           (item) => [
@@ -179,15 +189,6 @@ class _TaskBudgetRows extends ConsumerWidget {
             ),
             const Divider(height: 1.0),
           ],
-        ),
-        IconButton(
-          icon: const Icon(Icons.add),
-          onPressed: () {
-            ref.read(taskBudgetItemsServiceProvider).addTaskBudgetItem(
-                  taskId: taskId,
-                  itemNumber: taskBudgetItems.length + 1,
-                );
-          },
         ),
       ],
     );
