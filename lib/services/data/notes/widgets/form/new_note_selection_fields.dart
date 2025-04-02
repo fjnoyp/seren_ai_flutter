@@ -7,6 +7,7 @@ import 'package:seren_ai_flutter/services/data/notes/repositories/notes_reposito
 import 'package:seren_ai_flutter/services/data/notes/tool_methods/models/note_pending_edits_model.dart';
 import 'package:seren_ai_flutter/services/data/notes/tool_methods/models/note_edit_operation.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+import 'dart:async';
 
 // TODO p3: This code duplicates the functionality from the base text block and name fields ... We should consider consolidating them to avoid code duplication ...
 
@@ -235,23 +236,25 @@ class NewNoteBodyField extends HookConsumerWidget {
     }, [fieldState.currentValue]);
 
     // For multiline fields, implement auto-save with debouncing
-    final debounceTimer = useState<Future<void>?>(null);
+    final isMounted = context.mounted;
 
     useEffect(() {
       // Skip this if we have pending edits
       if (hasPendingEdits.value) return null;
 
+      // Use a timer instance that's local to this effect
+      Timer? debounceTimer;
+
       void onChange() {
         if (fieldState.controller.text != fieldState.lastSyncedValue) {
-          if (debounceTimer.value != null) {
-            // Cancel previous timer
-            debounceTimer.value = null;
-          }
+          // Cancel previous timer if it exists
+          debounceTimer?.cancel();
 
           // Create a new timer
-          debounceTimer.value =
-              Future.delayed(const Duration(milliseconds: 500), () {
-            if (fieldState.controller.text != fieldState.currentValue) {
+          debounceTimer = Timer(const Duration(milliseconds: 500), () {
+            // Check if widget is still mounted before using ref
+            if (isMounted &&
+                fieldState.controller.text != fieldState.currentValue) {
               fieldState.updateValue(fieldState.controller.text);
             }
           });
@@ -259,7 +262,13 @@ class NewNoteBodyField extends HookConsumerWidget {
       }
 
       fieldState.controller.addListener(onChange);
-      return () => fieldState.controller.removeListener(onChange);
+
+      // Clean up function
+      return () {
+        fieldState.controller.removeListener(onChange);
+        // Cancel the timer without modifying state
+        debounceTimer?.cancel();
+      };
     }, [fieldState.controller, hasPendingEdits.value]);
 
     // If there are pending edits, show the diff view
