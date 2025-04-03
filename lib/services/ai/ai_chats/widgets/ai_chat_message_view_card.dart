@@ -47,95 +47,112 @@ class AiChatMessageViewCard extends HookConsumerWidget {
       AiChatMessageDisplayType.aiWithToolCall =>
         _AiMessageWidget(message.getAiMessage() ?? message.content),
       AiChatMessageDisplayType.toolAiRequest => const SizedBox.shrink(),
-      // _AiRequestWidget(message.getAiRequest()!),
       AiChatMessageDisplayType.toolAiResult =>
         _AiRequestResultWidget(message.getAiResult()!),
       AiChatMessageDisplayType.tool => const SizedBox.shrink(),
-      // Text(message.content),
     };
 
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 12.0),
       child: isDebugMode
-          ? Card(
-              child: Column(
-                children: [
-                  // Debug Mode Toggle - Positioned in top right
-                  if (ref.watch(isDebugModeSNP))
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.end,
-                      children: [
-                        IconButton(
-                          padding: const EdgeInsets.only(right: 6, top: 6),
-                          constraints: const BoxConstraints(),
-                          iconSize: 15,
-                          icon: const Icon(Icons.copy),
-                          color: theme.colorScheme.primary,
-                          onPressed: () {
-                            Clipboard.setData(
-                                ClipboardData(text: message.content));
-                          },
-                        ),
-                        IconButton(
-                          padding: const EdgeInsets.only(right: 6, top: 6),
-                          constraints: const BoxConstraints(),
-                          iconSize: 15,
-                          icon: Icon(
-                            showRawJson.value ? Icons.list : Icons.bug_report,
-                            color: theme.colorScheme.primary,
-                          ),
-                          onPressed: () =>
-                              showRawJson.value = !showRawJson.value,
-                        ),
-                      ],
-                    ),
-                  showRawJson.value
-                      ? Padding(
-                          padding: const EdgeInsets.all(16.0),
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              _KeyValueText(
-                                key: 'Display Type',
-                                value: displayType.toHumanReadable(context),
-                                context: context,
-                              ),
-                              _KeyValueText(
-                                key: 'ID',
-                                value: message.id,
-                                context: context,
-                              ),
-                              _KeyValueText(
-                                key: 'Thread ID',
-                                value: message.parentChatThreadId,
-                                context: context,
-                              ),
-                              if (message.parentLgRunId != null)
+          ? Stack(
+              clipBehavior: Clip.none,
+              children: [
+                // Add padding to the right side of the content to make room for buttons
+                Padding(
+                  padding: const EdgeInsets.only(right: 30.0),
+                  child: showRawJson.value
+                      ? Card(
+                          child: Padding(
+                            padding: const EdgeInsets.all(16.0),
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
                                 _KeyValueText(
-                                  key: 'LG Run ID',
-                                  value: message.parentLgRunId!,
+                                  key: 'Display Type',
+                                  value: displayType.toHumanReadable(context),
                                   context: context,
                                 ),
-                              _KeyValueText(
-                                key: 'Content',
-                                value: message.content.tryFormatAsJson(),
-                                context: context,
-                                valueStyle: Theme.of(context)
-                                    .textTheme
-                                    .bodyMedium
-                                    ?.copyWith(
-                                      fontFamily: 'monospace',
-                                    ),
-                              ),
-                            ],
+                                _KeyValueText(
+                                  key: 'ID',
+                                  value: message.id,
+                                  context: context,
+                                ),
+                                _KeyValueText(
+                                  key: 'Thread ID',
+                                  value: message.parentChatThreadId,
+                                  context: context,
+                                ),
+                                if (message.parentLgRunId != null)
+                                  _KeyValueText(
+                                    key: 'LG Run ID',
+                                    value: message.parentLgRunId!,
+                                    context: context,
+                                  ),
+                                _KeyValueText(
+                                  key: 'Content',
+                                  value: message.content.tryFormatAsJson(),
+                                  context: context,
+                                  valueStyle: Theme.of(context)
+                                      .textTheme
+                                      .bodyMedium
+                                      ?.copyWith(
+                                        fontFamily: 'monospace',
+                                      ),
+                                ),
+                              ],
+                            ),
                           ),
                         )
-                      : Padding(
-                          padding: const EdgeInsets.all(8.0),
-                          child: messageDisplay,
+                      : messageDisplay,
+                ),
+
+                // Floating debug controls in right margin
+                Positioned(
+                  top: 8,
+                  right: 0,
+                  child: Column(
+                    children: [
+                      // Copy button
+                      IconButton(
+                        constraints: const BoxConstraints(
+                          minWidth: 14,
+                          minHeight: 14,
+                          maxWidth: 14,
+                          maxHeight: 14,
                         ),
-                ],
-              ),
+                        padding: EdgeInsets.zero,
+                        icon: const Icon(Icons.copy, size: 15),
+                        color: theme.colorScheme.primary,
+                        onPressed: () {
+                          Clipboard.setData(
+                              ClipboardData(text: message.content));
+                        },
+                        tooltip: "Copy content",
+                      ),
+
+                      // Toggle JSON/message view button
+                      IconButton(
+                        constraints: const BoxConstraints(
+                          minWidth: 14,
+                          minHeight: 14,
+                          maxWidth: 14,
+                          maxHeight: 14,
+                        ),
+                        padding: EdgeInsets.zero,
+                        icon: Icon(
+                          showRawJson.value ? Icons.list : Icons.bug_report,
+                          size: 15,
+                        ),
+                        color: theme.colorScheme.primary,
+                        onPressed: () => showRawJson.value = !showRawJson.value,
+                        tooltip:
+                            showRawJson.value ? "Show message" : "Show JSON",
+                      ),
+                    ],
+                  ),
+                ),
+              ],
             )
           : messageDisplay,
     );
