@@ -233,7 +233,6 @@ const budgetSchemas = [
     Column.integer('item_number'),
     Column.real('amount'),
     Column.real('unit_value'),
-    Column.integer('is_estimated'),
   ]),
 ];
 
