@@ -2,11 +2,11 @@
 class BuildInfo {
   // Core build info
   static const String version = '1.0.0';
-  static const String buildDate = '2025-04-03 10:20:35';
+  static const String buildDate = '2025-04-03 11:01:53';
   
   // Git info
-  static const String commitHash = 'b6b8151';
-  static const String branch = 'feat/ai_note_tools';
+  static const String commitHash = '205c9e1';
+  static const String branch = 'main';
   static const String lastTag = 'no tag';
   
   // Author of last commit
@@ -16,7 +16,15 @@ class BuildInfo {
   // Recent commits (last 5)
   static const List<Map<String, String>> recentCommits = [
     {
-      "hash": "b6b8151",
+      "hash": "205c9e1",
+      "author": "Kyle",
+      "email": "kylcheng@gmail.com", 
+      "message": "chore(ai): fix chat message view card debug mode spacing",
+      "date": "2025-04-03",
+      "relativeDate": "41 minutes ago"
+    },
+    {
+      "hash": "2b3434a",
       "author": "Kyle",
       "email": "kylcheng@gmail.com", 
       "message": "fix: note selection provider issues + support unassigned task tool search",
@@ -24,7 +32,7 @@ class BuildInfo {
       "relativeDate": "18 hours ago"
     },
     {
-      "hash": "3432ad9",
+      "hash": "d2b08d0",
       "author": "Kyle",
       "email": "kylcheng@gmail.com", 
       "message": "fix(notes): support append only ai edits",
@@ -32,7 +40,7 @@ class BuildInfo {
       "relativeDate": "2 days ago"
     },
     {
-      "hash": "3af2984",
+      "hash": "608f81c",
       "author": "Kyle",
       "email": "kylcheng@gmail.com", 
       "message": "feat(notes): working edit note functionality",
@@ -40,24 +48,16 @@ class BuildInfo {
       "relativeDate": "2 days ago"
     },
     {
-      "hash": "b7303f2",
+      "hash": "332734c",
       "author": "Kyle",
       "email": "kylcheng@gmail.com", 
       "message": "chore(notes): refine and test the note edit operation",
       "date": "2025-04-01",
       "relativeDate": "2 days ago"
     },
-    {
-      "hash": "b34fbd5",
-      "author": "Kyle",
-      "email": "kylcheng@gmail.com", 
-      "message": "feat(note): basic note edit method",
-      "date": "2025-04-01",
-      "relativeDate": "2 days ago"
-    },
   ];
 
   // Stats
-  static const String totalCommits = '503';
+  static const String totalCommits = '504';
   static const String contributors = '       0';
 }
