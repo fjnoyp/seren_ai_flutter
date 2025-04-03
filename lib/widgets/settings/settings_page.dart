@@ -174,22 +174,20 @@ class SettingsAppSection extends ConsumerWidget {
                 }
               },
               items: [
-                ...AppLocalizations.supportedLocales
-                    .where((e) => e.countryCode != null) // avoid unsupported
-                    .map((e) => (
-                          locale: e.toString(),
-                          currencySymbol:
-                              NumberFormat.currency(locale: e.toString())
-                                  .currencySymbol
-                        ))
-                    .toSet() // remove duplicated values if there are any
-                    .map((e) => DropdownMenuItem(
-                          value: e.locale,
-                          child: Text(
-                            e.currencySymbol,
-                            style: theme.textTheme.bodySmall,
-                          ),
-                        ))
+                ...Map.fromEntries(
+                  AppLocalizations.supportedLocales.map((locale) {
+                    final currencySymbol =
+                        NumberFormat.currency(locale: locale.toString())
+                            .currencySymbol;
+                    return MapEntry(currencySymbol, locale.toString());
+                  }),
+                ).entries.map((entry) => DropdownMenuItem(
+                      value: entry.value,
+                      child: Text(
+                        entry.key,
+                        style: theme.textTheme.bodySmall,
+                      ),
+                    ))
               ],
             ),
           ),
