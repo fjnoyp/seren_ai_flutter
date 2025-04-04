@@ -172,10 +172,9 @@ class CreateTaskResultWidget extends ConsumerWidget {
       );
     }
 
-    return !ref.read(currentRouteProvider).contains(AppRoutes.aiChats.name)
-        ? Text(AppLocalizations.of(context)!
-            .createdNewTaskAndOpenedTaskPage(result.task.name))
-        : Column(
+    return isWebVersion ||
+            ref.read(currentRouteProvider).contains(AppRoutes.aiChats.name)
+        ? Column(
             mainAxisSize: MainAxisSize.min,
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
@@ -184,7 +183,9 @@ class CreateTaskResultWidget extends ConsumerWidget {
               if (fieldsWidget != null) fieldsWidget,
               TaskListCardItemView(task: result.task),
             ],
-          );
+          )
+        : Text(AppLocalizations.of(context)!
+            .createdNewTaskAndOpenedTaskPage(result.task.name));
   }
 }
 
@@ -259,10 +260,9 @@ class UpdateTaskFieldsResultWidget extends ConsumerWidget {
       );
     }
 
-    return !ref.read(currentRouteProvider).contains(AppRoutes.aiChats.name)
-        ? Text(AppLocalizations.of(context)!
-            .updatedTaskAndShowedResultInUI(result.task.name))
-        : Column(
+    return isWebVersion ||
+            ref.read(currentRouteProvider).contains(AppRoutes.aiChats.name)
+        ? Column(
             mainAxisSize: MainAxisSize.min,
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
@@ -270,7 +270,9 @@ class UpdateTaskFieldsResultWidget extends ConsumerWidget {
               if (changesWidget != null) changesWidget,
               TaskListCardItemView(task: result.task),
             ],
-          );
+          )
+        : Text(AppLocalizations.of(context)!
+            .updatedTaskAndShowedResultInUI(result.task.name));
   }
 }
 
