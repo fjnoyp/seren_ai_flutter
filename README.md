@@ -32,13 +32,28 @@ Seren AI is an AI-native, cross-platform business productivity application that 
 Mobile is testflight only.
 Website is hosted live at: https://seren-ai.web.app/
 
-Contact kylcheng@gmail.com for access, or login/pw is included in my resume. 
+Contact kylcheng@gmail.com for access, login/pw for web access is included in my resume. 
 
-[GIF PLACEHOLDER: Voice command creating a new task]
 
-[GIF PLACEHOLDER: AI updating multiple items from a single voice request]
+## Demo Videos
 
-[GIF PLACEHOLDER: Gantt chart visualization and interaction]
+Here are demo videos showcasing Seren AI's capabilities:
+
+### Mobile Voice Control Demos
+
+1. **[Demo1-CreateTask.mp4](docs/Demo1-CreateTask.mp4)** - Creating a new task for the advanced budgeting feature and adding it to the MVP project using voice commands.
+
+2. **[Demo2-SearchTask.mp4](docs/Demo2-SearchTask.mp4)** - Finding all fix-related tasks that are overdue and high priority through voice interaction.
+
+3. **[Demo3-FindCreateNote.mp4](docs/Demo3-FindCreateNote.mp4)** - Creating a note that summarizes all tasks assigned to Renata that were completed in the last 3 weeks using voice commands.
+
+4. **[Demo4-UpdateNote.mp4](docs/Demo4-UpdateNote.mp4)** - Updating a note to improve formatting and include estimated time for each task using voice commands.
+
+### Web Interface Demos
+
+5. **[Demo5-WebFindTasks.mp4](docs/Demo5-WebFindTasks.mp4)** - Demonstrating how to filter and display high priority tasks completed in the last month that were assigned to Letty using the Web AI. 
+
+6. **[Demo6-WebFeatureOverview.mp4](docs/Demo6-WebFeatureOverview.mp4)** - Comprehensive overview of web interface features including task management, time tracking, and reporting capabilities using the Web AI.
 
 ## Technical Architecture
 
@@ -50,7 +65,7 @@ Seren AI uses a multi-repository architecture to separate concerns:
 
 The client architecture follows a service-oriented approach where each feature has its own dedicated folder containing models, repositories, providers, and UI components. This enables a clean separation of concerns while maintaining high cohesion between related elements.
 
-For a comprehensive breakdown of the architecture, design patterns, and code organization, please refer to our [detailed architecture documentation](ARCHITECTURE.md).
+For a comprehensive breakdown of the architecture, design patterns, and code organization, please refer to our [detailed architecture documentation](docs/ARCHITECTURE.md).
 
 ## AI System Architecture
 
@@ -178,15 +193,15 @@ Problem: The app must function offline and sync when online, ensuring data integ
 
 Solution: Implemented PowerSync with custom conflict resolution strategies to maintain data integrity across devices even with intermittent connectivity.
 
-If you're interested in contributing to these ongoing engineering challenges or implementing new features, please see our [contributing guidelines](CONTRIBUTING.md) for development setup and workflow.
+If you're interested in contributing to these ongoing engineering challenges or implementing new features, please see our [contributing guidelines](docs/CONTRIBUTING.md) for development setup and workflow.
 
 ## Documentation
 
 For more detailed information about the project, please refer to the following documentation:
 
-- [Architecture Documentation](ARCHITECTURE.md) - Detailed overview of the system architecture, design patterns, and code organization
-- [Contributing Guidelines](CONTRIBUTING.md) - Instructions for setting up the development environment and contribution workflow
-- [UI Guidelines](UI_GUIDELINES.md) - Best practices for UI implementation and cross-device responsiveness
+- [Architecture Documentation](docs/ARCHITECTURE.md) - Detailed overview of the system architecture, design patterns, and code organization
+- [Contributing Guidelines](docs/CONTRIBUTING.md) - Instructions for setting up the development environment and contribution workflow
+- [UI Guidelines](docs/UI_GUIDELINES.md) - Best practices for UI implementation and cross-device responsiveness
 
 ## Contributors
 

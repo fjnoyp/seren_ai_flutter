@@ -2,26 +2,34 @@
 class BuildInfo {
   // Core build info
   static const String version = '1.0.0';
-  static const String buildDate = '2025-04-04 11:23:38';
+  static const String buildDate = '2025-04-04 12:02:15';
   
   // Git info
-  static const String commitHash = 'dafa777';
+  static const String commitHash = '7e7e7d9';
   static const String branch = 'main';
   static const String lastTag = 'no tag';
   
   // Author of last commit
-  static const String lastCommitAuthor = 'renata-sisilio';
-  static const String lastCommitEmail = 'renata@seren-ai.co';
+  static const String lastCommitAuthor = 'Kyle';
+  static const String lastCommitEmail = 'kylcheng@gmail.com';
   
   // Recent commits (last 5)
   static const List<Map<String, String>> recentCommits = [
+    {
+      "hash": "7e7e7d9",
+      "author": "Kyle",
+      "email": "kylcheng@gmail.com", 
+      "message": "fix(ai): update task result datetime json parse issue + show note results",
+      "date": "2025-04-04",
+      "relativeDate": "39 minutes ago"
+    },
     {
       "hash": "dafa777",
       "author": "renata-sisilio",
       "email": "renata@seren-ai.co", 
       "message": "fix(ai_tools): update create/update note result display logic",
       "date": "2025-04-04",
-      "relativeDate": "4 hours ago"
+      "relativeDate": "5 hours ago"
     },
     {
       "hash": "326ebfd",
@@ -45,19 +53,11 @@ class BuildInfo {
       "email": "kylcheng@gmail.com", 
       "message": "chore: update readme",
       "date": "2025-04-03",
-      "relativeDate": "18 hours ago"
-    },
-    {
-      "hash": "13b054f",
-      "author": "Kyle",
-      "email": "kylcheng@gmail.com", 
-      "message": "chore(ai): fix ai views for notes / modal in web and mobile",
-      "date": "2025-04-03",
-      "relativeDate": "18 hours ago"
+      "relativeDate": "19 hours ago"
     },
   ];
 
   // Stats
-  static const String totalCommits = '510';
+  static const String totalCommits = '511';
   static const String contributors = '       0';
 }
