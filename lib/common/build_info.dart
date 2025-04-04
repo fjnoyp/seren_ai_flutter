@@ -2,10 +2,10 @@
 class BuildInfo {
   // Core build info
   static const String version = '1.0.0';
-  static const String buildDate = '2025-04-03 17:01:13';
+  static const String buildDate = '2025-04-03 18:11:12';
   
   // Git info
-  static const String commitHash = '1a0db56';
+  static const String commitHash = 'b4fc1ab';
   static const String branch = 'main';
   static const String lastTag = 'no tag';
   
@@ -16,12 +16,20 @@ class BuildInfo {
   // Recent commits (last 5)
   static const List<Map<String, String>> recentCommits = [
     {
-      "hash": "1a0db56",
+      "hash": "b4fc1ab",
+      "author": "Kyle",
+      "email": "kylcheng@gmail.com", 
+      "message": "chore: update readme",
+      "date": "2025-04-03",
+      "relativeDate": "60 minutes ago"
+    },
+    {
+      "hash": "13b054f",
       "author": "Kyle",
       "email": "kylcheng@gmail.com", 
       "message": "chore(ai): fix ai views for notes / modal in web and mobile",
       "date": "2025-04-03",
-      "relativeDate": "11 seconds ago"
+      "relativeDate": "70 minutes ago"
     },
     {
       "hash": "c18ca78",
@@ -29,7 +37,7 @@ class BuildInfo {
       "email": "kylcheng@gmail.com", 
       "message": "chore: update readme",
       "date": "2025-04-03",
-      "relativeDate": "6 hours ago"
+      "relativeDate": "7 hours ago"
     },
     {
       "hash": "205c9e1",
@@ -37,7 +45,7 @@ class BuildInfo {
       "email": "kylcheng@gmail.com", 
       "message": "chore(ai): fix chat message view card debug mode spacing",
       "date": "2025-04-03",
-      "relativeDate": "7 hours ago"
+      "relativeDate": "8 hours ago"
     },
     {
       "hash": "2b3434a",
@@ -45,19 +53,11 @@ class BuildInfo {
       "email": "kylcheng@gmail.com", 
       "message": "fix: note selection provider issues + support unassigned task tool search",
       "date": "2025-04-02",
-      "relativeDate": "24 hours ago"
-    },
-    {
-      "hash": "d2b08d0",
-      "author": "Kyle",
-      "email": "kylcheng@gmail.com", 
-      "message": "fix(notes): support append only ai edits",
-      "date": "2025-04-01",
-      "relativeDate": "2 days ago"
+      "relativeDate": "25 hours ago"
     },
   ];
 
   // Stats
-  static const String totalCommits = '506';
+  static const String totalCommits = '507';
   static const String contributors = '       0';
 }
