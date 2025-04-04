@@ -41,19 +41,33 @@ Here are demo videos showcasing Seren AI's capabilities:
 
 ### Mobile Voice Control Demos
 
-1. **[Demo1-CreateTask.mp4](docs/Demo1-CreateTask.mp4)** - Creating a new task for the advanced budgeting feature and adding it to the MVP project using voice commands.
+1. **Demo3-FindCreateNote** - AI Multistep reasoning - creating a note that summarizes all tasks assigned to Renata that were completed in the last 3 weeks. The ai must independently run multiple tools here to execute the request. 
 
-2. **[Demo2-SearchTask.mp4](docs/Demo2-SearchTask.mp4)** - Finding all fix-related tasks that are overdue and high priority through voice interaction.
+https://github.com/user-attachments/assets/50677d26-c004-458d-a62b-3bcd73a4b21b
 
-3. **[Demo3-FindCreateNote.mp4](docs/Demo3-FindCreateNote.mp4)** - Creating a note that summarizes all tasks assigned to Renata that were completed in the last 3 weeks using voice commands.
+2. **Demo4-UpdateNote** - Updating a note to improve formatting and include estimated time for each task - AI initiates a separate multistep AI reasoning chain to generate proper diffs on before and after note versions. 
 
-4. **[Demo4-UpdateNote.mp4](docs/Demo4-UpdateNote.mp4)** - Updating a note to improve formatting and include estimated time for each task using voice commands.
+https://github.com/user-attachments/assets/ceb3830b-20e7-4454-aa64-c8fe3508d72c
+
+3. **Demo1-CreateTask** - Creating and editing a new task - AI maps user intent to various tools that control the frontend UI. 
+
+https://github.com/user-attachments/assets/741cf9f6-e1ec-467a-a056-6cf517c56665
+
+4. **Demo2-SearchTask** - Finding all fix-related tasks that are overdue and high priority.
+
+https://github.com/user-attachments/assets/0f74b4e4-5abf-42aa-a562-1c22e00b8218
 
 ### Web Interface Demos
 
-5. **[Demo5-WebFindTasks.mp4](docs/Demo5-WebFindTasks.mp4)** - Demonstrating how to filter and display high priority tasks completed in the last month that were assigned to Letty using the Web AI. 
+5. **Demo5-WebFindTasks** - Demonstrating how to filter and display high priority tasks completed in the last month that were assigned to Letty.
 
-6. **[Demo6-WebFeatureOverview.mp4](docs/Demo6-WebFeatureOverview.mp4)** - Comprehensive overview of web interface features including task management, time tracking, and reporting capabilities using the Web AI.
+https://github.com/user-attachments/assets/d1b06648-ff2b-4535-a588-634dcc024361
+
+6. **Demo6-WebFeatureOverview** - Comprehensive overview of web interface features including advanced task management and reporting capabilities.
+
+https://github.com/user-attachments/assets/55587d8c-7d39-414c-864d-f944d2be4b54
+
+https://github.com/user-attachments/assets/b5fc4979-da59-41a8-a7e0-532c4eae8505
 
 ## Technical Architecture
 
