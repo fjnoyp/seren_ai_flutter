@@ -55,4 +55,12 @@ extension DateTimeExtension on DateTime {
   bool isSameMonth(DateTime other) {
     return year == other.year && month == other.month;
   }
+
+  bool isAfterOrAt(DateTime other) {
+    return isAfter(other) || isAtSameMomentAs(other);
+  }
+
+  bool isBeforeOrAt(DateTime other) {
+    return isBefore(other) || isAtSameMomentAs(other);
+  }
 }
