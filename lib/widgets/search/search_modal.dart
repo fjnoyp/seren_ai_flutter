@@ -52,7 +52,7 @@ class SearchModal extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final size = MediaQuery.of(context).size;
     const bottomSpaceReserved =
-        95.0; // Height for bottom app bar with some extra space
+        135.0; // Height for bottom app bar with some extra space
 
     final isSearchModalOpen = ref.watch(isSearchModalOpenProvider);
 

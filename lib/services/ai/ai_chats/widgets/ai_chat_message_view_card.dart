@@ -228,14 +228,14 @@ class _AiMessageWidget extends StatelessWidget {
     return Row(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 8.0, vertical: 24.0),
-          child: SizedBox(
-            width: 24.0,
-            height: 24.0,
-            child: SvgPicture.asset('assets/images/AI button.svg'),
-          ),
-        ),
+        // Padding(
+        //   padding: const EdgeInsets.symmetric(horizontal: 8.0, vertical: 24.0),
+        //   child: SizedBox(
+        //     width: 24.0,
+        //     height: 24.0,
+        //     child: SvgPicture.asset('assets/images/AI button.svg'),
+        //   ),
+        // ),
         Expanded(
           child: Card(
             child: Padding(

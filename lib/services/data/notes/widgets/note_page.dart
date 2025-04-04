@@ -4,6 +4,7 @@ import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:logging/logging.dart';
 import 'package:seren_ai_flutter/common/navigation_service_provider.dart';
 import 'package:seren_ai_flutter/common/universal_platform/universal_platform.dart';
+import 'package:seren_ai_flutter/services/ai/is_ai_assistant_expanded_provider.dart';
 import 'package:seren_ai_flutter/services/data/common/widgets/editable_page_mode_enum.dart';
 import 'package:seren_ai_flutter/services/data/notes/providers/cur_selected_note_id_notifier_provider.dart';
 import 'package:seren_ai_flutter/services/data/notes/providers/note_by_id_stream_provider.dart';
@@ -44,27 +45,34 @@ class NotePage extends HookConsumerWidget {
     }
 
     final note = ref.watch(noteByIdStreamProvider(noteId));
+    final isAiAssistantExpanded = ref.watch(isAiAssistantExpandedProvider);
 
-    return SingleChildScrollView(
-      child: Column(
-        children: [
-          // Project name display
-          if (note.value?.parentProjectId != null)
-            _buildProjectNameDisplay(ref, note.value?.parentProjectId),
-          NewNoteTitleField(
-            noteId: noteId,
-            focusNode: titleFocusNode,
-            onSubmitted: () {
-              // When user hits return in title, move focus to body
-              bodyFocusNode.requestFocus();
-            },
-          ),
-          const Divider(height: 1),
-          NewNoteBodyField(
-            noteId: noteId,
-            focusNode: bodyFocusNode,
-          ),
-        ],
+    return Align(
+      // Always align to the top regardless of AI assistant modal state
+      alignment: Alignment.topCenter,
+      child: SingleChildScrollView(
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.start, // Ensure top alignment
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            // Project name display
+            if (note.value?.parentProjectId != null)
+              _buildProjectNameDisplay(ref, note.value?.parentProjectId),
+            NewNoteTitleField(
+              noteId: noteId,
+              focusNode: titleFocusNode,
+              onSubmitted: () {
+                // When user hits return in title, move focus to body
+                bodyFocusNode.requestFocus();
+              },
+            ),
+            const Divider(height: 1),
+            NewNoteBodyField(
+              noteId: noteId,
+              focusNode: bodyFocusNode,
+            ),
+          ],
+        ),
       ),
     );
   }
