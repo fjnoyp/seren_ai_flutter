@@ -2,26 +2,34 @@
 class BuildInfo {
   // Core build info
   static const String version = '1.0.0';
-  static const String buildDate = '2025-04-04 10:39:52';
+  static const String buildDate = '2025-04-04 10:49:00';
   
   // Git info
-  static const String commitHash = '926276cd';
+  static const String commitHash = '2c622046';
   static const String branch = 'fix/small-task-related-issues';
   static const String lastTag = 'no tag';
   
   // Author of last commit
-  static const String lastCommitAuthor = 'Kyle';
-  static const String lastCommitEmail = 'kylcheng@gmail.com';
+  static const String lastCommitAuthor = 'renata-sisilio';
+  static const String lastCommitEmail = 'renata@seren-ai.co';
   
   // Recent commits (last 5)
   static const List<Map<String, String>> recentCommits = [
+    {
+      "hash": "2c622046",
+      "author": "renata-sisilio",
+      "email": "renata@seren-ai.co", 
+      "message": "fix(date): use isAfterOrAt and isBeforeOrAt instead of isAfter and isBefore, to properly find tasks in a date range",
+      "date": "2025-04-04",
+      "relativeDate": "9 minutes ago"
+    },
     {
       "hash": "926276cd",
       "author": "Kyle",
       "email": "kylcheng@gmail.com", 
       "message": "chore: update readme",
       "date": "2025-04-03",
-      "relativeDate": "13 hours ago"
+      "relativeDate": "14 hours ago"
     },
     {
       "hash": "13b054fd",
@@ -47,17 +55,9 @@ class BuildInfo {
       "date": "2025-04-03",
       "relativeDate": "20 hours ago"
     },
-    {
-      "hash": "2b3434ac",
-      "author": "Kyle",
-      "email": "kylcheng@gmail.com", 
-      "message": "fix: note selection provider issues + support unassigned task tool search",
-      "date": "2025-04-02",
-      "relativeDate": "2 days ago"
-    },
   ];
 
   // Stats
-  static const String totalCommits = '507';
+  static const String totalCommits = '508';
   static const String contributors = '0';
 }
