@@ -2,11 +2,11 @@
 class BuildInfo {
   // Core build info
   static const String version = '1.0.0';
-  static const String buildDate = '2025-04-04 10:56:43';
+  static const String buildDate = '2025-04-04 11:23:38';
   
   // Git info
-  static const String commitHash = '0261c635';
-  static const String branch = 'fix/small-task-related-issues';
+  static const String commitHash = 'dafa777';
+  static const String branch = 'main';
   static const String lastTag = 'no tag';
   
   // Author of last commit
@@ -16,48 +16,48 @@ class BuildInfo {
   // Recent commits (last 5)
   static const List<Map<String, String>> recentCommits = [
     {
-      "hash": "0261c635",
+      "hash": "dafa777",
+      "author": "renata-sisilio",
+      "email": "renata@seren-ai.co", 
+      "message": "fix(ai_tools): update create/update note result display logic",
+      "date": "2025-04-04",
+      "relativeDate": "4 hours ago"
+    },
+    {
+      "hash": "326ebfd",
       "author": "renata-sisilio",
       "email": "renata@seren-ai.co", 
       "message": "fix(ai): update create/update task result display logic",
       "date": "2025-04-04",
-      "relativeDate": "8 minutes ago"
+      "relativeDate": "5 hours ago"
     },
     {
-      "hash": "2c622046",
+      "hash": "36c72d3",
       "author": "renata-sisilio",
       "email": "renata@seren-ai.co", 
       "message": "fix(date): use isAfterOrAt and isBeforeOrAt instead of isAfter and isBefore, to properly find tasks in a date range",
       "date": "2025-04-04",
-      "relativeDate": "17 minutes ago"
+      "relativeDate": "5 hours ago"
     },
     {
-      "hash": "926276cd",
+      "hash": "926276c",
       "author": "Kyle",
       "email": "kylcheng@gmail.com", 
       "message": "chore: update readme",
       "date": "2025-04-03",
-      "relativeDate": "14 hours ago"
+      "relativeDate": "18 hours ago"
     },
     {
-      "hash": "13b054fd",
+      "hash": "13b054f",
       "author": "Kyle",
       "email": "kylcheng@gmail.com", 
       "message": "chore(ai): fix ai views for notes / modal in web and mobile",
       "date": "2025-04-03",
-      "relativeDate": "14 hours ago"
-    },
-    {
-      "hash": "c18ca78c",
-      "author": "Kyle",
-      "email": "kylcheng@gmail.com", 
-      "message": "chore: update readme",
-      "date": "2025-04-03",
-      "relativeDate": "20 hours ago"
+      "relativeDate": "18 hours ago"
     },
   ];
 
   // Stats
-  static const String totalCommits = '509';
-  static const String contributors = '0';
+  static const String totalCommits = '510';
+  static const String contributors = '       0';
 }

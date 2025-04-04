@@ -45,6 +45,11 @@ class UpdateTaskFieldsResultModel extends AiRequestResultModel {
   }) {
     final Map<String, Map<String, dynamic>> changedFields = {};
 
+    // Helper function to convert DateTime to ISO string
+    String? dateTimeToString(DateTime? dateTime) {
+      return dateTime?.toUtc().toIso8601String();
+    }
+
     // Compare and track changes for name
     if (request.taskName != originalTask.name) {
       changedFields['name'] = {
@@ -68,8 +73,8 @@ class UpdateTaskFieldsResultModel extends AiRequestResultModel {
           AiDateParser.parseIsoIntoLocalThenUTC(request.taskStartDate);
       if (newStartDate != originalTask.startDateTime) {
         changedFields['startDate'] = {
-          'old': originalTask.startDateTime,
-          'new': newStartDate,
+          'old': dateTimeToString(originalTask.startDateTime),
+          'new': dateTimeToString(newStartDate),
         };
       }
     }
@@ -80,8 +85,8 @@ class UpdateTaskFieldsResultModel extends AiRequestResultModel {
           AiDateParser.parseIsoIntoLocalThenUTC(request.taskDueDate);
       if (newDueDate != originalTask.dueDate) {
         changedFields['dueDate'] = {
-          'old': originalTask.dueDate,
-          'new': newDueDate,
+          'old': dateTimeToString(originalTask.dueDate),
+          'new': dateTimeToString(newDueDate),
         };
       }
     }
@@ -120,7 +125,25 @@ class UpdateTaskFieldsResultModel extends AiRequestResultModel {
 
     // Add any additional changes (like project or assignees that require repository access)
     if (additionalChanges != null) {
-      changedFields.addAll(additionalChanges);
+      // Process any DateTime objects in additionalChanges
+      final processedAdditionalChanges = <String, Map<String, dynamic>>{};
+
+      for (final entry in additionalChanges.entries) {
+        final processedChanges = <String, dynamic>{};
+
+        for (final field in entry.value.entries) {
+          if (field.value is DateTime) {
+            processedChanges[field.key] =
+                dateTimeToString(field.value as DateTime);
+          } else {
+            processedChanges[field.key] = field.value;
+          }
+        }
+
+        processedAdditionalChanges[entry.key] = processedChanges;
+      }
+
+      changedFields.addAll(processedAdditionalChanges);
     }
 
     return changedFields;

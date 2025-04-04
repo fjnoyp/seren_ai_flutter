@@ -15,11 +15,9 @@ class CreateNoteResultWidget extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final theme = Theme.of(context);
-    final isEnglish = Localizations.localeOf(context).languageCode == 'en';
 
-    // Only show created fields details for English language
     Widget? fieldsWidget;
-    if (isEnglish && result.createdFields.isNotEmpty) {
+    if (result.createdFields.isNotEmpty) {
       fieldsWidget = Padding(
         padding: const EdgeInsets.only(left: 16.0, right: 16.0, bottom: 8.0),
         child: Column(
@@ -172,11 +170,10 @@ class UpdateNoteResultWidget extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final theme = Theme.of(context);
-    final isEnglish = Localizations.localeOf(context).languageCode == 'en';
 
     // Only show edit operations details for English language
     Widget? editOperationsWidget;
-    if (isEnglish && result.editOperations.isNotEmpty) {
+    if (result.editOperations.isNotEmpty) {
       editOperationsWidget = Padding(
         padding: const EdgeInsets.only(left: 16.0, right: 16.0, bottom: 8.0),
         child: Column(
@@ -213,8 +210,11 @@ class UpdateNoteResultWidget extends ConsumerWidget {
                     const SizedBox(width: 4),
                     Expanded(
                       child: Text(
-                        operation.toString(),
-                        style: Theme.of(context).textTheme.bodyMedium,
+                        operation.text,
+                        style: Theme.of(context)
+                            .textTheme
+                            .bodyMedium
+                            ?.copyWith(color: color),
                       ),
                     ),
                   ],

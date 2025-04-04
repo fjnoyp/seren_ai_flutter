@@ -18,11 +18,10 @@ class FindTasksResultWidget extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final theme = Theme.of(context);
-    final isEnglish = Localizations.localeOf(context).languageCode == 'en';
 
     // Build search criteria widget if in English language
     Widget? searchCriteriaWidget;
-    if (isEnglish && result.searchCriteria.isNotEmpty) {
+    if (result.searchCriteria.isNotEmpty) {
       searchCriteriaWidget = Padding(
         padding: const EdgeInsets.only(left: 16.0, right: 16.0, bottom: 8.0),
         child: Column(
@@ -131,11 +130,9 @@ class CreateTaskResultWidget extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final isEnglish = Localizations.localeOf(context).languageCode == 'en';
-
     // Only show created fields details for English language
     Widget? fieldsWidget;
-    if (isEnglish && result.createdFields.isNotEmpty) {
+    if (result.createdFields.isNotEmpty) {
       fieldsWidget = Padding(
         padding: const EdgeInsets.only(left: 16.0, right: 16.0, bottom: 8.0),
         child: Column(
@@ -195,11 +192,9 @@ class UpdateTaskFieldsResultWidget extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final isEnglish = Localizations.localeOf(context).languageCode == 'en';
-
     // Only show changed fields details for English language
     Widget? changesWidget;
-    if (isEnglish && result.changedFields.isNotEmpty) {
+    if (result.changedFields.isNotEmpty) {
       changesWidget = Padding(
         padding: const EdgeInsets.only(left: 16.0, right: 16.0, bottom: 8.0),
         child: Column(
