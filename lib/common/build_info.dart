@@ -2,10 +2,10 @@
 class BuildInfo {
   // Core build info
   static const String version = '1.0.0';
-  static const String buildDate = '2025-04-04 10:49:00';
+  static const String buildDate = '2025-04-04 10:56:43';
   
   // Git info
-  static const String commitHash = '2c622046';
+  static const String commitHash = '0261c635';
   static const String branch = 'fix/small-task-related-issues';
   static const String lastTag = 'no tag';
   
@@ -16,12 +16,20 @@ class BuildInfo {
   // Recent commits (last 5)
   static const List<Map<String, String>> recentCommits = [
     {
+      "hash": "0261c635",
+      "author": "renata-sisilio",
+      "email": "renata@seren-ai.co", 
+      "message": "fix(ai): update create/update task result display logic",
+      "date": "2025-04-04",
+      "relativeDate": "8 minutes ago"
+    },
+    {
       "hash": "2c622046",
       "author": "renata-sisilio",
       "email": "renata@seren-ai.co", 
       "message": "fix(date): use isAfterOrAt and isBeforeOrAt instead of isAfter and isBefore, to properly find tasks in a date range",
       "date": "2025-04-04",
-      "relativeDate": "9 minutes ago"
+      "relativeDate": "17 minutes ago"
     },
     {
       "hash": "926276cd",
@@ -47,17 +55,9 @@ class BuildInfo {
       "date": "2025-04-03",
       "relativeDate": "20 hours ago"
     },
-    {
-      "hash": "205c9e1c",
-      "author": "Kyle",
-      "email": "kylcheng@gmail.com", 
-      "message": "chore(ai): fix chat message view card debug mode spacing",
-      "date": "2025-04-03",
-      "relativeDate": "20 hours ago"
-    },
   ];
 
   // Stats
-  static const String totalCommits = '508';
+  static const String totalCommits = '509';
   static const String contributors = '0';
 }
