@@ -8,6 +8,8 @@ import 'package:seren_ai_flutter/services/data/notes/tool_methods/models/note_pe
 import 'package:seren_ai_flutter/services/data/notes/tool_methods/models/note_edit_operation.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'dart:async';
+import 'package:seren_ai_flutter/services/ai/is_ai_assistant_expanded_provider.dart';
+import 'package:seren_ai_flutter/common/universal_platform/universal_platform.dart';
 
 // TODO p3: This code duplicates the functionality from the base text block and name fields ... We should consider consolidating them to avoid code duplication ...
 
@@ -320,6 +322,7 @@ class NewNoteBodyField extends HookConsumerWidget {
     FieldState fieldState,
   ) {
     final theme = Theme.of(context);
+    final isAiAssistantExpanded = ref.watch(isAiAssistantExpandedProvider);
 
     // Handle accepting the changes
     void acceptChanges() {
@@ -343,6 +346,7 @@ class NewNoteBodyField extends HookConsumerWidget {
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
+      mainAxisAlignment: MainAxisAlignment.start, // Ensure top alignment always
       children: [
         // Info banner at the top
         Container(
@@ -416,8 +420,11 @@ class NewNoteBodyField extends HookConsumerWidget {
               const SizedBox(height: 16),
 
               // Accept/Reject buttons
+              // Position buttons on the left side when AI assistant is expanded on web
               Row(
-                mainAxisAlignment: MainAxisAlignment.end,
+                mainAxisAlignment: (isWebVersion && isAiAssistantExpanded)
+                    ? MainAxisAlignment.start
+                    : MainAxisAlignment.end,
                 children: [
                   OutlinedButton(
                     onPressed: rejectChanges,

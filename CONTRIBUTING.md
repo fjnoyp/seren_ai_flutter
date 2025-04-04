@@ -114,5 +114,3 @@ We have a pre-commit hook, you must configure to run using this onetime setup:
 ```bash
 git config --local core.hooksPath .github/hooks
 ```
-
-```

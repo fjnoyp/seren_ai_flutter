@@ -14,7 +14,7 @@ class MobileAiAssistantOverlayManager {
   static final Map<AiAssistantOverlayType, bool> _processingOperation = {};
 
   // Default position from bottom of screen
-  static const double defaultBottomPosition = 100.0;
+  static const double defaultBottomPosition = 125.0;
 
   static void show({
     required BuildContext context,

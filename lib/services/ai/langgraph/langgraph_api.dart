@@ -132,7 +132,8 @@ class LanggraphApi {
           'Accept': 'text/event-stream',
         },
         validateStatus: (status) => status! < 500,
-        sendTimeout: timeout,
+        // Don't use sendTimeout on web platforms as it's not supported without a request body
+        sendTimeout: kIsWeb ? null : timeout,
         receiveTimeout: timeout,
         extra: kIsWeb ? {'Accept-Encoding': 'identity'} : {},
       );
