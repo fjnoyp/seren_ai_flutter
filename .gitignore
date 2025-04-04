@@ -48,3 +48,6 @@ app.*.map.json
 .firebase/
 firebase-debug.log
 .firebaserc
+
+# Configuration files with sensitive information
+lib/services/data/db_setup/app_config.dart

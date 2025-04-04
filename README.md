@@ -81,6 +81,24 @@ The client architecture follows a service-oriented approach where each feature h
 
 For a comprehensive breakdown of the architecture, design patterns, and code organization, please refer to our [detailed architecture documentation](docs/ARCHITECTURE.md).
 
+## Configuration Setup
+
+To set up the application configuration:
+
+1. Copy the template file: 
+   ```
+   cp lib/services/data/db_setup/app_config_template.dart lib/services/data/db_setup/app_config.dart
+   ```
+
+2. Edit the file and replace the placeholder values with your actual API keys and endpoints:
+   ```
+   lib/services/data/db_setup/app_config.dart
+   ```
+
+3. The `app_config.dart` file is excluded from Git to prevent exposing sensitive information.
+
+> **Important**: Never commit your `app_config.dart` file with actual API keys to the repository.
+
 ## AI System Architecture
 
 ### Integration Overview

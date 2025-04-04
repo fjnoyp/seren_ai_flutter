@@ -2,10 +2,10 @@
 class BuildInfo {
   // Core build info
   static const String version = '1.0.0';
-  static const String buildDate = '2025-04-04 12:07:06';
+  static const String buildDate = '2025-04-04 16:09:58';
   
   // Git info
-  static const String commitHash = '3ff99d0';
+  static const String commitHash = '290dddba';
   static const String branch = 'main';
   static const String lastTag = 'no tag';
   
@@ -16,48 +16,48 @@ class BuildInfo {
   // Recent commits (last 5)
   static const List<Map<String, String>> recentCommits = [
     {
-      "hash": "3ff99d0",
+      "hash": "290dddba",
+      "author": "Kyle",
+      "email": "kylcheng@gmail.com", 
+      "message": "chore: add app_config template and update gitignore to exclude sensitive information",
+      "date": "2025-04-04",
+      "relativeDate": "3 hours ago"
+    },
+    {
+      "hash": "68a899ec",
+      "author": "Kyle",
+      "email": "kylcheng@gmail.com", 
+      "message": "chore(docs): fix video formatting",
+      "date": "2025-04-04",
+      "relativeDate": "4 hours ago"
+    },
+    {
+      "hash": "17cec35f",
       "author": "Kyle",
       "email": "kylcheng@gmail.com", 
       "message": "chore: update docs with demo videos",
       "date": "2025-04-04",
-      "relativeDate": "5 minutes ago"
+      "relativeDate": "4 hours ago"
     },
     {
-      "hash": "7e7e7d9",
+      "hash": "3c94120c",
       "author": "Kyle",
       "email": "kylcheng@gmail.com", 
       "message": "fix(ai): update task result datetime json parse issue + show note results",
       "date": "2025-04-04",
-      "relativeDate": "43 minutes ago"
+      "relativeDate": "5 hours ago"
     },
     {
-      "hash": "dafa777",
+      "hash": "2aff2af9",
       "author": "renata-sisilio",
       "email": "renata@seren-ai.co", 
       "message": "fix(ai_tools): update create/update note result display logic",
       "date": "2025-04-04",
-      "relativeDate": "5 hours ago"
-    },
-    {
-      "hash": "326ebfd",
-      "author": "renata-sisilio",
-      "email": "renata@seren-ai.co", 
-      "message": "fix(ai): update create/update task result display logic",
-      "date": "2025-04-04",
-      "relativeDate": "5 hours ago"
-    },
-    {
-      "hash": "36c72d3",
-      "author": "renata-sisilio",
-      "email": "renata@seren-ai.co", 
-      "message": "fix(date): use isAfterOrAt and isBeforeOrAt instead of isAfter and isBefore, to properly find tasks in a date range",
-      "date": "2025-04-04",
-      "relativeDate": "5 hours ago"
+      "relativeDate": "9 hours ago"
     },
   ];
 
   // Stats
-  static const String totalCommits = '512';
+  static const String totalCommits = '513';
   static const String contributors = '       0';
 }
