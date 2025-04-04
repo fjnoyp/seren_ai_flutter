@@ -14,6 +14,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:seren_ai_flutter/common/navigation_service_provider.dart';
 import 'package:seren_ai_flutter/common/routes/app_routes.dart';
+import 'package:seren_ai_flutter/common/utils/date_time_extension.dart';
 import 'package:seren_ai_flutter/services/ai/ai_request/models/results/ai_request_result_model.dart';
 import 'package:seren_ai_flutter/services/ai/ai_request/models/results/error_request_result_model.dart';
 import 'package:seren_ai_flutter/services/auth/cur_auth_state_provider.dart';
@@ -352,7 +353,7 @@ class TaskToolMethods {
             TaskFieldEnum.dueDate => task.dueDate,
             _ => task.dueDate, // Default to due date for other fields
           };
-          return date != null && date.isAfter(start) && date.isBefore(end);
+          return date != null && date.isAfterOrAt(start) && date.isBeforeOrAt(end);
         },
       ));
     } else if (start != null) {
@@ -364,7 +365,7 @@ class TaskToolMethods {
             TaskFieldEnum.dueDate => task.dueDate,
             _ => task.dueDate, // Default to due date for other fields
           };
-          return date != null && date.isAfter(start);
+          return date != null && date.isAfterOrAt(start);
         },
       ));
     } else if (end != null) {
@@ -376,7 +377,7 @@ class TaskToolMethods {
             TaskFieldEnum.dueDate => task.dueDate,
             _ => task.dueDate, // Default to due date for other fields
           };
-          return date != null && date.isBefore(end);
+          return date != null && date.isBeforeOrAt(end);
         },
       ));
     }
@@ -941,8 +942,6 @@ class TaskToolMethods {
         resultForAi: 'No org selected',
       );
     }
-
-    final navigationService = ref.read(navigationServiceProvider);
 
     // If showToUser is false, just return information without showing in UI
     if (!actionRequest.showToUser) {

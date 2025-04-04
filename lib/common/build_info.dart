@@ -2,11 +2,11 @@
 class BuildInfo {
   // Core build info
   static const String version = '1.0.0';
-  static const String buildDate = '2025-04-03 18:11:12';
+  static const String buildDate = '2025-04-04 10:39:52';
   
   // Git info
-  static const String commitHash = 'b4fc1ab';
-  static const String branch = 'main';
+  static const String commitHash = '926276cd';
+  static const String branch = 'fix/small-task-related-issues';
   static const String lastTag = 'no tag';
   
   // Author of last commit
@@ -16,48 +16,48 @@ class BuildInfo {
   // Recent commits (last 5)
   static const List<Map<String, String>> recentCommits = [
     {
-      "hash": "b4fc1ab",
+      "hash": "926276cd",
       "author": "Kyle",
       "email": "kylcheng@gmail.com", 
       "message": "chore: update readme",
       "date": "2025-04-03",
-      "relativeDate": "60 minutes ago"
+      "relativeDate": "13 hours ago"
     },
     {
-      "hash": "13b054f",
+      "hash": "13b054fd",
       "author": "Kyle",
       "email": "kylcheng@gmail.com", 
       "message": "chore(ai): fix ai views for notes / modal in web and mobile",
       "date": "2025-04-03",
-      "relativeDate": "70 minutes ago"
+      "relativeDate": "14 hours ago"
     },
     {
-      "hash": "c18ca78",
+      "hash": "c18ca78c",
       "author": "Kyle",
       "email": "kylcheng@gmail.com", 
       "message": "chore: update readme",
       "date": "2025-04-03",
-      "relativeDate": "7 hours ago"
+      "relativeDate": "20 hours ago"
     },
     {
-      "hash": "205c9e1",
+      "hash": "205c9e1c",
       "author": "Kyle",
       "email": "kylcheng@gmail.com", 
       "message": "chore(ai): fix chat message view card debug mode spacing",
       "date": "2025-04-03",
-      "relativeDate": "8 hours ago"
+      "relativeDate": "20 hours ago"
     },
     {
-      "hash": "2b3434a",
+      "hash": "2b3434ac",
       "author": "Kyle",
       "email": "kylcheng@gmail.com", 
       "message": "fix: note selection provider issues + support unassigned task tool search",
       "date": "2025-04-02",
-      "relativeDate": "25 hours ago"
+      "relativeDate": "2 days ago"
     },
   ];
 
   // Stats
   static const String totalCommits = '507';
-  static const String contributors = '       0';
+  static const String contributors = '0';
 }
