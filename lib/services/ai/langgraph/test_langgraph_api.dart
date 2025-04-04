@@ -2,6 +2,7 @@ import 'package:seren_ai_flutter/services/ai/langgraph/langgraph_api.dart';
 import 'package:seren_ai_flutter/services/ai/langgraph/models/lg_ai_base_message_model.dart';
 import 'package:seren_ai_flutter/services/ai/langgraph/models/lg_ai_chat_message_role.dart';
 import 'package:seren_ai_flutter/services/ai/langgraph/models/lg_agent_state_model.dart';
+import 'package:seren_ai_flutter/services/data/db_setup/app_config_template.dart';
 
 /*
 
@@ -39,9 +40,8 @@ Future<void> testLanggraphClientMethods() async {
 
 LanggraphApi createLanggraphClient() {
   return LanggraphApi(
-    apiKey:
-        '***REMOVED***', // Replace with your actual API key
-    baseUrl: 'http://localhost:8123', // Replace with your actual base URL
+    apiKey: AppConfig.langgraphApiKey, // Use value from app_config.dart
+    baseUrl: AppConfig.langgraphBaseUrl, // Use value from app_config.dart
   );
 }
 
