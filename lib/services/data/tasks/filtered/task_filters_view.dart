@@ -1,3 +1,5 @@
+import 'dart:ui';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
@@ -80,16 +82,25 @@ class TaskFiltersView extends ConsumerWidget {
       children: [
         useHorizontalScroll
             ? Expanded(
-                child: SingleChildScrollView(
-                  scrollDirection: Axis.horizontal,
-                  child: Row(
-                    children: [
-                      for (var i = 0; i < filterWidgets.length; i++) ...[
-                        filterWidgets[i],
-                        if (i < filterWidgets.length - 1)
-                          const SizedBox(width: 8),
+                child: ScrollConfiguration(
+                  behavior: ScrollConfiguration.of(context).copyWith(
+                    dragDevices: {
+                      PointerDeviceKind.touch,
+                      PointerDeviceKind.mouse,
+                      PointerDeviceKind.trackpad,
+                    },
+                  ),
+                  child: SingleChildScrollView(
+                    scrollDirection: Axis.horizontal,
+                    child: Row(
+                      children: [
+                        for (var i = 0; i < filterWidgets.length; i++) ...[
+                          filterWidgets[i],
+                          if (i < filterWidgets.length - 1)
+                            const SizedBox(width: 8),
+                        ],
                       ],
-                    ],
+                    ),
                   ),
                 ),
               )
