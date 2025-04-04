@@ -2,10 +2,10 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:seren_ai_flutter/common/current_route_provider.dart';
 import 'package:seren_ai_flutter/common/routes/app_routes.dart';
+import 'package:seren_ai_flutter/common/universal_platform/universal_platform.dart';
 import 'package:seren_ai_flutter/services/data/notes/providers/notes_navigation_service.dart';
 import 'package:seren_ai_flutter/services/data/notes/tool_methods/models/create_note_result_model.dart';
 import 'package:seren_ai_flutter/services/data/notes/tool_methods/models/update_note_result_model.dart';
-import 'package:seren_ai_flutter/services/data/notes/tool_methods/models/note_edit_operation.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 class CreateNoteResultWidget extends ConsumerWidget {
@@ -50,17 +50,15 @@ class CreateNoteResultWidget extends ConsumerWidget {
                   ),
                 );
               }
-            }).toList(),
+            }),
           ],
         ),
       );
     }
 
-    return !ref.read(currentRouteProvider).contains(AppRoutes.aiChats.name)
-        ? Text(AppLocalizations.of(context)!
-            .createdNewTaskAndOpenedTaskPage(result.note.name)
-            .replaceAll('task', 'note'))
-        : Column(
+    return isWebVersion ||
+            ref.read(currentRouteProvider).contains(AppRoutes.aiChats.name)
+        ? Column(
             mainAxisSize: MainAxisSize.min,
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
@@ -159,7 +157,10 @@ class CreateNoteResultWidget extends ConsumerWidget {
                 ),
               ),
             ],
-          );
+          )
+        : Text(AppLocalizations.of(context)!
+            .createdNewTaskAndOpenedTaskPage(result.note.name)
+            .replaceAll('task', 'note'));
   }
 }
 
@@ -219,65 +220,63 @@ class UpdateNoteResultWidget extends ConsumerWidget {
                   ],
                 ),
               );
-            }).toList(),
+            }),
           ],
         ),
       );
     }
 
-    // If we're not in the AI chats route, just show a simple text
-    if (!ref.read(currentRouteProvider).contains(AppRoutes.aiChats.name)) {
-      return Text(
-        AppLocalizations.of(context)!
-            .updatedTaskAndShowedResultInUI(result.note.name)
-            .replaceAll('task', 'note'),
-      );
-    }
-
-    return Column(
-      mainAxisSize: MainAxisSize.min,
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Text(
-          AppLocalizations.of(context)!
-              .updatedTask(result.note.name)
-              .replaceAll('task', 'note'),
-        ),
-        if (editOperationsWidget != null) editOperationsWidget,
-        InkWell(
-          onTap: () {
-            ref
-                .read(notesNavigationServiceProvider)
-                .openNote(noteId: result.note.id);
-          },
-          child: Card(
-            child: Padding(
-              padding: const EdgeInsets.all(16.0),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(
-                    result.note.name,
-                    style: theme.textTheme.titleMedium?.copyWith(
-                      fontWeight: FontWeight.bold,
+    return isWebVersion ||
+            ref.read(currentRouteProvider).contains(AppRoutes.aiChats.name)
+        ? Column(
+            mainAxisSize: MainAxisSize.min,
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text(
+                AppLocalizations.of(context)!
+                    .updatedTask(result.note.name)
+                    .replaceAll('task', 'note'),
+              ),
+              if (editOperationsWidget != null) editOperationsWidget,
+              InkWell(
+                onTap: () {
+                  ref
+                      .read(notesNavigationServiceProvider)
+                      .openNote(noteId: result.note.id);
+                },
+                child: Card(
+                  child: Padding(
+                    padding: const EdgeInsets.all(16.0),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          result.note.name,
+                          style: theme.textTheme.titleMedium?.copyWith(
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                        if (result.note.description != null &&
+                            result.note.description!.isNotEmpty) ...[
+                          const SizedBox(height: 8),
+                          Text(
+                            result.note.description!,
+                            style: theme.textTheme.bodyMedium,
+                            maxLines: 3,
+                            overflow: TextOverflow.ellipsis,
+                          ),
+                        ],
+                      ],
                     ),
                   ),
-                  if (result.note.description != null &&
-                      result.note.description!.isNotEmpty) ...[
-                    const SizedBox(height: 8),
-                    Text(
-                      result.note.description!,
-                      style: theme.textTheme.bodyMedium,
-                      maxLines: 3,
-                      overflow: TextOverflow.ellipsis,
-                    ),
-                  ],
-                ],
+                ),
               ),
-            ),
-          ),
-        ),
-      ],
-    );
+            ],
+          )
+        : Text(
+            AppLocalizations.of(context)!
+                .updatedTaskAndShowedResultInUI(result.note.name)
+                .replaceAll('task', 'note'),
+          );
   }
 }
