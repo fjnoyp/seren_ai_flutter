@@ -75,29 +75,11 @@ Seren AI uses a multi-repository architecture to separate concerns:
 
 1. **Client Application (This Repo)** - Flutter UI and state management
 2. **[LangGraph Agentic AI](https://github.com/fjnoyp/seren-ai-langgraph)** - Reasoning engine powering voice commands
-3. **[Supabase Backend](https://github.com/fjnoyp/seren_ai_supabase)** - Postgres DB and Edge Functions
+3. **[Supabase Backend](https://github.com/fjnoyp/seren_ai_supabase)** - Postgres DB and Edge Functions, currently private, please contact me for access 
 
 The client architecture follows a service-oriented approach where each feature has its own dedicated folder containing models, repositories, providers, and UI components. This enables a clean separation of concerns while maintaining high cohesion between related elements.
 
 For a comprehensive breakdown of the architecture, design patterns, and code organization, please refer to our [detailed architecture documentation](docs/ARCHITECTURE.md).
-
-## Configuration Setup
-
-To set up the application configuration:
-
-1. Copy the template file: 
-   ```
-   cp lib/services/data/db_setup/app_config_template.dart lib/services/data/db_setup/app_config.dart
-   ```
-
-2. Edit the file and replace the placeholder values with your actual API keys and endpoints:
-   ```
-   lib/services/data/db_setup/app_config.dart
-   ```
-
-3. The `app_config.dart` file is excluded from Git to prevent exposing sensitive information.
-
-> **Important**: Never commit your `app_config.dart` file with actual API keys to the repository.
 
 ## AI System Architecture
 
