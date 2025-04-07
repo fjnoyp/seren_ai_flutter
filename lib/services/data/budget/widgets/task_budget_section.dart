@@ -68,8 +68,6 @@ class TaskBudgetSection extends ConsumerWidget {
         columns.length;
 
     final projectBdi = ref.watch(projectBdiProvider);
-    final taskBudgetItems =
-        ref.watch(taskBudgetItemsStreamProvider(taskId)).value ?? [];
     final taskBudgetItemsTotalValue =
         ref.watch(taskBudgetItemsTotalValueProvider(taskId));
 
@@ -118,10 +116,9 @@ class TaskBudgetSection extends ConsumerWidget {
         IconButton(
           icon: const Icon(Icons.add),
           onPressed: () {
-            ref.read(taskBudgetItemsServiceProvider).addTaskBudgetItem(
-                  taskId: taskId,
-                  itemNumber: taskBudgetItems.length + 1,
-                );
+            ref
+                .read(taskBudgetItemsServiceProvider)
+                .addTaskBudgetItem(taskId: taskId);
           },
         ),
       ],
