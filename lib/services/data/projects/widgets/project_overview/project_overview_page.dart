@@ -15,11 +15,7 @@ import 'package:seren_ai_flutter/services/data/projects/widgets/action_buttons/u
 import 'package:seren_ai_flutter/services/data/projects/widgets/project_details_page.dart';
 import 'package:seren_ai_flutter/services/data/projects/widgets/project_overview/project_tasks_section.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
-import 'package:seren_ai_flutter/services/data/tasks/filtered/task_filter_options_provider.dart';
-import 'package:seren_ai_flutter/services/data/tasks/filtered/task_filter_state_provider.dart';
-import 'package:seren_ai_flutter/services/data/tasks/filtered/task_filter_view_type.dart';
 import 'package:seren_ai_flutter/services/data/tasks/providers/cur_user_viewable_tasks_stream_provider.dart';
-import 'package:seren_ai_flutter/services/data/tasks/task_field_enum.dart';
 
 class ProjectOverviewPage extends HookConsumerWidget {
   const ProjectOverviewPage({super.key});
@@ -31,23 +27,6 @@ class ProjectOverviewPage extends HookConsumerWidget {
     if (curSelectedProjectId == null) {
       return const SizedBox.shrink();
     }
-
-    ref.listen(curSelectedProjectIdNotifierProvider, (_, next) {
-      if (next != null) {
-        final taskFilterStateNotifier = ref.read(
-            taskFilterStateProvider(TaskFilterViewType.projectOverview)
-                .notifier);
-
-        if (CurSelectedProjectIdNotifier.isEverythingId(next)) {
-          taskFilterStateNotifier.removeFilter(TaskFieldEnum.project);
-        } else {
-          // We only use the name String to show the filter name in the UI
-          // but the filter will be hidden in this case
-          taskFilterStateNotifier.updateFilter(
-              TFProject.byProject(projectId: next, projectName: ""));
-        }
-      }
-    });
 
     final curSelectedProject = ref.watch(curSelectedProjectStreamProvider);
     if (curSelectedProject.isLoading) {
