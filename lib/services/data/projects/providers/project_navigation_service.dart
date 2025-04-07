@@ -18,6 +18,10 @@ import 'package:seren_ai_flutter/services/data/projects/widgets/action_buttons/d
 import 'package:seren_ai_flutter/services/data/projects/widgets/action_buttons/open_project_info_button.dart';
 import 'package:seren_ai_flutter/services/data/projects/widgets/action_buttons/update_project_assignees_button.dart';
 import 'package:seren_ai_flutter/services/data/projects/widgets/project_details_page.dart';
+import 'package:seren_ai_flutter/services/data/tasks/filtered/task_filter_options_provider.dart';
+import 'package:seren_ai_flutter/services/data/tasks/filtered/task_filter_state_provider.dart';
+import 'package:seren_ai_flutter/services/data/tasks/filtered/task_filter_view_type.dart';
+import 'package:seren_ai_flutter/services/data/tasks/task_field_enum.dart';
 
 final projectNavigationServiceProvider =
     Provider<ProjectNavigationService>((ref) {
@@ -35,6 +39,18 @@ class ProjectNavigationService extends BaseNavigationService {
   Future<void> setIdFunction(String id) async {
     await _ensureProjectOrgIsSelected(id);
     ref.read(curSelectedProjectIdNotifierProvider.notifier).setProjectId(id);
+
+    final taskFilterStateNotifier = ref.read(
+        taskFilterStateProvider(TaskFilterViewType.projectOverview).notifier);
+    
+    if (CurSelectedProjectIdNotifier.isEverythingId(id)) {
+      taskFilterStateNotifier.removeFilter(TaskFieldEnum.project);
+    } else {
+      // We only use the name String to show the filter name in the UI
+      // but the filter will be hidden in this case
+      taskFilterStateNotifier
+          .updateFilter(TFProject.byProject(projectId: id, projectName: ""));
+    }
   }
 
   /// For projects, readOnly mode is used to open the project overview page.
@@ -46,9 +62,7 @@ class ProjectNavigationService extends BaseNavigationService {
 
     switch (mode) {
       case EditablePageMode.readOnly:
-        ref
-            .read(curSelectedProjectIdNotifierProvider.notifier)
-            .setProjectId(projectId!);
+        setIdFunction(projectId!);
         break;
       case EditablePageMode.edit:
         ref
@@ -70,9 +84,6 @@ class ProjectNavigationService extends BaseNavigationService {
       EditablePageMode.edit => AppLocalizations.of(context)!.updateProject,
       EditablePageMode.create => AppLocalizations.of(context)!.createProject,
     };
-
-    // If the project is already created, ensure its org is selected
-    if (projectId != null) await _ensureProjectOrgIsSelected(projectId);
 
     if (mode == EditablePageMode.readOnly) {
       _navigateToProjectOverviewPage(title);
