@@ -14,9 +14,6 @@ TaskBudgetItemModel _$TaskBudgetItemModelFromJson(Map<String, dynamic> json) =>
       itemNumber: (json['item_number'] as num).toInt(),
       amount: (json['amount'] as num).toDouble(),
       unitValue: (json['unit_value'] as num).toDouble(),
-      isEstimated: json['is_estimated'] == null
-          ? false
-          : TaskBudgetItemModel._boolFromInt(json['is_estimated']),
     );
 
 Map<String, dynamic> _$TaskBudgetItemModelToJson(
@@ -28,5 +25,4 @@ Map<String, dynamic> _$TaskBudgetItemModelToJson(
       'item_number': instance.itemNumber,
       'amount': instance.amount,
       'unit_value': instance.unitValue,
-      'is_estimated': instance.isEstimated,
     };
