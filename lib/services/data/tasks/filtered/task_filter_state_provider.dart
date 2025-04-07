@@ -66,6 +66,8 @@ class TaskFilterStateNotifier extends StateNotifier<TaskFilterState> {
         return TaskFilterState(activeFilters: [tasksOnlyFilter]);
       case TaskFilterViewType.phaseSubtasks:
         return TaskFilterState(activeFilters: [tasksOnlyFilter]);
+      case TaskFilterViewType.projectBudgetTable:
+        return const TaskFilterState(activeFilters: []);
     }
   }
 

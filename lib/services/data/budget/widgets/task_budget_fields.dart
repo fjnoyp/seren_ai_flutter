@@ -13,6 +13,7 @@ class TaskBudgetItemNumberField extends BaseBudgetTextField {
   TaskBudgetItemNumberField({
     super.key,
     required this.budgetItemId,
+    super.prefix,
     required bool isEnabled,
   }) : super(
           isEditable: isEnabled,

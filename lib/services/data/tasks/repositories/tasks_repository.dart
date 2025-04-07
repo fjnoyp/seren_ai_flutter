@@ -109,6 +109,15 @@ class TasksRepository extends BaseRepository<TaskModel> {
     );
   }
 
+  Stream<List<String>> watchChildTaskIds({
+    required String parentTaskId,
+  }) {
+    return watch(
+      TaskQueries.getTasksByParentIdQuery,
+      {'parent_task_id': parentTaskId},
+    ).map((tasks) => tasks.map((task) => task.id).toList());
+  }
+
   Future<List<String>> getChildTaskIds({
     required String parentTaskId,
   }) async {

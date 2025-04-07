@@ -18,6 +18,7 @@ class BaseBudgetTextField extends HookConsumerWidget {
     required this.updateValue,
     this.numbersOnly = false,
     this.formatAsCurrency = false,
+    this.prefix,
   });
 
   final bool isEditable;
@@ -25,6 +26,8 @@ class BaseBudgetTextField extends HookConsumerWidget {
   final Future Function(WidgetRef, String) updateValue;
   final bool numbersOnly;
   final bool formatAsCurrency;
+  final String? prefix;
+
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final curValue = ref.watch(valueProvider).toString();
@@ -146,7 +149,7 @@ class BaseBudgetTextField extends HookConsumerWidget {
               // Add currency symbol as prefix if needed
               prefixText: (formatAsCurrency && numbersOnly)
                   ? ref.watch(currencyFormatSNP).currencySymbol
-                  : null,
+                  : prefix,
             ),
             style: Theme.of(context).textTheme.bodyMedium?.copyWith(
                   color: colorAnimation.colorTween.value,
