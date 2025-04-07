@@ -51,4 +51,12 @@ class BudgetItemReferencesRepository
   }) async {
     await updateField(budgetItemId, field.toDbField(), value);
   }
+
+  // base unit value isn't a BudgetItemFieldEnum field - and doesn't need to be
+  Future<void> updateBudgetItemRefBaseUnitValue({
+    required String budgetItemId,
+    required double newBaseUnitValue,
+  }) async {
+    await updateField(budgetItemId, 'base_unit_value', newBaseUnitValue);
+  }
 }

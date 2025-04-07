@@ -122,6 +122,7 @@ class BaseBudgetTextField extends HookConsumerWidget {
               if (rawValue != curValue) {
                 updateValue(ref, rawValue);
               }
+              FocusScope.of(context).unfocus();
             },
             onTapOutside: (_) {
               // Update on tap outside with raw value
@@ -129,7 +130,7 @@ class BaseBudgetTextField extends HookConsumerWidget {
               if (rawValue != curValue) {
                 updateValue(ref, rawValue);
               }
-              FocusScope.of(context).unfocus(); // Hide the keyboard
+              FocusScope.of(context).unfocus();
             },
             textAlign: formatAsCurrency ? TextAlign.end : TextAlign.start,
             decoration: InputDecoration(
@@ -179,6 +180,8 @@ class BaseBudgetAutosuggestionTextField extends HookConsumerWidget {
 
     final options =
         ref.watch(curOrgAvailableBudgetItemsStreamProvider).value ?? [];
+    // Sort options by code length to improve numeric first matches
+    options.sort((a, b) => a.code.length.compareTo(b.code.length));
 
     return Autocomplete<BudgetItemRefModel>(
       optionsBuilder: (textEditingValue) {
@@ -214,6 +217,11 @@ class BaseBudgetAutosuggestionTextField extends HookConsumerWidget {
         FocusScope.of(context).unfocus();
         await updateBudgetItemRefId(ref, option.id);
       },
+      displayStringForOption: (option) => switch (fieldToSearch) {
+        BudgetItemFieldEnum.name => option.name,
+        BudgetItemFieldEnum.code => option.code,
+        _ => '',
+      },
       optionsViewBuilder: (context, onSelected, options) {
         final currencyFormat = ref.watch(currencyFormatSNP);
         return Align(
@@ -221,7 +229,10 @@ class BaseBudgetAutosuggestionTextField extends HookConsumerWidget {
           child: Material(
             elevation: 4.0,
             child: ConstrainedBox(
-              constraints: const BoxConstraints(maxHeight: 200),
+              constraints: const BoxConstraints(
+                maxHeight: 200,
+                maxWidth: 500,
+              ),
               child: ListView.builder(
                 shrinkWrap: true,
                 padding: EdgeInsets.zero,
@@ -230,9 +241,14 @@ class BaseBudgetAutosuggestionTextField extends HookConsumerWidget {
                   final option = options.elementAt(index);
                   return ListTile(
                     onTap: () => onSelected(option),
-                    leading: Text(
-                      option.code,
-                      overflow: TextOverflow.ellipsis,
+                    leading: SizedBox(
+                      width: 60,
+                      child: Text(
+                        "${option.code}\n${option.source}",
+                        maxLines: 4,
+                        textAlign: TextAlign.center,
+                        overflow: TextOverflow.ellipsis,
+                      ),
                     ),
                     title: Text(option.name, overflow: TextOverflow.ellipsis),
                     subtitle:
