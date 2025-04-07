@@ -657,7 +657,7 @@
 
     "@_": {"description": "Task Budgets"},
     "budget": "Budget",
-    "itemNumber": "",
+    "itemNumber": "Item",
     "type": "Type",
     "code": "Code",
     "source": "Source",
@@ -668,6 +668,7 @@
     "unitValueWithBdi": "Unit Value with BDI",
     "totalValue": "Total Value",
     "totalValueWithBdi": "Total Value with BDI",
+    "weightPercentage": "Weight (%)",
     "currency": "Currency",
 
     "@_": {"description": "Test SQL Page"},

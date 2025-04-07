@@ -365,6 +365,10 @@ Map<TaskFieldEnum, List<TaskFilter>> _getViewSpecificFilters(
         ..._createAuthorUserFilters(ref, projectId: projectId),
         ..._createAssigneesFilters(ref, projectId: projectId),
       };
+
+    case TaskFilterViewType.projectBudgetTable:
+      // don't need any filters for this view
+      return {};
   }
 }
 

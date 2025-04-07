@@ -3,6 +3,8 @@ import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:seren_ai_flutter/common/navigation_service_provider.dart';
 import 'package:seren_ai_flutter/common/universal_platform/universal_platform.dart';
+import 'package:seren_ai_flutter/common/utils/double_extension.dart';
+import 'package:seren_ai_flutter/services/data/budget/widgets/project_budget_table.dart';
 import 'package:seren_ai_flutter/services/data/common/status_enum.dart';
 import 'package:seren_ai_flutter/services/data/notes/providers/notes_navigation_service.dart';
 import 'package:seren_ai_flutter/services/data/notes/widgets/project_notes_list.dart';
@@ -16,6 +18,7 @@ import 'package:seren_ai_flutter/services/data/projects/widgets/project_details_
 import 'package:seren_ai_flutter/services/data/projects/widgets/project_overview/project_tasks_section.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:seren_ai_flutter/services/data/tasks/providers/cur_user_viewable_tasks_stream_provider.dart';
+import 'package:seren_ai_flutter/widgets/debug/debug_mode_provider.dart';
 
 class ProjectOverviewPage extends HookConsumerWidget {
   const ProjectOverviewPage({super.key});
@@ -41,6 +44,8 @@ class ProjectOverviewPage extends HookConsumerWidget {
       return const SizedBox.shrink();
     }
 
+    final isDebugMode = ref.watch(isDebugModeSNP);
+
     final tabs = [
       if (isWebVersion) ...[
         (
@@ -58,6 +63,13 @@ class ProjectOverviewPage extends HookConsumerWidget {
           icon: Icons.segment,
           child: const ProjectTasksSectionWeb(ProjectTasksSectionViewMode.gantt)
         ),
+        if (isDebugMode &&
+            !CurSelectedProjectIdNotifier.isEverythingId(curSelectedProjectId))
+          (
+            name: AppLocalizations.of(context)!.budget,
+            icon: Icons.money,
+            child: ProjectBudgetTable(projectId: curSelectedProjectId)
+          ),
       ] else ...[
         (
           name: AppLocalizations.of(context)!.tasks,
@@ -191,8 +203,7 @@ class _CurrentProjectReadinessBar extends ConsumerWidget {
       children: [
         Expanded(child: LinearProgressIndicator(value: readiness)),
         const SizedBox(width: 8),
-        Text(
-            '${(readiness * 100).toStringAsFixed(2).replaceAll(RegExp(r'\.?0*$'), '')} %'),
+        Text(readiness.toStringAsPercentage()),
       ],
     );
   }

@@ -384,7 +384,7 @@
 
     "@_": {"description": "Task Budgets"},
     "budget": "Orçamento",
-    "itemNumber": "",
+    "itemNumber": "Item",
     "type": "Tipo",
     "code": "Código",
     "source": "Fonte",
@@ -395,6 +395,7 @@
     "unitValueWithBdi": "Valor Un com BDI",
     "totalValue": "Valor Total",
     "totalValueWithBdi": "Total com BDI",
+    "weightPercentage": "Peso (%)",
     "currency": "Moeda",
 
     "@_": {"description": "Speech Recognition"},

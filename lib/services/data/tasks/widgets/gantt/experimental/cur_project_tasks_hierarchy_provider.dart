@@ -185,3 +185,51 @@ final _curProjectTasksHierarchyProvider =
 });
 
 // dark modern
+
+final curProjectTasksHierarchyNumberedProvider =
+    Provider<List<({String rowNumber, String taskId})>>((ref) {
+  final taskIds = ref.watch(curProjectTasksHierarchyIdsProvider);
+  final hierarchy = ref.watch(_curProjectTasksHierarchyProvider);
+
+  final result = <({String rowNumber, String taskId})>[];
+  final rootTaskCounter = <String, int>{};
+
+  // Helper function to generate hierarchical numbering
+  String generateTaskNumber(String taskId) {
+    final info = hierarchy[taskId];
+    if (info == null) return '';
+
+    // For root tasks (depth = 0)
+    if (info.depth == 0) {
+      // Count root tasks in order of appearance
+      final rootCount = (rootTaskCounter.length + 1);
+      rootTaskCounter[taskId] = rootCount;
+      return rootCount.toString();
+    } else {
+      // For child tasks, get parent's number and append child index
+      final parentId = info.parentId;
+      if (parentId == null) return ''; // Shouldn't happen if depth > 0
+
+      final parentNumber = result
+          .firstWhere((item) => item.taskId == parentId,
+              orElse: () => (rowNumber: '', taskId: ''))
+          .rowNumber;
+
+      if (parentNumber.isEmpty) return '';
+
+      // Find position of this task in parent's children list
+      final childIndex = hierarchy[parentId]?.childrenIds.indexOf(taskId) ?? -1;
+      if (childIndex == -1) return '';
+
+      return '$parentNumber.${childIndex + 1}';
+    }
+  }
+
+  // Process tasks in the order provided by curProjectTasksHierarchyIdsProvider
+  for (final taskId in taskIds) {
+    final taskNumber = generateTaskNumber(taskId);
+    result.add((rowNumber: taskNumber, taskId: taskId));
+  }
+
+  return result;
+});

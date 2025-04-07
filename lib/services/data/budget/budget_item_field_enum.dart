@@ -14,7 +14,8 @@ enum BudgetItemFieldEnum {
   unitValue,
   unitValueWithBdi,
   totalValue,
-  totalValueWithBdi;
+  totalValueWithBdi,
+  weight;
 
   String toHumanReadable(BuildContext context) => switch (this) {
         BudgetItemFieldEnum.itemNumber =>
@@ -39,6 +40,8 @@ enum BudgetItemFieldEnum {
           AppLocalizations.of(context)?.totalValue ?? 'Valor Total',
         BudgetItemFieldEnum.totalValueWithBdi =>
           AppLocalizations.of(context)?.totalValueWithBdi ?? 'Total com BDI',
+        BudgetItemFieldEnum.weight =>
+          AppLocalizations.of(context)?.weightPercentage ?? 'Peso (%)',
       };
 
   String toDbField() => switch (this) {
@@ -54,7 +57,8 @@ enum BudgetItemFieldEnum {
         // The fields below are not in the db
         BudgetItemFieldEnum.unitValueWithBdi ||
         BudgetItemFieldEnum.totalValue ||
-        BudgetItemFieldEnum.totalValueWithBdi =>
+        BudgetItemFieldEnum.totalValueWithBdi ||
+        BudgetItemFieldEnum.weight =>
           '',
       };
 
@@ -74,6 +78,7 @@ enum BudgetItemFieldEnum {
         BudgetItemFieldEnum.totalValue => null,
         BudgetItemFieldEnum.unitValueWithBdi => null, // use unitValue instead
         BudgetItemFieldEnum.totalValueWithBdi => null, // use totalValue instead
+        BudgetItemFieldEnum.weight => null, // use totalValue instead
       };
 
   Comparator<TaskBudgetItemModel>? get comparatorRealValues => switch (this) {
@@ -94,5 +99,6 @@ enum BudgetItemFieldEnum {
         BudgetItemFieldEnum.measureUnit => null,
         BudgetItemFieldEnum.unitValueWithBdi => null, // use unitValue instead
         BudgetItemFieldEnum.totalValueWithBdi => null, // use totalValue instead
+        BudgetItemFieldEnum.weight => null, // use totalValue instead
       };
 }

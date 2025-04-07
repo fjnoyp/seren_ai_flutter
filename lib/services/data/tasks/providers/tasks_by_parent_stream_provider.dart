@@ -8,3 +8,10 @@ final tasksByParentStreamProvider =
       .watch(tasksRepositoryProvider)
       .watchChildTasks(parentTaskId: parentTaskId),
 );
+
+final taskIdsByParentStreamProvider = StreamProvider.autoDispose
+    .family<List<String>, String>((ref, parentTaskId) {
+  return ref
+      .read(tasksRepositoryProvider)
+      .watchChildTaskIds(parentTaskId: parentTaskId);
+});
