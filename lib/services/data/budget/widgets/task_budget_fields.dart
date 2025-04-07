@@ -210,13 +210,33 @@ class TaskBudgetUnitValueField extends BaseBudgetTextField {
           isEditable: isEnabled,
           valueProvider: taskBudgetItemByIdProvider(budgetItemId).select(
               (value) => value.value?.unitValue.toStringAsFixed(2) ?? ''),
-          updateValue: (ref, value) => ref
-              .read(taskBudgetItemsRepositoryProvider)
-              .updateTaskBudgetItemField(
-                budgetItemId: budgetItemId,
-                field: BudgetItemFieldEnum.unitValue,
-                value: value,
-              ),
+          updateValue: (ref, value) async {
+            await ref
+                .read(taskBudgetItemsRepositoryProvider)
+                .updateTaskBudgetItemField(
+                  budgetItemId: budgetItemId,
+                  field: BudgetItemFieldEnum.unitValue,
+                  value: value,
+                );
+            final budgetItemRefId = await ref
+                .read(taskBudgetItemsRepositoryProvider)
+                .getById(budgetItemId)
+                .then((value) => value?.budgetItemRefId);
+            if (budgetItemRefId != null) {
+              final baseUnitValue = await ref
+                  .read(budgetItemRefsRepositoryProvider)
+                  .getById(budgetItemRefId)
+                  .then((value) => value?.baseUnitValue);
+              if (baseUnitValue == null || baseUnitValue == 0) {
+                await ref
+                    .read(budgetItemRefsRepositoryProvider)
+                    .updateBudgetItemRefBaseUnitValue(
+                      budgetItemId: budgetItemRefId,
+                      newBaseUnitValue: double.parse(value),
+                    );
+              }
+            }
+          },
           numbersOnly: true,
           formatAsCurrency: true,
         );
