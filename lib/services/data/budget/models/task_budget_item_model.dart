@@ -24,11 +24,6 @@ class TaskBudgetItemModel implements IHasId {
   @JsonKey(name: 'unit_value')
   final double unitValue;
 
-  @JsonKey(name: 'is_estimated', fromJson: _boolFromInt)
-  final bool isEstimated;
-
-  static bool _boolFromInt(dynamic value) => value == 1;
-
   double get totalValue => amount * unitValue;
 
   TaskBudgetItemModel({
@@ -38,7 +33,6 @@ class TaskBudgetItemModel implements IHasId {
     required this.itemNumber,
     required this.amount,
     required this.unitValue,
-    this.isEstimated = false,
   }) : id = id ?? uuid.v4();
 
   factory TaskBudgetItemModel.fromJson(Map<String, dynamic> json) =>
