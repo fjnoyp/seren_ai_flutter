@@ -1,6 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:seren_ai_flutter/services/data/budget/budget_item_field_enum.dart';
+import 'package:seren_ai_flutter/services/data/budget/providers/task_budget_items_service_provider.dart';
 import 'package:seren_ai_flutter/services/data/budget/providers/task_budget_total_value_provider.dart';
 import 'package:seren_ai_flutter/services/data/budget/widgets/task_budget_section.dart';
 import 'package:seren_ai_flutter/services/data/tasks/filtered/task_filter_state_provider.dart';
@@ -108,34 +111,52 @@ class ProjectBudgetTable extends ConsumerWidget {
                     child: Column(
                       mainAxisSize: MainAxisSize.min,
                       children: [
-                        ...numberedTasks.expand(
+                        ...numberedTasks.map(
                           (task) {
-                            return [
-                              const Divider(height: 1),
-                              Container(
-                                color: Theme.of(context)
-                                    .colorScheme
-                                    .primaryContainer
-                                    .withAlpha(25 *
-                                        (3 -
-                                            task.rowNumber
-                                                .split('.')
-                                                .length)),
-                                child: TaskTotalBudgetRow(
-                                  taskId: task.taskId,
-                                  taskNumber: task.rowNumber,
-                                  columns: columns,
-                                  projectTotalValue: projectTotalValue,
+                            return Stack(
+                              clipBehavior: Clip.none,
+                              children: [
+                                Column(
+                              children: [
+                                const Divider(height: 1),
+                                Container(
+                                  color: Theme.of(context)
+                                      .colorScheme
+                                      .primaryContainer
+                                      .withAlpha(25 *
+                                          (3 -
+                                              task.rowNumber
+                                                  .split('.')
+                                                  .length)),
+                                  child: TaskTotalBudgetRow(
+                                    taskId: task.taskId,
+                                    taskNumber: task.rowNumber,
+                                    columns: columns,
+                                    projectTotalValue: projectTotalValue,
+                                  ),
                                 ),
-                              ),
-                              const Divider(height: 1),
-                              TaskBudgetRows(
-                                taskId: task.taskId,
-                                taskNumber: task.rowNumber,
-                                columns: columns,
-                                totalValue: projectTotalValue,
-                              ),
-                            ];
+                                const Divider(height: 1),
+                                
+                                    TaskBudgetRows(
+                                      taskId: task.taskId,
+                                      taskNumber: task.rowNumber,
+                                      columns: columns,
+                                      totalValue: projectTotalValue,
+                                    ),
+                                  ],
+                                ),
+                                Positioned(
+                                  bottom: -12, // half of the row height
+                                  left: 0,
+                                  right: 0,
+                                  child: SizedBox(
+                                    width: totalWidth,
+                                    height: 24,
+                                    child: _AddItemRow(taskId: task.taskId),
+                                  ),
+                                ),
+                              ],
+                            );
                           },
                         ),
                       ],
@@ -146,6 +167,46 @@ class ProjectBudgetTable extends ConsumerWidget {
             ],
           ),
         ),
+      ),
+    );
+  }
+}
+
+class _AddItemRow extends HookConsumerWidget {
+  const _AddItemRow({required this.taskId});
+
+  final String taskId;
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final isHovering = useState(false);
+
+    return MouseRegion(
+      onEnter: (_) => isHovering.value = true,
+      onExit: (_) => isHovering.value = false,
+      child: InkWell(
+        onTap: () {
+          ref
+              .read(taskBudgetItemsServiceProvider)
+              .addTaskBudgetItem(taskId: taskId);
+        },
+        hoverColor: Colors.transparent,
+        child: isHovering.value
+            ? Row(
+                children: [
+                  Icon(
+                    Icons.add_circle,
+                    color: Theme.of(context).colorScheme.primary,
+                  ),
+                  Expanded(
+                    child: Container(
+                      height: 4,
+                      color: Theme.of(context).colorScheme.primary,
+                    ),
+                  ),
+                ],
+              )
+            : const SizedBox.expand(),
       ),
     );
   }

@@ -1,6 +1,9 @@
+import 'dart:developer';
+
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:seren_ai_flutter/services/data/budget/models/budget_item_ref_model.dart';
 import 'package:seren_ai_flutter/services/data/budget/models/task_budget_item_model.dart';
+import 'package:seren_ai_flutter/services/data/budget/providers/task_budget_items_stream_provider.dart';
 import 'package:seren_ai_flutter/services/data/budget/repositories/budget_item_refs_repository.dart';
 import 'package:seren_ai_flutter/services/data/budget/repositories/task_budget_items_repository.dart';
 import 'package:seren_ai_flutter/services/data/orgs/providers/cur_selected_org_id_notifier.dart';
@@ -14,15 +17,18 @@ class TaskBudgetItemsService {
   TaskBudgetItemsService(this.ref);
 
   /// Adds a new task budget item
-  Future<void> addTaskBudgetItem({
-    required String taskId,
-    required int itemNumber,
-  }) async {
+  Future<void> addTaskBudgetItem({required String taskId}) async {
     final taskBudgetsRepository = ref.read(taskBudgetItemsRepositoryProvider);
+    final taskBudgetItems =
+        ref.read(taskBudgetItemsStreamProvider(taskId)).value;
+    if (taskBudgetItems == null) {
+      log('should not add a task budget item before the stream is initialized');
+      return;
+    }
 
     final newTaskBudgetItem = TaskBudgetItemModel(
       parentTaskId: taskId,
-      itemNumber: itemNumber,
+      itemNumber: taskBudgetItems.length + 1,
       amount: 0,
       unitValue: 0,
     );
