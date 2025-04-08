@@ -94,7 +94,7 @@ class BudgetToPdfConverter extends Document {
           style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
         ),
         Text(
-          'Budget Report - ${DateFormat.yMMMd(AppLocalizations.of(context)!.localeName).format(DateTime.now())}',
+          '${AppLocalizations.of(context)?.budgetReport ?? 'Budget Report'} - ${DateFormat.yMMMd(AppLocalizations.of(context)!.localeName).format(DateTime.now())}',
           style: const TextStyle(fontSize: 12),
         ),
         Text(
@@ -257,6 +257,10 @@ class BudgetToPdfConverter extends Document {
   }
 
   Widget _buildFooter(double projectTotalValue, NumberFormat currencyFormat) {
+    final context =
+        ref.read(navigationServiceProvider).navigatorKey.currentContext;
+    if (context == null) throw Exception('Context not found');
+
     return Column(
       children: [
         Divider(thickness: 2),
@@ -264,7 +268,7 @@ class BudgetToPdfConverter extends Document {
           mainAxisAlignment: MainAxisAlignment.end,
           children: [
             Text(
-              'Total Budget: ',
+              '${AppLocalizations.of(context)?.totalBudget ?? 'Total Budget'}: ',
               style: TextStyle(fontWeight: FontWeight.bold),
             ),
             Text(
