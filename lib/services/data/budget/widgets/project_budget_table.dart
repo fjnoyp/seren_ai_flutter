@@ -8,7 +8,7 @@ import 'package:seren_ai_flutter/services/data/budget/providers/task_budget_tota
 import 'package:seren_ai_flutter/services/data/budget/widgets/task_budget_section.dart';
 
 /// This view will be used in project periodic admeasurement tables
-class ProjectBudgetTable extends ConsumerWidget {
+class ProjectBudgetTable extends HookConsumerWidget {
   const ProjectBudgetTable({
     super.key,
     required this.projectId,
@@ -25,8 +25,8 @@ class ProjectBudgetTable extends ConsumerWidget {
         columns.length;
 
     // Single scroll controller for lists and scrollbars
-    final horizontalScrollController = ScrollController();
-    final verticalScrollController = ScrollController();
+    final horizontalScrollController = useScrollController();
+    final verticalScrollController = useScrollController();
 
     final numberedTasks = ref.watch(curProjectTasksHierarchyNumberedProvider);
 

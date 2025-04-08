@@ -1,3 +1,5 @@
+import 'dart:developer';
+
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:intl/intl.dart';
 import 'package:seren_ai_flutter/common/shared_preferences_service_provider.dart';
@@ -30,8 +32,13 @@ class CurrencyFormatSN extends StateNotifier<NumberFormat> {
   }
 
   Future<void> setCurrency(String currencyLocale) async {
-    state = NumberFormat.simpleCurrency(locale: currencyLocale);
-    final prefs = ref.read(sharedPreferencesServiceProvider);
-    await prefs.setString('currency_locale', currencyLocale);
+    try {
+      state = NumberFormat.simpleCurrency(locale: currencyLocale);
+      final prefs = ref.read(sharedPreferencesServiceProvider);
+      await prefs.setString('currency_locale', currencyLocale);
+    } catch (e) {
+      // Log the error but keep the state updated anyway
+      log('Error saving currency preference: $e');
+    }
   }
 }

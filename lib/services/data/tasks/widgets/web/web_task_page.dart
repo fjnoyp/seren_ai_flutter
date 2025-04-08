@@ -46,7 +46,9 @@ class WebTaskPage extends ConsumerWidget {
         title: AppLocalizations.of(context)?.comments,
         body: SingleChildScrollView(child: TaskCommentSection(curTaskId)),
       ),
-      if (isDebugMode && !isPhase) // temporarily hide budget for phases
+      // We're temporarily hiding budget for phases until we adapt the budget view to that case
+      // and temporarily only showing budget on debug mode until the feature is fully ready
+      if (isDebugMode && !isPhase)
         (
           title: AppLocalizations.of(context)?.budget,
           body: TaskBudgetSection(curTaskId),
