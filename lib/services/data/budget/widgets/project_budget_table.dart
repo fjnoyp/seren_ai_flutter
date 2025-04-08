@@ -9,56 +9,14 @@ import 'package:seren_ai_flutter/services/data/budget/widgets/task_budget_sectio
 
 /// This view will be used in project periodic admeasurement tables
 class ProjectBudgetTable extends ConsumerWidget {
-  const ProjectBudgetTable({super.key, required this.projectId});
+  const ProjectBudgetTable({
+    super.key,
+    required this.projectId,
+    required this.columns,
+  });
 
   final String projectId;
-
-  static const columns = [
-    (
-      field: BudgetItemFieldEnum.itemNumber,
-      width: 60.0,
-    ),
-    (
-      field: BudgetItemFieldEnum.type,
-      width: 100.0,
-    ),
-    (
-      field: BudgetItemFieldEnum.code,
-      width: 100.0,
-    ),
-    (
-      field: BudgetItemFieldEnum.source,
-      width: 100.0,
-    ),
-    (
-      field: BudgetItemFieldEnum.name,
-      width: 400.0,
-    ),
-    (
-      field: BudgetItemFieldEnum.measureUnit,
-      width: 60.0,
-    ),
-    (
-      field: BudgetItemFieldEnum.amount,
-      width: 60.0,
-    ),
-    (
-      field: BudgetItemFieldEnum.unitValue,
-      width: 80.0,
-    ),
-    (
-      field: BudgetItemFieldEnum.totalValue,
-      width: 120.0,
-    ),
-    (
-      field: BudgetItemFieldEnum.totalValueWithBdi,
-      width: 120.0,
-    ),
-    (
-      field: BudgetItemFieldEnum.weight,
-      width: 80.0,
-    ),
-  ];
+  final List<({BudgetItemFieldEnum field, double width})> columns;
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -86,7 +44,7 @@ class ProjectBudgetTable extends ConsumerWidget {
           child: Column(
             children: [
               const Divider(height: 1.0),
-              const TaskBudgetHeaders(columns: columns),
+              TaskBudgetHeaders(columns: columns),
               const Divider(height: 1.0),
               Flexible(
                 child: Scrollbar(
