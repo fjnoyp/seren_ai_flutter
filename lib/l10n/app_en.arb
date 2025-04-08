@@ -660,7 +660,6 @@
     "itemNumber": "Item",
     "code": "Code",
     "source": "Source",
-    "description": "Description",
     "amount": "Amount",
     "measureUnit": "Unit",
     "unitValue": "Unit Value",
