@@ -65,7 +65,7 @@ class BudgetToPdfConverter extends Document {
         header: (Context context) {
           return Column(
             children: [
-              _buildHeader(project.name),
+              _buildHeader(project.name, projectBdi),
               SizedBox(height: 8.0),
               _buildTableHeader(columns, totalWidth),
             ],
@@ -81,7 +81,7 @@ class BudgetToPdfConverter extends Document {
     );
   }
 
-  Widget _buildHeader(String projectName) {
+  Widget _buildHeader(String projectName, double projectBdi) {
     final context =
         ref.read(navigationServiceProvider).navigatorKey.currentContext;
     if (context == null) throw Exception('Context not found');
@@ -95,6 +95,10 @@ class BudgetToPdfConverter extends Document {
         ),
         Text(
           'Budget Report - ${DateFormat.yMMMd(AppLocalizations.of(context)!.localeName).format(DateTime.now())}',
+          style: const TextStyle(fontSize: 12),
+        ),
+        Text(
+          'BDI: $projectBdi%',
           style: const TextStyle(fontSize: 12),
         ),
         SizedBox(height: 8),
