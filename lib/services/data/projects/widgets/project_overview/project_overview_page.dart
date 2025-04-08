@@ -4,7 +4,7 @@ import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:seren_ai_flutter/common/navigation_service_provider.dart';
 import 'package:seren_ai_flutter/common/universal_platform/universal_platform.dart';
 import 'package:seren_ai_flutter/common/utils/double_extension.dart';
-import 'package:seren_ai_flutter/services/data/budget/widgets/project_budget_table.dart';
+import 'package:seren_ai_flutter/services/data/budget/widgets/project_budget_section.dart';
 import 'package:seren_ai_flutter/services/data/common/status_enum.dart';
 import 'package:seren_ai_flutter/services/data/notes/providers/notes_navigation_service.dart';
 import 'package:seren_ai_flutter/services/data/notes/widgets/project_notes_list.dart';
@@ -68,7 +68,7 @@ class ProjectOverviewPage extends HookConsumerWidget {
           (
             name: AppLocalizations.of(context)!.budget,
             icon: Icons.money,
-            child: ProjectBudgetTable(projectId: curSelectedProjectId)
+            child: ProjectBudgetSection(projectId: curSelectedProjectId)
           ),
       ] else ...[
         (
