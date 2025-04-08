@@ -1,15 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
-import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:seren_ai_flutter/services/data/budget/budget_item_field_enum.dart';
+import 'package:seren_ai_flutter/services/data/budget/providers/project_budget_task_hierarchy_provider.dart';
 import 'package:seren_ai_flutter/services/data/budget/providers/task_budget_items_service_provider.dart';
 import 'package:seren_ai_flutter/services/data/budget/providers/task_budget_total_value_provider.dart';
 import 'package:seren_ai_flutter/services/data/budget/widgets/task_budget_section.dart';
-import 'package:seren_ai_flutter/services/data/tasks/filtered/task_filter_state_provider.dart';
-import 'package:seren_ai_flutter/services/data/tasks/filtered/task_filter_view_type.dart';
-import 'package:seren_ai_flutter/services/data/tasks/task_field_enum.dart';
-import 'package:seren_ai_flutter/services/data/tasks/widgets/gantt/experimental/cur_project_tasks_hierarchy_provider.dart';
 
 /// This view will be used in project periodic admeasurement tables
 class ProjectBudgetTable extends ConsumerWidget {
@@ -74,16 +70,6 @@ class ProjectBudgetTable extends ConsumerWidget {
     final horizontalScrollController = ScrollController();
     final verticalScrollController = ScrollController();
 
-    WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
-      // TODO p1: should be startDateTime instead
-      ref
-          .read(taskFilterStateProvider(TaskFilterViewType.projectBudgetTable)
-              .notifier)
-          .updateSortOption(TaskFieldEnum.createdAt);
-      // tasks.sort((a, b) => (a.startDateTime ?? a.createdAt ?? DateTime.now())
-      //     .compareTo(b.startDateTime ?? b.createdAt ?? DateTime.now()));
-    });
-
     final numberedTasks = ref.watch(curProjectTasksHierarchyNumberedProvider);
 
     final projectTotalValue =
@@ -136,7 +122,6 @@ class ProjectBudgetTable extends ConsumerWidget {
                                   ),
                                 ),
                                 const Divider(height: 1),
-                                
                                     TaskBudgetRows(
                                       taskId: task.taskId,
                                       taskNumber: task.rowNumber,
