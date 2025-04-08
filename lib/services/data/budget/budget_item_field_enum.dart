@@ -27,7 +27,7 @@ enum BudgetItemFieldEnum {
         BudgetItemFieldEnum.source =>
           AppLocalizations.of(context)?.source ?? 'Fonte',
         BudgetItemFieldEnum.name =>
-          AppLocalizations.of(context)?.name ?? 'Descrição',
+          AppLocalizations.of(context)?.description ?? 'Descrição',
         BudgetItemFieldEnum.amount =>
           AppLocalizations.of(context)?.amount ?? 'Qtd',
         BudgetItemFieldEnum.measureUnit =>

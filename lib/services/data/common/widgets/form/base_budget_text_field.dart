@@ -13,7 +13,7 @@ import 'package:intl/intl.dart';
 class BaseBudgetTextField extends HookConsumerWidget {
   const BaseBudgetTextField({
     super.key,
-    required this.isEditable,
+    required this.isEnabled,
     required this.valueProvider,
     required this.updateValue,
     this.numbersOnly = false,
@@ -21,7 +21,7 @@ class BaseBudgetTextField extends HookConsumerWidget {
     this.prefix,
   });
 
-  final bool isEditable;
+  final bool isEnabled;
   final ProviderListenable<String> valueProvider;
   final Future Function(WidgetRef, String) updateValue;
   final bool numbersOnly;
@@ -107,7 +107,7 @@ class BaseBudgetTextField extends HookConsumerWidget {
             minLines: 1,
             maxLines: null,
             controller: valueController,
-            enabled: isEditable,
+            enabled: isEnabled,
             textInputAction: TextInputAction.next,
             keyboardType: numbersOnly
                 ? (formatAsCurrency
@@ -164,14 +164,14 @@ class BaseBudgetTextField extends HookConsumerWidget {
 class BaseBudgetAutosuggestionTextField extends HookConsumerWidget {
   const BaseBudgetAutosuggestionTextField({
     super.key,
-    required this.isEditable,
+    required this.isEnabled,
     required this.valueProvider,
     required this.updateFieldValue,
     required this.updateBudgetItemRefId,
     required this.fieldToSearch,
   });
 
-  final bool isEditable;
+  final bool isEnabled;
   final ProviderListenable<String> valueProvider;
   final Future Function(WidgetRef, String) updateFieldValue;
   final Future Function(WidgetRef, String) updateBudgetItemRefId;
@@ -212,7 +212,7 @@ class BaseBudgetAutosuggestionTextField extends HookConsumerWidget {
           curValue: curValue,
           fieldController: fieldController,
           fieldFocusNode: fieldFocusNode,
-          isEditable: isEditable,
+          isEditable: isEnabled,
           updateValue: updateFieldValue,
         );
       },

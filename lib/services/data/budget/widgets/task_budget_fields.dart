@@ -14,9 +14,8 @@ class TaskBudgetItemNumberField extends BaseBudgetTextField {
     super.key,
     required this.budgetItemId,
     super.prefix,
-    required bool isEnabled,
+    required super.isEnabled,
   }) : super(
-          isEditable: isEnabled,
           valueProvider: taskBudgetItemByIdProvider(budgetItemId)
               .select((value) => value.value?.itemNumber.toString() ?? ''),
           updateValue: (ref, value) => ref
@@ -37,9 +36,8 @@ class TaskBudgetTypeField extends BaseBudgetTextField {
   TaskBudgetTypeField({
     super.key,
     required this.budgetItemRefId,
-    required bool isEnabled,
+    required super.isEnabled,
   }) : super(
-          isEditable: isEnabled,
           valueProvider: budgetItemRefByIdStreamProvider(budgetItemRefId)
               .select((value) => value.value?.type ?? ''),
           updateValue: (ref, value) async {
@@ -56,33 +54,37 @@ class TaskBudgetTypeField extends BaseBudgetTextField {
         );
 }
 
-/// Name Field
-class TaskBudgetNameField extends BaseBudgetAutosuggestionTextField {
-  final String budgetItemId;
-  final String? budgetItemRefId;
-
-  TaskBudgetNameField({
+/// Add a new base class for these autosuggestion fields
+abstract class TaskBudgetRefAutosuggestionField
+    extends BaseBudgetAutosuggestionTextField {
+  TaskBudgetRefAutosuggestionField({
     super.key,
-    required this.budgetItemId,
-    required this.budgetItemRefId,
-    required bool isEnabled,
+    required String budgetItemId,
+    required String? budgetItemRefId,
+    required super.fieldToSearch,
+    required super.isEnabled,
+    required super.valueProvider,
   }) : super(
-          isEditable: isEnabled,
-          valueProvider: budgetItemRefByIdStreamProvider(budgetItemRefId)
-              .select((value) => value.value?.name ?? ''),
           updateFieldValue: (ref, value) async {
             if (budgetItemRefId != null) {
               await ref
                   .read(budgetItemRefsRepositoryProvider)
                   .updateBudgetItemRefField(
                     budgetItemId: budgetItemRefId,
-                    field: BudgetItemFieldEnum.name,
+                    field: fieldToSearch,
                     value: value,
                   );
             } else {
               final newBudgetItemRefId = await ref
                   .read(taskBudgetItemsServiceProvider)
-                  .createBudgetItemRef(name: value);
+                  .createBudgetItemRef(
+                    name: fieldToSearch == BudgetItemFieldEnum.name
+                        ? value
+                        : null,
+                    code: fieldToSearch == BudgetItemFieldEnum.code
+                        ? value
+                        : null,
+                  );
               await ref
                   .read(taskBudgetItemsRepositoryProvider)
                   .updateTaskBudgetItemReference(
@@ -99,54 +101,34 @@ class TaskBudgetNameField extends BaseBudgetAutosuggestionTextField {
                   budgetItemRefId: value,
                 );
           },
-          fieldToSearch: BudgetItemFieldEnum.name,
         );
 }
 
-/// Code Field
-class TaskBudgetCodeField extends BaseBudgetAutosuggestionTextField {
-  final String budgetItemId;
-  final String? budgetItemRefId;
+/// Name field
+class TaskBudgetNameField extends TaskBudgetRefAutosuggestionField {
+  TaskBudgetNameField({
+    super.key,
+    required super.budgetItemId,
+    required super.budgetItemRefId,
+    required super.isEnabled,
+  }) : super(
+          fieldToSearch: BudgetItemFieldEnum.name,
+          valueProvider: budgetItemRefByIdStreamProvider(budgetItemRefId)
+              .select((value) => value.value?.name ?? ''),
+        );
+}
 
+/// Code field
+class TaskBudgetCodeField extends TaskBudgetRefAutosuggestionField {
   TaskBudgetCodeField({
     super.key,
-    required this.budgetItemId,
-    required this.budgetItemRefId,
-    required bool isEnabled,
+    required super.budgetItemId,
+    required super.budgetItemRefId,
+    required super.isEnabled,
   }) : super(
-          isEditable: isEnabled,
+          fieldToSearch: BudgetItemFieldEnum.code,
           valueProvider: budgetItemRefByIdStreamProvider(budgetItemRefId)
               .select((value) => value.value?.code ?? ''),
-          updateFieldValue: (ref, value) async {
-            if (budgetItemRefId != null) {
-              await ref
-                  .read(budgetItemRefsRepositoryProvider)
-                  .updateBudgetItemRefField(
-                    budgetItemId: budgetItemRefId,
-                    field: BudgetItemFieldEnum.code,
-                    value: value,
-                  );
-            } else {
-              final newBudgetItemRefId = await ref
-                  .read(taskBudgetItemsServiceProvider)
-                  .createBudgetItemRef(code: value);
-              await ref
-                  .read(taskBudgetItemsRepositoryProvider)
-                  .updateTaskBudgetItemReference(
-                    budgetItemId: budgetItemId,
-                    budgetItemRefId: newBudgetItemRefId,
-                  );
-            }
-          },
-          updateBudgetItemRefId: (ref, value) async {
-            await ref
-                .read(taskBudgetItemsRepositoryProvider)
-                .updateTaskBudgetItemReference(
-                  budgetItemId: budgetItemId,
-                  budgetItemRefId: value,
-                );
-          },
-          fieldToSearch: BudgetItemFieldEnum.code,
         );
 }
 
@@ -157,9 +139,8 @@ class TaskBudgetAmountField extends BaseBudgetTextField {
   TaskBudgetAmountField({
     super.key,
     required this.budgetItemId,
-    required bool isEnabled,
+    required super.isEnabled,
   }) : super(
-          isEditable: isEnabled,
           valueProvider: taskBudgetItemByIdProvider(budgetItemId)
               .select((value) => value.value?.amount.toString() ?? ''),
           updateValue: (ref, value) => ref
@@ -180,9 +161,8 @@ class TaskBudgetMeasureUnitField extends BaseBudgetTextField {
   TaskBudgetMeasureUnitField({
     super.key,
     required this.budgetItemRefId,
-    required bool isEnabled,
+    required super.isEnabled,
   }) : super(
-          isEditable: isEnabled,
           valueProvider: budgetItemRefByIdStreamProvider(budgetItemRefId)
               .select((value) => value.value?.measureUnit ?? ''),
           updateValue: (ref, value) async {
@@ -206,9 +186,8 @@ class TaskBudgetUnitValueField extends BaseBudgetTextField {
   TaskBudgetUnitValueField({
     super.key,
     required this.budgetItemId,
-    required bool isEnabled,
+    required super.isEnabled,
   }) : super(
-          isEditable: isEnabled,
           valueProvider: taskBudgetItemByIdProvider(budgetItemId).select(
               (value) => value.value?.unitValue.toStringAsFixed(2) ?? ''),
           updateValue: (ref, value) async {

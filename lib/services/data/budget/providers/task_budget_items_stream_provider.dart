@@ -10,6 +10,6 @@ final taskBudgetItemsStreamProvider = StreamProvider.autoDispose
 });
 
 final taskBudgetItemByIdProvider =
-    StreamProvider.family<TaskBudgetItemModel, String>((ref, budgetItemId) {
+    StreamProvider.autoDispose.family<TaskBudgetItemModel, String>((ref, budgetItemId) {
   return ref.read(taskBudgetItemsRepositoryProvider).watchById(budgetItemId);
 });
