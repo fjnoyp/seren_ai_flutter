@@ -392,6 +392,9 @@
     "totalValueWithBdi": "Total com BDI",
     "weightPercentage": "Peso (%)",
     "currency": "Moeda",
+    "exportAs": "Exportar como",
+    "budgetReport": "Orçamento",
+    "totalBudget": "Total",
 
     "@_": {"description": "Speech Recognition"},
     "unknownState": "Estado desconhecido: {state}",

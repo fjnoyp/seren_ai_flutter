@@ -6,6 +6,7 @@ import 'package:seren_ai_flutter/services/data/budget/providers/project_budget_t
 import 'package:seren_ai_flutter/services/data/budget/providers/share_budget_service_provider.dart';
 import 'package:seren_ai_flutter/services/data/budget/providers/task_budget_total_value_provider.dart';
 import 'package:seren_ai_flutter/services/data/projects/providers/project_bdi_provider.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 class ShareProjectBudgetButton extends ConsumerWidget {
   const ShareProjectBudgetButton({
@@ -67,7 +68,7 @@ class ShareProjectBudgetButton extends ConsumerWidget {
         return FilledButton.icon(
           onPressed: controller.open,
           icon: const Icon(Icons.file_download_outlined),
-          label: const Text('Export as'),
+          label: Text(AppLocalizations.of(context)?.exportAs ?? 'Export as'),
         );
       },
     );

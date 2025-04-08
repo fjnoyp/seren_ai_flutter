@@ -668,6 +668,9 @@
     "totalValueWithBdi": "Total Value with BDI",
     "weightPercentage": "Weight (%)",
     "currency": "Currency",
+    "exportAs": "Export as",
+    "budgetReport": "Budget Report",
+    "totalBudget": "Total Budget",
 
     "@_": {"description": "Test SQL Page"},
     "testSQLPage": "Test SQL Page",
