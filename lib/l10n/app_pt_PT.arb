@@ -387,7 +387,6 @@
     "itemNumber": "Item",
     "code": "Código",
     "source": "Fonte",
-    "description": "Descrição",
     "amount": "Qtd",
     "measureUnit": "Un",
     "unitValue": "Valor Un",
