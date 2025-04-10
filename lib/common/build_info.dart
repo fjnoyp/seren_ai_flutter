@@ -2,10 +2,10 @@
 class BuildInfo {
   // Core build info
   static const String version = '1.0.0';
-  static const String buildDate = '2025-04-10 09:48:52';
+  static const String buildDate = '2025-04-10 09:53:13';
   
   // Git info
-  static const String commitHash = 'a30c103f';
+  static const String commitHash = '485d3fd3';
   static const String branch = 'feat/introduce-task-budgets';
   static const String lastTag = 'no tag';
   
@@ -16,12 +16,20 @@ class BuildInfo {
   // Recent commits (last 5)
   static const List<Map<String, String>> recentCommits = [
     {
+      "hash": "485d3fd3",
+      "author": "renata-sisilio",
+      "email": "renata@seren-ai.co", 
+      "message": "refactor(budget): improve performance by moving sorting logic from autosuggestion field to query",
+      "date": "2025-04-10",
+      "relativeDate": "4 minutes ago"
+    },
+    {
       "hash": "a30c103f",
       "author": "renata-sisilio",
       "email": "renata@seren-ai.co", 
       "message": "pr comments",
       "date": "2025-04-10",
-      "relativeDate": "21 minutes ago"
+      "relativeDate": "25 minutes ago"
     },
     {
       "hash": "f251e9c5",
@@ -47,17 +55,9 @@ class BuildInfo {
       "date": "2025-04-08",
       "relativeDate": "2 days ago"
     },
-    {
-      "hash": "56016fff",
-      "author": "renata-sisilio",
-      "email": "renata@seren-ai.co", 
-      "message": "pr comments",
-      "date": "2025-04-08",
-      "relativeDate": "2 days ago"
-    },
   ];
 
   // Stats
-  static const String totalCommits = '535';
+  static const String totalCommits = '536';
   static const String contributors = '0';
 }
