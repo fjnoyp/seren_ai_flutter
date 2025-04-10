@@ -45,6 +45,64 @@ class TaskBudgetItemsRepository extends BaseRepository<TaskBudgetItemModel> {
     );
   }
 
+  Stream<double> watchTaskBudgetTotalValue({
+    required String taskId,
+  }) {
+    return db.watch(
+      BudgetQueries.getTaskBudgetTotalValueQuery,
+      parameters: [taskId],
+      triggerOnTables: ['task_budget_items', 'tasks'],
+    ).map((results) {
+      // Extract the 'total_value' from the result map
+      final totalValue = results.first['total_value'];
+      // Handle null case (when there are no budget items)
+      return totalValue != null ? totalValue as double : 0.0;
+    });
+  }
+
+  Future<double> getTaskBudgetTotalValue({
+    required String taskId,
+  }) async {
+    return db.execute(
+      BudgetQueries.getTaskBudgetTotalValueQuery,
+      [taskId],
+    ).then((results) {
+      // Extract the 'total_value' from the result map
+      final totalValue = results.first['total_value'];
+      // Handle null case (when there are no budget items)
+      return totalValue != null ? totalValue as double : 0.0;
+    });
+  }
+
+  Stream<double> watchProjectBudgetTotalValue({
+    required String projectId,
+  }) {
+    return db.watch(
+      BudgetQueries.getProjectBudgetTotalValueQuery,
+      parameters: [projectId],
+      triggerOnTables: ['task_budget_items', 'tasks'],
+    ).map((results) {
+      // Extract the 'total_value' from the result map
+      final totalValue = results.first['total_value'];
+      // Handle null case (when there are no budget items)
+      return totalValue != null ? totalValue as double : 0.0;
+    });
+  }
+
+  Future<double> getProjectBudgetTotalValue({
+    required String projectId,
+  }) async {
+    return db.execute(
+      BudgetQueries.getProjectBudgetTotalValueQuery,
+      [projectId],
+    ).then((results) {
+      // Extract the 'total_value' from the result map
+      final totalValue = results.first['total_value'];
+      // Handle null case (when there are no budget items)
+      return totalValue != null ? totalValue as double : 0.0;
+    });
+  }
+
   Future<void> updateTaskBudgetItemField({
     required String budgetItemId,
     required BudgetItemFieldEnum field,

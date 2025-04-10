@@ -6,7 +6,7 @@ import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:seren_ai_flutter/common/currency_provider.dart';
 import 'package:seren_ai_flutter/services/data/budget/budget_item_field_enum.dart';
 import 'package:seren_ai_flutter/services/data/budget/models/budget_item_ref_model.dart';
-import 'package:seren_ai_flutter/services/data/budget/providers/cur_org_available_budget_items.dart';
+import 'package:seren_ai_flutter/services/data/budget/providers/cur_org_available_budget_items_stream_providers.dart';
 import 'package:seren_ai_flutter/services/data/common/widgets/form/color_animation.dart';
 import 'package:intl/intl.dart';
 

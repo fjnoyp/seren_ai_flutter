@@ -2,9 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:seren_ai_flutter/common/currency_provider.dart';
 import 'package:seren_ai_flutter/common/utils/double_extension.dart';
-import 'package:seren_ai_flutter/services/data/budget/models/budget_item_ref_model.dart';
 import 'package:seren_ai_flutter/services/data/budget/models/task_budget_item_model.dart';
-import 'package:seren_ai_flutter/services/data/budget/providers/cur_org_available_budget_items.dart';
+import 'package:seren_ai_flutter/services/data/budget/providers/cur_org_available_budget_items_stream_providers.dart';
 import 'package:seren_ai_flutter/services/data/budget/providers/task_budget_items_service_provider.dart';
 import 'package:seren_ai_flutter/services/data/budget/providers/task_budget_items_stream_provider.dart';
 import 'package:seren_ai_flutter/services/data/budget/providers/task_budget_total_value_provider.dart';
@@ -69,7 +68,7 @@ class TaskBudgetSection extends ConsumerWidget {
 
     final projectBdi = ref.watch(projectBdiProvider);
     final taskBudgetItemsTotalValue =
-        ref.watch(taskBudgetItemsTotalValueProvider(taskId));
+        ref.watch(taskBudgetItemsTotalValueStreamProvider(taskId)).value ?? 0.0;
 
     // Single scroll controller for all horizontal lists
     final horizontalScrollController = ScrollController();
@@ -247,7 +246,8 @@ class TaskTotalBudgetRow extends ConsumerWidget {
         .select((value) => value.value?.name ?? '...'));
     final projectBdi = ref.watch(projectBdiProvider);
     final numberFormat = ref.watch(currencyFormatSNP);
-    final taskTotalValue = ref.watch(taskBudgetItemsTotalValueProvider(taskId));
+    final taskTotalValue =
+        ref.watch(taskBudgetItemsTotalValueStreamProvider(taskId)).value ?? 0.0;
 
     return SizedBox(
       height: 50.0,
@@ -319,9 +319,8 @@ class _TaskBudgetItemRowValue extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final projectBdi = ref.watch(projectBdiProvider);
     final matchedItemRef = ref
-            .watch(budgetItemRefByIdStreamProvider(curItem.budgetItemRefId))
-            .value ??
-        BudgetItemRefModel.loading();
+        .watch(budgetItemRefByIdStreamProvider(curItem.budgetItemRefId))
+        .value;
 
     final numberFormat = ref.watch(currencyFormatSNP);
 
@@ -331,13 +330,15 @@ class _TaskBudgetItemRowValue extends ConsumerWidget {
           isEnabled: true,
           prefix: itemNumberPrefix,
         ),
-      BudgetItemFieldEnum.type => matchedItemRef.isOwnSource
-          ? TaskBudgetTypeField(
-              budgetItemRefId: curItem.budgetItemRefId,
-              isEnabled: true,
-            )
-          : Text(matchedItemRef.type),
-      BudgetItemFieldEnum.source => Text(matchedItemRef.source),
+      BudgetItemFieldEnum.type => matchedItemRef == null
+          ? const Text('...')
+          : matchedItemRef.isOwnSource
+              ? TaskBudgetTypeField(
+                  budgetItemRefId: curItem.budgetItemRefId,
+                  isEnabled: true,
+                )
+              : Text(matchedItemRef.type),
+      BudgetItemFieldEnum.source => Text(matchedItemRef?.source ?? '...'),
       BudgetItemFieldEnum.code => TaskBudgetCodeField(
           budgetItemId: curItem.id,
           budgetItemRefId: curItem.budgetItemRefId,
@@ -352,12 +353,14 @@ class _TaskBudgetItemRowValue extends ConsumerWidget {
           budgetItemId: curItem.id,
           isEnabled: true,
         ),
-      BudgetItemFieldEnum.measureUnit => matchedItemRef.isOwnSource
-          ? TaskBudgetMeasureUnitField(
-              budgetItemRefId: curItem.budgetItemRefId,
-              isEnabled: true,
-            )
-          : Text(matchedItemRef.measureUnit),
+      BudgetItemFieldEnum.measureUnit => matchedItemRef == null
+          ? const Text('...')
+          : matchedItemRef.isOwnSource
+              ? TaskBudgetMeasureUnitField(
+                  budgetItemRefId: curItem.budgetItemRefId,
+                  isEnabled: true,
+                )
+              : Text(matchedItemRef.measureUnit),
       BudgetItemFieldEnum.unitValue => TaskBudgetUnitValueField(
           budgetItemId: curItem.id,
           isEnabled: true,

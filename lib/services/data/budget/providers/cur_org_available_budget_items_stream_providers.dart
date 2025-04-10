@@ -17,6 +17,7 @@ final curOrgAvailableBudgetItemsStreamProvider =
   },
 );
 
+/// Get the budget item reference by id.
 final budgetItemRefByIdStreamProvider =
     StreamProvider.family<BudgetItemRefModel, String?>((ref, budgetItemId) {
   if (budgetItemId == null) {

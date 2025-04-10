@@ -2,10 +2,10 @@ import 'package:flutter/material.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:seren_ai_flutter/services/data/budget/budget_item_field_enum.dart';
-import 'package:seren_ai_flutter/services/data/budget/providers/project_budget_task_hierarchy_provider.dart';
 import 'package:seren_ai_flutter/services/data/budget/providers/task_budget_items_service_provider.dart';
 import 'package:seren_ai_flutter/services/data/budget/providers/task_budget_total_value_provider.dart';
 import 'package:seren_ai_flutter/services/data/budget/widgets/task_budget_section.dart';
+import 'package:seren_ai_flutter/services/data/tasks/widgets/gantt/experimental/cur_project_tasks_hierarchy_provider.dart';
 
 /// This view will be used in project periodic admeasurement tables
 class ProjectBudgetTable extends HookConsumerWidget {
@@ -31,7 +31,8 @@ class ProjectBudgetTable extends HookConsumerWidget {
     final numberedTasks = ref.watch(curProjectTasksHierarchyNumberedProvider);
 
     final projectTotalValue =
-        ref.watch(projectBudgetTotalValueProvider(projectId));
+        ref.watch(projectBudgetTotalValueStreamProvider(projectId)).value ??
+            0.0;
 
     return Scrollbar(
       controller: horizontalScrollController,
@@ -61,25 +62,25 @@ class ProjectBudgetTable extends HookConsumerWidget {
                               clipBehavior: Clip.none,
                               children: [
                                 Column(
-                              children: [
-                                const Divider(height: 1),
-                                Container(
-                                  color: Theme.of(context)
-                                      .colorScheme
-                                      .primaryContainer
-                                      .withAlpha(25 *
-                                          (3 -
-                                              task.rowNumber
-                                                  .split('.')
-                                                  .length)),
-                                  child: TaskTotalBudgetRow(
-                                    taskId: task.taskId,
-                                    taskNumber: task.rowNumber,
-                                    columns: columns,
-                                    projectTotalValue: projectTotalValue,
-                                  ),
-                                ),
-                                const Divider(height: 1),
+                                  children: [
+                                    const Divider(height: 1),
+                                    Container(
+                                      color: Theme.of(context)
+                                          .colorScheme
+                                          .primaryContainer
+                                          .withAlpha(25 *
+                                              (3 -
+                                                  task.rowNumber
+                                                      .split('.')
+                                                      .length)),
+                                      child: TaskTotalBudgetRow(
+                                        taskId: task.taskId,
+                                        taskNumber: task.rowNumber,
+                                        columns: columns,
+                                        projectTotalValue: projectTotalValue,
+                                      ),
+                                    ),
+                                    const Divider(height: 1),
                                     TaskBudgetRows(
                                       taskId: task.taskId,
                                       taskNumber: task.rowNumber,
