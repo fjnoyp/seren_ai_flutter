@@ -328,6 +328,7 @@
     "newTask": "Nova Tarefa",
     "type": "Tipo",
     "lastUpdatedDate": "Última atualização: {date}",
+    "dueDateWithDate": "Prazo: {date}",
     "chooseDueDate": "Data de Término",
     "chooseDueTime": "Hora de Término",
     "todaysTasks": "Tarefas de Hoje",
