@@ -4,6 +4,14 @@ import 'package:seren_ai_flutter/services/data/common/uuid.dart';
 
 part 'budget_item_ref_model.g.dart';
 
+/// This model represents a budget item reference.
+/// It is used to represent a budget item reference from the source tables
+/// (e.g. SINAPI, SICRO, SETOP, etc. or own org sources)
+/// with reusable reference values like item name, measure unit, etc.
+///
+/// These references are used to populate the budget item fields in the task budget,
+/// and they're in a separate table to avoid duplicating the same reference values
+/// for the same item across different tasks.
 @JsonSerializable()
 class BudgetItemRefModel implements IHasId {
   @override
@@ -35,16 +43,6 @@ class BudgetItemRefModel implements IHasId {
     required this.measureUnit,
     required this.baseUnitValue,
   }) : id = id ?? uuid.v4();
-
-  /// Factory constructor to be used in loading states
-  factory BudgetItemRefModel.loading() => BudgetItemRefModel(
-        type: '...',
-        code: '...',
-        source: '...',
-        name: '...',
-        measureUnit: '...',
-        baseUnitValue: 0,
-      );
 
   /// Factory constructor to be used before the user selects an item reference
   factory BudgetItemRefModel.empty() => BudgetItemRefModel(

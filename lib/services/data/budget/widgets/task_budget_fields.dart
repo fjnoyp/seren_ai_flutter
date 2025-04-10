@@ -1,4 +1,4 @@
-import 'package:seren_ai_flutter/services/data/budget/providers/cur_org_available_budget_items.dart';
+import 'package:seren_ai_flutter/services/data/budget/providers/cur_org_available_budget_items_stream_providers.dart';
 import 'package:seren_ai_flutter/services/data/budget/providers/task_budget_items_service_provider.dart';
 import 'package:seren_ai_flutter/services/data/budget/providers/task_budget_items_stream_provider.dart';
 import 'package:seren_ai_flutter/services/data/budget/repositories/budget_item_refs_repository.dart';

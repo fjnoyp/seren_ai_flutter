@@ -2,11 +2,11 @@ import 'package:flutter/material.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:seren_ai_flutter/common/currency_provider.dart';
 import 'package:seren_ai_flutter/services/data/budget/budget_item_field_enum.dart';
-import 'package:seren_ai_flutter/services/data/budget/providers/project_budget_task_hierarchy_provider.dart';
 import 'package:seren_ai_flutter/services/data/budget/providers/share_budget_service_provider.dart';
 import 'package:seren_ai_flutter/services/data/budget/providers/task_budget_total_value_provider.dart';
 import 'package:seren_ai_flutter/services/data/projects/providers/project_bdi_provider.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+import 'package:seren_ai_flutter/services/data/tasks/widgets/gantt/experimental/cur_project_tasks_hierarchy_provider.dart';
 
 class ShareProjectBudgetButton extends ConsumerWidget {
   const ShareProjectBudgetButton({
@@ -23,7 +23,8 @@ class ShareProjectBudgetButton extends ConsumerWidget {
     final numberedTasks = ref.watch(curProjectTasksHierarchyNumberedProvider);
     // We pass the projectTotalValue down here to avoid overcalculations
     final projectTotalValue =
-        ref.watch(projectBudgetTotalValueProvider(projectId));
+        ref.watch(projectBudgetTotalValueStreamProvider(projectId)).value ??
+            0.0;
 
     if (numberedTasks.isEmpty || projectTotalValue == 0) {
       return const SizedBox.shrink();
