@@ -3,10 +3,12 @@ class BudgetQueries {
   /// - org_id: String
   ///
   /// Get all budget items for a given organization id
+  /// Sorted by code length to improve numeric first matches
   static const String getOrgBudgetItemsQuery = '''
   SELECT * FROM budget_item_references
   WHERE parent_org_id = :org_id
   OR parent_org_id IS NULL
+  ORDER BY LENGTH(code)
   ''';
 
   /// Params:
@@ -18,7 +20,7 @@ class BudgetQueries {
   WHERE parent_task_id = :task_id
   ORDER BY item_number
   ''';
-  
+
   /// Params:
   /// - task_id: String
   ///

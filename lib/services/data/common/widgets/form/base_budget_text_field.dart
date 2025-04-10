@@ -183,8 +183,6 @@ class BaseBudgetAutosuggestionTextField extends HookConsumerWidget {
 
     final options =
         ref.watch(curOrgAvailableBudgetItemsStreamProvider).value ?? [];
-    // Sort options by code length to improve numeric first matches
-    options.sort((a, b) => a.code.length.compareTo(b.code.length));
 
     return Autocomplete<BudgetItemRefModel>(
       optionsBuilder: (textEditingValue) {

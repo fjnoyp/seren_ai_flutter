@@ -212,7 +212,7 @@ class TaskBudgetUnitValueField extends BaseBudgetTextField {
                     .read(budgetItemRefsRepositoryProvider)
                     .updateBudgetItemRefBaseUnitValue(
                       budgetItemId: budgetItemRefId,
-                      newBaseUnitValue: double.parse(value),
+                      newBaseUnitValue: double.tryParse(value) ?? 0,
                     );
               }
             }
